@@ -15,10 +15,10 @@
 
          <!-- Scripts -->
          @vite(['resources/css/app.css', 'resources/js/app.js'])
-         <script defer src="{{ asset('build/assets/app-B9GXRaBV.js') }}"></script>
+         <script defer src="/build/assets/app-B9GXRaBV.js"></script>
  
          <!-- Styles -->
-         <link rel="stylesheet" href="{{ asset('build/assets/app-6skvEm6U.css') }}">
+         <link rel="stylesheet" href="/build/assets/app-6skvEm6U.css">
          @livewireStyles        
 
         <script>
