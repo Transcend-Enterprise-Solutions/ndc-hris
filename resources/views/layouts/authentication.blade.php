@@ -13,11 +13,13 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-        <!-- Styles -->
-        @livewireStyles        
+         <!-- Scripts -->
+         @vite(['resources/css/app.css', 'resources/js/app.js'])
+         <script defer src="{{ asset('build/assets/app-B9GXRaBV.js') }}"></script>
+ 
+         <!-- Styles -->
+         <link rel="stylesheet" href="{{ asset('build/assets/app-6skvEm6U.css') }}">
+         @livewireStyles        
 
         <script>
             if (localStorage.getItem('dark-mode') === 'false' || !('dark-mode' in localStorage)) {
