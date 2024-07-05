@@ -105,6 +105,20 @@ trait MakesAssertions
         return $this;
     }
 
+    function assertSetStrict($name, $value)
+    {
+        $this->assertSet($name, $value, true);
+
+        return $this;
+    }
+
+    function assertNotSetStrict($name, $value)
+    {
+        $this->assertNotSet($name, $value, true);
+
+        return $this;
+    }
+
     function assertCount($name, $value)
     {
         PHPUnit::assertCount($value, $this->get($name));
@@ -134,6 +148,20 @@ trait MakesAssertions
         } else {
             $strict ? PHPUnit::assertNotSame($value, data_get($data, $name)) : PHPUnit::assertNotEquals($value, data_get($data, $name));
         }
+
+        return $this;
+    }
+
+    function assertSnapshotSetStrict($name, $value)
+    {
+        $this->assertSnapshotSet($name, $value, true);
+
+        return $this;
+    }
+
+    function assertSnapshotNotSetStrict($name, $value)
+    {
+        $this->assertSnapshotNotSet($name, $value, true);
 
         return $this;
     }
