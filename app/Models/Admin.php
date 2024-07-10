@@ -18,7 +18,6 @@ class Admin extends AuthenticatableUser implements Authenticatable
     public $incrementing = false;
     protected $keyType = 'string';
     protected $fillable = [
-        'id',
         'user_id', 
         'surname',
         'last_name',

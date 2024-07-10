@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('eligibility', function (Blueprint $table) {
             $table->id('id');
-            $table->uuid('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('rating');
             $table->date('date')->format('F d Y');

@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('admin', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('user_id');
+            $table->id('id');
+            $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('first_name', 50);
             $table->string('middle_name', 50)->nullable();

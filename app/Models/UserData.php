@@ -17,7 +17,6 @@ class UserData extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'id',
         'user_id',
         'surname',
         'first_name',

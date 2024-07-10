@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('work_experience', function (Blueprint $table) {
             $table->id('id');
-            $table->uuid('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->date('start_date')->format('F d Y');
             $table->date('end_date')->format('F d Y');

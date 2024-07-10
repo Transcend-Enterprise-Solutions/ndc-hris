@@ -1,9 +1,9 @@
 <x-authentication-layout>
     <h1 class="text-3xl text-slate-800 font-bold mb-6">{{ __('Welcome back!') }}</h1>
     @if (session('status'))
-    <div class="mb-4 font-medium text-sm text-green-600">
-        {{ session('status') }}
-    </div>
+        <div class="mb-4 font-medium text-sm text-green-600">
+            {{ session('status') }}
+        </div>
     @endif
     <!-- Form -->
     <form method="POST" action="{{ route('login') }}">
@@ -31,13 +31,14 @@
             </x-button>
         </div>
     </form>
+    
     <x-validation-errors class="mt-4" />
     <!-- Footer -->
-    <div class="pt-5 mt-6 border-t border-slate-200 dark:border-slate-700">
+    {{-- <div class="pt-5 mt-6 border-t border-slate-200 dark:border-slate-700">
         <div class="text-sm">
             {{ __('Don\'t you have an account?') }} <a
                 class="font-medium text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400"
                 href="{{ route('register') }}">{{ __('Sign Up') }}</a>
         </div>
-    </div>
+    </div> --}}
 </x-authentication-layout>

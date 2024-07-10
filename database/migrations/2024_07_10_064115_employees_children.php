@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('employees_children', function (Blueprint $table) {
             $table->id('id');
-            $table->uuid('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('childs_name')->nullable();
             $table->date('childs_birth_date')->format('F d Y')->nullable();
