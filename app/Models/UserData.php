@@ -22,6 +22,7 @@ class UserData extends Model
         'surname',
         'first_name',
         'middle_name',
+        'name_extension',
         'date_of_birth',
         'civil_status',
         'citizenship',
