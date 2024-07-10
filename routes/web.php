@@ -22,7 +22,9 @@ use App\Http\Controllers\CampaignController;
 |
 */
 
-Route::redirect('/', 'login');
+Route::redirect('/', '/registeraccount');
+Route::get('/registeraccount', function () {return view('registeraccount');});
+
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
