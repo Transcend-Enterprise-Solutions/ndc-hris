@@ -27,7 +27,7 @@ class User extends Authenticatable
         'id',
         'email',
         'password',
-        'fullname',
+        'name',
         'user_role',
         'active_status',
     ];
@@ -46,6 +46,10 @@ class User extends Authenticatable
 
     public function userData(){
         return $this->hasOne(UserData::class);
+    }
+
+    public function admin(){
+        return $this->hasOne(Admin::class);
     }
 
     public function eligibility(){
