@@ -8,7 +8,7 @@
         <div class="sm:flex sm:justify-between sm:items-center mb-8">
 
             <!-- Left: Avatars -->
-            <x-dashboard.dashboard-avatars />
+            {{-- <x-dashboard.dashboard-avatars /> --}}
 
             <!-- Right: Actions -->
             <div class="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">

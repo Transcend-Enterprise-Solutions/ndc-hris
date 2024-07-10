@@ -16,36 +16,13 @@
                     <stop stop-color="#6366F1" stop-opacity="0" offset="100%" />
                 </linearGradient>
             </defs>
-            <g fill="none" fill-rule="evenodd">
-                <g transform="rotate(64 36.592 105.604)">
-                    <mask id="welcome-d" fill="#fff">
-                        <use xlink:href="#welcome-a" />
-                    </mask>
-                    <use fill="url(#welcome-b)" xlink:href="#welcome-a" />
-                    <path fill="url(#welcome-c)" mask="url(#welcome-d)" d="M64-24h80v152H64z" />
-                </g>
-                <g transform="rotate(-51 91.324 -105.372)">
-                    <mask id="welcome-f" fill="#fff">
-                        <use xlink:href="#welcome-e" />
-                    </mask>
-                    <use fill="url(#welcome-b)" xlink:href="#welcome-e" />
-                    <path fill="url(#welcome-c)" mask="url(#welcome-f)" d="M40.333-15.147h50v95h-50z" />
-                </g>
-                <g transform="rotate(44 61.546 392.623)">
-                    <mask id="welcome-h" fill="#fff">
-                        <use xlink:href="#welcome-g" />
-                    </mask>
-                    <use fill="url(#welcome-b)" xlink:href="#welcome-g" />
-                    <path fill="url(#welcome-c)" mask="url(#welcome-h)" d="M40.333-15.147h50v95h-50z" />
-                </g>
-            </g>
         </svg>
     </div>
 
     <!-- Content -->
     <div class="relative">
         <h1 class="text-2xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold mb-1">Good afternoon, {{ Auth::user()->name }} 👋</h1>
-        <p class="dark:text-indigo-200">Here is what's happening with your projects today:</p>
+        <p class="dark:text-indigo-200">Admin and Finance Information Management System's Overview:</p>
     </div>
 
 </div>
