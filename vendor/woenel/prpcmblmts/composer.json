@@ -1,0 +1,27 @@
+{
+    "name": "woenel/prpcmblmts",
+    "description": "Philippines region, province, cities/municipalities and barangays Laravel migration and table seeder.",
+    "keywords": ["laravel", "philippines", "region", "province", "city", "municipality", "barangay", "migration", "seeder"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ronnel Martinez",
+            "email": "misc.woe@outlook.ph"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {},
+  "autoload": {
+    "psr-4": {
+      "Woenel\\Prpcmblmts\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Woenel\\Prpcmblmts\\ServiceProvider"
+      ]
+    }
+  }
+}

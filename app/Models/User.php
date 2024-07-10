@@ -24,9 +24,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'id',
         'email',
         'password',
+        'fullname',
+        'user_role',
+        'active_status',
     ];
 
     /**
@@ -41,6 +44,23 @@ class User extends Authenticatable
         'two_factor_secret',
     ];
 
+    public function userData(){
+        return $this->hasOne(UserData::class);
+    }
+
+    public function eligibility(){
+        return $this->hasMany(Eligibility::class);
+    }
+
+    public function workExperience(){
+        return $this->hasMany(WorkExperience::class);
+    }
+
+    public function employeesChildren(){
+        return $this->hasMany(EmployeesChildren::class);
+    }
+
+
     /**
      * The attributes that should be cast.
      *
@@ -48,7 +68,9 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
+
 
     /**
      * The accessors to append to the model's array form.

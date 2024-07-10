@@ -48,6 +48,7 @@ class ComposerStaticInit90086042a90f6cc071a3ef0c004b887a
         ),
         'W' => 
         array (
+            'Woenel\\Prpcmblmts\\' => 18,
             'Whoops\\' => 7,
             'Webmozart\\Assert\\' => 17,
         ),
@@ -192,6 +193,10 @@ class ComposerStaticInit90086042a90f6cc071a3ef0c004b887a
         'voku\\' => 
         array (
             0 => __DIR__ . '/..' . '/voku/portable-ascii/src/voku',
+        ),
+        'Woenel\\Prpcmblmts\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/woenel/prpcmblmts/src',
         ),
         'Whoops\\' => 
         array (
@@ -591,6 +596,7 @@ class ComposerStaticInit90086042a90f6cc071a3ef0c004b887a
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\ValidateSignature' => __DIR__ . '/../..' . '/app/Http/Middleware/ValidateSignature.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Livewire\\Registration' => __DIR__ . '/../..' . '/app/Livewire/Registration.php',
         'App\\Models\\DataFeed' => __DIR__ . '/../..' . '/app/Models/DataFeed.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
@@ -7081,6 +7087,7 @@ class ComposerStaticInit90086042a90f6cc071a3ef0c004b887a
         'Whoops\\Util\\Misc' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Util/Misc.php',
         'Whoops\\Util\\SystemFacade' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Util/SystemFacade.php',
         'Whoops\\Util\\TemplateHelper' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Util/TemplateHelper.php',
+        'Woenel\\Prpcmblmts\\ServiceProvider' => __DIR__ . '/..' . '/woenel/prpcmblmts/src/ServiceProvider.php',
         'voku\\helper\\ASCII' => __DIR__ . '/..' . '/voku/portable-ascii/src/voku/helper/ASCII.php',
     );
 

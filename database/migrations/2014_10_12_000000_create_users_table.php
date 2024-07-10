@@ -15,7 +15,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('email', 50);
             $table->string('password', 1000);
-            $table->string('name');
+            $table->string('fullname');
+            $table->string('user_role');
+            $table->string('active_status');
             $table->rememberToken();
             $table->timestamps();
         });

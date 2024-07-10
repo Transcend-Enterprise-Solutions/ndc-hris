@@ -21,21 +21,41 @@
     <!-- Styles -->
     <link rel="stylesheet" href="/build/assets/app-6skvEm6U.css">
     @livewireStyles
+    <style>
+        .right-side-login{
+            height: 100%;
+            width: 100%;
+            overflow-x: visible;
+            overflow-y: hidden;
+            position: absolute;
+        }
 
-    <script>
-        if (localStorage.getItem('dark-mode') === 'false' || !('dark-mode' in localStorage)) {
-                document.querySelector('html').classList.remove('dark');
-                document.querySelector('html').style.colorScheme = 'light';
-            } else {
-                document.querySelector('html').classList.add('dark');
-                document.querySelector('html').style.colorScheme = 'dark';
-            }
-    </script>
+        .right-side-login img{
+            position: relative;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .right-side-login div{
+            height: 100%;
+            width: 50%;
+            right: 0;
+            top: 0;
+            position: absolute;
+            background: #004AAD;
+            z-index: 0;
+        }
+
+        .login-logo{
+            position: relative;
+            z-index: 1;
+        }
+    </style>
 </head>
 
 <body class="font-inter antialiased bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400">
 
-    <main class="bg-white dark:bg-slate-900">
+    <main class="bg-white">
 
         <div class="relative flex">
 
@@ -49,7 +69,7 @@
                         <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                             <!-- Logo -->
                             <a class="block" href="{{ route('dashboard') }}">
-                                <img src="images/hris-logo.png" alt="logo" class="h-12">
+                                <img src="images/nyc-logo.png" alt="logo" class="h-12">
                             </a>
                         </div>
                     </div>
@@ -64,7 +84,11 @@
 
             <!-- Image -->
             <div class="hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2" aria-hidden="true">
-                <div class="flex items-center justify-center w-full h-full">
+                <div class="right-side-login">
+                    <div></div>
+                    <img src="/images/rimg.png" alt="login bg">
+                </div>
+                <div class="flex items-center justify-center w-full h-full login-logo">
                     <img class="w-1/2 h-1/2 object-contain" src="{{ asset('images/hris-logo.png') }}" width="760"
                         height="1024" alt="Authentication image" />
                 </div>
