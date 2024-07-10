@@ -6,7 +6,7 @@
         </div>
     @endif
     <!-- Form -->
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" wire:submit.prevent='login'>
         @csrf
         <div class="space-y-4">
             <div>
@@ -33,6 +33,9 @@
     </form>
     
     <x-validation-errors class="mt-4" />
+    @error('login')
+        <span style="color: red;">{{ $message }}</span>
+    @enderror
     <!-- Footer -->
     {{-- <div class="pt-5 mt-6 border-t border-slate-200 dark:border-slate-700">
         <div class="text-sm">
