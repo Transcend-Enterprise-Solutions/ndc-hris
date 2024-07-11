@@ -8,7 +8,54 @@
                 <p class="mt-4 text-base font-medium text-gray-500"></p>
             </div>
             <div class="p-2 mt-8 border bg-gray-50 rounded-3xl">
-                <div x-data="{ step: 1, formData: { firstname: '', middlename: '', surname: '', citizenship: '', height: '', weight: '', bloodtype: '', gsis: '', pagibig: '', philhealth: '', sss: '', tin: '', agency: '', username: '', password: '' } }"
+                <div x-data="{ step: 1, formData: { firstname: '', 
+                                                    middlename: '', 
+                                                    surname: '', 
+                                                    citizenship: '', 
+                                                    height: '', 
+                                                    weight: '', 
+                                                    bloodtype: '', 
+                                                    gsis: '', 
+                                                    pagibig: '', 
+                                                    philhealth: '', 
+                                                    sss: '', 
+                                                    tin: '', 
+                                                    agency: '', 
+                                                    region: '',
+                                                    province: '',
+                                                    city: '',
+                                                    street: '',
+                                                    rregion: '',
+                                                    rprovince: '',
+                                                    rcity: '',
+                                                    rstreet: '',
+                                                    tel: '',
+                                                    mob: '',
+                                                    email: '',
+                                                    spouse_name: '',
+                                                    spouse_occupation: '',
+                                                    spouse_employer: '',
+                                                    childrens_name: '',
+                                                    fathers_name: '',
+                                                    mothers_name: '',
+                                                    name_of_school: '',
+                                                    degree: '',
+                                                    attendance: '',
+                                                    year_graduated: '',
+                                                    rating: '',
+                                                    exam_loc: '',
+                                                    license: '',
+                                                    position_title: '',
+                                                    department: '',
+                                                    monthly_salary: '',
+                                                    voluntary_works: '',
+                                                    training_title: '',
+                                                    number_of_hours: '',
+                                                    conducted_by: '',
+                                                    special: '',
+                                                    distinctions: '',
+                                                    membership: '',
+                                                    references: '',} }"
                     class="p-10 bg-white border shadow-lg rounded-2xl">
                     <!-- Step 1 -->
                     <div x-show="step === 1">
@@ -24,24 +71,23 @@
                                     placeholder="Enter your firstname">
                             </div>
                             <div class="w-full">
-                                <label for="name" class="block text-sm text-gray-700">Surname</label>
+                                <label for="name" class="block text-sm text-gray-700">Middle Name</label>
                                 <input type="text" id="name" x-model="formData.middlename"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Enter your surname">
+                                    placeholder="Enter your middlename">
                             </div>
                         </div>
 
                         <div class="mt-4 gap-2 columns-2">
                             <div class="w-full">
-                                <label for="name" class="block text-sm text-gray-700">Middle Name</label>
+                                <label for="name" class="block text-sm text-gray-700">SurName</label>
                                 <input type="text" id="name" x-model="formData.surname"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Enter your middlename">
+                                    placeholder="Enter your surname">
                             </div>
-
                             <div class="w-full">
-                                <label for="name" class="block text-sm text-gray-700">Sex at Birth</label>
-                                <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown"
+                                <label for="name" class="block text-sm text-gray-700">Suffix</label>
+                                <button id="dropdownDefaultButton" data-dropdown-toggle="suffix"
                                     data-dropdown-trigger="click"
                                     class="w-full text-zinc-300 bg-white font-medium rounded-lg text-sm px-5 border py-3.4 text-center inline-flex items-center dark:focus:ring-zinc-300 border-zinc-300 focus:outline-none focus:ring-zinc-300"
                                     type="button">Select one <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
@@ -51,7 +97,49 @@
                                     </svg>
                                 </button>
                                 <!-- Dropdown menu -->
-                                <div id="dropdown"
+                                <div id="suffix"
+                                    class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
+                                        aria-labelledby="dropdownDefaultButton">
+                                        <li>
+                                            <a href="#"
+                                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Jr.</a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sr.</a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">II</a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">III</a>
+                                        </li>
+                                        <li>
+                                            <a href="#"
+                                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">IV</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 gap-2 columns-2">
+                            <div class="w-full">
+                                <label for="name" class="block text-sm text-gray-700">Sex at Birth</label>
+                                <button id="dropdownDefaultButton" data-dropdown-toggle="sex"
+                                    data-dropdown-trigger="click"
+                                    class="w-full text-zinc-300 bg-white font-medium rounded-lg text-sm px-5 border py-3.4 text-center inline-flex items-center dark:focus:ring-zinc-300 border-zinc-300 focus:outline-none focus:ring-zinc-300"
+                                    type="button">Select one <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="m1 1 4 4 4-4" />
+                                    </svg>
+                                </button>
+                                <!-- Dropdown menu -->
+                                <div id="sex"
                                     class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
                                     <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
                                         aria-labelledby="dropdownDefaultButton">
@@ -66,9 +154,7 @@
                                     </ul>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="mt-4 gap-2 columns-2">
                             <label for="name" class="block text-sm text-gray-700">Birth Date</label>
                             <div class="relative max-w-sm">
                                 <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
@@ -78,20 +164,27 @@
                                             d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                                     </svg>
                                 </div>
-                                <input datepicker id="default-datepicker1" type="text"
+                                <input datepicker id="birthdate" type="text"
                                     class="bg-zinc-300 text-black text-sm rounded-lg block w-full ps-10 py-3.4 dark:bg-white border-zinc-300 dark:placeholder-zinc-300 dark:text-black focus:border-zinc-300 focus:ring-zinc-300"
                                     placeholder="Select date">
                             </div>
+                        </div>
 
+                        <div class="mt-4 gap-2 columns-2">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Citizenship</label>
                                 <input type="text" id="name" x-model="formData.citizenship"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                                     placeholder="Enter your citizenship">
                             </div>
+                            <div class="w-full">
+                                <label for="name" class="block text-sm text-gray-700">Blood type</label>
+                                <input type="text" id="name" x-model="formData.bloodtype"
+                                    class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                            </div>
                         </div>
 
-                        <div class="mt-4 gap-2 columns-3">
+                        <div class="mt-4 gap-2 columns-2">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Height (m)</label>
                                 <input type="text" id="name" x-model="formData.height"
@@ -103,11 +196,6 @@
                                 <input type="text" id="name" x-model="formData.weight"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                                     placeholder="Ex: 0kg">
-                            </div>
-                            <div class="w-full">
-                                <label for="name" class="block text-sm text-gray-700">Blood type</label>
-                                <input type="text" id="name" x-model="formData.bloodtype"
-                                    class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
 
@@ -193,28 +281,28 @@
                             <div class="mt-2">
                                 <div class="w-full mt-2">
                                     <label for="name" class="block text-sm text-gray-700">Region</label>
-                                    <input type="text" id="name" x-model="formData.gsis"
+                                    <input type="text" id="name" x-model="formData.region"
                                         class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 </div>
                                 <div class="w-full mt-2">
                                     <label for="name" class="block text-sm text-gray-700">Province</label>
-                                    <input type="text" id="name" x-model="formData.gsis"
+                                    <input type="text" id="name" x-model="formData.province"
                                         class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 </div>
                                 <div class="w-full mt-2">
                                     <label for="name" class="block text-sm text-gray-700">City</label>
-                                    <input type="text" id="name" x-model="formData.gsis"
+                                    <input type="text" id="name" x-model="formData.city"
                                         class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 </div>
                                 <div class="w-full mt-2">
                                     <label for="name" class="block text-sm text-gray-700">Barangay</label>
-                                    <input type="text" id="name" x-model="formData.gsis"
+                                    <input type="text" id="name" x-model="formData.barangay"
                                         class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 </div>
                                 <div class="w-full mt-2">
                                     <label for="name" class="block text-sm text-gray-700">House Number | Street |
                                         Subdivision</label>
-                                    <input type="text" id="name" x-model="formData.gsis"
+                                    <input type="text" id="name" x-model="formData.street"
                                         class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 </div>
                             </div>
@@ -225,28 +313,28 @@
                             <div class="mt-2">
                                 <div class="w-full mt-2">
                                     <label for="name" class="block text-sm text-gray-700">Region</label>
-                                    <input type="text" id="name" x-model="formData.gsis"
+                                    <input type="text" id="name" x-model="formData.rregion"
                                         class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 </div>
                                 <div class="w-full mt-2">
                                     <label for="name" class="block text-sm text-gray-700">Province</label>
-                                    <input type="text" id="name" x-model="formData.gsis"
+                                    <input type="text" id="name" x-model="formData.rprovince"
                                         class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 </div>
                                 <div class="w-full mt-2">
                                     <label for="name" class="block text-sm text-gray-700">City</label>
-                                    <input type="text" id="name" x-model="formData.gsis"
+                                    <input type="text" id="name" x-model="formData.rcity"
                                         class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 </div>
                                 <div class="w-full mt-2">
                                     <label for="name" class="block text-sm text-gray-700">Barangay</label>
-                                    <input type="text" id="name" x-model="formData.gsis"
+                                    <input type="text" id="name" x-model="formData.rbarangay"
                                         class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 </div>
                                 <div class="w-full mt-2">
                                     <label for="name" class="block text-sm text-gray-700">House Number | Street |
                                         Subdivision</label>
-                                    <input type="text" id="name" x-model="formData.gsis"
+                                    <input type="text" id="name" x-model="formData.rstreet"
                                         class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 </div>
                             </div>
@@ -255,12 +343,12 @@
                         <div class="mt-4 gap-2 columns-2">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Telephone No.</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.tel"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Mobile No.</label>
-                                <input type="text" id="name" x-model="formData.sss"
+                                <input type="text" id="name" x-model="formData.mob"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -268,7 +356,7 @@
                         <div class="mt-4 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Email Address</label>
-                                <input type="text" id="name" x-model="formData.gsis"
+                                <input type="text" id="name" x-model="formData.email"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -300,7 +388,7 @@
                         <div class="mt-12 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Spouse Name</label>
-                                <input type="text" id="name" x-model="formData.gsis"
+                                <input type="text" id="name" x-model="formData.spouse_name"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -315,13 +403,13 @@
                                             d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                                     </svg>
                                 </div>
-                                <input datepicker id="default-datepicker2" type="text"
+                                <input datepicker id="spouse_birthdate" type="text"
                                     class="bg-zinc-300 text-black text-sm rounded-lg block w-full ps-10 py-3.4 dark:bg-white border-zinc-300 dark:placeholder-zinc-300 dark:text-black focus:border-zinc-300 focus:ring-zinc-300"
                                     placeholder="Select birthdate">
                             </div>
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Spouse Occupation</label>
-                                <input type="text" id="name" x-model="formData.gsis"
+                                <input type="text" id="name" x-model="formData.spouse_occupation"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -329,7 +417,7 @@
                         <div class="mt-4 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Spouse Employer</label>
-                                <input type="text" id="name" x-model="formData.gsis"
+                                <input type="text" id="name" x-model="formData.spouse_employer"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -337,7 +425,7 @@
                         <div class="mt-4 gap-2 columns-2">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Children's Name</label>
-                                <input type="text" id="name" x-model="formData.gsis"
+                                <input type="text" id="name" x-model="formData.childrens_name"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
 
@@ -350,7 +438,7 @@
                                             d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                                     </svg>
                                 </div>
-                                <input datepicker id="default-datepicker3" type="text"
+                                <input datepicker id="childrens_birthdate" type="text"
                                     class="bg-zinc-300 text-black text-sm rounded-lg block w-full ps-10 py-3.4 dark:bg-white border-zinc-300 dark:placeholder-zinc-300 dark:text-black focus:border-zinc-300 focus:ring-zinc-300"
                                     placeholder="Select birth date">
                             </div>
@@ -359,7 +447,7 @@
                         <div class="mt-4 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Father's Name</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.fathers_name"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -367,7 +455,7 @@
                         <div class="mt-4 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Mother's Maiden Name</label>
-                                <input type="text" id="name" x-model="formData.gsis"
+                                <input type="text" id="name" x-model="formData.mothers_name"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -401,7 +489,7 @@
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Highest Educational
                                     Attainment</label>
-                                <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown1"
+                                <button id="dropdownDefaultButton" data-dropdown-toggle="educational_attainment"
                                     data-dropdown-trigger="click"
                                     class="w-full text-zinc-300 bg-white font-medium rounded-lg text-sm px-5 border py-3.4 text-center inline-flex items-center dark:focus:ring-zinc-300 border-zinc-300 focus:outline-none focus:ring-zinc-300"
                                     type="button">Select one <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
@@ -411,7 +499,7 @@
                                     </svg>
                                 </button>
                                 <!-- Dropdown menu -->
-                                <div id="dropdown1"
+                                <div id="educational_attainment"
                                     class="z-11 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
                                     <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
                                         aria-labelledby="dropdownDefaultButton">
@@ -444,7 +532,7 @@
                         <div class="mt-4 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Name of School</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.name_of_school"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -452,7 +540,7 @@
                         <div class="mt-4 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Degree</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.degree"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -460,12 +548,12 @@
                         <div class="mt-4 gap-2 columns-2">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Period of Attendance</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.attendance"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Year Graduated</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.year_graduated"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -497,7 +585,7 @@
                         <div class="mt-12 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Rating</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.rating"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -512,14 +600,14 @@
                                             d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                                     </svg>
                                 </div>
-                                <input datepicker id="default-datepicker4" type="text"
+                                <input datepicker id="exam_date" type="text"
                                     class="bg-zinc-300 text-black text-sm rounded-lg block w-full ps-10 py-3.4 dark:bg-white border-zinc-300 dark:placeholder-zinc-300 dark:text-black focus:border-zinc-300 focus:ring-zinc-300"
                                     placeholder="Select date">
                             </div>
 
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Place of Examination</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.exam_loc"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -527,7 +615,7 @@
                         <div class="mt-4 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">License</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.license"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -566,14 +654,14 @@
                                             d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                                     </svg>
                                 </div>
-                                <input datepicker id="default-datepicker5" type="text"
+                                <input datepicker id="inclusive_date1" type="text"
                                     class="bg-zinc-300 text-black text-sm rounded-lg block w-full ps-10 py-3.4 dark:bg-white border-zinc-300 dark:placeholder-zinc-300 dark:text-black focus:border-zinc-300 focus:ring-zinc-300"
                                     placeholder="Select date">
                             </div>
 
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Position Title</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.position_title"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -581,13 +669,13 @@
                         <div class="mt-4 gap-2 columns-2">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Department</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.department"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
 
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Monthly Salary</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.monthly_salary"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -595,7 +683,7 @@
                         <div class="mt-4 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Status of Appointment</label>
-                                <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown2"
+                                <button id="dropdownDefaultButton" data-dropdown-toggle="appointment_status"
                                     data-dropdown-trigger="click"
                                     class="w-full text-zinc-300 bg-white font-medium rounded-lg text-sm px-5 border py-3.4 text-center inline-flex items-center dark:focus:ring-zinc-300 border-zinc-300 focus:outline-none focus:ring-zinc-300"
                                     type="button">Select one <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
@@ -605,7 +693,7 @@
                                     </svg>
                                 </button>
                                 <!-- Dropdown menu -->
-                                <div id="dropdown2"
+                                <div id="appointment_status"
                                     class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
                                     <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
                                         aria-labelledby="dropdownDefaultButton">
@@ -650,7 +738,7 @@
                         <div class="mt-12 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Voluntary Works</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.voluntary_works"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -662,7 +750,7 @@
                                 <div class="mt-2 gap-2 columns-2">
                                     <div class="w-full">
                                         <label for="name" class="block text-sm text-gray-700">Title of Training</label>
-                                        <input type="text" id="name" x-model="formData.philhealth"
+                                        <input type="text" id="name" x-model="formData.training_title"
                                             class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     </div>
 
@@ -677,7 +765,7 @@
                                                     d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                                             </svg>
                                         </div>
-                                        <input datepicker id="default-datepicker5" type="text"
+                                        <input datepicker id="inclusive_date2" type="text"
                                             class="bg-zinc-300 text-black text-sm rounded-lg block w-full ps-10 py-3.4 dark:bg-white border-zinc-300 dark:placeholder-zinc-300 dark:text-black focus:border-zinc-300 focus:ring-zinc-300"
                                             placeholder="Select date">
                                     </div>
@@ -686,12 +774,12 @@
                                 <div class="mt-2 gap-2 columns-2">
                                     <div class="w-full">
                                         <label for="name" class="block text-sm text-gray-700">Number of hours</label>
-                                        <input type="text" id="name" x-model="formData.philhealth"
+                                        <input type="text" id="name" x-model="formData.number_of_hours"
                                             class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     </div>
                                     <div class="w-full">
                                         <label for="name" class="block text-sm text-gray-700">Conducted by</label>
-                                        <input type="text" id="name" x-model="formData.philhealth"
+                                        <input type="text" id="name" x-model="formData.conducted_by"
                                             class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     </div>
                                 </div>
@@ -701,7 +789,7 @@
                         <div class="mt-2 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Special Skills and Hobbies</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.special"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -709,7 +797,7 @@
                         <div class="mt-2 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Non-academic Distinctions</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.distinctions"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -718,7 +806,7 @@
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Membership in
                                     associations/organizations</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.membership"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
@@ -726,7 +814,7 @@
                         <div class="mt-2 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Character References</label>
-                                <input type="text" id="name" x-model="formData.philhealth"
+                                <input type="text" id="name" x-model="formData.references"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                             </div>
                         </div>
