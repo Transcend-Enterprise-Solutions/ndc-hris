@@ -63,6 +63,34 @@ class User extends Authenticatable
         return $this->hasMany(EmployeesChildren::class);
     }
 
+    public function voluntaryWorks(){
+        return $this->hasMany(VoluntaryWorks::class);
+    }
+
+    public function learningAndDevelopment(){
+        return $this->hasMany(LearningAndDevelopment::class);
+    }
+
+    public function skills(){
+        return $this->hasMany(Skills::class);
+    }
+
+    public function hobbies(){
+        return $this->hasMany(Hobbies::class);
+    }
+
+    public function nonAcadDistinctions(){
+        return $this->hasMany(NonAcadDistinctions::class);
+    }
+
+    public function assOrgMembership(){
+        return $this->hasMany(AssOrgMemberships::class);
+    }
+
+    public function charReferences(){
+        return $this->hasMany(CharReferences::class);
+    }
+
 
     /**
      * The attributes that should be cast.
