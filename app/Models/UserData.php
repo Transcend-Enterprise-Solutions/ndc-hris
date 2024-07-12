@@ -55,7 +55,7 @@ class UserData extends Model
         'spouse_occupation',
         'spouse_employer',
         'fathers_name',
-        'mothers_maiden_name',        
+        'mothers_maiden_name',
     ];
 
     public function user()
