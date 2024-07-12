@@ -68,13 +68,13 @@
                                 <label for="name" class="block text-sm text-gray-700">First Name</label>
                                 <input type="text" id="name" x-model="formData.firstname"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Enter your firstname">
+                                    placeholder="Enter your firstname" wire:model.live='firstname'>
                             </div>
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Middle Name</label>
                                 <input type="text" id="name" x-model="formData.middlename"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Enter your middlename">
+                                    placeholder="Enter your middlename" wire:model.live='middlename'>
                             </div>
                         </div>
 
@@ -83,7 +83,7 @@
                                 <label for="name" class="block text-sm text-gray-700">SurName</label>
                                 <input type="text" id="name" x-model="formData.surname"
                                     class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Enter your surname">
+                                    placeholder="Enter your surname" wire:model.live='surname'>
                             </div>
                             <div class="w-full">
                                 <label for="name" class="block text-sm text-gray-700">Suffix</label>
