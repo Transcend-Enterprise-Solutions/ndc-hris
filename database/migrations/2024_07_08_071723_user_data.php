@@ -53,6 +53,11 @@ return new class extends Migration
                 $table->string('fathers_name');
                 $table->string('mothers_maiden_name');
                 $table->string('educ_background');
+                $table->string('name_of_school');
+                $table->string('degree');
+                $table->date('period_start_date')->format('F d Y');
+                $table->date('period_end_date')->format('F d Y');
+                $table->string('year_graduated');
                 $table->timestamps();
             });
         }
