@@ -11,7 +11,7 @@
             {{-- <x-dashboard.dashboard-avatars /> --}}
 
             <!-- Right: Actions -->
-            <div class="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
+            {{-- <div class="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
 
                 <!-- Filter button -->
                 <x-dropdown-filter align="right" />
@@ -27,7 +27,7 @@
                     <span class="hidden xs:block ml-2">Add View</span>
                 </button>
                 
-            </div>
+            </div> --}}
 
         </div>
         
