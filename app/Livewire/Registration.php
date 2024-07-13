@@ -68,8 +68,8 @@ class Registration extends Component
     public $spouse_employer;
     public $have_child = false;
     public $have_spouse = false;
-    public $childrens_name;
-    public $childrens_birth_date;
+    public $childrens_name = [];
+    public $childrens_birth_date = [];
     public $fathers_name;
     public $mothers_maiden_name;
 
@@ -111,7 +111,12 @@ class Registration extends Component
 
     public $step = 1;
 
-    public $children = [];    
+    public $children = [['name' => '', 'birth_date' => '']];
+
+    public function addChild()
+    {
+        $this->children[] = ['name' => '', 'birth_date' => ''];
+    }
 
     public function toStep2()
     {
@@ -239,6 +244,14 @@ class Registration extends Component
             return;
         }
 
+        // Extract children's names and birth dates into separate arrays
+        $this->childrens_name = array_column($this->children, 'name');
+        $this->childrens_birth_date = array_column($this->children, 'birth_date');
+
+        // Convert arrays to comma-separated strings
+        $childrens_name_str = implode(', ', $this->childrens_name);
+        $childrens_birth_date_str = implode(', ', $this->childrens_birth_date);
+
         $user = User::create([
             'name' => $this->first_name . " " . $this->middle_name . " " . $this->surname,
             'email' => $this->email,
@@ -281,8 +294,8 @@ class Registration extends Component
             'spouse_birth_date' => $this->spouse_birth_date,
             'spouse_occupation' => $this->spouse_occupation,
             'spouse_employer' => $this->spouse_employer,
-            'childrens_name' => $this->childrens_name,
-            'childrens_birth_date' => $this->childrens_birth_date,
+            'childrens_name' => $childrens_name_str,
+            'childrens_birth_date' => $childrens_birth_date_str,
             'fathers_name' => $this->fathers_name,
             'mothers_maiden_name' => $this->mothers_maiden_name,
             'educ_background' => $this->educ_background,
@@ -394,10 +407,5 @@ class Registration extends Component
         $containsNumber = preg_match('/\d/', $password);
         $containsSpecialChar = preg_match('/[^A-Za-z0-9]/', $password); // Changed regex to include special characters
         return $containsUppercase && $containsNumber && $containsSpecialChar;
-    }
-
-    public function addChild()
-    {
-        $this->children[] = ['name' => '', 'birth_date' => ''];
     }
 }

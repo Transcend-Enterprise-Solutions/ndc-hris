@@ -60,6 +60,8 @@ class UserData extends Model
         'spouse_birth_date',
         'spouse_occupation',
         'spouse_employer',
+        'childrens_name',
+        'childrens_birth_date',
         'fathers_name',
         'mothers_maiden_name',
     ];
