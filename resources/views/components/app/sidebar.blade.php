@@ -102,6 +102,11 @@
                                             <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">My Documents</span>
                                         </a>
                                     </li>
+                                    <li class="mb-1 last:mb-0">
+                                        <a class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate @if(Route::is('doc-request')){{ '!text-indigo-500' }}@endif" href="{{route('doc-request')}}">
+                                            <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Document Request</span>
+                                        </a>
+                                    </li>
                                     {{-- <li class="mb-1 last:mb-0">
                                         <a class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate @if(Route::is('invoices')){{ '!text-indigo-500' }}@endif" href="#0">
                                             <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Eligibility</span>
@@ -226,6 +231,11 @@
                                     <li class="mb-1 last:mb-0">
                                         <a class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate @if(Route::is('job-post')){{ '!text-indigo-500' }}@endif" href="#0">
                                             <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Daily Time Record</span>
+                                        </a>
+                                    </li>
+                                    <li class="mb-1 last:mb-0">
+                                        <a class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate @if(Route::is('admin-doc-request')){{ '!text-indigo-500' }}@endif" href="{{route('admin-doc-request')}}">
+                                            <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Document Request</span>
                                         </a>
                                     </li>
                                 </ul>

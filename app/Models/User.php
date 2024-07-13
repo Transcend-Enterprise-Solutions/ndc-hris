@@ -92,9 +92,14 @@ class User extends Authenticatable
     }
 
     public function employeeDocuments()
-{
+    {
     return $this->hasMany(EmployeeDocument::class);
-}
+    }
+
+    public function docRequests()
+    {
+        return $this->hasMany(DocRequest::class);
+    }
 
 
     /**
