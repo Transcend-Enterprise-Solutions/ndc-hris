@@ -32,6 +32,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/employees', function () {return view('livewire.employee-management.employees');})->name('employees');
+    Route::get('/personal-data-sheet', function () {return view('livewire.personal-data-sheet.personal-data-sheet');})->name('personal-data-sheet');
     Route::get('/dashboard/analytics', [DashboardController::class, 'analytics'])->name('analytics');
     Route::get('/dashboard/fintech', [DashboardController::class, 'fintech'])->name('fintech');
     // Route::get('/ecommerce/customers', [CustomerController::class, 'index'])->name('customers');

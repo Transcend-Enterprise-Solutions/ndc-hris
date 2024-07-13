@@ -598,8 +598,6 @@
                         </fieldset>
                         @endif
 
-
-
                         <div class="mt-4 gap-2 columns-1">
                             <div class="w-full">
                                 <label for="fathers_name" class=" text-sm text-gray-700">Fathers Name <span

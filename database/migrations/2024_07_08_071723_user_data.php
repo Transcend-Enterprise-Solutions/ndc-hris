@@ -50,8 +50,6 @@ return new class extends Migration
                 $table->date('spouse_birth_date')->format('F d Y')->nullable();
                 $table->string('spouse_occupation')->nullable();
                 $table->string('spouse_employer')->nullable();
-                $table->string('childrens_name')->nullable();
-                $table->string('childrens_birth_date')->nullable();
                 $table->string('fathers_name');
                 $table->string('mothers_maiden_name');
                 $table->string('educ_background');

@@ -8,6 +8,7 @@ use App\Models\PhilippineProvinces;
 use App\Models\PhilippineCities;
 use App\Models\PhilippineBarangays;
 use App\Models\PhilippineRegions;
+use App\Models\EmployeesChildren;
 
 class Registration extends Component
 {
@@ -111,7 +112,7 @@ class Registration extends Component
 
     public $step = 1;
 
-    public $children = [['name' => '', 'birth_date' => '']];
+    public $children = [];
 
     public function addChild()
     {
@@ -244,13 +245,13 @@ class Registration extends Component
             return;
         }
 
-        // Extract children's names and birth dates into separate arrays
-        $this->childrens_name = array_column($this->children, 'name');
-        $this->childrens_birth_date = array_column($this->children, 'birth_date');
-
-        // Convert arrays to comma-separated strings
-        $childrens_name_str = implode(', ', $this->childrens_name);
-        $childrens_birth_date_str = implode(', ', $this->childrens_birth_date);
+        foreach ($this->children as $child) {
+            EmployeesChildren::create([
+                'user_id' => $user->id,
+                'childs_name' => $child['name'],
+                'childs_birth_date' => $child['birth_date'],
+            ]);
+        }
 
         $user = User::create([
             'name' => $this->first_name . " " . $this->middle_name . " " . $this->surname,
