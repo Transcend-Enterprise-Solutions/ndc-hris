@@ -245,14 +245,6 @@ class Registration extends Component
             return;
         }
 
-        foreach ($this->children as $child) {
-            EmployeesChildren::create([
-                'user_id' => $user->id,
-                'childs_name' => $child['name'],
-                'childs_birth_date' => $child['birth_date'],
-            ]);
-        }
-
         $user = User::create([
             'name' => $this->first_name . " " . $this->middle_name . " " . $this->surname,
             'email' => $this->email,
@@ -295,8 +287,6 @@ class Registration extends Component
             'spouse_birth_date' => $this->spouse_birth_date,
             'spouse_occupation' => $this->spouse_occupation,
             'spouse_employer' => $this->spouse_employer,
-            'childrens_name' => $childrens_name_str,
-            'childrens_birth_date' => $childrens_birth_date_str,
             'fathers_name' => $this->fathers_name,
             'mothers_maiden_name' => $this->mothers_maiden_name,
             'educ_background' => $this->educ_background,
@@ -306,6 +296,14 @@ class Registration extends Component
             'period_end_date' => $this->period_end_date,
             'year_graduated' => $this->year_graduated,
         ]);
+
+        foreach ($this->children as $child) {
+            EmployeesChildren::create([
+                'user_id' => $user->id,
+                'childs_name' => $child['name'],
+                'childs_birth_date' => $child['birth_date'],
+            ]);
+        }
 
         session()->flash('message', 'Registration successful!');
         return redirect()->route('login');

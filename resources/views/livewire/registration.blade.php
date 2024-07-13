@@ -590,13 +590,13 @@
                                         class="text-sm text-gray-700">Children's Birth Date</label>
                                     <input type="date" id="childrens_birth_date_{{ $index }}"
                                         wire:model="children.{{ $index }}.birth_date"
-                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                        placeholder="Select date">
+                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 </div>
                                 @endforeach
                             </div>
                         </fieldset>
                         @endif
+
 
                         <div class="mt-4 gap-2 columns-1">
                             <div class="w-full">
