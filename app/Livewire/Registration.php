@@ -26,6 +26,10 @@ class Registration extends Component
     public $weight;
     public $blood_type;
 
+
+    public $user_role = '1';
+    public $active_status = '';
+
     #Step 2
     public $gsis;
     public $pagibig;
@@ -249,6 +253,8 @@ class Registration extends Component
             'name' => $this->first_name . " " . $this->middle_name . " " . $this->surname,
             'email' => $this->email,
             'password' => $this->password,
+            'user_role' => '1',
+            'active_status' => $this->active_status,
         ]);
 
         $user->userData()->create([
@@ -258,6 +264,7 @@ class Registration extends Component
             'surname' => $this->surname,
             'suffix' => $this->suffix,
             'sex' => $this->sex,
+            'email' => $this->email,
             'date_of_birth' => $this->date_of_birth,
             'place_of_birth' => $this->place_of_birth,
             'citizenship' => $this->citizenship,
