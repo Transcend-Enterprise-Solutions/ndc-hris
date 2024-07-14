@@ -16,7 +16,7 @@ class Registration extends Component
     public $first_name;
     public $middle_name;
     public $surname;
-    public $suffix;
+    public $name_extension;
     public $sex;
     public $date_of_birth;
     public $place_of_birth;
@@ -262,7 +262,7 @@ class Registration extends Component
             'first_name' => $this->first_name,
             'middle_name' => $this->middle_name,
             'surname' => $this->surname,
-            'suffix' => $this->suffix,
+            'name_extension' => $this->name_extension,
             'sex' => $this->sex,
             'email' => $this->email,
             'date_of_birth' => $this->date_of_birth,
