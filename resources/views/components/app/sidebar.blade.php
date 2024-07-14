@@ -39,7 +39,7 @@
         <div class="space-y-8">
             <!-- Pages group -->
             <div>
-                
+
                 <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
                     <span class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">•••</span>
                     <span class="lg:hidden lg:sidebar-expanded:block 2xl:block">Pages</span>
@@ -67,7 +67,7 @@
                             <a class="block text-slate-200 hover:text-white truncate transition duration-150 @if(in_array(Request::segment(1), ['home'])){{ 'hover:text-slate-200' }}@endif" href="#0" @click.prevent="sidebarExpanded ? open = !open : sidebarExpanded = true">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center">
-                                        <i class="bi bi-house-fill"></i>                                    
+                                        <i class="bi bi-house-fill"></i>
                                         <span class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Home</span>
                                     </div>
                                 </div>
@@ -98,8 +98,13 @@
                                         </a>
                                     </li>
                                     <li class="mb-1 last:mb-0">
-                                        <a class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate @if(Route::is('orders')){{ '!text-indigo-500' }}@endif" href="#0">
+                                        <a class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate @if(Route::is('my-documents')){{ '!text-indigo-500' }}@endif" href="{{route('my-documents')}}">
                                             <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">My Documents</span>
+                                        </a>
+                                    </li>
+                                    <li class="mb-1 last:mb-0">
+                                        <a class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate @if(Route::is('doc-request')){{ '!text-indigo-500' }}@endif" href="{{route('doc-request')}}">
+                                            <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Document Request</span>
                                         </a>
                                     </li>
                                     {{-- <li class="mb-1 last:mb-0">
@@ -147,7 +152,7 @@
                                 </ul>
                             </div>
                         </li>
-                        
+
                         <!-- Filing and Approval -->
                         <li class="px-3 py-2 rounded-sm mb-0.5 last:mb-0 @if(in_array(Request::segment(1), ['finance'])){{ 'bg-slate-900' }}@endif" x-data="{ open: {{ in_array(Request::segment(1), ['finance']) ? 1 : 0 }} }">
                             <a class="block text-slate-200 hover:text-white truncate transition duration-150 @if(in_array(Request::segment(1), ['finance'])){{ 'hover:text-slate-200' }}@endif" href="#0" @click.prevent="sidebarExpanded ? open = !open : sidebarExpanded = true">
@@ -185,7 +190,7 @@
                             </div>
                         </li>
                     @endif
-                    
+
                      <!-- Admin Tabs -->
                     @if(Auth::user()->user_role === 'sa')
                         <!-- Role Management -->
@@ -226,6 +231,11 @@
                                     <li class="mb-1 last:mb-0">
                                         <a class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate @if(Route::is('job-post')){{ '!text-indigo-500' }}@endif" href="#0">
                                             <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Daily Time Record</span>
+                                        </a>
+                                    </li>
+                                    <li class="mb-1 last:mb-0">
+                                        <a class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate @if(Route::is('admin-doc-request')){{ '!text-indigo-500' }}@endif" href="{{route('admin-doc-request')}}">
+                                            <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Document Request</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -295,7 +305,7 @@
                     @endif
                 </ul>
             </div>
-            
+
         </div>
 
         <!-- Expand / collapse button -->

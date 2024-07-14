@@ -93,6 +93,16 @@ class User extends Authenticatable
         return $this->hasMany(CharReferences::class);
     }
 
+    public function employeeDocuments()
+    {
+    return $this->hasMany(EmployeeDocument::class);
+    }
+
+    public function docRequests()
+    {
+        return $this->hasMany(DocRequest::class);
+    }
+
 
     /**
      * The attributes that should be cast.

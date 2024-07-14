@@ -4,7 +4,7 @@
         <!-- Content Here -->
         <div class="flex justify-center items-center mb-8">
 
-            @livewire('employee-management.table.employee-table')
+            @livewire('user.employee-table')
 
         </div>
 

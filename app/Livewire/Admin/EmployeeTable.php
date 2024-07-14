@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\EmployeeManagement\Table;
+namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\User;

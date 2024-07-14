@@ -13,15 +13,18 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
          <!-- Scripts -->
          @vite(['resources/css/app.css', 'resources/js/app.js'])
          <script defer src="/build/assets/app-B9GXRaBV.js"></script>
- 
+
+
          <!-- Styles -->
          <link rel="stylesheet" href="/build/assets/app-6skvEm6U.css">
-         @livewireStyles       
-         
+         @livewireStyles
+
         <script>
             if (localStorage.getItem('dark-mode') === 'false' || !('dark-mode' in localStorage)) {
                 document.querySelector('html').classList.remove('dark');
@@ -36,7 +39,7 @@
         class="font-inter antialiased bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400"
         :class="{ 'sidebar-expanded': sidebarExpanded }"
         x-data="{ sidebarOpen: false, sidebarExpanded: localStorage.getItem('sidebar-expanded') == 'true' }"
-        x-init="$watch('sidebarExpanded', value => localStorage.setItem('sidebar-expanded', value))"    
+        x-init="$watch('sidebarExpanded', value => localStorage.setItem('sidebar-expanded', value))"
     >
 
         <script>

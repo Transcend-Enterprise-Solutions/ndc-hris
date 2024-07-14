@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\EmployeeManagement;
+namespace App\Livewire\Admin;
 
 use Livewire\Component;
 
@@ -8,6 +8,6 @@ class Employees extends Component
 {
     public function render()
     {
-        return view('livewire.employee-management.employees');
+        return view('livewire.admin.employees');
     }
 }
