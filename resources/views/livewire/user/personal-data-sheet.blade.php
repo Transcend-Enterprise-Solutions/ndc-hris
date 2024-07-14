@@ -4,7 +4,7 @@
         <!-- Content Here -->
         <div class="sm:flex sm:justify-between sm:items-center mb-8">
 
-            @livewire('employee-management.table.employee-table')
+            @livewire('user.personal-data-sheet-table')
 
         </div>
 

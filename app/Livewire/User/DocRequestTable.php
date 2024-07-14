@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\EmployeeManagement\User;
+namespace App\Livewire\User;
 
 use Livewire\Component;
 use App\Models\DocRequest; // Ensure you have the correct model imported
@@ -43,7 +43,7 @@ class DocRequestTable extends Component
 
     public function render()
     {
-        return view('livewire.employee-management.user.doc-request-table', [
+        return view('livewire.user.doc-request-table', [
             'requests' => $this->requests,
         ]);
     }

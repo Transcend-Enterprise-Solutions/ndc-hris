@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\PersonalDataSheet\Table;
+namespace App\Livewire\User;
 
 use App\Models\User;
 use App\Models\UserData;
@@ -13,7 +13,7 @@ class PersonalDataSheetTable extends Component
         $userId = Auth::user()->id;
         $user = User::where('id', $userId)->first();
 
-        return view('livewire.personal-data-sheet.table.personal-data-sheet-table', [
+        return view('livewire.user.personal-data-sheet-table', [
             'userData' => $user->userData,
         ]);
     }

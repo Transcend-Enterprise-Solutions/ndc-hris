@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\EmployeeManagement\Table;
+namespace App\Livewire\Admin;
 
 use Livewire\Component;
 
@@ -9,7 +9,7 @@ class EmployeeTable extends Component
     public  $test = "Test test";
     public function render()
     {
-        return view('livewire.employee-management.table.employee-table', [
+        return view('livewire.admin.employee-table', [
             'test' => $this->test,
         ]);
     }
