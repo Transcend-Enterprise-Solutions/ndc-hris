@@ -33,7 +33,7 @@ class EmployeeTable extends Component
                         )
                         ->paginate(10);
 
-        return view('livewire.employee-management.table.employee-table', [
+        return view('livewire.admin.employee-table', [
             'users' => $users
         ]);
     }
