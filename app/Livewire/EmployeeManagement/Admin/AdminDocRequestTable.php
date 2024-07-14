@@ -55,21 +55,29 @@ class AdminDocRequestTable extends Component
     public function uploadDocument()
     {
         $request = DocRequest::find($this->selectedRequestId);
-        if ($request && $this->uploadedFile) {
-            // Save the uploaded file
-            $path = $this->uploadedFile->store('documents');
 
-            // Update the request with the file path and set status to completed
-            $request->file_path = $path;
-            $request->status = 'completed';
-            $request->date_completed = now(); // Set completion date
-            $request->save(); // Save changes
-
-            session()->flash('message', 'Document uploaded and status updated to completed.');
-            $this->mount(); // Refresh the requests
-        } else {
-            session()->flash('error', 'Document request not found or no file uploaded.');
+        if (!$request) {
+            session()->flash('error', 'Document request not found.');
+            return;
         }
+
+        if (!$this->uploadedFile) {
+            session()->flash('error', 'No file uploaded.');
+            return;
+        }
+
+        // Save the uploaded file
+        $path = $this->uploadedFile->store('documents');
+
+        // Update the request with the file path and set status to completed
+        $request->file_path = $path;
+        $request->status = 'completed';
+        $request->date_completed = now(); // Set completion date
+        $request->save(); // Save changes
+
+        session()->flash('message', 'Document uploaded and status updated to completed.');
+        $this->mount(); // Refresh the requests
+        $this->selectedRequestId = null; // Reset selected ID
     }
 
     public function deleteRequest($id)
