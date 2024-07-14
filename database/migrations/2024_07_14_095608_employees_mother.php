@@ -8,17 +8,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('work_experience', function (Blueprint $table) {
+        Schema::create('employees_mother', function (Blueprint $table) {
             $table->id('id');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->date('start_date')->format('F d Y');
-            $table->date('end_date')->format('F d Y');
-            $table->string('position');
-            $table->string('department');
-            $table->string('monthly_salary');
-            $table->string('status_of_appointment');
-            $table->boolean('gov_service')->default(0);
+            $table->string('first_name')->nullable();
+            $table->string('middle_name')->nullable();
+            $table->string('surname')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('work_experience');
+        Schema::dropIfExists('employees_mother');
     }
 };

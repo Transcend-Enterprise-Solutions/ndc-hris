@@ -5,19 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Eligibility extends Model
+class EmployeesMother extends Model
 {
     use HasFactory;
 
-    protected $table = 'eligibility';
+    protected $table = 'employees_mother';
 
     protected $fillable = [
         'user_id',
-        'rating',
-        'date',
-        'place_of_exam',
-        'license',
-        'date_of_validity',
+        'first_name',
+        'middle_name',
+        'surname',
     ];
 
     public function user()
