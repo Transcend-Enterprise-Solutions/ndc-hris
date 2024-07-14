@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\EmployeeManagement\PersonalDataSheet;
+namespace App\Livewire\User;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -135,7 +135,7 @@ class MyDocumentsTable extends Component
         $documents = EmployeeDocument::where('user_id', Auth::id())->get();
         $availableDocumentTypes = $this->availableDocumentTypes();
 
-        return view('livewire.employee-management.personal-data-sheet.my-documents-table', [
+        return view('livewire.user.my-documents-table', [
             'documents' => $documents,
             'availableDocumentTypes' => $availableDocumentTypes,
             'isUploading' => $this->isUploading,

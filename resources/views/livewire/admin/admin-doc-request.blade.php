@@ -3,7 +3,7 @@
 
             <div>
 
-            @livewire('employee-management.user.doc-request-table')
+            @livewire('admin.admin-doc-request-table')
 
         </div>
 

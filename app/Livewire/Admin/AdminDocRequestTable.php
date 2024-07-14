@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\EmployeeManagement\Admin;
+namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\DocRequest;
@@ -94,6 +94,6 @@ class AdminDocRequestTable extends Component
 
     public function render()
     {
-        return view('livewire.employee-management.admin.admin-doc-request-table');
+        return view('livewire.admin.admin-doc-request-table');
     }
 }
