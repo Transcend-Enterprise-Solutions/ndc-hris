@@ -37,13 +37,11 @@ return new class extends Migration
                 $table->string('agency_employee_no', 50);
                 $table->string('tel_number')->nullable();
                 $table->string('mobile_number');
-                $table->string('permanent_selectedRegion', 200);
                 $table->string('permanent_selectedProvince', 200);
                 $table->string('permanent_selectedCity', 200);
                 $table->string('permanent_selectedBarangay', 200);
                 $table->string('p_house_street', 200);
                 $table->string('permanent_selectedZipcode', 200);
-                $table->string('residential_selectedRegion', 200);
                 $table->string('residential_selectedProvince', 200);
                 $table->string('residential_selectedCity', 200);
                 $table->string('residential_selectedBarangay', 200);

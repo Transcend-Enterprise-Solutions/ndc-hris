@@ -4,9 +4,6 @@
 
             <div class="pt-4 pb-4">
                 <h1 class="text-3xl font-bold text-center text-black dark:text-white">PERSONAL DATA SHEET</h1>
-                <button class="btn bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap" wire:click='exportPDS'>
-                    <i class="bi bi-file-earmark-arrow-down"></i>&nbsp&nbspExport
-                </button>
             </div>
 
             <style>
@@ -101,7 +98,7 @@
                                 <p class="custom-p w-full border px-1 py-2.5">
                                     {{ $userData->p_house_street }} <br>
                                     {{ $userData->permanent_selectedBarangay }} {{ $userData->permanent_selectedCity }} <br>
-                                    {{ $userData->permanent_selectedProvince }}, {{ $userData->permanent_selectedRegion }}<br>
+                                    {{ $userData->permanent_selectedProvince }} <br>
                                     {{ $userData->permanent_selectedZipcode }}
                                 </p>
                             </div>
@@ -110,7 +107,7 @@
                                 <p class="w-full border px-1 py-2.5">
                                     {{ $userData->r_house_street }} <br>
                                     {{ $userData->residential_selectedBarangay }} {{ $userData->residential_selectedCity }} <br>
-                                    {{ $userData->residential_selectedProvince }}, {{ $userData->residential_selectedRegion }}<br>
+                                    {{ $userData->residential_selectedProvince }} <br>
                                     {{ $userData->residential_selectedZipcode }}
                                 </p>
                             </div>
@@ -183,10 +180,8 @@
                         <p class="border p-1 w-full bg-gray-200 font-bold">Spouse</p>
                     </div>
 
-                    <div class="custom-d flex w-full">
-
-                        @foreach ($userSpouse as $spouse)
-
+                    @foreach ($userSpouse as $spouse)
+                        <div class="custom-d flex w-full">
                             <div class="w-full sm:w-2/4 block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border p-1 w-3/6 bg-gray-50">Surname</p>
@@ -210,10 +205,44 @@
                                     <p class="w-full border p-1">{{ $spouse->name_extension }}</p>
                                 </div>
                             </div>
+                        </div>
 
-                        @endforeach
+                        <div class="custom-d flex w-full">
+                            <div class="w-full sm:w-2/4 block">
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border p-1 w-3/6 bg-gray-50">Date of Birth</p>
+                                    <p class="w-full border p-1">{{ $spouse->birth_date }}</p>
+                                </div>
+                        
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border p-1 w-3/6 bg-gray-50">Occupation</p>
+                                    <p class="w-full border p-1">{{ $spouse->occupation }}</p>
+                                </div>
+                            </div>
 
-                    </div>
+                            <div class="w-full sm:w-2/4 block">
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border p-1 w-3/6 bg-gray-50">Employer</p>
+                                    <p class="w-full border p-1">{{ $spouse->employer }}</p>
+                                </div>
+                        
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border p-1 w-3/6 bg-gray-50">Tel. No.</p>
+                                    <p class="w-full border p-1">{{ $spouse->tel_number }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="custom-d flex w-full">
+                            <div class="w-full sm:w-4/4 block">
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border p-1 w-1/5 bg-gray-50">Business Address</p>
+                                    <p class="w-full border p-1">{{ $spouse->business_address }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    @endforeach
 
                     {{-- Father --}}
                     <div class="flex w-full sm:w-auto">
@@ -641,9 +670,39 @@
 
 
                 {{-- Footer --}}
+                <style>
+                    @-webkit-keyframes spinner-border {
+                        to {
+                            transform: rotate(360deg);
+                        }
+                    }
+
+                    @keyframes spinner-border {
+                        to {
+                            transform: rotate(360deg);
+                        }
+                    }
+
+                    .spinner-border {
+                        display: inline-block;
+                        width: 1rem;
+                        height: 1rem;
+                        vertical-align: text-bottom;
+                        border: 2px solid currentColor;
+                        border-right-color: transparent;
+                        border-radius: 50%;
+                        -webkit-animation: spinner-border .75s linear infinite;
+                        animation: spinner-border .75s linear infinite;
+                        color: white;
+                    }
+                </style>
                 <div class="bg-white p-2 mt-3 text-white flex justify-center">
-                    <button class="btn bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap" wire:click='exportPDS'>
-                        <i class="bi bi-file-earmark-arrow-down"></i>&nbsp&nbspExport
+                    <button class="btn bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap" wire:click='exportPDS' wire:loading.attr='disabled'>
+                        <div wire:loading wire:target="exportPDS">
+                            <div class="spinner-border small text-primary" role="status">
+                            </div>
+                        </div>
+                        <i class="bi bi-file-earmark-arrow-down" wire:loading.remove></i>&nbsp&nbspExport
                     </button>
                 </div>
 
