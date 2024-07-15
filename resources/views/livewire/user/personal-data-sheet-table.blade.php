@@ -4,6 +4,9 @@
 
             <div class="pt-4 pb-4">
                 <h1 class="text-3xl font-bold text-center text-black dark:text-white">PERSONAL DATA SHEET</h1>
+                <button class="btn bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap" wire:click='exportPDS'>
+                    <i class="bi bi-file-earmark-arrow-down"></i>&nbsp&nbspExport
+                </button>
             </div>
 
             <style>
@@ -631,6 +634,17 @@
                         </tbody>
                     </table>
 
+                </div>
+
+                {{-- End --}}
+                <div class="bg-blue-500 p-2 text-white flex justify-center"></div>
+
+
+                {{-- Footer --}}
+                <div class="bg-white p-2 mt-3 text-white flex justify-center">
+                    <button class="btn bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap" wire:click='exportPDS'>
+                        <i class="bi bi-file-earmark-arrow-down"></i>&nbsp&nbspExport
+                    </button>
                 </div>
 
             </div>
