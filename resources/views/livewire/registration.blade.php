@@ -13,7 +13,7 @@
                     @if ($step === 1)
                     <div>
                         <h2 class="text-lg font-medium text-gray-500">
-                            Step 1 out of 5: <span class="font-bold text-black">Personal Information</span>
+                            Step 1 out of 4: <span class="font-bold text-black">Personal Information</span>
                         </h2>
 
                         <div class="mt-12 gap-2 columns-2">
@@ -158,7 +158,7 @@
                     @if ($step === 2)
                     <div>
                         <h2 class="mb-4 text-lg font-medium text-gray-500">
-                            Step 2 out of 5: <span class="font-bold text-black">Government IDs</span>
+                            Step 2 out of 4: <span class="font-bold text-black">Government IDs</span>
                         </h2>
 
                         <div class="mt-12 gap-2 columns-2">
@@ -238,7 +238,7 @@
                     @if ($step === 3)
                     <div>
                         <h2 class="mb-4 text-lg font-medium text-gray-500">
-                            Step 3 out of 5: <span class="font-bold text-black">Contact Information</span>
+                            Step 3 out of 4: <span class="font-bold text-black">Contact Information</span>
                         </h2>
 
                         <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full mb-4">
@@ -521,7 +521,7 @@
                     @endif
 
                     <!-- Step 4 -->
-                    @if ($step === 4)
+                    {{-- @if ($step === 4)
                     <div>
                         <h2 class="mb-4 text-lg font-medium text-gray-500">
                             Step 4 out of 5: <span class="font-bold text-black">Family Information</span>
@@ -639,14 +639,14 @@
                             </div>
                         </div>
                     </div>
-                    @endif
+                    @endif --}}
 
 
                     <!-- Step 5 -->
-                    @if ($step === 5)
+                    @if ($step === 4)
                     <div>
                         <h2 class="mb-4 text-lg font-medium text-gray-500">
-                            Step 5 out of 5: <span class="font-bold text-black">Educational Background</span>
+                            Step 4 out of 4: <span class="font-bold text-black">Educational Background</span>
                         </h2>
 
                         <div class="mt-12 gap-2 columns-1">

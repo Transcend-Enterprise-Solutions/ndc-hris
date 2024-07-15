@@ -56,12 +56,12 @@ class UserData extends Model
         'period_start_date',
         'period_end_date',
         'year_graduated',
-        'spouse_name',
-        'spouse_birth_date',
-        'spouse_occupation',
-        'spouse_employer',
-        'fathers_name',
-        'mothers_maiden_name',
+        // 'spouse_name',
+        // 'spouse_birth_date',
+        // 'spouse_occupation',
+        // 'spouse_employer',
+        // 'fathers_name',
+        // 'mothers_maiden_name',
     ];
 
     public function user()

@@ -8,7 +8,7 @@ use App\Models\PhilippineProvinces;
 use App\Models\PhilippineCities;
 use App\Models\PhilippineBarangays;
 use App\Models\PhilippineRegions;
-use App\Models\EmployeesChildren;
+// use App\Models\EmployeesChildren;
 
 class Registration extends Component
 {
@@ -67,16 +67,16 @@ class Registration extends Component
     public $same_as_above = false;
 
     #Step 4
-    public $spouse_name;
-    public $spouse_birth_date;
-    public $spouse_occupation;
-    public $spouse_employer;
-    public $have_child = false;
-    public $have_spouse = false;
-    public $childrens_name = [];
-    public $childrens_birth_date = [];
-    public $fathers_name;
-    public $mothers_maiden_name;
+    // public $spouse_name;
+    // public $spouse_birth_date;
+    // public $spouse_occupation;
+    // public $spouse_employer;
+    // public $have_child = false;
+    // public $have_spouse = false;
+    // public $childrens_name = [];
+    // public $childrens_birth_date = [];
+    // public $fathers_name;
+    // public $mothers_maiden_name;
 
     #Step 5
     public $educ_background;
@@ -116,12 +116,12 @@ class Registration extends Component
 
     public $step = 1;
 
-    public $children = [];
+    // public $children = [];
 
-    public function addChild()
-    {
-        $this->children[] = ['name' => '', 'birth_date' => ''];
-    }
+    // public function addChild()
+    // {
+    //     $this->children[] = ['name' => '', 'birth_date' => ''];
+    // }
 
     public function toStep2()
     {
@@ -177,15 +177,15 @@ class Registration extends Component
         $this->step++;
     }
 
-    public function toStep5()
-    {
-        $this->validate([
-            'fathers_name' => 'required',
-            'mothers_maiden_name' => 'required',
-        ]);
+    // public function toStep5()
+    // {
+    //     $this->validate([
+    //         'fathers_name' => 'required',
+    //         'mothers_maiden_name' => 'required',
+    //     ]);
 
-        $this->step++;
-    }
+    //     $this->step++;
+    // }
 
     // public function toStep6()
     // {
@@ -290,12 +290,12 @@ class Registration extends Component
             'r_house_street' => $this->r_house_street,
             'tel_number' => $this->tel_number,
             'mobile_number' => $this->mobile_number,
-            'spouse_name' => $this->spouse_name,
-            'spouse_birth_date' => $this->spouse_birth_date,
-            'spouse_occupation' => $this->spouse_occupation,
-            'spouse_employer' => $this->spouse_employer,
-            'fathers_name' => $this->fathers_name,
-            'mothers_maiden_name' => $this->mothers_maiden_name,
+            // 'spouse_name' => $this->spouse_name,
+            // 'spouse_birth_date' => $this->spouse_birth_date,
+            // 'spouse_occupation' => $this->spouse_occupation,
+            // 'spouse_employer' => $this->spouse_employer,
+            // 'fathers_name' => $this->fathers_name,
+            // 'mothers_maiden_name' => $this->mothers_maiden_name,
             'educ_background' => $this->educ_background,
             'name_of_school' => $this->name_of_school,
             'degree' => $this->degree,
@@ -304,13 +304,13 @@ class Registration extends Component
             'year_graduated' => $this->year_graduated,
         ]);
 
-        foreach ($this->children as $child) {
-            EmployeesChildren::create([
-                'user_id' => $user->id,
-                'childs_name' => $child['name'],
-                'childs_birth_date' => $child['birth_date'],
-            ]);
-        }
+        // foreach ($this->children as $child) {
+        //     EmployeesChildren::create([
+        //         'user_id' => $user->id,
+        //         'childs_name' => $child['name'],
+        //         'childs_birth_date' => $child['birth_date'],
+        //     ]);
+        // }
 
         session()->flash('message', 'Registration successful!');
         return redirect()->route('login');

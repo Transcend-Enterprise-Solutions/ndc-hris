@@ -47,12 +47,12 @@ return new class extends Migration
                 $table->string('residential_selectedCity', 200);
                 $table->string('residential_selectedBarangay', 200);
                 $table->string('r_house_street', 200);
-                $table->string('spouse_name')->nullable();
-                $table->date('spouse_birth_date')->format('F d Y')->nullable();
-                $table->string('spouse_occupation')->nullable();
-                $table->string('spouse_employer')->nullable();
-                $table->string('fathers_name');
-                $table->string('mothers_maiden_name');
+                // $table->string('spouse_name')->nullable();
+                // $table->date('spouse_birth_date')->format('F d Y')->nullable();
+                // $table->string('spouse_occupation')->nullable();
+                // $table->string('spouse_employer')->nullable();
+                // $table->string('fathers_name');
+                // $table->string('mothers_maiden_name');
                 $table->string('educ_background');
                 $table->string('name_of_school');
                 $table->string('degree');

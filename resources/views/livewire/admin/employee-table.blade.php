@@ -1,9 +1,44 @@
 <div class="p-10 flex justify-center w-full">
     <div class="w-full">
-        <button type="button" wire:click="exportUsers"
-            class="inline-flex items-center justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 border rounded-lg border-neutral-500 dark:border-neutral-200 hover:bg-slate-900 dark:hover:bg-slate-100 hover:text-slate-100 dark:hover:text-slate-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none">
-            Generate
-        </button>
+        <div x-data="{ dropdownOpen: false, filters: { name: true, email: true } }"
+            class="flex items-center justify-center p-4">
+            <!-- Filter Dropdown -->
+            <div class="relative inline-block text-left">
+                <button @click="dropdownOpen = !dropdownOpen"
+                    class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    type="button">
+                    Filter by category
+                    <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div x-show="dropdownOpen" @click.away="dropdownOpen = false"
+                    class="z-10 w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700">
+                    <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Category</h6>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center">
+                            <input id="name" type="checkbox" x-model="filters.name"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+                            <label for="name"
+                                class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">Name</label>
+                        </li>
+                        <li class="flex items-center">
+                            <input id="email" type="checkbox" x-model="filters.email"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
+                            <label for="email"
+                                class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">Email</label>
+                        </li>
+                        <!-- Add more filters as needed -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Generate Button -->
+            <button
+                class="ml-4 text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                @click="Livewire.emit('exportUsers', filters)">Generate</button>
+        </div>
         <div class="inline-block w-full">
             <div class="overflow-hidden border rounded-lg border-neutral-500 dark:border-neutral-200">
                 <table class="divide-y divide-neutral-500 dark:divide-neutral-200 w-full">
