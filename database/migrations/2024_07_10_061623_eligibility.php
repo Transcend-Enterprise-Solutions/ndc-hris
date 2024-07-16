@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('date')->format('F d Y');
             $table->string('place_of_exam');
             $table->string('license');
+            $table->date('date_of_validity')->format('F d Y');
             $table->timestamps();
         });
     }

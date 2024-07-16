@@ -19,7 +19,7 @@ class WorkExperience extends Model
         'department',
         'monthly_salary',
         'status_of_appointment',
-        'sector',
+        'gov_service',
     ];
 
     public function user()

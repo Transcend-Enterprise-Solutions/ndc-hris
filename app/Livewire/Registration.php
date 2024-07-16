@@ -12,6 +12,9 @@ use App\Models\PhilippineRegions;
 
 class Registration extends Component
 {
+    public $user_role = 'sa';
+    public $active_status = '';
+
     #Step 1
     public $first_name;
     public $middle_name;
@@ -25,10 +28,6 @@ class Registration extends Component
     public $height;
     public $weight;
     public $blood_type;
-
-
-    public $user_role = '1';
-    public $active_status = '';
 
     #Step 2
     public $gsis;
@@ -50,6 +49,8 @@ class Registration extends Component
     public $residential_selectedBarangay;
     public $r_house_street;
 
+    public $permanent_selectedZipcode;
+    public $residential_selectedZipcode;
 
     public $regions;
     public $pprovinces;
@@ -58,7 +59,6 @@ class Registration extends Component
     public $rcities;
     public $pbarangays;
     public $rbarangays;
-
 
     public $tel_number;
     public $mobile_number;
@@ -79,39 +79,39 @@ class Registration extends Component
     // public $mothers_maiden_name;
 
     #Step 5
-    public $educ_background;
-    public $name_of_school;
-    public $degree;
-    public $period_start_date;
-    public $period_end_date;
-    public $year_graduated;
+    // public $educ_background;
+    // public $name_of_school;
+    // public $degree;
+    // public $period_start_date;
+    // public $period_end_date;
+    // public $year_graduated;
     public $password;
     public $c_password;
 
     #Step 6
-    public $rating;
-    public $exam_date;
-    public $exam_loc;
-    public $license;
+    // public $rating;
+    // public $exam_date;
+    // public $exam_loc;
+    // public $license;
 
     #Step 7
-    public $inclusive_dates;
-    public $position_title;
-    public $department;
-    public $monthly_salary;
-    public $status_appointment;
-    public $service;
+    // public $inclusive_dates;
+    // public $position_title;
+    // public $department;
+    // public $monthly_salary;
+    // public $status_appointment;
+    // public $service;
 
     #Step 8
-    public $voluntary_works;
-    public $training_title;
-    public $lad_inclusive_dates;
-    public $number_of_hours;
-    public $conducted_by;
-    public $special_skills_and_hobbies;
-    public $distinctions;
-    public $membership;
-    public $references;
+    // public $voluntary_works;
+    // public $training_title;
+    // public $lad_inclusive_dates;
+    // public $number_of_hours;
+    // public $conducted_by;
+    // public $special_skills_and_hobbies;
+    // public $distinctions;
+    // public $membership;
+    // public $references;
 
 
     public $step = 1;
@@ -129,7 +129,7 @@ class Registration extends Component
             'first_name' => 'required|min:2',
             'middle_name' => 'required|min:2',
             'surname' => 'required|min:2',
-            'suffix' => 'nullable',
+            'name_extension' => 'nullable',
             'sex' => 'required',
             'date_of_birth' => 'required|date|before:today',
             'place_of_birth' => 'required',
@@ -157,25 +157,25 @@ class Registration extends Component
         $this->step++;
     }
 
-    public function toStep4()
-    {
-        $this->validate([
-            'permanent_selectedRegion' => 'required',
-            'permanent_selectedProvince' => 'required',
-            'permanent_selectedCity' => 'required',
-            'permanent_selectedBarangay' => 'required',
-            'p_house_street' => 'required',
-            'residential_selectedRegion' => 'required',
-            'residential_selectedProvince' => 'required',
-            'residential_selectedCity' => 'required',
-            'residential_selectedBarangay' => 'required',
-            'r_house_street' => 'required',
-            'mobile_number' => 'required',
-            'email' => 'required|email|unique:users,email',
-        ]);
+    // public function toStep4()
+    // {
+    //     $this->validate([
+    //         'permanent_selectedRegion' => 'required',
+    //         'permanent_selectedProvince' => 'required',
+    //         'permanent_selectedCity' => 'required',
+    //         'permanent_selectedBarangay' => 'required',
+    //         'p_house_street' => 'required',
+    //         'residential_selectedRegion' => 'required',
+    //         'residential_selectedProvince' => 'required',
+    //         'residential_selectedCity' => 'required',
+    //         'residential_selectedBarangay' => 'required',
+    //         'r_house_street' => 'required',
+    //         'mobile_number' => 'required',
+    //         'email' => 'required|email|unique:users,email',
+    //     ]);
 
-        $this->step++;
-    }
+    //     $this->step++;
+    // }
 
     // public function toStep5()
     // {
@@ -234,12 +234,26 @@ class Registration extends Component
     public function submit()
     {
         $this->validate([
-            'educ_background' => 'required',
-            'name_of_school' => 'required',
-            'degree' => 'required',
-            'period_start_date' => 'required',
-            'period_end_date' => 'required',
-            'year_graduated' => 'required|numeric',
+            // 'educ_background' => 'required',
+            // 'name_of_school' => 'required',
+            // 'degree' => 'required',
+            // 'period_start_date' => 'required',
+            // 'period_end_date' => 'required',
+            // 'year_graduated' => 'required|numeric',
+            // 'permanent_selectedRegion' => 'required',
+            'permanent_selectedZipcode' => 'required',
+            'permanent_selectedProvince' => 'required',
+            'permanent_selectedCity' => 'required',
+            'permanent_selectedBarangay' => 'required',
+            'p_house_street' => 'required',
+            // 'residential_selectedRegion' => 'required',
+            'residential_selectedZipcode' => 'required',
+            'residential_selectedProvince' => 'required',
+            'residential_selectedCity' => 'required',
+            'residential_selectedBarangay' => 'required',
+            'r_house_street' => 'required',
+            'mobile_number' => 'required',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
             'c_password' => 'required|same:password',
         ]);
@@ -253,7 +267,7 @@ class Registration extends Component
             'name' => $this->first_name . " " . $this->middle_name . " " . $this->surname,
             'email' => $this->email,
             'password' => $this->password,
-            'user_role' => '1',
+            'user_role' => 'sa',
             'active_status' => $this->active_status,
         ]);
 
@@ -278,12 +292,14 @@ class Registration extends Component
             'sss' => $this->sss,
             'tin' => $this->tin,
             'agency_employee_no' => $this->agency_employee_no,
-            'permanent_selectedRegion' => $this->permanent_selectedRegion,
+            'permanent_selectedZipcode' => $this->permanent_selectedZipcode,
+            // 'permanent_selectedRegion' => $this->permanent_selectedRegion,
             'permanent_selectedProvince' => $this->permanent_selectedProvince,
             'permanent_selectedCity' => $this->permanent_selectedCity,
             'permanent_selectedBarangay' => $this->permanent_selectedBarangay,
             'p_house_street' => $this->p_house_street,
-            'residential_selectedRegion' => $this->residential_selectedRegion,
+            'residential_selectedZipcode' => $this->residential_selectedZipcode,
+            // 'residential_selectedRegion' => $this->residential_selectedRegion,
             'residential_selectedProvince' => $this->residential_selectedProvince,
             'residential_selectedCity' => $this->residential_selectedCity,
             'residential_selectedBarangay' => $this->residential_selectedBarangay,
@@ -296,12 +312,12 @@ class Registration extends Component
             // 'spouse_employer' => $this->spouse_employer,
             // 'fathers_name' => $this->fathers_name,
             // 'mothers_maiden_name' => $this->mothers_maiden_name,
-            'educ_background' => $this->educ_background,
-            'name_of_school' => $this->name_of_school,
-            'degree' => $this->degree,
-            'period_start_date' => $this->period_start_date,
-            'period_end_date' => $this->period_end_date,
-            'year_graduated' => $this->year_graduated,
+            // 'educ_background' => $this->educ_background,
+            // 'name_of_school' => $this->name_of_school,
+            // 'degree' => $this->degree,
+            // 'period_start_date' => $this->period_start_date,
+            // 'period_end_date' => $this->period_end_date,
+            // 'year_graduated' => $this->year_graduated,
         ]);
 
         // foreach ($this->children as $child) {
@@ -322,19 +338,19 @@ class Registration extends Component
 
     public function render()
     {
-        if ($this->permanent_selectedRegion != null) {
-            $regionCode = PhilippineRegions::where('region_description', $this->permanent_selectedRegion)
-                            ->select('region_code')->first();
-            $regionCode = $regionCode->getAttributes();
-            $this->pprovinces = PhilippineProvinces::where('region_code', $regionCode['region_code'])->get();
-        }
+        // if ($this->permanent_selectedRegion != null) {
+        //     $regionCode = PhilippineRegions::where('region_description', $this->permanent_selectedRegion)
+        //                     ->select('region_code')->first();
+        //     $regionCode = $regionCode->getAttributes();
+        //     $this->pprovinces = PhilippineProvinces::where('region_code', $regionCode['region_code'])->get();
+        // }
 
-        if ($this->residential_selectedRegion != null) {
-            $regionCode = PhilippineRegions::where('region_description', $this->residential_selectedRegion)
-                            ->select('region_code')->first();
-            $regionCode = $regionCode->getAttributes();
-            $this->rprovinces = PhilippineProvinces::where('region_code', $regionCode['region_code'])->get();
-        }
+        // if ($this->residential_selectedRegion != null) {
+        //     $regionCode = PhilippineRegions::where('region_description', $this->residential_selectedRegion)
+        //                     ->select('region_code')->first();
+        //     $regionCode = $regionCode->getAttributes();
+        //     $this->rprovinces = PhilippineProvinces::where('region_code', $regionCode['region_code'])->get();
+        // }
 
         if ($this->permanent_selectedProvince != null) {
             $provinceCode = PhilippineProvinces::where('province_description', $this->permanent_selectedProvince)
@@ -375,9 +391,8 @@ class Registration extends Component
     }
 
     public function getProvicesAndCities(){
-        $this->regions = PhilippineRegions::all();
-        $this->pprovinces = collect();
-        $this->rprovinces = collect();
+        $this->pprovinces = PhilippineProvinces::all();
+        // $this->rprovinces = PhilippineProvinces::all();
         $this->pcities = collect();
         $this->rcities = collect();
         $this->pbarangays = collect();
@@ -387,13 +402,13 @@ class Registration extends Component
     public function updatedSameAsAbove($value)
     {
         if ($value) {
-            $this->residential_selectedRegion = $this->permanent_selectedRegion;
+            $this->residential_selectedZipcode = $this->permanent_selectedZipcode;
             $this->residential_selectedProvince = $this->permanent_selectedProvince;
             $this->residential_selectedCity = $this->permanent_selectedCity;
             $this->residential_selectedBarangay = $this->permanent_selectedBarangay;
             $this->r_house_street = $this->p_house_street;
         } else {
-            $this->residential_selectedRegion = null;
+            $this->residential_selectedZipcode = null;
             $this->residential_selectedProvince = null;
             $this->residential_selectedCity = null;
             $this->residential_selectedBarangay = null;

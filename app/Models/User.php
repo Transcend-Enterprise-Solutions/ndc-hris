@@ -54,23 +54,39 @@ class User extends Authenticatable
     }
 
     public function eligibility(){
-        return $this->hasMany(Eligibility::class);
+        return $this->hasMany(Eligibility::class)->orderBy('date', 'DESC');
     }
 
     public function workExperience(){
-        return $this->hasMany(WorkExperience::class);
+        return $this->hasMany(WorkExperience::class)->orderBy('end_date', 'DESC');
     }
 
     public function employeesChildren(){
         return $this->hasMany(EmployeesChildren::class);
     }
 
+    public function employeesSpouse(){
+        return $this->hasMany(EmployeesSpouse::class);
+    }
+
+    public function employeesFather(){
+        return $this->hasOne(EmployeesFather::class);
+    }
+
+    public function employeesMother(){
+        return $this->hasOne(EmployeesMother::class);
+    }
+
+    public function employeesEducation(){
+        return $this->hasMany(EmployeesEducation::class)->orderBy('level_code', 'ASC');
+    }
+
     public function voluntaryWorks(){
-        return $this->hasMany(VoluntaryWorks::class);
+        return $this->hasMany(VoluntaryWorks::class)->orderBy('end_date', 'DESC');
     }
 
     public function learningAndDevelopment(){
-        return $this->hasMany(LearningAndDevelopment::class);
+        return $this->hasMany(LearningAndDevelopment::class)->orderBy('end_date', 'DESC');
     }
 
     public function skills(){
@@ -82,7 +98,7 @@ class User extends Authenticatable
     }
 
     public function nonAcadDistinctions(){
-        return $this->hasMany(NonAcadDistinctions::class);
+        return $this->hasMany(NonAcadDistinctions::class)->orderBy('date_received', 'DESC');
     }
 
     public function assOrgMembership(){

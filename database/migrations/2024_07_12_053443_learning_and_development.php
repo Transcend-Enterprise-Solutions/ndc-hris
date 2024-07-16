@@ -16,6 +16,7 @@ return new class extends Migration
             $table->date('start_date')->format('F d Y');
             $table->date('end_date')->format('F d Y');
             $table->integer('no_of_hours');
+            $table->string('type_of_ld');
             $table->string('conducted_by');
             $table->timestamps();
         });

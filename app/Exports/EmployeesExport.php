@@ -9,114 +9,118 @@ use Illuminate\Support\Facades\DB;
 
 class EmployeesExport implements FromCollection, WithHeadings
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
+    protected $filters;
+
+    public function __construct($filters)
+    {
+        $this->filters = $filters;
+    }
+
     public function collection()
     {
-        return DB::table('users')
-            ->join('user_data', 'users.id', '=', 'user_data.user_id')
-            ->select(
-                'users.id',
-                'users.name',
-                'users.email',
-                'users.user_role',
-                'users.active_status',
-                'user_data.first_name',
-                'user_data.middle_name',
-                'user_data.surname',
-                'user_data.name_extension',
-                'user_data.sex',
-                'user_data.date_of_birth',
-                'user_data.place_of_birth',
-                'user_data.citizenship',
-                'user_data.civil_status',
-                'user_data.height',
-                'user_data.weight',
-                'user_data.blood_type',
-                'user_data.gsis',
-                'user_data.pagibig',
-                'user_data.philhealth',
-                'user_data.sss',
-                'user_data.tin',
-                'user_data.agency_employee_no',
-                'user_data.permanent_selectedRegion',
-                'user_data.permanent_selectedProvince',
-                'user_data.permanent_selectedCity',
-                'user_data.permanent_selectedBarangay',
-                'user_data.p_house_street',
-                'user_data.residential_selectedRegion',
-                'user_data.residential_selectedProvince',
-                'user_data.residential_selectedCity',
-                'user_data.residential_selectedBarangay',
-                'user_data.r_house_street',
-                'user_data.tel_number',
-                'user_data.mobile_number',
-                'user_data.spouse_name',
-                'user_data.spouse_birth_date',
-                'user_data.spouse_occupation',
-                'user_data.spouse_employer',
-                'user_data.fathers_name',
-                'user_data.mothers_maiden_name',
-                'user_data.educ_background',
-                'user_data.name_of_school',
-                'user_data.degree',
-                'user_data.period_start_date',
-                'user_data.period_end_date',
-                'user_data.year_graduated'
-            )->get();
+        $query = User::join('user_data', 'users.id', '=', 'user_data.user_id')
+            ->select('users.id');
+
+        if ($this->filters['name']) {
+            $query->addSelect('users.name');
+        }
+        if ($this->filters['date_of_birth']) {
+            $query->addSelect('user_data.date_of_birth');
+        }
+        if ($this->filters['place_of_birth']) {
+            $query->addSelect('user_data.place_of_birth');
+        }
+        if ($this->filters['sex']) {
+            $query->addSelect('user_data.sex');
+        }
+        if ($this->filters['citizenship']) {
+            $query->addSelect('user_data.citizenship');
+        }
+        if ($this->filters['civil_status']) {
+            $query->addSelect('user_data.civil_status');
+        }
+        if ($this->filters['height']) {
+            $query->addSelect('user_data.height');
+        }
+        if ($this->filters['weight']) {
+            $query->addSelect('user_data.weight');
+        }
+        if ($this->filters['blood_type']) {
+            $query->addSelect('user_data.blood_type');
+        }
+        if ($this->filters['gsis']) {
+            $query->addSelect('user_data.gsis');
+        }
+        if ($this->filters['pagibig']) {
+            $query->addSelect('user_data.pagibig');
+        }
+        if ($this->filters['philhealth']) {
+            $query->addSelect('user_data.philhealth');
+        }
+        if ($this->filters['sss']) {
+            $query->addSelect('user_data.sss');
+        }
+        if ($this->filters['tin']) {
+            $query->addSelect('user_data.tin');
+        }
+        if ($this->filters['agency_employee_no']) {
+            $query->addSelect('user_data.agency_employee_no');
+        }
+
+        return $query->get();
     }
 
     public function headings(): array
     {
-        return [
-            'User ID',
-            'Name',
-            'Email',
-            'User Role',
-            'Active Status',
-            'First Name',
-            'Middle Name',
-            'Surname',
-            'Suffix',
-            'Sex',
-            'Date of Birth',
-            'Place of Birth',
-            'Citizenship',
-            'Civil Status',
-            'Height',
-            'Weight',
-            'Blood Type',
-            'GSIS',
-            'Pag-IBIG',
-            'PhilHealth',
-            'SSS',
-            'TIN',
-            'Agency Employee No.',
-            'Permanent Region',
-            'Permanent Province',
-            'Permanent City',
-            'Permanent Barangay',
-            'Permanent House/Street',
-            'Residential Region',
-            'Residential Province',
-            'Residential City',
-            'Residential Barangay',
-            'Residential House/Street',
-            'Telephone Number',
-            'Mobile Number',
-            'Spouse Name',
-            'Spouse Birth Date',
-            'Spouse Occupation',
-            'Spouse Employer',
-            'Father\'s Name',
-            'Mother\'s Maiden Name',
-            'Educational Background',
-            'Name of School',
-            'Degree',
-            'Period Start Date',
-            'Period End Date',
-            'Year Graduated',
-        ];
+        $headings = ['User ID'];
+
+        if ($this->filters['name']) {
+            $headings[] = 'Name';
+        }
+        if ($this->filters['date_of_birth']) {
+            $headings[] = 'Birth Date';
+        }
+        if ($this->filters['place_of_birth']) {
+            $headings[] = 'Birth Place';
+        }
+        if ($this->filters['sex']) {
+            $headings[] = 'Sex';
+        }
+        if ($this->filters['citizenship']) {
+            $headings[] = 'Citizenship';
+        }
+        if ($this->filters['civil_status']) {
+            $headings[] = 'Civil Status';
+        }
+        if ($this->filters['height']) {
+            $headings[] = 'Height';
+        }
+        if ($this->filters['weight']) {
+            $headings[] = 'Weight';
+        }
+        if ($this->filters['blood_type']) {
+            $headings[] = 'Blood Type';
+        }
+        if ($this->filters['gsis']) {
+            $headings[] = 'GSIS ID No.';
+        }
+        if ($this->filters['pagibig']) {
+            $headings[] = 'PAGIBIG ID No.';
+        }
+        if ($this->filters['philhealth']) {
+            $headings[] = 'PhilHealth ID No.';
+        }
+        if ($this->filters['sss']) {
+            $headings[] = 'SSS No.';
+        }
+        if ($this->filters['tin']) {
+            $headings[] = 'Tin No.';
+        }
+        if ($this->filters['agency_employee_no']) {
+            $headings[] = 'Agency Employee No.';
+        }
+        // Add more headings based on filters
+
+        return $headings;
     }
 }

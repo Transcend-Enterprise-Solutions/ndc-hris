@@ -1,92 +1,169 @@
 <div class="p-10 flex justify-center w-full">
     <div class="w-full">
-        <div x-data="{ dropdownOpen: false, filters: { name: true, email: true } }"
-            class="flex items-center justify-center p-4">
+        <div class="flex items-center justify-end">
             <!-- Filter Dropdown -->
             <div class="relative inline-block text-left">
-                <button @click="dropdownOpen = !dropdownOpen"
-                    class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                <button wire:click="toggleDropdown"
+                    class="mr-4 inline-flex items-center justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 border rounded-lg border-neutral-500 dark:border-neutral-200 hover:bg-slate-900 dark:hover:bg-slate-100 hover:text-slate-100 dark:hover:text-slate-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none"
                     type="button">
                     Filter by category
-                    <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
+                    <i class="bi bi-chevron-down w-4 h-4 ml-2"></i>
                 </button>
-                <div x-show="dropdownOpen" @click.away="dropdownOpen = false"
-                    class="z-10 w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700">
+                @if($dropdownOpen)
+                <div class="absolute z-20 w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700">
                     <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Category</h6>
                     <ul class="space-y-2 text-sm">
+                        {{-- <li class="flex items-center">
+                            <input id="name" type="checkbox" wire:model="filters.name" class="h-4 w-4">
+                            <label for="name" class="ml-2 text-gray-900 dark:text-gray-300">Name</label>
+                        </li> --}}
                         <li class="flex items-center">
-                            <input id="name" type="checkbox" x-model="filters.name"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-                            <label for="name"
-                                class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">Name</label>
+                            <input id="date_of_birth" type="checkbox" wire:model.live="filters.date_of_birth"
+                                class="h-4 w-4">
+                            <label for="date_of_birth" class="ml-2 text-gray-900 dark:text-gray-300">Birth Date</label>
                         </li>
                         <li class="flex items-center">
-                            <input id="email" type="checkbox" x-model="filters.email"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-                            <label for="email"
-                                class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">Email</label>
+                            <input id="place_of_birth" type="checkbox" wire:model.live="filters.place_of_birth"
+                                class="h-4 w-4">
+                            <label for="place_of_birth" class="ml-2 text-gray-900 dark:text-gray-300">Birth
+                                Place</label>
                         </li>
-                        <!-- Add more filters as needed -->
+                        <li class="flex items-center">
+                            <input id="sex" type="checkbox" wire:model.live="filters.sex" class="h-4 w-4">
+                            <label for="sex" class="ml-2 text-gray-900 dark:text-gray-300">Sex</label>
+                        </li>
+                        <li class="flex items-center">
+                            <input id="citizenship" type="checkbox" wire:model.live="filters.citizenship"
+                                class="h-4 w-4">
+                            <label for="citizenship" class="ml-2 text-gray-900 dark:text-gray-300">Citizenship</label>
+                        </li>
+                        <li class="flex items-center">
+                            <input id="civil_status" type="checkbox" wire:model.live="filters.civil_status"
+                                class="h-4 w-4">
+                            <label for="civil_status" class="ml-2 text-gray-900 dark:text-gray-300">Civil Status</label>
+                        </li>
+                        <li class="flex items-center">
+                            <input id="height" type="checkbox" wire:model.live="filters.height" class="h-4 w-4">
+                            <label for="height" class="ml-2 text-gray-900 dark:text-gray-300">Height</label>
+                        </li>
+                        <li class="flex items-center">
+                            <input id="weight" type="checkbox" wire:model.live="filters.weight" class="h-4 w-4">
+                            <label for="weight" class="ml-2 text-gray-900 dark:text-gray-300">Weight</label>
+                        </li>
+                        <li class="flex items-center">
+                            <input id="blood_type" type="checkbox" wire:model.live="filters.blood_type" class="h-4 w-4">
+                            <label for="blood_type" class="ml-2 text-gray-900 dark:text-gray-300">Blood Type</label>
+                        </li>
                     </ul>
                 </div>
+                @endif
             </div>
-
-            <!-- Generate Button -->
-            <button
-                class="ml-4 text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                @click="Livewire.emit('exportUsers', filters)">Generate</button>
+            <button wire:click="exportUsers"
+                class="inline-flex items-center justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 border rounded-lg border-neutral-500 dark:border-neutral-200 hover:bg-slate-900 dark:hover:bg-slate-100 hover:text-slate-100 dark:hover:text-slate-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none"
+                type="button">
+                Generate
+            </button>
         </div>
-        <div class="inline-block w-full">
-            <div class="overflow-hidden border rounded-lg border-neutral-500 dark:border-neutral-200">
-                <table class="divide-y divide-neutral-500 dark:divide-neutral-200 w-full">
-                    <thead class="text-neutral-500 dark:text-neutral-200">
-                        <tr class="text-neutral-800 dark:text-neutral-200">
-                            <th class="px-5 py-3 text-sm font-medium text-left uppercase w-1/5">Name</th>
-                            {{-- <th class="px-5 py-3 text-sm font-medium text-left uppercase w-1/10">Sex</th>
-                            <th class="px-5 py-3 text-sm font-medium text-left uppercase w-1/5">Citizenship</th>
-                            <th class="px-5 py-3 text-sm font-medium text-left uppercase w-1/10">Civil Status</th>
-                            <th class="px-5 py-3 text-sm font-medium text-left uppercase w-1/10">Mobile Number</th> --}}
-                            <th class="px-5 py-3 text-sm font-medium text-right uppercase w-1/10">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-neutral-200 dark:divide-neutral-500">
-                        @foreach($users as $user)
-                        <tr class="text-neutral-800 dark:text-neutral-200">
-                            <td class="px-5 py-4 text-sm font-medium whitespace-nowrap w-1/5">{{ $user->name }}</td>
-                            {{-- <td class="px-5 py-4 text-sm whitespace-nowrap w-1/10">{{ $user->sex }}</td>
-                            <td class="px-5 py-4 text-sm whitespace-nowrap w-1/5">{{ $user->citizenship }}</td>
-                            <td class="px-5 py-4 text-sm whitespace-nowrap w-1/10">{{ $user->civil_status }}</td>
-                            <td class="px-5 py-4 text-sm whitespace-nowrap w-1/10">{{ $user->mobile_number }}</td> --}}
-                            <td class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap w-1/10">
-                                <button wire:click="showUser({{ $user->id }})"
-                                    class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 border rounded-lg border-neutral-500 dark:border-neutral-200 hover:bg-slate-900 dark:hover:bg-slate-100 hover:text-slate-100 dark:hover:text-slate-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none">Show</button>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                    <tfoot class="text-neutral-500 dark:text-neutral-200">
-                        <tr>
-                            <td colspan="6" class="p-0">
-                                <div class="flex items-center justify-between h-16 px-3 border-t border-neutral-200">
-                                    <p class="pl-2 text-sm text-neutral-800 dark:text-neutral-200">
-                                        Showing <span class="font-medium">{{ $users->firstItem() }}</span> to
-                                        <span class="font-medium">{{ $users->lastItem() }}</span> of
-                                        <span class="font-medium">{{ $users->total() }}</span> results
-                                    </p>
-                                    <nav x-data="{}">
-                                        <ul
-                                            class="flex items-center text-sm leading-tight bg-white border divide-x rounded h-9 text-neutral-500 divide-neutral-200 border-neutral-200">
-                                            {{ $users->links() }}
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
+        <div class="flex flex-col">
+            <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block w-full py-2 align-middle">
+                    <div class="overflow-hidden border rounded-lg border-neutral-500 dark:border-neutral-200">
+                        <div class="overflow-x-auto">
+                            <table class="divide-y divide-neutral-500 dark:divide-neutral-200 w-full min-w-full">
+                                <thead class="text-neutral-500 dark:text-neutral-200 bg-slate-900 dark:bg-slate-100">
+                                    <tr class="text-neutral-200 dark:text-neutral-800">
+                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Name
+                                        </th>
+                                        @if($filters['date_of_birth'])
+                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Birth
+                                            Date</th>
+                                        @endif
+                                        @if($filters['place_of_birth'])
+                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Birth
+                                            Place</th>
+                                        @endif
+                                        @if($filters['sex'])
+                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Sex
+                                        </th>
+                                        @endif
+                                        @if($filters['citizenship'])
+                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">
+                                            Citizenship</th>
+                                        @endif
+                                        @if($filters['civil_status'])
+                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Civil
+                                            Status</th>
+                                        @endif
+                                        @if($filters['height'])
+                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Height
+                                        </th>
+                                        @endif
+                                        @if($filters['weight'])
+                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Weight
+                                        </th>
+                                        @endif
+                                        @if($filters['blood_type'])
+                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Blood
+                                            Type</th>
+                                        @endif
+                                        <th
+                                            class="px-5 py-3 text-sm font-medium text-right uppercase sticky right-0 z-10">
+                                            Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-neutral-200 dark:divide-neutral-500">
+                                    @foreach($users as $user)
+                                    <tr class="text-neutral-800 dark:text-neutral-200">
+                                        <td class="px-5 py-4 text-sm font-medium whitespace-nowrap">{{ $user->name }}
+                                        </td>
+                                        @if($filters['date_of_birth'])
+                                        <td class="px-5 py-4 text-sm font-medium whitespace-nowrap">{{
+                                            $user->date_of_birth }}</td>
+                                        @endif
+                                        @if($filters['place_of_birth'])
+                                        <td class="px-5 py-4 text-sm font-medium whitespace-nowrap">{{
+                                            $user->place_of_birth }}</td>
+                                        @endif
+                                        @if($filters['sex'])
+                                        <td class="px-5 py-4 text-sm font-medium whitespace-nowrap">{{ $user->sex }}
+                                        </td>
+                                        @endif
+                                        @if($filters['citizenship'])
+                                        <td class="px-5 py-4 text-sm font-medium whitespace-nowrap">{{
+                                            $user->citizenship }}</td>
+                                        @endif
+                                        @if($filters['civil_status'])
+                                        <td class="px-5 py-4 text-sm font-medium whitespace-nowrap">{{
+                                            $user->civil_status }}</td>
+                                        @endif
+                                        @if($filters['height'])
+                                        <td class="px-5 py-4 text-sm font-medium whitespace-nowrap">{{ $user->height }}
+                                        </td>
+                                        @endif
+                                        @if($filters['weight'])
+                                        <td class="px-5 py-4 text-sm font-medium whitespace-nowrap">{{ $user->weight }}
+                                        </td>
+                                        @endif
+                                        @if($filters['blood_type'])
+                                        <td class="px-5 py-4 text-sm font-medium whitespace-nowrap">{{ $user->blood_type
+                                            }}</td>
+                                        @endif
+                                        <td
+                                            class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10">
+                                            <button wire:click="showUser({{ $user->id }})"
+                                                class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 border rounded-lg border-neutral-500 dark:border-neutral-200 hover:bg-slate-900 dark:hover:bg-slate-100 hover:text-slate-100 dark:hover:text-slate-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none">Show</button>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-5 border-t border-neutral-500 dark:border-neutral-200">
+                            {{ $users->links() }}
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
 

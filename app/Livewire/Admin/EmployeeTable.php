@@ -15,30 +15,111 @@ class EmployeeTable extends Component
     use WithPagination;
 
     public $employeesChildren;
-    public $selectedUser;
+    // public $selectedUser;
     public $selectedUserData;
     public $p_full_address;
     public $r_full_address;
     public $childrenNames;
     public $childrenBirthDates;
 
+    public $filters = [
+        'name' => true,
+        'date_of_birth' => false,
+        'place_of_birth' => false,
+        'sex' => false,
+        'citizenship' => false,
+        'civil_status' => false,
+        'height' => false,
+        'weight' => false,
+        'blood_type' => false,
+        'gsis' => false,
+        'pagibig' => false,
+        'philhealth' => false,
+        'sss' => false,
+        'tin' => false,
+        'agency_employee_no' => false,
+        // 'permanent_selectedProvince' => false,
+        // 'permanent_selectedCity' => false,
+        // 'permanent_selectedBarangay' => false,
+        // 'p_house_street' => false,
+        // 'permanent_selectedZipcode' => false,
+        // 'residential_selectedProvince' => false,
+        // 'residential_selectedCity' => false,
+        // 'residential_selectedBarangay' => false,
+        // 'r_house_street' => false,
+        // 'residential_selectedZipcode' => false,
+        // 'tel_number' => false,
+        // 'mobile_number' => false,
+        // 'email' => false,
+    ];
+
+    public $selectedUser = null;
+    public $dropdownOpen = false;
+
+    protected $listeners = [
+        'exportUsers'
+    ];
+
+    public function toggleDropdown()
+    {
+        $this->dropdownOpen = !$this->dropdownOpen;
+    }
+
+    public function updatedFilters()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
         $users = User::join('user_data', 'users.id', '=', 'user_data.user_id')
-                        ->select(
-                            'users.id',
-                            'users.name', 
-                            'user_data.sex', 
-                            'user_data.citizenship', 
-                            'user_data.civil_status', 
-                            'user_data.mobile_number', 
-                            'user_data.p_house_street', 
-                            'user_data.permanent_selectedBarangay', 
-                            'user_data.permanent_selectedCity', 
-                            'user_data.permanent_selectedProvince', 
-                            'user_data.permanent_selectedRegion'
-                        )
-                        ->paginate(10);
+            ->select('users.id')
+            ->when($this->filters['name'], function ($query) {
+                $query->addSelect('users.name');
+            })
+            ->when($this->filters['date_of_birth'], function ($query) {
+                $query->addSelect('user_data.date_of_birth');
+            })
+            ->when($this->filters['place_of_birth'], function ($query) {
+            $query->addSelect('user_data.place_of_birth');
+            })
+            ->when($this->filters['sex'], function ($query) {
+            $query->addSelect('user_data.sex');
+            })
+            ->when($this->filters['civil_status'], function ($query) {
+            $query->addSelect('user_data.civil_status');
+            })
+            ->when($this->filters['citizenship'], function ($query) {
+            $query->addSelect('user_data.citizenship');
+            })
+            ->when($this->filters['height'], function ($query) {
+            $query->addSelect('user_data.height');
+            })
+            ->when($this->filters['weight'], function ($query) {
+            $query->addSelect('user_data.weight');
+            })
+            ->when($this->filters['blood_type'], function ($query) {
+            $query->addSelect('user_data.blood_type');
+            })
+            ->when($this->filters['gsis'], function ($query) {
+            $query->addSelect('user_data.gsis');
+            })
+            ->when($this->filters['pagibig'], function ($query) {
+            $query->addSelect('user_data.pagibig');
+            })
+            ->when($this->filters['philhealth'], function ($query) {
+            $query->addSelect('user_data.philhealth');
+            })
+            ->when($this->filters['sss'], function ($query) {
+            $query->addSelect('user_data.sss');
+            })
+            ->when($this->filters['tin'], function ($query) {
+            $query->addSelect('user_data.tin');
+            })
+            ->when($this->filters['agency_employee_no'], function ($query) {
+            $query->addSelect('user_data.agency_employee_no');
+            })
+            ->paginate(10);
 
         return view('livewire.admin.employee-table', [
             'users' => $users
@@ -58,12 +139,12 @@ class EmployeeTable extends Component
                               $this->selectedUserData->permanent_selectedBarangay . ' ' . 
                               $this->selectedUserData->permanent_selectedCity . ', ' . 
                               $this->selectedUserData->permanent_selectedProvince . ', ' . 
-                              $this->selectedUserData->permanent_selectedRegion;
+                              $this->selectedUserData->permanent_selectedZipcode;
         $this->r_full_address = $this->selectedUserData->r_house_street . ' ' . 
                               $this->selectedUserData->residential_selectedBarangay . ' ' . 
                               $this->selectedUserData->residential_selectedCity . ', ' . 
                               $this->selectedUserData->residential_selectedProvince . ', ' . 
-                              $this->selectedUserData->residential_selectedRegion;
+                              $this->selectedUserData->residential_selectedZipcode;
     }
 
     public function closeUserProfile()
@@ -77,8 +158,9 @@ class EmployeeTable extends Component
         $this->childrenBirthDates = null;
     }
 
-    public function exportUsers()
+    public function exportUsers($filters)
     {
-        return Excel::download(new EmployeesExport, 'EmployeesList.xlsx');
+        $this->filters = $filters;
+        return Excel::download(new EmployeesExport($this->filters), 'EmployeesList.xlsx');
     }
 }
