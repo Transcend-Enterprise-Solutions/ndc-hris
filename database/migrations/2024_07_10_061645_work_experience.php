@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('department');
             $table->string('monthly_salary');
             $table->string('status_of_appointment');
-            $table->string('sector');
+            $table->boolean('gov_service')->default(0);
             $table->timestamps();
         });
     }

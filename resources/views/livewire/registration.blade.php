@@ -13,7 +13,7 @@
                     @if ($step === 1)
                     <div>
                         <h2 class="text-lg font-medium text-gray-500">
-                            Step 1 out of 5: <span class="font-bold text-black">Personal Information</span>
+                            Step 1 out of 3: <span class="font-bold text-black">Personal Information</span>
                         </h2>
 
                         <div class="mt-12 gap-2 columns-2">
@@ -42,8 +42,8 @@
                                 @error('surname') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                             </div>
                             <div class="w-full">
-                                <label for="suffix" class=" text-sm text-gray-700">Suffix</label>
-                                <select id="suffix" wire:model.live="suffix"
+                                <label for="name_extension" class=" text-sm text-gray-700">Suffix</label>
+                                <select id="name_extension" wire:model.live="name_extension"
                                     class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     <option value="">None</option>
                                     <option value="Jr.">Jr.</option>
@@ -158,7 +158,7 @@
                     @if ($step === 2)
                     <div>
                         <h2 class="mb-4 text-lg font-medium text-gray-500">
-                            Step 2 out of 5: <span class="font-bold text-black">Government IDs</span>
+                            Step 2 out of 3: <span class="font-bold text-black">Government IDs</span>
                         </h2>
 
                         <div class="mt-12 gap-2 columns-2">
@@ -238,36 +238,12 @@
                     @if ($step === 3)
                     <div>
                         <h2 class="mb-4 text-lg font-medium text-gray-500">
-                            Step 3 out of 5: <span class="font-bold text-black">Contact Information</span>
+                            Step 3 out of 3: <span class="font-bold text-black">Contact Information</span>
                         </h2>
 
                         <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full mb-4">
                             <legend class="text-black">Permanent Address</legend>
                             <div class="mt-2">
-                                <div class="w-full mt-2">
-                                    <label for="permanent_region" class="block text-sm text-gray-700">Region <span
-                                            class="text-red-600">*</span></label>
-                                    <select
-                                        class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                        wire:model.live="permanent_selectedRegion" id="permanent_region"
-                                        name="permanent_selectedRegion" required>
-                                        @if ($regions)
-                                        <option class="text-base text-gray-700 capitalize block mb-1.5" value=""
-                                            style="opacity: .6;">Select Region</option>
-                                        @foreach ($regions->sortBy('region_description') as $region)
-                                        <option class="text-base text-gray-700 capitalize block mb-1.5"
-                                            value="{{ $region->region_description }}">{{
-                                            $region->region_description }}</option>
-                                        @endforeach
-                                        @else
-                                        <option class="text-base text-gray-700 capitalize block mb-1.5" value="">No
-                                            region available</option>
-                                        @endif
-                                    </select>
-                                    @error('permanent_selectedRegion') <span class="text-red-500 text-sm">The Region
-                                        Field is required</span> @enderror
-                                </div>
-
                                 <div class="w-full mt-2">
                                     <label for="permanent_province" class="block text-sm text-gray-700">Province <span
                                             class="text-red-600">*</span></label>
@@ -349,6 +325,19 @@
                                     @error('p_house_street') <span class="text-red-500 text-sm">The Street and Barangay
                                         field is required</span> @enderror
                                 </div>
+
+                                <div class="w-full mt-2">
+                                    <div class="w-full">
+                                        <label for="permanent_selectedZipcode" class="text-sm text-gray-700">Zip Code
+                                            <span class="text-red-600">*</span></label>
+                                        <input type="number" id="permanent_selectedZipcode"
+                                            wire:model.live="permanent_selectedZipcode"
+                                            class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        @error('permanent_selectedZipcode') <span class="text-red-500 text-sm">{{
+                                            $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
                         </fieldset>
 
@@ -361,30 +350,6 @@
                         <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full mb-4">
                             <legend class="text-black">Residential Address</legend>
                             <div class="mt-2">
-                                <div class="w-full mt-2">
-                                    <label for="residential_region" class="block text-sm text-gray-700">Region <span
-                                            class="text-red-600">*</span></label>
-                                    <select
-                                        class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                        wire:model.live="residential_selectedRegion" id="residential_region"
-                                        name="residential_selectedRegion" required>
-                                        @if ($regions)
-                                        <option class="text-base text-gray-700 capitalize block mb-1.5" value=""
-                                            style="opacity: .6;">Select Region</option>
-                                        @foreach ($regions->sortBy('region_description') as $region)
-                                        <option class="text-base text-gray-700 capitalize block mb-1.5"
-                                            value="{{ $region->region_description }}">{{
-                                            $region->region_description }}</option>
-                                        @endforeach
-                                        @else
-                                        <option class="text-base text-gray-700 capitalize block mb-1.5" value="">No
-                                            region available</option>
-                                        @endif
-                                    </select>
-                                    @error('residential_selectedRegion') <span class="text-red-500 text-sm">The Region
-                                        Field is required</span> @enderror
-                                </div>
-
                                 <div class="w-full mt-2">
                                     <label for="residential_province" class="block text-sm text-gray-700">Province <span
                                             class="text-red-600">*</span></label>
@@ -468,6 +433,19 @@
                                     @error('r_house_street') <span class="text-red-500 text-sm">The Street and Barangay
                                         field is required</span> @enderror
                                 </div>
+
+                                <div class="w-full mt-2">
+                                    <div class="w-full">
+                                        <label for="residential_selectedZipcode" class="text-sm text-gray-700">Zip Code
+                                            <span class="text-red-600">*</span></label>
+                                        <input type="number" id="residential_selectedZipcode"
+                                            wire:model.live="residential_selectedZipcode"
+                                            class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        @error('residential_selectedZipcode') <span class="text-red-500 text-sm">{{
+                                            $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
                         </fieldset>
                         @endif
@@ -499,6 +477,31 @@
                             </div>
                         </div>
 
+                        <div class="mt-4 gap-2 columns-2">
+                            <div class="relative w-full" x-data="{ show: false }">
+                                <label for="password" class="text-sm text-gray-700">Password <span
+                                        class="text-red-600">*</span></label>
+                                <input :type="show ? 'text' : 'password'" id="password" wire:model.live="password"
+                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                <div class="absolute top-1/2 right-0 pr-3 flex items-center text-sm leading-5">
+                                    <i :class="show ? 'bi bi-eye-slash' : 'bi bi-eye'" @click="show = !show"
+                                        class="cursor-pointer"></i>
+                                </div>
+                                @error('password') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="relative w-full" x-data="{ show: false }">
+                                <label for="c_password" class="text-sm text-gray-700">Confirm Password <span
+                                        class="text-red-600">*</span></label>
+                                <input :type="show ? 'text' : 'password'" id="c_password" wire:model.live="c_password"
+                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                <div class="absolute top-1/2 right-0 pr-3 flex items-center text-sm leading-5">
+                                    <i :class="show ? 'bi bi-eye-slash' : 'bi bi-eye'" @click="show = !show"
+                                        class="cursor-pointer"></i>
+                                </div>
+                                @error('c_password') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+
                         <div class="flex gap-2 mt-12 columns-2">
                             <div class="w-full relative">
                                 <button
@@ -511,9 +514,9 @@
                             <div class="w-full relative">
                                 <button
                                     class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
-                                    wire:click="toStep4" wire:loading.attr="disabled" wire:target="toStep4">
-                                    <span wire:loading.remove wire:target="toStep4">Next</span>
-                                    <span wire:loading wire:target="toStep4">Loading...</span>
+                                    wire:click="submit" wire:loading.attr="disabled" wire:target="submit">
+                                    <span wire:loading.remove wire:target="submit">Submit</span>
+                                    <span wire:loading wire:target="submit">Submitting...</span>
                                 </button>
                             </div>
                         </div>
@@ -521,7 +524,7 @@
                     @endif
 
                     <!-- Step 4 -->
-                    @if ($step === 4)
+                    {{-- @if ($step === 4)
                     <div>
                         <h2 class="mb-4 text-lg font-medium text-gray-500">
                             Step 4 out of 5: <span class="font-bold text-black">Family Information</span>
@@ -639,14 +642,14 @@
                             </div>
                         </div>
                     </div>
-                    @endif
+                    @endif --}}
 
 
                     <!-- Step 5 -->
-                    @if ($step === 5)
+                    {{-- @if ($step === 4)
                     <div>
                         <h2 class="mb-4 text-lg font-medium text-gray-500">
-                            Step 5 out of 5: <span class="font-bold text-black">Educational Background</span>
+                            Step 4 out of 4: <span class="font-bold text-black">Educational Background</span>
                         </h2>
 
                         <div class="mt-12 gap-2 columns-1">
@@ -760,7 +763,7 @@
                             </div>
                         </div>
                     </div>
-                    @endif
+                    @endif --}}
 
                     {{--
                     <!-- Step 6 -->

@@ -17,6 +17,7 @@ class Eligibility extends Model
         'date',
         'place_of_exam',
         'license',
+        'date_of_validity',
     ];
 
     public function user()
