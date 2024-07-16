@@ -9,6 +9,9 @@ use Livewire\WithPagination;
 use App\Models\EmployeesChildren;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\EmployeesExport;
+use App\Models\PhilippineProvinces;
+use App\Models\PhilippineCities;
+use App\Models\PhilippineBarangays;
 
 class EmployeeTable extends Component
 {
@@ -53,8 +56,22 @@ class EmployeeTable extends Component
         // 'email' => false,
     ];
 
+    public $sex;
+    public $civil_status;
+    public $selectedProvince;
+    public $selectedCity;
+    public $selectedBarangay;
+    public $provinces;
+    public $cities;
+    public $barangays;
+
     public $selectedUser = null;
-    public $dropdownOpen = false;
+    public $dropdownForCategoryOpen = false;
+    public $dropdownForSexOpen = false;
+    public $dropdownForCivilStatusOpen = false;
+    public $dropdownForProvinceOpen = false;
+    public $dropdownForCityOpen = false;
+    public $dropdownForBarangayOpen = false;
 
     protected $listeners = [
         'exportUsers'
@@ -62,7 +79,62 @@ class EmployeeTable extends Component
 
     public function toggleDropdown()
     {
-        $this->dropdownOpen = !$this->dropdownOpen;
+        $this->dropdownForCategoryOpen = !$this->dropdownForCategoryOpen;
+        $this->dropdownForSexOpen = false;
+        $this->dropdownForCivilStatusOpen = false;
+        $this->dropdownForProvinceOpen = false;
+        $this->dropdownForCityOpen = false;
+        $this->dropdownForBarangayOpen = false;
+    }
+
+    public function toggleDropdownSex()
+    {
+        $this->dropdownForSexOpen = !$this->dropdownForSexOpen;
+        $this->dropdownForCategoryOpen = false;
+        $this->dropdownForCivilStatusOpen = false;
+        $this->dropdownForProvinceOpen = false;
+        $this->dropdownForCityOpen = false;
+        $this->dropdownForBarangayOpen = false;
+    }
+
+    public function toggleDropdownCivilStatus()
+    {
+        $this->dropdownForCivilStatusOpen = !$this->dropdownForCivilStatusOpen;
+        $this->dropdownForCategoryOpen = false;
+        $this->dropdownForSexOpen = false;
+        $this->dropdownForProvinceOpen = false;
+        $this->dropdownForCityOpen = false;
+        $this->dropdownForBarangayOpen = false;
+    }
+
+    public function toggleDropdownProvince()
+    {
+        $this->dropdownForProvinceOpen = !$this->dropdownForProvinceOpen;
+        $this->dropdownForCategoryOpen = false;
+        $this->dropdownForSexOpen = false;
+        $this->dropdownForCivilStatusOpen = false;
+        $this->dropdownForCityOpen = false;
+        $this->dropdownForBarangayOpen = false;
+    }
+
+    public function toggleDropdownCity()
+    {
+        $this->dropdownForCityOpen = !$this->dropdownForCityOpen;
+        $this->dropdownForCategoryOpen = false;
+        $this->dropdownForSexOpen = false;
+        $this->dropdownForCivilStatusOpen = false;
+        $this->dropdownForProvinceOpen = false;
+        $this->dropdownForBarangayOpen = false;
+    }
+
+    public function toggleDropdownBarangay()
+    {
+        $this->dropdownForBarangayOpen = !$this->dropdownForBarangayOpen;
+        $this->dropdownForCategoryOpen = false;
+        $this->dropdownForSexOpen = false;
+        $this->dropdownForCivilStatusOpen = false;
+        $this->dropdownForCityOpen = false;
+        $this->dropdownForProvinceOpen = false;
     }
 
     public function updatedFilters()
@@ -72,7 +144,9 @@ class EmployeeTable extends Component
 
     public function render()
     {
-        $users = User::join('user_data', 'users.id', '=', 'user_data.user_id')
+        $this->checkFilter();
+
+        $query = User::join('user_data', 'users.id', '=', 'user_data.user_id')
             ->select('users.id')
             ->when($this->filters['name'], function ($query) {
                 $query->addSelect('users.name');
@@ -119,11 +193,32 @@ class EmployeeTable extends Component
             ->when($this->filters['agency_employee_no'], function ($query) {
             $query->addSelect('user_data.agency_employee_no');
             })
+            ->where(function ($query) {
+                if ($this->sex) {
+                    $query->where('user_data.sex', $this->sex);
+                }
+            })
+            ->where(function ($query) {
+                if ($this->civil_status) {
+                    $query->where('user_data.civil_status', $this->civil_status);
+                }
+            })
+            ->when($this->selectedProvince, function ($query) {
+                return $query->where('user_data.permanent_selectedProvince', $this->selectedProvince);
+            })
+            ->when($this->selectedCity, function ($query) {
+                return $query->where('user_data.permanent_selectedCity', $this->selectedCity);
+            })
+            ->when($this->selectedBarangay, function ($query) {
+                return $query->where('user_data.permanent_selectedBarangay', $this->selectedBarangay);
+            })
             ->paginate(10);
 
-        return view('livewire.admin.employee-table', [
-            'users' => $users
-        ]);
+            return view('livewire.admin.employee-table', [
+                'users' => $query,
+                'cities' => $this->cities,
+                'barangays' => $this->barangays,
+            ]);
     }
 
     public function showUser($userId)
@@ -158,9 +253,47 @@ class EmployeeTable extends Component
         $this->childrenBirthDates = null;
     }
 
-    public function exportUsers($filters)
-    {
-        $this->filters = $filters;
-        return Excel::download(new EmployeesExport($this->filters), 'EmployeesList.xlsx');
+    public function exportUsers(){
+        $filters = [
+            'sex' => $this->sex,
+            'civil_status' => $this->civil_status,
+            'selectedProvince' => $this->selectedProvince,
+            'selectedCity' => $this->selectedCity,
+            'selectedBarangay' => $this->selectedBarangay,
+        ];
+        return Excel::download(new EmployeesExport($filters), 'EmployeesList.xlsx');
+    }
+
+    public function checkFilter(){
+        if ($this->selectedProvince != null) {
+            $provinceCode = PhilippineProvinces::where('province_description', $this->selectedProvince)
+                            ->select('province_code')->first();
+            $provinceCode = $provinceCode->getAttributes();
+            $this->cities = PhilippineCities::where('province_code', $provinceCode['province_code'])->get();
+        }
+        if ($this->selectedCity != null) {
+            $cityCode = PhilippineCities::where('city_municipality_description', $this->selectedCity)
+                            ->select('city_municipality_code')->first();
+            $cityCode = $cityCode->getAttributes();
+            $this->barangays = PhilippineBarangays::where('city_municipality_code', $cityCode['city_municipality_code'])->get();
+        }
+
+        if ($this->selectedProvince === '') {
+            $this->cities = collect();
+            $this->barangays = collect();
+        }
+        if ($this->selectedCity === '') {
+            $this->barangays = collect();
+        }
+    }
+
+    public function mount(){
+        $this->getProvicesAndCities();
+    }
+
+    public function getProvicesAndCities(){
+        $this->provinces = PhilippineProvinces::all();
+        $this->cities = collect();
+        $this->barangays = collect();
     }
 }

@@ -14,6 +14,10 @@ export default {
     darkMode: 'class',
     theme: {
         extend: {
+            scrollbar: {
+                width: '8px',
+                radius: '8px',
+            },
             boxShadow: {
                 DEFAULT: '0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.02)',
                 md: '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.02)',
@@ -71,6 +75,25 @@ export default {
     },
 
     plugins: [
+        require('tailwind-scrollbar'),
+        function ({ addUtilities }) {
+            const newUtilities = {
+                '.scrollbar-thin': {
+                    '&::-webkit-scrollbar': {
+                        width: '8px',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        backgroundColor: '#4A5568',
+                        borderRadius: '8px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        backgroundColor: '#E2E8F0',
+                        borderRadius: '8px',
+                    },
+                },
+            };
+            addUtilities(newUtilities, ['responsive', 'hover']);
+        },
         forms,
         typography,
         // add custom variant for expanding sidebar
@@ -78,6 +101,6 @@ export default {
             addVariant('sidebar-expanded', ({ modifySelectors, separator }) => {
                 modifySelectors(({ className }) => `.sidebar-expanded .${e(`sidebar-expanded${separator}${className}`)}`);
             });
-        }),        
+        }),
     ],
 };

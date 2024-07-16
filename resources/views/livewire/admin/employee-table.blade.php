@@ -1,15 +1,204 @@
 <div class="p-10 flex justify-center w-full">
     <div class="w-full">
         <div class="flex items-center justify-end">
+            <style>
+                .scrollbar-thin1::-webkit-scrollbar {
+                    width: 5px;
+                }
+
+                .scrollbar-thin1::-webkit-scrollbar-thumb {
+                    background-color: #1a1a1a4b;
+                    /* cursor: grab; */
+                    border-radius: 0 50px 50px 0;
+                }
+
+                .scrollbar-thin1::-webkit-scrollbar-track {
+                    background-color: #ffffff23;
+                    border-radius: 0 50px 50px 0;
+                }
+            </style>
+
+            <!-- Provinces Dropdown -->
+            <div class="relative inline-block text-left">
+                <button wire:click="toggleDropdownProvince"
+                    class="mr-4 inline-flex items-center justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 border rounded-lg border-neutral-500 dark:border-neutral-200 hover:bg-slate-900 dark:hover:bg-slate-100 hover:text-slate-100 dark:hover:text-slate-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none"
+                    type="button">
+                    Filter by Province
+                    <i class="bi bi-chevron-down w-5 h-5 ml-2"></i>
+                </button>
+                @if($dropdownForProvinceOpen)
+                <div
+                    class="absolute z-20 w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
+                    <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Province</h6>
+                    <ul class="space-y-2 text-sm">
+                        @foreach($provinces as $province)
+                        <li class="flex items-center">
+                            <input id="province-{{ $province->province_description }}" type="radio"
+                                wire:model.live="selectedProvince" value="{{ $province->province_description }}"
+                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                            <label for="province-{{ $province->province_description }}"
+                                class="ml-2 text-gray-900 dark:text-gray-300">{{ $province->province_description
+                                }}</label>
+                        </li>
+                        @endforeach
+                        <li class="flex items-center">
+                            <input id="any-province" type="radio" wire:model.live="selectedProvince" value=""
+                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                            <label for="any-province" class="ml-2 text-gray-900 dark:text-gray-300">Any</label>
+                        </li>
+                    </ul>
+                </div>
+                @endif
+            </div>
+
+            <!-- Cities Dropdown -->
+            <div class="relative inline-block text-left">
+                <button wire:click="toggleDropdownCity"
+                    class="mr-4 inline-flex items-center justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 border rounded-lg border-neutral-500 dark:border-neutral-200 hover:bg-slate-900 dark:hover:bg-slate-100 hover:text-slate-100 dark:hover:text-slate-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none"
+                    type="button">
+                    Filter by City
+                    <i class="bi bi-chevron-down w-5 h-5 ml-2"></i>
+                </button>
+                @if($dropdownForCityOpen)
+                <div
+                    class="absolute z-20 w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
+                    <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">City</h6>
+                    <ul class="space-y-2 text-sm">
+                        @if($cities)
+                        @foreach($cities as $city)
+                        <li class="flex items-center">
+                            <input id="city-{{ $city->city_municipality_description }}" type="radio"
+                                wire:model.live="selectedCity" value="{{ $city->city_municipality_description }}"
+                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                            <label for="city-{{ $city->city_municipality_description }}"
+                                class="ml-2 text-gray-900 dark:text-gray-300">{{ $city->city_municipality_description
+                                }}</label>
+                        </li>
+                        @endforeach
+                        @endif
+                        <li class="flex items-center">
+                            <input id="any-city" type="radio" wire:model.live="selectedCity" value=""
+                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                            <label for="any-city" class="ml-2 text-gray-900 dark:text-gray-300">Any</label>
+                        </li>
+                    </ul>
+                </div>
+                @endif
+            </div>
+
+            <!-- Barangay Dropdown -->
+            <div class="relative inline-block text-left">
+                <button wire:click="toggleDropdownBarangay"
+                    class="mr-4 inline-flex items-center justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 border rounded-lg border-neutral-500 dark:border-neutral-200 hover:bg-slate-900 dark:hover:bg-slate-100 hover:text-slate-100 dark:hover:text-slate-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none"
+                    type="button">
+                    Filter by Barangay
+                    <i class="bi bi-chevron-down w-5 h-5 ml-2"></i>
+                </button>
+                @if($dropdownForBarangayOpen)
+                <div
+                    class="absolute z-20 w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
+                    <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Barangay</h6>
+                    <ul class="space-y-2 text-sm">
+                        @if($barangays)
+                        @foreach($barangays as $barangay)
+                        <li class="flex items-center">
+                            <input id="barangay-{{ $barangay->barangay_description }}" type="radio"
+                                wire:model.live="selectedBarangay" value="{{ $barangay->barangay_description }}"
+                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                            <label for="barangay-{{ $barangay->barangay_description }}"
+                                class="ml-2 text-gray-900 dark:text-gray-300">{{ $barangay->barangay_description
+                                }}</label>
+                        </li>
+                        @endforeach
+                        @endif
+                        <li class="flex items-center">
+                            <input id="any-barangay" type="radio" wire:model.live="selectedBarangay" value=""
+                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                            <label for="any-barangay" class="ml-2 text-gray-900 dark:text-gray-300">Any</label>
+                        </li>
+                    </ul>
+                </div>
+                @endif
+            </div>
+
+            <!-- Civil Status Dropdown -->
+            <div class="relative inline-block text-left">
+                <button wire:click="toggleDropdownCivilStatus"
+                    class="mr-4 inline-flex items-center justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 border rounded-lg border-neutral-500 dark:border-neutral-200 hover:bg-slate-900 dark:hover:bg-slate-100 hover:text-slate-100 dark:hover:text-slate-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none"
+                    type="button">
+                    Filter by Civil Status
+                    <i class="bi bi-chevron-down w-5 h-5 ml-2"></i>
+                </button>
+                @if($dropdownForCivilStatusOpen)
+                <div class="absolute z-20 w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700">
+                    <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Civil Status</h6>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center">
+                            <input id="single" type="radio" wire:model.live="civil_status" value="Single"
+                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                            <label for="single" class="ml-2 text-gray-900 dark:text-gray-300">Single</label>
+                        </li>
+                        <li class="flex items-center">
+                            <input id="married" type="radio" wire:model.live="civil_status" value="Married"
+                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                            <label for="married" class="ml-2 text-gray-900 dark:text-gray-300">Married</label>
+                        </li>
+                        <li class="flex items-center">
+                            <input id="widowed" type="radio" wire:model.live="civil_status" value="Widowed"
+                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                            <label for="widowed" class="ml-2 text-gray-900 dark:text-gray-300">Widowed</label>
+                        </li>
+                        <li class="flex items-center">
+                            <input id="separated" type="radio" wire:model.live="civil_status" value="Separated"
+                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                            <label for="separated" class="ml-2 text-gray-900 dark:text-gray-300">Separated</label>
+                        </li>
+                    </ul>
+                </div>
+                @endif
+            </div>
+
+            <!-- Sex Dropdown -->
+            <div class="relative inline-block text-left">
+                <button wire:click="toggleDropdownSex"
+                    class="mr-4 inline-flex items-center justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 border rounded-lg border-neutral-500 dark:border-neutral-200 hover:bg-slate-900 dark:hover:bg-slate-100 hover:text-slate-100 dark:hover:text-slate-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none"
+                    type="button">
+                    Filter by Sex
+                    <i class="bi bi-chevron-down w-5 h-5 ml-2"></i>
+                </button>
+                @if($dropdownForSexOpen)
+                <div class="absolute z-20 w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700">
+                    <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Sex</h6>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center">
+                            <input id="default" type="radio" wire:model.live="sex" value=""
+                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                            <label for="default" class="ml-2 text-gray-900 dark:text-gray-300">Default</label>
+                        </li>
+                        <li class="flex items-center">
+                            <input id="male" type="radio" wire:model.live="sex" value="Male"
+                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                            <label for="male" class="ml-2 text-gray-900 dark:text-gray-300">Male</label>
+                        </li>
+                        <li class="flex items-center">
+                            <input id="female" type="radio" wire:model.live="sex" value="Female"
+                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                            <label for="female" class="ml-2 text-gray-900 dark:text-gray-300">Female</label>
+                        </li>
+                    </ul>
+                </div>
+                @endif
+            </div>
+
             <!-- Filter Dropdown -->
             <div class="relative inline-block text-left">
                 <button wire:click="toggleDropdown"
                     class="mr-4 inline-flex items-center justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 border rounded-lg border-neutral-500 dark:border-neutral-200 hover:bg-slate-900 dark:hover:bg-slate-100 hover:text-slate-100 dark:hover:text-slate-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none"
                     type="button">
                     Filter by category
-                    <i class="bi bi-chevron-down w-4 h-4 ml-2"></i>
+                    <i class="bi bi-chevron-down w-5 h-5 ml-2"></i>
                 </button>
-                @if($dropdownOpen)
+                @if($dropdownForCategoryOpen)
                 <div class="absolute z-20 w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700">
                     <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Category</h6>
                     <ul class="space-y-2 text-sm">
@@ -58,19 +247,24 @@
                 </div>
                 @endif
             </div>
+
+            <!-- Export to Excel -->
             <button wire:click="exportUsers"
                 class="inline-flex items-center justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 border rounded-lg border-neutral-500 dark:border-neutral-200 hover:bg-slate-900 dark:hover:bg-slate-100 hover:text-slate-100 dark:hover:text-slate-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none"
                 type="button">
-                Generate
+                Export to Excel
+                <i class="bi bi-download w-5 h-5 ml-2"></i>
             </button>
         </div>
+
+        <!-- Table -->
         <div class="flex flex-col">
             <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block w-full py-2 align-middle">
                     <div class="overflow-hidden border rounded-lg border-neutral-500 dark:border-neutral-200">
                         <div class="overflow-x-auto">
                             <table class="divide-y divide-neutral-500 dark:divide-neutral-200 w-full min-w-full">
-                                <thead class="text-neutral-500 dark:text-neutral-200 bg-slate-900 dark:bg-slate-100">
+                                <thead class="text-neutral-500 dark:text-neutral-200 dark:bg-slate-100 bg-gray-900">
                                     <tr class="text-neutral-200 dark:text-neutral-800">
                                         <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Name
                                         </th>
@@ -107,7 +301,7 @@
                                             Type</th>
                                         @endif
                                         <th
-                                            class="px-5 py-3 text-sm font-medium text-right uppercase sticky right-0 z-10">
+                                            class="px-5 py-3 text-sm font-medium text-right uppercase sticky right-0 z-10 dark:bg-slate-100 bg-gray-900">
                                             Action</th>
                                     </tr>
                                 </thead>
@@ -149,7 +343,7 @@
                                             }}</td>
                                         @endif
                                         <td
-                                            class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10">
+                                            class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 dark:bg-slate-900 bg-slate-100">
                                             <button wire:click="showUser({{ $user->id }})"
                                                 class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 border rounded-lg border-neutral-500 dark:border-neutral-200 hover:bg-slate-900 dark:hover:bg-slate-100 hover:text-slate-100 dark:hover:text-slate-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none">Show</button>
                                         </td>
