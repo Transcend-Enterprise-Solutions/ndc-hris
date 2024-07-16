@@ -16,6 +16,7 @@ class DocRequest extends Model
         'status',
         'date_completed',
         'file_path',
+        'filename',
     ];
 
     protected $casts = [
