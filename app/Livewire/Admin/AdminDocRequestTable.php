@@ -40,24 +40,21 @@ class AdminDocRequestTable extends Component
 
     public function approveRequest($id)
     {
-        $request = DocRequest::find($id);
-        if ($request) {
-            $request->status = 'preparing';
-            $request->save();
-            session()->flash('message', 'Document request approved successfully.');
-            $this->loadRequests();
-        } else {
-            session()->flash('error', 'Document request not found.');
-        }
+        $this->changeStatus($id, 'preparing', 'Document request approved successfully.');
     }
 
     public function rejectRequest($id)
     {
+        $this->changeStatus($id, 'rejected', 'Document request rejected.');
+    }
+
+    private function changeStatus($id, $status, $message)
+    {
         $request = DocRequest::find($id);
         if ($request) {
-            $request->status = 'rejected';
+            $request->status = $status;
             $request->save();
-            session()->flash('message', 'Document request rejected.');
+            session()->flash('message', $message);
             $this->loadRequests();
         } else {
             session()->flash('error', 'Document request not found.');
@@ -66,21 +63,18 @@ class AdminDocRequestTable extends Component
 
     public function uploadDocument($requestId)
     {
-        $this->uploadRequestId = $requestId;
-
-        if (empty($this->uploadRequestId)) {
+        if (empty($requestId)) {
             session()->flash('error', 'No document request selected.');
             return;
         }
 
-        $request = DocRequest::find($this->uploadRequestId);
-
+        $request = DocRequest::find($requestId);
         if (!$request) {
             session()->flash('error', 'Document request not found.');
             return;
         }
 
-        if (!isset($this->uploadedFile[$requestId]) || !$this->uploadedFile[$requestId]) {
+        if (empty($this->uploadedFile[$requestId])) {
             session()->flash('error', 'No file uploaded.');
             return;
         }
@@ -100,14 +94,14 @@ class AdminDocRequestTable extends Component
     public function downloadDocument($id)
     {
         $request = DocRequest::find($id);
-
         if (!$request || !$request->file_path) {
             session()->flash('error', 'Document not found.');
             return;
         }
 
-        if (Storage::disk('public')->exists($request->file_path)) {
-            return response()->download(Storage::disk('public')->path($request->file_path), $request->filename);
+        $filePath = storage_path('app/public/' . $request->file_path);
+        if (file_exists($filePath)) {
+            return response()->download($filePath, $request->filename);
         } else {
             session()->flash('error', 'File not found on the server.');
         }

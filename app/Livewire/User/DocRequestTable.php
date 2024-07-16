@@ -43,8 +43,9 @@ class DocRequestTable extends Component
             return;
         }
 
-        if (Storage::disk('public')->exists($request->file_path)) {
-            return response()->download(Storage::disk('public')->path($request->file_path), $request->filename);
+        $filePath = storage_path('app/public/' . $request->file_path);
+        if (file_exists($filePath)) {
+            return response()->download($filePath, $request->filename);
         } else {
             session()->flash('error', 'File not found on the server.');
         }
@@ -52,7 +53,9 @@ class DocRequestTable extends Component
 
     public function getRequestsProperty()
     {
-        return DocRequest::where('user_id', Auth::id())->orderBy('date_requested', 'desc')->get();
+        return DocRequest::where('user_id', Auth::id())
+            ->orderBy('date_requested', 'desc')
+            ->get();
     }
 
     public function render()
