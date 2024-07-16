@@ -1,6 +1,6 @@
 <div class="w-full">
     <div class="flex justify-center w-full">
-        <div class="overflow-x-auto w-4/5 bg-white dark:bg-gray-800 rounded-lg p-3 shadow">
+        <div class="overflow-x-auto w-full bg-white dark:bg-gray-800 rounded-lg p-3 shadow">
             <div class="pt-4 pb-4">
                 <h1 class="text-lg font-bold text-center text-black dark:text-white">My Documents</h1>
             </div>

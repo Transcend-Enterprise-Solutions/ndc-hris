@@ -1,5 +1,5 @@
 <div class="w-full flex justify-center">
-    <div class="w-3/4 bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md overflow-x-auto">
+    <div class="w-full bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md overflow-x-auto">
         <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Document Requests</h1>
 
         @if (session()->has('message'))
@@ -14,7 +14,7 @@
             </div>
         @endif
 
-        <table class="min-w-full bg-white dark:bg-gray-800 rounded-lg">
+        <table class="min-w-full bg-white dark:bg-gray-800 rounded-lg w-full">
             <thead>
                 <tr class="bg-gray-200 dark:bg-gray-700">
                     <th class="px-4 py-2 text-center">Name</th>
