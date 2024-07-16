@@ -240,13 +240,11 @@ class Registration extends Component
             // 'period_start_date' => 'required',
             // 'period_end_date' => 'required',
             // 'year_graduated' => 'required|numeric',
-            // 'permanent_selectedRegion' => 'required',
             'permanent_selectedZipcode' => 'required',
             'permanent_selectedProvince' => 'required',
             'permanent_selectedCity' => 'required',
             'permanent_selectedBarangay' => 'required',
             'p_house_street' => 'required',
-            // 'residential_selectedRegion' => 'required',
             'residential_selectedZipcode' => 'required',
             'residential_selectedProvince' => 'required',
             'residential_selectedCity' => 'required',
@@ -293,13 +291,11 @@ class Registration extends Component
             'tin' => $this->tin,
             'agency_employee_no' => $this->agency_employee_no,
             'permanent_selectedZipcode' => $this->permanent_selectedZipcode,
-            // 'permanent_selectedRegion' => $this->permanent_selectedRegion,
             'permanent_selectedProvince' => $this->permanent_selectedProvince,
             'permanent_selectedCity' => $this->permanent_selectedCity,
             'permanent_selectedBarangay' => $this->permanent_selectedBarangay,
             'p_house_street' => $this->p_house_street,
             'residential_selectedZipcode' => $this->residential_selectedZipcode,
-            // 'residential_selectedRegion' => $this->residential_selectedRegion,
             'residential_selectedProvince' => $this->residential_selectedProvince,
             'residential_selectedCity' => $this->residential_selectedCity,
             'residential_selectedBarangay' => $this->residential_selectedBarangay,
@@ -320,14 +316,6 @@ class Registration extends Component
             // 'year_graduated' => $this->year_graduated,
         ]);
 
-        // foreach ($this->children as $child) {
-        //     EmployeesChildren::create([
-        //         'user_id' => $user->id,
-        //         'childs_name' => $child['name'],
-        //         'childs_birth_date' => $child['birth_date'],
-        //     ]);
-        // }
-
         session()->flash('message', 'Registration successful!');
         return redirect()->route('login');
     }
@@ -338,20 +326,6 @@ class Registration extends Component
 
     public function render()
     {
-        // if ($this->permanent_selectedRegion != null) {
-        //     $regionCode = PhilippineRegions::where('region_description', $this->permanent_selectedRegion)
-        //                     ->select('region_code')->first();
-        //     $regionCode = $regionCode->getAttributes();
-        //     $this->pprovinces = PhilippineProvinces::where('region_code', $regionCode['region_code'])->get();
-        // }
-
-        // if ($this->residential_selectedRegion != null) {
-        //     $regionCode = PhilippineRegions::where('region_description', $this->residential_selectedRegion)
-        //                     ->select('region_code')->first();
-        //     $regionCode = $regionCode->getAttributes();
-        //     $this->rprovinces = PhilippineProvinces::where('region_code', $regionCode['region_code'])->get();
-        // }
-
         if ($this->permanent_selectedProvince != null) {
             $provinceCode = PhilippineProvinces::where('province_description', $this->permanent_selectedProvince)
                             ->select('province_code')->first();
