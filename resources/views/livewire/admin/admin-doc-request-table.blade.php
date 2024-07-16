@@ -1,6 +1,6 @@
 <div x-data="{ showModal: false, deleteRequestId: null }">
     <div class="w-full flex justify-center">
-        <div class="w-full bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
+        <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
             <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Document Requests</h1>
 
             @if (session()->has('message'))

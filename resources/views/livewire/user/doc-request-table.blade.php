@@ -1,5 +1,5 @@
 <div class="w-full flex justify-center">
-    <div class="w-4/5 bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
+    <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
         <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Request a Document</h1>
 
         <!-- Success and Error Messages -->
@@ -30,23 +30,45 @@
 
         <!-- Document Requests List -->
         <h2 class="text-lg font-bold text-black dark:text-white mt-6 mb-4">My Document Requests</h2>
-        <table class="min-w-full bg-white dark:bg-gray-800 rounded-lg">
-            <thead>
-                <tr class="bg-gray-200 dark:bg-gray-700">
-                    <th class="px-4 py-2">Document Type</th>
-                    <th class="px-4 py-2">Date Requested</th>
-                    <th class="px-4 py-2">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($requests as $request)
-                    <tr class="border-b dark:border-gray-600">
-                        <td class="px-4 py-2">{{ $request->document_type }}</td>
-                        <td class="px-4 py-2">{{ $request->date_requested->format('Y-m-d') }}</td>
-                        <td class="px-4 py-2">{{ $request->status }}</td>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white dark:bg-gray-800  overflow-hidden">
+                <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                    <tr class="whitespace-nowrap">
+                        <th class="px-4 py-2 text-center">Document Type</th>
+                        <th class="px-4 py-2 text-center">Date Requested</th>
+                        <th class="px-4 py-2 text-center">Date Completed</th>
+                        <th class="px-4 py-2 text-center">Status</th>
+                        <th class="px-4 py-2 text-center">My Document</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach ($requests as $request)
+                        <tr class="border-b dark:border-gray-600 whitespace-nowrap">
+                            <td class="px-4 py-2 text-center">{{ $request->document_type }}</td>
+                            <td class="px-4 py-2 text-center">{{ $request->date_requested->format('Y-m-d') }}</td>
+                            <td class="px-4 py-2 text-center">{{ $request->date_completed ? $request->date_completed->format('Y-m-d') : 'N/A' }}</td>
+                            <td class="px-4 py-2 text-center">
+                                <span class="px-3 py-1 rounded
+                                    {{ $request->status == 'pending' ? 'bg-orange-500 text-white' : '' }}
+                                    {{ $request->status == 'preparing' ? 'bg-blue-500 text-white' : '' }}
+                                    {{ $request->status == 'completed' ? 'bg-green-500 text-white' : '' }}
+                                    {{ $request->status == 'rejected' ? 'bg-red-500 text-white' : '' }}">
+                                    {{ ucfirst($request->status) }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-2 text-center">
+                                @if ($request->file_path)
+                                    <button wire:click="downloadDocument({{ $request->id }})" class="text-blue-500 hover:underline">
+                                        {{ $request->filename }} (Download)
+                                    </button>
+                                @else
+                                    No Document
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
