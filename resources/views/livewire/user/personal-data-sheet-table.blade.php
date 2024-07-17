@@ -208,7 +208,7 @@
 
                 {{-- Family Background --}}
                 <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">II. FAMILY BACKGROUND
-                    <i class="fas fa-edit float-right pt-1"></i>
+                    <i class="fas fa-edit float-right pt-1 cursor-pointer" wire:click="toggleEditFamilyBackground"></i>
                 </div>
                 <div>
                     {{-- Spouse --}}
@@ -216,69 +216,66 @@
                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-full bg-gray-200 font-bold dark:bg-slate-700 dark:text-white">Spouse</p>
                     </div>
 
-                    @foreach ($userSpouse as $spouse)
-                        <div class="custom-d flex w-full">
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $spouse->surname }}</p>
-                                </div>
-                        
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $spouse->first_name }}</p>
-                                </div>
+                    <div class="custom-d flex w-full">
+                        <div class="w-full sm:w-2/4 block">
+                            <div class="flex w-full sm:w-auto">
+                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->surname }}</p>
                             </div>
-
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $spouse->middle_name }}</p>
-                                </div>
-                        
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $spouse->name_extension }}</p>
-                                </div>
+                    
+                            <div class="flex w-full sm:w-auto">
+                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->first_name }}</p>
                             </div>
                         </div>
 
-                        <div class="custom-d flex w-full">
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ \Carbon\Carbon::parse($spouse->birth_date)->format('F d, Y') }}</p>
-                                </div>
-                        
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Occupation</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $spouse->occupation }}</p>
-                                </div>
+                        <div class="w-full sm:w-2/4 block">
+                            <div class="flex w-full sm:w-auto">
+                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->middle_name }}</p>
                             </div>
+                    
+                            <div class="flex w-full sm:w-auto">
+                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->name_extension }}</p>
+                            </div>
+                        </div>
+                    </div>
 
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Employer</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $spouse->employer }}</p>
-                                </div>
-                        
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Tel. No.</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $spouse->tel_number }}</p>
-                                </div>
+                    <div class="custom-d flex w-full">
+                        <div class="w-full sm:w-2/4 block">
+                            <div class="flex w-full sm:w-auto">
+                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ \Carbon\Carbon::parse($userSpouse->birth_date)->format('F d, Y') }}</p>
+                            </div>
+                    
+                            <div class="flex w-full sm:w-auto">
+                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Occupation</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->occupation }}</p>
                             </div>
                         </div>
 
-                        <div class="custom-d flex w-full">
-                            <div class="w-full sm:w-4/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 sm:w-1/5 bg-gray-50 dark:bg-slate-700">Business Address</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $spouse->business_address }}</p>
-                                </div>
+                        <div class="w-full sm:w-2/4 block">
+                            <div class="flex w-full sm:w-auto">
+                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Employer</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->employer }}</p>
+                            </div>
+                    
+                            <div class="flex w-full sm:w-auto">
+                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Tel. No.</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->tel_number }}</p>
                             </div>
                         </div>
-                        
-                    @endforeach
+                    </div>
+
+                    <div class="custom-d flex w-full">
+                        <div class="w-full sm:w-4/4 block">
+                            <div class="flex w-full sm:w-auto">
+                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 sm:w-1/5 bg-gray-50 dark:bg-slate-700">Business Address</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->business_address }}</p>
+                            </div>
+                        </div>
+                    </div>
 
                     {{-- Father --}}
                     <div class="flex w-full sm:w-auto">
@@ -735,7 +732,7 @@
 
     <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="personalInfo">
         <div class="p-4">
-            <div class="bg-slate-800 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+            <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
                 Edit Personal Information
                 <button @click="show = false" class="float-right focus:outline-none">
                     <i class="fas fa-times"></i>
@@ -1098,9 +1095,9 @@
                             </div>
                             Save
                         </button>
-                        <button @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
                             Cancel
-                        </button>
+                        </p>
                     </div>
 
                 </div>
@@ -1109,6 +1106,112 @@
         </div>
     </x-modal>
 
-    <x-toast />
-    
+    <x-modal id="familyBackgroundModal" maxWidth="2xl" wire:model="familyBackground">
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                Edit Family Background
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            {{-- Form fields --}}
+            <form wire:submit.prevent='savePersonalInfo'>
+                <div class="grid grid-cols-2 gap-4">
+                    
+                    <div class="col-span-2 sm:col-span-2 border-b border-slate-400">
+                        <label for="surname" class="block text-s font-medium text-gray-700 dark:text-slate-400">SPOUSE</label>
+                    </div>
+                    
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="spouse_surname" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Surname</label>
+                        <input type="text" id="spouse_surname" wire:model='spouse_surname' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('spouse_surname') 
+                            <span class="text-red-500 text-sm">The surname is required!</span> 
+                        @enderror
+                    </div>
+                    
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="spouse_first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Firstname</label>
+                        <input type="text" id="spouse_first_name" wire:model='spouse_first_name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('spouse_first_name')
+                            <span class="text-red-500 text-sm">The firstname is required!</span> 
+                        @enderror
+                    </div>
+                    
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="spouse_middle_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Middlename</label>
+                        <input type="text" id="spouse_middle_name" wire:model='spouse_middle_name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('spouse_middle_name')
+                            <span class="text-red-500 text-sm">The middlename is required!</span>
+                        @enderror
+                    </div>
+                    
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="spouse_name_extension" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name Extension</label>
+                        <input type="text" id="spouse_name_extension" wire:model='spouse_name_extension' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('spouse_name_extension') 
+                            <span class="text-red-500 text-sm">The name extension is required!</span>
+                        @enderror
+                    </div>
+                    
+                    {{-- <div class="col-span-2 sm:col-span-1">
+                        <label for="date_of_birth" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+                        <input type="date" id="date_of_birth" wire:model='date_of_birth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('date_of_birth') 
+                            <span class="text-red-500 text-sm">The date of birth is required!</span> 
+                        @enderror
+                    </div>
+                    
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="place_of_birth" class="block text-sm font-medium text-gray-700">Place of Birth</label>
+                        <input type="text" id="place_of_birth" wire:model='place_of_birth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('place_of_birth') 
+                            <span class="text-red-500 text-sm">The place of birth is required!</span> 
+                        @enderror
+                    </div>
+                    
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="sex" class="block text-sm font-medium text-gray-700">Sex at Birth</label>
+                        <input type="text" id="sex" wire:model='sex' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('sex') 
+                            <span class="text-red-500 text-sm">The sex is required!</span> 
+                        @enderror
+                    </div>
+                    
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="civil_status" class="block text-sm font-medium text-gray-700">Civil Status</label>
+                        <select wire:model='civil_status' class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                            <option value=""></option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Widowed">Widowed</option>
+                            <option value="Separated">Separated</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        @error('civil_status') 
+                            <span class="text-red-500 text-sm">The civil status is required!</span> 
+                        @enderror
+                    </div> --}}
+                    
+                    {{-- Save and Cancel buttons --}}
+                    <div class="mt-4 flex justify-end col-span-2 sm:col-span-2">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="savePersonalInfo" style="margin-bottom: 5px;">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                            Cancel
+                        </p>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </x-modal>
+
 </div>

@@ -56,6 +56,27 @@ class PersonalDataSheetTable extends Component
     public $r_province;
     public $r_zipcode;
 
+    // Personal Information
+    public $familyBackground = false;
+    public $spouse_surname;
+    public $spouse_first_name;
+    public $spouse_middle_name;
+    public $spouse_date_of_birth;
+    public $spouse_name_extension;
+    public $spouse_occupation;
+    public $spouse_employer;
+    public $spouse_emp_business_address;
+    public $spouse_emp_tel_num;
+    public $father_surname;
+    public $father_first_name;
+    public $father_middle_name;
+    public $father_name_extension;
+    public $mother_surname;
+    public $mother_first_name;
+    public $mother_middle_name;
+    public $mother_name_extension;
+    public $children = [];
+
 
     public function render(){
         $userId = Auth::user()->id;
@@ -190,6 +211,32 @@ class PersonalDataSheetTable extends Component
         }
     }
 
+    public function toggleEditFamilyBackground(){
+        $this->familyBackground = true;
+        try{
+            $this->spouse_surname = $this->pds['userSpouse']->surname;
+            $this->spouse_first_name = $this->pds['userSpouse']->first_name;
+            $this->spouse_middle_name = $this->pds['userSpouse']->middle_name;
+            $this->spouse_date_of_birth = $this->pds['userSpouse']->birth_date;
+            $this->spouse_name_extension = $this->pds['userSpouse']->name_extension;
+            $this->spouse_occupation = $this->pds['userSpouse']->occupation;
+            $this->spouse_employer = $this->pds['userSpouse']->employer;
+            $this->spouse_emp_business_address = $this->pds['userSpouse']->business_address;
+            $this->spouse_emp_tel_num = $this->pds['userSpouse']->tel_number;
+            $this->father_surname = $this->pds['userFather']->surname;
+            $this->father_first_name = $this->pds['userFather']->first_name;
+            $this->father_middle_name = $this->pds['userFather']->middle_name;
+            $this->father_name_extension = $this->pds['userFather']->name_extension;
+            $this->mother_surname = $this->pds['userMother']->surname;
+            $this->mother_first_name = $this->pds['userMother']->first_name;
+            $this->mother_middle_name = $this->pds['userMother']->middle_name;
+            $this->mother_name_extension = $this->pds['userMother']->name_extension;
+            $this->children = $this->pds['userChildren'];
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+
     public function savePersonalInfo(){
         try{
             $user = Auth::user();
@@ -263,7 +310,7 @@ class PersonalDataSheetTable extends Component
                     'residential_selectedZipcode' => $this->r_zipcode,
                 ]);                
 
-                $this->personalInfo = null;
+                $this->personalInfo = null;                                                
                 $this->dispatch('notify', [
                     'message' => 'Personal Information updated successfully!', 
                     'type' => 'success'
@@ -272,7 +319,7 @@ class PersonalDataSheetTable extends Component
         }catch(Exception $e){
             $this->dispatch('notify', [
                 'message' => 'Personal Information update was unsuccessful!', 
-                'type' => 'success'
+                'type' => 'error'
             ]);
             throw $e;
         }

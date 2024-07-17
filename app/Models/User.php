@@ -66,7 +66,7 @@ class User extends Authenticatable
     }
 
     public function employeesSpouse(){
-        return $this->hasMany(EmployeesSpouse::class);
+        return $this->hasOne(EmployeesSpouse::class);
     }
 
     public function employeesFather(){
