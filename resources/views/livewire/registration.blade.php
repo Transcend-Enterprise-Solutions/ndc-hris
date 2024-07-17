@@ -248,13 +248,13 @@
                                         wire:model.live="permanent_selectedProvince" id="permanent_province"
                                         name="permanent_selectedProvince" required>
                                         @if ($pprovinces)
-                                        <option class="text-base text-gray-700 capitalize block mb-1.5" value=""
-                                            style="opacity: .6;">Select Province</option>
-                                        @foreach ($pprovinces->sortBy('province_description') as $province)
-                                        <option class="text-base text-gray-700 capitalize block mb-1.5"
-                                            value="{{ $province->province_description }}">{{
-                                            $province->province_description }}</option>
-                                        @endforeach
+                                            <option class="text-base text-gray-700 capitalize block mb-1.5" value=""
+                                                style="opacity: .6;">Select Province</option>
+                                            @foreach ($pprovinces->sortBy('province_description') as $province)
+                                            <option class="text-base text-gray-700 capitalize block mb-1.5"
+                                                value="{{ $province->province_description }}">{{
+                                                $province->province_description }}</option>
+                                            @endforeach
                                         @else
                                         <option class="text-base text-gray-700 capitalize block mb-1.5" value="">Select
                                             a region</option>

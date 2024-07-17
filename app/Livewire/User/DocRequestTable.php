@@ -3,8 +3,9 @@
 namespace App\Livewire\User;
 
 use Livewire\Component;
-use App\Models\DocRequest; // Ensure you have the correct model imported
+use App\Models\DocRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class DocRequestTable extends Component
 {
@@ -22,7 +23,6 @@ class DocRequestTable extends Component
             'documentType' => 'required',
         ]);
 
-        // Logic to handle the document request
         DocRequest::create([
             'user_id' => Auth::id(),
             'document_type' => $this->documentType,
@@ -31,14 +31,31 @@ class DocRequestTable extends Component
         ]);
 
         session()->flash('message', 'Document request submitted successfully.');
-
-        // Reset the document type for further requests
         $this->documentType = null;
+    }
+
+    public function downloadDocument($id)
+    {
+        $request = DocRequest::find($id);
+
+        if (!$request || !$request->file_path) {
+            session()->flash('error', 'Document not found.');
+            return;
+        }
+
+        $filePath = storage_path('app/public/' . $request->file_path);
+        if (file_exists($filePath)) {
+            return response()->download($filePath, $request->filename);
+        } else {
+            session()->flash('error', 'File not found on the server.');
+        }
     }
 
     public function getRequestsProperty()
     {
-        return DocRequest::where('user_id', Auth::id())->get();
+        return DocRequest::where('user_id', Auth::id())
+            ->orderBy('date_requested', 'desc')
+            ->get();
     }
 
     public function render()
