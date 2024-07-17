@@ -1,10 +1,10 @@
-<header class="sticky top-0 bg-white dark:bg-[#182235] border-b border-slate-200 dark:border-slate-700 z-30">
+<header class="sticky top-0 bg-gray-100/80 dark:bg-[#182235]/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700 z-30 shadow-b">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16 -mb-px">
 
             <!-- Header: Left side -->
             <div class="flex">
-                
+
                 <!-- Hamburger button -->
                 <button
                     class="text-slate-500 hover:text-slate-600 lg:hidden"
@@ -35,7 +35,7 @@
                 <x-dropdown-help align="right" />
 
                 <!-- Dark mode toggle -->
-                <x-theme-toggle />                
+                <x-theme-toggle />
 
                 <!-- Divider -->
                 <hr class="w-px h-6 bg-slate-200 dark:bg-slate-700 border-none" />

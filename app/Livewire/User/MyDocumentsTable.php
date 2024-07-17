@@ -17,8 +17,8 @@ class MyDocumentsTable extends Component
     public $error = '';
     public $message = '';
     public $isUploading = false;
-    public $confirmDeleteModal = false; // Modal state
-    public $documentToDelete = null; // Store document ID for deletion
+    public $confirmDeleteModal = false;
+    public $documentToDelete = null;
 
     protected $rules = [
         'files.*' => 'required|file|max:10240', // 10MB Max
@@ -27,13 +27,13 @@ class MyDocumentsTable extends Component
 
     public function uploadDocuments()
     {
-        $this->validate(); // Validate files and document type
-        $this->isUploading = true; // Start the upload process
+        $this->validate();
+        $this->isUploading = true;
 
         if ($this->documentAlreadyUploaded()) {
             $this->error = 'Document type "' . $this->documentType . '" has already been uploaded.';
-            $this->isUploading = false; // End the upload process
-            return; // Stop further processing if document type exists
+            $this->isUploading = false;
+            return;
         }
 
         foreach ($this->files as $file) {
@@ -42,7 +42,10 @@ class MyDocumentsTable extends Component
 
         $this->reset(['files', 'documentType']);
         $this->message = 'Documents uploaded successfully.';
-        $this->isUploading = false; // End the upload process
+        $this->isUploading = false;
+
+        // Dispatch an event to refresh documents
+        $this->dispatch('refreshDocuments');
     }
 
     protected function documentAlreadyUploaded()
@@ -59,7 +62,7 @@ class MyDocumentsTable extends Component
                 throw new \Exception('One or more files are invalid.');
             }
 
-            $fileName = $file->getClientOriginalName(); // Use original file name
+            $fileName = $file->getClientOriginalName();
             $filePath = $file->storeAs('public/upload/employee_document', $fileName);
 
             EmployeeDocument::create([
@@ -72,14 +75,14 @@ class MyDocumentsTable extends Component
             ]);
         } catch (\Exception $e) {
             $this->error = 'Error uploading document: ' . $e->getMessage();
-            $this->isUploading = false; // End the upload process
+            $this->isUploading = false;
         }
     }
 
     public function confirmDelete($documentId)
     {
-        $this->documentToDelete = $documentId; // Store document ID
-        $this->confirmDeleteModal = true; // Show the modal
+        $this->documentToDelete = $documentId;
+        $this->confirmDeleteModal = true;
     }
 
     public function deleteDocument()
@@ -87,28 +90,18 @@ class MyDocumentsTable extends Component
         $document = EmployeeDocument::find($this->documentToDelete);
 
         if ($document && $document->user_id === Auth::id()) {
-            Storage::delete($document->file_path); // Delete the file from storage
-            $document->delete(); // Delete the document from the database
+            Storage::delete($document->file_path);
+            $document->delete();
             $this->message = 'Document deleted successfully.';
         } else {
             $this->error = 'Document not found or permission denied.';
         }
 
-        $this->confirmDeleteModal = false; // Hide the modal
-        $this->documentToDelete = null; // Reset document ID
-    }
+        $this->confirmDeleteModal = false;
+        $this->documentToDelete = null;
 
-    public function updateDocument($documentId, $newDocumentType)
-    {
-        $document = EmployeeDocument::find($documentId);
-
-        if ($document && $document->user_id === Auth::id()) {
-            $document->document_type = $newDocumentType;
-            $document->save();
-            $this->message = 'Document updated successfully.';
-        } else {
-            $this->error = 'Document not found or permission denied.';
-        }
+        // Dispatch an event to refresh documents
+        $this->dispatch('refreshDocuments');
     }
 
     public function availableDocumentTypes()
