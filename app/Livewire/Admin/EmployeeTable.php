@@ -12,6 +12,7 @@ use App\Exports\EmployeesExport;
 use App\Models\PhilippineProvinces;
 use App\Models\PhilippineCities;
 use App\Models\PhilippineBarangays;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class EmployeeTable extends Component
 {
@@ -72,6 +73,10 @@ class EmployeeTable extends Component
     public $dropdownForProvinceOpen = false;
     public $dropdownForCityOpen = false;
     public $dropdownForBarangayOpen = false;
+
+    public $personalDataSheetOpen = false;
+
+    public $pds;
 
     protected $listeners = [
         'exportUsers'
@@ -270,6 +275,8 @@ class EmployeeTable extends Component
                               $this->selectedUserData->residential_selectedCity . ', ' . 
                               $this->selectedUserData->residential_selectedProvince . ', ' . 
                               $this->selectedUserData->residential_selectedZipcode;
+
+        $this->personalDataSheetOpen = true;
     }
 
     public function closeUserProfile()
@@ -281,6 +288,12 @@ class EmployeeTable extends Component
         $this->employeesChildren = null;
         $this->childrenNames = null;
         $this->childrenBirthDates = null;
+    }
+
+    public function closePersonalDataSheet()
+    {
+        $this->selectedUser = null;
+        $this->personalDataSheetOpen = false;
     }
 
     public function exportUsers(){
@@ -326,4 +339,44 @@ class EmployeeTable extends Component
         $this->cities = collect();
         $this->barangays = collect();
     }
+
+    public function exportPDS()
+    {
+        try {
+            $user = $this->selectedUser; // Fetch the selected user data
+
+            // If no user is selected, throw an exception
+            if (!$user) {
+                throw new \Exception('No user selected.');
+            }
+
+            $pds = [
+                'userData' => $user->userData,
+                'userSpouse' => $user->employeesSpouse,
+                'userMother' => $user->employeesMother,
+                'userFather' => $user->employeesFather,
+                'userChildren' => $user->employeesChildren,
+                'educBackground' => $user->employeesEducation,
+                'eligibility' => $user->eligibility,
+                'workExperience' => $user->workExperience,
+                'voluntaryWorks' => $user->voluntaryWorks,
+                'lds' => $user->learningAndDevelopment,
+                'skills' => $user->skills,
+                'hobbies' => $user->hobbies,
+                'non_acads_distinctions' => $user->nonAcadDistinctions,
+                'assOrgMemberships' => $user->assOrgMembership,
+                'references' => $user->charReferences,
+            ];
+
+            $pdf = Pdf::loadView('pdf.pds', ['pds' => $pds]);
+            $pdf->setPaper('A4', 'portrait');
+            
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->stream();
+            }, $user->userData->first_name . ' ' . $user->userData->surname . ' PDS.pdf');
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
 }
