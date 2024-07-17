@@ -216,13 +216,18 @@
                                     </a>
                                 </li>
                                 <li class="mb-1 last:mb-0">
-                                    <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('job-post')){{ '!text-blue-500' }}@endif" href="#0">
+                                    <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('admin-dtr')){{ '!text-blue-500' }}@endif" href="{{route('admin-dtr')}}">
                                         <span class="text-sm font-medium">Daily Time Record</span>
                                     </a>
                                 </li>
                                 <li class="mb-1 last:mb-0">
                                     <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('admin-doc-request')){{ '!text-blue-500' }}@endif" href="{{route('admin-doc-request')}}">
                                         <span class="text-sm font-medium">Document Request</span>
+                                    </a>
+                                </li>
+                                <li class="mb-1 last:mb-0">
+                                    <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('admin-schedule')){{ '!text-blue-500' }}@endif" href="{{route('admin-schedule')}}">
+                                        <span class="text-sm font-medium">Schedule</span>
                                     </a>
                                 </li>
                             </ul>
