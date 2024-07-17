@@ -79,8 +79,7 @@ class PersonalDataSheetTable extends Component
         ];
 
         if($this->personalInfo === true){
-            $this->editPersonalInfo();
-            $this->getProvicesAndCities();
+            $this->getProvincesAndCities();
             if ($this->p_province != null) {
                 $provinceCode = PhilippineProvinces::where('province_description', $this->p_province)
                                 ->select('province_code')->first();
@@ -129,7 +128,7 @@ class PersonalDataSheetTable extends Component
         ]);
     }
 
-    public function getProvicesAndCities(){
+    public function getProvincesAndCities(){
         $this->pprovinces = PhilippineProvinces::all();
         $this->pcities = collect();
         $this->rcities = collect();
@@ -150,7 +149,8 @@ class PersonalDataSheetTable extends Component
         }
     }
 
-    public function editPersonalInfo(){
+    public function toggleEditPersonalInfo(){
+        $this->personalInfo = true;
         try{
             $this->surname = $this->pds['userData']->surname;
             $this->first_name = $this->pds['userData']->first_name;
@@ -175,8 +175,14 @@ class PersonalDataSheetTable extends Component
             $this->email = $this->pds['userData']->email;
             $this->p_house_street = $this->pds['userData']->p_house_street;
             $this->p_zipcode = $this->pds['userData']->permanent_selectedZipcode;
+            $this->p_province = $this->pds['userData']->permanent_selectedProvince;
+            $this->p_city = $this->pds['userData']->permanent_selectedCity;
+            $this->p_barangay = $this->pds['userData']->permanent_selectedBarangay;
             $this->r_house_street = $this->pds['userData']->r_house_street;
             $this->r_zipcode = $this->pds['userData']->residential_selectedZipcode;
+            $this->r_province = $this->pds['userData']->residential_selectedProvince;
+            $this->r_city = $this->pds['userData']->residential_selectedCity;
+            $this->r_barangay = $this->pds['userData']->residential_selectedBarangay;
             
         }catch(Exception $e){
             throw $e;
@@ -214,17 +220,47 @@ class PersonalDataSheetTable extends Component
                     'p_barangay' => 'required|string|max:255',
                     'p_city' => 'required|string|max:255',
                     'p_province' => 'required|string|max:255',
-                    'p_zipcode' => 'required|string|max:10',
+                    'p_zipcode' => 'required|numeric|digits:4',
                     'r_house_street' => 'required|string|max:255',
                     'r_barangay' => 'required|string|max:255',
                     'r_city' => 'required|string|max:255',
                     'r_province' => 'required|string|max:255',
-                    'r_zipcode' => 'required|string|max:10',
+                    'r_zipcode' => 'required|numeric|digits:4',
                 ]);
 
                 $user->userData->update([
-
-                ]);
+                    'surname' => $this->surname,
+                    'first_name' => $this->first_name,
+                    'middle_name' => $this->middle_name,
+                    'name_extension' => $this->name_extension,
+                    'date_of_birth' => $this->date_of_birth,
+                    'place_of_birth' => $this->place_of_birth,
+                    'sex' => $this->sex,
+                    'civil_status' => $this->civil_status,
+                    'citizenship' => $this->citizenship,
+                    'height' => $this->height,
+                    'weight' => $this->weight,
+                    'blood_type' => $this->blood_type,
+                    'mobile_number' => $this->mobile_number,
+                    'tel_number' => $this->tel_number,
+                    'gsis' => $this->gsis,
+                    'sss' => $this->sss,
+                    'pagibig' => $this->pagibig,
+                    'philhealth' => $this->philhealth,
+                    'tin' => $this->tin,
+                    'agency_employee_no' => $this->agency_employee_no,
+                    'email' => $this->email,
+                    'p_house_street' => $this->p_house_street,
+                    'permanent_selectedBarangay' => $this->p_barangay,
+                    'permanent_selectedCity' => $this->p_city,
+                    'permanent_selectedProvince' => $this->p_province,
+                    'permanent_selectedZipcode' => $this->p_zipcode,
+                    'r_house_street' => $this->r_house_street,
+                    'residential_selectedBarangay' => $this->r_barangay,
+                    'residential_selectedCity' => $this->r_city,
+                    'residential_selectedProvince' => $this->r_province,
+                    'residential_selectedZipcode' => $this->r_zipcode,
+                ]);                
 
             }
         }catch(Exception $e){

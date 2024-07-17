@@ -1,6 +1,6 @@
 <div class="w-full">
     <div class="flex justify-center w-full">
-        <div class="overflow-x-auto w-full sm:w-4/5 bg-white rounded-lg p-3 shadow dark:bg-gray-800">
+        <div class="overflow-x-auto w-full sm:w-4/5 bg-white rounded-2xl p-3 shadow dark:bg-gray-800">
 
             <div class="pt-4 pb-4">
                 <h1 class="text-3xl font-bold text-center text-slate-800 dark:text-white">PERSONAL DATA SHEET</h1>
@@ -25,14 +25,13 @@
                         padding-bottom: 14px !important;
                     }
                 }
-
             </style>
 
             <div class="overflow-hidden text-sm pb-3">
 
                 {{-- Employee's Data --}}
-                <div class="bg-blue-500 dark:bg-gray-200 p-2 text-gray-50 dark:text-slate-900 font-bold">I. PERSONAL INFORMATION
-                    <i class="fas fa-edit float-right pt-1 cursor-pointer" wire:click="$set('personalInfo', true)"></i>
+                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold rounded-t-lg">I. PERSONAL INFORMATION
+                    <i class="fas fa-edit float-right pt-1 cursor-pointer" wire:click="toggleEditPersonalInfo"></i>
                 </div>
                 <div>
 
@@ -183,7 +182,7 @@
                 </div>
 
                 {{-- Family Background --}}
-                <div class="bg-blue-500 dark:bg-gray-200 p-2 text-gray-50 dark:text-slate-900 font-bold">II. FAMILY BACKGROUND
+                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">II. FAMILY BACKGROUND
                     <i class="fas fa-edit float-right pt-1"></i>
                 </div>
                 <div>
@@ -351,7 +350,7 @@
                 </div>
 
                 {{-- Educational Background --}}
-                <div class="bg-blue-500 dark:bg-gray-200 p-2 text-gray-50 dark:text-slate-900 font-bold">III. EDUCATIONAL BACKGROUND
+                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">III. EDUCATIONAL BACKGROUND
                     <i class="fas fa-edit float-right pt-1"></i>
                 </div>
                 <div>
@@ -400,7 +399,7 @@
                 </div>
 
                 {{-- Civil Service Eligibility --}}
-                <div class="bg-blue-500 dark:bg-gray-200 p-2 text-gray-50 dark:text-slate-900 font-bold">IV. CIVIL SERVICE ELIGIBILITY
+                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">IV. CIVIL SERVICE ELIGIBILITY
                     <i class="fas fa-edit float-right pt-1"></i>
                 </div>
                 <div class="m-scrollable">
@@ -431,7 +430,7 @@
                 </div>
 
                 {{-- Work Experience --}}
-                <div class="bg-blue-500 dark:bg-gray-200 p-2 text-gray-50 dark:text-slate-900 font-bold">V. WORK EXPERIENCE
+                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">V. WORK EXPERIENCE
                     <i class="fas fa-edit float-right pt-1"></i>
                 </div>
                 <div class="m-scrollable">
@@ -485,7 +484,7 @@
                 </div>
 
                 {{-- Voluntary Work --}}
-                <div class="bg-blue-500 dark:bg-gray-200 p-2 text-gray-50 dark:text-slate-900 font-bold">VI. VOLUNTARY WORK
+                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">VI. VOLUNTARY WORK
                     <i class="fas fa-edit float-right pt-1"></i>
                 </div>
                 <div class="m-scrollable">
@@ -537,7 +536,7 @@
                 </div>
 
                 {{-- Learning and Development --}}
-                <div class="bg-blue-500 dark:bg-gray-200 p-2 text-gray-50 dark:text-slate-900 font-bold">VII. LEARNING AND DEVELOPMENT
+                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">VII. LEARNING AND DEVELOPMENT
                     <i class="fas fa-edit float-right pt-1"></i>
                 </div>
                 <div class="m-scrollable">
@@ -589,7 +588,7 @@
                 </div>
 
                 {{-- Other Information --}}
-                <div class="bg-blue-500 dark:bg-gray-200 p-2 text-gray-50 dark:text-slate-900 font-bold">VIII. OTHER INFORMATION</div>
+                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">VIII. OTHER INFORMATION</div>
                 <div class="m-scrollable">
 
                     {{-- SKILLS --}}
@@ -719,8 +718,8 @@
                         color: white;
                     }
                 </style>
-                <div class="bg-white dark:bg-slate-700 p-2 mt-3 text-white flex justify-center">
-                    <button class="btn bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap" wire:click='exportPDS' wire:loading.attr='disabled'>
+                <div class="bg-gray-400 dark:bg-slate-700 p-2 text-white flex justify-center rounded-b-lg">
+                    <button class="btn bg-emerald-200 dark:bg-emerald-500 hover:bg-emerald-600 text-gray-800 dark:text-white whitespace-nowrap" wire:click='exportPDS' wire:loading.attr='disabled'>
                         <div wire:loading wire:target="exportPDS">
                             <div class="spinner-border small text-primary" role="status">
                             </div>
@@ -750,40 +749,61 @@
                     <div class="col-span-2 sm:col-span-1">
                         <label for="surname" class="block text-sm font-medium text-gray-700">Surname</label>
                         <input type="text" id="surname" wire:model='surname' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('surname') 
+                            <span class="text-red-500 text-sm">The surname is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
                         <label for="first_name" class="block text-sm font-medium text-gray-700">Firstname</label>
                         <input type="text" id="first_name" wire:model='first_name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('first_name') 
+                            <span class="text-red-500 text-sm">The firstname is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">Middlename</label>
-                        <input type="text" id="first_name" wire:model='middle_name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <label for="middle_name" class="block text-sm font-medium text-gray-700">Middlename</label>
+                        <input type="text" id="middle_name" wire:model='middle_name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('middle_name') 
+                            <span class="text-red-500 text-sm">The middlename is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">Name Extension</label>
-                        <input type="text" id="first_name" wire:model='name_extension' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <label for="name_extension" class="block text-sm font-medium text-gray-700">Name Extension</label>
+                        <input type="text" id="name_extension" wire:model='name_extension' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('name_extension') 
+                            <span class="text-red-500 text-sm">The name extension is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">Date of Birth</label>
-                        <input type="date" id="first_name" wire:model='date_of_birth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <label for="date_of_birth" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+                        <input type="date" id="date_of_birth" wire:model='date_of_birth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('date_of_birth') 
+                            <span class="text-red-500 text-sm">The date of birth is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">Place of Birth</label>
-                        <input type="text" id="first_name" wire:model='place_of_birth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <label for="place_of_birth" class="block text-sm font-medium text-gray-700">Place of Birth</label>
+                        <input type="text" id="place_of_birth" wire:model='place_of_birth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('place_of_birth') 
+                            <span class="text-red-500 text-sm">The place of birth is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">Sex at Birth</label>
-                        <input type="text" id="first_name" wire:model='sex' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <label for="sex" class="block text-sm font-medium text-gray-700">Sex at Birth</label>
+                        <input type="text" id="sex" wire:model='sex' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('sex') 
+                            <span class="text-red-500 text-sm">The sex is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">Civil Status</label>
+                        <label for="civil_status" class="block text-sm font-medium text-gray-700">Civil Status</label>
                         <select wire:model='civil_status' class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                             <option value=""></option>
                             <option value="Single">Single</option>
@@ -792,84 +812,124 @@
                             <option value="Separated">Separated</option>
                             <option value="Other">Other</option>
                         </select>
+                        @error('civil_status') 
+                            <span class="text-red-500 text-sm">The civil status is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">Citizenship</label>
-                        <input type="text" id="first_name" wire:model='citizenship' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <label for="citizenship" class="block text-sm font-medium text-gray-700">Citizenship</label>
+                        <input type="text" id="citizenship" wire:model='citizenship' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('citizenship') 
+                            <span class="text-red-500 text-sm">The citizenship is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">Height</label>
-                        <input type="number" id="first_name" wire:model='height' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <label for="height" class="block text-sm font-medium text-gray-700">Height</label>
+                        <input type="number" step="0.01" id="height" wire:model='height' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('height') 
+                            <span class="text-red-500 text-sm">The height is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">Weight</label>
-                        <input type="number" id="first_name" wire:model='weight' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <label for="weight" class="block text-sm font-medium text-gray-700">Weight</label>
+                        <input type="number" step="0.01" id="weight" wire:model='weight' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('weight') 
+                            <span class="text-red-500 text-sm">The weight is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">Bloodtype</label>
-                        <input type="text" id="first_name" wire:model='blood_type' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <label for="blood_type" class="block text-sm font-medium text-gray-700">Bloodtype</label>
+                        <input type="text" id="blood_type" wire:model='blood_type' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('blood_type') 
+                            <span class="text-red-500 text-sm">The bloodtype is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">Tel Number</label>
-                        <input type="text" id="first_name" wire:model='tel_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <label for="tel_number" class="block text-sm font-medium text-gray-700">Tel Number</label>
+                        <input type="text" id="tel_number" wire:model='tel_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('tel_number') 
+                            <span class="text-red-500 text-sm">The telephone number is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">Mobile Number</label>
-                        <input type="text" id="first_name" wire:model='mobile_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <label for="mobile_number" class="block text-sm font-medium text-gray-700">Mobile Number</label>
+                        <input type="text" id="mobile_number" wire:model='mobile_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('mobile_number') 
+                            <span class="text-red-500 text-sm">The mobile number is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="text" id="first_name" wire:model='email' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="email" wire:model='email' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('email') 
+                            <span class="text-red-500 text-sm">The email is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">GSIS ID No.</label>
-                        <input type="text" id="first_name" wire:model='gsis' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                    </div>
+                        <label for="gsis" class="block text-sm font-medium text-gray-700">GSIS ID No.</label>
+                        <input type="text" id="gsis" wire:model='gsis' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('gsis') 
+                            <span class="text-red-500 text-sm">The GSIS ID No. is required!</span> 
+                        @enderror
+                    </div>                    
 
                     <div class="col-span-2 sm:col-span-1">
                         <label for="first_name" class="block text-sm font-medium text-gray-700">SSS ID No.</label>
                         <input type="text" id="first_name" wire:model='sss' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('sss')
+                            <span class="text-red-500 text-sm">The SSS ID No. is required!</span>
+                        @enderror
                     </div>
 
                     <div class="col-span-2 sm:col-span-1">
                         <label for="first_name" class="block text-sm font-medium text-gray-700">Pag-Ibig ID No.</label>
                         <input type="text" id="first_name" wire:model='pagibig' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('pagibig') 
+                            <span class="text-red-500 text-sm">The Pag-IBIG ID No. is required!</span> 
+                        @enderror
                     </div>
 
                     <div class="col-span-2 sm:col-span-1">
                         <label for="first_name" class="block text-sm font-medium text-gray-700">PhilHealth ID No.</label>
                         <input type="text" id="first_name" wire:model='philhealth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('philhealth') 
+                            <span class="text-red-500 text-sm">The Philhealth No. is required!</span> 
+                        @enderror
                     </div>
 
                     <div class="col-span-2 sm:col-span-1">
                         <label for="first_name" class="block text-sm font-medium text-gray-700">TIN ID No.</label>
-                        <input type="text" id="first_name" wire:model='tin' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <input type="text" id="tin" wire:model='tin' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('tin') 
+                            <span class="text-red-500 text-sm">The TIN ID No. is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <div class="col-span-2 sm:col-span-2">
                         <label for="first_name" class="block text-sm font-medium text-gray-700">Agency Employee No.</label>
-                        <input type="text" id="first_name" wire:model='agency_employee_no' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <input type="text" id="agency_employee_no" wire:model='agency_employee_no' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        @error('agency_employee_no') 
+                            <span class="text-red-500 text-sm">The Agency Employee No. is required!</span> 
+                        @enderror
                     </div>
-
+                    
                     <fieldset class="col-span-2 sm:col-span-2 border border-gray-300 p-4 rounded-lg overflow-hidden w-full">
                         <legend class="px-2"> Permanent Address </legend>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="col-span-2 sm:col-span-1">
-                                <label for="surname" class="block text-sm font-medium text-gray-700">Province</label>
-                                <select
-                                    class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                    wire:model.live="p_province" id="p_province"
-                                    name="p_province" required>
+                                <label for="p_province" class="block text-sm font-medium text-gray-700">Province</label>
+                                <select class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        wire:model='p_province' id="p_province" name="p_province" required>
                                     @if ($pprovinces)
-                                        <option value="" style="opacity: .6;">Select Province</option>
+                                        <option value="{{ $p_province }}" style="opacity: .6;">{{ $p_province }}</option>
                                         @foreach ($pprovinces->sortBy('province_description') as $province)
                                             <option value="{{ $province->province_description }}">
                                                 {{ $province->province_description }}
@@ -879,16 +939,17 @@
                                         <option value="">Select a region</option>
                                     @endif
                                 </select>
+                                @error('p_province') 
+                                    <span class="text-red-500 text-sm">The province is required!</span> 
+                                @enderror
                             </div>
-
+                    
                             <div class="col-span-2 sm:col-span-1">
-                                <label for="surname" class="block text-sm font-medium text-gray-700">City</label>
-                                <select
-                                    class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                    wire:model.live="p_city" id="p_city"
-                                    name="p_city" required>
+                                <label for="p_city" class="block text-sm font-medium text-gray-700">City</label>
+                                <select class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        wire:model='p_city' id="p_city" name="p_city" required>
                                     @if ($pcities)
-                                        <option value="" style="opacity: .6;">Select City</option>
+                                        <option value="{{ $p_city }}" style="opacity: .6;">{{ $p_city }}</option>
                                         @foreach ($pcities->sortBy('city_municipality_description') as $city_municipality)
                                             <option value="{{ $city_municipality->city_municipality_description }}">
                                                 {{ $city_municipality->city_municipality_description }}
@@ -898,16 +959,17 @@
                                         <option value="">Select a city/municipality</option>
                                     @endif
                                 </select>
+                                @error('p_city') 
+                                    <span class="text-red-500 text-sm">The city is required!</span> 
+                                @enderror
                             </div>
-
+                    
                             <div class="col-span-2 sm:col-span-1">
-                                <label for="surname" class="block text-sm font-medium text-gray-700">Barangay</label>
-                                <select
-                                    class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                    wire:model.live="p_barangay" id="p_barangay"
-                                    name="p_barangay" required>
+                                <label for="p_barangay" class="block text-sm font-medium text-gray-700">Barangay</label>
+                                <select class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        wire:model='p_barangay' id="p_barangay" name="p_barangay" required>
                                     @if ($pbarangays)
-                                        <option value="" style="opacity: .6;">Select Barangay</option>
+                                        <option value="{{ $p_barangay }}" style="opacity: .6;">{{ $p_barangay }}</option>
                                         @foreach ($pbarangays->sortBy('barangay_description') as $barangay)
                                             <option value="{{ $barangay->barangay_description }}">
                                                 {{ $barangay->barangay_description }}
@@ -917,18 +979,27 @@
                                         <option value="">Select a barangay</option>
                                     @endif
                                 </select>
+                                @error('p_barangay') 
+                                    <span class="text-red-500 text-sm">The barangay is required!</span> 
+                                @enderror
                             </div>
-
+                    
                             <div class="col-span-2 sm:col-span-1">
-                                <label for="first_name" class="block text-sm font-medium text-gray-700">Zip Code</label>
-                                <input type="number" id="first_name" wire:model='p_zipcode' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                <label for="p_zipcode" class="block text-sm font-medium text-gray-700">Zip Code</label>
+                                <input type="number" id="p_zipcode" wire:model='p_zipcode' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                @error('p_zipcode') 
+                                    <span class="text-red-500 text-sm">The Zip Code is required!</span> 
+                                @enderror
                             </div>
-        
+                    
                             <div class="col-span-2 sm:col-span-2">
-                                <label for="first_name" class="block text-sm font-medium text-gray-700">House | Street | Subdivision</label>
-                                <input type="text" id="first_name" wire:model='p_house_street' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                <label for="p_house_street" class="block text-sm font-medium text-gray-700">House | Street | Subdivision</label>
+                                <input type="text" id="p_house_street" wire:model='p_house_street' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                @error('p_house_street') 
+                                    <span class="text-red-500 text-sm">The House/Street/Subdivision is required!</span> 
+                                @enderror
                             </div>
-        
+                    
                         </div>
                     </fieldset>
 
@@ -942,7 +1013,7 @@
                                     wire:model.live="r_province" id="r_province"
                                     name="r_province" required>
                                     @if ($pprovinces)
-                                        <option value="" style="opacity: .6;">Select Province</option>
+                                        <option value="{{ $r_province }}" style="opacity: .6;">{{ $r_province }}</option>
                                         @foreach ($pprovinces->sortBy('province_description') as $province)
                                             <option value="{{ $province->province_description }}">
                                                 {{ $province->province_description }}
@@ -952,6 +1023,9 @@
                                         <option value="">Select a region</option>
                                     @endif
                                 </select>
+                                @error('r_province') 
+                                    <span class="text-red-500 text-sm">The province is required!</span> 
+                                @enderror
                             </div>
         
                             <div class="col-span-2 sm:col-span-1">
@@ -961,7 +1035,7 @@
                                     wire:model.live="r_city" id="r_city"
                                     name="r_city" required>
                                     @if ($rcities)
-                                        <option value="" style="opacity: .6;">Select City</option>
+                                        <option value="{{ $r_city }}" style="opacity: .6;">{{ $r_city }}</option>
                                         @foreach ($rcities->sortBy('city_municipality_description') as $city_municipality)
                                             <option value="{{ $city_municipality->city_municipality_description }}">
                                                 {{ $city_municipality->city_municipality_description }}
@@ -971,6 +1045,9 @@
                                         <option value="">Select a city/municipality</option>
                                     @endif
                                 </select>
+                                @error('r_city') 
+                                    <span class="text-red-500 text-sm">The city is required!</span> 
+                                @enderror
                             </div>
 
                             <div class="col-span-2 sm:col-span-1">
@@ -980,7 +1057,7 @@
                                     wire:model.live="r_barangay" id="r_barangay"
                                     name="r_barangay" required>
                                     @if ($rbarangays)
-                                        <option value="" style="opacity: .6;">Select Barangay</option>
+                                        <option value="{{ $r_barangay }}" style="opacity: .6;">{{ $r_barangay }}</option>
                                         @foreach ($rbarangays->sortBy('barangay_description') as $barangay)
                                             <option value="{{ $barangay->barangay_description }}">
                                                 {{ $barangay->barangay_description }}
@@ -990,16 +1067,25 @@
                                         <option value="">Select a barangay</option>
                                     @endif
                                 </select>
+                                @error('r_barangay') 
+                                    <span class="text-red-500 text-sm">The barangay is required</span>
+                                @enderror
                             </div>
 
                             <div class="col-span-2 sm:col-span-1">
                                 <label for="first_name" class="block text-sm font-medium text-gray-700">Zip Code</label>
                                 <input type="number" id="first_name" wire:model='r_zipcode' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                @error('r_zipcode') 
+                                    <span class="text-red-500 text-sm">The Zip Code is required!</span> 
+                                @enderror
                             </div>
         
                             <div class="col-span-2 sm:col-span-2">
                                 <label for="first_name" class="block text-sm font-medium text-gray-700">House | Street | Subdivision</label>
                                 <input type="text" id="first_name" wire:model='r_house_street' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                @error('r_house_street') 
+                                    <span class="text-red-500 text-sm">The House/Street/Subdivision is required!</span> 
+                                @enderror
                             </div>
                         </div>
                     </fieldset>
