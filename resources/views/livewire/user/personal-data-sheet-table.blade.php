@@ -25,6 +25,31 @@
                         padding-bottom: 14px !important;
                     }
                 }
+
+                @-webkit-keyframes spinner-border {
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+
+                @keyframes spinner-border {
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+
+                .spinner-border {
+                    display: inline-block;
+                    width: 1rem;
+                    height: 1rem;
+                    vertical-align: text-bottom;
+                    border: 2px solid currentColor;
+                    border-right-color: transparent;
+                    border-radius: 50%;
+                    -webkit-animation: spinner-border .75s linear infinite;
+                    animation: spinner-border .75s linear infinite;
+                    color: white;
+                }
             </style>
 
             <div class="overflow-hidden text-sm pb-3">
@@ -692,32 +717,6 @@
                 </div>
 
                 {{-- Footer --}}
-                <style>
-                    @-webkit-keyframes spinner-border {
-                        to {
-                            transform: rotate(360deg);
-                        }
-                    }
-
-                    @keyframes spinner-border {
-                        to {
-                            transform: rotate(360deg);
-                        }
-                    }
-
-                    .spinner-border {
-                        display: inline-block;
-                        width: 1rem;
-                        height: 1rem;
-                        vertical-align: text-bottom;
-                        border: 2px solid currentColor;
-                        border-right-color: transparent;
-                        border-radius: 50%;
-                        -webkit-animation: spinner-border .75s linear infinite;
-                        animation: spinner-border .75s linear infinite;
-                        color: white;
-                    }
-                </style>
                 <div class="bg-gray-400 dark:bg-slate-700 p-2 text-white flex justify-center rounded-b-lg">
                     <button class="btn bg-emerald-200 dark:bg-emerald-500 hover:bg-emerald-600 text-gray-800 dark:text-white whitespace-nowrap" wire:click='exportPDS' wire:loading.attr='disabled'>
                         <div wire:loading wire:target="exportPDS">
@@ -1093,6 +1092,10 @@
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-2 sm:col-span-2">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="savePersonalInfo" style="margin-bottom: 5px;">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
                             Save
                         </button>
                         <button @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
@@ -1106,5 +1109,6 @@
         </div>
     </x-modal>
 
+    <x-toast />
     
 </div>

@@ -14,6 +14,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class PersonalDataSheetTable extends Component
 {
     public $pds;
+    public $popup_message = '';
 
     public $pprovinces;
     public $pcities;
@@ -262,8 +263,17 @@ class PersonalDataSheetTable extends Component
                     'residential_selectedZipcode' => $this->r_zipcode,
                 ]);                
 
+                $this->personalInfo = null;
+                $this->dispatch('notify', [
+                    'message' => 'Personal Information updated successfully!', 
+                    'type' => 'success'
+                ]);
             }
         }catch(Exception $e){
+            $this->dispatch('notify', [
+                'message' => 'Personal Information update was unsuccessful!', 
+                'type' => 'success'
+            ]);
             throw $e;
         }
     }
