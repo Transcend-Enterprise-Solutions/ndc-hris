@@ -20,9 +20,4 @@ class Transaction extends Model
         'area_alias',
         'upload_time',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 }

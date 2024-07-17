@@ -29,6 +29,7 @@ class User extends Authenticatable
         'password',
         'user_role',
         'active_status',
+        'emp_code',
     ];
 
     /**
@@ -117,6 +118,11 @@ class User extends Authenticatable
     public function docRequests()
     {
         return $this->hasMany(DocRequest::class);
+    }
+
+    public function userSchedule()
+    {
+        return $this->hasMany(Schedule::class);
     }
 
 
