@@ -27,11 +27,11 @@ class EmployeeTable extends Component
 
     public $filters = [
         'name' => true,
-        'date_of_birth' => false,
-        'place_of_birth' => false,
-        'sex' => false,
+        'date_of_birth' => true,
+        'place_of_birth' => true,
+        'sex' => true,
         'citizenship' => false,
-        'civil_status' => false,
+        'civil_status' => true,
         'height' => false,
         'weight' => false,
         'blood_type' => false,
@@ -41,16 +41,16 @@ class EmployeeTable extends Component
         'sss' => false,
         'tin' => false,
         'agency_employee_no' => false,
-        // 'permanent_selectedProvince' => false,
-        // 'permanent_selectedCity' => false,
-        // 'permanent_selectedBarangay' => false,
-        // 'p_house_street' => false,
-        // 'permanent_selectedZipcode' => false,
-        // 'residential_selectedProvince' => false,
-        // 'residential_selectedCity' => false,
-        // 'residential_selectedBarangay' => false,
-        // 'r_house_street' => false,
-        // 'residential_selectedZipcode' => false,
+        'permanent_selectedZipcode' => false,
+        'permanent_selectedProvince' => false,
+        'permanent_selectedCity' => false,
+        'permanent_selectedBarangay' => false,
+        'p_house_street' => false,
+        'residential_selectedZipcode' => false,
+        'residential_selectedProvince' => false,
+        'residential_selectedCity' => false,
+        'residential_selectedBarangay' => false,
+        'r_house_street' => false,
         // 'tel_number' => false,
         // 'mobile_number' => false,
         // 'email' => false,
@@ -192,6 +192,36 @@ class EmployeeTable extends Component
             })
             ->when($this->filters['agency_employee_no'], function ($query) {
             $query->addSelect('user_data.agency_employee_no');
+            })
+            ->when($this->filters['permanent_selectedProvince'], function ($query) {
+            $query->addSelect('user_data.permanent_selectedProvince');
+            })
+            ->when($this->filters['permanent_selectedCity'], function ($query) {
+            $query->addSelect('user_data.permanent_selectedCity');
+            })
+            ->when($this->filters['permanent_selectedBarangay'], function ($query) {
+            $query->addSelect('user_data.permanent_selectedBarangay');
+            })
+            ->when($this->filters['p_house_street'], function ($query) {
+            $query->addSelect('user_data.p_house_street');
+            })
+            ->when($this->filters['permanent_selectedZipcode'], function ($query) {
+            $query->addSelect('user_data.permanent_selectedZipcode');
+            })
+            ->when($this->filters['residential_selectedProvince'], function ($query) {
+            $query->addSelect('user_data.residential_selectedProvince');
+            })
+            ->when($this->filters['residential_selectedCity'], function ($query) {
+            $query->addSelect('user_data.residential_selectedCity');
+            })
+            ->when($this->filters['residential_selectedBarangay'], function ($query) {
+            $query->addSelect('user_data.residential_selectedBarangay');
+            })
+            ->when($this->filters['r_house_street'], function ($query) {
+            $query->addSelect('user_data.r_house_street');
+            })
+            ->when($this->filters['residential_selectedZipcode'], function ($query) {
+            $query->addSelect('user_data.residential_selectedZipcode');
             })
             ->where(function ($query) {
                 if ($this->sex) {
