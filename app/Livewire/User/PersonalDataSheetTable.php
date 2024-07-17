@@ -15,12 +15,16 @@ class PersonalDataSheetTable extends Component
 {
     public $pds;
     public $popup_message = '';
-
     public $pprovinces;
     public $pcities;
     public $rcities;
     public $pbarangays;
     public $rbarangays;
+    public $editSpouse = false;
+    public $editFather = false;
+    public $editMother = false;
+    public $editChildren = false;
+    public $editEducBackground = false;
 
     // Personal Information
     public $personalInfo = false;
@@ -56,8 +60,7 @@ class PersonalDataSheetTable extends Component
     public $r_province;
     public $r_zipcode;
 
-    // Personal Information
-    public $familyBackground = false;
+    // Family Background
     public $spouse_surname;
     public $spouse_first_name;
     public $spouse_middle_name;
@@ -76,6 +79,9 @@ class PersonalDataSheetTable extends Component
     public $mother_middle_name;
     public $mother_name_extension;
     public $children = [];
+
+    // Educational Background
+    public $education = [];
 
 
     public function render(){
@@ -210,9 +216,8 @@ class PersonalDataSheetTable extends Component
             throw $e;
         }
     }
-
-    public function toggleEditFamilyBackground(){
-        $this->familyBackground = true;
+    public function toggleEditSpouse(){
+        $this->editSpouse = true;
         try{
             $this->spouse_surname = $this->pds['userSpouse']->surname;
             $this->spouse_first_name = $this->pds['userSpouse']->first_name;
@@ -223,15 +228,44 @@ class PersonalDataSheetTable extends Component
             $this->spouse_employer = $this->pds['userSpouse']->employer;
             $this->spouse_emp_business_address = $this->pds['userSpouse']->business_address;
             $this->spouse_emp_tel_num = $this->pds['userSpouse']->tel_number;
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function toggleEditFather(){
+        $this->editFather = true;
+        try{
             $this->father_surname = $this->pds['userFather']->surname;
             $this->father_first_name = $this->pds['userFather']->first_name;
             $this->father_middle_name = $this->pds['userFather']->middle_name;
             $this->father_name_extension = $this->pds['userFather']->name_extension;
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function toggleEditMother(){
+        $this->editMother = true;
+        try{
             $this->mother_surname = $this->pds['userMother']->surname;
             $this->mother_first_name = $this->pds['userMother']->first_name;
             $this->mother_middle_name = $this->pds['userMother']->middle_name;
             $this->mother_name_extension = $this->pds['userMother']->name_extension;
-            $this->children = $this->pds['userChildren'];
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function toggleEditEducBackground(){
+        $this->editEducBackground = true;
+        try{
+            $this->education = $this->pds['educBackground']->toArray();
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function toggleEditChildren(){
+        $this->editChildren = true;
+        try{
+            $this->children = $this->pds['userChildren']->toArray();
         }catch(Exception $e){
             throw $e;
         }
@@ -324,4 +358,174 @@ class PersonalDataSheetTable extends Component
             throw $e;
         }
     }
+
+    public function saveSpouse(){
+        try{
+            $user = Auth::user();
+            if($user){
+
+                $this->validate([
+                    'spouse_surname' => 'required|string|max:255',
+                    'spouse_first_name' => 'required|string|max:255',
+                    'spouse_date_of_birth' => 'required|date',
+                ]);
+
+                $user->employeesSpouse->update([
+                    'surname' => $this->spouse_surname,
+                    'first_name' => $this->spouse_first_name,
+                    'middle_name' => $this->spouse_middle_name,
+                    'name_extension' => $this->spouse_name_extension,
+                    'birth_date' => $this->spouse_date_of_birth,
+                    'occupation' => $this->spouse_occupation,
+                    'employer' => $this->spouse_employer,
+                    'business_address' => $this->spouse_emp_business_address,
+                    'tel_number' => $this->spouse_emp_tel_num,
+                ]);                
+
+                $this->editSpouse = null;                                                
+                $this->dispatch('notify', [
+                    'message' => "Spouse's info updated successfully!", 
+                    'type' => 'success'
+                ]);
+            }
+        }catch(Exception $e){
+            $this->dispatch('notify', [
+                'message' => "Spouse's info update was unsuccessful!", 
+                'type' => 'error'
+            ]);
+            throw $e;
+        }
+    }
+
+    public function saveFather(){
+        try{
+            $user = Auth::user();
+            if($user){
+
+                $this->validate([
+                    'father_surname' => 'required|string|max:255',
+                    'father_first_name' => 'required|string|max:255',
+                ]);
+
+                $user->employeesFather->update([
+                    'surname' => $this->father_surname,
+                    'first_name' => $this->father_first_name,
+                    'middle_name' => $this->father_middle_name,
+                    'name_extension' => $this->father_name_extension,
+                ]);                
+
+                $this->editFather = null;                                                
+                $this->dispatch('notify', [
+                    'message' => "Father's name updated successfully!", 
+                    'type' => 'success'
+                ]);
+            }
+        }catch(Exception $e){
+            $this->dispatch('notify', [
+                'message' => "Father's name update was unsuccessful!", 
+                'type' => 'error'
+            ]);
+            throw $e;
+        }
+    }
+
+    public function saveChildren(){
+        try{
+            $user = Auth::user();
+            if($user){
+                foreach ($this->children as $child) {
+                    $childRecord = $user->employeesChildren->find($child['id']);
+                    if ($childRecord) {
+                        $childRecord->update([
+                            'childs_name' => $child['childs_name'],
+                            'childs_birth_date' => $child['childs_birth_date'],
+                        ]);
+                    }
+                }
+
+                $this->editChildren = null;
+                $this->dispatch('notify', [
+                    'message' => "Children's info updated successfully!", 
+                    'type' => 'success'
+                ]);
+            }
+        }catch(Exception $e){
+            $this->dispatch('notify', [
+                'message' => "Children's info update was unsuccessful!", 
+                'type' => 'error'
+            ]);
+            throw $e;
+        }
+    }
+
+    public function saveMother(){
+        try{
+            $user = Auth::user();
+            if($user){
+
+                $this->validate([
+                    'mother_surname' => 'required|string|max:255',
+                    'mother_first_name' => 'required|string|max:255',
+                ]);
+
+                $user->employeesMother->update([
+                    'surname' => $this->mother_surname,
+                    'first_name' => $this->mother_first_name,
+                    'middle_name' => $this->mother_middle_name,
+                    'name_extension' => $this->mother_name_extension,
+                ]);                
+
+                $this->editMother = null;                                                
+                $this->dispatch('notify', [
+                    'message' => "Mother's name updated successfully!", 
+                    'type' => 'success'
+                ]);
+            }
+        }catch(Exception $e){
+            $this->dispatch('notify', [
+                'message' => "Mother's name update was unsuccessful!", 
+                'type' => 'error'
+            ]);
+            throw $e;
+        }
+    }
+
+    public function saveEducationBackground()
+    {
+        try {
+            $user = Auth::user();
+            if ($user) {
+
+                foreach ($this->education as $educ) {
+                    $educRecord = $user->employeesEducation->find($educ['id']);
+                    if ($educRecord) {
+                        $educRecord->update([
+                            'level' => $educ['level'],
+                            'name_of_school' => $educ['name_of_school'],
+                            'from' => $educ['from'],
+                            'to' => $educ['to'],
+                            'basic_educ_degree_course' => $educ['basic_educ_degree_course'],
+                            'award' => $educ['award'],
+                            'highest_level_unit_earned' => $educ['highest_level_unit_earned'],
+                            'year_graduated' => $educ['year_graduated'],
+                        ]);
+                    }
+                }
+
+                $this->editEducBackground = null;
+                $this->dispatch('notify', [
+                    'message' => "Education background updated successfully!",
+                    'type' => 'success'
+                ]);
+            }
+        } catch (Exception $e) {
+            $this->dispatch('notify', [
+                'message' => "Education background update was unsuccessful!",
+                'type' => 'error'
+            ]);
+            throw $e;
+        }
+    }
+
+
 }
