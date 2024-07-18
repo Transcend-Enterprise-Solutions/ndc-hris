@@ -8,7 +8,8 @@
                 <form>
                     <div class="grid grid-cols-2 gap-4 mt-1">
                         <div class="col-span-2 sm:col-span-1">
-                            <label for="surname" class="block text-sm font-medium text-gray-700">Surname</label>
+                            <label for="surname"
+                                class="block text-sm font-medium text-gray-700 dark:text-slate-100">Surname</label>
                             <input type="text" id="surname" wire:model='surname'
                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                             @error('surname')
@@ -17,7 +18,8 @@
                         </div>
 
                         <div class="col-span-2 sm:col-span-1">
-                            <label for="first_name" class="block text-sm font-medium text-gray-700">Firstname</label>
+                            <label for="first_name"
+                                class="block text-sm font-medium text-gray-700 dark:text-slate-100">Firstname</label>
                             <input type="text" id="first_name" wire:model='first_name'
                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                             @error('first_name')
@@ -26,7 +28,8 @@
                         </div>
 
                         <div class="col-span-2 sm:col-span-1">
-                            <label for="middle_name" class="block text-sm font-medium text-gray-700">Middlename</label>
+                            <label for="middle_name"
+                                class="block text-sm font-medium text-gray-700 dark:text-slate-100">Middlename</label>
                             <input type="text" id="middle_name" wire:model='middle_name'
                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                             @error('middle_name')
@@ -36,7 +39,7 @@
 
                         <div class="col-span-2 sm:col-span-1">
                             <label for="name_extension"
-                                class="block text-sm font-medium text-gray-700">Office/Department</label>
+                                class="block text-sm font-medium text-gray-700 dark:text-slate-100">Office/Department</label>
                             <input type="text" id="name_extension" wire:model='name_extension'
                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                             @error('name_extension')
@@ -45,7 +48,8 @@
                         </div>
 
                         <div class="col-span-2 sm:col-span-1">
-                            <label for="date_of_birth" class="block text-sm font-medium text-gray-700">Date of
+                            <label for="date_of_birth"
+                                class="block text-sm font-medium text-gray-700 dark:text-slate-100">Date of
                                 Filing</label>
                             <input type="date" id="date_of_birth" wire:model='date_of_birth'
                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
@@ -55,7 +59,8 @@
                         </div>
 
                         <div class="col-span-2 sm:col-span-1">
-                            <label for="place_of_birth" class="block text-sm font-medium text-gray-700">Position</label>
+                            <label for="place_of_birth"
+                                class="block text-sm font-medium text-gray-700 dark:text-slate-100">Position</label>
                             <input type="text" id="place_of_birth" wire:model='place_of_birth'
                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                             @error('place_of_birth')
@@ -64,7 +69,8 @@
                         </div>
 
                         <div class="col-span-2 sm:col-span-1">
-                            <label for="sex" class="block text-sm font-medium text-gray-700">Salary</label>
+                            <label for="sex"
+                                class="block text-sm font-medium text-gray-700 dark:text-slate-100">Salary</label>
                             <input type="text" id="sex" wire:model='sex'
                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                             @error('sex')
