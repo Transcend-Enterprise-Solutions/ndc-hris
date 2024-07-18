@@ -25,6 +25,8 @@ class PersonalDataSheetTable extends Component
     public $editMother = false;
     public $editChildren = false;
     public $editEducBackground = false;
+    public $editEligibility = false;
+    public $editWorkExp = false;
 
     // Personal Information
     public $personalInfo = false;
@@ -82,6 +84,12 @@ class PersonalDataSheetTable extends Component
 
     // Educational Background
     public $education = [];
+
+    // Eligibility
+    public $eligibilities = [];
+
+    // Work Experience
+    public $workExperiences = [];
 
 
     public function render(){
@@ -254,6 +262,14 @@ class PersonalDataSheetTable extends Component
             throw $e;
         }
     }
+    public function toggleEditChildren(){
+        $this->editChildren = true;
+        try{
+            $this->children = $this->pds['userChildren']->toArray();
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
     public function toggleEditEducBackground(){
         $this->editEducBackground = true;
         try{
@@ -262,10 +278,18 @@ class PersonalDataSheetTable extends Component
             throw $e;
         }
     }
-    public function toggleEditChildren(){
-        $this->editChildren = true;
+    public function toggleEditEligibility(){
+        $this->editEligibility = true;
         try{
-            $this->children = $this->pds['userChildren']->toArray();
+            $this->eligibilities = $this->pds['eligibility']->toArray();
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function toggleEditWorkExp(){
+        $this->editWorkExp = true;
+        try{
+            $this->workExperiences = $this->pds['workExperience']->toArray();
         }catch(Exception $e){
             throw $e;
         }
@@ -490,8 +514,7 @@ class PersonalDataSheetTable extends Component
         }
     }
 
-    public function saveEducationBackground()
-    {
+    public function saveEducationBackground(){
         try {
             $user = Auth::user();
             if ($user) {
@@ -521,6 +544,40 @@ class PersonalDataSheetTable extends Component
         } catch (Exception $e) {
             $this->dispatch('notify', [
                 'message' => "Education background update was unsuccessful!",
+                'type' => 'error'
+            ]);
+            throw $e;
+        }
+    }
+
+    public function saveEligibility(){
+        try {
+            $user = Auth::user();
+            if ($user) {
+
+                foreach ($this->eligibilities as $elig) {
+                    $eligRecord = $user->eligibility->find($elig['id']);
+                    if ($eligRecord) {
+                        $eligRecord->update([
+                            'eligibility' => $elig['eligibility'],
+                            'rating' => $elig['rating'],
+                            'date' => $elig['date'],
+                            'place_of_exam' => $elig['place_of_exam'],
+                            'license' => $elig['license'],
+                            'date_of_validity' => $elig['date_of_validity'],
+                        ]);
+                    }
+                }
+
+                $this->editEligibility = null;
+                $this->dispatch('notify', [
+                    'message' => "Eligibilities updated successfully!",
+                    'type' => 'success'
+                ]);
+            }
+        } catch (Exception $e) {
+            $this->dispatch('notify', [
+                'message' => "Eligibilities update was unsuccessful!",
                 'type' => 'error'
             ]);
             throw $e;

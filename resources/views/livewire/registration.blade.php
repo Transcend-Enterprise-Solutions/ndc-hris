@@ -42,7 +42,7 @@
                                 @error('surname') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                             </div>
                             <div class="w-full">
-                                <label for="name_extension" class=" text-sm text-gray-700">Suffix</label>
+                                <label for="name_extension" class=" text-sm text-gray-700">Name Extension</label>
                                 <select id="name_extension" wire:model.live="name_extension"
                                     class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     <option value="">None</option>
@@ -113,11 +113,7 @@
                                     <option value="Single">Single</option>
                                     <option value="Married">Married</option>
                                     <option value="Widowed">Widowed</option>
-                                    <option value="Divorced">Divorced</option>
                                     <option value="Separated">Separated</option>
-                                    <option value="Annulled">Annulled</option>
-                                    <option value="Live-in">Live-in</option>
-                                    <option value="Unknown">Unknown</option>
                                 </select>
                                 @error('civil_status') <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
