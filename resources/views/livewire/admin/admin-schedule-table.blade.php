@@ -6,7 +6,7 @@
         <!-- Modal -->
         @if($isModalOpen)
         <div class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
-            <div class="relative bg-white dark:bg-gray-800 rounded-lg p-6 mx-auto max-w-lg rounded-2xl">
+            <div class="relative bg-white dark:bg-gray-800 p-6 mx-auto max-w-lg rounded-2xl">
                 <div class="flex items-center justify-between pb-4">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">Add/Edit Schedule</h3>
                     <button wire:click="closeModal" class="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none">
