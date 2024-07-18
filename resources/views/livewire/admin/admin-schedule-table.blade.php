@@ -40,7 +40,7 @@
                                     <option value="{{ $employee->emp_code }}">{{ $employee->name }}</option>
                                 @endforeach
                             </select>
-                            @error('emp_code') <span class="text-red-500">{{ $message }}</span> @enderror
+                            @error('emp_code') <span class="text-red-500">{{ "Employee Field is required!" }}</span> @enderror
                         </div>
 
                         <div class="flex space-x-4">
