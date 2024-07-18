@@ -27,7 +27,7 @@
                             @endphp
                             <tr class="whitespace-nowrap">
                                 <td class="px-4 py-2 text-center">{{ $empCode }}</td>
-                                <td class="px-4 py-2 text-center">{{ $employee->name }}</td>
+                                <td class="px-4 py-2 text-center">{{ $employee ? $employee->name : 'Unknown' }}</td>
                                 <td class="px-4 py-2 text-center">{{ $date }}</td>
                                 <td class="px-4 py-2 text-center">{{ $timeRecords['morningIn'] }}</td>
                                 <td class="px-4 py-2 text-center">{{ $timeRecords['morningOut'] }}</td>
