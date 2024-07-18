@@ -34,6 +34,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/employees', function () {return view('livewire.admin.employees');})->name('employees');
     Route::get('/my-documents', function () {return view('livewire.user.my-documents');})->name('my-documents');
     Route::get('/doc-request', function () {return view('livewire.user.doc-request');})->name('doc-request');
+    Route::get('/leave-application', function () {return view('livewire.user.leave-application');})->name('leave-application');
     Route::get('/admin-doc-request', function () {return view('livewire.admin.admin-doc-request');})->name('admin-doc-request');
     Route::get('/personal-data-sheet', function () {return view('livewire.user.personal-data-sheet');})->name('personal-data-sheet');
     Route::get('/dashboard/analytics', [DashboardController::class, 'analytics'])->name('analytics');

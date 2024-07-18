@@ -3,11 +3,11 @@
 namespace App\Exports;
 
 use App\Models\User;
-use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
 
-class EmployeesExport implements FromQuery, WithHeadings
+class EmployeesExport implements FromCollection, WithHeadings
 {
     use Exportable;
 
@@ -18,12 +18,11 @@ class EmployeesExport implements FromQuery, WithHeadings
         $this->filters = $filters;
     }
 
-    public function query()
+    public function collection()
     {
         $query = User::join('user_data', 'users.id', '=', 'user_data.user_id')
             ->select(
-                'users.id', 
-                'users.name', 
+                'users.id',
                 'user_data.surname', 
                 'user_data.first_name', 
                 'user_data.middle_name', 
@@ -65,18 +64,53 @@ class EmployeesExport implements FromQuery, WithHeadings
         }
 
         if ($this->filters['selectedProvince']) {
-            $query->where('user_data.province', $this->filters['selectedProvince']);
+            $query->where('user_data.permanent_selectedProvince', $this->filters['selectedProvince']);
         }
 
         if ($this->filters['selectedCity']) {
-            $query->where('user_data.city', $this->filters['selectedCity']);
+            $query->where('user_data.permanent_selectedCity', $this->filters['selectedCity']);
         }
 
         if ($this->filters['selectedBarangay']) {
-            $query->where('user_data.barangay', $this->filters['selectedBarangay']);
+            $query->where('user_data.permanent_selectedBarangay', $this->filters['selectedBarangay']);
         }
 
-        return $query;
+        return $query->get()
+            ->map(function ($user) {
+                return [
+                    'ID' => $user->id,
+                    'Surname' => $user->surname,
+                    'First Name' => $user->first_name,
+                    'Middle Name' => $user->middle_name,
+                    'Name Extension' => $user->name_extension,
+                    'Birth Date' => $user->date_of_birth,
+                    'Birth Place' => $user->place_of_birth,
+                    'Sex' => $user->sex,
+                    'Citizenship' => $user->citizenship,
+                    'Civil Status' => $user->civil_status,
+                    'Height' => $user->height,
+                    'Weight' => $user->weight,
+                    'Blood Type' => $user->blood_type,
+                    'GSIS ID No.' => $user->gsis,
+                    'PAGIBIG ID No.' => $user->pagibig,
+                    'PhilHealth ID No.' => $user->philhealth,
+                    'SSS No.' => $user->sss,
+                    'TIN No.' => $user->tin,
+                    'Agency Employee No.' => $user->agency_employee_no,
+                    'Telephone No.' => $user->tel_number,
+                    'Mobile No.' => $user->mobile_number,
+                    'Permanent Address (Province)' => $user->permanent_selectedProvince,
+                    'Permanent Address (City)' => $user->permanent_selectedCity,
+                    'Permanent Address (Barangay)' => $user->permanent_selectedBarangay,
+                    'Permanent Address (Street)' => $user->p_house_street,
+                    'Permanent Address (Zip Code)' => $user->permanent_selectedZipcode,
+                    'Residential Address (Province)' => $user->residential_selectedProvince,
+                    'Residential Address (City)' => $user->residential_selectedCity,
+                    'Residential Address (Barangay)' => $user->residential_selectedBarangay,
+                    'Residential Address (Street)' => $user->r_house_street,
+                    'Residential Address (Zip Code)' => $user->residential_selectedZipcode,
+                ];
+            });
     }
 
     public function headings(): array

@@ -31,7 +31,7 @@ class EmployeeTable extends Component
         'date_of_birth' => true,
         'place_of_birth' => true,
         'sex' => true,
-        'citizenship' => false,
+        'citizenship' => true,
         'civil_status' => true,
         'height' => false,
         'weight' => false,
