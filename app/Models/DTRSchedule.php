@@ -21,6 +21,12 @@ class DTRSchedule extends Model
         'start_date',
         'end_date',
     ];
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'emp_code', 'emp_code');

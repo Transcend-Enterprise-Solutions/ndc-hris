@@ -14,6 +14,9 @@ class AdminScheduleTable extends Component
     public $emp_code, $wfh_days = [], $default_start_time = '07:00', $default_end_time = '18:30';
     public $start_date, $end_date;
     public $isModalOpen = false;
+    public $isEditMode = false;
+    public $confirmingScheduleDeletion = false;
+    public $scheduleToDelete;
 
     protected $rules = [
         'emp_code' => 'required|string',
@@ -39,6 +42,7 @@ class AdminScheduleTable extends Component
     {
         $this->resetValidation();
         $this->isModalOpen = true;
+        $this->isEditMode = false;
         $this->resetInputFields();
     }
 
@@ -50,6 +54,10 @@ class AdminScheduleTable extends Component
 
     public function saveSchedule()
     {
+        // Format time fields to H:i format before validation
+        $this->default_start_time = date('H:i', strtotime($this->default_start_time));
+        $this->default_end_time = date('H:i', strtotime($this->default_end_time));
+
         $this->validate();
 
         DTRSchedule::updateOrCreate(
@@ -64,29 +72,43 @@ class AdminScheduleTable extends Component
             ]
         );
 
+        session()->flash('message', $this->scheduleId ? 'Schedule updated successfully.' : 'Schedule created successfully.');
+
         $this->closeModal();
         $this->loadSchedules();
     }
 
     public function edit($id)
     {
-        $schedule = DTRSchedule::find($id);
-        if ($schedule) {
-            $this->scheduleId = $schedule->id;
-            $this->emp_code = $schedule->emp_code;
-            $this->wfh_days = explode(',', $schedule->wfh_days);
-            $this->default_start_time = $schedule->default_start_time;
-            $this->default_end_time = $schedule->default_end_time;
-            $this->start_date = $schedule->start_date;
-            $this->end_date = $schedule->end_date;
-            $this->openModal();
-        }
+        $schedule = DTRSchedule::findOrFail($id);
+        $this->scheduleId = $id;
+        $this->emp_code = $schedule->emp_code;
+        $this->wfh_days = explode(',', $schedule->wfh_days);
+        $this->default_start_time = date('H:i', strtotime($schedule->default_start_time));
+        $this->default_end_time = date('H:i', strtotime($schedule->default_end_time));
+        $this->start_date = $schedule->start_date->format('Y-m-d');
+        $this->end_date = $schedule->end_date->format('Y-m-d');
+        $this->isEditMode = true;
+        $this->isModalOpen = true;
     }
 
-    public function delete($id)
+    public function confirmDelete($id)
     {
-        DTRSchedule::find($id)->delete();
+        $this->scheduleToDelete = $id;
+        $this->confirmingScheduleDeletion = true;
+    }
+
+    public function deleteConfirmed()
+    {
+        DTRSchedule::find($this->scheduleToDelete)->delete();
+        $this->confirmingScheduleDeletion = false;
         $this->loadSchedules();
+        session()->flash('message', 'Schedule deleted successfully.');
+    }
+
+    public function closeConfirmationModal()
+    {
+        $this->confirmingScheduleDeletion = false;
     }
 
     private function resetInputFields()
@@ -98,6 +120,7 @@ class AdminScheduleTable extends Component
         $this->default_end_time = '18:30';
         $this->start_date = null;
         $this->end_date = null;
+        $this->isEditMode = false;
     }
 
     private function loadSchedules()
