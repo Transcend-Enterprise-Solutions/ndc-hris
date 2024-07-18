@@ -3,7 +3,7 @@
 
         <div>
 
-            @livewire('admin.admin-schedule-table')
+            @livewire('admin.admin-dtr-table')
 
         </div>
 
