@@ -125,6 +125,11 @@ class User extends Authenticatable
         return $this->hasMany(Schedule::class);
     }
 
+    public function leaveApplication()
+    {
+        return $this->hasMany(LeaveApplication::class);
+    }
+
 
     /**
      * The attributes that should be cast.
