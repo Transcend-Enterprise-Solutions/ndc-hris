@@ -58,7 +58,7 @@
 
                 {{-- Employee's Data --}}
                 <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold rounded-t-lg">I. PERSONAL INFORMATION
-                    <i class="fas fa-edit float-right pt-1 cursor-pointer" wire:click="toggleEditPersonalInfo"></i>
+                    <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 cursor-pointer" wire:click="toggleEditPersonalInfo"></i>
                 </div>
                 <div>
 
@@ -67,24 +67,24 @@
                         <div class="w-full sm:w-2/4 block">
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-white">{{ $userData->surname }}</p>
+                                <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->surname }}</p>
                             </div>
                     
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-white">{{ $userData->first_name }}</p>
+                                <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->first_name }}</p>
                             </div>
                         </div>
 
                         <div class="w-full sm:w-2/4 block">
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 dark:bg-slate-700 bg-gray-50">Middlename</p>
-                                <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-white">{{ $userData->middle_name }}</p>
+                                <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->middle_name }}</p>
                             </div>
                     
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
-                                <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-white">{{ $userData->name_extension }}</p>
+                                <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->name_extension }}</p>
                             </div>
                         </div>
 
@@ -95,43 +95,43 @@
                         <div class="w-full sm:w-2/4 block">
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ \Carbon\Carbon::parse($userData->date_of_birth)->format('F d, Y') }}
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($userData->date_of_birth)->format('F d, Y') }}
                                 </p>
                             </div>
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Place of Birth</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->place_of_birth }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->place_of_birth }}</p>
                             </div>
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Sex at Birth</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->sex }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->sex }}</p>
                             </div>
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Civil Status</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->civil_status }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->civil_status }}</p>
                             </div>
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Citizenship</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->citizenship }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->citizenship }}</p>
                             </div>
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Height</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->height }}m</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->height }}m</p>
                             </div>
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Weight</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->weight }}kg</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->weight }}kg</p>
                             </div>
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Bloodtype</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->blood_type }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->blood_type }}</p>
                             </div>
                         </div>
 
                         <div class="w-full sm:w-2/4 block">
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">Permanent Address</p>
-                                <p class="custom-p w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-white">
+                                <p class="custom-p w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200">
                                     {{ $userData->p_house_street }} <br>
                                     {{ $userData->permanent_selectedBarangay }} {{ $userData->permanent_selectedCity }} <br>
                                     {{ $userData->permanent_selectedProvince }}, Philippines <br>
@@ -140,7 +140,7 @@
                             </div>
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">Residential Address</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-white">
+                                <p class="w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200">
                                     {{ $userData->r_house_street }} <br>
                                     {{ $userData->residential_selectedBarangay }} {{ $userData->residential_selectedCity }} <br>
                                     {{ $userData->residential_selectedProvince }}, Philippines <br>
@@ -149,7 +149,7 @@
                             </div>
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Tel No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->tel_number }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->tel_number }}</p>
                             </div>
                         </div>
 
@@ -160,14 +160,14 @@
                         <div class="w-full sm:w-2/4 block">
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Mobile No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->mobile_number }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->mobile_number }}</p>
                             </div>
                         </div>
 
                         <div class="w-full sm:w-2/4 block">
                              <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Email</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->email }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->email }}</p>
                             </div>
                         </div>
                     </div>
@@ -177,30 +177,30 @@
                         <div class="w-full sm:w-2/4 block">
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">GSIS ID No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->gsis }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->gsis }}</p>
                             </div>
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Pag-Ibig ID No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->pagibig }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->pagibig }}</p>
                             </div>
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">PhilHealth ID No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->philhealth }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->philhealth }}</p>
                             </div>
                         </div>
 
                         <div class="w-full sm:w-2/4 block">
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">SSS No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->sss }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->sss }}</p>
                             </div>
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">TIN No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->tin }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->tin }}</p>
                             </div>
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Agency Employee No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userData->agency_employee_no }}</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->agency_employee_no }}</p>
                             </div>
                         </div>
 
@@ -213,213 +213,234 @@
                 </div>
                 <div>
                     {{-- Spouse --}}
-                    <div class="flex w-full sm:w-auto bg-gray-200 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
-                        <p class="p-1 w-full font-bold dark:text-white">Spouse</p>
-                        <i class="fas fa-edit float-right mt-2  mr-2 cursor-pointer" wire:click="toggleEditSpouse"></i>
+                    <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
+                        <p class="p-1 w-full font-bold dark:text-gray-200">Spouse</p>
+                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? '' : 'hidden' }}" wire:click="toggleEditSpouse"></i>
+                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? '' : 'hidden' }}" wire:click="toggleDelete('spouse', '')"></i>
+                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? 'hidden' : '' }}" wire:click="toggleAddSpouse"></i>
                     </div>
 
-                    <div class="custom-d flex w-full">
-                        <div class="w-full sm:w-2/4 block">
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->surname }}</p>
-                            </div>
-                    
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->first_name }}</p>
-                            </div>
-                        </div>
-
-                        <div class="w-full sm:w-2/4 block">
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->middle_name }}</p>
-                            </div>
-                    
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->name_extension }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="custom-d flex w-full">
-                        <div class="w-full sm:w-2/4 block">
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ \Carbon\Carbon::parse($userSpouse->birth_date)->format('F d, Y') }}</p>
-                            </div>
-                    
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Occupation</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->occupation }}</p>
-                            </div>
-                        </div>
-
-                        <div class="w-full sm:w-2/4 block">
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Employer</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->employer }}</p>
-                            </div>
-                    
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Tel. No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->tel_number }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="custom-d flex w-full">
-                        <div class="w-full sm:w-4/4 block">
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 sm:w-1/5 bg-gray-50 dark:bg-slate-700">Business Address</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userSpouse->business_address }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Father --}}
-                    <div class="flex w-full sm:w-auto bg-gray-200 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
-                        <p class="p-1 w-full font-bold dark:text-white">Father</p>
-                        <i class="fas fa-edit float-right mt-2  mr-2 cursor-pointer" wire:click="toggleEditFather"></i>
-                    </div>
-
-                    <div class="custom-d flex w-full">
-
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userFather->surname }}</p>
-                                </div>
-                        
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userFather->first_name }}</p>
-                                </div>
-                            </div>
-
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userFather->middle_name }}</p>
-                                </div>
-                        
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userFather->name_extension }}</p>
-                                </div>
-                            </div>
-
-                    </div>
-
-                    {{-- Mother's Maiden Name --}}
-                    <div class="flex w-full sm:w-auto bg-gray-200 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
-                        <p class="p-1 w-full font-bold dark:text-white">Mother's Maiden Name</p>
-                        <i class="fas fa-edit float-right mt-2  mr-2 cursor-pointer" wire:click="toggleEditMother"></i>
-                    </div>
-
-                    <div class="custom-d flex w-full">
-
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userMother->surname }}</p>
-                                </div>
-                        
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userMother->first_name }}</p>
-                                </div>
-                            </div>
-
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userMother->middle_name }}</p>
-                                </div>
-                        
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $userMother->name_extension }}</p>
-                                </div>
-                            </div>
-
-                    </div>
-
-                    {{-- Children --}}
-                    <div class="flex w-full sm:w-auto bg-gray-200 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
-                        <p class="p-1 w-full font-bold dark:text-white">Children</p>
-                        <i class="fas fa-edit float-right mt-2  mr-2 cursor-pointer" wire:click="toggleEditChildren"></i>
-                        <i class="fas fa-plus float-right mt-2  mr-2 cursor-pointer"></i>
-                    </div>
-
-                    @foreach ($userChildren as $child)
+                    @if($userSpouse)
                         <div class="custom-d flex w-full">
-
                             <div class="w-full sm:w-2/4 block">
                                 <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Fullname</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $child->childs_name }}</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->surname }}</p>
+                                </div>
+                        
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->first_name }}</p>
                                 </div>
                             </div>
 
+                            <div class="w-full sm:w-2/4 block">
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->middle_name }}</p>
+                                </div>
+                        
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->name_extension }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="custom-d flex w-full">
                             <div class="w-full sm:w-2/4 block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ \Carbon\Carbon::parse($child->childs_birth_date)->format('F d, Y') }}
-                                    </p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($userSpouse->birth_date)->format('F d, Y') }}</p>
+                                </div>
+                        
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Occupation</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->occupation }}</p>
                                 </div>
                             </div>
-                                                   
+
+                            <div class="w-full sm:w-2/4 block">
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Employer</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->employer }}</p>
+                                </div>
+                        
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Tel. No.</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->tel_number }}</p>
+                                </div>
+                            </div>
                         </div>
-                    @endforeach
+
+                        <div class="custom-d flex w-full">
+                            <div class="w-full sm:w-4/4 block">
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 sm:w-1/5 bg-gray-50 dark:bg-slate-700">Business Address</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->business_address }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- Father --}}
+                    <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
+                        <p class="p-1 w-full font-bold dark:text-gray-200">Father</p>
+                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? '' : 'hidden' }}" wire:click="toggleEditFather"></i>
+                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? '' : 'hidden' }}" wire:click="toggleDelete('father', '')"></i>
+                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? 'hidden' : '' }}" wire:click="toggleAddFather"></i>
+                    </div>
+
+                    @if($userFather)
+                        <div class="custom-d flex w-full">
+
+                                <div class="w-full sm:w-2/4 block">
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->surname }}</p>
+                                    </div>
+                            
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->first_name }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="w-full sm:w-2/4 block">
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->middle_name }}</p>
+                                    </div>
+                            
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->name_extension }}</p>
+                                    </div>
+                                </div>
+
+                        </div>
+                    @endif
+
+                    {{-- Mother's Maiden Name --}}
+                    <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
+                        <p class="p-1 w-full font-bold dark:text-gray-200">Mother's Maiden Name</p>
+                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? '' : 'hidden' }}" wire:click="toggleEditMother"></i>
+                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? '' : 'hidden' }}" wire:click="toggleDelete('mother', '')"></i>
+                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? 'hidden' : '' }}" wire:click="toggleAddMother"></i>
+                    </div>
+
+                    @if($userMother)
+                        <div class="custom-d flex w-full">
+
+                                <div class="w-full sm:w-2/4 block">
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->surname }}</p>
+                                    </div>
+                            
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->first_name }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="w-full sm:w-2/4 block">
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->middle_name }}</p>
+                                    </div>
+                            
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->name_extension }}</p>
+                                    </div>
+                                </div>
+
+                        </div>
+                    @endif
+
+                    {{-- Children --}}
+                    <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
+                        <p class="p-1 w-full font-bold dark:text-gray-200">Children</p>
+                        @if ($userChildren && $userChildren->isNotEmpty())
+                            <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2 mr-2 cursor-pointer" wire:click="toggleEditChildren"></i>
+                        @endif
+                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddChildren"></i>
+                    </div>
+
+                    @if($userChildren)
+                        @foreach ($userChildren as $child)
+                            <div class="custom-d flex w-full">
+
+                                <div class="w-full sm:w-2/4 block">
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Fullname</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $child->childs_name }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="w-full sm:w-2/4 block">
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($child->childs_birth_date)->format('F d, Y') }}
+                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('child', {{ $child->id }})"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                                                    
+                            </div>
+                        @endforeach
+                    @endif
 
                 </div>
 
                 {{-- Educational Background --}}
-                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">III. EDUCATIONAL BACKGROUND
-                    <i class="fas fa-plus float-right pt-1 cursor-pointer"></i>
-                    <i class="fas fa-edit float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEducBackground"></i>
+                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $educBackground && $educBackground->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">III. EDUCATIONAL BACKGROUND
+                    <i class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddEducBackground"></i>
+                    @if ($educBackground && $educBackground->isNotEmpty())
+                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEducBackground"></i>
+                    @endif
                 </div>
                 <div>
                     @foreach ($educBackground as $educ)
                         <div class="flex w-full sm:w-auto">
-                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-1/7 bg-gray-200 font-bold dark:bg-slate-700 dark:text-white">Level</p>
-                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 font-bold uppercase dark:text-white">{{ $educ->level }}</p>
+                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-1/7 bg-gray-200 font-bold dark:bg-slate-700 dark:text-gray-200">Level</p>
+                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 font-bold uppercase dark:text-gray-200">{{ $educ->level }}
+                                <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('educ', {{ $educ->id }})"></i>
+                            </p>
                         </div>
                         <div class="custom-d flex w-full">
 
                             <div class="w-full sm:w-2/4 block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name of School</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $educ->name_of_school }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->name_of_school }}</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Period of Attendance</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
                                         From: {{ $educ->from }} <br>
                                         To: {{ $educ->to }}
                                     </p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Scholarship/Academic Honors Received</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $educ->award }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->award }}</p>
                                 </div>
                             </div>
 
                             <div class="w-full sm:w-2/4 block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Basic Education/<br>Degree/Course</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $educ->basic_educ_degree_course }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->basic_educ_degree_course }}</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Highest Level/<br>Units Earned</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $educ->highest_level_unit_earned }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->highest_level_unit_earned }}</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Year Graduated</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-white">{{ $educ->year_graduated }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->year_graduated }}</p>
                                 </div>
                             </div>
                                                 
@@ -428,209 +449,242 @@
                 </div>
 
                 {{-- Civil Service Eligibility --}}
-                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">IV. CIVIL SERVICE ELIGIBILITY
-                    <i class="fas fa-plus float-right pt-1 cursor-pointer"></i>
-                    <i class="fas fa-edit float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEligibility"></i>
+                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $eligibility && $eligibility->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">IV. CIVIL SERVICE ELIGIBILITY
+                    <i class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddEligibility"></i>
+                    @if ($eligibility && $eligibility->isNotEmpty())
+                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEligibility"></i>
+                    @endif
                 </div>
-                <div class="m-scrollable">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-gray-100 dark:bg-slate-700">
-                                <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Eligibility</th>
-                                <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Rating</th>
-                                <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Date of Examination/Confernment</th>
-                                <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Place of Examination/Confernment</th>
-                                <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">License Number</th>
-                                <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Date of Validity</th>
-                            </tr>
-                        </thead>
-                        <tbody class="">
-                            @foreach($eligibility as $elig)
-                                <tr class="dark:text-white">
-                                    <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->eligibility }}</td>
-                                    <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->rating }}%</td>
-                                    <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($elig->date)->format('F d, Y') }}</td>
-                                    <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->place_of_exam }}</td>
-                                    <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->license }}</td>
-                                    <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($elig->date_of_validity)->format('F d, Y') }}</td>
+
+                @if ($eligibility && $eligibility->isNotEmpty())
+                    <div class="m-scrollable">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-100 dark:bg-slate-700">
+                                    <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Eligibility</th>
+                                    <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Rating</th>
+                                    <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Date of Examination/Confernment</th>
+                                    <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Place of Examination/Confernment</th>
+                                    <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">License Number</th>
+                                    <th width="20%" class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Date of Validity</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody class="">
+                                @foreach($eligibility as $elig)
+                                    <tr class="dark:text-gray-200">
+                                        <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->eligibility }}</td>
+                                        <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->rating }}%</td>
+                                        <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($elig->date)->format('F d, Y') }}</td>
+                                        <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->place_of_exam }}</td>
+                                        <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->license }}</td>
+                                        <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($elig->date_of_validity)->format('F d, Y') }}
+                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('elig', {{ $elig->id }})"></i>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
 
                 {{-- Work Experience --}}
-                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">V. WORK EXPERIENCE
-                    <i class="fas fa-plus float-right pt-1 cursor-pointer"></i>
-                    <i class="fas fa-edit float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEducBackground"></i>
+                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $workExperience && $workExperience->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">V. WORK EXPERIENCE
+                    <i class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddWorkExp"></i>
+                    @if ($workExperience && $workExperience->isNotEmpty())
+                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditWorkExp"></i>
+                    @endif
                 </div>
-                <div class="m-scrollable">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-gray-100 dark:bg-slate-700">
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase w-1/5"  width="20%">
-                                    <div class="block w-full">
-                                        <div class=" flex justify-center w-full">
-                                            INCLUSIVE DATES
-                                        </div>
-                                        <div class="flex w-full">
-                                            <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
-                                                From
+
+                @if ($workExperience && $workExperience->isNotEmpty())
+                    <div class="m-scrollable">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-100 dark:bg-slate-700">
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase w-1/5"  width="20%">
+                                        <div class="block w-full">
+                                            <div class=" flex justify-center w-full">
+                                                INCLUSIVE DATES
                                             </div>
-                                            <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
-                                                To
-                                            </div>
-                                        </div>
-                                    </div>
-                                </th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Position Title</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Department/Agency/Office/Company</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Monthly Salary</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Status of Appointment</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">GOV'T SERVICE</th>
-                            </tr>
-                        </thead>
-                        <tbody class="">
-                            @foreach($workExperience as $exp)
-                                <tr class="text-neutral-800 dark:text-neutral-200">
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left w-1/5">
-                                        <div class="flex w-full">
-                                            <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
-                                                {{ $exp->start_date }}
-                                            </div>
-                                            <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
-                                                {{ $exp->end_date }}
+                                            <div class="flex w-full">
+                                                <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
+                                                    From
+                                                </div>
+                                                <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
+                                                    To
+                                                </div>
                                             </div>
                                         </div>
-                                    </td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left">{{ $exp->position }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left">{{ $exp->department }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left">{{ '₱ ' . number_format($exp->monthly_salary, 2) }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left">{{ $exp->status_of_appointment }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left">{{ $exp->gov_service ? 'Yes' : 'No' }}</td>
+                                    </th>
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Position Title</th>
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Department/Agency/Office/Company</th>
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Monthly Salary</th>
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Status of Appointment</th>
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">GOV'T SERVICE</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody class="">
+                                @foreach($workExperience as $exp)
+                                    <tr class="text-neutral-800 dark:text-neutral-200">
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
+                                            <div class="flex w-full">
+                                                <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
+                                                    {{ $exp->start_date }}
+                                                </div>
+                                                <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
+                                                    {{ $exp->end_date }}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->position }}</td>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->department }}</td>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ '₱ ' . number_format($exp->monthly_salary, 2) }}</td>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->status_of_appointment }}</td>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->gov_service ? 'Yes' : 'No' }}
+                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('exp', {{ $exp->id }})"></i>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
 
                 {{-- Voluntary Work --}}
-                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">VI. VOLUNTARY WORK
-                    <i class="fas fa-plus float-right pt-1 cursor-pointer"></i>
-                    <i class="fas fa-edit float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEducBackground"></i>
-                </div>
-                <div class="m-scrollable">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-gray-100 dark:bg-slate-700">
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Name of Organization</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Address of Organization</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase w-1/5">
-                                    <div class="block w-full">
-                                        <div class=" flex justify-center w-full">
-                                            INCLUSIVE DATES
-                                        </div>
-                                        <div class="flex w-full">
-                                            <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
-                                                From
-                                            </div>
-                                            <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
-                                                To
-                                            </div>
-                                        </div>
-                                    </div>
-                                </th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Number of Hours</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Position/Nature of Work</th>
-                            </tr>
-                        </thead>
-                        <tbody class="">
-                            @foreach($voluntaryWorks as $voluntary)
-                                <tr>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left">{{ $voluntary->org_name }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left">{{ $voluntary->org_address }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left w-1/5">
-                                        <div class="flex w-full">
-                                            <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
-                                                {{ $voluntary->start_date }}
-                                            </div>
-                                            <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
-                                                {{ $voluntary->end_date }}
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-sm text-left">{{ $voluntary->no_of_hours }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-sm text-left">{{ $voluntary->position_nature }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $voluntaryWorks && $voluntaryWorks->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">VI. VOLUNTARY WORK
+                    <i class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddVoluntaryWorks"></i>
+                    @if ($voluntaryWorks && $voluntaryWorks->isNotEmpty())
+                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditVoluntaryWorks"></i>
+                    @endif
                 </div>
 
-                {{-- Learning and Development --}}
-                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">VII. LEARNING AND DEVELOPMENT
-                    <i class="fas fa-plus float-right pt-1 cursor-pointer"></i>
-                    <i class="fas fa-edit float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEducBackground"></i> 
-                </div>
-                <div class="m-scrollable">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-gray-100 dark:bg-slate-700">
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase"  width="20%">Title of Training</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase w-1/5">
-                                    <div class="block w-full">
-                                        <div class=" flex justify-center w-full">
-                                            INCLUSIVE DATES
-                                        </div>
-                                        <div class="flex w-full">
-                                            <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
-                                                From
+                @if ($voluntaryWorks && $voluntaryWorks->isNotEmpty())
+                    <div class="m-scrollable">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-100 dark:bg-slate-700">
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Name of Organization</th>
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Address of Organization</th>
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase w-1/5">
+                                        <div class="block w-full">
+                                            <div class=" flex justify-center w-full">
+                                                INCLUSIVE DATES
                                             </div>
-                                            <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
-                                                To
+                                            <div class="flex w-full">
+                                                <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
+                                                    From
+                                                </div>
+                                                <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
+                                                    To
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase">Number of Hours</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase">Type of LD</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase"  width="20%">Conducted/Sponsored By</th>
-                            </tr>
-                        </thead>
-                        <tbody class="">
-                            @foreach($lds as $ld)
-                                <tr class="text-neutral-800 dark:text-neutral-200">
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left">{{ $ld->title }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left w-1/5">
-                                        <div class="flex w-full">
-                                            <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
-                                                {{ $ld->start_date }}
-                                            </div>
-                                            <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
-                                                {{ $ld->end_date }}
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left">{{ $ld->no_of_hours }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left">{{ $ld->type_of_ld }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-white text-left">{{ $ld->conducted_by }}</td>
+                                    </th>
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Number of Hours</th>
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Position/Nature of Work</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody class="">
+                                @foreach($voluntaryWorks as $voluntary)
+                                    <tr>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $voluntary->org_name }}</td>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $voluntary->org_address }}</td>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
+                                            <div class="flex w-full">
+                                                <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
+                                                    {{ $voluntary->start_date }}
+                                                </div>
+                                                <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
+                                                    {{ $voluntary->end_date }}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">{{ $voluntary->no_of_hours }}</td>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">{{ $voluntary->position_nature }}
+                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('voluntary', {{ $voluntary->id }})"></i>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
+                {{-- Learning and Development --}}
+                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $lds && $lds->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">VII. LEARNING AND DEVELOPMENT
+                    <i class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddLearnAndDev"></i>
+                    @if ($lds && $lds->isNotEmpty())
+                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditLearnAndDev"></i> 
+                    @endif
                 </div>
+
+                @if ($lds && $lds->isNotEmpty())
+                    <div class="m-scrollable">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-100 dark:bg-slate-700">
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase"  width="20%">Title of Training</th>
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase w-1/5">
+                                        <div class="block w-full">
+                                            <div class=" flex justify-center w-full">
+                                                INCLUSIVE DATES
+                                            </div>
+                                            <div class="flex w-full">
+                                                <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
+                                                    From
+                                                </div>
+                                                <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
+                                                    To
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase">Number of Hours</th>
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase">Type of LD</th>
+                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase"  width="20%">Conducted/Sponsored By</th>
+                                </tr>
+                            </thead>
+                            <tbody class="">
+                                @foreach($lds as $ld)
+                                    <tr class="text-neutral-800 dark:text-neutral-200">
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->title }}</td>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
+                                            <div class="flex w-full">
+                                                <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
+                                                    {{ $ld->start_date }}
+                                                </div>
+                                                <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
+                                                    {{ $ld->end_date }}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->no_of_hours }}</td>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->type_of_ld }}</td>
+                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->conducted_by }}
+                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('ld', {{ $ld->id }})"></i>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
 
                 {{-- Other Information --}}
                 <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">VIII. OTHER INFORMATION</div>
+                
                 <div class="m-scrollable">
 
                     {{-- SKILLS --}}
-                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-700 bg-gray-200 dark:bg-slate-700">
+                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
                         <p class="p-1 w-full font-bold">SKILLS</p>
-                        <i class="fas fa-edit float-right pt-2 pr-1.5"></i>
+                        @if ($skills && $skills->isNotEmpty())
+                            <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditSkills"></i>
+                        @endif
+                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddSkills"></i>
                     </div>
-                    <div class="custom-d flex w-full border-2 border-gray-200 dark:border-slate-700">
-                        <div class="flex w-full sm:w-auto dark:text-white">
+
+                    <div class="custom-d flex w-full border-r-2 border-l-2 border-gray-200 dark:border-slate-600">
+                        <div class="flex w-full sm:w-auto dark:text-gray-200">
                             @foreach ($skills as $skill)
                                 <p class="p-1"> • {{ $skill->skill }} </p>
                             @endforeach
@@ -638,12 +692,16 @@
                     </div>
 
                     {{-- Hobbies --}}
-                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-700 bg-gray-200 dark:bg-slate-700">
+                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
                         <p class="p-1 w-full font-bold">HOBBIES</p>
-                        <i class="fas fa-edit float-right pt-2 pr-1.5"></i>
+                        @if ($hobbies && $hobbies->isNotEmpty())
+                            <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditHobbies"></i>
+                        @endif
+                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddHobbies"></i>
                     </div>
-                    <div class="custom-d flex w-full border-2 border-gray-200 dark:border-slate-700">
-                        <div class="flex w-full sm:w-auto dark:text-white">
+
+                    <div class="custom-d flex w-full border-r-2 border-l-2 border-gray-200 dark:border-slate-600">
+                        <div class="flex w-full sm:w-auto dark:text-gray-200">
                             @foreach ($hobbies as $hobby)
                                 <p class="p-1"> • {{ $hobby->hobby }} </p>
                             @endforeach
@@ -651,87 +709,111 @@
                     </div>
 
                     {{-- NON-ACADEMIC DISTINCTIONS / RECOGNITION --}}
-                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-700 bg-gray-200 dark:bg-slate-700">
+                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
                         <p class="p-1 w-full font-bold">NON-ACADEMIC DISTINCTIONS / RECOGNITION</p>
-                        <i class="fas fa-edit float-right pt-2 pr-1.5"></i>
+                        @if ($non_acads_distinctions && $non_acads_distinctions->isNotEmpty())
+                            <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditNonAcads"></i>
+                        @endif
+                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddNonAcads"></i>
                     </div>
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-gray-200 dark:bg-slate-700">
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-700 font-medium text-left uppercase" width="20%">Award</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-700 font-medium text-left uppercase">Association/ Organization Name</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-700 font-medium text-left uppercase"  width="20%">Date Received</th>
-                            </tr>
-                        </thead>
-                        <tbody class="">
-                            @foreach($non_acads_distinctions as $non_acads_distinction)
-                                <tr class="dark:text-white">
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-700 text-left">{{ $non_acads_distinction->award }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-700 text-left">{{ $non_acads_distinction->ass_org_name }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-700 text-left">{{ $non_acads_distinction->date_received }}</td>
+
+                    @if ($non_acads_distinctions && $non_acads_distinctions->isNotEmpty())
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-100 dark:bg-slate-700">
+                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase" width="20%">Award</th>
+                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Association/ Organization Name</th>
+                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Date Received</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody class="">
+                                @foreach($non_acads_distinctions as $non_acads_distinction)
+                                    <tr class="dark:text-gray-200">
+                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $non_acads_distinction->award }}</td>
+                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $non_acads_distinction->ass_org_name }}</td>
+                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($non_acads_distinction->date_received)->format('F d, Y') }}
+                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('nonacad', {{ $non_acads_distinction->id }})"></i>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
 
                     {{-- MEMBERSHIP IN ASSOCIATION/ORGANIZATION --}}
-                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-700 bg-gray-200 dark:bg-slate-700">
+                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
                         <p class="p-1 w-full font-bold">MEMBERSHIP IN ASSOCIATION/ORGANIZATION</p>
-                        <i class="fas fa-edit float-right pt-2 pr-1.5"></i>
+                        @if ($assOrgMemberships && $assOrgMemberships->isNotEmpty())
+                            <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditMemberships"></i>
+                        @endif
+                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddMemberships"></i>
                     </div>
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-gray-200 dark:bg-slate-700">
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-700 font-medium text-left uppercase">Association/Organization Name</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-700 font-medium text-left uppercase"  width="20%">Position</th>
-                            </tr>
-                        </thead>
-                        <tbody class="">
-                            @foreach($assOrgMemberships as $assOrgMembership)
-                                <tr class="dark:text-white">
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-700 text-left">{{ $assOrgMembership->ass_org_name }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-700 text-left">{{ $assOrgMembership->position }}</td>
+
+                    @if ($assOrgMemberships && $assOrgMemberships->isNotEmpty())
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-100 dark:bg-slate-700">
+                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Association/Organization Name</th>
+                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Position</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody class="">
+                                @foreach($assOrgMemberships as $assOrgMembership)
+                                    <tr class="dark:text-gray-200">
+                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $assOrgMembership->ass_org_name }}</td>
+                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $assOrgMembership->position }}
+                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('membership', {{ $assOrgMembership->id }})"></i>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
 
                     {{-- Character References --}}
-                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-700 bg-gray-200 dark:bg-slate-700">
+                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
                         <p class="p-1 w-full font-bold">CHARACTER REFERENCES</p>
-                        <i class="fas fa-edit float-right pt-2 pr-1.5"></i>
+                        @if ($references && $references->isNotEmpty())
+                            <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditReferences"></i>
+                        @endif
+                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddReferences"></i>
                     </div>
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-gray-200 dark:bg-slate-700">
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-700 font-medium text-left uppercase"  width="20%">Fullname</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-700 font-medium text-left uppercase">Address</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-700 font-medium text-left uppercase">Tel Number</th>
-                                <th class="p-1 border-2 border-gray-200 dark:border-slate-700 font-medium text-left uppercase"  width="20%">Mobile Number</th>
-                            </tr>
-                        </thead>
-                        <tbody class="">
-                            @foreach($references as $reference)
-                                <tr class="dark:text-white">
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-700 text-left">{{ $reference->firstname }} {{ $reference->middle_initial ? $reference->middle_initial . '.' : '' }} {{ $reference->surname }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-700 text-left">{{ $reference->address }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-700 text-left">{{ $reference->tel_number }}</td>
-                                    <td class="p-1 border-2 border-gray-200 dark:border-slate-700 text-left">{{ $reference->mobile_number }}</td>
+
+                    @if ($references && $references->isNotEmpty())
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-100 dark:bg-slate-700">
+                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Fullname</th>
+                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Address</th>
+                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Tel Number</th>
+                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Mobile Number</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody class="">
+                                @foreach($references as $reference)
+                                    <tr class="dark:text-gray-200">
+                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->firstname }} {{ $reference->middle_initial ? $reference->middle_initial . '.' : '' }} {{ $reference->surname }}</td>
+                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->address }}</td>
+                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->tel_number }}</td>
+                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->mobile_number }}
+                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('refs', {{ $reference->id }})"></i>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
 
                 </div>
 
                 {{-- Footer --}}
                 <div class="bg-gray-400 dark:bg-slate-700 p-2 text-white flex justify-center rounded-b-lg">
-                    <button class="btn bg-emerald-200 dark:bg-emerald-500 hover:bg-emerald-600 text-gray-800 dark:text-white whitespace-nowrap" wire:click='exportPDS' wire:loading.attr='disabled'>
+                    <button class="btn bg-emerald-400 dark:bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap" wire:click='exportPDS' wire:loading.attr='disabled'>
                         <div wire:loading wire:target="exportPDS">
                             <div class="spinner-border small text-primary" role="status">
                             </div>
                         </div>
-                        <i class="bi bi-file-earmark-arrow-down" wire:loading.remove></i>&nbsp&nbspExport
+                        <i class="bi bi-file-earmark-arrow-down"></i>&nbsp&nbspExport
                     </button>
                 </div>
 
@@ -740,7 +822,7 @@
         </div>
     </div>
 
-    {{-- Personal Info Edit Modal --}}
+    {{-- Personal Info Add and Edit Modal --}}
     <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="personalInfo">
         <div class="p-4">
             <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
@@ -1106,7 +1188,7 @@
                             </div>
                             Save
                         </button>
-                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
                             Cancel
                         </p>
                     </div>
@@ -1117,12 +1199,12 @@
         </div>
     </x-modal>
 
-    {{-- Spouse's Info Edit Modal --}}
+    {{-- Spouse's Info Add and Edit Modal --}}
     <x-modal id="spouseModal" maxWidth="2xl" wire:model="editSpouse">
         <div class="p-4">
             <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                Edit Spouse's Information
-                <button @click="show = false" class="float-right focus:outline-none">
+                {{ $addSpouse ? 'Add' : 'Edit' }} Spouse's Information
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -1208,13 +1290,13 @@
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-2 sm:col-span-2">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            <div wire:loading wire:target="savePersonalInfo" style="margin-bottom: 5px;">
+                            <div wire:loading wire:target="saveSpouse" style="margin-bottom: 5px;">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
                             </div>
                             Save
                         </button>
-                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
                             Cancel
                         </p>
                     </div>
@@ -1225,12 +1307,12 @@
         </div>
     </x-modal>
 
-    {{-- Father's Name Edit Modal --}}
+    {{-- Father's Name Add and Edit Modal --}}
     <x-modal id="fatherModal" maxWidth="2xl" wire:model="editFather">
         <div class="p-4">
             <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                Edit Father's Name
-                <button @click="show = false" class="float-right focus:outline-none">
+                {{ $addFather ? 'Add' : 'Edit' }} Father's Name
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -1274,13 +1356,13 @@
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-2 sm:col-span-2">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            <div wire:loading wire:target="savePersonalInfo" style="margin-bottom: 5px;">
+                            <div wire:loading wire:target="saveFather" style="margin-bottom: 5px;">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
                             </div>
                             Save
                         </button>
-                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
                             Cancel
                         </p>
                     </div>
@@ -1291,12 +1373,12 @@
         </div>
     </x-modal>
 
-    {{-- Mother's Maiden Name Edit Modal --}}
+    {{-- Mother's Maiden Name Add and Edit Modal --}}
     <x-modal id="motherModal" maxWidth="2xl" wire:model="editMother">
         <div class="p-4">
             <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                Edit Mother's Mainden Name
-                <button @click="show = false" class="float-right focus:outline-none">
+                {{ $addMother ? 'Add' : 'Edit' }} Mother's Mainden Name
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -1340,13 +1422,13 @@
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-2 sm:col-span-2">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            <div wire:loading wire:target="savePersonalInfo" style="margin-bottom: 5px;">
+                            <div wire:loading wire:target="saveMother" style="margin-bottom: 5px;">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
                             </div>
                             Save
                         </button>
-                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
                             Cancel
                         </p>
                     </div>
@@ -1357,12 +1439,12 @@
         </div>
     </x-modal>
 
-    {{-- Children's Info Edit Modal --}}
+    {{-- Children's Info Add and Edit Modal --}}
     <x-modal id="childrenModal" maxWidth="2xl" wire:model="editChildren">
         <div class="p-4">
-            <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                Edit Children's Information
-                <button @click="show = false" class="float-right focus:outline-none">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addChildren ? 'Add' : 'Edit' }} Children's Information
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -1371,36 +1453,66 @@
             <form wire:submit.prevent='saveChildren'>
                 <div class="grid grid-cols-1">
                     
-                    @foreach ($children as $index => $child)
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="childs_name_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Fullname</label>
-                                <input type="text" id="childs_name_{{ $index }}" wire:model="children.{{ $index }}.childs_name" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('children.' . $index . '.childs_name')
-                                    <span class="text-red-500 text-sm">The fullname is required!</span>
-                                @enderror
-                            </div>
+                    @if($addChildren != true)
+                        @foreach ($children as $index => $child)
+                            <div class="grid grid-cols-2 gap-4 mb-4  mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="childs_name_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Fullname</label>
+                                    <input type="text" id="childs_name_{{ $index }}" wire:model="children.{{ $index }}.childs_name" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('children.' . $index . '.childs_name')
+                                        <span class="text-red-500 text-sm">The fullname is required!</span>
+                                    @enderror
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="childs_birth_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date of Birth</label>
-                                <input type="date" id="childs_birth_date_{{ $index }}" wire:model="children.{{ $index }}.childs_birth_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('children.' . $index . '.childs_birth_date')
-                                    <span class="text-red-500 text-sm">The date of birth is required!</span>
-                                @enderror
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="childs_birth_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date of Birth</label>
+                                    <input type="date" id="childs_birth_date_{{ $index }}" wire:model="children.{{ $index }}.childs_birth_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('children.' . $index . '.childs_birth_date')
+                                        <span class="text-red-500 text-sm">The date of birth is required!</span>
+                                    @enderror
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    @else
+                        @foreach ($newChildren as $index => $child)
+                            <div class="grid grid-cols-2 gap-4 mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="new_childs_name_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Fullname
+                                        <i class="fas fa-times flex sm:hidden cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewChild({{ $index }})"></i>
+                                    </label>
+                                    <input type="text" id="new_childs_name_{{ $index }}" wire:model="newChildren.{{ $index }}.childs_name" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newChildren.' . $index . '.childs_name')
+                                        <span class="text-red-500 text-sm">The fullname is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="new_childs_birth_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date of Birth
+                                        <i class="fas fa-times hidden sm:flex cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewChild({{ $index }})"></i>
+                                    </label>
+                                    <input type="date" id="new_childs_birth_date_{{ $index }}" wire:model="newChildren.{{ $index }}.childs_birth_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newChildren.' . $index . '.childs_birth_date')
+                                        <span class="text-red-500 text-sm">The date of birth is required!</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <button type="button" wire:click="addNewChild" class="bg-blue-500 hover:bg-blue-700 hover:text-white text-slate-700 dark:text-gray-300 font-bold py-2 px-4 rounded mb-4">
+                            Add Child
+                        </button>
+                    @endif
                     
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            <div wire:loading wire:target="savePersonalInfo" style="margin-bottom: 5px;">
+                            <div wire:loading wire:target="saveChildren" style="margin-bottom: 5px;">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
                             </div>
                             Save
                         </button>
-                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
                             Cancel
                         </p>
                     </div>
@@ -1411,11 +1523,11 @@
         </div>
     </x-modal>
 
-    {{-- Educational Background Edit Modal --}}
+    {{-- Educational Background Add and Edit Modal --}}
     <x-modal id="educBackgroundModal" maxWidth="2xl" wire:model="editEducBackground">
         <div class="p-4">
-            <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                Edit Educational Background 
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addEducBackground ? 'Add' : 'Edit' }} Educational Background 
                 <button @click="show = false" class="float-right focus:outline-none">
                     <i class="fas fa-times"></i>
                 </button>
@@ -1425,77 +1537,157 @@
             <form wire:submit.prevent='saveEducationBackground'>
                 <div class="grid grid-cols-1">
                     
-                    @foreach ($education as $index => $educ)
-                        <div class="grid grid-cols-2 gap-4">
-                            
-                            <div class="col-span-2 sm:col-span-2 mt-3 pt-2 border-t border-slate-500">
-                                <label for="education_level_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-300 uppercase">{{ $educ['level'] }}</label>
-                            </div>
+                    @if($addEducBackground != true)
+                        @foreach ($education as $index => $educ)
+                            <div class="grid grid-cols-2 gap-4 mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
+                                
+                                <div class="col-span-2 sm:col-span-2 mt-3 pt-2 border-b">
+                                    <label for="education_level_{{ $index }}" class="block font-bold text-sm text-gray-700 dark:text-slate-300 uppercase">{{ $educ['level'] }}</label>
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-2">
-                                <label for="name_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name of School</label>
-                                <input type="text" id="name_{{ $index }}" wire:model="education.{{ $index }}.name_of_school" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('education.' . $index . '.name_of_school')
-                                    <span class="text-red-500 text-sm">The name of school is required!</span>
-                                @enderror
-                            </div>
+                                <div class="col-span-2 sm:col-span-2">
+                                    <label for="name_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name of School</label>
+                                    <input type="text" id="name_{{ $index }}" wire:model="education.{{ $index }}.name_of_school" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('education.' . $index . '.name_of_school')
+                                        <span class="text-red-500 text-sm">The name of school is required!</span>
+                                    @enderror
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="from_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">From</label>
-                                <input type="text" id="from_{{ $index }}" wire:model="education.{{ $index }}.from" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('education.' . $index . '.from')
-                                    <span class="text-red-500 text-sm">The start period of attendance is required!</span>
-                                @enderror
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="from_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">From</label>
+                                    <input type="number" id="from_{{ $index }}" wire:model="education.{{ $index }}.from" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('education.' . $index . '.from')
+                                        <span class="text-red-500 text-sm">The start period of attendance is required!</span>
+                                    @enderror
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">To</label>
-                                <input type="text" id="to_{{ $index }}" wire:model="education.{{ $index }}.to" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('education.' . $index . '.to')
-                                    <span class="text-red-500 text-sm">The end period of attendance is required!</span>
-                                @enderror
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">To</label>
+                                    <input type="number" id="to_{{ $index }}" wire:model="education.{{ $index }}.to" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('education.' . $index . '.to')
+                                        <span class="text-red-500 text-sm">The end period of attendance is required!</span>
+                                    @enderror
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="educ_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Basic Education/Degree/Course</label>
-                                <input type="text" id="educ_{{ $index }}" wire:model="education.{{ $index }}.basic_educ_degree_course" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('education.' . $index . '.basic_educ_degree_course')
-                                    <span class="text-red-500 text-sm">This field is required!</span>
-                                @enderror
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="educ_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Basic Education/Degree/Course</label>
+                                    <input type="text" id="educ_{{ $index }}" wire:model="education.{{ $index }}.basic_educ_degree_course" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('education.' . $index . '.basic_educ_degree_course')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="award_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Scholarship/Academic Honors Received</label>
-                                <input type="text" id="award_{{ $index }}" wire:model="education.{{ $index }}.award" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="award_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Scholarship/Academic Honors Received</label>
+                                    <input type="text" id="award_{{ $index }}" wire:model="education.{{ $index }}.award" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="earned_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Highest Level/Units Earned</label>
-                                <input type="text" id="earned_{{ $index }}" wire:model="education.{{ $index }}.highest_level_unit_earned" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="earned_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Highest Level/Units Earned</label>
+                                    <input type="text" id="earned_{{ $index }}" wire:model="education.{{ $index }}.highest_level_unit_earned" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="yearGrad_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Year Graduated</label>
-                                <input type="text" id="yearGrad_{{ $index }}" wire:model="education.{{ $index }}.year_graduated" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('education.' . $index . '.year_graduated')
-                                    <span class="text-red-500 text-sm">The year graduateds is required!</span>
-                                @enderror
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="yearGrad_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Year Graduated</label>
+                                    <input type="number" id="yearGrad_{{ $index }}" wire:model="education.{{ $index }}.year_graduated" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('education.' . $index . '.year_graduated')
+                                        <span class="text-red-500 text-sm">The year graduated is required!</span>
+                                    @enderror
+                                </div>
+                                
                             </div>
-                            
-                        </div>
-                    @endforeach
+                        @endforeach
+                    @else
+                        @foreach ($newEducation as $index => $educ)
+                            <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="level_code_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Level
+                                        <i class="fas fa-times flex sm:hidden cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewEducation({{ $index }})"></i>
+                                    </label>
+                                    <select id="level_code_{{ $index }}" wire:model="newEducation.{{ $index }}.level_code" class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        <option value=""></option>
+                                        <option value="1">Elementary</option>
+                                        <option value="2">Secondary</option>
+                                        <option value="3">Vocational/Trade Course</option>
+                                        <option value="4">College</option>
+                                        <option value="5">Graduate Studies</option>
+                                    </select>
+                                    @error('newEducation.' . $index . '.level_code') 
+                                        <span class="text-red-500 text-sm">The level is required!</span> 
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="name_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name of School
+                                        <i class="fas fa-times hidden sm:flex cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewEducation({{ $index }})"></i>
+                                    </label>
+                                    <input type="text" id="name_{{ $index }}" wire:model="newEducation.{{ $index }}.name_of_school" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newEducation.' . $index . '.name_of_school')
+                                        <span class="text-red-500 text-sm">The name of school is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="from_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">From</label>
+                                    <input type="number" id="from_{{ $index }}" wire:model="newEducation.{{ $index }}.from" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newEducation.' . $index . '.from')
+                                        <span class="text-red-500 text-sm">The start period of attendance is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">To</label>
+                                    <input type="number" id="to_{{ $index }}" wire:model="newEducation.{{ $index }}.to" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newEducation.' . $index . '.to')
+                                        <span class="text-red-500 text-sm">The end period of attendance is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="educ_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Basic Education/Degree/Course</label>
+                                    <input type="text" id="educ_{{ $index }}" wire:model="newEducation.{{ $index }}.basic_educ_degree_course" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newEducation.' . $index . '.basic_educ_degree_course')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="award_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Scholarship/Academic Honors Received</label>
+                                    <input type="text" id="award_{{ $index }}" wire:model="newEducation.{{ $index }}.award" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="earned_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Highest Level/Units Earned</label>
+                                    <input type="text" id="earned_{{ $index }}" wire:model="newEducation.{{ $index }}.highest_level_unit_earned" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="yearGrad_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Year Graduated</label>
+                                    <input type="number" id="yearGrad_{{ $index }}" wire:model="newEducation.{{ $index }}.year_graduated" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newEducation.' . $index . '.year_graduated')
+                                        <span class="text-red-500 text-sm">The year graduated is required!</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <button type="button" wire:click="addNewEducation" class="bg-blue-500 hover:bg-blue-700 text-slate-700 hover:text-white dark:text-gray-300 font-bold py-2 px-4 rounded mb-4">
+                            Add Education
+                        </button>
+                    @endif
 
                     
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            <div wire:loading wire:target="savePersonalInfo" style="margin-bottom: 5px;">
+                            <div wire:loading wire:target="saveEducationBackground" style="margin-bottom: 5px;">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
                             </div>
                             Save
                         </button>
-                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
                             Cancel
                         </p>
                     </div>
@@ -1506,11 +1698,11 @@
         </div>
     </x-modal>
 
-    {{-- Eligibility Edit Modal --}}
+    {{-- Eligibility Add and Edit Modal --}}
     <x-modal id="eligibilityModal" maxWidth="2xl" wire:model="editEligibility">
         <div class="p-4">
-            <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                Edit Civil Service Eligibility 
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addEligibility ? 'Add' : 'Edit' }} Civil Service Eligibility 
                 <button @click="show = false" class="float-right focus:outline-none">
                     <i class="fas fa-times"></i>
                 </button>
@@ -1520,69 +1712,122 @@
             <form wire:submit.prevent='saveEligibility'>
                 <div class="grid grid-cols-1">
                     
-                    @foreach ($eligibilities as $index => $elig)
-                        <div class="grid grid-cols-2 gap-4">
-                            
-                            <div class="col-span-2 sm:col-span-2 mt-3 pt-2 border-t border-slate-500">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 uppercase">{{ $index + 1 }}.</label>
-                            </div>
+                    @if($addEligibility != true)
+                        @foreach ($eligibilities as $index => $elig)
+                            <div class="grid grid-cols-2 gap-4 mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="eligibility_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Eligibility</label>
-                                <input type="text" id="eligibility_{{ $index }}" wire:model="eligibilities.{{ $index }}.eligibility" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('eligibilities.' . $index . '.eligibility')
-                                    <span class="text-red-500 text-sm">The eligibility is required!</span>
-                                @enderror
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="eligibility_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Eligibility</label>
+                                    <input type="text" id="eligibility_{{ $index }}" wire:model="eligibilities.{{ $index }}.eligibility" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('eligibilities.' . $index . '.eligibility')
+                                        <span class="text-red-500 text-sm">The eligibility is required!</span>
+                                    @enderror
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="rating_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Rating</label>
-                                <input type="text" id="rating_{{ $index }}" wire:model="eligibilities.{{ $index }}.rating" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('eligibilities.' . $index . '.rating')
-                                    <span class="text-red-500 text-sm">The rating is required!</span>
-                                @enderror
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="rating_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Rating</label>
+                                    <input type="number" id="rating_{{ $index }}" wire:model="eligibilities.{{ $index }}.rating" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('eligibilities.' . $index . '.rating')
+                                        <span class="text-red-500 text-sm">The rating is required!</span>
+                                    @enderror
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date of Examination/Confernment</label>
-                                <input type="date" id="date_{{ $index }}" wire:model="eligibilities.{{ $index }}.date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('eligibilities.' . $index . '.date')
-                                    <span class="text-red-500 text-sm">The date of exam/confernment is required!</span>
-                                @enderror
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date of Examination/Confernment</label>
+                                    <input type="date" id="date_{{ $index }}" wire:model="eligibilities.{{ $index }}.date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('eligibilities.' . $index . '.date')
+                                        <span class="text-red-500 text-sm">The date of exam/confernment is required!</span>
+                                    @enderror
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="place_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Place of Examination/Confernment</label>
-                                <input type="text" id="place_{{ $index }}" wire:model="eligibilities.{{ $index }}.place_of_exam" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('eligibilities.' . $index . '.place_of_exam')
-                                    <span class="text-red-500 text-sm">The place of exam/confernment is required!</span>
-                                @enderror
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="place_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Place of Examination/Confernment</label>
+                                    <input type="text" id="place_{{ $index }}" wire:model="eligibilities.{{ $index }}.place_of_exam" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('eligibilities.' . $index . '.place_of_exam')
+                                        <span class="text-red-500 text-sm">The place of exam/confernment is required!</span>
+                                    @enderror
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="license_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">License Number</label>
-                                <input type="text" id="license_{{ $index }}" wire:model="eligibilities.{{ $index }}.license" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="license_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">License Number</label>
+                                    <input type="text" id="license_{{ $index }}" wire:model="eligibilities.{{ $index }}.license" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="date_of_validity_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date of Validity</label>
-                                <input type="date" id="date_of_validity_{{ $index }}" wire:model="eligibilities.{{ $index }}.date_of_validity" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="date_of_validity_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date of Validity</label>
+                                    <input type="date" id="date_of_validity_{{ $index }}" wire:model="eligibilities.{{ $index }}.date_of_validity" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                </div>
+                                
                             </div>
-                            
-                        </div>
-                    @endforeach
+                        @endforeach
+                    @else
+                        @foreach ($newEligibilities as $index => $elig)
+                            <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="eligibility_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Eligibility
+                                        <i class="fas fa-times flex sm:hidden cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewEligibility({{ $index }})"></i>
+                                    </label>
+                                    <input type="text" id="eligibility_{{ $index }}" wire:model="newEligibilities.{{ $index }}.eligibility" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newEligibilities.' . $index . '.eligibility')
+                                        <span class="text-red-500 text-sm">The eligibility is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="rating_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Rating
+                                        <i class="fas fa-times hidden sm:flex cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewEligibility({{ $index }})"></i>
+                                    </label>
+                                    <input type="number" id="rating_{{ $index }}" wire:model="newEligibilities.{{ $index }}.rating" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newEligibilities.' . $index . '.rating')
+                                        <span class="text-red-500 text-sm">The rating is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date of Examination/Confernment</label>
+                                    <input type="date" id="date_{{ $index }}" wire:model="newEligibilities.{{ $index }}.date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newEligibilities.' . $index . '.date')
+                                        <span class="text-red-500 text-sm">The date of exam/confernment is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="place_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Place of Examination/Confernment</label>
+                                    <input type="text" id="place_{{ $index }}" wire:model="newEligibilities.{{ $index }}.place_of_exam" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newEligibilities.' . $index . '.place_of_exam')
+                                        <span class="text-red-500 text-sm">The place of exam/confernment is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="license_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">License Number</label>
+                                    <input type="text" id="license_{{ $index }}" wire:model="newEligibilities.{{ $index }}.license" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="date_of_validity_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date of Validity</label>
+                                    <input type="date" id="date_of_validity_{{ $index }}" wire:model="newEligibilities.{{ $index }}.date_of_validity" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <button type="button" wire:click="addNewEligibility" class="bg-blue-500 hover:bg-blue-700 hover:text-white text-slate-700 dark:text-gray-300 font-bold py-2 px-4 rounded mb-4">
+                            Add Eligibility
+                        </button>
+                    @endif
 
                     
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            <div wire:loading wire:target="savePersonalInfo" style="margin-bottom: 5px;">
+                            <div wire:loading wire:target="saveEligibility" style="margin-bottom: 5px;">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
                             </div>
                             Save
                         </button>
-                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
                             Cancel
                         </p>
                     </div>
@@ -1593,11 +1838,11 @@
         </div>
     </x-modal>
 
-    {{-- Work Experience Edit Modal --}}
+    {{-- Work Experience Add and Edit Modal --}}
     <x-modal id="workExpModal" maxWidth="2xl" wire:model="editWorkExp">
         <div class="p-4">
-            <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                Edit Work Experience 
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addWorkExp ? 'Add' : 'Edit' }} Work Experience 
                 <button @click="show = false" class="float-right focus:outline-none">
                     <i class="fas fa-times"></i>
                 </button>
@@ -1607,77 +1852,156 @@
             <form wire:submit.prevent='saveWorkExp'>
                 <div class="grid grid-cols-1">
                     
-                    @foreach ($workExperiences as $index => $exp)
-                        <div class="grid grid-cols-2 gap-4">
-                            
-                            <div class="col-span-2 sm:col-span-2 mt-3 pt-2 border-t border-slate-500">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 uppercase">{{ $index + 1 }}.</label>
+                    @if($addWorkExp != true)
+                        @foreach ($workExperiences as $index => $exp)
+                            <div class="grid grid-cols-2 gap-4 mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
+    
+                                <div class="col-span-2 sm:col-span-2">
+                                    <label for="comp_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Department/Agency/Office/Company</label>
+                                    <input type="text" id="comp_{{ $index }}" wire:model="workExperiences.{{ $index }}.department" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('workExperiences.' . $index . '.department')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+    
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="start_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
+                                    <input type="date" id="start_date_{{ $index }}" wire:model="workExperiences.{{ $index }}.start_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('workExperiences.' . $index . '.start_date')
+                                        <span class="text-red-500 text-sm">The start date is required!</span>
+                                    @enderror
+                                </div>
+    
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
+                                    <input type="date" id="end_date_{{ $index }}" wire:model="workExperiences.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('workExperiences.' . $index . '.end_date')
+                                        <span class="text-red-500 text-sm">The end date is required!</span>
+                                    @enderror
+                                </div>
+    
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="position_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
+                                    <input type="text" id="position_{{ $index }}" wire:model="workExperiences.{{ $index }}.position" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('workExperiences.' . $index . '.position')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+    
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="status_of_appointment_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Status of Appointment</label>
+                                    <input type="text" id="status_of_appointment_{{ $index }}" wire:model="workExperiences.{{ $index }}.status_of_appointment" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                </div>
+    
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="monthly_salary_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Monthly Salary</label>
+                                    <input type="number" id="monthly_salary_{{ $index }}" wire:model="workExperiences.{{ $index }}.monthly_salary" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                </div>
+    
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="gov_service_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Gov't Service</label>
+                                    <div class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" id="gov_service_yes_{{ $index }}" wire:model="workExperiences.{{ $index }}.gov_service" value="1" class="form-radio text-green-600">
+                                            <span class="ml-2">Yes</span>
+                                        </label>
+                                        <label class="inline-flex items-center ml-6">
+                                            <input type="radio" id="gov_service_no_{{ $index }}" wire:model="workExperiences.{{ $index }}.gov_service" value="0" class="form-radio text-green-600">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                    </div>
+                                    @error('workExperiences.' . $index . '.gov_service')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>                            
+                                
                             </div>
+                        @endforeach
+                    @else
+                        @foreach ($newWorkExperiences as $index => $exp)
+                            <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
 
-                            <div class="col-span-2 sm:col-span-2">
-                                <label for="comp_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Department/Agency/Office/Company</label>
-                                <input type="text" id="comp_{{ $index }}" wire:model="workExperiences.{{ $index }}.department" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('workExperiences.' . $index . '.department')
-                                    <span class="text-red-500 text-sm">This field is required!</span>
-                                @enderror
-                            </div>
+                                <div class="col-span-2 sm:col-span-2">
+                                    <label for="comp_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Department/Agency/Office/Company
+                                        <i class="fas fa-times cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewWorkExp({{ $index }})"></i>
+                                    </label>
+                                    <input type="text" id="comp_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.department" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newWorkExperiences.' . $index . '.department')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="start_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
-                                <input type="text" id="start_date_{{ $index }}" wire:model="workExperiences.{{ $index }}.start_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('workExperiences.' . $index . '.start_date')
-                                    <span class="text-red-500 text-sm">The start date is required!</span>
-                                @enderror
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="start_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
+                                    <input type="date" id="start_date_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.start_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newWorkExperiences.' . $index . '.start_date')
+                                        <span class="text-red-500 text-sm">The start date is required!</span>
+                                    @enderror
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
-                                <input type="text" id="end_date_{{ $index }}" wire:model="workExperiences.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('workExperiences.' . $index . '.end_date')
-                                    <span class="text-red-500 text-sm">The end date is required!</span>
-                                @enderror
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
+                                    <input type="date" id="end_date_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newWorkExperiences.' . $index . '.end_date')
+                                        <span class="text-red-500 text-sm">The end date is required!</span>
+                                    @enderror
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="position_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
-                                <input type="text" id="position_{{ $index }}" wire:model="workExperiences.{{ $index }}.position" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('workExperiences.' . $index . '.position')
-                                    <span class="text-red-500 text-sm">This field is required!</span>
-                                @enderror
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="position_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
+                                    <input type="text" id="position_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.position" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newWorkExperiences.' . $index . '.position')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="status_of_appointment_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Status of Appointment</label>
-                                <input type="text" id="status_of_appointment_{{ $index }}" wire:model="workExperiences.{{ $index }}.status_of_appointment" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="status_of_appointment_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Status of Appointment</label>
+                                    <input type="text" id="status_of_appointment_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.status_of_appointment" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="monthly_salary_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Monthly Salary</label>
-                                <input type="text" id="monthly_salary_{{ $index }}" wire:model="workExperiences.{{ $index }}.monthly_salary" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                            </div>
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="monthly_salary_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Monthly Salary</label>
+                                    <input type="number" id="monthly_salary_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.monthly_salary" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                </div>
 
-                            <div class="col-span-2 sm:col-span-1">
-                                <label for="gov_service_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Gov't Service</label>
-                                <input type="text" id="gov_service_{{ $index }}" wire:model="workExperiences.{{ $index }}.gov_service" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('workExperiences.' . $index . '.gov_service')
-                                    <span class="text-red-500 text-sm">This field is required!</span>
-                                @enderror
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="gov_service_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Gov't Service</label>
+                                    <div class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" id="gov_service_yes_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.gov_service" value="1" class="form-radio text-green-600">
+                                            <span class="ml-2">Yes</span>
+                                        </label>
+                                        <label class="inline-flex items-center ml-6">
+                                            <input type="radio" id="gov_service_no_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.gov_service" value="0" class="form-radio text-green-600">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                    </div>
+                                    @error('newWorkExperiences.' . $index . '.gov_service')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>                            
+
                             </div>
-                            
-                        </div>
-                    @endforeach
+                        @endforeach
+
+                        <button type="button" wire:click="addNewWorkExp" class="bg-blue-500 hover:bg-blue-700 hover:text-white text-slate-700 dark:text-gray-300 font-bold py-2 px-4 rounded mb-4">
+                            Add Work Experience
+                        </button>
+                    @endif
+                    
 
                     
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            <div wire:loading wire:target="savePersonalInfo" style="margin-bottom: 5px;">
+                            <div wire:loading wire:target="saveWorkExp" style="margin-bottom: 5px;">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
                             </div>
                             Save
                         </button>
-                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
                             Cancel
                         </p>
                     </div>
@@ -1687,4 +2011,813 @@
 
         </div>
     </x-modal>
+
+    {{-- Voluntary Work Add and Edit Modal --}}
+    <x-modal id="voluntaryWorkModal" maxWidth="2xl" wire:model="editVoluntaryWorks">
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addVoluntaryWorks ? 'Add' : 'Edit' }} Voluntary Work 
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            {{-- Form fields --}}
+            <form wire:submit.prevent='saveVoluntaryWork'>
+                <div class="grid grid-cols-1">
+                    
+                    @if($addVoluntaryWorks != true)
+                        @foreach ($voluntaryWork as $index => $work)
+                            <div class="grid grid-cols-2 gap-4 mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="name_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name of Organization</label>
+                                    <input type="text" id="name_{{ $index }}" wire:model="voluntaryWork.{{ $index }}.org_name" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('voluntaryWork.' . $index . '.org_name')
+                                        <span class="text-red-500 text-sm">The name of organization is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="comp_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Place of Organization</label>
+                                    <input type="text" id="comp_{{ $index }}" wire:model="voluntaryWork.{{ $index }}.org_address" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('voluntaryWork.' . $index . '.org_address')
+                                        <span class="text-red-500 text-sm">The place of organization is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="start_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
+                                    <input type="date" id="start_date_{{ $index }}" wire:model="voluntaryWork.{{ $index }}.start_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('voluntaryWork.' . $index . '.start_date')
+                                        <span class="text-red-500 text-sm">The start date is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
+                                    <input type="date" id="end_date_{{ $index }}" wire:model="voluntaryWork.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('voluntaryWork.' . $index . '.end_date')
+                                        <span class="text-red-500 text-sm">The end date is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="hours_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number of Hours</label>
+                                    <input type="number" id="hours_{{ $index }}" wire:model="voluntaryWork.{{ $index }}.no_of_hours" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('voluntaryWork.' . $index . '.no_of_hours')
+                                        <span class="text-red-500 text-sm">The number of hours is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="position_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position/Nature of Work</label>
+                                    <input type="text" id="position_{{ $index }}" wire:model="voluntaryWork.{{ $index }}.position_nature" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('voluntaryWork.' . $index . '.position_nature')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>            
+                                
+                            </div>
+                        @endforeach
+                    @else
+                        @foreach ($newVoluntaryWorks as $index => $work)
+                            <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="name_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name of Organization
+                                        <i class="fas fa-times flex sm:hidden cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewVoluntaryWork({{ $index }})"></i>
+                                    </label>
+                                    <input type="text" id="name_{{ $index }}" wire:model="newVoluntaryWorks.{{ $index }}.org_name" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newVoluntaryWorks.' . $index . '.org_name')
+                                        <span class="text-red-500 text-sm">The name of organization is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="comp_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Place of Organization
+                                        <i class="fas fa-times hidden sm:flex cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewVoluntaryWork({{ $index }})"></i>
+                                    </label>
+                                    <input type="text" id="comp_{{ $index }}" wire:model="newVoluntaryWorks.{{ $index }}.org_address" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newVoluntaryWorks.' . $index . '.org_address')
+                                        <span class="text-red-500 text-sm">The place of organization is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="start_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
+                                    <input type="date" id="start_date_{{ $index }}" wire:model="newVoluntaryWorks.{{ $index }}.start_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newVoluntaryWorks.' . $index . '.start_date')
+                                        <span class="text-red-500 text-sm">The start date is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
+                                    <input type="date" id="end_date_{{ $index }}" wire:model="newVoluntaryWorks.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newVoluntaryWorks.' . $index . '.end_date')
+                                        <span class="text-red-500 text-sm">The end date is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="hours_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number of Hours</label>
+                                    <input type="number" id="hours_{{ $index }}" wire:model="newVoluntaryWorks.{{ $index }}.no_of_hours" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newVoluntaryWorks.' . $index . '.no_of_hours')
+                                        <span class="text-red-500 text-sm">The number of hours is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="position_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position/Nature of Work</label>
+                                    <input type="text" id="position_{{ $index }}" wire:model="newVoluntaryWorks.{{ $index }}.position_nature" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newVoluntaryWorks.' . $index . '.position_nature')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>            
+                                
+                            </div>
+                        @endforeach
+
+                        <button type="button" wire:click="addNewVoluntaryWork" class="bg-blue-500 hover:text-white hover:bg-blue-700 text-slate-700 dark:text-gray-300 font-bold py-2 px-4 rounded mb-4">
+                            Add Voluntary Work
+                        </button>
+                    @endif
+
+                    
+                    {{-- Save and Cancel buttons --}}
+                    <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveVoluntaryWork" style="margin-bottom: 5px;">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                            Cancel
+                        </p>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </x-modal>
+
+    {{-- Learning and Development Add and Edit Modal --}}
+    <x-modal id="learnDevModal" maxWidth="2xl" wire:model="editLearnDev">
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addLearnDev ? 'Add' : 'Edit' }} Learning and Development
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            {{-- Form fields --}}
+            <form wire:submit.prevent='saveLearnAndDev'>
+                <div class="grid grid-cols-1">
+                    
+                    @if($addLearnDev != true)
+                        @foreach ($learnAndDevs as $index => $learnAndDev)
+                            <div class="grid grid-cols-2 gap-4  mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="title_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Title of Training</label>
+                                    <input type="text" id="title_{{ $index }}" wire:model="learnAndDevs.{{ $index }}.title" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('learnAndDevs.' . $index . '.title')
+                                        <span class="text-red-500 text-sm">The title of training is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="type_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Type of LD</label>
+                                    <input type="text" id="type_{{ $index }}" wire:model="learnAndDevs.{{ $index }}.type_of_ld" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('learnAndDevs.' . $index . '.type_of_ld')
+                                        <span class="text-red-500 text-sm">The type of ld is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="start_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
+                                    <input type="date" id="start_date_{{ $index }}" wire:model="learnAndDevs.{{ $index }}.start_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('learnAndDevs.' . $index . '.start_date')
+                                        <span class="text-red-500 text-sm">The start date is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
+                                    <input type="date" id="end_date_{{ $index }}" wire:model="learnAndDevs.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('learnAndDevs.' . $index . '.end_date')
+                                        <span class="text-red-500 text-sm">The end date is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="hours_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number of Hours</label>
+                                    <input type="number" id="hours_{{ $index }}" wire:model="learnAndDevs.{{ $index }}.no_of_hours" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('learnAndDevs.' . $index . '.no_of_hours')
+                                        <span class="text-red-500 text-sm">The number of hours is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="conducted_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Conducted/Sponsored By</label>
+                                    <input type="text" id="conducted_{{ $index }}" wire:model="learnAndDevs.{{ $index }}.conducted_by" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('learnAndDevs.' . $index . '.conducted_by')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>            
+                                
+                            </div>
+                        @endforeach
+                    @else
+                        @foreach ($newLearnAndDevs as $index => $learnAndDev)
+                            <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="title_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Title of Training
+                                        <i class="fas fa-times flex sm:hidden cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewLearnAndDev({{ $index }})"></i>
+                                    </label>
+                                    <input type="text" id="title_{{ $index }}" wire:model="newLearnAndDevs.{{ $index }}.title" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newLearnAndDevs.' . $index . '.title')
+                                        <span class="text-red-500 text-sm">The title of training is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="type_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Type of LD
+                                        <i class="fas fa-times hidden sm:flex cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewLearnAndDev({{ $index }})"></i>
+                                    </label>
+                                    <input type="text" id="type_{{ $index }}" wire:model="newLearnAndDevs.{{ $index }}.type_of_ld" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newLearnAndDevs.' . $index . '.type_of_ld')
+                                        <span class="text-red-500 text-sm">The type of ld is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="start_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
+                                    <input type="date" id="start_date_{{ $index }}" wire:model="newLearnAndDevs.{{ $index }}.start_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newLearnAndDevs.' . $index . '.start_date')
+                                        <span class="text-red-500 text-sm">The start date is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
+                                    <input type="date" id="end_date_{{ $index }}" wire:model="newLearnAndDevs.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newLearnAndDevs.' . $index . '.end_date')
+                                        <span class="text-red-500 text-sm">The end date is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="hours_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number of Hours</label>
+                                    <input type="number" id="hours_{{ $index }}" wire:model="newLearnAndDevs.{{ $index }}.no_of_hours" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newLearnAndDevs.' . $index . '.no_of_hours')
+                                        <span class="text-red-500 text-sm">The number of hours is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="conducted_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Conducted/Sponsored By</label>
+                                    <input type="text" id="conducted_{{ $index }}" wire:model="newLearnAndDevs.{{ $index }}.conducted_by" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newLearnAndDevs.' . $index . '.conducted_by')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>            
+                                
+                            </div>
+                        @endforeach
+
+                        <button type="button" wire:click="addNewLearnAndDev" class="bg-blue-500 hover:text-white hover:bg-blue-700 text-slate-700 dark:text-gray-300 font-bold py-2 px-4 rounded mb-4">
+                            Add Training
+                        </button>
+                    @endif
+
+                    
+                    {{-- Save and Cancel buttons --}}
+                    <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveLearnAndDev" style="margin-bottom: 5px;">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                            Cancel
+                        </p>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </x-modal>
+
+    {{-- Skills Add and Edit Modal --}}
+    <x-modal id="skillsModal" maxWidth="md" wire:model="editSkills">
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addSkills ? 'Add' : 'Edit' }} Skills
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            {{-- Form fields --}}
+            <form wire:submit.prevent='saveSkills'>
+                <div class="grid grid-cols-1">
+                    
+                    @if($addSkills != true)
+                        @foreach ($mySkills as $index => $skill)
+                            <div class="grid grid-cols-1 gap-4">
+                                <div class="col-span-1 sm:col-span-1 mb-3">
+                                    <label for="skill_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Skill</label>
+                                    <input type="text" id="skill_{{ $index }}" wire:model="mySkills.{{ $index }}.skill" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                                    <i class="fas fa-trash cursor-pointer text-red-500 hover:text-red-700 float-right mr-3" wire:click="deleteSkill({{ $skill['id'] }}, {{ $index }})" style="margin-top: -30px"></i>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        @foreach ($myNewSkills as $index => $skll)
+                            <div class="grid grid-cols-1 gap-4">
+
+                                <div class="col-span-1 sm:col-span-1 mb-3">
+                                    <label for="skill_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400"></label>
+                                    <input type="text" id="skill_{{ $index }}" wire:model="myNewSkills.{{ $index }}.skill" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    <i class="fas fa-times cursor-pointer text-red-500 hover:text-red-700 float-right mr-3" wire:click="removeNewSkill({{ $index }})" style="margin-top: -30px"></i>
+                                </div>
+                                
+                            </div>
+                        @endforeach
+
+                        <button type="button" wire:click="addNewSkill" class="bg-blue-500 hover:text-white hover:bg-blue-700 text-slate-700 dark:text-gray-300 font-bold py-2 px-4 rounded mb-4">
+                            Add Skill
+                        </button>
+                    @endif
+
+                    
+                    {{-- Save and Cancel buttons --}}
+                    <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveSkills" style="margin-bottom: 5px;">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                            Cancel
+                        </p>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </x-modal>
+
+    {{-- Hobbies Add and Edit Modal --}}
+    <x-modal id="hobbiesModal" maxWidth="md" wire:model="editHobbies">
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addHobbies ? 'Add' : 'Edit' }} Hobbies
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            {{-- Form fields --}}
+            <form wire:submit.prevent='saveHobbies'>
+                <div class="grid grid-cols-1">
+                    
+                    @if($addHobbies != true)
+                        @foreach ($myHobbies as $index => $hbby)
+                            <div class="grid grid-cols-1 gap-4">
+
+                                <div class="col-span-1 sm:col-span-1 mb-3">
+                                    <label for="hobby_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400"></label>
+                                    <input type="text" id="hobby_{{ $index }}" wire:model="myHobbies.{{ $index }}.hobby" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    <i class="fas fa-trash cursor-pointer text-red-500 hover:text-red-700 float-right mr-3" wire:click="deleteHobby({{ $hbby['id'] }}, {{ $index }})" style="margin-top: -30px"></i>
+                                </div>
+                                
+                            </div>
+                        @endforeach
+                    @else
+                        @foreach ($myNewHobbies as $index => $hbby)
+                            <div class="grid grid-cols-1 gap-4">
+
+                                <div class="col-span-1 sm:col-span-1 mb-3">
+                                    <label for="hobby_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400"></label>
+                                    <input type="text" id="hobby_{{ $index }}" wire:model="myNewHobbies.{{ $index }}.hobby" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    <i class="fas fa-times cursor-pointer text-red-500 hover:text-red-700 float-right mr-3" wire:click="removeNewHobby({{ $index }})" style="margin-top: -30px"></i>
+                                </div>
+
+                            </div>
+                        @endforeach
+
+                        <button type="button" wire:click="addNewHobby" class="bg-blue-500 hover:text-white hover:bg-blue-700 text-slate-700 dark:text-gray-300 font-bold py-2 px-4 rounded mb-4">
+                            Add Hobby
+                        </button>
+                    @endif
+
+                    
+                    {{-- Save and Cancel buttons --}}
+                    <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveHobbies" style="margin-bottom: 5px;">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                            Cancel
+                        </p>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </x-modal>
+
+    {{-- Non-Academic Distinction/Recognition Add and Edit Modal --}}
+    <x-modal id="nonAcadModal" maxWidth="2xl" wire:model="editNonAcad">
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addNonAcad ? 'Add' : 'Edit' }} Non-Academic Distinction/Recognition
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            {{-- Form fields --}}
+            <form wire:submit.prevent='saveNonAcad'>
+                <div class="grid grid-cols-1">
+                    
+                    @if($addNonAcad != true)
+                        @foreach ($nonAcads as $index => $nonAcad)
+                            <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
+
+                                <div class="col-span-2 sm:col-span-2">
+                                    <label for="award_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Award</label>
+                                    <input type="text" id="award_{{ $index }}" wire:model="nonAcads.{{ $index }}.award" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('nonAcads.' . $index . '.award')
+                                        <span class="text-red-500 text-sm">The award is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="org_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Association/Organization Name</label>
+                                    <input type="text" id="org_{{ $index }}" wire:model="nonAcads.{{ $index }}.ass_org_name" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('nonAcads.' . $index . '.ass_org_name')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date Received</label>
+                                    <input type="date" id="date_{{ $index }}" wire:model="nonAcads.{{ $index }}.date_received" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('nonAcads.' . $index . '.date_received')
+                                        <span class="text-red-500 text-sm">The date received is required!</span>
+                                    @enderror
+                                </div>  
+                                
+                            </div>
+                        @endforeach
+                    @else
+                        @foreach ($newNonAcads as $index => $nonAcad)
+                            <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
+
+                                <div class="col-span-2 sm:col-span-2">
+                                    <label for="award_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Award
+                                        <i class="fas fa-times cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewNonAcad({{ $index }})"></i>
+                                    </label>
+                                    <input type="text" id="award_{{ $index }}" wire:model="newNonAcads.{{ $index }}.award" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newNonAcads.' . $index . '.award')
+                                        <span class="text-red-500 text-sm">The award is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="org_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Association/Organization Name</label>
+                                    <input type="text" id="org_{{ $index }}" wire:model="newNonAcads.{{ $index }}.ass_org_name" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newNonAcads.' . $index . '.ass_org_name')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date Received</label>
+                                    <input type="date" id="date_{{ $index }}" wire:model="newNonAcads.{{ $index }}.date_received" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newNonAcads.' . $index . '.date_received')
+                                        <span class="text-red-500 text-sm">The date received is required!</span>
+                                    @enderror
+                                </div>  
+                                
+                            </div>
+                        @endforeach
+                        
+                        <button type="button" wire:click="addNewNonAcad" class="bg-blue-500 hover:text-white hover:bg-blue-700 text-slate-700 dark:text-gray-300 font-bold py-2 px-4 rounded mb-4">
+                            Add Non-Academic Distinction/Recognition
+                        </button>
+                    @endif
+
+                    
+                    {{-- Save and Cancel buttons --}}
+                    <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveNonAcad" style="margin-bottom: 5px;">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                            Cancel
+                        </p>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </x-modal>
+
+    {{-- Membership in Association/Organization Add and Edit Modal --}}
+    <x-modal id="membershipsModal" maxWidth="2xl" wire:model="editMemberships">
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addMemberships ? 'Add' : 'Edit' }} Membership in Association/Organization
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            {{-- Form fields --}}
+            <form wire:submit.prevent='saveMemberships'>
+                <div class="grid grid-cols-1">
+                    
+                    @if($addMemberships != true)
+                        @foreach ($memberships as $index => $member)
+                            <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="ass_org_name_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Association/Organization Name</label>
+                                    <input type="text" id="ass_org_name_{{ $index }}" wire:model="memberships.{{ $index }}.ass_org_name" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('memberships.' . $index . '.ass_org_name')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="position_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
+                                    <input type="text" id="position_{{ $index }}" wire:model="memberships.{{ $index }}.position" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('memberships.' . $index . '.position')
+                                        <span class="text-red-500 text-sm">This position is required!</span>
+                                    @enderror
+                                </div>
+                                
+                            </div>
+                        @endforeach
+                    @else
+                        @foreach ($newMemberships as $index => $member)
+                            <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="ass_org_name_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Association/Organization Name
+                                        <i class="fas fa-times flex sm:hidden cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewMembership({{ $index }})"></i>
+                                    </label>
+                                    <input type="text" id="ass_org_name_{{ $index }}" wire:model="newMemberships.{{ $index }}.ass_org_name" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newMemberships.' . $index . '.ass_org_name')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="position_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position
+                                        <i class="fas fa-times hidden sm:flex cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewMembership({{ $index }})"></i>
+                                    </label>
+                                    <input type="text" id="position_{{ $index }}" wire:model="newMemberships.{{ $index }}.position" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('newMemberships.' . $index . '.position')
+                                        <span class="text-red-500 text-sm">This position is required!</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <button type="button" wire:click="addNewMembership" class="bg-blue-500 hover:text-white hover:bg-blue-700 text-slate-700 dark:text-gray-300 font-bold py-2 px-4 rounded mb-4">
+                            Add Membership
+                        </button>
+                    @endif
+
+                    
+                    {{-- Save and Cancel buttons --}}
+                    <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveMemberships" style="margin-bottom: 5px;">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                            Cancel
+                        </p>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </x-modal>
+
+    {{-- Character Reference Add and Edit Modal --}}
+    <x-modal id="referenceModal" maxWidth="2xl" wire:model="editReferences">
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addReferences ? 'Add' : 'Edit' }} Character Reference
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            {{-- Form fields --}}
+            <form wire:submit.prevent='saveReferences'>
+                <div class="grid grid-cols-1">
+                    
+                    @if($addReferences != true)
+                        @foreach ($myReferences as $index => $refs)
+                            <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="firstname_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Firstname</label>
+                                    <input type="text" id="firstname_{{ $index }}" wire:model="myReferences.{{ $index }}.firstname" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('myReferences.' . $index . '.firstname')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="middle_initial_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Middle Initial</label>
+                                    <input type="text" id="middle_initial_{{ $index }}" wire:model="myReferences.{{ $index }}.middle_initial" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('myReferences.' . $index . '.middle_initial')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="surname_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Surname</label>
+                                    <input type="text" id="surname_{{ $index }}" wire:model="myReferences.{{ $index }}.surname" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('myReferences.' . $index . '.surname')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="address_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Address</label>
+                                    <input type="text" id="address_{{ $index }}" wire:model="myReferences.{{ $index }}.address" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('myReferences.' . $index . '.address')
+                                        <span class="text-red-500 text-sm">This position is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="tel_number_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Tel Number</label>
+                                    <input type="text" id="tel_number_{{ $index }}" wire:model="myReferences.{{ $index }}.tel_number" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('myReferences.' . $index . '.tel_number')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="mobile_number_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Mobile Number</label>
+                                    <input type="number" id="mobile_number_{{ $index }}" wire:model="myReferences.{{ $index }}.mobile_number" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('myReferences.' . $index . '.mobile_number')
+                                        <span class="text-red-500 text-sm">This position is required!</span>
+                                    @enderror
+                                </div>
+                                
+                            </div>
+                        @endforeach
+                    @else
+                        @foreach ($myNewReferences as $index => $refs)
+                            <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="firstname_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Firstname
+                                        <i class="fas fa-times flex sm:hidden cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewReference({{ $index }})"></i>
+                                    </label>
+                                    <input type="text" id="firstname_{{ $index }}" wire:model="myNewReferences.{{ $index }}.firstname" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('myNewReferences.' . $index . '.firstname')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="middle_initial_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Middle Initial
+                                        <i class="fas fa-times hidden sm:flex cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewReference({{ $index }})"></i>
+                                    </label>
+                                    <input type="text" id="middle_initial_{{ $index }}" wire:model="myNewReferences.{{ $index }}.middle_initial" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('myNewReferences.' . $index . '.middle_initial')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="surname_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Surname</label>
+                                    <input type="text" id="surname_{{ $index }}" wire:model="myNewReferences.{{ $index }}.surname" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('myNewReferences.' . $index . '.surname')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="address_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Address</label>
+                                    <input type="text" id="address_{{ $index }}" wire:model="myNewReferences.{{ $index }}.address" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('myNewReferences.' . $index . '.address')
+                                        <span class="text-red-500 text-sm">This position is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="tel_number_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Tel Number</label>
+                                    <input type="text" id="tel_number_{{ $index }}" wire:model="myNewReferences.{{ $index }}.tel_number" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('myNewReferences.' . $index . '.tel_number')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="mobile_number_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Mobile Number</label>
+                                    <input type="number" id="mobile_number_{{ $index }}" wire:model="myNewReferences.{{ $index }}.mobile_number" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    @error('myNewReferences.' . $index . '.mobile_number')
+                                        <span class="text-red-500 text-sm">This position is required!</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <button type="button" wire:click="addNewReference" class="bg-blue-500 hover:text-white hover:bg-blue-700 text-slate-700 dark:text-gray-300 font-bold py-2 px-4 rounded mb-4">
+                            Add Reference
+                        </button>
+                    @endif
+
+                    
+                    {{-- Save and Cancel buttons --}}
+                    <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveReferences" style="margin-bottom: 5px;">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                            Cancel
+                        </p>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </x-modal>
+
+    {{-- Delete Modal --}}
+    <x-modal id="deleteModal" maxWidth="md" wire:model="delete" centered>
+        <div class="p-4">
+            <div class="mb-4 text-slate-900 dark:text-gray-100 font-bold">
+                Confirm Deletion
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">
+                Are you sure you want to delete this {{ $deleteMessage }}?
+            </label>
+            <form wire:submit.prevent='deleteData'>
+                <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
+                    <button class="mr-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        <div wire:loading wire:target="deleteData" style="margin-bottom: 5px;">
+                            <div class="spinner-border small text-primary" role="status">
+                            </div>
+                        </div>
+                        Delete
+                    </button>
+                    <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                        Cancel
+                    </p>
+                </div>
+            </form>
+
+        </div>
+    </x-modal>
+    
 </div>

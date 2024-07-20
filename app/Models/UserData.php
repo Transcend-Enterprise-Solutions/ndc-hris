@@ -56,4 +56,9 @@ class UserData extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function leaveApplication()
+    {
+        return $this->hasMany(LeaveApplication::class);
+    }
 }

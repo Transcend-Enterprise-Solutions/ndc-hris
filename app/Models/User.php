@@ -63,7 +63,7 @@ class User extends Authenticatable
     }
 
     public function employeesChildren(){
-        return $this->hasMany(EmployeesChildren::class);
+        return $this->hasMany(EmployeesChildren::class)->orderBy('childs_birth_date', 'ASC');
     }
 
     public function employeesSpouse(){
@@ -123,6 +123,11 @@ class User extends Authenticatable
     public function userSchedule()
     {
         return $this->hasMany(Schedule::class);
+    }
+
+    public function leaveApplication()
+    {
+        return $this->hasMany(LeaveApplication::class);
     }
 
 

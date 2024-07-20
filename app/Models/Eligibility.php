@@ -13,6 +13,7 @@ class Eligibility extends Model
 
     protected $fillable = [
         'user_id',
+        'eligibility',
         'rating',
         'date',
         'place_of_exam',
