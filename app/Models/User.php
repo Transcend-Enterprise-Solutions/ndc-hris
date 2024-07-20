@@ -63,7 +63,7 @@ class User extends Authenticatable
     }
 
     public function employeesChildren(){
-        return $this->hasMany(EmployeesChildren::class);
+        return $this->hasMany(EmployeesChildren::class)->orderBy('childs_birth_date', 'ASC');
     }
 
     public function employeesSpouse(){
