@@ -24,6 +24,7 @@ class LeaveApplication extends Model
         'start_date',
         'end_date',
         'commutation',
+        'status',
     ];
 
     public function user()
@@ -34,5 +35,15 @@ class LeaveApplication extends Model
     public function userData()
     {
         return $this->belongsTo(UserData::class);
+    }
+
+    public function vacationLeaveDetails()
+    {
+        return $this->hasMany(VacationLeaveDetails::class, 'application_id');
+    }
+
+    public function sickLeaveDetails()
+    {
+        return $this->hasMany(SickLeaveDetails::class, 'application_id');
     }
 }

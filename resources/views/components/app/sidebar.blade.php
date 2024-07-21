@@ -319,7 +319,7 @@
                                 :class="{'max-h-0': !open, 'max-h-screen': open}">
                                 <li class="mb-1 last:mb-0">
                                     <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('leave-request')){{ '!text-blue-500' }}@endif"
-                                        href="#0">
+                                        href="{{ route('admin-leave-request') }}">
                                         <span class="text-sm font-medium transition-opacity duration-300"
                                             :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Leave
                                             Request</span>

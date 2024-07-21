@@ -4,12 +4,17 @@ namespace App\Livewire\User;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\WithPagination;
 use App\Models\UserData;
 use App\Models\User;
 use App\Models\LeaveApplication;
+use App\Models\VacationLeaveDetails;
+use App\Models\SickLeaveDetails;
 
 class LeaveApplicationTable extends Component
 {
+    use WithPagination;
+
     public $applyForLeave = false;
     public $name;
     public $office_or_department;
@@ -106,12 +111,23 @@ class LeaveApplicationTable extends Component
             if ($leaveType === 'Women Special Illness') {
                 $leaveDetails[] = $leaveType . ' = ' . $this->specialIllnessForWomen;
             }
+            if ($leaveType === 'Completion of Masters Degree') {
+                $leaveDetails[] = $leaveType;
+            }
+            if ($leaveType === 'BAR/Board Examination Review') {
+                $leaveDetails[] = $leaveType;
+            }
+            if ($leaveType === 'Monetization of Leave Credits') {
+                $leaveDetails[] = $leaveType;
+            }
+            if ($leaveType === 'Terminal Leave') {
+                $leaveDetails[] = $leaveType;
+            }
         }
 
         $leaveDetailsString = implode(', ', $leaveDetails);
 
-
-        LeaveApplication::create([
+        $leaveApplication = LeaveApplication::create([
             'user_id' => Auth::id(),
             'name' => $this->name,
             'office_or_department' => $this->office_or_department,
@@ -124,7 +140,30 @@ class LeaveApplicationTable extends Component
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'commutation' => $this->commutation,
+            'status' => 'Pending',
         ]);
+
+        if (in_array('Vacation Leave', $this->type_of_leave)) {
+            VacationLeaveDetails::create([
+                'application_id' => $leaveApplication->id,
+                'total_earned' => 0, // You may update this based on your requirements
+                'less_this_application' => 1,
+                'balance' => 10,
+                'recommendation' => 'For approval',
+                'status' => 'Pending', // You may update this based on your requirements
+            ]);
+        }
+
+        if (in_array('Sick Leave', $this->type_of_leave)) {
+            SickLeaveDetails::create([
+                'application_id' => $leaveApplication->id,
+                'total_earned' => 0, // You may update this based on your requirements
+                'less_this_application' => 1,
+                'balance' => 10,
+                'recommendation' => 'For approval',
+                'status' => 'Pending', // You may update this based on your requirements
+            ]);
+        }
 
         $this->dispatch('notify', [
             'message' => "Leave Application sent successfully!",
@@ -156,6 +195,12 @@ class LeaveApplicationTable extends Component
 
     public function render()
     {
-        return view('livewire.user.leave-application-table');
+        $leaveApplications = LeaveApplication::where('user_id', Auth::id())
+        ->with('vacationLeaveDetails', 'sickLeaveDetails')
+        ->paginate(10);
+
+        return view('livewire.user.leave-application-table', [
+            'leaveApplications' => $leaveApplications,
+        ]);
     }
 }

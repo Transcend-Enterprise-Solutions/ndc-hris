@@ -1,10 +1,131 @@
 <div x-data="{ open: false }" class="w-full">
     <button wire:click="openLeaveForm"
-        class="btn bg-emerald-200 dark:bg-emerald-500 hover:bg-emerald-600 text-gray-800 dark:text-white whitespace-nowrap mx-2">
+        class="btn bg-emerald-200 dark:bg-emerald-500 hover:bg-emerald-600 text-gray-800 dark:text-white whitespace-nowrap mx-2 mb-2">
         Apply for Leave
     </button>
 
-    {{-- Form --}}
+    {{-- <button wire:click="openLeaveForm"
+        class="btn bg-emerald-200 dark:bg-emerald-500 hover:bg-emerald-600 text-gray-800 dark:text-white whitespace-nowrap mx-2 mb-2">
+        See Status of Application
+    </button> --}}
+
+    {{-- Table --}}
+    <div class="w-full flex justify-center">
+        <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
+            <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Leave Application</h1>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
+                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                        <tr class="whitespace-nowrap">
+                            <th scope="col" class="px-4 py-2 text-center">Date of Filing</th>
+                            <th scope="col" class="px-4 py-2 text-center">Type of Leave</th>
+                            <th scope="col" class="px-4 py-2 text-center">Details of Leave</th>
+                            <th scope="col" class="px-4 py-2 text-center">Number of days</th>
+                            <th scope="col" class="px-4 py-2 text-center">Start Date</th>
+                            <th scope="col" class="px-4 py-2 text-center">End Date</th>
+                            <th class="px-4 py-2 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($leaveApplications as $leaveApplication)
+                        <tr class="whitespace-nowrap">
+                            <td class="px-4 py-2 text-center">{{ $leaveApplication->date_of_filing }}</td>
+                            <td class="px-4 py-2 text-center">{{ $leaveApplication->type_of_leave }}</td>
+                            <td class="px-4 py-2 text-center">{{ $leaveApplication->details_of_leave }}</td>
+                            <td class="px-4 py-2 text-center">{{ $leaveApplication->number_of_days }}</td>
+                            <td class="px-4 py-2 text-center">{{ $leaveApplication->start_date }}</td>
+                            <td class="px-4 py-2 text-center">{{ $leaveApplication->end_date }}</td>
+                            <td class="px-4 py-2 text-center">
+                                <span
+                                    class="inline-block px-3 py-1 text-sm font-semibold {{ $leaveApplication->status === 'Pending' ? 'text-yellow-800 bg-yellow-200' : ($leaveApplication->status === 'Approved' ? 'text-green-800 bg-green-200' : 'text-red-800 bg-red-200') }} rounded-full">
+                                    {{ $leaveApplication->status }}
+                                </span>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-5 border-t border-neutral-500 dark:border-neutral-200">
+                {{ $leaveApplications->links() }}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="w-full flex justify-center mt-4 grid grid-cols-2 gap-2">
+        <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
+            <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Details of Action on Application
+            </h1>
+            <div class="overflow-x-auto">
+                <label class="ml-2 text-gray-900 dark:text-gray-300">(Vacation Leave)</label>
+                <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
+                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                        <tr class="whitespace-nowrap">
+                            <th scope="col" class="px-4 py-2 text-center">Total Earned</th>
+                            <th scope="col" class="px-4 py-2 text-center">Less this Application</th>
+                            <th scope="col" class="px-4 py-2 text-center">Balance</th>
+                            <th scope="col" class="px-4 py-2 text-center">Recommendation</th>
+                            <th scope="col" class="px-4 py-2 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($leaveApplications as $leaveApplication)
+                        @foreach($leaveApplication->vacationLeaveDetails as $details)
+                        <tr class="whitespace-nowrap">
+                            <td class="px-4 py-2 text-center">{{ $details->total_earned }}</td>
+                            <td class="px-4 py-2 text-center">{{ $details->less_this_application }}</td>
+                            <td class="px-4 py-2 text-center">{{ $details->balance }}</td>
+                            <td class="px-4 py-2 text-center">{{ $details->recommendation }}</td>
+                            <td class="px-4 py-2 text-center">{{ $details->status }}</td>
+                        </tr>
+                        @endforeach
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-5 border-t border-neutral-500 dark:border-neutral-200">
+                {{-- {{ $leaveApplications->links() }} --}}
+            </div>
+        </div>
+        <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
+            <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Details of Action on Application
+            </h1>
+            <div class="overflow-x-auto">
+                <label class="ml-2 text-gray-900 dark:text-gray-300">(Sick Leave)</label>
+                <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
+                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                        <tr class="whitespace-nowrap">
+                            <th scope="col" class="px-4 py-2 text-center">Total Earned</th>
+                            <th scope="col" class="px-4 py-2 text-center">Less this Application</th>
+                            <th scope="col" class="px-4 py-2 text-center">Balance</th>
+                            <th scope="col" class="px-4 py-2 text-center">Recommendation</th>
+                            <th scope="col" class="px-4 py-2 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($leaveApplications as $leaveApplication)
+                        @foreach($leaveApplication->sickLeaveDetails as $details)
+                        <tr class="whitespace-nowrap">
+                            <td class="px-4 py-2 text-center">{{ $details->total_earned }}</td>
+                            <td class="px-4 py-2 text-center">{{ $details->less_this_application }}</td>
+                            <td class="px-4 py-2 text-center">{{ $details->balance }}</td>
+                            <td class="px-4 py-2 text-center">{{ $details->recommendation }}</td>
+                            <td class="px-4 py-2 text-center">{{ $details->status }}</td>
+                        </tr>
+                        @endforeach
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-5 border-t border-neutral-500 dark:border-neutral-200">
+                {{-- {{ $leaveApplications->links() }} --}}
+            </div>
+        </div>
+    </div>
+
+
+    {{-- Leave Application Form --}}
     <x-modal id="applyForLeave" maxWidth="5xl" wire:model="applyForLeave">
         <div class="p-4">
             <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
@@ -249,7 +370,7 @@
                             <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic">In case of
                                 Study Leave:</h6>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" class="ml-1" value="Completion of Master's Degree"
+                                <input type="checkbox" class="ml-1" value="Completion of Masters Degree"
                                     wire:model="details_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Completion of Master's
                                     Degree</label>
@@ -307,4 +428,6 @@
             </div>
         </div>
     </x-modal>
+
+
 </div>
