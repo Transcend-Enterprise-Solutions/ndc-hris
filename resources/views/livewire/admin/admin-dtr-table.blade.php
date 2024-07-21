@@ -9,6 +9,8 @@
                         <th class="px-4 py-2 text-center">Employee ID</th>
                         <th class="px-4 py-2 text-center">Employee Name</th>
                         <th class="px-4 py-2 text-center">Date</th>
+                        <th class="px-4 py-2 text-center">Day</th>
+                        <th class="px-4 py-2 text-center">Location</th>
                         <th class="px-4 py-2 text-center">Morning In</th>
                         <th class="px-4 py-2 text-center">Noon Out</th>
                         <th class="px-4 py-2 text-center">Noon In</th>
@@ -22,13 +24,15 @@
                     @foreach ($transactions as $empCode => $empTransactions)
                         @foreach ($empTransactions as $date => $dateTransactions)
                             @php
-                                $timeRecords = $this->calculateTimeRecords($dateTransactions);
+                                $timeRecords = $this->calculateTimeRecords($dateTransactions, $empCode, $date);
                                 $employee = \App\Models\User::where('emp_code', $empCode)->first();
                             @endphp
                             <tr class="whitespace-nowrap">
                                 <td class="px-4 py-2 text-center">{{ $empCode }}</td>
                                 <td class="px-4 py-2 text-center">{{ $employee ? $employee->name : 'Unknown' }}</td>
                                 <td class="px-4 py-2 text-center">{{ $date }}</td>
+                                <td class="px-4 py-2 text-center">{{ $timeRecords['dayOfWeek'] }}</td>
+                                <td class="px-4 py-2 text-center">{{ $timeRecords['location'] }}</td>
                                 <td class="px-4 py-2 text-center">{{ $timeRecords['morningIn'] }}</td>
                                 <td class="px-4 py-2 text-center">{{ $timeRecords['morningOut'] }}</td>
                                 <td class="px-4 py-2 text-center">{{ $timeRecords['afternoonIn'] }}</td>
