@@ -26,9 +26,6 @@ class AdminDtrTable extends Component
             $date = Carbon::parse($transaction->punch_time)->format('Y-m-d');
             $empCode = $transaction->emp_code;
             if (!isset($groupedTransactions[$empCode])) {
-                $groupedTransactions[$empCode] = [];
-            }
-            if (!isset($groupedTransactions[$empCode][$date])) {
                 $groupedTransactions[$empCode][$date] = [];
             }
             $groupedTransactions[$empCode][$date][] = [
@@ -115,10 +112,14 @@ class AdminDtrTable extends Component
         // Calculate total hours rendered
         $totalHoursRendered = 0;
         if ($morningIn && $morningOut) {
-            $totalHoursRendered += max(0, $morningIn->copy()->max($defaultStartTime)->diffInMinutes($morningOut)) / 60;
+            $morningStart = max($defaultStartTime, $morningIn);
+            $morningEnd = min($defaultEndTime, $morningOut);
+            $totalHoursRendered += max(0, $morningStart->diffInMinutes($morningEnd)) / 60;
         }
         if ($afternoonIn && $afternoonOut) {
-            $totalHoursRendered += max(0, $afternoonIn->copy()->max($defaultStartTime)->diffInMinutes($afternoonOut)) / 60;
+            $afternoonStart = max($defaultStartTime, $afternoonIn);
+            $afternoonEnd = min($defaultEndTime, $afternoonOut);
+            $totalHoursRendered += max(0, $afternoonStart->diffInMinutes($afternoonEnd)) / 60;
         }
 
         // Limit total rendered hours to 8 hours
@@ -138,8 +139,6 @@ class AdminDtrTable extends Component
 
         return $result;
     }
-
-
 
     private function getFirstInPunch($punches)
     {
