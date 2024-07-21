@@ -48,7 +48,7 @@ class AdminDtrTable extends Component
         // Separate morning and afternoon punches
         foreach ($dateTransactions as $transaction) {
             $punchTime = Carbon::parse($transaction['punch_time']);
-            if ($punchTime->hour < 12) {
+            if ($punchTime->hour <= 12) {
                 $morningPunches->push($transaction);
             } else {
                 $afternoonPunches->push($transaction);
@@ -124,11 +124,6 @@ class AdminDtrTable extends Component
         // Limit total rendered hours to 8 hours
         $totalHoursRendered = min($totalHoursRendered, 8);
 
-        // Subtract overtime hours if the afternoon out is late
-        if ($afternoonOut && $afternoonOut->gt($defaultEndTime)) {
-            $totalHoursRendered -= $overtime / 60;
-        }
-
         $result = [
             'dayOfWeek' => $dayOfWeek,
             'location' => $location,
@@ -143,6 +138,7 @@ class AdminDtrTable extends Component
 
         return $result;
     }
+
 
 
     private function getFirstInPunch($punches)
