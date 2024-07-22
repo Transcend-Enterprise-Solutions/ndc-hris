@@ -60,6 +60,26 @@ class AdminScheduleTable extends Component
 
         $this->validate();
 
+        // Check for overlapping schedules
+        $overlappingSchedule = DTRSchedule::where('emp_code', $this->emp_code)
+            ->where(function ($query) {
+                $query->whereBetween('start_date', [$this->start_date, $this->end_date])
+                    ->orWhereBetween('end_date', [$this->start_date, $this->end_date])
+                    ->orWhere(function ($q) {
+                        $q->where('start_date', '<=', $this->start_date)
+                          ->where('end_date', '>=', $this->end_date);
+                    });
+            })
+            ->when($this->scheduleId, function ($query) {
+                return $query->where('id', '!=', $this->scheduleId);
+            })
+            ->first();
+
+        if ($overlappingSchedule) {
+            $this->addError('date_range', 'This schedule overlaps with an existing schedule for this employee.');
+            return;
+        }
+
         DTRSchedule::updateOrCreate(
             ['id' => $this->scheduleId],
             [
@@ -72,7 +92,10 @@ class AdminScheduleTable extends Component
             ]
         );
 
-        session()->flash('message', $this->scheduleId ? 'Schedule updated successfully.' : 'Schedule created successfully.');
+        $this->dispatch('notify', [
+            'message' => $this->scheduleId ? 'Schedule updated successfully.' : 'Schedule created successfully.',
+            'type' => 'success'
+        ]);
 
         $this->closeModal();
         $this->loadSchedules();
@@ -103,7 +126,10 @@ class AdminScheduleTable extends Component
         DTRSchedule::find($this->scheduleToDelete)->delete();
         $this->confirmingScheduleDeletion = false;
         $this->loadSchedules();
-        session()->flash('message', 'Schedule deleted successfully.');
+        $this->dispatch('notify', [
+            'message' => 'Schedule deleted successfully!',
+            'type' => 'success'
+        ]);
     }
 
     public function closeConfirmationModal()

@@ -1,20 +1,6 @@
 <div>
     <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
         <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Schedule</h1>
-
-        <!-- Success/Error Message -->
-        @if (session()->has('message'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <span class="block sm:inline">{{ session('message') }}</span>
-            </div>
-        @endif
-
-        @if (session()->has('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <span class="block sm:inline">{{ session('error') }}</span>
-            </div>
-        @endif
-
         <!-- Modal -->
         @if($isModalOpen)
             <div class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
@@ -69,6 +55,9 @@
                                 <input id="end_date" type="date" wire:model="end_date" class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700">
                                 @error('end_date') <span class="text-red-500">{{ $message }}</span> @enderror
                             </div>
+                        </div>
+                        <div>
+                            @error('date_range') <span class="text-red-500">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
