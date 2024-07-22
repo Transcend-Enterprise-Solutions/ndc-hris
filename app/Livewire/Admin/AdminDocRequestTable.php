@@ -45,7 +45,22 @@ class AdminDocRequestTable extends Component
 
     public function rejectRequest($id)
     {
-        $this->changeStatus($id, 'rejected', 'Document request rejected.');
+        $request = DocRequest::find($id);
+        if ($request) {
+            $request->status = 'rejected';
+            $request->date_completed = now();
+            $request->save();
+            $this->dispatch('notify', [
+                'message' => 'Document request rejected!',
+                'type' => 'success'
+            ]);
+            $this->loadRequests();
+        } else {
+            $this->dispatch('notify', [
+                'message' => 'Document request not found!',
+                'type' => 'error'
+            ]);
+        }
     }
 
     private function changeStatus($id, $status, $message)
@@ -54,28 +69,43 @@ class AdminDocRequestTable extends Component
         if ($request) {
             $request->status = $status;
             $request->save();
-            session()->flash('message', $message);
+            $this->dispatch('notify', [
+                'message' => $message,
+                'type' => 'success'
+            ]);
             $this->loadRequests();
         } else {
-            session()->flash('error', 'Document request not found.');
+            $this->dispatch('notify', [
+                'message' => 'Document request not found!',
+                'type' => 'error'
+            ]);
         }
     }
 
     public function uploadDocument($requestId)
     {
         if (empty($requestId)) {
-            session()->flash('error', 'No document request selected.');
+            $this->dispatch('notify', [
+                'message' => 'No document request selected!',
+                'type' => 'error'
+            ]);
             return;
         }
 
         $request = DocRequest::find($requestId);
         if (!$request) {
-            session()->flash('error', 'Document request not found.');
+            $this->dispatch('notify', [
+                'message' => 'Document request not found!',
+                'type' => 'error'
+            ]);
             return;
         }
 
         if (empty($this->uploadedFile[$requestId])) {
-            session()->flash('error', 'No file uploaded.');
+            $this->dispatch('notify', [
+                'message' => 'No File Uploaded!',
+                'type' => 'error'
+            ]);
             return;
         }
 
@@ -86,7 +116,10 @@ class AdminDocRequestTable extends Component
         $request->date_completed = now();
         $request->save();
 
-        session()->flash('message', 'Document uploaded successfully.');
+        $this->dispatch('notify', [
+            'message' => 'Document uploaded successfully!',
+            'type' => 'success'
+        ]);
         $this->resetUploadFields($requestId);
         $this->loadRequests();
     }
@@ -95,7 +128,10 @@ class AdminDocRequestTable extends Component
     {
         $request = DocRequest::find($id);
         if (!$request || !$request->file_path) {
-            session()->flash('error', 'Document not found.');
+            $this->dispatch('notify', [
+                'message' => 'Document not found!',
+                'type' => 'error'
+            ]);
             return;
         }
 
@@ -103,7 +139,10 @@ class AdminDocRequestTable extends Component
         if (file_exists($filePath)) {
             return response()->download($filePath, $request->filename);
         } else {
-            session()->flash('error', 'File not found on the server.');
+            $this->dispatch('notify', [
+                'message' => 'File not found!',
+                'type' => 'error'
+            ]);
         }
     }
 
@@ -115,10 +154,16 @@ class AdminDocRequestTable extends Component
                 Storage::disk('public')->delete($request->file_path);
             }
             $request->delete();
-            session()->flash('message', 'Document request deleted.');
+            $this->dispatch('notify', [
+                'message' => 'Document Request Deleted!',
+                'type' => 'success'
+            ]);
             $this->loadRequests();
         } else {
-            session()->flash('error', 'Document request not found.');
+            $this->dispatch('notify', [
+                'message' => 'Document request not found!',
+                'type' => 'error'
+            ]);
         }
     }
 

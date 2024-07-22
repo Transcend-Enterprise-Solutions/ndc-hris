@@ -41,7 +41,10 @@ class MyDocumentsTable extends Component
         }
 
         $this->reset(['files', 'documentType']);
-        $this->message = 'Documents uploaded successfully.';
+        $this->dispatch('notify', [
+            'message' => 'Document uploaded successfully!',
+            'type' => 'success'
+        ]);
         $this->isUploading = false;
 
         // Dispatch an event to refresh documents
@@ -92,9 +95,15 @@ class MyDocumentsTable extends Component
         if ($document && $document->user_id === Auth::id()) {
             Storage::delete($document->file_path);
             $document->delete();
-            $this->message = 'Document deleted successfully.';
+            $this->dispatch('notify', [
+                'message' => 'Document deleted successfully!',
+                'type' => 'success'
+            ]);
         } else {
-            $this->error = 'Document not found or permission denied.';
+            $this->dispatch('notify', [
+                'message' => 'Document not found!',
+                'type' => 'error'
+            ]);
         }
 
         $this->confirmDeleteModal = false;

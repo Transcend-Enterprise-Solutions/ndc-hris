@@ -2,22 +2,11 @@
     <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
         <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Request a Document</h1>
 
-        <!-- Success and Error Messages -->
-        @if (session()->has('message'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <span class="block sm:inline">{{ session('message') }}</span>
-            </div>
-        @endif
 
-        @if (session()->has('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <span class="block sm:inline">{{ session('error') }}</span>
-            </div>
-        @endif
 
         <!-- Document Type Selection -->
         <select wire:model="documentType" class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700 mb-4">
-            <option value="" disabled selected>Select document type</option>
+            <option value="" selected>Select document type</option>
             @foreach ($availableDocumentTypes as $key => $label)
                 <option value="{{ $key }}">{{ $label }}</option>
             @endforeach

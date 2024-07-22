@@ -5,18 +5,6 @@
                 <h1 class="text-lg font-bold text-center text-black dark:text-white">My Documents</h1>
             </div>
 
-            <!-- Success and Error Messages -->
-            @if ($message)
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                    <span class="block sm:inline">{{ $message }}</span>
-                </div>
-            @endif
-
-            @if ($error)
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                    <span class="block sm:inline">{{ $error }}</span>
-                </div>
-            @endif
 
             <!-- File Upload Area -->
             <div class="mt-4 p-6 border-2 border-dashed border-gray-300 rounded-lg text-center">

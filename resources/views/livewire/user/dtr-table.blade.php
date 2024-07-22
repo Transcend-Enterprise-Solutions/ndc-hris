@@ -7,6 +7,8 @@
                 <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                     <tr class="whitespace-nowrap">
                         <th class="px-4 py-2 text-center">Date</th>
+                        <th class="px-4 py-2 text-center">Day</th>
+                        <th class="px-4 py-2 text-center">Location</th>
                         <th class="px-4 py-2 text-center">Morning In</th>
                         <th class="px-4 py-2 text-center">Noon Out</th>
                         <th class="px-4 py-2 text-center">Noon In</th>
@@ -17,19 +19,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($transactions as $date => $dateTransactions)
-                        @php
-                            $timeRecords = $this->calculateTimeRecords($dateTransactions);
-                        @endphp
+                    @foreach ($formattedTransactions as $date => $record)
                         <tr class="whitespace-nowrap">
                             <td class="px-4 py-2 text-center">{{ $date }}</td>
-                            <td class="px-4 py-2 text-center">{{ $timeRecords['morningIn'] }}</td>
-                            <td class="px-4 py-2 text-center">{{ $timeRecords['morningOut'] }}</td>
-                            <td class="px-4 py-2 text-center">{{ $timeRecords['afternoonIn'] }}</td>
-                            <td class="px-4 py-2 text-center">{{ $timeRecords['afternoonOut'] }}</td>
-                            <td class="px-4 py-2 text-center">{{ $timeRecords['late'] }}</td>
-                            <td class="px-4 py-2 text-center">{{ $timeRecords['overtime'] }}</td>
-                            <td class="px-4 py-2 text-center">{{ $timeRecords['totalHoursRendered'] }}</td>
+                            <td class="px-4 py-2 text-center">{{ $record['dayOfWeek'] }}</td>
+                            <td class="px-4 py-2 text-center">{{ $record['location'] }}</td>
+                            <td class="px-4 py-2 text-center">{{ $record['morningIn'] }}</td>
+                            <td class="px-4 py-2 text-center">{{ $record['morningOut'] }}</td>
+                            <td class="px-4 py-2 text-center">{{ $record['afternoonIn'] }}</td>
+                            <td class="px-4 py-2 text-center">{{ $record['afternoonOut'] }}</td>
+                            <td class="px-4 py-2 text-center">{{ $record['late'] }}</td>
+                            <td class="px-4 py-2 text-center">{{ $record['overtime'] }}</td>
+                            <td class="px-4 py-2 text-center">{{ $record['totalHoursRendered'] }}</td>
                         </tr>
                     @endforeach
                 </tbody>
