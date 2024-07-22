@@ -30,7 +30,10 @@ class DocRequestTable extends Component
             'status' => 'pending',
         ]);
 
-        session()->flash('message', 'Document request submitted successfully.');
+        $this->dispatch('notify', [
+            'message' => 'Document Request sent successfully!',
+            'type' => 'success'
+        ]);
         $this->documentType = null;
     }
 
@@ -49,6 +52,10 @@ class DocRequestTable extends Component
         } else {
             session()->flash('error', 'File not found on the server.');
         }
+        $this->dispatch('notify', [
+            'message' => 'Document downloaded successfully!',
+            'type' => 'success'
+        ]);
     }
 
     public function getRequestsProperty()
