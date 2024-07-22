@@ -63,13 +63,13 @@ class AdminLeaveRequestTable extends Component
             if ($this->status === 'Other') {
                 $this->selectedApplication->status = $this->otherReason;
             } else {
-                $this->selectedApplication->status = "{$this->days} days {$this->status}";
+                $this->selectedApplication->status = "Approved for: {$this->days} days {$this->status}";
             }
 
             $this->selectedApplication->save();
 
             $this->dispatch('notify', [
-                'message' => "Status updated to {$this->selectedApplication->status}!",
+                'message' => "Leave application approved successfully!",
                 'type' => 'success'
             ]);
 
@@ -84,7 +84,7 @@ class AdminLeaveRequestTable extends Component
         ]);
 
         if ($this->selectedApplication) {
-            $this->selectedApplication->status = "Disapproved: {$this->disapproveReason}";
+            $this->selectedApplication->status = "Disapproved due to: {$this->disapproveReason}";
             $this->selectedApplication->save();
 
             $this->dispatch('notify', [

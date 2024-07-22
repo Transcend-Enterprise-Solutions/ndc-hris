@@ -37,7 +37,9 @@
                             <td class="px-4 py-2 text-center">{{ $leaveApplication->end_date }}</td>
                             <td class="px-4 py-2 text-center">
                                 <span
-                                    class="inline-block px-3 py-1 text-sm font-semibold {{ $leaveApplication->status === 'Pending' ? 'text-yellow-800 bg-yellow-200' : ($leaveApplication->status === 'Approved' ? 'text-green-800 bg-green-200' : 'text-red-800 bg-red-200') }} rounded-full">
+                                    class="inline-block px-3 py-1 text-sm font-semibold 
+                                {{ str_starts_with($leaveApplication->status, 'Approved') ? 'text-green-800 bg-green-200' : 
+                                (str_starts_with($leaveApplication->status, 'Disapproved') ? 'text-red-800 bg-red-200' : 'text-yellow-800 bg-yellow-200') }} rounded-full">
                                     {{ $leaveApplication->status }}
                                 </span>
                             </td>
@@ -77,15 +79,19 @@
                             <td class="px-4 py-2 text-center">{{ $details->less_this_application }}</td>
                             <td class="px-4 py-2 text-center">{{ $details->balance }}</td>
                             <td class="px-4 py-2 text-center">{{ $details->recommendation }}</td>
-                            <td class="px-4 py-2 text-center">{{ $details->status }}</td>
+                            <td class="px-4 py-2 text-center">
+                                <span
+                                    class="inline-block px-3 py-1 text-sm font-semibold 
+                                {{ str_starts_with($leaveApplication->status, 'Approved') ? 'text-green-800 bg-green-200' : 
+                                (str_starts_with($leaveApplication->status, 'Disapproved') ? 'text-red-800 bg-red-200' : 'text-yellow-800 bg-yellow-200') }} rounded-full">
+                                    {{ $leaveApplication->status }}
+                                </span>
+                            </td>
                         </tr>
                         @endforeach
                         @endforeach
                     </tbody>
                 </table>
-            </div>
-            <div class="p-5 border-t border-neutral-500 dark:border-neutral-200">
-                {{-- {{ $leaveApplications->links() }} --}}
             </div>
         </div>
         <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
@@ -111,15 +117,17 @@
                             <td class="px-4 py-2 text-center">{{ $details->less_this_application }}</td>
                             <td class="px-4 py-2 text-center">{{ $details->balance }}</td>
                             <td class="px-4 py-2 text-center">{{ $details->recommendation }}</td>
-                            <td class="px-4 py-2 text-center">{{ $details->status }}</td>
+                            <td class="px-4 py-2 text-center">
+                                <span
+                                    class="inline-block px-3 py-1 text-sm font-semibold {{ $leaveApplication->status === 'Pending' ? 'text-yellow-800 bg-yellow-200' : ($leaveApplication->status === 'Approved' ? 'text-green-800 bg-green-200' : 'text-red-800 bg-red-200') }} rounded-full">
+                                    {{ $leaveApplication->status }}
+                                </span>
+                            </td>
                         </tr>
                         @endforeach
                         @endforeach
                     </tbody>
                 </table>
-            </div>
-            <div class="p-5 border-t border-neutral-500 dark:border-neutral-200">
-                {{-- {{ $leaveApplications->links() }} --}}
             </div>
         </div>
     </div>
