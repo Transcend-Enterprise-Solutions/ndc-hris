@@ -48,10 +48,8 @@ class Registration extends Component
     public $residential_selectedCity;
     public $residential_selectedBarangay;
     public $r_house_street;
-
     public $permanent_selectedZipcode;
     public $residential_selectedZipcode;
-
     public $regions;
     public $pprovinces;
     public $rprovinces;
@@ -59,69 +57,13 @@ class Registration extends Component
     public $rcities;
     public $pbarangays;
     public $rbarangays;
-
     public $tel_number;
     public $mobile_number;
     public $email;
-
     public $same_as_above = false;
-
-    #Step 4
-    // public $spouse_name;
-    // public $spouse_birth_date;
-    // public $spouse_occupation;
-    // public $spouse_employer;
-    // public $have_child = false;
-    // public $have_spouse = false;
-    // public $childrens_name = [];
-    // public $childrens_birth_date = [];
-    // public $fathers_name;
-    // public $mothers_maiden_name;
-
-    #Step 5
-    // public $educ_background;
-    // public $name_of_school;
-    // public $degree;
-    // public $period_start_date;
-    // public $period_end_date;
-    // public $year_graduated;
     public $password;
     public $c_password;
-
-    #Step 6
-    // public $rating;
-    // public $exam_date;
-    // public $exam_loc;
-    // public $license;
-
-    #Step 7
-    // public $inclusive_dates;
-    // public $position_title;
-    // public $department;
-    // public $monthly_salary;
-    // public $status_appointment;
-    // public $service;
-
-    #Step 8
-    // public $voluntary_works;
-    // public $training_title;
-    // public $lad_inclusive_dates;
-    // public $number_of_hours;
-    // public $conducted_by;
-    // public $special_skills_and_hobbies;
-    // public $distinctions;
-    // public $membership;
-    // public $references;
-
-
     public $step = 1;
-
-    // public $children = [];
-
-    // public function addChild()
-    // {
-    //     $this->children[] = ['name' => '', 'birth_date' => ''];
-    // }
 
     public function toStep2()
     {
@@ -157,75 +99,6 @@ class Registration extends Component
         $this->step++;
     }
 
-    // public function toStep4()
-    // {
-    //     $this->validate([
-    //         'permanent_selectedRegion' => 'required',
-    //         'permanent_selectedProvince' => 'required',
-    //         'permanent_selectedCity' => 'required',
-    //         'permanent_selectedBarangay' => 'required',
-    //         'p_house_street' => 'required',
-    //         'residential_selectedRegion' => 'required',
-    //         'residential_selectedProvince' => 'required',
-    //         'residential_selectedCity' => 'required',
-    //         'residential_selectedBarangay' => 'required',
-    //         'r_house_street' => 'required',
-    //         'mobile_number' => 'required',
-    //         'email' => 'required|email|unique:users,email',
-    //     ]);
-
-    //     $this->step++;
-    // }
-
-    // public function toStep5()
-    // {
-    //     $this->validate([
-    //         'fathers_name' => 'required',
-    //         'mothers_maiden_name' => 'required',
-    //     ]);
-
-    //     $this->step++;
-    // }
-
-    // public function toStep6()
-    // {
-    //     $this->validate([
-    //         'educ_background' => 'required',
-    //         'name_of_school' => 'required',
-    //         'degree' => 'required',
-    //         'period_of_attendance' => 'required',
-    //         'year_graduated' => 'required',
-    //     ]);
-
-    //     $this->step++;
-    // }
-
-    // public function toStep7()
-    // {
-    //     $this->validate([
-    //         'rating' => 'required|max:100|numeric',
-    //         'exam_date' => 'required|date',
-    //         'exam_loc' => 'required',
-    //         'license' => 'required',
-    //     ]);
-
-    //     $this->step++;
-    // }
-
-    // public function toStep8()
-    // {
-    //     $this->validate([
-    //         'inclusive_dates' => 'required|date',
-    //         'position_title' => 'required',
-    //         'department' => 'required',
-    //         'monthly_salary' => 'required|numeric',
-    //         'status_appointment' => 'required',
-    //         'service' => 'required',
-    //     ]);
-
-    //     $this->step++;
-    // }
-
     public function prevStep()
     {
         $this->step--;
@@ -234,12 +107,6 @@ class Registration extends Component
     public function submit()
     {
         $this->validate([
-            // 'educ_background' => 'required',
-            // 'name_of_school' => 'required',
-            // 'degree' => 'required',
-            // 'period_start_date' => 'required',
-            // 'period_end_date' => 'required',
-            // 'year_graduated' => 'required|numeric',
             'permanent_selectedZipcode' => 'required',
             'permanent_selectedProvince' => 'required',
             'permanent_selectedCity' => 'required',
@@ -267,6 +134,7 @@ class Registration extends Component
             'password' => $this->password,
             'user_role' => 'sa',
             'active_status' => $this->active_status,
+            'emp_code' => 3,
         ]);
 
         $user->userData()->create([
@@ -302,18 +170,6 @@ class Registration extends Component
             'r_house_street' => $this->r_house_street,
             'tel_number' => $this->tel_number,
             'mobile_number' => $this->mobile_number,
-            // 'spouse_name' => $this->spouse_name,
-            // 'spouse_birth_date' => $this->spouse_birth_date,
-            // 'spouse_occupation' => $this->spouse_occupation,
-            // 'spouse_employer' => $this->spouse_employer,
-            // 'fathers_name' => $this->fathers_name,
-            // 'mothers_maiden_name' => $this->mothers_maiden_name,
-            // 'educ_background' => $this->educ_background,
-            // 'name_of_school' => $this->name_of_school,
-            // 'degree' => $this->degree,
-            // 'period_start_date' => $this->period_start_date,
-            // 'period_end_date' => $this->period_end_date,
-            // 'year_graduated' => $this->year_graduated,
         ]);
 
         session()->flash('message', 'Registration successful!');
@@ -366,7 +222,6 @@ class Registration extends Component
 
     public function getProvicesAndCities(){
         $this->pprovinces = PhilippineProvinces::all();
-        // $this->rprovinces = PhilippineProvinces::all();
         $this->pcities = collect();
         $this->rcities = collect();
         $this->pbarangays = collect();

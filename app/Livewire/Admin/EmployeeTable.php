@@ -68,13 +68,30 @@ class EmployeeTable extends Component
 
     public $selectedUser = null;
     public $dropdownForCategoryOpen = false;
+    public $dropdownForFilter = false;
     public $dropdownForSexOpen = false;
     public $dropdownForCivilStatusOpen = false;
     public $dropdownForProvinceOpen = false;
     public $dropdownForCityOpen = false;
     public $dropdownForBarangayOpen = false;
-
     public $personalDataSheetOpen = false;
+
+    // User's Data
+    public $userData;
+    public $userSpouse;
+    public $userMother;
+    public $userFather;
+    public $userChildren;
+    public $educBackground;
+    public $eligibility;
+    public $workExperience;
+    public $voluntaryWorks;
+    public $lds;
+    public $skills;
+    public $hobbies;
+    public $non_acads_distinctions;
+    public $assOrgMemberships;
+    public $references;
 
     public $pds;
 
@@ -90,6 +107,11 @@ class EmployeeTable extends Component
         $this->dropdownForProvinceOpen = false;
         $this->dropdownForCityOpen = false;
         $this->dropdownForBarangayOpen = false;
+    }
+
+    public function toggleDropdownFilter()
+    {
+        $this->dropdownForFilter = !$this->dropdownForFilter;
     }
 
     public function toggleDropdownSex()
@@ -249,6 +271,14 @@ class EmployeeTable extends Component
             })
             ->paginate(10);
 
+            if($this->dropdownForCategoryOpen){
+                $this->dropdownForFilter = null;
+            }
+
+            if($this->dropdownForFilter){
+                $this->dropdownForCategoryOpen = null;
+            }
+
             return view('livewire.admin.employee-table', [
                 'users' => $query,
                 'cities' => $this->cities,
@@ -259,22 +289,21 @@ class EmployeeTable extends Component
     public function showUser($userId)
     {
         $this->selectedUser = User::find($userId);
-        $this->selectedUserData = UserData::where('user_id', $userId)->first();
-        $this->employeesChildren = EmployeesChildren::where('user_id', $userId)->get();
-
-        $this->childrenNames = $this->employeesChildren->pluck('childs_name')->implode(', ');
-        $this->childrenBirthDates = $this->employeesChildren->pluck('childs_birth_date')->implode(', ');
-
-        $this->p_full_address = $this->selectedUserData->p_house_street . ' ' . 
-                              $this->selectedUserData->permanent_selectedBarangay . ' ' . 
-                              $this->selectedUserData->permanent_selectedCity . ', ' . 
-                              $this->selectedUserData->permanent_selectedProvince . ', ' . 
-                              $this->selectedUserData->permanent_selectedZipcode;
-        $this->r_full_address = $this->selectedUserData->r_house_street . ' ' . 
-                              $this->selectedUserData->residential_selectedBarangay . ' ' . 
-                              $this->selectedUserData->residential_selectedCity . ', ' . 
-                              $this->selectedUserData->residential_selectedProvince . ', ' . 
-                              $this->selectedUserData->residential_selectedZipcode;
+        $this->userData = $this->selectedUser->userData;
+        $this->userSpouse = $this->selectedUser->employeesSpouse;
+        $this->userMother = $this->selectedUser->employeesMother;
+        $this->userFather = $this->selectedUser->employeesFather;
+        $this->userChildren = $this->selectedUser->employeesChildren;
+        $this->educBackground = $this->selectedUser->employeesEducation;
+        $this->eligibility = $this->selectedUser->eligibility;
+        $this->workExperience = $this->selectedUser->workExperience;
+        $this->voluntaryWorks = $this->selectedUser->voluntaryWorks;
+        $this->lds = $this->selectedUser->learningAndDevelopment;
+        $this->skills = $this->selectedUser->skills;
+        $this->hobbies = $this->selectedUser->hobbies;
+        $this->non_acads_distinctions = $this->selectedUser->nonAcadDistinctions;
+        $this->assOrgMemberships = $this->selectedUser->assOrgMembership;
+        $this->references = $this->selectedUser->charReferences;
 
         $this->personalDataSheetOpen = true;
     }

@@ -809,7 +809,7 @@
                 {{-- Footer --}}
                 <div class="bg-gray-400 dark:bg-slate-700 p-2 text-white flex justify-center rounded-b-lg">
                     <button class="btn bg-emerald-400 dark:bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap" wire:click='exportPDS' wire:loading.attr='disabled'>
-                        <div wire:loading wire:target="exportPDS">
+                        <div wire:loading wire:target="exportPDS" style="margin-right: 5px">
                             <div class="spinner-border small text-primary" role="status">
                             </div>
                         </div>
@@ -1310,7 +1310,7 @@
     {{-- Father's Name Add and Edit Modal --}}
     <x-modal id="fatherModal" maxWidth="2xl" wire:model="editFather">
         <div class="p-4">
-            <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
                 {{ $addFather ? 'Add' : 'Edit' }} Father's Name
                 <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
                     <i class="fas fa-times"></i>
