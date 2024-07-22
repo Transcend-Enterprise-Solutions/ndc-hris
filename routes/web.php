@@ -38,6 +38,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/admin-doc-request', function () {return view('livewire.admin.admin-doc-request');})->name('admin-doc-request');
     Route::get('/admin-dtr', function () {return view('livewire.admin.admin-dtr');})->name('admin-dtr');
     Route::get('/admin-schedule', function () {return view('livewire.admin.admin-schedule');})->name('admin-schedule');
+    Route::get('/payroll-management', function () {return view('livewire.admin.payroll-management');})->name('payroll-management');
     Route::get('/personal-data-sheet', function () {return view('livewire.user.personal-data-sheet');})->name('personal-data-sheet');
     Route::get('/dtr', function () {return view('livewire.user.dtr');})->name('dtr');
     Route::get('/dashboard/analytics', [DashboardController::class, 'analytics'])->name('analytics');

@@ -129,9 +129,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(LeaveApplication::class);
     }
+
     public function dtrSchedules()
     {
     return $this->hasMany(DTRSchedule::class, 'emp_code', 'emp_code');
+    }
+    
+    public function employeesPayroll()
+    {
+    return $this->hasOne(EmployeesPayroll::class);
     }
 
 
