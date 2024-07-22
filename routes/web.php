@@ -35,6 +35,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/my-documents', function () {return view('livewire.user.my-documents');})->name('my-documents');
     Route::get('/doc-request', function () {return view('livewire.user.doc-request');})->name('doc-request');
     Route::get('/leave-application', function () {return view('livewire.user.leave-application');})->name('leave-application');
+    Route::get('/admin-leave-request', function () {return view('livewire.admin.admin-leave-request');})->name('admin-leave-request');
     Route::get('/admin-doc-request', function () {return view('livewire.admin.admin-doc-request');})->name('admin-doc-request');
     Route::get('/admin-dtr', function () {return view('livewire.admin.admin-dtr');})->name('admin-dtr');
     Route::get('/admin-schedule', function () {return view('livewire.admin.admin-schedule');})->name('admin-schedule');

@@ -241,63 +241,6 @@
                             </a>
                         </li>
 
-                        <!-- Employee Management -->
-                        <li class="px-3 py-2 rounded-sm mb-0.5 last:mb-0 @if(in_array(Request::segment(1), ['job'])){{ 'bg-slate-700' }}@endif"
-                            x-data="{ open: {{ in_array(Request::segment(1), ['job']) ? 1 : 0 }} }">
-                            <a class="block text-black dark:text-white hover:text-blue-500 transition duration-150 @if(in_array(Request::segment(1), ['job'])){{ 'text-blue-500' }}@endif"
-                                href="#0" @click.prevent="sidebarExpanded ? open = !open : sidebarExpanded = true">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center">
-                                        <i class="bi bi-people text-slate-400 mr-3"></i>
-                                        <span class="text-sm font-medium transition-opacity duration-300"
-                                            :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Employee
-                                            Mgmt</span>
-                                    </div>
-                                    <div class="flex shrink-0 ml-2">
-                                        <svg class="lg:hidden lg:sidebar-expanded:inline w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
-                                            :class="open ? 'rotate-180' : 'rotate-0'" viewBox="0 0 12 12">
-                                            <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </a>
-                            <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                                <ul class="pl-9 mt-1 transition-all duration-300 overflow-hidden"
-                                    :class="{'max-h-0': !open, 'max-h-screen': open}">
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('employees')){{ '!text-blue-500' }}@endif"
-                                            href="{{ route('employees') }}" wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Employees</span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('admin-dtr')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('admin-dtr')}}">
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Daily
-                                                Time Record</span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('admin-doc-request')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('admin-doc-request')}}">
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Document
-                                                Request</span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('admin-schedule')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('admin-schedule')}}">
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Schedule</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-
                         <!-- Leave Management -->
                         <li class="px-3 py-2 rounded-sm mb-0.5 last:mb-0 @if(in_array(Request::segment(1), ['leave'])){{ 'bg-slate-700' }}@endif"
                             x-data="{ open: {{ in_array(Request::segment(1), ['leave']) ? 1 : 0 }} }">
@@ -323,7 +266,7 @@
                                     :class="{'max-h-0': !open, 'max-h-screen': open}">
                                     <li class="mb-1 last:mb-0">
                                         <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('leave-request')){{ '!text-blue-500' }}@endif"
-                                            href="#0">
+                                            href="{{ route('admin-leave-request') }}">
                                             <span class="text-sm font-medium transition-opacity duration-300"
                                                 :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Leave
                                                 Request</span>
