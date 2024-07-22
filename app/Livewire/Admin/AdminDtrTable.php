@@ -6,14 +6,15 @@ use Livewire\Component;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\DTRSchedule;
+use App\Models\EmployeesDtr;
 use Carbon\Carbon;
+use Exception;
 
 class AdminDtrTable extends Component
 {
     public $transactions = [];
 
-    public function mount()
-    {
+    public function mount(){
         $startDate = Carbon::now()->startOfMonth();
         $endDate = Carbon::now()->endOfMonth();
 
@@ -148,6 +149,36 @@ class AdminDtrTable extends Component
     private function getLastOutPunch($punches)
     {
         return $punches->where('punch_state', 1)->sortByDesc('punch_time')->first()['punch_time'] ?? null;
+    }
+
+    public function recordDTR(){
+        try{
+            foreach ($this->transactions as $empCode => $empTransactions){
+                foreach ($empTransactions as $date => $dateTransactions){
+                    $timeRecords = $this->calculateTimeRecords($dateTransactions, $empCode, $date);
+                    $employee = User::where('emp_code', $empCode)->first();
+                    EmployeesDtr::updateOrCreate([
+                        'user_id' => $employee->id,
+                        'date' => $date,
+                        'day_of_week' => $timeRecords['dayOfWeek'],
+                        'location' => $timeRecords['location'],
+                        'morning_in' => $timeRecords['morningIn'],
+                        'morning_out' => $timeRecords['morningOut'],
+                        'afternoon_in' => $timeRecords['afternoonIn'],
+                        'afternoon_out' => $timeRecords['afternoonOut'],
+                        'late' => $timeRecords['late'],
+                        'overtime' => $timeRecords['overtime'],
+                        'total_hours_endered' => $timeRecords['totalHoursRendered']
+                    ]);
+                }
+            }
+            $this->dispatch('notify', [
+                'message' => "DTR recorded successfully!", 
+                'type' => 'success'
+            ]);
+        }catch(Exception $e){
+            throw $e;
+        }
     }
 
     public function render()

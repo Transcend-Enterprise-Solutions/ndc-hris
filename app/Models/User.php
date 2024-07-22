@@ -140,6 +140,11 @@ class User extends Authenticatable
     return $this->hasOne(EmployeesPayroll::class);
     }
 
+    public function employeesDtr()
+    {
+    return $this->hasMany(EmployeesDtr::class);
+    }
+
 
 
     /**

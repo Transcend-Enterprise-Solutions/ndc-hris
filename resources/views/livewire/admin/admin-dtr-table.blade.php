@@ -1,7 +1,9 @@
 <div class="w-full flex justify-center">
     <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
         <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Admin Daily Time Record</h1>
-
+        <button wire:click='recordDTR'>
+            Record DTR
+        </button>
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                 <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
