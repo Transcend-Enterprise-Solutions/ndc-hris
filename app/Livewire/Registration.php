@@ -12,7 +12,7 @@ use App\Models\PhilippineRegions;
 
 class Registration extends Component
 {
-    public $user_role = 'sa';
+    public $user_role = 'emp';
     public $active_status = '';
 
     #Step 1
@@ -69,7 +69,7 @@ class Registration extends Component
     {
         $this->validate([
             'first_name' => 'required|min:2',
-            'middle_name' => 'required|min:2',
+            'middle_name' => 'nullable',
             'surname' => 'required|min:2',
             'name_extension' => 'nullable',
             'sex' => 'required',
@@ -128,13 +128,17 @@ class Registration extends Component
             return;
         }
 
+        $currentYear = now()->year;
+        $userCount = User::whereYear('created_at', $currentYear)->count();
+        $empCode = 'EMP' . $currentYear . ($userCount + 1);
+
         $user = User::create([
             'name' => $this->first_name . " " . $this->middle_name . " " . $this->surname,
             'email' => $this->email,
             'password' => $this->password,
-            'user_role' => 'sa',
+            'user_role' => 'emp',
             'active_status' => $this->active_status,
-            'emp_code' => 3,
+            'emp_code' => $empCode,
         ]);
 
         $user->userData()->create([

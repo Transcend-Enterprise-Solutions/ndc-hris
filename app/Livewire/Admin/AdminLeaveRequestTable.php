@@ -5,6 +5,8 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\LeaveApplication;
+use App\Models\VacationLeaveDetails;
+use App\Models\SickLeaveDetails;
 
 class AdminLeaveRequestTable extends Component
 {
@@ -68,6 +70,34 @@ class AdminLeaveRequestTable extends Component
 
             $this->selectedApplication->save();
 
+            if (in_array('Vacation Leave', explode(',', $this->selectedApplication->type_of_leave))) {
+                $vacationLeaveDetails = VacationLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
+                if ($vacationLeaveDetails) {
+                    if ($this->status === 'Pending') {
+                        $vacationLeaveDetails->less_this_application = 1;
+                    } else {
+                        $vacationLeaveDetails->less_this_application = 0;
+                        $vacationLeaveDetails->total_earned += 1;
+                        $vacationLeaveDetails->balance -= 1;
+                    }
+                    $vacationLeaveDetails->save();
+                }
+            }
+
+            if (in_array('Sick Leave', explode(',', $this->selectedApplication->type_of_leave))) {
+                $sickLeaveDetails = SickLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
+                if ($sickLeaveDetails) {
+                    if ($this->status === 'Pending') {
+                        $sickLeaveDetails->less_this_application = 1;
+                    } else {
+                        $sickLeaveDetails->less_this_application = 0;
+                        $sickLeaveDetails->total_earned += 1;
+                        $sickLeaveDetails->balance -= 1;
+                    }
+                    $sickLeaveDetails->save();
+                }
+            }
+
             $this->dispatch('notify', [
                 'message' => "Leave application approved successfully!",
                 'type' => 'success'
@@ -76,6 +106,7 @@ class AdminLeaveRequestTable extends Component
             $this->closeApproveModal();
         }
     }
+
 
     public function disapproveLeave()
     {
@@ -98,7 +129,7 @@ class AdminLeaveRequestTable extends Component
 
     public function render()
     {
-        $leaveApplications = LeaveApplication::paginate(10);
+        $leaveApplications = LeaveApplication::orderBy('created_at', 'desc')->paginate(10);
 
         return view('livewire.admin.admin-leave-request-table', [
             'leaveApplications' => $leaveApplications,

@@ -9,7 +9,7 @@
         See Status of Application
     </button> --}}
 
-    {{-- Table --}}
+    {{-- Leave Application Table --}}
     <div class="w-full flex justify-center">
         <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
             <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Leave Application</h1>
@@ -58,16 +58,16 @@
     <div class="w-full flex justify-center mt-4 grid grid-cols-2 gap-2">
         <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
             <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Details of Action on Application
+                (Vacation Leave)
             </h1>
             <div class="overflow-x-auto">
-                <label class="ml-2 text-gray-900 dark:text-gray-300">(Vacation Leave)</label>
                 <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                     <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                         <tr class="whitespace-nowrap">
                             <th scope="col" class="px-4 py-2 text-center">Total Earned</th>
                             <th scope="col" class="px-4 py-2 text-center">Less this Application</th>
                             <th scope="col" class="px-4 py-2 text-center">Balance</th>
-                            <th scope="col" class="px-4 py-2 text-center">Recommendation</th>
+                            {{-- <th scope="col" class="px-4 py-2 text-center">Recommendation</th> --}}
                             <th scope="col" class="px-4 py-2 text-center">Status</th>
                         </tr>
                     </thead>
@@ -78,7 +78,7 @@
                             <td class="px-4 py-2 text-center">{{ $details->total_earned }}</td>
                             <td class="px-4 py-2 text-center">{{ $details->less_this_application }}</td>
                             <td class="px-4 py-2 text-center">{{ $details->balance }}</td>
-                            <td class="px-4 py-2 text-center">{{ $details->recommendation }}</td>
+                            {{-- <td class="px-4 py-2 text-center">{{ $details->recommendation }}</td> --}}
                             <td class="px-4 py-2 text-center">
                                 <span
                                     class="inline-block px-3 py-1 text-sm font-semibold 
@@ -96,16 +96,16 @@
         </div>
         <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
             <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Details of Action on Application
+                (Sick Leave)
             </h1>
             <div class="overflow-x-auto">
-                <label class="ml-2 text-gray-900 dark:text-gray-300">(Sick Leave)</label>
                 <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                     <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                         <tr class="whitespace-nowrap">
                             <th scope="col" class="px-4 py-2 text-center">Total Earned</th>
                             <th scope="col" class="px-4 py-2 text-center">Less this Application</th>
                             <th scope="col" class="px-4 py-2 text-center">Balance</th>
-                            <th scope="col" class="px-4 py-2 text-center">Recommendation</th>
+                            {{-- <th scope="col" class="px-4 py-2 text-center">Recommendation</th> --}}
                             <th scope="col" class="px-4 py-2 text-center">Status</th>
                         </tr>
                     </thead>
@@ -116,10 +116,12 @@
                             <td class="px-4 py-2 text-center">{{ $details->total_earned }}</td>
                             <td class="px-4 py-2 text-center">{{ $details->less_this_application }}</td>
                             <td class="px-4 py-2 text-center">{{ $details->balance }}</td>
-                            <td class="px-4 py-2 text-center">{{ $details->recommendation }}</td>
+                            {{-- <td class="px-4 py-2 text-center">{{ $details->recommendation }}</td> --}}
                             <td class="px-4 py-2 text-center">
                                 <span
-                                    class="inline-block px-3 py-1 text-sm font-semibold {{ $leaveApplication->status === 'Pending' ? 'text-yellow-800 bg-yellow-200' : ($leaveApplication->status === 'Approved' ? 'text-green-800 bg-green-200' : 'text-red-800 bg-red-200') }} rounded-full">
+                                    class="inline-block px-3 py-1 text-sm font-semibold 
+                                {{ str_starts_with($leaveApplication->status, 'Approved') ? 'text-green-800 bg-green-200' : 
+                                (str_starts_with($leaveApplication->status, 'Disapproved') ? 'text-red-800 bg-red-200' : 'text-yellow-800 bg-yellow-200') }} rounded-full">
                                     {{ $leaveApplication->status }}
                                 </span>
                             </td>
@@ -199,58 +201,57 @@
                     <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full">
                         <legend class="text-gray-700 dark:text-slate-100">A. Type of Leave to be availed of</legend>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Vacation Leave" wire:model="type_of_leave">
+                            <input type="radio" value="Vacation Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Vacation Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Mandatory/Forced Leave" wire:model="type_of_leave">
+                            <input type="radio" value="Mandatory/Forced Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Mandatory/Forced Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Sick Leave" wire:model="type_of_leave">
+                            <input type="radio" value="Sick Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Sick Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Maternity Leave" wire:model="type_of_leave">
+                            <input type="radio" value="Maternity Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Maternity Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Paternity Leave" wire:model="type_of_leave">
+                            <input type="radio" value="Paternity Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Paternity Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Special Privilege Leave" wire:model="type_of_leave">
+                            <input type="radio" value="Special Privilege Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Special Privilege Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Solo Parent Leave" wire:model="type_of_leave">
+                            <input type="radio" value="Solo Parent Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Solo Parent Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Study Leave" wire:model="type_of_leave">
+                            <input type="radio" value="Study Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Study Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="10-Day VAWC Leave" wire:model="type_of_leave">
+                            <input type="radio" value="10-Day VAWC Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">10-Day VAWC Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Rehabilitation Privilege" wire:model="type_of_leave">
+                            <input type="radio" value="Rehabilitation Privilege" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Rehabilitation Privilege</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Special Leave Benefits for Women" wire:model="type_of_leave">
+                            <input type="radio" value="Special Leave Benefits for Women" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Special Leave Benefits for
                                 Women</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Special Emergency (Calamity) Leave"
-                                wire:model="type_of_leave">
+                            <input type="radio" value="Special Emergency (Calamity) Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Special Emergency (Calamity)
                                 Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Adoption Leave" wire:model="type_of_leave">
+                            <input type="radio" value="Adoption Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Adoption Leave</label>
                         </div>
                         @error('type_of_leave') <span class="text-red-500 text-sm">Please choose one!</span>
@@ -262,7 +263,7 @@
                         <legend class="text-gray-700 dark:text-slate-100">C. Number of Working Days Applied for</legend>
                         <div class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700">
                             <div class="gap-2 columns-1">
-                                <label class="text-md text-gray-700 dark:text-slate-100">Days</label>
+                                <label class="text-sm text-gray-700 dark:text-slate-100">Days</label>
                                 <input type="number" id="number_of_days" wire:model="number_of_days"
                                     class="mt-1 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                 @error('number_of_days') <span class="text-red-500 text-sm">This field is
@@ -313,7 +314,9 @@
                             fields.)</label>
                         <div
                             class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-2">
-                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic">In case of
+                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
+                                In case
+                                of
                                 Vacation/Special Privilege Leave:</h6>
                             <div class="grid grid-cols-1 gap-4">
                                 <div class="gap-2 columns-1">
@@ -336,7 +339,9 @@
 
                         <div
                             class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
-                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic">In case of
+                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">In
+                                case
+                                of
                                 Sick Leave:</h6>
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="gap-2 columns-1">
@@ -360,7 +365,9 @@
 
                         <div
                             class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
-                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic">In case of
+                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">In
+                                case
+                                of
                                 Special
                                 Leave Benefits for Women:</h6>
                             <div class="gap-2 columns-1">
@@ -375,7 +382,9 @@
 
                         <div
                             class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
-                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic">In case of
+                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">In
+                                case
+                                of
                                 Study Leave:</h6>
                             <div class="gap-2 columns-1">
                                 <input type="checkbox" class="ml-1" value="Completion of Masters Degree"
@@ -393,7 +402,9 @@
 
                         <div
                             class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
-                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic">Other purpose:
+                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
+                                Other
+                                purpose:
                             </h6>
                             <div class="gap-2 columns-1">
                                 <input type="checkbox" class="ml-1" value="Monetization of Leave Credits"
@@ -422,6 +433,36 @@
 
                 </div> --}}
 
+                <!-- File upload section -->
+                <div class="flex flex-col items-center justify-center w-full col-span-2">
+                    <label for="dropzone-file"
+                        class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i class="bi bi-cloud-arrow-up" style="font-size: 2rem;"></i>
+                            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click
+                                    to upload</span> or drag and drop</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF</p>
+                        </div>
+                        <input id="dropzone-file" type="file" wire:model="files" multiple class="hidden" />
+                    </label>
+
+                    <!-- Display selected files -->
+                    @if ($files)
+                    <div class="mt-4">
+                        <ul class="list-disc list-inside">
+                            @foreach ($files as $file)
+                            <li class="text-sm text-gray-700 dark:text-gray-300">
+                                {{ $file->getClientOriginalName() }}
+                            </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+
+                    @error('files.*') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+
+
             </div>
 
             <div class="bg-gray-800 dark:bg-gray-200 p-2 text-white flex justify-center rounded-b-lg border">
@@ -429,8 +470,7 @@
                     class="btn bg-emerald-200 dark:bg-emerald-500 hover:bg-emerald-600 text-gray-800 dark:text-white whitespace-nowrap mx-2">
                     Submit
                 </button>
-                <button wire:click="closeLeaveForm"
-                    class="btn bg-emerald-200 dark:bg-emerald-500 hover:bg-emerald-600 text-gray-800 dark:text-white whitespace-nowrap mx-2">
+                <button wire:click="closeLeaveForm" class="mr-2 bg-gray-500 text-white px-4 py-2 rounded mx-2">
                     Close
                 </button>
             </div>

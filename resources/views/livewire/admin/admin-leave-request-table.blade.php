@@ -14,6 +14,7 @@
                             <th scope="col" class="px-4 py-2 text-center">Number of days</th>
                             <th scope="col" class="px-4 py-2 text-center">Start Date</th>
                             <th scope="col" class="px-4 py-2 text-center">End Date</th>
+                            <th scope="col" class="px-4 py-2 text-center">Uploaded File</th>
                             <th scope="col" class="px-4 py-2 text-center">Status</th>
                             <th scope="col" class="px-4 py-2 text-center">Action</th>
                         </tr>
@@ -29,17 +30,40 @@
                             <td class="px-4 py-2 text-center">{{ $leaveApplication->start_date }}</td>
                             <td class="px-4 py-2 text-center">{{ $leaveApplication->end_date }}</td>
                             <td class="px-4 py-2 text-center">
-                                @if (str_contains($leaveApplication->status, 'Disapproved'))
-                                <span class="text-red-500">{{ $leaveApplication->status }}</span>
-                                @else
-                                <span class="text-green-500">{{ $leaveApplication->status }}</span>
+                                @if ($leaveApplication->file_name)
+                                @php
+                                $fileNames = explode(',', $leaveApplication->file_name);
+                                $filePaths = explode(',', $leaveApplication->file_path);
+                                @endphp
+
+                                @foreach ($fileNames as $index => $fileName)
+                                @if (isset($filePaths[$index]))
+                                <div class="mb-1">
+                                    <a href="{{ Storage::url($filePaths[$index]) }}" download
+                                        class="text-blue-500 hover:underline">
+                                        {{ strlen($fileName) > 10 ? substr($fileName, 0, 10) . '...' : $fileName }}
+                                    </a>
+                                </div>
                                 @endif
+                                @endforeach
+                                @else
+                                No file
+                                @endif
+                            </td>
+
+                            <td class="px-4 py-2 text-center">
+                                <span
+                                    class="inline-block px-3 py-1 text-sm font-semibold 
+                                {{ str_starts_with($leaveApplication->status, 'Approved') ? 'text-green-800 bg-green-200' : 
+                                (str_starts_with($leaveApplication->status, 'Disapproved') ? 'text-red-800 bg-red-200' : 'text-yellow-800 bg-yellow-200') }} rounded-full">
+                                    {{ $leaveApplication->status }}
+                                </span>
                             </td>
                             <td class="px-4 py-2 text-center">
                                 <button @click="$wire.openApproveModal({{ $leaveApplication->id }})"
-                                    class="bg-blue-500 text-white px-4 py-2 rounded">Approve</button>
+                                    class="text-blue-500"> <i class="bi bi-check-lg"></i></button>
                                 <button @click="$wire.openDisapproveModal({{ $leaveApplication->id }})"
-                                    class="bg-red-500 text-white px-4 py-2 rounded">Disapprove</button>
+                                    class="text-red-500"> <i class="bi bi-x"></i></button>
                             </td>
                         </tr>
                         @endforeach
@@ -57,7 +81,8 @@
             <form wire:submit.prevent="updateStatus">
                 <div class="mb-4">
                     <label for="status" class="block text-gray-700 dark:text-gray-300">Status</label>
-                    <select wire:model.live="status" id="status" class="form-input mt-1 block w-full">
+                    <select wire:model.live="status" id="status"
+                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
                         <option value="">Select Status</option>
                         <option value="With Pay">With Pay</option>
                         <option value="Without Pay">Without Pay</option>
@@ -68,7 +93,9 @@
 
                 @if ($status === 'Other')
                 <div class="mb-4">
-                    <label for="otherReason" class="block text-gray-700 dark:text-gray-300">Please specify</label>
+                    <label for="otherReason"
+                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">Please
+                        specify</label>
                     <input type="text" wire:model="otherReason" id="otherReason" class="form-input mt-1 block w-full">
                     @error('otherReason') <span class="text-red-500">{{ $message }}</span> @enderror
                 </div>
@@ -76,7 +103,9 @@
 
                 @if ($status === 'With Pay' || $status === 'Without Pay')
                 <div class="mb-4">
-                    <label for="days" class="block text-gray-700 dark:text-gray-300">Number of Days</label>
+                    <label for="days"
+                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">Number
+                        of Days</label>
                     <input type="number" wire:model="days" id="days" class="form-input mt-1 block w-full" min="1">
                     @error('days') <span class="text-red-500">{{ $message }}</span> @enderror
                 </div>
