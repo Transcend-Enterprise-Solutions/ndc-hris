@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\DTRSchedule;
+use App\Models\EmployeesDtr;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 
@@ -250,7 +251,7 @@ class AdminDtrTable extends Component
                 'message' => "DTR recorded successfully!",
                 'type' => 'success'
             ]);
-        }catch(Exception $e){
+        }catch(\Exception $e){
             throw $e;
         }
     }
