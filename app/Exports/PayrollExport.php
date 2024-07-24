@@ -2,59 +2,62 @@
 
 namespace App\Exports;
 
-use App\Models\User;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\Exportable;
-
-class PayrollExport implements FromCollection, WithHeadings
+use Maatwebsite\Excel\Concerns\WithMapping;
+class PayrollExport implements FromCollection, WithHeadings, WithMapping
 {
     use Exportable;
     protected $payrolls;
+    protected $rowNumber = 0;
 
-    public function __construct($payrolls){
-        $this->payrolls = $payrolls;
+    public function __construct($payrolls)
+    {
+        // Convert to a collection if it's not already one
+        $this->payrolls = $payrolls instanceof Collection ? $payrolls : collect($payrolls);
     }
 
     public function collection()
     {
+        return $this->payrolls;
+    }
 
-        // return $query->get()
-        //     ->map(function ($user) {
-        //         return [
-        //             'ID' => $user->id,
-        //             'Surname' => $user->surname,
-        //             'First Name' => $user->first_name,
-        //             'Middle Name' => $user->middle_name,
-        //             'Name Extension' => $user->name_extension,
-        //             'Birth Date' => $user->date_of_birth,
-        //             'Birth Place' => $user->place_of_birth,
-        //             'Sex' => $user->sex,
-        //             'Citizenship' => $user->citizenship,
-        //             'Civil Status' => $user->civil_status,
-        //             'Height' => $user->height,
-        //             'Weight' => $user->weight,
-        //             'Blood Type' => $user->blood_type,
-        //             'GSIS ID No.' => $user->gsis,
-        //             'PAGIBIG ID No.' => $user->pagibig,
-        //             'PhilHealth ID No.' => $user->philhealth,
-        //             'SSS No.' => $user->sss,
-        //             'TIN No.' => $user->tin,
-        //             'Agency Employee No.' => $user->agency_employee_no,
-        //             'Telephone No.' => $user->tel_number,
-        //             'Mobile No.' => $user->mobile_number,
-        //             'Permanent Address (Province)' => $user->permanent_selectedProvince,
-        //             'Permanent Address (City)' => $user->permanent_selectedCity,
-        //             'Permanent Address (Barangay)' => $user->permanent_selectedBarangay,
-        //             'Permanent Address (Street)' => $user->p_house_street,
-        //             'Permanent Address (Zip Code)' => $user->permanent_selectedZipcode,
-        //             'Residential Address (Province)' => $user->residential_selectedProvince,
-        //             'Residential Address (City)' => $user->residential_selectedCity,
-        //             'Residential Address (Barangay)' => $user->residential_selectedBarangay,
-        //             'Residential Address (Street)' => $user->r_house_street,
-        //             'Residential Address (Zip Code)' => $user->residential_selectedZipcode,
-        //         ];
-        //     });
+    public function map($payroll): array
+    {
+        $this->rowNumber++;
+
+        // Adjust this based on whether $payroll is an object or an array
+        $getData = function($key) use ($payroll) {
+            return is_array($payroll) ? ($payroll[$key] ?? '') : ($payroll->$key ?? '');
+        };
+
+        $formatCurrency = function($value) {
+            return '₱ ' . number_format((float)$value, 2, '.', ',');
+        };
+
+        return [
+            $this->rowNumber,
+            $getData('name'),
+            $getData('employee_number'),
+            $getData('position'),
+            $getData('salary_grade'),
+            $formatCurrency($getData('daily_salary_rate')),
+            $getData('no_of_days_covered'),
+            $formatCurrency($getData('gross_salary')),
+            $getData('absences_days'),
+            $formatCurrency($getData('absences_amount')),
+            $getData('late_undertime_hours'),
+            $formatCurrency($getData('late_undertime_hours_amount')),
+            $getData('late_undertime_mins'),
+            $formatCurrency($getData('late_undertime_mins_amount')),
+            $formatCurrency($getData('gross_salary_less')),
+            $formatCurrency($getData('withholding_tax')),
+            $formatCurrency($getData('nycempc')),
+            $formatCurrency($getData('total_deductions')),
+            $getData('net_amount_due') == 0 ? '₱ 0.00' : $formatCurrency($getData('net_amount_due')),
+        ];
     }
 
     public function headings(): array
@@ -62,9 +65,10 @@ class PayrollExport implements FromCollection, WithHeadings
         return [
             'NO.',
             'NAME',
-            'POSITION',
             'ID NUMBER',
+            'POSITION',
             'SALARY GRADE',
+            'DAILY SALARY RATE',
             'NO. OF DAYS COVERED',
             'GROSS SALARY',
             'ABSENCES (DAYS)',

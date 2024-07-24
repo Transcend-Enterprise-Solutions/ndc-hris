@@ -185,7 +185,7 @@
 
                     <!-- Export to Excel -->
                     <div class="relative inline-block text-left">
-                        <button wire:click=""
+                        <button wire:click="exportPayroll"
                             class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                             justify-center px-4 py-1.5 mb-4 text-sm font-medium tracking-wide 
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
@@ -312,4 +312,5 @@
             </div>
         </div>
     </div>
+
 </div>

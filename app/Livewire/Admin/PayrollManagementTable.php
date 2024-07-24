@@ -198,7 +198,7 @@ class PayrollManagementTable extends Component
         }
     }
 
-    public function getPayroll(){
+    public function getPayroll($paginate = true){
         $payrolls = collect();
         try {
             if ($this->startDate && $this->endDate) {
@@ -295,20 +295,22 @@ class PayrollManagementTable extends Component
                     });
                 }
 
-                $page = request()->get('page', 1); // Get the current page from the request
-                $perPage = 10; // Number of items per page
-
-                $items = $payrolls->forPage($page, $perPage);
-
-                $paginator = new LengthAwarePaginator(
-                    $items,
-                    $payrolls->count(),
-                    $perPage,
-                    $page,
-                    ['path' => request()->url(), 'query' => request()->query()]
-                );
-
-                return $paginator;
+                if ($paginate) {
+                    $page = request()->get('page', 1);
+                    $perPage = 10;
+            
+                    $items = $payrolls->forPage($page, $perPage);
+            
+                    return new LengthAwarePaginator(
+                        $items,
+                        $payrolls->count(),
+                        $perPage,
+                        $page,
+                        ['path' => request()->url(), 'query' => request()->query()]
+                    );
+                } else {
+                    return $payrolls;
+                }
             }
         } catch (Exception $e) {
             $this->dispatch('notify', [
@@ -404,11 +406,61 @@ class PayrollManagementTable extends Component
         $this->sortColumn = !$this->sortColumn;
     }
 
-    public function exportPayroll(){
-        $filters = [
-            'search' => $this->search,
-        ];
-        $filename = 'Payroll_' . $this->startDate->format('F') . ' ' . $this->startDate->format('d') . '-' . $this->endDate->format('d') . ' ' . $this->startDate->format('Y') . '.xlsx';
-        return Excel::download(new PayrollExport($this->payrolls), $filename);
+    public function exportPayroll()
+    {
+        try {
+            if ($this->startDate && $this->endDate) {
+                $startDate = Carbon::parse($this->startDate);
+                $endDate = Carbon::parse($this->endDate);
+                
+                $filename = 'Payroll ' . $startDate->format('F') . ' '
+                                       . $startDate->format('d') . '-'
+                                       . $endDate->format('d') . ' '
+                                       . $startDate->format('Y') . '.xlsx';
+                
+                if ($this->hasPayroll) {
+                    $payrolls = EmployeesPayroll::where('start_date', $this->startDate)
+                        ->where('end_date', $this->endDate)
+                        ->when($this->search, function ($query) {
+                            return $query->search(trim($this->search));
+                        })
+                        ->select([
+                            'name',
+                            'employee_number',
+                            'position',
+                            'salary_grade',
+                            'daily_salary_rate',
+                            'no_of_days_covered',
+                            'gross_salary',
+                            'absences_days',
+                            'absences_amount',
+                            'late_undertime_hours',
+                            'late_undertime_hours_amount',
+                            'late_undertime_mins',
+                            'late_undertime_mins_amount',
+                            'gross_salary_less',
+                            'withholding_tax',
+                            'nycempc',
+                            'total_deductions',
+                            'net_amount_due'
+                        ])
+                        ->get();
+                } else {
+                    $payrolls = $this->getPayroll(false);
+                }
+                
+                return Excel::download(new PayrollExport($payrolls), $filename);
+            } else {
+                $this->dispatch('notify', [
+                    'message' => 'Select start and end date!',
+                    'type' => 'info'
+                ]);
+            }
+        } catch (Exception $e) {
+            $this->dispatch('notify', [
+                'message' => 'Error exporting payroll: ' . $e->getMessage(),
+                'type' => 'error'
+            ]);
+        }
     }
 }

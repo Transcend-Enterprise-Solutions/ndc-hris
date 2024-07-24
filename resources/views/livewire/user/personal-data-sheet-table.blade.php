@@ -822,7 +822,7 @@
         </div>
     </div>
 
-    {{-- Personal Info Add and Edit Modal --}}
+    {{-- Personal Info Edit Modal --}}
     <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="personalInfo">
         <div class="p-4">
             <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">

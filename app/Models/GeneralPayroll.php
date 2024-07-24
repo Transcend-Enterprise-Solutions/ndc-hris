@@ -14,6 +14,7 @@ class GeneralPayroll extends Model
     protected $fillable = [
         'user_id',
         'employee_number',
+        'name',
         'position',
         'sg_step',
         'rate_per_month',
@@ -45,8 +46,17 @@ class GeneralPayroll extends Model
         'amount_due_second_half',
     ];
 
-    public function user()
-    {
+    public function user(){
         return $this->belongsTo(User::class);
+    }
+
+    public function scopeSearch($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('name', 'like', $term)
+                ->orWhere('employee_number', 'like', $term)
+                ->orWhere('position', 'like', $term)
+                ->orWhere('sg_step', 'like', $term);
+        });
     }
 }
