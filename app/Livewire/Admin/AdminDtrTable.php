@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\DTRSchedule;
@@ -11,7 +12,8 @@ use Carbon\CarbonPeriod;
 
 class AdminDtrTable extends Component
 {
-    public $transactions = [];
+    use WithPagination;
+
     public $startDate;
     public $endDate;
     public $searchTerm = '';
@@ -20,25 +22,24 @@ class AdminDtrTable extends Component
     {
         $this->startDate = Carbon::now()->startOfMonth()->toDateString();
         $this->endDate = Carbon::now()->endOfMonth()->toDateString();
-        $this->loadTransactions();
     }
 
     public function updatedStartDate()
     {
-        $this->loadTransactions();
+        $this->resetPage();
     }
 
     public function updatedEndDate()
     {
-        $this->loadTransactions();
+        $this->resetPage();
     }
 
     public function updatedSearchTerm()
     {
-        $this->loadTransactions();
+        $this->resetPage();
     }
 
-    public function loadTransactions()
+    public function getTransactions()
     {
         $startDate = Carbon::parse($this->startDate);
         $endDate = Carbon::parse($this->endDate);
@@ -49,6 +50,7 @@ class AdminDtrTable extends Component
             $query->where('name', 'like', "%{$this->searchTerm}%")
                   ->orWhere('emp_code', 'like', "%{$this->searchTerm}%");
         }
+
         $users = $query->get();
 
         $groupedTransactions = [];
@@ -71,7 +73,7 @@ class AdminDtrTable extends Component
             }
         }
 
-        $this->transactions = $groupedTransactions;
+        return $groupedTransactions;
     }
 
     public function calculateTimeRecords($dateTransactions, $empCode, $date)
@@ -137,26 +139,39 @@ class AdminDtrTable extends Component
             $overtime = $afternoonOut->diffInMinutes($defaultEndTime);
         }
 
-        $totalHoursRendered = 0;
+        $totalMinutesRendered = 0;
         if ($morningIn && $morningOut) {
             $morningStart = max($defaultStartTime, $morningIn);
             $morningEnd = min($defaultEndTime, $morningOut);
-            $totalHoursRendered += max(0, $morningStart->diffInMinutes($morningEnd)) / 60;
+            $totalMinutesRendered += max(0, $morningStart->diffInMinutes($morningEnd));
         }
         if ($afternoonIn && $afternoonOut) {
             $afternoonStart = max($defaultStartTime, $afternoonIn);
             $afternoonEnd = min($defaultEndTime, $afternoonOut);
-            $totalHoursRendered += max(0, $afternoonStart->diffInMinutes($afternoonEnd)) / 60;
+            $totalMinutesRendered += max(0, $afternoonStart->diffInMinutes($afternoonEnd));
         }
 
-        $requiredHours = 8;
+        $requiredMinutes = 8 * 60; // 8 hours in minutes
         $undertime = 0;
-        if ($totalHoursRendered < $requiredHours) {
-            $undertime = ($requiredHours - $totalHoursRendered) * 60; // Convert to minutes
+        if ($totalMinutesRendered < $requiredMinutes) {
+            $undertime = $requiredMinutes - $totalMinutesRendered;
         }
 
         $late = max($late, $undertime);
-        $totalHoursRendered = min($totalHoursRendered, 8);
+        $totalMinutesRendered = min($totalMinutesRendered, $requiredMinutes);
+
+        // Convert minutes to hours and minutes format
+        $formatTime = function($minutes) {
+            $hours = floor($minutes / 60);
+            $remainingMinutes = $minutes % 60;
+            return sprintf('%02d:%02d', $hours, $remainingMinutes);
+        };
+
+        $formattedLate = $formatTime($late);
+        $formattedOvertime = $formatTime($overtime);
+
+        $totalHoursRendered = floor($totalMinutesRendered / 60);
+        $totalMinutes = $totalMinutesRendered % 60;
 
         $remarks = '';
         if (in_array($dayOfWeek, ['Saturday', 'Sunday'])) {
@@ -172,12 +187,14 @@ class AdminDtrTable extends Component
             'morningOut' => $morningOut ? $morningOut->format('H:i:s') : '-',
             'afternoonIn' => $afternoonIn ? $afternoonIn->format('H:i:s') : '-',
             'afternoonOut' => $afternoonOut ? $afternoonOut->format('H:i:s') : '-',
-            'late' => $late,
-            'overtime' => $overtime,
-            'totalHoursRendered' => round($totalHoursRendered, 2),
+            'late' => $formattedLate,
+            'overtime' => $formattedOvertime,
+            'totalHoursRendered' => sprintf('%02d:%02d', $totalHoursRendered, $totalMinutes),
             'remarks' => $remarks,
         ];
     }
+
+
 
     private function getFirstInPunch($punches)
     {
@@ -191,6 +208,20 @@ class AdminDtrTable extends Component
 
     public function render()
     {
-        return view('livewire.admin.admin-dtr-table');
+        $paginatedUsers = User::query()
+            ->where(function($query) {
+                if ($this->searchTerm) {
+                    $query->where('name', 'like', "%{$this->searchTerm}%")
+                          ->orWhere('emp_code', 'like', "%{$this->searchTerm}%");
+                }
+            })
+            ->paginate(1);
+
+        $transactions = $this->getTransactions();
+
+        return view('livewire.admin.admin-dtr-table', [
+            'users' => $paginatedUsers,
+            'transactions' => $transactions,
+        ]);
     }
 }

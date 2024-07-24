@@ -18,7 +18,7 @@
             <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
                 <div class="w-full sm:w-auto">
                     <label for="startDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Start Date</label>
-                    <input type="date" id="startDate" wire:model.live='startDate'
+                    <input type="date" id="startDate" wire:model.live="startDate"
                         class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
@@ -26,18 +26,13 @@
 
                 <div class="w-full sm:w-auto mt-4 sm:mt-0">
                     <label for="endDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">End Date</label>
-                    <input type="date" id="endDate" wire:model.live='endDate'
+                    <input type="date" id="endDate" wire:model.live="endDate"
                         class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                 </div>
             </div>
         </div>
-
-        <!-- Record DTR Button -->
-        <button wire:click='recordDTR' class="mb-4 px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700">
-            Record DTR
-        </button>
 
         <!-- Table -->
         <div class="overflow-x-auto">
@@ -53,22 +48,32 @@
                         <th class="px-4 py-2 text-center">Noon Out</th>
                         <th class="px-4 py-2 text-center">Noon In</th>
                         <th class="px-4 py-2 text-center">Afternoon Out</th>
-                        <th class="px-4 py-2 text-center">Late/Undertime (minutes)</th>
-                        <th class="px-4 py-2 text-center">Overtime (minutes)</th>
+                        <th class="px-4 py-2 text-center">Late/Undertime</th>
+                        <th class="px-4 py-2 text-center">Overtime</th>
                         <th class="px-4 py-2 text-center">Hours Rendered</th>
                         <th class="px-4 py-2 text-center">Remarks</th>
                     </tr>
+                    <tr class="whitespace-nowrap bg-gray-100 dark:bg-gray-600">
+                        <th colspan="5"></th> <!-- Empty cells to align with columns -->
+                        <th class="px-4 py-2 text-center">(HH:MM)</th>
+                        <th class="px-4 py-2 text-center">(HH:MM)</th>
+                        <th class="px-4 py-2 text-center">(HH:MM)</th>
+                        <th class="px-4 py-2 text-center">(HH:MM)</th>
+                        <th class="px-4 py-2 text-center">(HH:MM)</th>
+                        <th class="px-4 py-2 text-center">(HH:MM)</th>
+                        <th class="px-4 py-2 text-center">(HH:MM)</th>
+                        <th class="px-4 py-2 text-center"></th> <!-- Empty cell for alignment -->
+                    </tr>
                 </thead>
                 <tbody>
-                    @forelse ($transactions as $empCode => $empTransactions)
-                        @foreach ($empTransactions as $date => $dateTransactions)
+                    @forelse ($users as $user)
+                        @foreach ($transactions[$user->emp_code] as $date => $dateTransactions)
                             @php
-                                $timeRecords = $this->calculateTimeRecords($dateTransactions, $empCode, $date);
-                                $employee = \App\Models\User::where('emp_code', $empCode)->first();
+                                $timeRecords = $this->calculateTimeRecords($dateTransactions, $user->emp_code, $date);
                             @endphp
                             <tr class="whitespace-nowrap">
-                                <td class="px-4 py-2 text-center">{{ $empCode }}</td>
-                                <td class="px-4 py-2 text-center">{{ $employee ? $employee->name : 'Unknown' }}</td>
+                                <td class="px-4 py-2 text-center">{{ $user->emp_code }}</td>
+                                <td class="px-4 py-2 text-center">{{ $user->name }}</td>
                                 <td class="px-4 py-2 text-center">{{ $date }}</td>
                                 <td class="px-4 py-2 text-center">{{ $timeRecords['dayOfWeek'] }}</td>
                                 <td class="px-4 py-2 text-center">{{ $timeRecords['location'] }}</td>
@@ -89,6 +94,11 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- Pagination Links -->
+        <div class="mt-4">
+            {{ $users->links() }}
         </div>
     </div>
 </div>
