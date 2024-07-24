@@ -260,7 +260,7 @@
                                     <tr class="whitespace-nowrap">
                                         @foreach($columns as $column => $visible)
                                             @if($visible)
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium text-left uppercase">
                                                     {{ ucwords(str_replace('_', ' ', $column)) }}
                                                 </th>
                                             @endif
@@ -275,7 +275,7 @@
                                             <tr class="text-neutral-800 dark:text-neutral-200">
                                                 @foreach($columns as $column => $visible)
                                                     @if($visible)
-                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        <td class="px-5 py-4 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium whitespace-nowrap">
                                                             @if(in_array($column, [
                                                                 'rate_per_month', 
                                                                 'personal_economic_relief_allowance', 

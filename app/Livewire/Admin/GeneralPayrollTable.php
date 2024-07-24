@@ -133,12 +133,42 @@ class GeneralPayrollTable extends Component
     public function toggleEditPayroll($userId){
         $this->editPayroll = true;
         $this->userId = $userId;
-        try{
+        try {
             $payroll = GeneralPayroll::where('user_id', $userId)->first();
-            if($payroll){
+            if ($payroll) {
                 $this->name = $payroll->name;
+                $this->employee_number = $payroll->employee_number;
+                $this->position = $payroll->position;
+                $this->sg_step = $payroll->sg_step;
+                $this->rate_per_month = $payroll->rate_per_month;
+                $this->personal_economic_relief_allowance = $payroll->personal_economic_relief_allowance;
+                $this->gross_amount = $payroll->gross_amount;
+                $this->additional_gsis_premium = $payroll->additional_gsis_premium;
+                $this->lbp_salary_loan = $payroll->lbp_salary_loan;
+                $this->nycea_deductions = $payroll->nycea_deductions;
+                $this->sc_membership = $payroll->sc_membership;
+                $this->total_loans = $payroll->total_loans;
+                $this->salary_loan = $payroll->salary_loan;
+                $this->policy_loan = $payroll->policy_loan;
+                $this->eal = $payroll->eal;
+                $this->emergency_loan = $payroll->emergency_loan;
+                $this->mpl = $payroll->mpl;
+                $this->housing_loan = $payroll->housing_loan;
+                $this->ouli_prem = $payroll->ouli_prem;
+                $this->gfal = $payroll->gfal;
+                $this->cpl = $payroll->cpl;
+                $this->pagibig_mpl = $payroll->pagibig_mpl;
+                $this->other_deduction_philheath_diff = $payroll->other_deduction_philheath_diff;
+                $this->life_retirement_insurance_premiums = $payroll->life_retirement_insurance_premiums;
+                $this->pagibig_contribution = $payroll->pagibig_contribution;
+                $this->w_holding_tax = $payroll->w_holding_tax;
+                $this->philhealth = $payroll->philhealth;
+                $this->total_deduction = $payroll->total_deduction;
+            } else {
+                // If no payroll exists, you might want to reset all fields
+                $this->resetPayrollFields();
             }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
     }
@@ -149,21 +179,85 @@ class GeneralPayrollTable extends Component
     }
 
     public function savePayroll(){
-        try{
+        try {
             $payroll = GeneralPayroll::where('user_id', $this->userId)->first();
-            if($payroll){
-                $payroll->update([
-                    'user_id' => $this->userId,
-                    'employee_number' => $this->employee_number,
+    
+            $payrollData = [
+                'user_id' => $this->userId,
+                'employee_number' => $this->employee_number,
+                'position' => $this->position,
+                'sg_step' => $this->sg_step,
+                'rate_per_month' => $this->rate_per_month,
+                'personal_economic_relief_allowance' => $this->personal_economic_relief_allowance,
+                'gross_amount' => $this->gross_amount,
+                'additional_gsis_premium' => $this->additional_gsis_premium,
+                'lbp_salary_loan' => $this->lbp_salary_loan,
+                'nycea_deductions' => $this->nycea_deductions,
+                'sc_membership' => $this->sc_membership,
+                'total_loans' => $this->total_loans,
+                'salary_loan' => $this->salary_loan,
+                'policy_loan' => $this->policy_loan,
+                'eal' => $this->eal,
+                'emergency_loan' => $this->emergency_loan,
+                'mpl' => $this->mpl,
+                'housing_loan' => $this->housing_loan,
+                'ouli_prem' => $this->ouli_prem,
+                'gfal' => $this->gfal,
+                'cpl' => $this->cpl,
+                'pagibig_mpl' => $this->pagibig_mpl,
+                'other_deduction_philheath_diff' => $this->other_deduction_philheath_diff,
+                'life_retirement_insurance_premiums' => $this->life_retirement_insurance_premiums,
+                'pagibig_contribution' => $this->pagibig_contribution,
+                'w_holding_tax' => $this->w_holding_tax,
+                'philhealth' => $this->philhealth,
+                'total_deduction' => $this->total_deduction,
+            ];
+    
+            if ($payroll) {
+                $this->validate([
+                    'employee_number' => 'required|max:100',
+                    'position' => 'required|max:100',
+                    'sg_step' => 'required|max:100',
+                    'rate_per_month' => 'required|numeric',
+                    'gross_amount' => 'required|numeric',
+                    'pagibig_contribution' => 'required|numeric',
+                    'w_holding_tax' => 'required|numeric',
+                    'philhealth' => 'required|numeric',
+                    'total_deduction' => 'required|numeric',
                 ]);
-            }else{
+
+                $payroll->update($payrollData);
+                $message = "Payroll updated successfully!";
+            } else {
+                $this->validate([
+                    'employee_number' => 'required|max:100',
+                    'position' => 'required|max:100',
+                    'sg_step' => 'required|max:100',
+                    'rate_per_month' => 'required|numeric',
+                    'gross_amount' => 'required|numeric',
+                    'pagibig_contribution' => 'required|numeric',
+                    'w_holding_tax' => 'required|numeric',
+                    'philhealth' => 'required|numeric',
+                    'total_deduction' => 'required|numeric',
+                ]);
                 $user = User::where('id', $this->userId)->first();
-                GeneralPayroll::create([
-                    'user_id' => $this->userId,
-                    'name' => $user->name,
-                ]);
+                $payrollData['name'] = $user->name;
+                GeneralPayroll::create($payrollData);
+                $message = "Payroll added successfully!";
             }
-        }catch(Exception $e){
+    
+            $this->editPayroll = null;
+            $this->addPayroll = null;
+            $this->dispatch('notify', [
+                'message' => $message,
+                'type' => 'success'
+            ]);
+    
+        } catch (Exception $e) {
+            $this->dispatch('notify', [
+                'message' => "Payroll update was unsuccessful!",
+                'type' => 'error'
+            ]);
             throw $e;
         }
     }
