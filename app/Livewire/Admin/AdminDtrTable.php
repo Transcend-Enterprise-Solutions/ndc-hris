@@ -224,4 +224,34 @@ class AdminDtrTable extends Component
             'transactions' => $transactions,
         ]);
     }
+
+    public function recordDTR(){
+        try{
+            foreach ($this->transactions as $empCode => $empTransactions){
+                foreach ($empTransactions as $date => $dateTransactions){
+                    $timeRecords = $this->calculateTimeRecords($dateTransactions, $empCode, $date);
+                    $employee = User::where('emp_code', $empCode)->first();
+                    EmployeesDtr::updateOrCreate([
+                        'user_id' => $employee->id,
+                        'date' => $date,
+                        'day_of_week' => $timeRecords['dayOfWeek'],
+                        'location' => $timeRecords['location'],
+                        'morning_in' => $timeRecords['morningIn'],
+                        'morning_out' => $timeRecords['morningOut'],
+                        'afternoon_in' => $timeRecords['afternoonIn'],
+                        'afternoon_out' => $timeRecords['afternoonOut'],
+                        'late' => $timeRecords['late'],
+                        'overtime' => $timeRecords['overtime'],
+                        'total_hours_endered' => $timeRecords['totalHoursRendered']
+                    ]);
+                }
+            }
+            $this->dispatch('notify', [
+                'message' => "DTR recorded successfully!",
+                'type' => 'success'
+            ]);
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
 }
