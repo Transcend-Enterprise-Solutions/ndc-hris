@@ -1139,7 +1139,7 @@
 
                     <div class="relative inline-block text-left">
                         <input type="search" id="search" wire:model.live="search" placeholder="Search..."
-                            class="py-2 px-3 block w-full shadow-sm text-sm font-medium border-gray-400 
+                            class="py-2 px-3 block w-full shadow-sm text-sm font-medium border-gray-400
                             wire:text-neutral-800 dark:text-neutral-200 mb-4 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
                     </div>
 
@@ -1149,21 +1149,21 @@
                         <div class="relative inline-block text-left mr-0 sm:mr-4">
                             <button wire:click="toggleDropdownFilter"
                                 class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                                    justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide 
-                                    text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                                    justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide
+                                    text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none w-full sm:w-fit" type="button">
                                 Filter by
                                 <i class="bi bi-chevron-down w-5 h-5 ml-2"></i>
                             </button>
                             @if($dropdownForFilter)
-                            <div class="absolute z-20 w-64 p-3 border border-gray-400 
-                                        bg-white rounded-lg shadow-2xl dark:bg-gray-700 
+                            <div class="absolute z-20 w-64 p-3 border border-gray-400
+                                        bg-white rounded-lg shadow-2xl dark:bg-gray-700
                                         overflow-x-hidden scrollbar-thin1" style="height: fit-content">
 
                                 <!-- Provinces Dropdown -->
                                 <div class="relative inline-block text-left w-full">
                                     <button wire:click="toggleDropdownProvince" class="w-full mr-4 p-2 mb-4 text-left
-                                                text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 
+                                                text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200
                                                 transition-colors duration-200 rounded-lg border border-gray-400
                                                  hover:bg-gray-200 dark:hover:bg-slate-600 focus:outline-none"
                                         type="button">
@@ -1203,7 +1203,7 @@
                                 <!-- Cities Dropdown -->
                                 <div class="relative inline-block text-left w-full">
                                     <button wire:click="toggleDropdownCity" class="w-full mr-4 p-2 mb-4 text-left
-                                                text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 
+                                                text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200
                                                 transition-colors duration-200 rounded-lg border border-gray-400
                                                 hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600"
                                         type="button">
@@ -1245,7 +1245,7 @@
                                 <!-- Barangay Dropdown -->
                                 <div class="relative inline-block text-left w-full">
                                     <button wire:click="toggleDropdownBarangay" class="w-full mr-4 p-2 mb-4 text-left
-                                                text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 
+                                                text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200
                                                 transition-colors duration-200 rounded-lg border border-gray-400
                                                 hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600"
                                         type="button">
@@ -1287,7 +1287,7 @@
                                 <!-- Civil Status Dropdown -->
                                 <div class="relative inline-block text-left w-full">
                                     <button wire:click="toggleDropdownCivilStatus" class="w-full mr-4 p-2 mb-4 text-left
-                                                text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 
+                                                text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200
                                                 transition-colors duration-200 rounded-lg border border-gray-400
                                                 hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600"
                                         type="button">
@@ -1337,7 +1337,7 @@
                                 <!-- Sex Dropdown -->
                                 <div class="relative inline-block text-left w-full">
                                     <button wire:click="toggleDropdownSex" class="w-full mr-4 p-2 mb-4 text-left
-                                                text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 
+                                                text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200
                                                 transition-colors duration-200 rounded-lg border border-gray-400
                                                 hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600"
                                         type="button">
@@ -1379,15 +1379,15 @@
                         <!-- Sort Dropdown -->
                         <div class="relative inline-block text-left mr-0 sm:mr-4">
                             <button wire:click="toggleDropdown" class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                                    justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide 
-                                    text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                                    justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide
+                                    text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                                 type="button">
                                 Sort Column
                                 <i class="bi bi-chevron-down w-5 h-5 ml-2"></i>
                             </button>
                             @if($dropdownForCategoryOpen)
-                            <div class="absolute z-20 w-56 p-3 border border-gray-400 bg-white rounded-lg 
+                            <div class="absolute z-20 w-56 p-3 border border-gray-400 bg-white rounded-lg
                                         shadow-2xl dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
                                 <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Category</h6>
                                 <ul class="space-y-2 text-sm">
@@ -1552,8 +1552,8 @@
                         <!-- Export to Excel -->
                         <div class="relative inline-block text-left">
                             <button wire:click="exportUsers" class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                                    justify-center px-4 py-1.5 mb-4 text-sm font-medium tracking-wide 
-                                    text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                                    justify-center px-4 py-1.5 mb-4 text-sm font-medium tracking-wide
+                                    text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                                 type="button">
                                 <img class="flex dark:hidden" src="/images/export-excel.png" width="25" alt="">

@@ -3,39 +3,78 @@
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\DTRSchedule;
 use App\Models\EmployeesDtr;
 use Carbon\Carbon;
-use Exception;
+use Carbon\CarbonPeriod;
 
 class AdminDtrTable extends Component
 {
-    public $transactions = [];
+    use WithPagination;
 
-    public function mount(){
-        $startDate = Carbon::now()->startOfMonth();
-        $endDate = Carbon::now()->endOfMonth();
+    public $startDate;
+    public $endDate;
+    public $searchTerm = '';
 
-        $transactions = Transaction::whereBetween('punch_time', [$startDate, $endDate])
-                                    ->orderBy('punch_time')
-                                    ->get();
+    public function mount()
+    {
+        $this->startDate = Carbon::now()->startOfMonth()->toDateString();
+        $this->endDate = Carbon::now()->endOfMonth()->toDateString();
+    }
 
-        $groupedTransactions = [];
-        foreach ($transactions as $transaction) {
-            $date = Carbon::parse($transaction->punch_time)->format('Y-m-d');
-            $empCode = $transaction->emp_code;
-            if (!isset($groupedTransactions[$empCode])) {
-                $groupedTransactions[$empCode][$date] = [];
-            }
-            $groupedTransactions[$empCode][$date][] = [
-                'punch_time' => Carbon::parse($transaction->punch_time),
-                'punch_state' => $transaction->punch_state,
-            ];
+    public function updatedStartDate()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedEndDate()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSearchTerm()
+    {
+        $this->resetPage();
+    }
+
+    public function getTransactions()
+    {
+        $startDate = Carbon::parse($this->startDate);
+        $endDate = Carbon::parse($this->endDate);
+        $period = CarbonPeriod::create($startDate, $endDate);
+
+        $query = User::query();
+        if ($this->searchTerm) {
+            $query->where('name', 'like', "%{$this->searchTerm}%")
+                  ->orWhere('emp_code', 'like', "%{$this->searchTerm}%");
         }
 
-        $this->transactions = $groupedTransactions;
+        $users = $query->get();
+
+        $groupedTransactions = [];
+        foreach ($users as $user) {
+            foreach ($period as $date) {
+                $dateString = $date->format('Y-m-d');
+                $groupedTransactions[$user->emp_code][$dateString] = [];
+            }
+
+            $transactions = Transaction::where('emp_code', $user->emp_code)
+                ->whereBetween('punch_time', [$startDate, $endDate])
+                ->get();
+
+            foreach ($transactions as $transaction) {
+                $date = Carbon::parse($transaction->punch_time)->format('Y-m-d');
+                $groupedTransactions[$user->emp_code][$date][] = [
+                    'punch_time' => Carbon::parse($transaction->punch_time),
+                    'punch_state' => $transaction->punch_state,
+                ];
+            }
+        }
+
+        return $groupedTransactions;
     }
 
     public function calculateTimeRecords($dateTransactions, $empCode, $date)
@@ -43,7 +82,6 @@ class AdminDtrTable extends Component
         $morningPunches = collect();
         $afternoonPunches = collect();
 
-        // Separate morning and afternoon punches
         foreach ($dateTransactions as $transaction) {
             $punchTime = Carbon::parse($transaction['punch_time']);
             if ($punchTime->hour <= 12) {
@@ -53,13 +91,11 @@ class AdminDtrTable extends Component
             }
         }
 
-        // Determine the first in and last out punches for morning and afternoon
         $morningIn = $this->getFirstInPunch($morningPunches);
         $morningOut = $this->getLastOutPunch($morningPunches);
         $afternoonIn = $this->getFirstInPunch($afternoonPunches);
         $afternoonOut = $this->getLastOutPunch($afternoonPunches);
 
-        // Retrieve the employee's schedule within the date range
         $schedule = DTRSchedule::where('emp_code', $empCode)
             ->whereDate('start_date', '<=', $date)
             ->whereDate('end_date', '>=', $date)
@@ -68,15 +104,12 @@ class AdminDtrTable extends Component
         $carbonDate = Carbon::parse($date);
         $dayOfWeek = $carbonDate->format('l');
 
-        // Set default location and times
         $location = 'Onsite';
-        $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString('09:30:00');
+        $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString('07:00:00');
         $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString('18:30:00');
 
         if ($schedule) {
-            $wfhDays = explode(',', $schedule->wfh_days);
-            $wfhDays = array_map('trim', $wfhDays); // Trim whitespace from each day
-            $wfhDays = array_map('ucfirst', $wfhDays); // Capitalize the first letter of each day
+            $wfhDays = array_map('ucfirst', array_map('trim', explode(',', $schedule->wfh_days)));
 
             if (in_array($dayOfWeek, $wfhDays)) {
                 $location = 'WFH';
@@ -88,13 +121,11 @@ class AdminDtrTable extends Component
             }
         }
 
-        // Adjust for Mondays if it's not a WFH day
         if ($dayOfWeek === 'Monday' && $location !== 'WFH') {
             $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString('09:00:00');
             $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString('18:00:00');
         }
 
-        // Calculate lateness using 9:00 for Mondays and 9:30 for other days if not WFH
         $latenessThreshold = $dayOfWeek === 'Monday' ? '09:00:00' : '09:30:00';
         $latenessThreshold = ($location === 'WFH') ? '08:00:00' : $latenessThreshold;
         $latenessThresholdTime = $carbonDate->copy()->setTimeFromTimeString($latenessThreshold);
@@ -104,42 +135,67 @@ class AdminDtrTable extends Component
             $late = $morningIn->diffInMinutes($latenessThresholdTime);
         }
 
-        // Calculate overtime
         $overtime = 0;
         if ($afternoonOut && $afternoonOut->gt($defaultEndTime)) {
             $overtime = $afternoonOut->diffInMinutes($defaultEndTime);
         }
 
-        // Calculate total hours rendered
-        $totalHoursRendered = 0;
+        $totalMinutesRendered = 0;
         if ($morningIn && $morningOut) {
             $morningStart = max($defaultStartTime, $morningIn);
             $morningEnd = min($defaultEndTime, $morningOut);
-            $totalHoursRendered += max(0, $morningStart->diffInMinutes($morningEnd)) / 60;
+            $totalMinutesRendered += max(0, $morningStart->diffInMinutes($morningEnd));
         }
         if ($afternoonIn && $afternoonOut) {
             $afternoonStart = max($defaultStartTime, $afternoonIn);
             $afternoonEnd = min($defaultEndTime, $afternoonOut);
-            $totalHoursRendered += max(0, $afternoonStart->diffInMinutes($afternoonEnd)) / 60;
+            $totalMinutesRendered += max(0, $afternoonStart->diffInMinutes($afternoonEnd));
         }
 
-        // Limit total rendered hours to 8 hours
-        $totalHoursRendered = min($totalHoursRendered, 8);
+        $requiredMinutes = 8 * 60; // 8 hours in minutes
+        $undertime = 0;
+        if ($totalMinutesRendered < $requiredMinutes) {
+            $undertime = $requiredMinutes - $totalMinutesRendered;
+        }
 
-        $result = [
+        $late = max($late, $undertime);
+        $totalMinutesRendered = min($totalMinutesRendered, $requiredMinutes);
+
+        // Convert minutes to hours and minutes format
+        $formatTime = function($minutes) {
+            $hours = floor($minutes / 60);
+            $remainingMinutes = $minutes % 60;
+            return sprintf('%02d:%02d', $hours, $remainingMinutes);
+        };
+
+        $formattedLate = $formatTime($late);
+        $formattedOvertime = $formatTime($overtime);
+
+        $totalHoursRendered = floor($totalMinutesRendered / 60);
+        $totalMinutes = $totalMinutesRendered % 60;
+
+        $remarks = '';
+        if (in_array($dayOfWeek, ['Saturday', 'Sunday'])) {
+            $remarks = $dayOfWeek;
+        } elseif (empty($dateTransactions)) {
+            $remarks = 'Absent';
+        }
+
+        return [
             'dayOfWeek' => $dayOfWeek,
             'location' => $location,
             'morningIn' => $morningIn ? $morningIn->format('H:i:s') : '-',
             'morningOut' => $morningOut ? $morningOut->format('H:i:s') : '-',
             'afternoonIn' => $afternoonIn ? $afternoonIn->format('H:i:s') : '-',
             'afternoonOut' => $afternoonOut ? $afternoonOut->format('H:i:s') : '-',
-            'late' => $late,
-            'overtime' => $overtime,
-            'totalHoursRendered' => round($totalHoursRendered, 2),
+            'late' => $formattedLate,
+            'overtime' => $formattedOvertime,
+            'totalHoursRendered' => sprintf('%02d:%02d', $totalHoursRendered, $totalMinutes),
+            'remarks' => $remarks,
         ];
-
-        return $result;
     }
+
+
 
     private function getFirstInPunch($punches)
     {
@@ -151,61 +207,52 @@ class AdminDtrTable extends Component
         return $punches->where('punch_state', 1)->sortByDesc('punch_time')->first()['punch_time'] ?? null;
     }
 
+    public function render()
+    {
+        $paginatedUsers = User::query()
+            ->where(function($query) {
+                if ($this->searchTerm) {
+                    $query->where('name', 'like', "%{$this->searchTerm}%")
+                          ->orWhere('emp_code', 'like', "%{$this->searchTerm}%");
+                }
+            })
+            ->paginate(1);
+
+        $transactions = $this->getTransactions();
+
+        return view('livewire.admin.admin-dtr-table', [
+            'users' => $paginatedUsers,
+            'transactions' => $transactions,
+        ]);
+    }
+
     public function recordDTR(){
         try{
-            $startDate = Carbon::now()->startOfMonth();
-            $endDate = Carbon::now()->endOfMonth();
-
-            $transactions = Transaction::whereBetween('punch_time', [$startDate, $endDate])
-                                        ->orderBy('punch_time')
-                                        ->get();
-
-            $groupedTransactions = [];
-            foreach ($transactions as $transaction) {
-                $date = Carbon::parse($transaction->punch_time)->format('Y-m-d');
-                $empCode = $transaction->emp_code;
-                if (!isset($groupedTransactions[$empCode])) {
-                    $groupedTransactions[$empCode][$date] = [];
-                }
-                $groupedTransactions[$empCode][$date][] = [
-                    'punch_time' => Carbon::parse($transaction->punch_time),
-                    'punch_state' => $transaction->punch_state,
-                ];
-            }
-
-            $transactions = $groupedTransactions;
-            foreach ($transactions as $empCode => $empTransactions){
+            foreach ($this->transactions as $empCode => $empTransactions){
                 foreach ($empTransactions as $date => $dateTransactions){
                     $timeRecords = $this->calculateTimeRecords($dateTransactions, $empCode, $date);
                     $employee = User::where('emp_code', $empCode)->first();
-                    if($employee){
-                        EmployeesDtr::updateOrCreate([
-                            'user_id' => $employee->id,
-                            'date' => $date,
-                            'day_of_week' => $timeRecords['dayOfWeek'],
-                            'location' => $timeRecords['location'],
-                            'morning_in' => $timeRecords['morningIn'],
-                            'morning_out' => $timeRecords['morningOut'],
-                            'afternoon_in' => $timeRecords['afternoonIn'],
-                            'afternoon_out' => $timeRecords['afternoonOut'],
-                            'late' => $timeRecords['late'],
-                            'overtime' => $timeRecords['overtime'],
-                            'total_hours_endered' => $timeRecords['totalHoursRendered']
-                        ]);
-                    }
+                    EmployeesDtr::updateOrCreate([
+                        'user_id' => $employee->id,
+                        'date' => $date,
+                        'day_of_week' => $timeRecords['dayOfWeek'],
+                        'location' => $timeRecords['location'],
+                        'morning_in' => $timeRecords['morningIn'],
+                        'morning_out' => $timeRecords['morningOut'],
+                        'afternoon_in' => $timeRecords['afternoonIn'],
+                        'afternoon_out' => $timeRecords['afternoonOut'],
+                        'late' => $timeRecords['late'],
+                        'overtime' => $timeRecords['overtime'],
+                        'total_hours_endered' => $timeRecords['totalHoursRendered']
+                    ]);
                 }
             }
             $this->dispatch('notify', [
-                'message' => "DTR recorded successfully!", 
+                'message' => "DTR recorded successfully!",
                 'type' => 'success'
             ]);
-        }catch(Exception $e){
+        }catch(\Exception $e){
             throw $e;
         }
-    }
-
-    public function render()
-    {
-        return view('livewire.admin.admin-dtr-table');
     }
 }
