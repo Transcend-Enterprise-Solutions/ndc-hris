@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\DTRSchedule;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class AdminDtrTable extends Component
 {
@@ -17,10 +18,8 @@ class AdminDtrTable extends Component
 
     public function mount()
     {
-        // Initialize default date range to current month
         $this->startDate = Carbon::now()->startOfMonth()->toDateString();
         $this->endDate = Carbon::now()->endOfMonth()->toDateString();
-
         $this->loadTransactions();
     }
 
@@ -41,28 +40,35 @@ class AdminDtrTable extends Component
 
     public function loadTransactions()
     {
-        $query = Transaction::query()
-            ->whereBetween('punch_time', [$this->startDate, $this->endDate]);
+        $startDate = Carbon::parse($this->startDate);
+        $endDate = Carbon::parse($this->endDate);
+        $period = CarbonPeriod::create($startDate, $endDate);
 
+        $query = User::query();
         if ($this->searchTerm) {
-            $empCodes = User::where('name', 'like', "%{$this->searchTerm}%")
-                ->orWhere('emp_code', 'like', "%{$this->searchTerm}%")
-                ->pluck('emp_code');
-            $query->whereIn('emp_code', $empCodes);
+            $query->where('name', 'like', "%{$this->searchTerm}%")
+                  ->orWhere('emp_code', 'like', "%{$this->searchTerm}%");
         }
+        $users = $query->get();
 
-        $transactions = $query->orderBy('punch_time')->get();
         $groupedTransactions = [];
-        foreach ($transactions as $transaction) {
-            $date = Carbon::parse($transaction->punch_time)->format('Y-m-d');
-            $empCode = $transaction->emp_code;
-            if (!isset($groupedTransactions[$empCode])) {
-                $groupedTransactions[$empCode][$date] = [];
+        foreach ($users as $user) {
+            foreach ($period as $date) {
+                $dateString = $date->format('Y-m-d');
+                $groupedTransactions[$user->emp_code][$dateString] = [];
             }
-            $groupedTransactions[$empCode][$date][] = [
-                'punch_time' => Carbon::parse($transaction->punch_time),
-                'punch_state' => $transaction->punch_state,
-            ];
+
+            $transactions = Transaction::where('emp_code', $user->emp_code)
+                ->whereBetween('punch_time', [$startDate, $endDate])
+                ->get();
+
+            foreach ($transactions as $transaction) {
+                $date = Carbon::parse($transaction->punch_time)->format('Y-m-d');
+                $groupedTransactions[$user->emp_code][$date][] = [
+                    'punch_time' => Carbon::parse($transaction->punch_time),
+                    'punch_state' => $transaction->punch_state,
+                ];
+            }
         }
 
         $this->transactions = $groupedTransactions;
@@ -75,7 +81,7 @@ class AdminDtrTable extends Component
 
         foreach ($dateTransactions as $transaction) {
             $punchTime = Carbon::parse($transaction['punch_time']);
-            if ($punchTime->hour < 12) {
+            if ($punchTime->hour <= 12) {
                 $morningPunches->push($transaction);
             } else {
                 $afternoonPunches->push($transaction);
@@ -152,6 +158,13 @@ class AdminDtrTable extends Component
         $late = max($late, $undertime);
         $totalHoursRendered = min($totalHoursRendered, 8);
 
+        $remarks = '';
+        if (in_array($dayOfWeek, ['Saturday', 'Sunday'])) {
+            $remarks = $dayOfWeek;
+        } elseif (empty($dateTransactions)) {
+            $remarks = 'Absent';
+        }
+
         return [
             'dayOfWeek' => $dayOfWeek,
             'location' => $location,
@@ -162,6 +175,7 @@ class AdminDtrTable extends Component
             'late' => $late,
             'overtime' => $overtime,
             'totalHoursRendered' => round($totalHoursRendered, 2),
+            'remarks' => $remarks,
         ];
     }
 

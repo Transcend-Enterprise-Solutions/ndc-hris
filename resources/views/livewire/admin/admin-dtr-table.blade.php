@@ -5,7 +5,7 @@
         <!-- Search and Date Range Picker -->
         <div class="mb-6 flex flex-col sm:flex-row items-end justify-between space-y-4 sm:space-y-0">
             <!-- Search Input -->
-            <div class="w-full sm:w-1/3 sm:mr-4"> <!-- Added sm:mr-4 for extra space -->
+            <div class="w-full sm:w-1/3 sm:mr-4">
                 <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
                 <input type="text" id="search" wire:model.live="searchTerm"
                     class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
@@ -56,6 +56,7 @@
                         <th class="px-4 py-2 text-center">Late/Undertime (minutes)</th>
                         <th class="px-4 py-2 text-center">Overtime (minutes)</th>
                         <th class="px-4 py-2 text-center">Hours Rendered</th>
+                        <th class="px-4 py-2 text-center">Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -78,11 +79,12 @@
                                 <td class="px-4 py-2 text-center">{{ $timeRecords['late'] }}</td>
                                 <td class="px-4 py-2 text-center">{{ $timeRecords['overtime'] }}</td>
                                 <td class="px-4 py-2 text-center">{{ $timeRecords['totalHoursRendered'] }}</td>
+                                <td class="px-4 py-2 text-center">{{ $timeRecords['remarks'] }}</td>
                             </tr>
                         @endforeach
                     @empty
                         <tr>
-                            <td colspan="12" class="px-4 py-2 text-center text-gray-500 dark:text-gray-400">No transactions available for the selected date range.</td>
+                            <td colspan="13" class="px-4 py-2 text-center text-gray-500 dark:text-gray-400">No transactions available for the selected date range.</td>
                         </tr>
                     @endforelse
                 </tbody>
