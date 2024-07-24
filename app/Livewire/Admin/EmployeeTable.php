@@ -95,6 +95,8 @@ class EmployeeTable extends Component
 
     public $pds;
 
+    public $search = '';
+
     protected $listeners = [
         'exportUsers'
     ];
@@ -249,6 +251,10 @@ class EmployeeTable extends Component
             })
             ->when($this->filters['residential_selectedZipcode'], function ($query) {
             $query->addSelect('user_data.residential_selectedZipcode');
+            })
+            ->where('users.user_role', 'emp')
+            ->when($this->search, function ($query) {
+                $query->where('users.name', 'like', '%' . $this->search . '%');
             })
             ->where(function ($query) {
                 if ($this->sex) {

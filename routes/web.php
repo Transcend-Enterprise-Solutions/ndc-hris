@@ -36,10 +36,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/doc-request', function () {return view('livewire.user.doc-request');})->name('doc-request');
     Route::get('/leave-application', function () {return view('livewire.user.leave-application');})->name('leave-application');
     Route::get('/admin-leave-request', function () {return view('livewire.admin.admin-leave-request');})->name('admin-leave-request');
+    Route::get('/admin-leave-records', function () {return view('livewire.admin.admin-leave-records');})->name('admin-leave-records');
     Route::get('/admin-doc-request', function () {return view('livewire.admin.admin-doc-request');})->name('admin-doc-request');
     Route::get('/admin-dtr', function () {return view('livewire.admin.admin-dtr');})->name('admin-dtr');
     Route::get('/admin-schedule', function () {return view('livewire.admin.admin-schedule');})->name('admin-schedule');
     Route::get('/payroll-management', function () {return view('livewire.admin.payroll-management');})->name('payroll-management');
+    Route::get('/general-payroll', function () {return view('livewire.admin.general-payroll');})->name('general-payroll');
     Route::get('/personal-data-sheet', function () {return view('livewire.user.personal-data-sheet');})->name('personal-data-sheet');
     Route::get('/dtr', function () {return view('livewire.user.dtr');})->name('dtr');
     Route::get('/dashboard/analytics', [DashboardController::class, 'analytics'])->name('analytics');

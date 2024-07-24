@@ -13,40 +13,40 @@ class EmployeesPayroll extends Model
 
     protected $fillable = [
         'user_id',
+        'name',
         'employee_number',
         'position',
-        'sg/step',
-        'rate_per_month',
-        'personal_economic_relief_allowance',
-        'gross_amount',
-        'additional_gsis_premium',
-        'lbp_salary_loan',
-        'nycea_deductions',
-        'sc_membership',
-        'total_loans',
-        'salary_loan',
-        'policy_loan',
-        'eal',
-        'emergency_loan',
-        'mpl',
-        'housing_loan',
-        'ouli_prem',
-        'gfal',
-        'cpl',
-        'pagibig_mpl',
-        'other_deduction_philheath_diff',
-        'life_retirement_insurance_premiums',
-        'pagibig_contribution',
-        'w_holding_tax',
-        'philhealth',
-        'total_deduction',
-        'net_amount_received',
-        'amount_due_first_half',
-        'amount_due_second_half',
+        'salary_grade',
+        'daily_salary_rate',
+        'no_of_days_covered',
+        'gross_salary',
+        'absences_days',
+        'absences_amount',
+        'late_undertime_hours',
+        'late_undertime_hours_amount',
+        'late_undertime_mins',
+        'late_undertime_mins_amount',
+        'gross_salary_less',
+        'withholding_tax',
+        'nycempc',
+        'total_deductions',
+        'net_amount_due',
+        'start_date',
+        'end_date',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function scopeSearch($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('name', 'like', $term)
+                ->orWhere('employee_number', 'like', $term)
+                ->orWhere('position', 'like', $term)
+                ->orWhere('salary_grade', 'like', $term);
+        });
     }
 }
