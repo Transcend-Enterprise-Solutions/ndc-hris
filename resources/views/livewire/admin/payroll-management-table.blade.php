@@ -1,8 +1,13 @@
 <div class="w-full flex justify-center">
     <div class="flex justify-center w-full">
         <div class="w-full bg-white rounded-2xl p3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
-            <div class="pb-4 pt-4 sm:pt-1">
-                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Payroll Management</h1>
+            <div class="pb-4 pt-4 sm:pt-1 mb-4">
+                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">
+                    Payroll for the month of {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('F') : '' }} {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('Y') : '' }}
+                </h1>
+                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">
+                    {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('d') : '' }} - {{ $endDate ? \Carbon\Carbon::parse($endDate)->format('d') : '' }}
+                </h1>
             </div>
 
             <div class="block sm:flex items-center justify-between">
@@ -26,7 +31,7 @@
 
 
                 <div class="relative inline-block text-left">
-                    <input type="search" id="search" wire:model="search" 
+                    <input type="search" id="search" wire:model.live="search" 
                     placeholder="Search..."
                     class="py-2 px-3 block w-full shadow-sm text-sm font-medium border-gray-400 
                     wire:text-neutral-800 dark:text-neutral-200 
@@ -36,8 +41,26 @@
 
                 <div class="block sm:flex items-center">
 
+                    <!-- Start Date -->
+                    <div class="col-span-2 sm:col-span-1 mr-0 sm:mr-4">
+                        <label for="startDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
+                        <input type="date" id="startDate" wire:model.live='startDate' value="{{ $startDate }}"
+                        class="mb-10 mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
+                            dark:hover:bg-slate-600 dark:border-slate-600
+                            dark:text-gray-300 dark:bg-gray-800">
+                    </div>
+
+                     <!-- End Date -->
+                    <div class="col-span-2 sm:col-span-1 mr-0 sm:mr-4">
+                        <label for="endDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
+                        <input type="date" id="endDate" wire:model.live='endDate' value="{{ $endDate }}"
+                        class="mb-10 mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
+                            dark:hover:bg-slate-600 dark:border-slate-600
+                            dark:text-gray-300 dark:bg-gray-800">
+                    </div>
+
                     <!-- Sort Dropdown -->
-                    <div class="relative inline-block text-left mr-0 sm:mr-4">
+                    {{-- <div class="relative inline-block text-left mr-0 sm:mr-4">
                         <button wire:click="toggleDropdown"
                             class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                             justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide 
@@ -53,161 +76,116 @@
                                 shadow-2xl dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
                                 <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Category</h6>
                                 <ul class="space-y-2 text-sm">
-                                    {{-- <li class="flex items-center">
-                                        <input id="name" type="checkbox" wire:model="filters.name" class="h-4 w-4">
-                                        <label for="name" class="ml-2 text-gray-900 dark:text-gray-300">Name</label>
-                                    </li> --}}
-                                    <li class="flex items-center">
-                                        <input id="date_of_birth" type="checkbox" wire:model.live="filters.date_of_birth"
+                                    <li class="flex items-center" wire:click='toggleAllColumn'>
+                                        <input id="allCol" type="checkbox" wire:model.live="allCol"
                                             class="h-4 w-4">
-                                        <label for="date_of_birth" class="ml-2 text-gray-900 dark:text-gray-300">Birth
-                                            Date</label>
+                                        <label for="allCol" class="ml-2 text-gray-900 dark:text-gray-300">Select All</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="place_of_birth" type="checkbox" wire:model.live="filters.place_of_birth"
+                                        <input id="employee_number" type="checkbox" wire:model.live="columns.employee_number"
                                             class="h-4 w-4">
-                                        <label for="place_of_birth" class="ml-2 text-gray-900 dark:text-gray-300">Birth
-                                            Place</label>
+                                        <label for="employee_number" class="ml-2 text-gray-900 dark:text-gray-300">Employee Number</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="sex" type="checkbox" wire:model.live="filters.sex" class="h-4 w-4">
-                                        <label for="sex" class="ml-2 text-gray-900 dark:text-gray-300">Sex</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="citizenship" type="checkbox" wire:model.live="filters.citizenship"
+                                        <input id="position" type="checkbox" wire:model.live="columns.position"
                                             class="h-4 w-4">
-                                        <label for="citizenship"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Citizenship</label>
+                                        <label for="position" class="ml-2 text-gray-900 dark:text-gray-300">Position</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="civil_status" type="checkbox" wire:model.live="filters.civil_status"
+                                        <input id="salary_grade" type="checkbox" wire:model.live="columns.salary_grade" class="h-4 w-4">
+                                        <label for="salary_grade" class="ml-2 text-gray-900 dark:text-gray-300">Salary Grade</label>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <input id="daily_salary_rate" type="checkbox" wire:model.live="columns.daily_salary_rate"
                                             class="h-4 w-4">
-                                        <label for="civil_status" class="ml-2 text-gray-900 dark:text-gray-300">Civil
-                                            Status</label>
+                                        <label for="daily_salary_rate"
+                                            class="ml-2 text-gray-900 dark:text-gray-300">Daily Salary Rate</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="height" type="checkbox" wire:model.live="filters.height" class="h-4 w-4">
-                                        <label for="height" class="ml-2 text-gray-900 dark:text-gray-300">Height</label>
+                                        <input id="no_of_days_covered" type="checkbox" wire:model.live="columns.no_of_days_covered"
+                                        class="h-4 w-4">
+                                        <label for="no_of_days_covered" class="ml-2 text-gray-900 dark:text-gray-300">No. of Days Covered</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="weight" type="checkbox" wire:model.live="filters.weight" class="h-4 w-4">
-                                        <label for="weight" class="ml-2 text-gray-900 dark:text-gray-300">Weight</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="blood_type" type="checkbox" wire:model.live="filters.blood_type"
+                                        <input id="gross_salary" type="checkbox" wire:model.live="columns.gross_salary"
                                             class="h-4 w-4">
-                                        <label for="blood_type" class="ml-2 text-gray-900 dark:text-gray-300">Blood
-                                            Type</label>
+                                        <label for="gross_salary"
+                                            class="ml-2 text-gray-900 dark:text-gray-300">Gross Salary</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="gsis" type="checkbox" wire:model.live="filters.gsis" class="h-4 w-4">
-                                        <label for="gsis" class="ml-2 text-gray-900 dark:text-gray-300">GSIS ID No.</label>
+                                        <input id="absences_days" type="checkbox" wire:model.live="columns.absences_days" class="h-4 w-4">
+                                        <label for="absences_days" class="ml-2 text-gray-900 dark:text-gray-300">Absences (Days)</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="pagibig" type="checkbox" wire:model.live="filters.pagibig"
+                                        <input id="absences_amount" type="checkbox" wire:model.live="columns.absences_amount" class="h-4 w-4">
+                                        <label for="absences_amount" class="ml-2 text-gray-900 dark:text-gray-300">Absences (Amount)</label>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <input id="late_undertime_hours" type="checkbox" wire:model.live="columns.late_undertime_hours"
                                             class="h-4 w-4">
-                                        <label for="pagibig" class="ml-2 text-gray-900 dark:text-gray-300">PAGIBIG ID
-                                            No.</label>
+                                        <label for="late_undertime_hours" class="ml-2 text-gray-900 dark:text-gray-300">Late/Undertime (Hours)</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="philhealth" type="checkbox" wire:model.live="filters.philhealth"
+                                        <input id="late_undertime_hours_amount" type="checkbox" wire:model.live="columns.late_undertime_hours_amount" class="h-4 w-4">
+                                        <label for="late_undertime_hours_amount" class="ml-2 text-gray-900 dark:text-gray-300">Late/Undertime (Hours -Amount)</label>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <input id="late_undertime_mins" type="checkbox" wire:model.live="columns.late_undertime_mins"
                                             class="h-4 w-4">
-                                        <label for="philhealth" class="ml-2 text-gray-900 dark:text-gray-300">PhilHealth ID
-                                            No.</label>
+                                        <label for="late_undertime_mins" class="ml-2 text-gray-900 dark:text-gray-300">Late/Undertime (Minutes)</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="sss" type="checkbox" wire:model.live="filters.sss" class="h-4 w-4">
-                                        <label for="sss" class="ml-2 text-gray-900 dark:text-gray-300">SSS No.</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="tin" type="checkbox" wire:model.live="filters.tin" class="h-4 w-4">
-                                        <label for="tin" class="ml-2 text-gray-900 dark:text-gray-300">TIN No.</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="agency_employee_no" type="checkbox"
-                                            wire:model.live="filters.agency_employee_no" class="h-4 w-4">
-                                        <label for="agency_employee_no" class="ml-2 text-gray-900 dark:text-gray-300">Agency
-                                            Employee No.</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="permanent_selectedProvince" type="checkbox"
-                                            wire:model.live="filters.permanent_selectedProvince" class="h-4 w-4">
-                                        <label for="permanent_selectedProvince"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Permanent Address
-                                            (Province)</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="permanent_selectedCity" type="checkbox"
-                                            wire:model.live="filters.permanent_selectedCity" class="h-4 w-4">
-                                        <label for="permanent_selectedCity"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Permanent
-                                            Address (City)</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="permanent_selectedBarangay" type="checkbox"
-                                            wire:model.live="filters.permanent_selectedBarangay" class="h-4 w-4">
-                                        <label for="permanent_selectedBarangay"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Permanent Address
-                                            (Barangay)</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="p_house_street" type="checkbox" wire:model.live="filters.p_house_street"
+                                        <input id="late_undertime_mins_amount" type="checkbox" wire:model.live="columns.late_undertime_mins_amount"
                                             class="h-4 w-4">
-                                        <label for="p_house_street" class="ml-2 text-gray-900 dark:text-gray-300">Permanent
-                                            Address
-                                            (Street)</label>
+                                        <label for="late_undertime_mins_amount" class="ml-2 text-gray-900 dark:text-gray-300">Late/Undertime (Mins - Amount)</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="permanent_selectedZipcode" type="checkbox"
-                                            wire:model.live="filters.permanent_selectedZipcode" class="h-4 w-4">
-                                        <label for="permanent_selectedZipcode"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Permanent Address
-                                            (Zip Code)</label>
+                                        <input id="gross_salary_less" type="checkbox" wire:model.live="columns.gross_salary_less" class="h-4 w-4">
+                                        <label for="gross_salary_less" class="ml-2 text-gray-900 dark:text-gray-300">Gross Salary (Less)</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="residential_selectedProvince" type="checkbox"
-                                            wire:model.live="filters.residential_selectedProvince" class="h-4 w-4">
-                                        <label for="residential_selectedProvince"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Residential Address
-                                            (Province)</label>
+                                        <input id="withholding_tax" type="checkbox" wire:model.live="columns.withholding_tax" class="h-4 w-4">
+                                        <label for="withholding_tax" class="ml-2 text-gray-900 dark:text-gray-300">Withholding Tax</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="residential_selectedCity" type="checkbox"
-                                            wire:model.live="filters.residential_selectedCity" class="h-4 w-4">
-                                        <label for="residential_selectedCity"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Residential
-                                            Address (City)</label>
+                                        <input id="nycempc" type="checkbox"
+                                            wire:model.live="columns.nycempc" class="h-4 w-4">
+                                        <label for="nycempc" class="ml-2 text-gray-900 dark:text-gray-300">NYCEMPC</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="residential_selectedBarangay" type="checkbox"
-                                            wire:model.live="filters.residential_selectedBarangay" class="h-4 w-4">
-                                        <label for="residential_selectedBarangay"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Residential Address
-                                            (Barangay)</label>
+                                        <input id="total_deductions" type="checkbox"
+                                            wire:model.live="columns.total_deductions" class="h-4 w-4">
+                                        <label for="total_deductions"
+                                            class="ml-2 text-gray-900 dark:text-gray-300">Total Deduction</label>
                                     </li>
                                     <li class="flex items-center">
-                                        <input id="p_house_street" type="checkbox" wire:model.live="filters.p_house_street"
-                                            class="h-4 w-4">
-                                        <label for="p_house_street"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Residential
-                                            Address
-                                            (Street)</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="residential_selectedZipcode" type="checkbox"
-                                            wire:model.live="filters.residential_selectedZipcode" class="h-4 w-4">
-                                        <label for="residential_selectedZipcode"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Residential Address
-                                            (Zip Code)</label>
+                                        <input id="net_amount_due" type="checkbox"
+                                            wire:model.live="columns.net_amount_due" class="h-4 w-4">
+                                        <label for="net_amount_due"
+                                            class="ml-2 text-gray-900 dark:text-gray-300">Net Amount Due</label>
                                     </li>
                                 </ul>
                             </div>
                         @endif
-                    </div>
+                    </div> --}}
+
+                    <!-- Export to Excel -->
+                    @if($hasPayroll ===  false)
+                        <div class="relative inline-block text-left mr-0 sm:mr-4">
+                            <button wire:click="recordPayroll"
+                                class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                                justify-center px-4 pt-2 pb-1.5 mb-4 text-sm font-medium tracking-wide 
+                                text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                                rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
+                                type="button">
+                                Save Payroll
+                            </button>
+                        </div>
+                    @endif
 
                     <!-- Export to Excel -->
                     <div class="relative inline-block text-left">
-                        <button wire:click="exportUsers"
+                        <button wire:click=""
                             class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                             justify-center px-4 py-1.5 mb-4 text-sm font-medium tracking-wide 
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
@@ -233,81 +211,100 @@
                                     <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                                         <tr class="whitespace-nowrap">
                                             <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Name</th>
-                                            @foreach($columns as $column => $visible)
-                                                @if($visible)
-                                                    <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                        {{ ucwords(str_replace('_', ' ', $column)) }}
-                                                    </th>
-                                                @endif
-                                            @endforeach
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Employee Number
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Position
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Salary Grade
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Daily Salary Rate
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                No. of Days Covered
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Gross Salary
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Absences (Days)
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Absences (Amount)
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Late/Undertime (Hours)
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Late/Undertime (Hours -Amount)
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Late/Undertime (Minutes)
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Late/Undertime (Mins - Amount)
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Gross Salary Less<br>(Absences/Lates/Undertime)
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Withholding Tax
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                NYCEMPC
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Total Deduction
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Net Amount Due
+                                            </th>
                                             <th class="px-5 py-3 text-gray-100 text-sm font-medium text-right uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
                                                 Action
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
-                                        @foreach($users as $user)
-                                            @foreach($payrolls as $payroll)
-                                                @if($user->id == $payroll->user_id) <!-- Adjust this line according to your relationship -->
-                                                    <tr class="text-neutral-800 dark:text-neutral-200">
-                                                        <td class="px-5 py-4 text-sm font-medium whitespace-nowrap">{{ $user->name ?? '' }}</td>
-                                                        @foreach($columns as $column => $visible)
-                                                            @if($visible)
-                                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                                    @if(in_array($column, [
-                                                                        'rate_per_month', 
-                                                                        'personal_economic_relief_allowance', 
-                                                                        'gross_amount', 
-                                                                        'additional_gsis_premium', 
-                                                                        'lbp_salary_loan', 
-                                                                        'nycea_deductions', 
-                                                                        'sc_membership', 
-                                                                        'total_loans', 
-                                                                        'salary_loan', 
-                                                                        'policy_loan', 
-                                                                        'eal', 
-                                                                        'emergency_loan', 
-                                                                        'mpl', 
-                                                                        'housing_loan', 
-                                                                        'ouli_prem', 
-                                                                        'gfal', 
-                                                                        'cpl', 
-                                                                        'pagibig_mpl', 
-                                                                        'other_deduction_philheath_diff', 
-                                                                        'life_retirement_insurance_premiums', 
-                                                                        'pagibig_contribution', 
-                                                                        'w_holding_tax', 
-                                                                        'philhealth', 
-                                                                        'total_deduction', 
-                                                                        'net_amount_received', 
-                                                                        'amount_due_first_half', 
-                                                                        'amount_due_second_half'
-                                                                    ]))
-                                                                        {{ currency_format($payroll->$column) }}
-                                                                    @else
-                                                                        {{ $payroll->$column ?? '' }}
-                                                                    @endif
-                                                                </td>
-                                                            @endif
-                                                        @endforeach
-                                                        <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                            <button wire:click="editPayroll({{ $user->id }})" class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 focus:outline-none">
-                                                                <i class="fas fa-pencil-alt ml-3"></i>
-                                                                <i class="fas fa-file-export ml-3"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                @endif
-                                            @endforeach
+                                        @foreach($payrolls as $payroll)
+                                            <tr class="text-neutral-800 dark:text-neutral-200">
+                                                @foreach($columns as $column)
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        @if(in_array($column, [
+                                                            'daily_salary_rate',
+                                                            'gross_salary',
+                                                            'absences_amount',
+                                                            'late_undertime_hours_amount',
+                                                            'late_undertime_mins_amount',
+                                                            'gross_salary_less',
+                                                            'withholding_tax',
+                                                            'nycempc',
+                                                            'total_deductions',
+                                                            'net_amount_due',
+                                                        ]))
+                                                            {{ currency_format($payroll[$column]) }}
+                                                        @else
+                                                            {{ $payroll[$column] ?? '' }}
+                                                        @endif
+                                                    </td>
+                                                @endforeach
+                                                <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-gray-100 dark:bg-gray-900">
+                                                    <button wire:click="" class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 focus:outline-none">
+                                                        <i class="fas fa-file-export ml-3"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                                 
                                 
                             </div>
-                            <div class="p-5 border-t border-gray-200 dark:border-slate-600 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
-                                {{ $users->links() }}
-                            </div>
+                            {{-- <div class="p-5 border-t border-gray-200 dark:border-slate-600 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                {{ $payrolls->links() }}
+                            </div> --}}
 
                         </div>
                     </div>

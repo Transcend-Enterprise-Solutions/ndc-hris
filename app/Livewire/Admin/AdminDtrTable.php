@@ -153,23 +153,46 @@ class AdminDtrTable extends Component
 
     public function recordDTR(){
         try{
-            foreach ($this->transactions as $empCode => $empTransactions){
+            $startDate = Carbon::now()->startOfMonth();
+            $endDate = Carbon::now()->endOfMonth();
+
+            $transactions = Transaction::whereBetween('punch_time', [$startDate, $endDate])
+                                        ->orderBy('punch_time')
+                                        ->get();
+
+            $groupedTransactions = [];
+            foreach ($transactions as $transaction) {
+                $date = Carbon::parse($transaction->punch_time)->format('Y-m-d');
+                $empCode = $transaction->emp_code;
+                if (!isset($groupedTransactions[$empCode])) {
+                    $groupedTransactions[$empCode][$date] = [];
+                }
+                $groupedTransactions[$empCode][$date][] = [
+                    'punch_time' => Carbon::parse($transaction->punch_time),
+                    'punch_state' => $transaction->punch_state,
+                ];
+            }
+
+            $transactions = $groupedTransactions;
+            foreach ($transactions as $empCode => $empTransactions){
                 foreach ($empTransactions as $date => $dateTransactions){
                     $timeRecords = $this->calculateTimeRecords($dateTransactions, $empCode, $date);
                     $employee = User::where('emp_code', $empCode)->first();
-                    EmployeesDtr::updateOrCreate([
-                        'user_id' => $employee->id,
-                        'date' => $date,
-                        'day_of_week' => $timeRecords['dayOfWeek'],
-                        'location' => $timeRecords['location'],
-                        'morning_in' => $timeRecords['morningIn'],
-                        'morning_out' => $timeRecords['morningOut'],
-                        'afternoon_in' => $timeRecords['afternoonIn'],
-                        'afternoon_out' => $timeRecords['afternoonOut'],
-                        'late' => $timeRecords['late'],
-                        'overtime' => $timeRecords['overtime'],
-                        'total_hours_endered' => $timeRecords['totalHoursRendered']
-                    ]);
+                    if($employee){
+                        EmployeesDtr::updateOrCreate([
+                            'user_id' => $employee->id,
+                            'date' => $date,
+                            'day_of_week' => $timeRecords['dayOfWeek'],
+                            'location' => $timeRecords['location'],
+                            'morning_in' => $timeRecords['morningIn'],
+                            'morning_out' => $timeRecords['morningOut'],
+                            'afternoon_in' => $timeRecords['afternoonIn'],
+                            'afternoon_out' => $timeRecords['afternoonOut'],
+                            'late' => $timeRecords['late'],
+                            'overtime' => $timeRecords['overtime'],
+                            'total_hours_endered' => $timeRecords['totalHoursRendered']
+                        ]);
+                    }
                 }
             }
             $this->dispatch('notify', [

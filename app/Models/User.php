@@ -135,9 +135,12 @@ class User extends Authenticatable
     return $this->hasMany(DTRSchedule::class, 'emp_code', 'emp_code');
     }
     
-    public function employeesPayroll()
+    public function employeesPayroll(){
+        return $this->hasMany(EmployeesPayroll::class);
+    }
+    public function generalPayroll()
     {
-    return $this->hasOne(EmployeesPayroll::class);
+        return $this->hasOne(GeneralPayroll::class);
     }
 
     public function employeesDtr()
