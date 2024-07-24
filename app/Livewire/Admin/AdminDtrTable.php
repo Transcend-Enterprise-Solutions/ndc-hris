@@ -173,7 +173,7 @@ class AdminDtrTable extends Component
                 }
             }
             $this->dispatch('notify', [
-                'message' => "DTR recorded successfully!", 
+                'message' => "DTR recorded successfully!",
                 'type' => 'success'
             ]);
         }catch(Exception $e){
