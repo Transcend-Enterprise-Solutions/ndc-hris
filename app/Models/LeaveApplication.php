@@ -24,6 +24,8 @@ class LeaveApplication extends Model
         'start_date',
         'end_date',
         'commutation',
+        'file_name',
+        'file_path',
         'status',
     ];
 

@@ -4,16 +4,18 @@ namespace App\Livewire\User;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 use App\Models\UserData;
 use App\Models\User;
 use App\Models\LeaveApplication;
 use App\Models\VacationLeaveDetails;
 use App\Models\SickLeaveDetails;
+use Illuminate\Support\Facades\Storage;
 
 class LeaveApplicationTable extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     public $applyForLeave = false;
     public $name;
@@ -32,12 +34,14 @@ class LeaveApplicationTable extends Component
     public $outPatient;
     public $specialIllnessForWomen;
     public $commutation;
+    public $files = [];
 
     protected $rules = [
         'office_or_department' => 'required|string|max:255',
         'position' => 'required|string|max:255',
         'salary' => 'required|string|max:255',
         'type_of_leave' => 'required|array|min:1',
+        'files.*' => 'file|mimes:jpeg,png,jpg,gif,pdf|max:2048',
     ];
 
     public function openLeaveForm()
@@ -67,6 +71,7 @@ class LeaveApplicationTable extends Component
         $this->inHospital = null;
         $this->outPatient = null;
         $this->specialIllnessForWomen = null;
+        $this->files = [];
     }
 
     public function loadUserData()
@@ -87,12 +92,25 @@ class LeaveApplicationTable extends Component
             'position' => 'required',
             'salary' => 'required',
             'type_of_leave' => 'required|array|min:1',
-            'details_of_leave' => 'required',
+            // 'details_of_leave' => 'required',
             'number_of_days' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
             'commutation' => 'required',
         ]);
+
+        $filePaths = [];
+        $fileNames = [];
+
+        // Handle file uploads
+        if ($this->files) {
+            foreach ($this->files as $file) {
+                $originalFilename = $file->getClientOriginalName();
+                $filePath = $file->storeAs('leavedocu', $originalFilename, 'public');
+                $filePaths[] = $filePath;
+                $fileNames[] = $originalFilename;
+            }
+        }
 
         $leaveDetails = [];
         foreach ($this->details_of_leave as $leaveType) {
@@ -126,6 +144,7 @@ class LeaveApplicationTable extends Component
         }
 
         $leaveDetailsString = implode(', ', $leaveDetails);
+        $filePathsString = implode(',', $filePaths);
 
         $leaveApplication = LeaveApplication::create([
             'user_id' => Auth::id(),
@@ -141,6 +160,8 @@ class LeaveApplicationTable extends Component
             'end_date' => $this->end_date,
             'commutation' => $this->commutation,
             'status' => 'Pending',
+            'file_path' => implode(',', $filePaths),  // Concatenate file paths
+            'file_name' => implode(',', $fileNames),
         ]);
 
         if (in_array('Vacation Leave', $this->type_of_leave)) {
@@ -190,6 +211,7 @@ class LeaveApplicationTable extends Component
             'inHospital',
             'outPatient',
             'specialIllnessForWomen',
+            'files',
         ]);
     }
 
@@ -197,6 +219,7 @@ class LeaveApplicationTable extends Component
     {
         $leaveApplications = LeaveApplication::where('user_id', Auth::id())
         ->with('vacationLeaveDetails', 'sickLeaveDetails')
+        ->orderBy('created_at', 'desc')
         ->paginate(10);
 
         return view('livewire.user.leave-application-table', [
