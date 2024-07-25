@@ -30,6 +30,7 @@ return new class extends Migration
                 $table->string('commutation')->default('Not Requested');
                 $table->string('file_name')->nullable();
                 $table->string('file_path')->nullable();
+                $table->string('remarks')->nullable();
                 $table->string('status');
                 $table->timestamps();
             });

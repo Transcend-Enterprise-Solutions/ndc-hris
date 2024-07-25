@@ -26,6 +26,7 @@ class LeaveApplication extends Model
         'commutation',
         'file_name',
         'file_path',
+        'remarks',
         'status',
     ];
 
