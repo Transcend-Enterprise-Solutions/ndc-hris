@@ -12,25 +12,27 @@ return new class extends Migration
             Schema::create('employees_dtr', function (Blueprint $table) {
                 $table->id('id');
                 $table->unsignedBigInteger('user_id');
+                $table->string('emp_code');
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-                $table->date('date')->format('F d Y');
+                $table->date('date');
                 $table->string('day_of_week')->nullable();
                 $table->string('location')->nullable();
                 $table->time('morning_in')->nullable();
                 $table->time('morning_out')->nullable();
                 $table->time('afternoon_in')->nullable();
                 $table->time('afternoon_out')->nullable();
-                $table->float('late')->nullable();          
-                $table->float('overtime')->nullable();          
-                $table->float('total_hours_endered')->nullable();          
+                $table->string('late')->nullable();  // Changed from float to string
+                $table->string('overtime')->nullable();  // Changed from float to string
+                $table->string('total_hours_rendered')->nullable();  // Changed from float to string
+                $table->string('remarks')->nullable();
                 $table->timestamps();
+
+                // Indexes for better performance
+                $table->index(['user_id', 'date']);
             });
         }
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         if (Schema::hasTable('employees_dtr')) {

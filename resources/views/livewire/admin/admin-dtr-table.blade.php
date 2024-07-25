@@ -61,7 +61,6 @@
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
-                        <th class="px-4 py-2 text-center">(HH:MM)</th>
                         <th class="px-4 py-2 text-center"></th> <!-- Empty cell for alignment -->
                     </tr>
                 </thead>
