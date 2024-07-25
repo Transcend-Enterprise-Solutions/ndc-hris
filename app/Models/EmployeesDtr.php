@@ -10,9 +10,9 @@ class EmployeesDtr extends Model
     use HasFactory;
 
     protected $table = 'employees_dtr';
-
     protected $fillable = [
         'user_id',
+        'emp_code',
         'date',
         'day_of_week',
         'location',
@@ -22,9 +22,16 @@ class EmployeesDtr extends Model
         'afternoon_out',
         'late',
         'overtime',
-        'total_hours_endered',
+        'total_hours_rendered',
+        'remarks',
+    ];
+    protected $casts = [
+        'late' => 'string',  // Changed from float to string
+        'overtime' => 'string',  // Changed from float to string
+        'total_hours_rendered' => 'string',  // Changed from float to string
     ];
 
+    // Define relationships if needed
     public function user()
     {
         return $this->belongsTo(User::class);
