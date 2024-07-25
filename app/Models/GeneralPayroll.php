@@ -53,10 +53,10 @@ class GeneralPayroll extends Model
     public function scopeSearch($query, $term){
         $term = "%$term%";
         $query->where(function ($query) use ($term) {
-            $query->where('name', 'like', $term)
-                ->orWhere('employee_number', 'like', $term)
-                ->orWhere('position', 'like', $term)
-                ->orWhere('sg_step', 'like', $term);
+            $query->where('general_payroll.name', 'like', $term)
+                ->orWhere('general_payroll.employee_number', 'like', $term)
+                ->orWhere('general_payroll.position', 'like', $term)
+                ->orWhere('general_payroll.sg_step', 'like', $term);
         });
     }
 }

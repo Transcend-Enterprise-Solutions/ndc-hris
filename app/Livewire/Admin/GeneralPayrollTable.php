@@ -7,8 +7,10 @@ use App\Models\EmployeesDtr;
 use App\Models\GeneralPayroll;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Carbon;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\DB;
 
 class GeneralPayrollTable extends Component
 {
@@ -21,35 +23,34 @@ class GeneralPayrollTable extends Component
         'position' => true,
         'sg_step' => true,
         'rate_per_month' => true,
-        'personal_economic_relief_allowance' => false,
-        'gross_amount' => false,
-        'additional_gsis_premium' => false,
-        'lbp_salary_loan' => false,
-        'nycea_deductions' => false,
-        'sc_membership' => false,
-        'total_loans' => false,
-        'salary_loan' => false,
-        'policy_loan' => false,
-        'eal' => false,
-        'emergency_loan' => false,
-        'mpl' => false,
-        'housing_loan' => false,
-        'ouli_prem' => false,
-        'gfal' => false,
-        'cpl' => false,
-        'pagibig_mpl' => false,
-        'other_deduction_philheath_diff' => false,
-        'life_retirement_insurance_premiums' => false,
-        'pagibig_contribution' => false,
-        'w_holding_tax' => false,
-        'philhealth' => false,
-        'total_deduction' => false,
-        // 'net_amount_received' => false,
-        // 'amount_due_first_half' => false,
-        // 'amount_due_second_half' => false,
+        'personal_economic_relief_allowance' => true,
+        'gross_amount' => true,
+        'additional_gsis_premium' => true,
+        'lbp_salary_loan' => true,
+        'nycea_deductions' => true,
+        'sc_membership' => true,
+        'total_loans' => true,
+        'salary_loan' => true,
+        'policy_loan' => true,
+        'eal' => true,
+        'emergency_loan' => true,
+        'mpl' => true,
+        'housing_loan' => true,
+        'ouli_prem' => true,
+        'gfal' => true,
+        'cpl' => true,
+        'pagibig_mpl' => true,
+        'other_deduction_philheath_diff' => true,
+        'life_retirement_insurance_premiums' => true,
+        'pagibig_contribution' => true,
+        'w_holding_tax' => true,
+        'philhealth' => true,
+        'total_deduction' => true,
+        'net_amount_received' => true,
+        'amount_due_first_half' => true,
+        'amount_due_second_half' => true,
     ];
-    public $addPayroll;
-    public $editPayroll;
+    public $payroll;
     public $employees;
     public $userId;
     public $name;
@@ -80,24 +81,67 @@ class GeneralPayrollTable extends Component
     public $w_holding_tax;
     public $philhealth;
     public $total_deduction;
-    // public $net_amount_received;
-    // public $amount_due_first_half;
-    // public $amount_due_second_half;
+    public $net_amount_received;
+    public $amount_due_first_half;
+    public $amount_due_second_half;
+    public $date;
+    public $startDateFirstHalf;
+    public $endDateFirstHalf;
+    public $startDateSecondHalf;
+    public $endDateSecondHalf;
 
     public function mount(){
         $this->employees = User::all();
     }
 
     public function render(){
-        $payrolls = GeneralPayroll::when($this->search, function ($query) {
-                        return $query->search(trim($this->search));
-                    })
-                    ->paginate(10);
-        
+        $payrolls = collect();
+    
+        if ($this->date) {
+            // Create a Carbon instance from the month input
+            $carbonDate = Carbon::createFromFormat('Y-m', $this->date);
+    
+            // Set the date ranges for the first and second halves of the month
+            $this->startDateFirstHalf = $carbonDate->startOfMonth()->toDateString();
+            $this->endDateFirstHalf = $carbonDate->copy()->day(15)->toDateString();
+            $this->startDateSecondHalf = $carbonDate->copy()->day(16)->toDateString();
+            $this->endDateSecondHalf = $carbonDate->endOfMonth()->toDateString();
+    
+            // Aggregate net_amount_due for both periods using subqueries
+            $payrollAggregates = DB::table('employees_payroll')
+                ->select('user_id')
+                ->selectRaw("SUM(CASE 
+                                WHEN start_date >= ? AND end_date <= ? 
+                                THEN net_amount_due 
+                                ELSE 0 
+                              END) as net_amount_due_first_half", [$this->startDateFirstHalf, $this->endDateFirstHalf])
+                ->selectRaw("SUM(CASE 
+                                WHEN start_date >= ? AND end_date <= ? 
+                                THEN net_amount_due 
+                                ELSE 0 
+                              END) as net_amount_due_second_half", [$this->startDateSecondHalf, $this->endDateSecondHalf])
+                ->selectRaw("SUM(net_amount_due) as total_amount_due")
+                ->groupBy('user_id');
+    
+            // Join the aggregate results with the general_payroll table
+            $payrolls = GeneralPayroll::when($this->search, function ($query) {
+                                return $query->search(trim($this->search));
+                            })
+                            ->joinSub($payrollAggregates, 'payroll_aggregates', function ($join) {
+                                $join->on('general_payroll.user_id', '=', 'payroll_aggregates.user_id');
+                            })
+                            ->select('general_payroll.*', 
+                                     'payroll_aggregates.net_amount_due_first_half', 
+                                     'payroll_aggregates.net_amount_due_second_half', 
+                                     'payroll_aggregates.total_amount_due')
+                            ->paginate(10);
+        }
+    
         return view('livewire.admin.general-payroll-table', [
             'payrolls' => $payrolls,
         ]);
     }
+    
 
     public function toggleDropdown(){
         $this->sortColumn = !$this->sortColumn;
@@ -122,6 +166,7 @@ class GeneralPayrollTable extends Component
             $this->allCol = true;
         }
     }
+    
     public function exportExcel(){
         $filters = [
             'search' => $this->search,
@@ -130,8 +175,8 @@ class GeneralPayrollTable extends Component
         return Excel::download(new GeneralPayrollExport($filters), $fileName);
     }
 
-    public function toggleEditPayroll($userId){
-        $this->editPayroll = true;
+    public function viewPayroll($userId){
+        $this->payroll = true;
         $this->userId = $userId;
         try {
             $payroll = GeneralPayroll::where('user_id', $userId)->first();
@@ -173,100 +218,10 @@ class GeneralPayrollTable extends Component
         }
     }
 
-    public function toggleAddPayroll(){
-        $this->editPayroll = true;
-        $this->addPayroll = true;
-    }
-
-    public function savePayroll(){
-        try {
-            $payroll = GeneralPayroll::where('user_id', $this->userId)->first();
-    
-            $payrollData = [
-                'user_id' => $this->userId,
-                'employee_number' => $this->employee_number,
-                'position' => $this->position,
-                'sg_step' => $this->sg_step,
-                'rate_per_month' => $this->rate_per_month,
-                'personal_economic_relief_allowance' => $this->personal_economic_relief_allowance,
-                'gross_amount' => $this->gross_amount,
-                'additional_gsis_premium' => $this->additional_gsis_premium,
-                'lbp_salary_loan' => $this->lbp_salary_loan,
-                'nycea_deductions' => $this->nycea_deductions,
-                'sc_membership' => $this->sc_membership,
-                'total_loans' => $this->total_loans,
-                'salary_loan' => $this->salary_loan,
-                'policy_loan' => $this->policy_loan,
-                'eal' => $this->eal,
-                'emergency_loan' => $this->emergency_loan,
-                'mpl' => $this->mpl,
-                'housing_loan' => $this->housing_loan,
-                'ouli_prem' => $this->ouli_prem,
-                'gfal' => $this->gfal,
-                'cpl' => $this->cpl,
-                'pagibig_mpl' => $this->pagibig_mpl,
-                'other_deduction_philheath_diff' => $this->other_deduction_philheath_diff,
-                'life_retirement_insurance_premiums' => $this->life_retirement_insurance_premiums,
-                'pagibig_contribution' => $this->pagibig_contribution,
-                'w_holding_tax' => $this->w_holding_tax,
-                'philhealth' => $this->philhealth,
-                'total_deduction' => $this->total_deduction,
-            ];
-    
-            if ($payroll) {
-                $this->validate([
-                    'employee_number' => 'required|max:100',
-                    'position' => 'required|max:100',
-                    'sg_step' => 'required|max:100',
-                    'rate_per_month' => 'required|numeric',
-                    'gross_amount' => 'required|numeric',
-                    'pagibig_contribution' => 'required|numeric',
-                    'w_holding_tax' => 'required|numeric',
-                    'philhealth' => 'required|numeric',
-                    'total_deduction' => 'required|numeric',
-                ]);
-
-                $payroll->update($payrollData);
-                $message = "Payroll updated successfully!";
-            } else {
-                $this->validate([
-                    'employee_number' => 'required|max:100',
-                    'position' => 'required|max:100',
-                    'sg_step' => 'required|max:100',
-                    'rate_per_month' => 'required|numeric',
-                    'gross_amount' => 'required|numeric',
-                    'pagibig_contribution' => 'required|numeric',
-                    'w_holding_tax' => 'required|numeric',
-                    'philhealth' => 'required|numeric',
-                    'total_deduction' => 'required|numeric',
-                ]);
-                $user = User::where('id', $this->userId)->first();
-                $payrollData['name'] = $user->name;
-                GeneralPayroll::create($payrollData);
-                $message = "Payroll added successfully!";
-            }
-    
-            $this->editPayroll = null;
-            $this->addPayroll = null;
-            $this->dispatch('notify', [
-                'message' => $message,
-                'type' => 'success'
-            ]);
-    
-        } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => "Payroll update was unsuccessful!",
-                'type' => 'error'
-            ]);
-            throw $e;
-        }
-    }
-
     public function resetVariables(){
         $this->resetValidation();
         $this->userId = null;
-        $this->addPayroll = null;
-        $this->editPayroll = null;
+        $this->payroll = null;
         $this->name = null;
         $this->employee_number = null;
         $this->position = null;

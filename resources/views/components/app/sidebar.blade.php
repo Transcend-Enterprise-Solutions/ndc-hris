@@ -159,10 +159,10 @@
                                         </a>
                                     </li>
                                     <li class="mb-1 last:mb-0">
-                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('users-tiles')){{ '!text-blue-500' }}@endif"
-                                            href="#0">
+                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('payslip')){{ '!text-blue-500' }}@endif"
+                                            href="{{ route('payslip') }}">
                                             <span
-                                                class="text-sm font-medium @if(Route::is('users-tiles')){{ 'text-blue-500' }}@endif">Payslip</span>
+                                                class="text-sm font-medium @if(Route::is('payslip')){{ 'text-blue-500' }}@endif">Payslip</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -362,6 +362,13 @@
                                 <ul class="pl-9 mt-1 transition-all duration-300 overflow-hidden"
                                     :class="{'max-h-0': !open, 'max-h-screen': open}">
                                     <li class="mb-1 last:mb-0">
+                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('payroll-management')){{ '!text-blue-500' }}@endif"
+                                            href="{{route('payroll-management')}}">
+                                            <span class="text-sm font-medium transition-opacity duration-300"
+                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Payroll Management</span>
+                                        </a>
+                                    </li>
+                                    <li class="mb-1 last:mb-0">
                                         <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('general-payroll')){{ '!text-blue-500' }}@endif"
                                             href="{{route('general-payroll')}}">
                                             <span class="text-sm font-medium transition-opacity duration-300"
@@ -371,10 +378,10 @@
                                         </a>
                                     </li>
                                     <li class="mb-1 last:mb-0">
-                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('payroll-management')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('payroll-management')}}">
+                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('payroll')){{ '!text-blue-500' }}@endif"
+                                            href="{{route('payroll')}}">
                                             <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Payroll Management</span>
+                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Payroll</span>
                                         </a>
                                     </li>
                                 </ul>

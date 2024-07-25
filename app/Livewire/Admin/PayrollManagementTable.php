@@ -2,465 +2,299 @@
 
 namespace App\Livewire\Admin;
 
+use App\Exports\GeneralPayrollExport;
 use App\Exports\PayrollExport;
+use App\Exports\PayrollListExport;
 use App\Models\EmployeesDtr;
-use App\Models\EmployeesPayroll;
 use App\Models\GeneralPayroll;
 use App\Models\User;
-use Carbon\Carbon;
 use Exception;
 use Livewire\Component;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class PayrollManagementTable extends Component
 {
     public $sortColumn = false;
-    public $startDate;
-    public $endDate;
-    public $payrollDTR;
-    public $generalPayroll;
-    public $hasPayroll;
-    protected $payrolls = [];
     public $search;
-    public $allCol = true;
+    public $allCol = false;
     public $columns = [
-        'name',
-        'employee_number',
-        'position',
-        'salary_grade',
-        'daily_salary_rate',
-        'no_of_days_covered',
-        'gross_salary',
-        'absences_days',
-        'absences_amount',
-        'late_undertime_hours',
-        'late_undertime_hours_amount',
-        'late_undertime_mins',
-        'late_undertime_mins_amount',
-        'gross_salary_less',
-        'withholding_tax',
-        'nycempc',
-        'total_deductions',
-        'net_amount_due',
+        'name' => true,
+        'employee_number' => true,
+        'position' => true,
+        'sg_step' => true,
+        'rate_per_month' => true,
+        'personal_economic_relief_allowance' => false,
+        'gross_amount' => false,
+        'additional_gsis_premium' => false,
+        'lbp_salary_loan' => false,
+        'nycea_deductions' => false,
+        'sc_membership' => false,
+        'total_loans' => false,
+        'salary_loan' => false,
+        'policy_loan' => false,
+        'eal' => false,
+        'emergency_loan' => false,
+        'mpl' => false,
+        'housing_loan' => false,
+        'ouli_prem' => false,
+        'gfal' => false,
+        'cpl' => false,
+        'pagibig_mpl' => false,
+        'other_deduction_philheath_diff' => false,
+        'life_retirement_insurance_premiums' => false,
+        'pagibig_contribution' => false,
+        'w_holding_tax' => false,
+        'philhealth' => false,
+        'total_deduction' => false,
     ];
+    public $addPayroll;
+    public $editPayroll;
+    public $employees;
+    public $userId;
+    public $name;
+    public $employee_number;
+    public $position;
+    public $sg_step;
+    public $rate_per_month;
+    public $personal_economic_relief_allowance;
+    public $gross_amount;
+    public $additional_gsis_premium;
+    public $lbp_salary_loan;
+    public $nycea_deductions;
+    public $sc_membership;
+    public $total_loans;
+    public $salary_loan;
+    public $policy_loan;
+    public $eal;
+    public $emergency_loan;
+    public $mpl;
+    public $housing_loan;
+    public $ouli_prem;
+    public $gfal;
+    public $cpl;
+    public $pagibig_mpl;
+    public $other_deduction_philheath_diff;
+    public $life_retirement_insurance_premiums;
+    public $pagibig_contribution;
+    public $w_holding_tax;
+    public $philhealth;
+    public $total_deduction;
+
+    public function mount(){
+        $this->employees = User::all();
+    }
 
     public function render(){
-        $users = User::paginate(10);
-
-        if ($this->startDate && $this->endDate) {
-            $query = EmployeesPayroll::where('start_date', $this->startDate)
-                ->where('end_date', $this->endDate)
-                ->when($this->search, function ($query) {
-                    return $query->search(trim($this->search));
-                });
-    
-            if ($query->exists()) {
-                $this->payrolls = $query->paginate(10);
-                $this->hasPayroll = true;
-            } else {
-                $this->payrolls = $this->getPayroll();
-                $this->hasPayroll = false;
-            }
-        }
-
+        $payrolls = GeneralPayroll::when($this->search, function ($query) {
+                        return $query->search(trim($this->search));
+                    })
+                    ->paginate(10);
+        
         return view('livewire.admin.payroll-management-table', [
-            'users' => $users,
-            'payrolls' => $this->payrolls,
+            'payrolls' => $payrolls,
         ]);
-    }
-
-    public function toggleAllColumn() {
-        if ($this->allCol) {
-            foreach (array_keys($this->columns) as $col) {
-                $this->columns[$col] = false;
-            }
-            $this->allCol = false;
-        } else {
-            foreach (array_keys($this->columns) as $col) {
-                $this->columns[$col] = true;
-            }
-            $this->allCol = true;
-        }
-    }
-
-    public function recordPayroll(){
-        try {
-            if ($this->startDate && $this->endDate) {
-                $this->generalPayroll = GeneralPayroll::all();
-                $this->payrollDTR = $this->getDTRForPayroll($this->startDate, $this->endDate);
-                $startDate = Carbon::parse($this->startDate);
-                $endDate = Carbon::parse($this->endDate);
-                
-                // Calculate total working days in the month
-                $totalWorkingDaysInMonth = Carbon::parse($startDate)->daysInMonth - 
-                    Carbon::parse($startDate)->daysInMonth * 2 / 7; // Subtracting weekends
-                $totalWorkingDaysInMonth = round($totalWorkingDaysInMonth);
-    
-                // Calculate working days in the covered period
-                $totalDays = $startDate->diffInDaysFiltered(function(Carbon $date) {
-                    return !$date->isWeekend();
-                }, $endDate) + 1; // Include both start and end dates
-    
-                foreach ($this->generalPayroll as $generalPayrollRecord) {
-                    $userId = $generalPayrollRecord->user_id;
-                    $user = User::where('id', $userId)->first();
-                    $dtrData = $this->payrollDTR[$userId] ?? null;
-    
-                    if (!$dtrData) {
-                        continue; // Skip if no DTR data for this user
-                    }
-    
-                    $presentDays = count($dtrData['daily_records']);
-                    $absentDays = $totalDays - $presentDays;
-    
-                    // New calculations
-                    $dailySalaryRate = $generalPayrollRecord->rate_per_month / $totalWorkingDaysInMonth;
-                    $grossSalary = $dailySalaryRate * $totalDays;
-                    
-                    $deductionPercentage = $totalDays / $totalWorkingDaysInMonth;
-                    $totalDeductions = $generalPayrollRecord->total_deduction * $deductionPercentage;
-                    $withholdingTax = $generalPayrollRecord->w_holding_tax * $deductionPercentage;
-    
-                    $absentAmount = $absentDays * $dailySalaryRate;
-    
-                    $lateUndertimeHours = floor($dtrData['total_late'] / 60);
-                    $lateUndertimeMins = $dtrData['total_late'] % 60;
-    
-                    $lateUndertimeHoursAmount = $lateUndertimeHours * ($dailySalaryRate / 8); // Assuming 8-hour workday
-                    $lateUndertimeMinsAmount = $lateUndertimeMins * ($dailySalaryRate / 480); // 480 minutes in a workday
-    
-                    $grossSalaryLess = $grossSalary - $absentAmount - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount;
-
-                    // Deduct withholding tax
-                    $grossSalaryLessTax = $grossSalaryLess - $withholdingTax;
-
-                    // Deduct NYCEMPC
-                    $grossSalaryLessNYCEMPC = $grossSalaryLessTax - ($generalPayrollRecord->nycea_deductions * $deductionPercentage);
-
-                    // Ensure net amount is not negative
-                    $netAmountDue = max(0, $grossSalaryLessTax - $grossSalaryLessNYCEMPC);
-
-                    $net_amount_due = 0;
-
-                    if ($grossSalaryLessNYCEMPC < $totalDeductions) {
-                        $totalDeductions = $grossSalaryLessNYCEMPC;
-                        $net_amount_due = $grossSalaryLessNYCEMPC - $totalDeductions;
-                    }
-
-                    $net_amount_due = $grossSalaryLessNYCEMPC - $totalDeductions;
-                        
-                    EmployeesPayroll::create([
-                            'user_id' => $userId,
-                            'name' => $user->name,
-                            'employee_number' => $generalPayrollRecord->employee_number,
-                            'position' => $generalPayrollRecord->position,
-                            'salary_grade' => $generalPayrollRecord->sg_step,
-                            'daily_salary_rate' => $dailySalaryRate,
-                            'no_of_days_covered' => $totalDays,
-                            'gross_salary' => $grossSalary,
-                            'absences_days' => $absentDays,
-                            'absences_amount' => $absentAmount,
-                            'late_undertime_hours' => $lateUndertimeHours,
-                            'late_undertime_hours_amount' => $lateUndertimeHoursAmount,
-                            'late_undertime_mins' => $lateUndertimeMins,
-                            'late_undertime_mins_amount' => $lateUndertimeMinsAmount,
-                            'gross_salary_less' => $grossSalaryLess,
-                            'withholding_tax' => $withholdingTax,
-                            'nycempc' => $generalPayrollRecord->nycea_deductions * $deductionPercentage,
-                            'total_deductions' => $totalDeductions,
-                            'net_amount_due' => $net_amount_due,
-                            'start_date' => $this->startDate,
-                            'end_date' => $this->endDate,
-                        ]
-                    );
-                }
-    
-                $this->dispatch('notify', [
-                    'message' => 'Payroll Saved!',
-                    'type' => 'success'
-                ]);
-            }else{
-                $this->dispatch('notify', [
-                    'message' => 'Select start and end date!',
-                    'type' => 'info'
-                ]);
-            }
-        } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => 'Error: ' . $e->getMessage(),
-                'type' => 'error'
-            ]);
-            throw $e;
-        }
-    }
-
-    public function getPayroll($paginate = true){
-        $payrolls = collect();
-        try {
-            if ($this->startDate && $this->endDate) {
-                $generalPayroll = GeneralPayroll::all();
-                $payrollDTR = $this->getDTRForPayroll($this->startDate, $this->endDate);
-                $startDate = Carbon::parse($this->startDate);
-                $endDate = Carbon::parse($this->endDate);
-                
-                $totalWorkingDaysInMonth = Carbon::parse($startDate)->daysInMonth - 
-                    Carbon::parse($startDate)->daysInMonth * 2 / 7;
-                $totalWorkingDaysInMonth = round($totalWorkingDaysInMonth);
-
-                $totalDays = $startDate->diffInDaysFiltered(function(Carbon $date) {
-                    return !$date->isWeekend();
-                }, $endDate) + 1;
-
-                foreach ($generalPayroll as $generalPayrollRecord) {
-                    $userId = $generalPayrollRecord->user_id;
-                    $user = User::where('id', $userId)->first();
-                    $dtrData = $payrollDTR[$userId] ?? null;
-
-                    if (!$dtrData) {
-                        continue;
-                    }
-
-                    $presentDays = count($dtrData['daily_records']);
-                    $absentDays = $totalDays - $presentDays;
-
-                    $dailySalaryRate = $generalPayrollRecord->rate_per_month / $totalWorkingDaysInMonth;
-                    $grossSalary = $dailySalaryRate * $totalDays;
-                    
-                    $deductionPercentage = $totalDays / $totalWorkingDaysInMonth;
-                    $totalDeductions = $generalPayrollRecord->total_deduction * $deductionPercentage;
-                    $withholdingTax = $generalPayrollRecord->w_holding_tax * $deductionPercentage;
-
-                    $absentAmount = $absentDays * $dailySalaryRate;
-
-                    $lateUndertimeHours = floor($dtrData['total_late'] / 60);
-                    $lateUndertimeMins = $dtrData['total_late'] % 60;
-
-                    $lateUndertimeHoursAmount = $lateUndertimeHours * ($dailySalaryRate / 8);
-                    $lateUndertimeMinsAmount = $lateUndertimeMins * ($dailySalaryRate / 480);
-
-                    $grossSalaryLess = $grossSalary - $absentAmount - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount;
-
-                    // Deduct withholding tax
-                    $afterTax = $grossSalaryLess - $withholdingTax;
-
-                    // Deduct NYCEMPC
-                    $nycempc = $generalPayrollRecord->nycea_deductions * $deductionPercentage;
-                    $afterNYCEMPC = $afterTax - $nycempc;
-
-                    // Calculate remaining deductions
-                    $remainingDeductions = $totalDeductions - ($withholdingTax + $nycempc);
-
-                    // Ensure net amount is not negative
-                    $netAmountDue = max(0, $afterNYCEMPC - $remainingDeductions);
-
-                    // Adjust total deductions if necessary
-                    $adjustedTotalDeductions = $totalDeductions;
-                    if ($afterNYCEMPC < $remainingDeductions) {
-                        $adjustedTotalDeductions = $afterNYCEMPC + $withholdingTax + $nycempc;
-                    }
-
-                    $payrolls->push([
-                        'name' => $user->name,
-                        'employee_number' => $generalPayrollRecord->employee_number,
-                        'position' => $generalPayrollRecord->position,
-                        'salary_grade' => $generalPayrollRecord->sg_step,
-                        'daily_salary_rate' => $dailySalaryRate,
-                        'no_of_days_covered' => $totalDays,
-                        'gross_salary' => $grossSalary,
-                        'absences_days' => $absentDays,
-                        'absences_amount' => $absentAmount,
-                        'late_undertime_hours' => $lateUndertimeHours,
-                        'late_undertime_hours_amount' => $lateUndertimeHoursAmount,
-                        'late_undertime_mins' => $lateUndertimeMins,
-                        'late_undertime_mins_amount' => $lateUndertimeMinsAmount,
-                        'gross_salary_less' => $grossSalaryLess,
-                        'withholding_tax' => $withholdingTax,
-                        'nycempc' => $nycempc,
-                        'total_deductions' => $adjustedTotalDeductions,
-                        'net_amount_due' => $netAmountDue,
-                        'start_date' => $this->startDate,
-                        'end_date' => $this->endDate,
-                    ]);
-                }
-
-                // Apply search filter
-                if ($this->search) {
-                    $payrolls = $payrolls->filter(function ($payroll) {
-                        return Str::contains(strtolower($payroll['name']), strtolower($this->search)) ||
-                            Str::contains(strtolower($payroll['employee_number']), strtolower($this->search));
-                    });
-                }
-
-                if ($paginate) {
-                    $page = request()->get('page', 1);
-                    $perPage = 10;
-            
-                    $items = $payrolls->forPage($page, $perPage);
-            
-                    return new LengthAwarePaginator(
-                        $items,
-                        $payrolls->count(),
-                        $perPage,
-                        $page,
-                        ['path' => request()->url(), 'query' => request()->query()]
-                    );
-                } else {
-                    return $payrolls;
-                }
-            }
-        } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => 'Error: ' . $e->getMessage(),
-                'type' => 'error'
-            ]);
-            return new LengthAwarePaginator([], 0, 10);
-        }
-    }
-
-    public function getDTRForPayroll($startDate, $endDate, $employeeId = null){
-        try {
-            $query = EmployeesDtr::whereBetween('date', [$startDate, $endDate]);
-            
-            if ($employeeId) {
-                $query->where('user_id', $employeeId);
-            }
-    
-            $dtrRecords = $query->orderBy('date')->get();
-            $payrollDTR = [];
-    
-            foreach ($dtrRecords as $record) {
-                $employeeId = $record->user_id;
-                $date = $record->date;
-    
-                if (!isset($payrollDTR[$employeeId])) {
-                    $payrollDTR[$employeeId] = [
-                        'total_days' => 0,
-                        'total_hours' => 0,
-                        'total_late' => 0,
-                        'total_overtime' => 0,
-                        'daily_records' => []
-                    ];
-                }
-    
-                $payrollDTR[$employeeId]['total_days']++;
-                $payrollDTR[$employeeId]['total_hours'] += $record->total_hours_endered;
-                $payrollDTR[$employeeId]['total_late'] += $record->late;
-                $payrollDTR[$employeeId]['total_overtime'] += $record->overtime;
-    
-                $payrollDTR[$employeeId]['daily_records'][$date] = [
-                    'day_of_week' => $record->day_of_week,
-                    'location' => $record->location,
-                    'morning_in' => $record->morning_in,
-                    'morning_out' => $record->morning_out,
-                    'afternoon_in' => $record->afternoon_in,
-                    'afternoon_out' => $record->afternoon_out,
-                    'late' => $record->late,
-                    'overtime' => $record->overtime,
-                    'total_hours' => $record->total_hours_endered
-                ];
-            }
-    
-            return $payrollDTR;
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
-    public function processPayroll($startDate, $endDate){
-        $payrollData = $this->getDTRForPayroll($startDate, $endDate);
-
-        foreach ($payrollData as $employeeId => $dtrData) {
-            // Retrieve employee's base salary and other relevant information
-            $employee = User::find($employeeId);
-            $baseSalary = $employee->base_salary; // Assuming you have this field
-
-            // Calculate salary based on DTR data
-            $totalHours = $dtrData['total_hours'];
-            $totalLate = $dtrData['total_late'];
-            $totalOvertime = $dtrData['total_overtime'];
-
-            // Perform salary calculations here
-            // For example:
-            $salary = ($baseSalary / 160) * $totalHours; // Assuming 160 hours per month
-            $lateDeductions = $totalLate * ($baseSalary / 160 / 60); // Deduct per minute of late
-            $overtimePay = $totalOvertime * (($baseSalary / 160) * 1.25); // 1.25x pay for overtime
-
-            $grossPay = $salary + $overtimePay - $lateDeductions;
-
-            // Calculate deductions (taxes, benefits, etc.)
-            // ...
-
-            // Calculate net pay
-            // ...
-
-            // Store payroll results
-            // ...
-        }
     }
 
     public function toggleDropdown(){
         $this->sortColumn = !$this->sortColumn;
     }
 
-    public function exportPayroll()
-    {
-        try {
-            if ($this->startDate && $this->endDate) {
-                $startDate = Carbon::parse($this->startDate);
-                $endDate = Carbon::parse($this->endDate);
-                
-                $filename = 'Payroll ' . $startDate->format('F') . ' '
-                                       . $startDate->format('d') . '-'
-                                       . $endDate->format('d') . ' '
-                                       . $startDate->format('Y') . '.xlsx';
-                
-                if ($this->hasPayroll) {
-                    $payrolls = EmployeesPayroll::where('start_date', $this->startDate)
-                        ->where('end_date', $this->endDate)
-                        ->when($this->search, function ($query) {
-                            return $query->search(trim($this->search));
-                        })
-                        ->select([
-                            'name',
-                            'employee_number',
-                            'position',
-                            'salary_grade',
-                            'daily_salary_rate',
-                            'no_of_days_covered',
-                            'gross_salary',
-                            'absences_days',
-                            'absences_amount',
-                            'late_undertime_hours',
-                            'late_undertime_hours_amount',
-                            'late_undertime_mins',
-                            'late_undertime_mins_amount',
-                            'gross_salary_less',
-                            'withholding_tax',
-                            'nycempc',
-                            'total_deductions',
-                            'net_amount_due'
-                        ])
-                        ->get();
-                } else {
-                    $payrolls = $this->getPayroll(false);
+    public function toggleAllColumn() {
+        if ($this->allCol) {
+            foreach (array_keys($this->columns) as $col) {
+                if($col == 'name' || $col == 'employee_number' || $col == 'position' || $col == 'sg_step' || $col == 'rate_per_month'){
+                    continue;
                 }
-                
-                return Excel::download(new PayrollExport($payrolls), $filename);
+                $this->columns[$col] = false;
+            }
+            $this->allCol = false;
+        } else {
+            foreach (array_keys($this->columns) as $col) {
+                if($col == 'name' || $col == 'employee_number' || $col == 'position' || $col == 'sg_step' || $col == 'rate_per_month'){
+                    continue;
+                }
+                $this->columns[$col] = true;
+            }
+            $this->allCol = true;
+        }
+    }
+    public function exportExcel(){
+        $filters = [
+            'search' => $this->search,
+        ];
+        $fileName = 'Payroll List.xlsx';
+        return Excel::download(new PayrollListExport($filters), $fileName);
+    }
+
+    public function toggleEditPayroll($userId){
+        $this->editPayroll = true;
+        $this->userId = $userId;
+        try {
+            $payroll = GeneralPayroll::where('user_id', $userId)->first();
+            if ($payroll) {
+                $this->name = $payroll->name;
+                $this->employee_number = $payroll->employee_number;
+                $this->position = $payroll->position;
+                $this->sg_step = $payroll->sg_step;
+                $this->rate_per_month = $payroll->rate_per_month;
+                $this->personal_economic_relief_allowance = $payroll->personal_economic_relief_allowance;
+                $this->gross_amount = $payroll->gross_amount;
+                $this->additional_gsis_premium = $payroll->additional_gsis_premium;
+                $this->lbp_salary_loan = $payroll->lbp_salary_loan;
+                $this->nycea_deductions = $payroll->nycea_deductions;
+                $this->sc_membership = $payroll->sc_membership;
+                $this->total_loans = $payroll->total_loans;
+                $this->salary_loan = $payroll->salary_loan;
+                $this->policy_loan = $payroll->policy_loan;
+                $this->eal = $payroll->eal;
+                $this->emergency_loan = $payroll->emergency_loan;
+                $this->mpl = $payroll->mpl;
+                $this->housing_loan = $payroll->housing_loan;
+                $this->ouli_prem = $payroll->ouli_prem;
+                $this->gfal = $payroll->gfal;
+                $this->cpl = $payroll->cpl;
+                $this->pagibig_mpl = $payroll->pagibig_mpl;
+                $this->other_deduction_philheath_diff = $payroll->other_deduction_philheath_diff;
+                $this->life_retirement_insurance_premiums = $payroll->life_retirement_insurance_premiums;
+                $this->pagibig_contribution = $payroll->pagibig_contribution;
+                $this->w_holding_tax = $payroll->w_holding_tax;
+                $this->philhealth = $payroll->philhealth;
+                $this->total_deduction = $payroll->total_deduction;
             } else {
-                $this->dispatch('notify', [
-                    'message' => 'Select start and end date!',
-                    'type' => 'info'
-                ]);
+                // If no payroll exists, you might want to reset all fields
+                $this->resetPayrollFields();
             }
         } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function toggleAddPayroll(){
+        $this->editPayroll = true;
+        $this->addPayroll = true;
+    }
+
+    public function savePayroll(){
+        try {
+            $payroll = GeneralPayroll::where('user_id', $this->userId)->first();
+    
+            $payrollData = [
+                'user_id' => $this->userId,
+                'employee_number' => $this->employee_number,
+                'position' => $this->position,
+                'sg_step' => $this->sg_step,
+                'rate_per_month' => $this->rate_per_month,
+                'personal_economic_relief_allowance' => $this->personal_economic_relief_allowance,
+                'gross_amount' => $this->gross_amount,
+                'additional_gsis_premium' => $this->additional_gsis_premium,
+                'lbp_salary_loan' => $this->lbp_salary_loan,
+                'nycea_deductions' => $this->nycea_deductions,
+                'sc_membership' => $this->sc_membership,
+                'total_loans' => $this->total_loans,
+                'salary_loan' => $this->salary_loan,
+                'policy_loan' => $this->policy_loan,
+                'eal' => $this->eal,
+                'emergency_loan' => $this->emergency_loan,
+                'mpl' => $this->mpl,
+                'housing_loan' => $this->housing_loan,
+                'ouli_prem' => $this->ouli_prem,
+                'gfal' => $this->gfal,
+                'cpl' => $this->cpl,
+                'pagibig_mpl' => $this->pagibig_mpl,
+                'other_deduction_philheath_diff' => $this->other_deduction_philheath_diff,
+                'life_retirement_insurance_premiums' => $this->life_retirement_insurance_premiums,
+                'pagibig_contribution' => $this->pagibig_contribution,
+                'w_holding_tax' => $this->w_holding_tax,
+                'philhealth' => $this->philhealth,
+                'total_deduction' => $this->total_deduction,
+            ];
+    
+            if ($payroll) {
+                $this->validate([
+                    'employee_number' => 'required|max:100',
+                    'position' => 'required|max:100',
+                    'sg_step' => 'required|max:100',
+                    'rate_per_month' => 'required|numeric',
+                    'gross_amount' => 'required|numeric',
+                    'pagibig_contribution' => 'required|numeric',
+                    'w_holding_tax' => 'required|numeric',
+                    'philhealth' => 'required|numeric',
+                    'total_deduction' => 'required|numeric',
+                ]);
+
+                $payroll->update($payrollData);
+                $message = "Payroll updated successfully!";
+            } else {
+                $this->validate([
+                    'employee_number' => 'required|max:100',
+                    'position' => 'required|max:100',
+                    'sg_step' => 'required|max:100',
+                    'rate_per_month' => 'required|numeric',
+                    'gross_amount' => 'required|numeric',
+                    'pagibig_contribution' => 'required|numeric',
+                    'w_holding_tax' => 'required|numeric',
+                    'philhealth' => 'required|numeric',
+                    'total_deduction' => 'required|numeric',
+                ]);
+                $user = User::where('id', $this->userId)->first();
+                $payrollData['name'] = $user->name;
+                GeneralPayroll::create($payrollData);
+                $message = "Payroll added successfully!";
+            }
+    
+            $this->editPayroll = null;
+            $this->addPayroll = null;
             $this->dispatch('notify', [
-                'message' => 'Error exporting payroll: ' . $e->getMessage(),
+                'message' => $message,
+                'type' => 'success'
+            ]);
+    
+        } catch (Exception $e) {
+            $this->dispatch('notify', [
+                'message' => "Payroll update was unsuccessful!",
                 'type' => 'error'
             ]);
+            throw $e;
         }
+    }
+
+    public function resetVariables(){
+        $this->resetValidation();
+        $this->userId = null;
+        $this->addPayroll = null;
+        $this->editPayroll = null;
+        $this->name = null;
+        $this->employee_number = null;
+        $this->position = null;
+        $this->sg_step = null;
+        $this->rate_per_month = null;
+        $this->personal_economic_relief_allowance = null;
+        $this->gross_amount = null;
+        $this->additional_gsis_premium = null;
+        $this->lbp_salary_loan = null;
+        $this->nycea_deductions = null;
+        $this->sc_membership = null;
+        $this->total_loans = null;
+        $this->salary_loan = null;
+        $this->policy_loan = null;
+        $this->eal = null;
+        $this->emergency_loan = null;
+        $this->mpl = null;
+        $this->housing_loan = null;
+        $this->ouli_prem = null;
+        $this->gfal = null;
+        $this->cpl = null;
+        $this->pagibig_mpl = null;
+        $this->other_deduction_philheath_diff = null;
+        $this->life_retirement_insurance_premiums = null;
+        $this->pagibig_contribution = null;
+        $this->w_holding_tax = null;
+        $this->philhealth = null;
+        $this->total_deduction = null;
+        // $this->net_amount_received = null;
+        // $this->amount_due_first_half = null;
+        // $this->amount_due_second_half = null;
+        
     }
 }
