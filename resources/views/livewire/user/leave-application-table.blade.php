@@ -201,57 +201,58 @@
                     <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full">
                         <legend class="text-gray-700 dark:text-slate-100">A. Type of Leave to be availed of</legend>
                         <div class="gap-2 columns-1">
-                            <input type="radio" value="Vacation Leave" wire:model="type_of_leave">
+                            <input type="checkbox" value="Vacation Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Vacation Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="radio" value="Mandatory/Forced Leave" wire:model="type_of_leave">
+                            <input type="checkbox" value="Mandatory/Forced Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Mandatory/Forced Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="radio" value="Sick Leave" wire:model="type_of_leave">
+                            <input type="checkbox" value="Sick Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Sick Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="radio" value="Maternity Leave" wire:model="type_of_leave">
+                            <input type="checkbox" value="Maternity Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Maternity Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="radio" value="Paternity Leave" wire:model="type_of_leave">
+                            <input type="checkbox" value="Paternity Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Paternity Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="radio" value="Special Privilege Leave" wire:model="type_of_leave">
+                            <input type="checkbox" value="Special Privilege Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Special Privilege Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="radio" value="Solo Parent Leave" wire:model="type_of_leave">
+                            <input type="checkbox" value="Solo Parent Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Solo Parent Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="radio" value="Study Leave" wire:model="type_of_leave">
+                            <input type="checkbox" value="Study Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Study Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="radio" value="10-Day VAWC Leave" wire:model="type_of_leave">
+                            <input type="checkbox" value="10-Day VAWC Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">10-Day VAWC Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="radio" value="Rehabilitation Privilege" wire:model="type_of_leave">
+                            <input type="checkbox" value="Rehabilitation Privilege" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Rehabilitation Privilege</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="radio" value="Special Leave Benefits for Women" wire:model="type_of_leave">
+                            <input type="checkbox" value="Special Leave Benefits for Women" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Special Leave Benefits for
                                 Women</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="radio" value="Special Emergency (Calamity) Leave" wire:model="type_of_leave">
+                            <input type="checkbox" value="Special Emergency (Calamity) Leave"
+                                wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Special Emergency (Calamity)
                                 Leave</label>
                         </div>
                         <div class="gap-2 columns-1">
-                            <input type="radio" value="Adoption Leave" wire:model="type_of_leave">
+                            <input type="checkbox" value="Adoption Leave" wire:model="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Adoption Leave</label>
                         </div>
                         @error('type_of_leave') <span class="text-red-500 text-sm">Please choose one!</span>

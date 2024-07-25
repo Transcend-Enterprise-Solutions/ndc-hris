@@ -43,6 +43,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/payroll-management', function () {return view('livewire.admin.payroll-management');})->name('payroll-management');
     Route::get('/general-payroll', function () {return view('livewire.admin.general-payroll');})->name('general-payroll');
     Route::get('/personal-data-sheet', function () {return view('livewire.user.personal-data-sheet');})->name('personal-data-sheet');
+    Route::get('/leave-monetization', function () {return view('livewire.user.leave-monetization');})->name('leave-monetization');
     Route::get('/dtr', function () {return view('livewire.user.dtr');})->name('dtr');
     Route::get('/dashboard/analytics', [DashboardController::class, 'analytics'])->name('analytics');
     Route::get('/dashboard/fintech', [DashboardController::class, 'fintech'])->name('fintech');

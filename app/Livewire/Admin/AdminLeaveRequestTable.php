@@ -22,10 +22,11 @@ class AdminLeaveRequestTable extends Component
 
     protected $rules = [
         'status' => 'required_if:showApproveModal,true',
-        'otherReason' => 'required_if:status,Other',
+        'otherReason' => 'required_if:status,Other|string',
         'days' => 'required_if:status,With Pay,Without Pay|numeric|min:1',
         'disapproveReason' => 'required_if:showDisapproveModal,true'
     ];
+    
 
     public function openApproveModal($applicationId)
     {
@@ -55,17 +56,24 @@ class AdminLeaveRequestTable extends Component
 
     public function updateStatus()
     {
-        $this->validate([
-            'status' => 'required',
-            'otherReason' => 'required_if:status,Other',
-            'days' => 'required_if:status,With Pay,Without Pay|numeric|min:1',
-        ]);
+        if ($this->status === 'Other') {
+            $this->validate([
+                'status' => 'required',
+                'otherReason' => 'required',
+            ]);
+        } else {
+            $this->validate([
+                'status' => 'required',
+                'days' => 'required|numeric|min:1',
+            ]);
+        }
 
         if ($this->selectedApplication) {
             if ($this->status === 'Other') {
-                $this->selectedApplication->status = $this->otherReason;
+                $this->selectedApplication->status = "Other: {$this->otherReason}";
             } else {
                 $this->selectedApplication->status = "Approved for: {$this->days} days {$this->status}";
+                $this->selectedApplication->remarks = $this->status === 'With Pay' ? 'With Pay' : 'Without Pay';
             }
 
             $this->selectedApplication->save();
