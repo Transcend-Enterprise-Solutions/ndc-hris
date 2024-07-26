@@ -6,6 +6,7 @@ use App\Exports\PayrollExport;
 use App\Models\EmployeesDtr;
 use App\Models\EmployeesPayroll;
 use App\Models\GeneralPayroll;
+use App\Models\Payrolls;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -20,10 +21,7 @@ class PayrollTable extends Component
     public $sortColumn = false;
     public $startDate;
     public $endDate;
-    public $payrollDTR;
-    public $generalPayroll;
     public $hasPayroll = true;
-    protected $payrolls = [];
     public $search;
     public $allCol = true;
     public $columns = [
@@ -49,7 +47,7 @@ class PayrollTable extends Component
 
     public function render(){
         $users = User::paginate(10);
-
+        $payrolls = [];
         if ($this->startDate && $this->endDate) {
             $query = EmployeesPayroll::where('start_date', $this->startDate)
                 ->where('end_date', $this->endDate)
@@ -58,17 +56,17 @@ class PayrollTable extends Component
                 });
     
             if ($query->exists()) {
-                $this->payrolls = $query->paginate(10);
+                $payrolls = $query->paginate(10);
                 $this->hasPayroll = true;
             } else {
-                $this->payrolls = $this->getPayroll();
+                $payrolls = $this->getPayroll();
                 $this->hasPayroll = false;
             }
         }
 
         return view('livewire.admin.payroll-table', [
             'users' => $users,
-            'payrolls' => $this->payrolls,
+            'payrolls' => $payrolls,
         ]);
     }
 
@@ -89,8 +87,8 @@ class PayrollTable extends Component
     public function recordPayroll(){
         try {
             if ($this->startDate && $this->endDate) {
-                $this->generalPayroll = GeneralPayroll::all();
-                $this->payrollDTR = $this->getDTRForPayroll($this->startDate, $this->endDate);
+                $payrollsAll = Payrolls::all();
+                $payrollDTR = $this->getDTRForPayroll($this->startDate, $this->endDate);
                 $startDate = Carbon::parse($this->startDate);
                 $endDate = Carbon::parse($this->endDate);
                 
@@ -104,10 +102,10 @@ class PayrollTable extends Component
                     return !$date->isWeekend();
                 }, $endDate) + 1; // Include both start and end dates
     
-                foreach ($this->generalPayroll as $generalPayrollRecord) {
-                    $userId = $generalPayrollRecord->user_id;
+                foreach ($payrollsAll as $payrollRecord) {
+                    $userId = $payrollRecord->user_id;
                     $user = User::where('id', $userId)->first();
-                    $dtrData = $this->payrollDTR[$userId] ?? null;
+                    $dtrData = $payrollDTR[$userId] ?? null;
     
                     if (!$dtrData) {
                         continue; // Skip if no DTR data for this user
@@ -117,12 +115,12 @@ class PayrollTable extends Component
                     $absentDays = $totalDays - $presentDays;
     
                     // New calculations
-                    $dailySalaryRate = $generalPayrollRecord->rate_per_month / $totalWorkingDaysInMonth;
+                    $dailySalaryRate = $payrollRecord->rate_per_month / $totalWorkingDaysInMonth;
                     $grossSalary = $dailySalaryRate * $totalDays;
                     
                     $deductionPercentage = $totalDays / $totalWorkingDaysInMonth;
-                    $totalDeductions = $generalPayrollRecord->total_deduction * $deductionPercentage;
-                    $withholdingTax = $generalPayrollRecord->w_holding_tax * $deductionPercentage;
+                    $totalDeductions = $payrollRecord->total_deduction * $deductionPercentage;
+                    $withholdingTax = $payrollRecord->w_holding_tax * $deductionPercentage;
     
                     $absentAmount = $absentDays * $dailySalaryRate;
     
@@ -138,7 +136,7 @@ class PayrollTable extends Component
                     $grossSalaryLessTax = $grossSalaryLess - $withholdingTax;
 
                     // Deduct NYCEMPC
-                    $grossSalaryLessNYCEMPC = $grossSalaryLessTax - ($generalPayrollRecord->nycea_deductions * $deductionPercentage);
+                    $grossSalaryLessNYCEMPC = $grossSalaryLessTax - ($payrollRecord->nycea_deductions * $deductionPercentage);
 
                     // Ensure net amount is not negative
                     $netAmountDue = max(0, $grossSalaryLessTax - $grossSalaryLessNYCEMPC);
@@ -155,9 +153,9 @@ class PayrollTable extends Component
                     EmployeesPayroll::create([
                             'user_id' => $userId,
                             'name' => $user->name,
-                            'employee_number' => $generalPayrollRecord->employee_number,
-                            'position' => $generalPayrollRecord->position,
-                            'salary_grade' => $generalPayrollRecord->sg_step,
+                            'employee_number' => $payrollRecord->employee_number,
+                            'position' => $payrollRecord->position,
+                            'salary_grade' => $payrollRecord->sg_step,
                             'daily_salary_rate' => $dailySalaryRate,
                             'no_of_days_covered' => $totalDays,
                             'gross_salary' => $grossSalary,
@@ -169,7 +167,7 @@ class PayrollTable extends Component
                             'late_undertime_mins_amount' => $lateUndertimeMinsAmount,
                             'gross_salary_less' => $grossSalaryLess,
                             'withholding_tax' => $withholdingTax,
-                            'nycempc' => $generalPayrollRecord->nycea_deductions * $deductionPercentage,
+                            'nycempc' => $payrollRecord->nycea_deductions * $deductionPercentage,
                             'total_deductions' => $totalDeductions,
                             'net_amount_due' => $net_amount_due,
                             'start_date' => $this->startDate,
@@ -197,11 +195,11 @@ class PayrollTable extends Component
         }
     }
 
-    public function getPayroll($paginate = true){
+    public function getPayroll(){
         $payrolls = collect();
         try {
             if ($this->startDate && $this->endDate) {
-                $generalPayroll = GeneralPayroll::all();
+                $payrollsAll = Payrolls::all();
                 $payrollDTR = $this->getDTRForPayroll($this->startDate, $this->endDate);
                 $startDate = Carbon::parse($this->startDate);
                 $endDate = Carbon::parse($this->endDate);
@@ -214,8 +212,8 @@ class PayrollTable extends Component
                     return !$date->isWeekend();
                 }, $endDate) + 1;
 
-                foreach ($generalPayroll as $generalPayrollRecord) {
-                    $userId = $generalPayrollRecord->user_id;
+                foreach ($payrollsAll as $payrollsAllRecord) {
+                    $userId = $payrollsAllRecord->user_id;
                     $user = User::where('id', $userId)->first();
                     $dtrData = $payrollDTR[$userId] ?? null;
 
@@ -226,12 +224,12 @@ class PayrollTable extends Component
                     $presentDays = count($dtrData['daily_records']);
                     $absentDays = $totalDays - $presentDays;
 
-                    $dailySalaryRate = $generalPayrollRecord->rate_per_month / $totalWorkingDaysInMonth;
+                    $dailySalaryRate = $payrollsAllRecord->rate_per_month / $totalWorkingDaysInMonth;
                     $grossSalary = $dailySalaryRate * $totalDays;
                     
                     $deductionPercentage = $totalDays / $totalWorkingDaysInMonth;
-                    $totalDeductions = $generalPayrollRecord->total_deduction * $deductionPercentage;
-                    $withholdingTax = $generalPayrollRecord->w_holding_tax * $deductionPercentage;
+                    $totalDeductions = $payrollsAllRecord->total_deduction * $deductionPercentage;
+                    $withholdingTax = $payrollsAllRecord->w_holding_tax * $deductionPercentage;
 
                     $absentAmount = $absentDays * $dailySalaryRate;
 
@@ -247,7 +245,7 @@ class PayrollTable extends Component
                     $afterTax = $grossSalaryLess - $withholdingTax;
 
                     // Deduct NYCEMPC
-                    $nycempc = $generalPayrollRecord->nycea_deductions * $deductionPercentage;
+                    $nycempc = $payrollsAllRecord->nycea_deductions * $deductionPercentage;
                     $afterNYCEMPC = $afterTax - $nycempc;
 
                     // Calculate remaining deductions
@@ -264,9 +262,9 @@ class PayrollTable extends Component
 
                     $payrolls->push([
                         'name' => $user->name,
-                        'employee_number' => $generalPayrollRecord->employee_number,
-                        'position' => $generalPayrollRecord->position,
-                        'salary_grade' => $generalPayrollRecord->sg_step,
+                        'employee_number' => $payrollsAllRecord->employee_number,
+                        'position' => $payrollsAllRecord->position,
+                        'salary_grade' => $payrollsAllRecord->sg_step,
                         'daily_salary_rate' => $dailySalaryRate,
                         'no_of_days_covered' => $totalDays,
                         'gross_salary' => $grossSalary,
@@ -294,22 +292,7 @@ class PayrollTable extends Component
                     });
                 }
 
-                if ($paginate) {
-                    $page = request()->get('page', 1);
-                    $perPage = 10;
-            
-                    $items = $payrolls->forPage($page, $perPage);
-            
-                    return new LengthAwarePaginator(
-                        $items,
-                        $payrolls->count(),
-                        $perPage,
-                        $page,
-                        ['path' => request()->url(), 'query' => request()->query()]
-                    );
-                } else {
-                    return $payrolls;
-                }
+                return $payrolls;
             }
         } catch (Exception $e) {
             $this->dispatch('notify', [
@@ -323,18 +306,16 @@ class PayrollTable extends Component
     public function getDTRForPayroll($startDate, $endDate, $employeeId = null){
         try {
             $query = EmployeesDtr::whereBetween('date', [$startDate, $endDate]);
-            
             if ($employeeId) {
                 $query->where('user_id', $employeeId);
             }
-    
             $dtrRecords = $query->orderBy('date')->get();
             $payrollDTR = [];
-    
+
             foreach ($dtrRecords as $record) {
                 $employeeId = $record->user_id;
                 $date = $record->date;
-    
+
                 if (!isset($payrollDTR[$employeeId])) {
                     $payrollDTR[$employeeId] = [
                         'total_days' => 0,
@@ -344,12 +325,18 @@ class PayrollTable extends Component
                         'daily_records' => []
                     ];
                 }
-    
+
                 $payrollDTR[$employeeId]['total_days']++;
-                $payrollDTR[$employeeId]['total_hours'] += $record->total_hours_endered;
-                $payrollDTR[$employeeId]['total_late'] += $record->late;
-                $payrollDTR[$employeeId]['total_overtime'] += $record->overtime;
-    
+                
+                // Convert time strings to integer minutes
+                $totalHours = $this->timeToMinutes($record->total_hours_endered);
+                $late = $this->timeToMinutes($record->late);
+                $overtime = $this->timeToMinutes($record->overtime);
+
+                $payrollDTR[$employeeId]['total_hours'] += $totalHours;
+                $payrollDTR[$employeeId]['total_late'] += $late;
+                $payrollDTR[$employeeId]['total_overtime'] += $overtime;
+
                 $payrollDTR[$employeeId]['daily_records'][$date] = [
                     'day_of_week' => $record->day_of_week,
                     'location' => $record->location,
@@ -357,16 +344,23 @@ class PayrollTable extends Component
                     'morning_out' => $record->morning_out,
                     'afternoon_in' => $record->afternoon_in,
                     'afternoon_out' => $record->afternoon_out,
-                    'late' => $record->late,
-                    'overtime' => $record->overtime,
-                    'total_hours' => $record->total_hours_endered
+                    'late' => $late,
+                    'overtime' => $overtime,
+                    'total_hours' => $totalHours
                 ];
             }
-    
             return $payrollDTR;
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    private function timeToMinutes($timeString){
+        if (empty($timeString)) {
+            return 0;
+        }
+        list($hours, $minutes) = explode(':', $timeString);
+        return (int)$hours * 60 + (int)$minutes;
     }
 
     public function processPayroll($startDate, $endDate){
@@ -444,7 +438,7 @@ class PayrollTable extends Component
                         ])
                         ->get();
                 } else {
-                    $payrolls = $this->getPayroll(false);
+                    $payrolls = $this->getPayroll();
                 }
                 
                 return Excel::download(new PayrollExport($payrolls), $filename);

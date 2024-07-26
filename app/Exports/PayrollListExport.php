@@ -2,11 +2,10 @@
 
 namespace App\Exports;
 
-use App\Models\GeneralPayroll;
+use App\Models\Payrolls;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Illuminate\Support\Collection;
 
 class PayrollListExport implements FromCollection, WithHeadings
 {
@@ -24,7 +23,7 @@ class PayrollListExport implements FromCollection, WithHeadings
             return '₱ ' . number_format((float)$value, 2, '.', ',');
         };
 
-        $query = GeneralPayroll::query();
+        $query = Payrolls::query();
 
         if (!empty($this->filters['search'])) {
             $query->where(function ($q) {

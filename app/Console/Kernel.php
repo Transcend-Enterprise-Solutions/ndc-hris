@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        // $schedule->command('fetch:biotime-transactions')->everyMinute();
+        $schedule->command('fetch:biotime-transactions')->everyMinute();
         // $schedule->job(new AutoSaveDtrRecords())->daily();
         $schedule->job(new AutoSaveDtrRecords())->everyMinute();
     }

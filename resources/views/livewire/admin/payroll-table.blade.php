@@ -29,6 +29,7 @@
                     }
                 </style>
 
+                {{-- Search Input --}}
                 <div class="relative inline-block text-left">
                     <input type="search" id="search" wire:model.live="search" 
                     placeholder="Search..."
@@ -38,6 +39,7 @@
                     rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
                 </div>
 
+                {{-- Filters --}}
                 <div class="block sm:flex items-center">
 
                     <!-- Start Date -->
@@ -270,7 +272,7 @@
                                         @foreach($payrolls as $payroll)
                                             <tr class="text-neutral-800 dark:text-neutral-200">
                                                 @foreach($columns as $column)
-                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    <td class="px-5 py-4 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium whitespace-nowrap">
                                                         @if(in_array($column, [
                                                             'daily_salary_rate',
                                                             'gross_salary',
@@ -299,26 +301,7 @@
                                     </tbody>
                                 </table>
                                 
-                                
                             </div>
-                            {{-- <div class="p-5 border-t border-gray-200 dark:border-slate-600 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
-                                @if($payrolls instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                                    {{ $payrolls->links() }}
-                                @else
-                                    <!-- Display a message or alternative pagination for temporary payrolls -->
-                                    <div class="flex justify-between items-center">
-                                        <span>Showing {{ $payrolls->firstItem() }} to {{ $payrolls->lastItem() }} of {{ $payrolls->total() }} results</span>
-                                        <div>
-                                            @if($payrolls->previousPageUrl())
-                                                <button wire:click="gotoPage({{ $payrolls->currentPage() - 1 }})" class="px-4 py-2 bg-blue-500 text-white rounded">Previous</button>
-                                            @endif
-                                            @if($payrolls->nextPageUrl())
-                                                <button wire:click="gotoPage({{ $payrolls->currentPage() + 1 }})" class="px-4 py-2 bg-blue-500 text-white rounded">Next</button>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @endif
-                            </div> --}}
 
                         </div>
                     </div>

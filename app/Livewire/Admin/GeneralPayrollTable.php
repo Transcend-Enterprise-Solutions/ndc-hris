@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use App\Exports\GeneralPayrollExport;
 use App\Models\EmployeesDtr;
 use App\Models\GeneralPayroll;
+use App\Models\Payrolls;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Carbon;
@@ -106,35 +107,45 @@ class GeneralPayrollTable extends Component
             $this->endDateFirstHalf = $carbonDate->copy()->day(15)->toDateString();
             $this->startDateSecondHalf = $carbonDate->copy()->day(16)->toDateString();
             $this->endDateSecondHalf = $carbonDate->endOfMonth()->toDateString();
-    
-            // Aggregate net_amount_due for both periods using subqueries
-            $payrollAggregates = DB::table('employees_payroll')
-                ->select('user_id')
-                ->selectRaw("SUM(CASE 
-                                WHEN start_date >= ? AND end_date <= ? 
-                                THEN net_amount_due 
-                                ELSE 0 
-                              END) as net_amount_due_first_half", [$this->startDateFirstHalf, $this->endDateFirstHalf])
-                ->selectRaw("SUM(CASE 
-                                WHEN start_date >= ? AND end_date <= ? 
-                                THEN net_amount_due 
-                                ELSE 0 
-                              END) as net_amount_due_second_half", [$this->startDateSecondHalf, $this->endDateSecondHalf])
-                ->selectRaw("SUM(net_amount_due) as total_amount_due")
-                ->groupBy('user_id');
-    
-            // Join the aggregate results with the general_payroll table
-            $payrolls = GeneralPayroll::when($this->search, function ($query) {
-                                return $query->search(trim($this->search));
-                            })
-                            ->joinSub($payrollAggregates, 'payroll_aggregates', function ($join) {
-                                $join->on('general_payroll.user_id', '=', 'payroll_aggregates.user_id');
-                            })
-                            ->select('general_payroll.*', 
-                                     'payroll_aggregates.net_amount_due_first_half', 
-                                     'payroll_aggregates.net_amount_due_second_half', 
-                                     'payroll_aggregates.total_amount_due')
-                            ->paginate(10);
+
+            $generalPayrollQuery = GeneralPayroll::where('date', $this->startDateFirstHalf);
+            if($generalPayrollQuery->exists()){
+                $payrolls = $generalPayrollQuery
+                    ->join('payrolls', 'general_payroll.user_id', '=', 'payrolls.user_id')
+                    ->select('payrolls.*', 
+                        'general_payroll.net_amount_received as total_amount_due', 
+                        'general_payroll.amount_due_first_half as net_amount_due_first_half', 
+                        'general_payroll.amount_due_second_half as net_amount_due_second_half')
+                    ->paginate(10);
+            }else{
+                $payrollAggregates = DB::table('employees_payroll')
+                    ->select('user_id')
+                    ->selectRaw("SUM(CASE 
+                                    WHEN start_date >= ? AND end_date <= ? 
+                                    THEN net_amount_due 
+                                    ELSE 0 
+                                END) as net_amount_due_first_half", [$this->startDateFirstHalf, $this->endDateFirstHalf])
+                    ->selectRaw("SUM(CASE 
+                                    WHEN start_date >= ? AND end_date <= ? 
+                                    THEN net_amount_due 
+                                    ELSE 0 
+                                END) as net_amount_due_second_half", [$this->startDateSecondHalf, $this->endDateSecondHalf])
+                    ->selectRaw("SUM(net_amount_due) as total_amount_due")
+                    ->groupBy('user_id');
+        
+                // Join the aggregate results with the general_payroll table
+                $payrolls = Payrolls::when($this->search, function ($query) {
+                                    return $query->search(trim($this->search));
+                                })
+                                ->joinSub($payrollAggregates, 'payroll_aggregates', function ($join) {
+                                    $join->on('payrolls.user_id', '=', 'payroll_aggregates.user_id');
+                                })
+                                ->select('payrolls.*', 
+                                        'payroll_aggregates.net_amount_due_first_half', 
+                                        'payroll_aggregates.net_amount_due_second_half', 
+                                        'payroll_aggregates.total_amount_due')
+                                ->paginate(10);
+            }
         }
     
         return view('livewire.admin.general-payroll-table', [

@@ -2,16 +2,13 @@
 
 namespace App\Livewire\Admin;
 
-use App\Exports\GeneralPayrollExport;
-use App\Exports\PayrollExport;
 use App\Exports\PayrollListExport;
-use App\Models\EmployeesDtr;
 use App\Models\GeneralPayroll;
+use App\Models\Payrolls;
 use App\Models\User;
 use Exception;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
-
 
 class PayrollManagementTable extends Component
 {
@@ -86,7 +83,7 @@ class PayrollManagementTable extends Component
     }
 
     public function render(){
-        $payrolls = GeneralPayroll::when($this->search, function ($query) {
+        $payrolls = Payrolls::when($this->search, function ($query) {
                         return $query->search(trim($this->search));
                     })
                     ->paginate(10);
@@ -162,7 +159,6 @@ class PayrollManagementTable extends Component
                 $this->philhealth = $payroll->philhealth;
                 $this->total_deduction = $payroll->total_deduction;
             } else {
-                // If no payroll exists, you might want to reset all fields
                 $this->resetPayrollFields();
             }
         } catch (Exception $e) {
@@ -177,7 +173,7 @@ class PayrollManagementTable extends Component
 
     public function savePayroll(){
         try {
-            $payroll = GeneralPayroll::where('user_id', $this->userId)->first();
+            $payroll = Payrolls::where('user_id', $this->userId)->first();
     
             $payrollData = [
                 'user_id' => $this->userId,
@@ -239,10 +235,11 @@ class PayrollManagementTable extends Component
                 ]);
                 $user = User::where('id', $this->userId)->first();
                 $payrollData['name'] = $user->name;
-                GeneralPayroll::create($payrollData);
+                Payrolls::create($payrollData);
                 $message = "Payroll added successfully!";
             }
     
+            $this->resetVariables();
             $this->editPayroll = null;
             $this->addPayroll = null;
             $this->dispatch('notify', [
@@ -292,9 +289,5 @@ class PayrollManagementTable extends Component
         $this->w_holding_tax = null;
         $this->philhealth = null;
         $this->total_deduction = null;
-        // $this->net_amount_received = null;
-        // $this->amount_due_first_half = null;
-        // $this->amount_due_second_half = null;
-        
     }
 }
