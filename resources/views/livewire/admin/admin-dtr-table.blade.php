@@ -54,38 +54,33 @@
                         <th class="px-4 py-2 text-center">Remarks</th>
                     </tr>
                     <tr class="whitespace-nowrap bg-gray-100 dark:bg-gray-600">
-                        <th colspan="5"></th> <!-- Empty cells to align with columns -->
+                        <th colspan="5"></th>
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
-                        <th class="px-4 py-2 text-center"></th> <!-- Empty cell for alignment -->
+                        <th class="px-4 py-2 text-center">(HH:MM)</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($users as $user)
-                        @foreach ($transactions[$user->emp_code] as $date => $dateTransactions)
-                            @php
-                                $timeRecords = $this->calculateTimeRecords($dateTransactions, $user->emp_code, $date);
-                            @endphp
-                            <tr class="whitespace-nowrap">
-                                <td class="px-4 py-2 text-center">{{ $user->emp_code }}</td>
-                                <td class="px-4 py-2 text-center">{{ $user->name }}</td>
-                                <td class="px-4 py-2 text-center">{{ $date }}</td>
-                                <td class="px-4 py-2 text-center">{{ $timeRecords['dayOfWeek'] }}</td>
-                                <td class="px-4 py-2 text-center">{{ $timeRecords['location'] }}</td>
-                                <td class="px-4 py-2 text-center">{{ $timeRecords['morningIn'] }}</td>
-                                <td class="px-4 py-2 text-center">{{ $timeRecords['morningOut'] }}</td>
-                                <td class="px-4 py-2 text-center">{{ $timeRecords['afternoonIn'] }}</td>
-                                <td class="px-4 py-2 text-center">{{ $timeRecords['afternoonOut'] }}</td>
-                                <td class="px-4 py-2 text-center">{{ $timeRecords['late'] }}</td>
-                                <td class="px-4 py-2 text-center">{{ $timeRecords['overtime'] }}</td>
-                                <td class="px-4 py-2 text-center">{{ $timeRecords['totalHoursRendered'] }}</td>
-                                <td class="px-4 py-2 text-center">{{ $timeRecords['remarks'] }}</td>
-                            </tr>
-                        @endforeach
+                    @forelse ($dtrs as $dtr)
+                        <tr class="whitespace-nowrap">
+                            <td class="px-4 py-2 text-center">{{ $dtr->emp_code }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->user->name }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->date }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->day_of_week }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->location }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->morning_in ?? '--:--' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->morning_out ?? '--:--' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->afternoon_in ?? '--:--' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->afternoon_out ?? '--:--' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->late ?? '--:--' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->overtime ?? '--:--' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->total_hours_rendered ?? '--:--' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->remarks }}</td>
+                        </tr>
                     @empty
                         <tr>
                             <td colspan="13" class="px-4 py-2 text-center text-gray-500 dark:text-gray-400">No transactions available for the selected date range.</td>
@@ -97,7 +92,7 @@
 
         <!-- Pagination Links -->
         <div class="mt-4">
-            {{ $users->links() }}
+            {{ $dtrs->links() }}
         </div>
     </div>
 </div>

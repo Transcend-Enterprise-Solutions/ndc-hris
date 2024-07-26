@@ -86,7 +86,6 @@ class AutoSaveDtrRecords implements ShouldQueue
         }
     }
 
-
     private function calculateTimeRecords($transactions, $empCode, $date)
     {
         $carbonDate = Carbon::parse($date);
@@ -123,17 +122,34 @@ class AutoSaveDtrRecords implements ShouldQueue
         $latenessThreshold = ($location === 'WFH') ? '08:00:00' : $latenessThreshold;
         $latenessThresholdTime = $carbonDate->copy()->setTimeFromTimeString($latenessThreshold);
 
-        $morningTransactions = $transactions->filter(function ($transaction) {
-            return Carbon::parse($transaction->punch_time)->hour < 13;
-        });
-        $afternoonTransactions = $transactions->filter(function ($transaction) {
-            return Carbon::parse($transaction->punch_time)->hour >= 13;
-        });
+        $sortedTransactions = $transactions->sortBy('punch_time');
 
-        $morningIn = $this->getFirstInPunch($morningTransactions);
-        $morningOut = $this->getLastOutPunch($morningTransactions);
-        $afternoonIn = $this->getFirstInPunch($afternoonTransactions);
-        $afternoonOut = $this->getLastOutPunch($afternoonTransactions);
+        $morningIn = null;
+        $morningOut = null;
+        $afternoonIn = null;
+        $afternoonOut = null;
+
+        foreach ($sortedTransactions as $transaction) {
+            $time = Carbon::parse($transaction->punch_time);
+
+            if (!$morningIn) {
+                $morningIn = $time;
+            } elseif (!$morningOut && $time->hour <= 13) {
+                $morningOut = $time;
+            } elseif (!$afternoonIn) {
+                $afternoonIn = $time;
+            } elseif (!$afternoonOut) {
+                $afternoonOut = $time;
+            }
+        }
+
+        // Correct any misalignments
+        if ($afternoonIn && $afternoonOut && $afternoonIn->gt($afternoonOut)) {
+            // Swap afternoon in and out if they're in the wrong order
+            $temp = $afternoonIn;
+            $afternoonIn = $afternoonOut;
+            $afternoonOut = $temp;
+        }
 
         $late = 0;
         if ($morningIn && $morningIn->gt($latenessThresholdTime)) {
@@ -190,17 +206,5 @@ class AutoSaveDtrRecords implements ShouldQueue
             'total_hours_rendered' => $formatTime($totalMinutesRendered),
             'remarks' => $remarks,
         ];
-    }
-
-    private function getFirstInPunch($transactions)
-    {
-        $firstIn = $transactions->where('punch_state', '0')->sortBy('punch_time')->first();
-        return $firstIn ? Carbon::parse($firstIn->punch_time) : null;
-    }
-
-    private function getLastOutPunch($transactions)
-    {
-        $lastOut = $transactions->where('punch_state', '1')->sortByDesc('punch_time')->first();
-        return $lastOut ? Carbon::parse($lastOut->punch_time) : null;
     }
 }
