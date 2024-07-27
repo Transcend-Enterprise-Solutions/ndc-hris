@@ -6,6 +6,10 @@
             @livewire('admin.admin-schedule-table')
 
         </div>
+        <br>
+        <div>
+            @livewire('admin.holiday-schedule-table')
+        </div>
 
     </div>
 </x-app-layout>
