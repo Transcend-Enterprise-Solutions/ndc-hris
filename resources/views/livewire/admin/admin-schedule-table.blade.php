@@ -1,6 +1,6 @@
 <div>
     <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
-        <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Schedule</h1>
+        <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Employee Schedule</h1>
         <!-- Modal -->
         @if($isModalOpen)
             <div class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
