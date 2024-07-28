@@ -5,6 +5,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\DTRSchedule;
 use App\Models\EmployeesDtr;
+use App\Models\Holiday;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -116,6 +117,23 @@ class AutoSaveDtrRecords implements ShouldQueue
         if ($dayOfWeek === 'Monday' && $location !== 'WFH') {
             $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString('09:00:00');
             $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString('18:00:00');
+        }
+
+        // Check if the date is a holiday
+        $holiday = Holiday::whereDate('holiday_date', $date)->first();
+        if ($holiday) {
+            return [
+                'day_of_week' => $dayOfWeek,
+                'location' => $location,
+                'morning_in' => null,
+                'morning_out' => null,
+                'afternoon_in' => null,
+                'afternoon_out' => null,
+                'late' => '00:00',
+                'overtime' => '00:00',
+                'total_hours_rendered' => '08:00',
+                'remarks' => 'Holiday',
+            ];
         }
 
         $latenessThreshold = $dayOfWeek === 'Monday' ? '09:00:00' : '09:30:00';
