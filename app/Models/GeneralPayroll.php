@@ -23,13 +23,13 @@ class GeneralPayroll extends Model
         return $this->belongsTo(User::class);
     }
 
-    // public function scopeSearch($query, $term){
-    //     $term = "%$term%";
-    //     $query->where(function ($query) use ($term) {
-    //         $query->where('general_payroll.name', 'like', $term)
-    //             ->orWhere('general_payroll.employee_number', 'like', $term)
-    //             ->orWhere('general_payroll.position', 'like', $term)
-    //             ->orWhere('general_payroll.sg_step', 'like', $term);
-    //     });
-    // }
+    public function scopeSearch($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('payrolls.name', 'like', $term)
+                ->orWhere('payrolls.employee_number', 'like', $term)
+                ->orWhere('payrolls.position', 'like', $term)
+                ->orWhere('payrolls.sg_step', 'like', $term);
+        });
+    }
 }

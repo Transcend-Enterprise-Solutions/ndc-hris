@@ -29,7 +29,7 @@
                     }
                 </style>
 
-                <div class="relative inline-block text-left">
+                <div class="relative inline-block text-left sm:mb-1">
                     <input type="search" id="search" wire:model.live="search" 
                     placeholder="Search..."
                     class="py-2 px-3 block w-full shadow-sm text-sm font-medium border-gray-400 
@@ -41,7 +41,7 @@
                 <div class="block sm:flex items-center">
 
                     <!-- Select Date -->
-                    <div class="mr-0 sm:mr-4 relative">
+                    <div class="mr-0 sm:mr-4 relative sm:mb-1">
                         <label for="date" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Select Date</label>
                         <input type="month" id="date" wire:model.live='date' value="{{ $date }}"
                         class="mb-0 mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
@@ -49,7 +49,7 @@
                             dark:text-gray-300 dark:bg-gray-800 mb-4 sm:mb-0">
                     </div>
 
-                    <!-- Sort Dropdown -->
+                    {{-- <!-- Sort Dropdown -->
                     <div class="mr-0 sm:mr-4">
                         <button wire:click="toggleDropdown"
                             class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
@@ -234,7 +234,21 @@
                                 </ul>
                             </div>
                         @endif
-                    </div>
+                    </div> --}}
+
+                    <!-- Save Payroll -->
+                    @if($hasPayroll == false)
+                        <div class="relative inline-block text-left mr-0 sm:mr-4">
+                            <button wire:click="recordPayroll"
+                                class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                                justify-center px-4 pt-2 pb-1.5 mb-4 sm:mb-0 text-sm font-medium tracking-wide 
+                                text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                                rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
+                                type="button">
+                                Save Payroll
+                            </button>
+                        </div>
+                    @endif
 
                     <!-- Export to Excel -->
                     <div class="relative inline-block text-left">
@@ -377,163 +391,165 @@
             <form wire:submit.prevent=''>
                 <div class="grid grid-cols-2 gap-4">
                     
-                    <div class="col-span-2">
-                        <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
-                        <input type="text" id="name" wire:model='name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                    </div>
-
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="employee_number" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Number</label>
-                        <input type="text" id="employee_number" wire:model='employee_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $employee_number }}</p>
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
-                        <input type="text" id="position" wire:model='position' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $position }}</p>
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="sg_step" class="block text-sm font-medium text-gray-700 dark:text-slate-400">SG - Step</label>
-                        <input type="text" id="sg_step" wire:model='sg_step' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $sg_step }}</p>
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="rate_per_month" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Rate per Month</label>
-                        <input type="number" step="0.01" id="rate_per_month" wire:model='rate_per_month' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $rate_per_month == 0 ? '-' : currency_format($rate_per_month) }}</p>
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="personal_economic_relief_allowance" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Personal Economic Relief Allowance</label>
-                        <input type="number" step="0.01" id="personal_economic_relief_allowance" wire:model='personal_economic_relief_allowance' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $personal_economic_relief_allowance == 0 ? '-' : currency_format($personal_economic_relief_allowance) }}</p>
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="gross_amount" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Gross Amount</label>
-                        <input type="number" step="0.01" id="gross_amount" wire:model='gross_amount' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $gross_amount == 0 ? '-' : currency_format($gross_amount) }}</p>
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="additional_gsis_premium" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Additional GSIS Premium</label>
-                        <input type="number" step="0.01" id="additional_gsis_premium" wire:model='additional_gsis_premium' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $additional_gsis_premium == 0 ? '-' : currency_format($additional_gsis_premium) }}</p>
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="lbp_salary_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">LBP Salary Loan</label>
-                        <input type="number" step="0.01" id="lbp_salary_loan" wire:model='lbp_salary_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $lbp_salary_loan == 0 ? '-' : currency_format($lbp_salary_loan) }}</p>
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="nycea_deductions" class="block text-sm font-medium text-gray-700 dark:text-slate-400">NYCEA Deductions</label>
-                        <input type="number" step="0.01" id="nycea_deductions" wire:model='nycea_deductions' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $nycea_deductions == 0 ? '-' : currency_format($nycea_deductions) }}</p>
                     </div>
     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="sc_membership" class="block text-sm font-medium text-gray-700 dark:text-slate-400">SC Membership</label>
-                        <input type="number" step="0.01" id="sc_membership" wire:model='sc_membership' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $sc_membership == 0 ? '-' : currency_format($sc_membership) }}</p>
                     </div>
     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="total_loans" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Total Loans</label>
-                        <input type="number" step="0.01" id="total_loans" wire:model='total_loans' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $total_loans == 0 ? '-' : currency_format($total_loans) }}</p>
                     </div>
     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="salary_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Salary Loan</label>
-                        <input type="number" step="0.01" id="salary_loan" wire:model='salary_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $salary_loan == 0 ? '-' : currency_format($salary_loan) }}</p>
                     </div>
     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="policy_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Policy Loan</label>
-                        <input type="number" step="0.01" id="policy_loan" wire:model='policy_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $policy_loan == 0 ? '-' : currency_format($policy_loan) }}</p>
                     </div>
     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="eal" class="block text-sm font-medium text-gray-700 dark:text-slate-400">EAL</label>
-                        <input type="number" step="0.01" id="eal" wire:model='eal' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $eal == 0 ? '-' : currency_format($eal) }}</p>
                     </div>
     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="emergency_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Emergency Loan</label>
-                        <input type="number" step="0.01" id="emergency_loan" wire:model='emergency_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $emergency_loan == 0 ? '-' : currency_format($emergency_loan) }}</p>
                     </div>
     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="mpl" class="block text-sm font-medium text-gray-700 dark:text-slate-400">MPL</label>
-                        <input type="number" step="0.01" id="mpl" wire:model='mpl' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $mpl == 0 ? '-' : currency_format($mpl) }}</p>
                     </div>
     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="housing_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Housing Loan</label>
-                        <input type="number" step="0.01" id="housing_loan" wire:model='housing_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $housing_loan == 0 ? '-' : currency_format($housing_loan) }}</p>
                     </div>
     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="ouli_prem" class="block text-sm font-medium text-gray-700 dark:text-slate-400">OULI Premium</label>
-                        <input type="number" step="0.01" id="ouli_prem" wire:model='ouli_prem' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $ouli_prem == 0 ? '-' : currency_format($ouli_prem) }}</p>
                     </div>
     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="gfal" class="block text-sm font-medium text-gray-700 dark:text-slate-400">GFAL</label>
-                        <input type="number" step="0.01" id="gfal" wire:model='gfal' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $gfal == 0 ? '-' : currency_format($gfal) }}</p>
                     </div>
     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="cpl" class="block text-sm font-medium text-gray-700 dark:text-slate-400">CPL</label>
-                        <input type="number" step="0.01" id="cpl" wire:model='cpl' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $cpl == 0 ? '-' : currency_format($cpl) }}</p>
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="pagibig_mpl" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Pag-Ibig MPL</label>
-                        <input type="number" step="0.01" id="pagibig_mpl" wire:model='pagibig_mpl' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $pagibig_mpl == 0 ? '-' : currency_format($pagibig_mpl) }}</p>
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="other_deduction_philheath_diff" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Other Deduction Philheath Differential</label>
-                        <input type="number" step="0.01" id="other_deduction_philheath_diff" wire:model='other_deduction_philheath_diff' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $other_deduction_philheath_diff == 0 ? '-' : currency_format($other_deduction_philheath_diff) }}</p>
                     </div>
 
                     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="life_retirement_insurance_premiums" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Life Retirement Insurance Premiums</label>
-                        <input type="number" step="0.01" id="life_retirement_insurance_premiums" wire:model='life_retirement_insurance_premiums' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $life_retirement_insurance_premiums == 0 ? '-' : currency_format($life_retirement_insurance_premiums) }}</p>
                     </div>
                     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="pagibig_contribution" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Pag-Ibig Contribution</label>
-                        <input type="number" step="0.01" id="pagibig_contribution" wire:model='pagibig_contribution' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $pagibig_contribution == 0 ? '-' : currency_format($pagibig_contribution) }}</p>
                     </div>
                     
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="w_holding_tax" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Withholding Tax</label>
-                        <input type="number" step="0.01" id="w_holding_tax" wire:model='w_holding_tax' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $w_holding_tax == 0 ? '-' : currency_format($w_holding_tax) }}</p>
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="philhealth" class="block text-sm font-medium text-gray-700 dark:text-slate-400">PhilHealth</label>
-                        <input type="number" step="0.01" id="philhealth" wire:model='philhealth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                        @error('philhealth') 
-                            <span class="text-red-500 text-sm">The philhealth is required!</span> 
-                        @enderror
+                        <p class="text-slate-800 dark:text-gray-200">{{ $philhealth == 0 ? '-' : currency_format($philhealth) }}</p>
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="total_deduction" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Total Deduction</label>
-                        <input type="number" step="0.01" id="total_deduction" wire:model='total_deduction' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ $total_deduction == 0 ? '-' : currency_format($total_deduction) }}</p>
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
                         <label for="net_amount_received" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Net Amount Received</label>
-                        <input type="number" step="0.01" id="net_amount_received" wire:model='net_amount_received' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <p class="text-slate-800 dark:text-gray-200">{{ currency_format($net_amount_received) }}</p>
                     </div>
 
-                    <div class="col-span-1">
-                        <label for="amount_due_first_half" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Amount Due First Half</label>
-                        <input type="number" step="0.01" id="amount_due_first_half" wire:model='amount_due_first_half' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
+                        <label for="amount_due_first_half" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
+                            Amount Due 
+                            ({{ $startDateFirstHalf ? \Carbon\Carbon::parse($startDateFirstHalf)->format('F') : '' }} 
+                            {{ $startDateFirstHalf ? \Carbon\Carbon::parse($startDateFirstHalf)->format('d') : '' }} - {{ $endDateFirstHalf ? \Carbon\Carbon::parse($endDateFirstHalf)->format('d') : '' }}
+                            {{ $startDateFirstHalf ? \Carbon\Carbon::parse($startDateFirstHalf)->format('Y') : '' }})
+                        </label>
+                        <p class="text-slate-800 dark:text-gray-200">{{ currency_format($amount_due_first_half) }}</p>
                     </div>
 
-                    <div class="col-span-1">
-                        <label for="amount_due_second_half" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Amount Due Second Half</label>
-                        <input type="number" step="0.01" id="amount_due_second_half" wire:model='amount_due_second_half' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    <div class="col-span-1 border-b border-slate-800 dark:border-gray-300">
+                        <label for="amount_due_second_half" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
+                            Amount Due 
+                            ({{ $startDateSecondHalf ? \Carbon\Carbon::parse($startDateSecondHalf)->format('F') : '' }} 
+                            {{ $startDateSecondHalf ? \Carbon\Carbon::parse($startDateSecondHalf)->format('d') : '' }} - {{ $endDateSecondHalf ? \Carbon\Carbon::parse($endDateSecondHalf)->format('d') : '' }}
+                            {{ $startDateSecondHalf ? \Carbon\Carbon::parse($startDateSecondHalf)->format('Y') : '' }})
+                        </label>
+                        <p class="text-slate-800 dark:text-gray-200">{{ currency_format($amount_due_second_half) }}</p>
                     </div>
 
                     {{-- Save and Cancel buttons --}}

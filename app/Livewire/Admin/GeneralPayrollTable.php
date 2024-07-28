@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Exports\GeneralPayrollExport;
-use App\Models\EmployeesDtr;
+use App\Models\EmployeesPayroll;
 use App\Models\GeneralPayroll;
 use App\Models\Payrolls;
 use App\Models\User;
@@ -90,6 +90,8 @@ class GeneralPayrollTable extends Component
     public $endDateFirstHalf;
     public $startDateSecondHalf;
     public $endDateSecondHalf;
+    public $hasPayroll = true;
+
 
     public function mount(){
         $this->employees = User::all();
@@ -116,35 +118,14 @@ class GeneralPayrollTable extends Component
                         'general_payroll.net_amount_received as total_amount_due', 
                         'general_payroll.amount_due_first_half as net_amount_due_first_half', 
                         'general_payroll.amount_due_second_half as net_amount_due_second_half')
+                    ->when($this->search, function ($query) {
+                        return $query->search(trim($this->search));
+                    })
                     ->paginate(10);
+                $this->hasPayroll = true;
             }else{
-                $payrollAggregates = DB::table('employees_payroll')
-                    ->select('user_id')
-                    ->selectRaw("SUM(CASE 
-                                    WHEN start_date >= ? AND end_date <= ? 
-                                    THEN net_amount_due 
-                                    ELSE 0 
-                                END) as net_amount_due_first_half", [$this->startDateFirstHalf, $this->endDateFirstHalf])
-                    ->selectRaw("SUM(CASE 
-                                    WHEN start_date >= ? AND end_date <= ? 
-                                    THEN net_amount_due 
-                                    ELSE 0 
-                                END) as net_amount_due_second_half", [$this->startDateSecondHalf, $this->endDateSecondHalf])
-                    ->selectRaw("SUM(net_amount_due) as total_amount_due")
-                    ->groupBy('user_id');
-        
-                // Join the aggregate results with the general_payroll table
-                $payrolls = Payrolls::when($this->search, function ($query) {
-                                    return $query->search(trim($this->search));
-                                })
-                                ->joinSub($payrollAggregates, 'payroll_aggregates', function ($join) {
-                                    $join->on('payrolls.user_id', '=', 'payroll_aggregates.user_id');
-                                })
-                                ->select('payrolls.*', 
-                                        'payroll_aggregates.net_amount_due_first_half', 
-                                        'payroll_aggregates.net_amount_due_second_half', 
-                                        'payroll_aggregates.total_amount_due')
-                                ->paginate(10);
+                $payrolls = $this->getGenPayroll();
+                $this->hasPayroll = false;
             }
         }
     
@@ -152,8 +133,44 @@ class GeneralPayrollTable extends Component
             'payrolls' => $payrolls,
         ]);
     }
-    
 
+    public function getGenPayroll(){
+        try{
+            $payrollAggregates = DB::table('employees_payroll')
+            ->select('user_id')
+            ->selectRaw("SUM(CASE 
+                            WHEN start_date >= ? AND end_date <= ? 
+                            THEN net_amount_due 
+                            ELSE 0 
+                        END) as net_amount_due_first_half", [$this->startDateFirstHalf, $this->endDateFirstHalf])
+            ->selectRaw("SUM(CASE 
+                            WHEN start_date >= ? AND end_date <= ? 
+                            THEN net_amount_due 
+                            ELSE 0 
+                        END) as net_amount_due_second_half", [$this->startDateSecondHalf, $this->endDateSecondHalf])
+            ->selectRaw("SUM(net_amount_due) as total_amount_due")
+            ->where('start_date', $this->startDateFirstHalf)
+            ->orWhere('end_date', $this->endDateSecondHalf)
+            ->groupBy('user_id');
+
+            // Join the aggregate results with the general_payroll table
+            $payrolls = Payrolls::when($this->search, function ($query) {
+                                return $query->search(trim($this->search));
+                            })
+                            ->joinSub($payrollAggregates, 'payroll_aggregates', function ($join) {
+                                $join->on('payrolls.user_id', '=', 'payroll_aggregates.user_id');
+                            })
+                            ->select('payrolls.*', 
+                                    'payroll_aggregates.net_amount_due_first_half', 
+                                    'payroll_aggregates.net_amount_due_second_half', 
+                                    'payroll_aggregates.total_amount_due')
+                            ->paginate(10);
+            return $payrolls;
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    
     public function toggleDropdown(){
         $this->sortColumn = !$this->sortColumn;
     }
@@ -181,6 +198,7 @@ class GeneralPayrollTable extends Component
     public function exportExcel(){
         $filters = [
             'search' => $this->search,
+            'date' => $this->date,
         ];
         $fileName = 'General Payroll.xlsx';
         return Excel::download(new GeneralPayrollExport($filters), $fileName);
@@ -190,7 +208,14 @@ class GeneralPayrollTable extends Component
         $this->payroll = true;
         $this->userId = $userId;
         try {
-            $payroll = GeneralPayroll::where('user_id', $userId)->first();
+            $carbonDate = Carbon::createFromFormat('Y-m', $this->date);
+            $date = $carbonDate->startOfMonth()->toDateString();
+
+            $payroll = Payrolls::where('user_id', $userId)->first();
+            $generalPayroll = GeneralPayroll::where('user_id', $userId)
+                                ->where('date', $date)
+                                ->first();
+                                
             if ($payroll) {
                 $this->name = $payroll->name;
                 $this->employee_number = $payroll->employee_number;
@@ -220,6 +245,33 @@ class GeneralPayrollTable extends Component
                 $this->w_holding_tax = $payroll->w_holding_tax;
                 $this->philhealth = $payroll->philhealth;
                 $this->total_deduction = $payroll->total_deduction;
+                if($generalPayroll){
+                    $this->net_amount_received = $generalPayroll->net_amount_received;
+                    $this->amount_due_first_half = $generalPayroll->amount_due_first_half;
+                    $this->amount_due_second_half = $generalPayroll->amount_due_second_half;
+                }else{
+                    $thisPayroll = EmployeesPayroll::where('user_id', $userId)
+                                ->selectRaw("SUM(CASE
+                                                WHEN start_date >= ? AND end_date <= ?
+                                                THEN net_amount_due
+                                                ELSE 0
+                                            END) as net_amount_due_first_half", [$this->startDateFirstHalf, $this->endDateFirstHalf])
+                                ->selectRaw("SUM(CASE
+                                                WHEN start_date >= ? AND end_date <= ?
+                                                THEN net_amount_due
+                                                ELSE 0
+                                            END) as net_amount_due_second_half", [$this->startDateSecondHalf, $this->endDateSecondHalf])
+                                ->selectRaw("SUM(net_amount_due) as total_amount_due")
+                                ->where(function ($query) {
+                                    $query->where('start_date', '>=', $this->startDateFirstHalf)
+                                        ->where('end_date', '<=', $this->endDateSecondHalf);
+                                })
+                                ->groupBy('user_id')
+                                ->first();
+                    $this->net_amount_received = $thisPayroll->total_amount_due;
+                    $this->amount_due_first_half = $thisPayroll->net_amount_due_first_half;
+                    $this->amount_due_second_half = $thisPayroll->net_amount_due_second_half;
+                }
             } else {
                 // If no payroll exists, you might want to reset all fields
                 $this->resetPayrollFields();
@@ -267,84 +319,69 @@ class GeneralPayrollTable extends Component
         
     }
 
-    public function getDTRForPayroll($startDate, $endDate, $employeeId = null){
+    public function recordPayroll(){
         try {
-            $query = EmployeesDtr::whereBetween('date', [$startDate, $endDate]);
+            if ($this->date) {
+                $carbonDate = Carbon::createFromFormat('Y-m', $this->date);
+                $startDateFirstHalf = $carbonDate->startOfMonth()->toDateString();
+                $endDateFirstHalf = $carbonDate->copy()->day(15)->toDateString();
+                $startDateSecondHalf = $carbonDate->copy()->day(16)->toDateString();
+                $endDateSecondHalf = $carbonDate->endOfMonth()->toDateString();
 
-            if ($employeeId) {
-                $query->where('user_id', $employeeId);
-            }
-
-            $dtrRecords = $query->orderBy('date')->get();
-
-            $payrollDTR = [];
-
-            foreach ($dtrRecords as $record) {
-                $employeeId = $record->user_id;
-                $date = $record->date;
-
-                if (!isset($payrollDTR[$employeeId])) {
-                    $payrollDTR[$employeeId] = [
-                        'total_days' => 0,
-                        'total_hours' => 0,
-                        'total_late' => 0,
-                        'total_overtime' => 0,
-                        'daily_records' => []
-                    ];
+                $payrollAggregates = DB::table('employees_payroll')
+                    ->select('user_id')
+                    ->selectRaw("SUM(CASE 
+                                    WHEN start_date >= ? AND end_date <= ? 
+                                    THEN net_amount_due 
+                                    ELSE 0 
+                                END) as net_amount_due_first_half", [$startDateFirstHalf, $endDateFirstHalf])
+                    ->selectRaw("SUM(CASE 
+                                    WHEN start_date >= ? AND end_date <= ? 
+                                    THEN net_amount_due 
+                                    ELSE 0 
+                                END) as net_amount_due_second_half", [$startDateSecondHalf, $endDateSecondHalf])
+                    ->selectRaw("SUM(net_amount_due) as total_amount_due")
+                    ->groupBy('user_id');
+        
+                // Join the aggregate results with the general_payroll table
+                $payrolls = Payrolls::joinSub($payrollAggregates, 'payroll_aggregates', function ($join) {
+                                    $join->on('payrolls.user_id', '=', 'payroll_aggregates.user_id');
+                                })
+                                ->select('payrolls.*', 
+                                        'payroll_aggregates.net_amount_due_first_half', 
+                                        'payroll_aggregates.net_amount_due_second_half', 
+                                        'payroll_aggregates.total_amount_due')
+                                ->get();
+    
+                foreach ($payrolls as $payroll) {
+                    $userId = $payroll->user_id;
+                        
+                    GeneralPayroll::create([
+                            'user_id' => $userId,
+                            'net_amount_received' => $payroll->total_amount_due,
+                            'amount_due_first_half' => $payroll->net_amount_due_first_half,
+                            'amount_due_second_half' => $payroll->net_amount_due_second_half,
+                            'date' => $startDateFirstHalf,
+                        ]
+                    );
                 }
-
-                $payrollDTR[$employeeId]['total_days']++;
-                $payrollDTR[$employeeId]['total_hours'] += $record->total_hours_endered;
-                $payrollDTR[$employeeId]['total_late'] += $record->late;
-                $payrollDTR[$employeeId]['total_overtime'] += $record->overtime;
-
-                $payrollDTR[$employeeId]['daily_records'][$date] = [
-                    'day_of_week' => $record->day_of_week,
-                    'location' => $record->location,
-                    'morning_in' => $record->morning_in,
-                    'morning_out' => $record->morning_out,
-                    'afternoon_in' => $record->afternoon_in,
-                    'afternoon_out' => $record->afternoon_out,
-                    'late' => $record->late,
-                    'overtime' => $record->overtime,
-                    'total_hours' => $record->total_hours_endered
-                ];
+    
+                $this->dispatch('notify', [
+                    'message' => 'General Payroll Saved!',
+                    'type' => 'success'
+                ]);
+            }else{
+                $this->dispatch('notify', [
+                    'message' => 'Select date!',
+                    'type' => 'info'
+                ]);
             }
-
-            return $payrollDTR;
         } catch (Exception $e) {
+            $this->dispatch('notify', [
+                'message' => 'Error: ' . $e->getMessage(),
+                'type' => 'error'
+            ]);
             throw $e;
-        }
-    }
-
-    public function processPayroll($startDate, $endDate){
-        $payrollData = $this->getDTRForPayroll($startDate, $endDate);
-
-        foreach ($payrollData as $employeeId => $dtrData) {
-            // Retrieve employee's base salary and other relevant information
-            $employee = User::find($employeeId);
-            $baseSalary = $employee->base_salary; // Assuming you have this field
-
-            // Calculate salary based on DTR data
-            $totalHours = $dtrData['total_hours'];
-            $totalLate = $dtrData['total_late'];
-            $totalOvertime = $dtrData['total_overtime'];
-
-            // Perform salary calculations here
-            // For example:
-            $salary = ($baseSalary / 160) * $totalHours; // Assuming 160 hours per month
-            $lateDeductions = $totalLate * ($baseSalary / 160 / 60); // Deduct per minute of late
-            $overtimePay = $totalOvertime * (($baseSalary / 160) * 1.25); // 1.25x pay for overtime
-
-            $grossPay = $salary + $overtimePay - $lateDeductions;
-
-            // Calculate deductions (taxes, benefits, etc.)
-            // ...
-
-            // Calculate net pay
-            // ...
-
-            // Store payroll results
         }
     }
 }
