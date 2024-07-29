@@ -12,23 +12,44 @@ class MyDocumentsTable extends Component
 {
     use WithFileUploads;
 
-    public $files = [];
+    public $file;
+    public $droppedFile;
     public $documentType = '';
     public $error = '';
     public $message = '';
     public $isUploading = false;
+    public $isDeleting = false; // Separate state for deleting
     public $confirmDeleteModal = false;
     public $documentToDelete = null;
 
     protected $rules = [
-        'files.*' => 'required|file|max:10240', // 10MB Max
+        'file' => 'required|file|max:10240', // 10MB Max
         'documentType' => 'required|string',
     ];
 
-    public function uploadDocuments()
+    protected $listeners = ['file-dropped' => 'handleDroppedFile'];
+
+    public function mount()
     {
-        $this->validate();
-        $this->isUploading = true;
+        $this->file = null;
+    }
+
+    public function handleDroppedFile($fileData)
+    {
+        $this->droppedFile = $fileData;
+        $this->dispatch('notify', ['message' => 'File dropped: ' . substr($this->droppedFile, 0, 20) . '...', 'type' => 'success']);
+    }
+
+    public function uploadDocument()
+    {
+        if ($this->droppedFile) {
+            $this->file = $this->droppedFile;
+        }
+
+        $this->validate([
+            'file' => 'required',
+            'documentType' => 'required|string',
+        ]);
 
         if ($this->documentAlreadyUploaded()) {
             $this->error = 'Document type "' . $this->documentType . '" has already been uploaded.';
@@ -36,18 +57,40 @@ class MyDocumentsTable extends Component
             return;
         }
 
-        foreach ($this->files as $file) {
-            $this->processFileUpload($file);
+        $this->isUploading = true;
+
+        try {
+            if ($this->file instanceof \Livewire\TemporaryUploadedFile) {
+                $fileName = $this->file->getClientOriginalName();
+                $filePath = $this->file->storeAs('public/upload/employee_document', $fileName);
+                $mimeType = $this->file->getMimeType();
+                $fileSize = $this->file->getSize();
+            } else {
+                $fileData = base64_decode(preg_replace('#^data:.*?;base64,#', '', $this->file));
+                $fileName = 'dropped_file_' . time() . '.txt';
+                $filePath = 'public/upload/employee_document/' . $fileName;
+                Storage::put($filePath, $fileData);
+                $mimeType = mime_content_type(Storage::path($filePath));
+                $fileSize = strlen($fileData);
+            }
+
+            EmployeeDocument::create([
+                'user_id' => Auth::id(),
+                'document_type' => $this->documentType,
+                'file_name' => $fileName,
+                'file_path' => $filePath,
+                'mime_type' => $mimeType,
+                'file_size' => $fileSize,
+            ]);
+
+            $this->reset(['file', 'droppedFile', 'documentType']);
+            $this->dispatch('notify', ['message' => 'Document uploaded successfully!', 'type' => 'success']);
+        } catch (\Exception $e) {
+            $this->error = 'Error uploading document: ' . $e->getMessage();
+        } finally {
+            $this->isUploading = false;
         }
 
-        $this->reset(['files', 'documentType']);
-        $this->dispatch('notify', [
-            'message' => 'Document uploaded successfully!',
-            'type' => 'success'
-        ]);
-        $this->isUploading = false;
-
-        // Dispatch an event to refresh documents
         $this->dispatch('refreshDocuments');
     }
 
@@ -58,30 +101,6 @@ class MyDocumentsTable extends Component
             ->exists();
     }
 
-    protected function processFileUpload($file)
-    {
-        try {
-            if (!$file->isValid()) {
-                throw new \Exception('One or more files are invalid.');
-            }
-
-            $fileName = $file->getClientOriginalName();
-            $filePath = $file->storeAs('public/upload/employee_document', $fileName);
-
-            EmployeeDocument::create([
-                'user_id' => Auth::id(),
-                'document_type' => $this->documentType,
-                'file_name' => $fileName,
-                'file_path' => $filePath,
-                'mime_type' => $file->getMimeType(),
-                'file_size' => $file->getSize(),
-            ]);
-        } catch (\Exception $e) {
-            $this->error = 'Error uploading document: ' . $e->getMessage();
-            $this->isUploading = false;
-        }
-    }
-
     public function confirmDelete($documentId)
     {
         $this->documentToDelete = $documentId;
@@ -90,26 +109,23 @@ class MyDocumentsTable extends Component
 
     public function deleteDocument()
     {
+        $this->isDeleting = true; // Set deleting state to true
+
         $document = EmployeeDocument::find($this->documentToDelete);
 
         if ($document && $document->user_id === Auth::id()) {
             Storage::delete($document->file_path);
             $document->delete();
-            $this->dispatch('notify', [
-                'message' => 'Document deleted successfully!',
-                'type' => 'success'
-            ]);
+            $this->dispatch('notify', ['message' => 'Document deleted successfully!', 'type' => 'success']);
         } else {
-            $this->dispatch('notify', [
-                'message' => 'Document not found!',
-                'type' => 'error'
-            ]);
+            $this->dispatch('notify', ['message' => 'Document not found or unauthorized!', 'type' => 'error']);
         }
 
+        $this->isDeleting = false; // Reset deleting state after process
         $this->confirmDeleteModal = false;
         $this->documentToDelete = null;
 
-        // Dispatch an event to refresh documents
+        // Refresh the documents list
         $this->dispatch('refreshDocuments');
     }
 
@@ -141,6 +157,7 @@ class MyDocumentsTable extends Component
             'documents' => $documents,
             'availableDocumentTypes' => $availableDocumentTypes,
             'isUploading' => $this->isUploading,
+            'isDeleting' => $this->isDeleting, // Pass the new property to the view
             'confirmDeleteModal' => $this->confirmDeleteModal,
         ]);
     }

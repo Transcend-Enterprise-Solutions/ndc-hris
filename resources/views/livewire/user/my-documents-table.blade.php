@@ -5,22 +5,60 @@
                 <h1 class="text-lg font-bold text-center text-black dark:text-white">My Documents</h1>
             </div>
 
-
             <!-- File Upload Area -->
-            <div class="mt-4 p-6 border-2 border-dashed border-gray-300 rounded-lg text-center">
-                <label for="file-upload" class="cursor-pointer">
-                    <span class="text-blue-600 hover:underline">Choose files</span>
-                </label>
-                <input id="file-upload" type="file" multiple wire:model="files" class="hidden">
-
-                @if ($files)
-                    <ul class="mt-4 text-left">
-                        @foreach ($files as $file)
-                            <li>{{ $file->getClientOriginalName() }}</li>
-                        @endforeach
-                    </ul>
-                @endif
+            <div
+                x-data="{
+                    dragOver: false,
+                    handleDrop(event) {
+                        event.preventDefault();
+                        this.dragOver = false;
+                        const file = event.dataTransfer.files[0];
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            @this.call('handleDroppedFile', e.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }"
+                x-on:dragover.prevent="dragOver = true"
+                x-on:dragleave.prevent="dragOver = false"
+                x-on:drop.prevent="handleDrop($event)"
+                class="mt-4 flex w-full max-w-xl mx-auto text-center flex-col gap-1"
+            >
+                <span class="w-fit pl-0.5 text-sm text-slate-700 dark:text-slate-300">Upload Document</span>
+                <div
+                    class="flex w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 p-8 text-slate-700 dark:border-slate-700 dark:text-slate-300"
+                    :class="{ 'bg-slate-100 dark:bg-slate-700': dragOver }"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="w-12 h-12 opacity-75">
+                        <path fill-rule="evenodd" d="M10.5 3.75a6 6 0 0 0-5.98 6.496A5.25 5.25 0 0 0 6.75 20.25H18a4.5 4.5 0 0 0 2.206-8.423 3.75 3.75 0 0 0-4.133-4.303A6.001 6.001 0 0 0 10.5 3.75Zm2.03 5.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l1.72-1.72v4.94a.75.75 0 0 0 1.5 0v-4.94l1.72 1.72a.75.75 0 1 0 1.06-1.06l-3-3Z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="group">
+                        <label for="fileInput" class="cursor-pointer font-medium text-violet-700 group-focus-within:underline dark:text-blue-600">
+                            <input id="fileInput" type="file" wire:model="file" class="sr-only" aria-describedby="validFileFormats" />
+                            Browse
+                        </label>
+                        or drag and drop here
+                    </div>
+                    <small id="validFileFormats">Any file type - Max 10MB</small>
+                </div>
             </div>
+
+            @if ($file)
+                <div class="mt-4 text-left">
+                    <p>Selected File: {{ is_object($file) ? $file->getClientOriginalName() : 'File selected' }}</p>
+                </div>
+            @endif
+
+            @if ($droppedFile)
+                <div class="mt-4 text-left">
+                    <p>Dropped File: {{ substr($droppedFile, 0, 20) }}...</p>
+                </div>
+            @endif
+
+            @if ($error)
+                <div class="mt-4 text-red-500">{{ $error }}</div>
+            @endif
 
             <!-- Document Type Selection -->
             <select wire:model="documentType" class="mt-4 w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700">
@@ -31,8 +69,9 @@
             </select>
 
             <!-- Upload Button -->
-            <button wire:click="uploadDocuments" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full">
-                Upload Documents
+            <button wire:click="uploadDocument" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full" wire:loading.attr="disabled">
+                <span wire:loading.remove>Upload Document</span>
+                <span wire:loading>Uploading...</span>
             </button>
 
             <!-- Existing Documents -->
@@ -89,10 +128,3 @@
         </div>
     </div>
 </div>
-<script>
-    window.addEventListener('refreshDocuments', event => {
-        Livewire.start(); // This will refresh the Livewire component
-    });
-</script>
-
-
