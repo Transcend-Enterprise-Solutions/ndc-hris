@@ -53,7 +53,7 @@
                         <th class="px-4 py-2 text-center">Hours Rendered</th>
                         <th class="px-4 py-2 text-center">Remarks</th>
                     </tr>
-                    <tr class="whitespace-nowrap bg-gray-100 dark:bg-gray-600">
+                    <tr class="whitespace-nowrap">
                         <th colspan="5"></th>
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
@@ -62,6 +62,7 @@
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
                         <th class="px-4 py-2 text-center">(HH:MM)</th>
+                        <th class="px-4 py-2 text-center"></th>
                     </tr>
                 </thead>
                 <tbody>

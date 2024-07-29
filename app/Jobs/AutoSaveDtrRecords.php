@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\DTRSchedule;
 use App\Models\EmployeesDtr;
 use App\Models\Holiday;
+use App\Models\LeaveApplication;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -43,6 +44,14 @@ class AutoSaveDtrRecords implements ShouldQueue
                     ->orderBy('punch_time')
                     ->get();
 
+                $approvedLeaves = LeaveApplication::where('user_id', $user->id)
+                    ->where('status', 'approved')
+                    ->where(function ($query) use ($startDate, $endDate) {
+                        $query->whereBetween('start_date', [$startDate, $endDate])
+                            ->orWhereBetween('end_date', [$startDate, $endDate]);
+                    })
+                    ->get();
+
                 echo "Total transactions found for user {$user->emp_code}: " . $transactions->count() . "\n";
                 Log::info("Total transactions found for user {$user->emp_code}: " . $transactions->count());
 
@@ -58,7 +67,7 @@ class AutoSaveDtrRecords implements ShouldQueue
                     echo "Transactions for this date: " . $dateTransactions->count() . "\n";
                     Log::info("Transactions for this date: " . $dateTransactions->count());
 
-                    $calculatedData = $this->calculateTimeRecords($dateTransactions, $user->emp_code, $dateString);
+                    $calculatedData = $this->calculateTimeRecords($dateTransactions, $user->emp_code, $dateString, $approvedLeaves);
                     echo "Calculated data for user {$user->emp_code} on {$dateString}: " . json_encode($calculatedData) . "\n";
                     Log::info("Calculated data for user {$user->emp_code} on {$dateString}: " . json_encode($calculatedData));
 
@@ -87,7 +96,7 @@ class AutoSaveDtrRecords implements ShouldQueue
         }
     }
 
-    private function calculateTimeRecords($transactions, $empCode, $date)
+    private function calculateTimeRecords($transactions, $empCode, $date, $approvedLeaves)
     {
         $carbonDate = Carbon::parse($date);
         $dayOfWeek = $carbonDate->format('l');
@@ -133,6 +142,26 @@ class AutoSaveDtrRecords implements ShouldQueue
                 'overtime' => '00:00',
                 'total_hours_rendered' => '08:00',
                 'remarks' => 'Holiday',
+            ];
+        }
+
+        // Check if the date is within an approved leave period
+        $isOnLeave = $approvedLeaves->contains(function ($leave) use ($carbonDate) {
+            return $carbonDate->between(Carbon::parse($leave->start_date), Carbon::parse($leave->end_date));
+        });
+
+        if ($isOnLeave) {
+            return [
+                'day_of_week' => $dayOfWeek,
+                'location' => $location,
+                'morning_in' => null,
+                'morning_out' => null,
+                'afternoon_in' => null,
+                'afternoon_out' => null,
+                'late' => '00:00',
+                'overtime' => '00:00',
+                'total_hours_rendered' => '00:00',
+                'remarks' => 'Leave',
             ];
         }
 
