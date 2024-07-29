@@ -30,6 +30,9 @@ class GeneralPayrollExport implements FromCollection, WithHeadings
 
     public function collection(){
         $formatCurrency = function($value) {
+            if($value == 0 || $value == null){
+                return "-";
+            }
             return '₱ ' . number_format((float)$value, 2, '.', ',');
         };
 

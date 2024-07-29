@@ -227,6 +227,22 @@
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                 No. of Days Covered
                                             </th>
+                                            @if($weekdayRegularHolidays)
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Regular Holiday/s
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Regular Holiday/s (Amount)
+                                                </th>
+                                            @endif
+                                            @if($weekdaySpecialHolidays)
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Special Holiday/s
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Special Holiday/s (Amount)
+                                                </th>
+                                            @endif
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                 Gross Salary
                                             </th>
@@ -272,24 +288,39 @@
                                         @foreach($payrolls as $payroll)
                                             <tr class="text-neutral-800 dark:text-neutral-200">
                                                 @foreach($columns as $column)
-                                                    <td class="px-5 py-4 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium whitespace-nowrap">
-                                                        @if(in_array($column, [
-                                                            'daily_salary_rate',
-                                                            'gross_salary',
-                                                            'absences_amount',
-                                                            'late_undertime_hours_amount',
-                                                            'late_undertime_mins_amount',
-                                                            'gross_salary_less',
-                                                            'withholding_tax',
-                                                            'nycempc',
-                                                            'total_deductions',
-                                                            'net_amount_due',
-                                                        ]))
-                                                            {{ currency_format($payroll[$column]) }}
-                                                        @else
-                                                            {{ $payroll[$column] ?? '' }}
-                                                        @endif
-                                                    </td>
+                                                @if(!in_array($column, [
+                                                    'regular_holidays_amount',
+                                                    'regular_holidays',
+                                                    'special_holidays_amount',
+                                                    'special_holidays'
+                                                ]) || (isset($payroll[$column]) && $payroll[$column] != 0))
+                                                        <td class="px-5 py-4 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium whitespace-nowrap">
+                                                            @if(in_array($column, [
+                                                                'daily_salary_rate',
+                                                                'gross_salary',
+                                                                'absences_amount',
+                                                                'late_undertime_hours_amount',
+                                                                'late_undertime_mins_amount',
+                                                                'regular_holidays_amount',
+                                                                'special_holidays_amount',
+                                                                'gross_salary_less',
+                                                                'withholding_tax',
+                                                                'nycempc',
+                                                                'total_deductions',
+                                                                'net_amount_due',
+                                                            ]))
+                                                                {{ currency_format($payroll[$column]) }}
+                                                            @elseif(in_array($column, [
+                                                                    'absences_days',
+                                                                    'late_undertime_hours',
+                                                                    'late_undertime_mins',
+                                                                ]))
+                                                                {{ zero_checker($payroll[$column]) }}
+                                                            @else
+                                                                {{ $payroll[$column] ?? '' }}
+                                                            @endif
+                                                        </td>
+                                                    @endif
                                                 @endforeach
                                                 <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-gray-100 dark:bg-gray-900">
                                                     <button wire:click="sendPaylip" class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide hover:text-blue-600 focus:outline-none">
