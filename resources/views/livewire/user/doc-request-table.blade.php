@@ -1,9 +1,6 @@
 <div class="w-full flex justify-center">
     <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
         <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Request a Document</h1>
-
-
-
         <!-- Document Type Selection -->
         <select wire:model="documentType" class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700 mb-4">
             <option value="" selected>Select document type</option>

@@ -1,11 +1,10 @@
 <div>
     <div class="w-full">
         <div class="flex justify-center w-full">
-            <div class="overflow-x-auto w-full bg-white dark:bg-gray-800 rounded-2xl p-3 shadow">
+            <div class="overflow-x-auto w-full bg-white dark:bg-gray-800 rounded-2xl px-6 shadow ">
                 <div class="pt-4 pb-4">
                     <h1 class="text-lg font-bold text-center text-black dark:text-white">My Documents</h1>
                 </div>
-
                 <!-- File Upload Area -->
                 <div
                     x-data="{
@@ -69,7 +68,7 @@
                             </label>
                             or drag and drop here
                         </div>
-                        <small id="validFileFormats">PDF files only - Max 10MB</small>
+                        <small id="validFileFormats">PDF files only - Max 5MB</small>
                     </div>
 
                     <!-- Remove File Button -->

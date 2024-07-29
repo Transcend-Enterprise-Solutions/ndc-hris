@@ -24,7 +24,7 @@ class MyDocumentsTable extends Component
     public $fileSelected = false;
 
     protected $rules = [
-        'file' => 'required|file|mimes:pdf|max:10240', // 10MB Max, PDF only
+        'file' => 'required|file|mimes:pdf|max:5020',
         'documentType' => 'required|string',
     ];
 
@@ -47,7 +47,6 @@ class MyDocumentsTable extends Component
         if ($this->droppedFile) {
             $this->file = $this->droppedFile;
         }
-
         $this->validate([
             'file' => 'required',
             'documentType' => 'required|string',
@@ -145,14 +144,12 @@ class MyDocumentsTable extends Component
             'employment_cert' => 'Certificate of Employment',
             'service_record' => 'Service Record',
         ];
-
         $uploadedDocumentTypes = EmployeeDocument::where('user_id', Auth::id())
             ->pluck('document_type')
             ->toArray();
 
         return array_diff_key($allDocumentTypes, array_flip($uploadedDocumentTypes));
     }
-
     public function render()
     {
         $documents = EmployeeDocument::where('user_id', Auth::id())->get();
