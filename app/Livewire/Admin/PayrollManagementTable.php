@@ -128,7 +128,7 @@ class PayrollManagementTable extends Component
         $this->editPayroll = true;
         $this->userId = $userId;
         try {
-            $payroll = GeneralPayroll::where('user_id', $userId)->first();
+            $payroll = Payrolls::where('user_id', $userId)->first();
             if ($payroll) {
                 $this->name = $payroll->name;
                 $this->employee_number = $payroll->employee_number;

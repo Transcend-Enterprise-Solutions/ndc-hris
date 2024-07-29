@@ -100,7 +100,20 @@ class PayrollTable extends Component
                 // Calculate working days in the covered period
                 $totalDays = $startDate->diffInDaysFiltered(function(Carbon $date) {
                     return !$date->isWeekend();
-                }, $endDate) + 1; // Include both start and end dates
+                }, $endDate) + 1;
+
+                // Check if the start date is from 16th to end of month
+                $isSecondSemiMonthlyPay = $startDate->day >= 16 || $endDate->isLastOfMonth();
+
+                // Get the first day of the month
+                $firstDayOfMonth = $startDate->copy()->startOfMonth();
+
+                $totalDeductions = 0;
+                $withholdingTax = 0;
+                $newTotalDeduction = 0;
+                $deductionBalance = 0;
+                $nycempc = 0;
+                $netAmountDue = 0;
     
                 foreach ($payrollsAll as $payrollRecord) {
                     $userId = $payrollRecord->user_id;
@@ -108,47 +121,49 @@ class PayrollTable extends Component
                     $dtrData = $payrollDTR[$userId] ?? null;
     
                     if (!$dtrData) {
-                        continue; // Skip if no DTR data for this user
+                        continue;
                     }
-    
+
                     $presentDays = count($dtrData['daily_records']);
                     $absentDays = $totalDays - $presentDays;
-    
-                    // New calculations
+                    
+                    $totalHoursRendered = $dtrData['total_hours'] / 60;
+                    $totalDaysRendered = $totalHoursRendered / 8; 
+                    
                     $dailySalaryRate = $payrollRecord->rate_per_month / $totalWorkingDaysInMonth;
                     $grossSalary = $dailySalaryRate * $totalDays;
                     
-                    $deductionPercentage = $totalDays / $totalWorkingDaysInMonth;
-                    $totalDeductions = $payrollRecord->total_deduction * $deductionPercentage;
-                    $withholdingTax = $payrollRecord->w_holding_tax * $deductionPercentage;
-    
                     $absentAmount = $absentDays * $dailySalaryRate;
-    
+
                     $lateUndertimeHours = floor($dtrData['total_late'] / 60);
                     $lateUndertimeMins = $dtrData['total_late'] % 60;
+                    $lateUndertimeHoursAmount = $lateUndertimeHours * ($dailySalaryRate / 8);
+                    $lateUndertimeMinsAmount = $lateUndertimeMins * ($dailySalaryRate / 480);
     
-                    $lateUndertimeHoursAmount = $lateUndertimeHours * ($dailySalaryRate / 8); // Assuming 8-hour workday
-                    $lateUndertimeMinsAmount = $lateUndertimeMins * ($dailySalaryRate / 480); // 480 minutes in a workday
+                    // Gross Salary less
+                    $grossSalaryLess = $grossSalary - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount - $absentAmount;
     
-                    $grossSalaryLess = $grossSalary - $absentAmount - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount;
-
-                    // Deduct withholding tax
-                    $grossSalaryLessTax = $grossSalaryLess - $withholdingTax;
-
-                    // Deduct NYCEMPC
-                    $grossSalaryLessNYCEMPC = $grossSalaryLessTax - ($payrollRecord->nycea_deductions * $deductionPercentage);
-
-                    // Ensure net amount is not negative
-                    $netAmountDue = max(0, $grossSalaryLessTax - $grossSalaryLessNYCEMPC);
-
-                    $net_amount_due = 0;
-
-                    if ($grossSalaryLessNYCEMPC < $totalDeductions) {
-                        $totalDeductions = $grossSalaryLessNYCEMPC;
-                        $net_amount_due = $grossSalaryLessNYCEMPC - $totalDeductions;
+                    // Calculate withholding tax based on rendered days
+                    if ($isSecondSemiMonthlyPay) {
+                        $withholdingTax = $payrollRecord->w_holding_tax;
+                        // $withholdingTax = $payrollRecord->w_holding_tax * ($totalDaysRendered / $totalWorkingDaysInMonth);
+                        // dd( $payrollRecord->w_holding_tax . " * " . "(" . $totalDaysRendered . "/" . $totalWorkingDaysInMonth . ") = " . $withholdingTax);
+                        
+                        $totalDeductions = $payrollRecord->total_deduction;
+                        $nycempc = $payrollRecord->nycea_deductions;
+    
+                        // Calculate remaining deductions
+                        $newTotalDeduction = $totalDeductions + $nycempc;
+    
+                        if($grossSalaryLess < $newTotalDeduction) {
+                            $deductionBalance = $newTotalDeduction - $grossSalaryLess;
+                            $netAmountDue = 0;
+                        } else {
+                            $netAmountDue = $grossSalaryLess - $newTotalDeduction;
+                        }
+                    }else{
+                        $netAmountDue = $grossSalaryLess;
                     }
-
-                    $net_amount_due = $grossSalaryLessNYCEMPC - $totalDeductions;
                         
                     EmployeesPayroll::create([
                             'user_id' => $userId,
@@ -167,9 +182,9 @@ class PayrollTable extends Component
                             'late_undertime_mins_amount' => $lateUndertimeMinsAmount,
                             'gross_salary_less' => $grossSalaryLess,
                             'withholding_tax' => $withholdingTax,
-                            'nycempc' => $payrollRecord->nycea_deductions * $deductionPercentage,
+                            'nycempc' => $payrollRecord->nycea_deductions,
                             'total_deductions' => $totalDeductions,
-                            'net_amount_due' => $net_amount_due,
+                            'net_amount_due' => $netAmountDue,
                             'start_date' => $this->startDate,
                             'end_date' => $this->endDate,
                         ]
@@ -207,59 +222,74 @@ class PayrollTable extends Component
                 $totalWorkingDaysInMonth = Carbon::parse($startDate)->daysInMonth - 
                     Carbon::parse($startDate)->daysInMonth * 2 / 7;
                 $totalWorkingDaysInMonth = round($totalWorkingDaysInMonth);
-
+    
                 $totalDays = $startDate->diffInDaysFiltered(function(Carbon $date) {
                     return !$date->isWeekend();
                 }, $endDate) + 1;
+    
+                // Check if the start date is from 16th to end of month
+                $isSecondSemiMonthlyPay = $startDate->day >= 16 || $endDate->isLastOfMonth();
+    
+                // Get the first day of the month
+                $firstDayOfMonth = $startDate->copy()->startOfMonth();
 
+                $totalDeductions = 0;
+                $withholdingTax = 0;
+                $newTotalDeduction = 0;
+                $deductionBalance = 0;
+                $nycempc = 0;
+                $netAmountDue = 0;
+    
                 foreach ($payrollsAll as $payrollsAllRecord) {
                     $userId = $payrollsAllRecord->user_id;
                     $user = User::where('id', $userId)->first();
                     $dtrData = $payrollDTR[$userId] ?? null;
-
+    
                     if (!$dtrData) {
                         continue;
                     }
 
                     $presentDays = count($dtrData['daily_records']);
                     $absentDays = $totalDays - $presentDays;
-
+                    
+                    $totalHoursRendered = $dtrData['total_hours'] / 60;
+                    $totalDaysRendered = $totalHoursRendered / 8; 
+                    
                     $dailySalaryRate = $payrollsAllRecord->rate_per_month / $totalWorkingDaysInMonth;
                     $grossSalary = $dailySalaryRate * $totalDays;
                     
-                    $deductionPercentage = $totalDays / $totalWorkingDaysInMonth;
-                    $totalDeductions = $payrollsAllRecord->total_deduction * $deductionPercentage;
-                    $withholdingTax = $payrollsAllRecord->w_holding_tax * $deductionPercentage;
-
                     $absentAmount = $absentDays * $dailySalaryRate;
 
                     $lateUndertimeHours = floor($dtrData['total_late'] / 60);
                     $lateUndertimeMins = $dtrData['total_late'] % 60;
-
                     $lateUndertimeHoursAmount = $lateUndertimeHours * ($dailySalaryRate / 8);
                     $lateUndertimeMinsAmount = $lateUndertimeMins * ($dailySalaryRate / 480);
-
-                    $grossSalaryLess = $grossSalary - $absentAmount - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount;
-
-                    // Deduct withholding tax
-                    $afterTax = $grossSalaryLess - $withholdingTax;
-
-                    // Deduct NYCEMPC
-                    $nycempc = $payrollsAllRecord->nycea_deductions * $deductionPercentage;
-                    $afterNYCEMPC = $afterTax - $nycempc;
-
-                    // Calculate remaining deductions
-                    $remainingDeductions = $totalDeductions - ($withholdingTax + $nycempc);
-
-                    // Ensure net amount is not negative
-                    $netAmountDue = max(0, $afterNYCEMPC - $remainingDeductions);
-
-                    // Adjust total deductions if necessary
-                    $adjustedTotalDeductions = $totalDeductions;
-                    if ($afterNYCEMPC < $remainingDeductions) {
-                        $adjustedTotalDeductions = $afterNYCEMPC + $withholdingTax + $nycempc;
+    
+                    // Gross Salary less
+                    $grossSalaryLess = $grossSalary - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount - $absentAmount;
+    
+                    // Calculate withholding tax based on rendered days
+                    if ($isSecondSemiMonthlyPay) {
+                        $withholdingTax = $payrollsAllRecord->w_holding_tax;
+                        // $withholdingTax = $payrollsAllRecord->w_holding_tax * ($totalDaysRendered / $totalWorkingDaysInMonth);
+                        // dd( $payrollsAllRecord->w_holding_tax . " * " . "(" . $totalDaysRendered . "/" . $totalWorkingDaysInMonth . ") = " . $withholdingTax);
+                        
+                        $totalDeductions = $payrollsAllRecord->total_deduction;
+                        $nycempc = $payrollsAllRecord->nycea_deductions;
+    
+                        // Calculate remaining deductions
+                        $newTotalDeduction = $totalDeductions + $nycempc;
+    
+                        if($grossSalaryLess < $newTotalDeduction) {
+                            $deductionBalance = $newTotalDeduction - $grossSalaryLess;
+                            $netAmountDue = 0;
+                        } else {
+                            $netAmountDue = $grossSalaryLess - $newTotalDeduction;
+                        }
+                    }else{
+                        $netAmountDue = $grossSalaryLess;
                     }
-
+    
                     $payrolls->push([
                         'name' => $user->name,
                         'employee_number' => $payrollsAllRecord->employee_number,
@@ -277,13 +307,13 @@ class PayrollTable extends Component
                         'gross_salary_less' => $grossSalaryLess,
                         'withholding_tax' => $withholdingTax,
                         'nycempc' => $nycempc,
-                        'total_deductions' => $adjustedTotalDeductions,
+                        'total_deductions' => $newTotalDeduction,
                         'net_amount_due' => $netAmountDue,
                         'start_date' => $this->startDate,
                         'end_date' => $this->endDate,
                     ]);
                 }
-
+    
                 // Apply search filter
                 if ($this->search) {
                     $payrolls = $payrolls->filter(function ($payroll) {
@@ -291,7 +321,7 @@ class PayrollTable extends Component
                             Str::contains(strtolower($payroll['employee_number']), strtolower($this->search));
                     });
                 }
-
+    
                 return $payrolls;
             }
         } catch (Exception $e) {
@@ -402,6 +432,7 @@ class PayrollTable extends Component
     public function exportPayroll(){
         try {
             if ($this->startDate && $this->endDate) {
+                $this->recordPayroll();
                 $startDate = Carbon::parse($this->startDate);
                 $endDate = Carbon::parse($this->endDate);
                 
