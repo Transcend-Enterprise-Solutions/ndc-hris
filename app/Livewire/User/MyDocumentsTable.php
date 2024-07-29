@@ -18,12 +18,13 @@ class MyDocumentsTable extends Component
     public $error = '';
     public $message = '';
     public $isUploading = false;
-    public $isDeleting = false; // Separate state for deleting
+    public $isDeleting = false;
     public $confirmDeleteModal = false;
     public $documentToDelete = null;
+    public $fileSelected = false;
 
     protected $rules = [
-        'file' => 'required|file|max:10240', // 10MB Max
+        'file' => 'required|file|mimes:pdf|max:10240', // 10MB Max, PDF only
         'documentType' => 'required|string',
     ];
 
@@ -37,7 +38,8 @@ class MyDocumentsTable extends Component
     public function handleDroppedFile($fileData)
     {
         $this->droppedFile = $fileData;
-        $this->dispatch('notify', ['message' => 'File dropped: ' . substr($this->droppedFile, 0, 20) . '...', 'type' => 'success']);
+        $this->fileSelected = true;
+        $this->dispatch('notify', ['message' => 'Document selected successfully!', 'type' => 'success']);
     }
 
     public function uploadDocument()
@@ -60,14 +62,14 @@ class MyDocumentsTable extends Component
         $this->isUploading = true;
 
         try {
-            if ($this->file instanceof \Livewire\TemporaryUploadedFile) {
+            if ($this->file instanceof \Illuminate\Http\UploadedFile) {
                 $fileName = $this->file->getClientOriginalName();
                 $filePath = $this->file->storeAs('public/upload/employee_document', $fileName);
                 $mimeType = $this->file->getMimeType();
                 $fileSize = $this->file->getSize();
             } else {
                 $fileData = base64_decode(preg_replace('#^data:.*?;base64,#', '', $this->file));
-                $fileName = 'dropped_file_' . time() . '.txt';
+                $fileName = 'document_' . time() . '.pdf'; // Ensure filename has PDF extension
                 $filePath = 'public/upload/employee_document/' . $fileName;
                 Storage::put($filePath, $fileData);
                 $mimeType = mime_content_type(Storage::path($filePath));
@@ -84,14 +86,20 @@ class MyDocumentsTable extends Component
             ]);
 
             $this->reset(['file', 'droppedFile', 'documentType']);
+            $this->fileSelected = false;
             $this->dispatch('notify', ['message' => 'Document uploaded successfully!', 'type' => 'success']);
+            $this->dispatch('documentUploaded');
         } catch (\Exception $e) {
             $this->error = 'Error uploading document: ' . $e->getMessage();
         } finally {
             $this->isUploading = false;
         }
+    }
 
-        $this->dispatch('refreshDocuments');
+    public function clearDroppedFile()
+    {
+        $this->droppedFile = null;
+        $this->fileSelected = false;
     }
 
     protected function documentAlreadyUploaded()
@@ -109,7 +117,7 @@ class MyDocumentsTable extends Component
 
     public function deleteDocument()
     {
-        $this->isDeleting = true; // Set deleting state to true
+        $this->isDeleting = true;
 
         $document = EmployeeDocument::find($this->documentToDelete);
 
@@ -121,12 +129,9 @@ class MyDocumentsTable extends Component
             $this->dispatch('notify', ['message' => 'Document not found or unauthorized!', 'type' => 'error']);
         }
 
-        $this->isDeleting = false; // Reset deleting state after process
+        $this->isDeleting = false;
         $this->confirmDeleteModal = false;
         $this->documentToDelete = null;
-
-        // Refresh the documents list
-        $this->dispatch('refreshDocuments');
     }
 
     public function availableDocumentTypes()
@@ -157,7 +162,7 @@ class MyDocumentsTable extends Component
             'documents' => $documents,
             'availableDocumentTypes' => $availableDocumentTypes,
             'isUploading' => $this->isUploading,
-            'isDeleting' => $this->isDeleting, // Pass the new property to the view
+            'isDeleting' => $this->isDeleting,
             'confirmDeleteModal' => $this->confirmDeleteModal,
         ]);
     }
