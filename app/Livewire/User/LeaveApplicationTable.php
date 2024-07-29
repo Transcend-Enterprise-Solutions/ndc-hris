@@ -13,6 +13,7 @@ use App\Models\VacationLeaveDetails;
 use App\Models\SickLeaveDetails;
 use Illuminate\Support\Facades\Storage;
 use App\Models\EmployeesDtr;
+use App\Models\LeaveCredits;
 use Carbon\Carbon;
 
 class LeaveApplicationTable extends Component
@@ -264,15 +265,32 @@ class LeaveApplicationTable extends Component
         }
 
         if (in_array('Vacation Leave', $this->type_of_leave)) {
-            // Retrieve the latest vacation leave details for the user
-            $lastVacationLeave = VacationLeaveDetails::whereHas('leaveApplication', function ($query) {
-                $query->where('user_id', Auth::id());
-            })->orderBy('created_at', 'desc')->first();
+            $user_id = Auth::user()->id;
 
-            // Calculate the new balance based on the existing record
-            $initialBalance = $lastVacationLeave ? $lastVacationLeave->balance - $lastVacationLeave->approved_days : 10;
-            $totalBalance = $initialBalance + $leaveCreditsEarned - $this->number_of_days;
+            // Fetch or initialize LeaveCredits
+            $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
 
+            if ($leaveCredits) {
+                // Update existing LeaveCredits record
+                $initialBalance = $leaveCredits->claimable_credits;
+                $totalBalance = $initialBalance + $leaveCreditsEarned;
+
+                $leaveCredits->update([
+                    'total_credits' => $totalBalance,
+                    'claimable_credits' => $leaveCredits->claimable_credits + $leaveCreditsEarned,
+                ]);
+            } else {
+                // Create a new LeaveCredits record if it does not exist
+                $totalBalance = $leaveCreditsEarned;  // No initial balance, just set the earned amount
+                LeaveCredits::create([
+                    'user_id' => $user_id,
+                    'total_credits' => $totalBalance,
+                    'claimable_credits' => $totalBalance,
+                    'total_claimed_credits' => 0,
+                ]);
+            }
+
+            // Create a new VacationLeaveDetails record
             VacationLeaveDetails::create([
                 'application_id' => $leaveApplication->id,
                 'late' => $formattedLateTime,
@@ -280,23 +298,48 @@ class LeaveApplicationTable extends Component
                 'leave_credits_earned' => $leaveCreditsEarned,
                 'balance' => $totalBalance,
                 'recommendation' => 'For approval',
-                'less_this_application' => $this->number_of_days,
-                'approved_days' => 0, // Initially 0, updated upon approval
+                'less_this_application' => 1,
                 'status' => 'Pending',
                 'month' => $currentMonth,
             ]);
-        }
 
-        if (in_array('Sick Leave', $this->type_of_leave)) {
+        } else if (in_array('Sick Leave', $this->type_of_leave)) {
+
+            $user_id = Auth::user()->id;
+
+            // Fetch or initialize LeaveCredits
+            $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
+
+            if ($leaveCredits) {
+                // Update existing LeaveCredits record
+                $initialBalance = $leaveCredits->claimable_credits;
+                $totalBalance = $initialBalance + $leaveCreditsEarned;
+
+                $leaveCredits->update([
+                    'total_credits' => $totalBalance,
+                    'claimable_credits' => $leaveCredits->claimable_credits + $leaveCreditsEarned,
+                ]);
+            } else {
+                // Create a new LeaveCredits record if it does not exist
+                $totalBalance = $leaveCreditsEarned;  // No initial balance, just set the earned amount
+                LeaveCredits::create([
+                    'user_id' => $user_id,
+                    'total_credits' => $totalBalance,
+                    'claimable_credits' => $totalBalance,
+                    'total_claimed_credits' => 0,
+                ]);
+            }
+
             SickLeaveDetails::create([
                 'application_id' => $leaveApplication->id,
-                // 'late' => $totalLateMinutes, // Store total late minutes
-                // 'total_earned' => $totalLateHoursDividedByEight, // Store total late hours divided by 8
-                'balance' => 10,
+                'late' => $formattedLateTime,
+                'totalCreditsEarned' => $totalCreditsEarned,
+                'leave_credits_earned' => $leaveCreditsEarned,
+                'balance' => $totalBalance,
                 'recommendation' => 'For approval',
-                'less_this_application' => $this->number_of_days,
+                'less_this_application' => 1,
                 'status' => 'Pending',
-                // 'leave_credits_earned' => $this->leaveCreditsEarned, // Store leave credits earned
+                'month' => $currentMonth,
             ]);
         }
 
@@ -307,8 +350,6 @@ class LeaveApplicationTable extends Component
         $this->resetForm();
         $this->closeLeaveForm();
     }
-
-
 
     public function resetForm()
     {
@@ -349,10 +390,24 @@ class LeaveApplicationTable extends Component
                 ->orderBy('created_at', 'desc')
                 ->limit(1);
         })->first();
+        $sickLeaveDetails = SickLeaveDetails::where('application_id', function ($query) {
+            $query->select('id')
+                ->from('leave_application')
+                ->where('user_id', Auth::id())
+                ->orderBy('created_at', 'desc')
+                ->limit(1);
+        })->first();
+
+        $leaveCredits = LeaveCredits::where('user_id', Auth::id())->first();
+        $claimableCredits = $leaveCredits ? $leaveCredits->claimable_credits : 0;
+        $totalClaimedCredits = $leaveCredits ? $leaveCredits->total_claimed_credits : 0;
 
         return view('livewire.user.leave-application-table', [
             'leaveApplications' => $leaveApplications,
             'vacationLeaveDetails' => $vacationLeaveDetails,
+            'sickLeaveDetails' => $sickLeaveDetails,
+            'claimableCredits' => $claimableCredits,
+            'totalClaimedCredits' => $totalClaimedCredits,
         ]);
     }
 

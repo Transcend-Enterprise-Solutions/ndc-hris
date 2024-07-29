@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\LeaveCredits;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\LeaveApplication;
@@ -106,8 +107,6 @@ class AdminLeaveRequestTable extends Component
         }
     }
 
-
-
     public function disapproveLeave()
     {
         $this->validate([
@@ -115,7 +114,8 @@ class AdminLeaveRequestTable extends Component
         ]);
 
         if ($this->selectedApplication) {
-            $this->selectedApplication->status = "Disapproved due to: {$this->disapproveReason}";
+            $this->selectedApplication->status = "Disapproved";
+            $this->selectedApplication->remarks = $this->disapproveReason;
             $this->selectedApplication->save();
 
             $this->dispatch('notify', [
@@ -133,8 +133,14 @@ class AdminLeaveRequestTable extends Component
             ->select('id', 'name', 'date_of_filing', 'type_of_leave', 'details_of_leave', 'number_of_days', 'start_date', 'end_date', 'file_name', 'file_path', 'status', 'remarks', 'approved_days')
             ->paginate(10);
 
+        $vacationLeaveDetails = VacationLeaveDetails::orderBy('created_at', 'desc')->paginate(10);
+
+        $sickLeaveDetails = SickLeaveDetails::orderBy('created_at', 'desc')->paginate(10);
+
         return view('livewire.admin.admin-leave-request-table', [
             'leaveApplications' => $leaveApplications,
+            'vacationLeaveDetails' => $vacationLeaveDetails,
+            'sickLeaveDetails' => $sickLeaveDetails,
         ]);
     }
 
@@ -150,7 +156,12 @@ class AdminLeaveRequestTable extends Component
     {
         // Fetch current balance for the user
         $vacationLeaveDetails = VacationLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
-        $this->balance = $vacationLeaveDetails ? $vacationLeaveDetails->balance : 0;
+        $sickLeaveDetails = SickLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
+
+        $vacationBalance = $vacationLeaveDetails ? $vacationLeaveDetails->balance : 0;
+        $sickBalance = $sickLeaveDetails ? $sickLeaveDetails->balance : 0;
+
+        $this->balance = $vacationBalance + $sickBalance;
 
         // Check if the balance is sufficient
         if ($this->status === 'With Pay' && $this->balance < $days) {
@@ -160,27 +171,46 @@ class AdminLeaveRequestTable extends Component
 
     protected function updateLeaveDetails($days, $status)
     {
+        // Handle vacation leave
         if (in_array('Vacation Leave', explode(',', $this->selectedApplication->type_of_leave))) {
             $vacationLeaveDetails = VacationLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
             if ($vacationLeaveDetails) {
                 if ($status === 'With Pay') {
                     $vacationLeaveDetails->balance -= $days;
+
+                    // Update claimable_credits and total_claimed_credits in leave_credits
+                    $user_id = $this->selectedApplication->user_id;
+                    $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
+                    if ($leaveCredits) {
+                        $leaveCredits->claimable_credits -= $days;
+                        $leaveCredits->total_claimed_credits = ($leaveCredits->total_claimed_credits ?? 0) + $days;
+                        $leaveCredits->save();
+                    }
                 }
                 $vacationLeaveDetails->less_this_application = $status === 'Pending' ? 1 : 0;
+                $vacationLeaveDetails->status = $status === 'Pending' ? 'Pending' : 'Approved';
                 $vacationLeaveDetails->save();
             }
         }
 
+        // Handle sick leave
         if (in_array('Sick Leave', explode(',', $this->selectedApplication->type_of_leave))) {
             $sickLeaveDetails = SickLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
             if ($sickLeaveDetails) {
-                if ($status === 'Pending') {
-                    $sickLeaveDetails->less_this_application = 1;
-                } else {
-                    $sickLeaveDetails->less_this_application = 0;
-                    $sickLeaveDetails->total_earned += 1;
-                    $sickLeaveDetails->balance -= 1;
+                if ($status === 'With Pay') {
+                    $sickLeaveDetails->balance -= $days;
+
+                    // Update claimable_credits and total_claimed_credits in leave_credits
+                    $user_id = $this->selectedApplication->user_id;
+                    $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
+                    if ($leaveCredits) {
+                        $leaveCredits->claimable_credits -= $days;
+                        $leaveCredits->total_claimed_credits = ($leaveCredits->total_claimed_credits ?? 0) + $days;
+                        $leaveCredits->save();
+                    }
                 }
+                $sickLeaveDetails->less_this_application = $status === 'Pending' ? 1 : 0;
+                $sickLeaveDetails->status = $status === 'Pending' ? 'Pending' : 'Approved';
                 $sickLeaveDetails->save();
             }
         }

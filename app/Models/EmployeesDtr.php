@@ -46,4 +46,8 @@ class EmployeesDtr extends Model
     {
         return $this->hasMany(VacationLeaveDetails::class);
     }
+    public function sickLeaveDetails()
+    {
+        return $this->hasMany(SickLeaveDetails::class);
+    }
 }
