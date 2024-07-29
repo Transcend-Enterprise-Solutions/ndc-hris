@@ -34,7 +34,17 @@ class PayrollExport implements FromCollection, WithHeadings, WithMapping
         };
 
         $formatCurrency = function($value) {
+            if($value == 0 || $value == null){
+                return "-";
+            }
             return '₱ ' . number_format((float)$value, 2, '.', ',');
+        };
+
+        $zeroCheck = function($value) {
+            if ($value == 0 || $value == null) {
+                return "-";
+            }
+            return $value;
         };
 
         return [
@@ -44,13 +54,17 @@ class PayrollExport implements FromCollection, WithHeadings, WithMapping
             $getData('position'),
             $getData('salary_grade'),
             $formatCurrency($getData('daily_salary_rate')),
-            $getData('no_of_days_covered'),
+            $zeroCheck($getData('no_of_days_covered')),
+            $zeroCheck($getData('regular_holidays')),
+            $formatCurrency($getData('regular_holidays_amount')),
+            $zeroCheck($getData('special_holidays')),
+            $formatCurrency($getData('special_holidays_amount')),
             $formatCurrency($getData('gross_salary')),
-            $getData('absences_days'),
+            $zeroCheck($getData('absences_days')),
             $formatCurrency($getData('absences_amount')),
-            $getData('late_undertime_hours'),
+            $zeroCheck($getData('late_undertime_hours')),
             $formatCurrency($getData('late_undertime_hours_amount')),
-            $getData('late_undertime_mins'),
+            $zeroCheck($getData('late_undertime_mins')),
             $formatCurrency($getData('late_undertime_mins_amount')),
             $formatCurrency($getData('gross_salary_less')),
             $formatCurrency($getData('withholding_tax')),
@@ -70,6 +84,10 @@ class PayrollExport implements FromCollection, WithHeadings, WithMapping
             'SALARY GRADE',
             'DAILY SALARY RATE',
             'NO. OF DAYS COVERED',
+            'REGULAR HOLIDAY/S',
+            'REGULAR HOLIDAY/S (AMOUNT)',
+            'SPECIAL HOLIDAY/S',
+            'SPECIAL HOLIDAY/S (AMOUNT)',
             'GROSS SALARY',
             'ABSENCES (DAYS)',
             'ABSENCES (DAYS AMOUNT)',

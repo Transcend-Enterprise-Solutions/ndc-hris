@@ -19,6 +19,10 @@ return new class extends Migration
                 $table->string('salary_grade')->nullable();
                 $table->double('daily_salary_rate')->nullable();
                 $table->integer('no_of_days_covered')->nullable();
+                $table->integer('regular_holidays')->nullable();
+                $table->double('regular_holidays_amount')->nullable();
+                $table->integer('special_holidays')->nullable();
+                $table->double('special_holidays_amount')->nullable();
                 $table->double('gross_salary')->nullable();
                 $table->double('absences_days')->nullable();
                 $table->double('absences_amount')->nullable();

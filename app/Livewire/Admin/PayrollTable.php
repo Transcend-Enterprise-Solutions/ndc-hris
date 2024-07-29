@@ -6,6 +6,7 @@ use App\Exports\PayrollExport;
 use App\Models\EmployeesDtr;
 use App\Models\EmployeesPayroll;
 use App\Models\GeneralPayroll;
+use App\Models\Holiday;
 use App\Models\Payrolls;
 use App\Models\User;
 use Carbon\Carbon;
@@ -31,6 +32,10 @@ class PayrollTable extends Component
         'salary_grade',
         'daily_salary_rate',
         'no_of_days_covered',
+        'regular_holidays',
+        'regular_holidays_amount',
+        'special_holidays',
+        'special_holidays_amount',
         'gross_salary',
         'absences_days',
         'absences_amount',
@@ -44,6 +49,8 @@ class PayrollTable extends Component
         'total_deductions',
         'net_amount_due',
     ];
+    public $weekdayRegularHolidays = 0;
+    public $weekdaySpecialHolidays = 0;
 
     public function render(){
         $users = User::paginate(10);
@@ -61,6 +68,16 @@ class PayrollTable extends Component
             } else {
                 $payrolls = $this->getPayroll();
                 $this->hasPayroll = false;
+            }
+        }
+
+        // Check for holiday values
+        foreach ($payrolls as $payroll) {
+            if ($payroll['regular_holidays_amount'] != 0 || $payroll['regular_holidays'] != 0) {
+                $this->weekdayRegularHolidays = 1;
+            }
+            if ($payroll['special_holidays_amount'] != 0 || $payroll['special_holidays'] != 0) {
+                $this->weekdaySpecialHolidays = 1;
             }
         }
 
@@ -92,19 +109,41 @@ class PayrollTable extends Component
                 $startDate = Carbon::parse($this->startDate);
                 $endDate = Carbon::parse($this->endDate);
                 
-                // Calculate total working days in the month
                 $totalWorkingDaysInMonth = Carbon::parse($startDate)->daysInMonth - 
-                    Carbon::parse($startDate)->daysInMonth * 2 / 7; // Subtracting weekends
+                    Carbon::parse($startDate)->daysInMonth * 2 / 7;
                 $totalWorkingDaysInMonth = round($totalWorkingDaysInMonth);
     
-                // Calculate working days in the covered period
-                $totalDays = $startDate->diffInDaysFiltered(function(Carbon $date) {
-                    return !$date->isWeekend();
-                }, $endDate) + 1;
+                // Fetch holidays between start and end date
+                $holidays = $this->getHolidays($startDate, $endDate);
 
+                // Calculate total working days (Monday to Friday, excluding holidays)
+                $totalDays = 0;
+                $currentDate = $startDate->copy();
+                $this->weekdayRegularHolidays = 0;
+                $this->weekdaySpecialHolidays = 0;
+
+                while ($currentDate <= $endDate) {
+                    if ($currentDate->isWeekday()) {
+                        $dateString = $currentDate->format('Y-m-d');
+                        if (!$holidays->has($dateString)) {
+                            $totalDays++;
+                        } else {
+                            // Check the type of holiday
+                            $holidayType = $holidays->get($dateString);
+                            if ($holidayType === 'Special') {
+                                $totalDays++;
+                                $this->weekdaySpecialHolidays++;
+                            } else {
+                                $this->weekdayRegularHolidays++;
+                            }
+                        }
+                    }
+                    $currentDate->addDay();
+                }
+    
                 // Check if the start date is from 16th to end of month
                 $isSecondSemiMonthlyPay = $startDate->day >= 16 || $endDate->isLastOfMonth();
-
+    
                 // Get the first day of the month
                 $firstDayOfMonth = $startDate->copy()->startOfMonth();
 
@@ -114,9 +153,11 @@ class PayrollTable extends Component
                 $deductionBalance = 0;
                 $nycempc = 0;
                 $netAmountDue = 0;
+                $specialHolidayRate = 0.3;
+                $regularHolidayRate = 2;
     
-                foreach ($payrollsAll as $payrollRecord) {
-                    $userId = $payrollRecord->user_id;
+                foreach ($payrollsAll as $payrollsAllRecord) {
+                    $userId = $payrollsAllRecord->user_id;
                     $user = User::where('id', $userId)->first();
                     $dtrData = $payrollDTR[$userId] ?? null;
     
@@ -130,7 +171,7 @@ class PayrollTable extends Component
                     $totalHoursRendered = $dtrData['total_hours'] / 60;
                     $totalDaysRendered = $totalHoursRendered / 8; 
                     
-                    $dailySalaryRate = $payrollRecord->rate_per_month / $totalWorkingDaysInMonth;
+                    $dailySalaryRate = $payrollsAllRecord->rate_per_month / $totalWorkingDaysInMonth;
                     $grossSalary = $dailySalaryRate * $totalDays;
                     
                     $absentAmount = $absentDays * $dailySalaryRate;
@@ -139,18 +180,62 @@ class PayrollTable extends Component
                     $lateUndertimeMins = $dtrData['total_late'] % 60;
                     $lateUndertimeHoursAmount = $lateUndertimeHours * ($dailySalaryRate / 8);
                     $lateUndertimeMinsAmount = $lateUndertimeMins * ($dailySalaryRate / 480);
-    
+
+                    $hourlyRate = $dailySalaryRate / 8;
+                    $totalHoursRendered = 0;
+                    $regularHolidayPay = 0;
+                    $specialHolidayPay = 0;
+                    $regularHolidayCount = 0;
+                    $specialHolidayCount = 0;
+
+                    // Iterate through all days in the pay period
+                    $currentDate = $startDate->copy();
+                    while ($currentDate <= $endDate) {
+                        $dateString = $currentDate->format('Y-m-d');
+                        $holidayType = $holidays->get($dateString);
+                        $record = $dtrData['daily_records'][$dateString] ?? null;
+
+                        if ($currentDate->isWeekday()) {
+                            if ($holidayType === 'Regular') {
+                                if ($record && $record['total_hours'] > 0) {
+                                    // Employee worked on a regular holiday
+                                    $regularHolidayPay += ($record['total_hours'] / 60) * $hourlyRate * $regularHolidayRate;
+                                } else {
+                                    // Employee didn't work but it's a paid holiday
+                                    $regularHolidayPay += $dailySalaryRate;
+                                }
+                                $regularHolidayCount++;
+                            } elseif ($holidayType === 'Special') {
+                                if ($record && $record['total_hours'] > 0) {
+                                    // Employee worked on a special holiday
+                                    $specialHolidayPay += ($record['total_hours'] / 60) * $hourlyRate * $specialHolidayRate;
+                                }
+                                // If employee didn't work on a special holiday, no additional pay
+                                $specialHolidayCount++;
+                            }
+                        }
+
+                        if ($record) {
+                            $totalHoursRendered += $record['total_hours'];
+                        }
+
+                        $currentDate->addDay();
+                    }
+
+                    
+                    // Gross salary holiday added
+                    $grossSalary = $grossSalary + $regularHolidayPay + $specialHolidayPay;
                     // Gross Salary less
                     $grossSalaryLess = $grossSalary - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount - $absentAmount;
-    
+                    
                     // Calculate withholding tax based on rendered days
                     if ($isSecondSemiMonthlyPay) {
-                        $withholdingTax = $payrollRecord->w_holding_tax;
-                        // $withholdingTax = $payrollRecord->w_holding_tax * ($totalDaysRendered / $totalWorkingDaysInMonth);
-                        // dd( $payrollRecord->w_holding_tax . " * " . "(" . $totalDaysRendered . "/" . $totalWorkingDaysInMonth . ") = " . $withholdingTax);
+                        $withholdingTax = $payrollsAllRecord->w_holding_tax;
+                        // $withholdingTax = $payrollsAllRecord->w_holding_tax * ($totalDaysRendered / $totalWorkingDaysInMonth);
+                        // dd( $payrollsAllRecord->w_holding_tax . " * " . "(" . $totalDaysRendered . "/" . $totalWorkingDaysInMonth . ") = " . $withholdingTax);
                         
-                        $totalDeductions = $payrollRecord->total_deduction;
-                        $nycempc = $payrollRecord->nycea_deductions;
+                        $totalDeductions = $payrollsAllRecord->total_deduction;
+                        $nycempc = $payrollsAllRecord->nycea_deductions;
     
                         // Calculate remaining deductions
                         $newTotalDeduction = $totalDeductions + $nycempc;
@@ -168,11 +253,15 @@ class PayrollTable extends Component
                     EmployeesPayroll::create([
                             'user_id' => $userId,
                             'name' => $user->name,
-                            'employee_number' => $payrollRecord->employee_number,
-                            'position' => $payrollRecord->position,
-                            'salary_grade' => $payrollRecord->sg_step,
+                            'employee_number' => $payrollsAllRecord->employee_number,
+                            'position' => $payrollsAllRecord->position,
+                            'salary_grade' => $payrollsAllRecord->sg_step,
                             'daily_salary_rate' => $dailySalaryRate,
                             'no_of_days_covered' => $totalDays,
+                            'regular_holidays' => $regularHolidayCount,
+                            'regular_holidays_amount' => $regularHolidayPay,
+                            'special_holidays' => $specialHolidayCount,
+                            'special_holidays_amount' => $specialHolidayPay,
                             'gross_salary' => $grossSalary,
                             'absences_days' => $absentDays,
                             'absences_amount' => $absentAmount,
@@ -182,7 +271,7 @@ class PayrollTable extends Component
                             'late_undertime_mins_amount' => $lateUndertimeMinsAmount,
                             'gross_salary_less' => $grossSalaryLess,
                             'withholding_tax' => $withholdingTax,
-                            'nycempc' => $payrollRecord->nycea_deductions,
+                            'nycempc' => $payrollsAllRecord->nycea_deductions,
                             'total_deductions' => $totalDeductions,
                             'net_amount_due' => $netAmountDue,
                             'start_date' => $this->startDate,
@@ -223,9 +312,33 @@ class PayrollTable extends Component
                     Carbon::parse($startDate)->daysInMonth * 2 / 7;
                 $totalWorkingDaysInMonth = round($totalWorkingDaysInMonth);
     
-                $totalDays = $startDate->diffInDaysFiltered(function(Carbon $date) {
-                    return !$date->isWeekend();
-                }, $endDate) + 1;
+                // Fetch holidays between start and end date
+                $holidays = $this->getHolidays($startDate, $endDate);
+
+                // Calculate total working days (Monday to Friday, excluding holidays)
+                $totalDays = 0;
+                $currentDate = $startDate->copy();
+                $this->weekdayRegularHolidays = 0;
+                $this->weekdaySpecialHolidays = 0;
+
+                while ($currentDate <= $endDate) {
+                    if ($currentDate->isWeekday()) {
+                        $dateString = $currentDate->format('Y-m-d');
+                        if (!$holidays->has($dateString)) {
+                            $totalDays++;
+                        } else {
+                            // Check the type of holiday
+                            $holidayType = $holidays->get($dateString);
+                            if ($holidayType === 'Special') {
+                                $totalDays++;
+                                $this->weekdaySpecialHolidays++;
+                            } else {
+                                $this->weekdayRegularHolidays++;
+                            }
+                        }
+                    }
+                    $currentDate->addDay();
+                }
     
                 // Check if the start date is from 16th to end of month
                 $isSecondSemiMonthlyPay = $startDate->day >= 16 || $endDate->isLastOfMonth();
@@ -239,6 +352,8 @@ class PayrollTable extends Component
                 $deductionBalance = 0;
                 $nycempc = 0;
                 $netAmountDue = 0;
+                $specialHolidayRate = 0.3;
+                $regularHolidayRate = 2;
     
                 foreach ($payrollsAll as $payrollsAllRecord) {
                     $userId = $payrollsAllRecord->user_id;
@@ -264,10 +379,54 @@ class PayrollTable extends Component
                     $lateUndertimeMins = $dtrData['total_late'] % 60;
                     $lateUndertimeHoursAmount = $lateUndertimeHours * ($dailySalaryRate / 8);
                     $lateUndertimeMinsAmount = $lateUndertimeMins * ($dailySalaryRate / 480);
-    
+
+                    $hourlyRate = $dailySalaryRate / 8;
+                    $totalHoursRendered = 0;
+                    $regularHolidayPay = 0;
+                    $specialHolidayPay = 0;
+                    $regularHolidayCount = 0;
+                    $specialHolidayCount = 0;
+
+                    // Iterate through all days in the pay period
+                    $currentDate = $startDate->copy();
+                    while ($currentDate <= $endDate) {
+                        $dateString = $currentDate->format('Y-m-d');
+                        $holidayType = $holidays->get($dateString);
+                        $record = $dtrData['daily_records'][$dateString] ?? null;
+
+                        if ($currentDate->isWeekday()) {
+                            if ($holidayType === 'Regular') {
+                                if ($record && $record['total_hours'] > 0) {
+                                    // Employee worked on a regular holiday
+                                    $regularHolidayPay += ($record['total_hours'] / 60) * $hourlyRate * $regularHolidayRate;
+                                } else {
+                                    // Employee didn't work but it's a paid holiday
+                                    $regularHolidayPay += $dailySalaryRate;
+                                }
+                                $regularHolidayCount++;
+                            } elseif ($holidayType === 'Special') {
+                                if ($record && $record['total_hours'] > 0) {
+                                    // Employee worked on a special holiday
+                                    $specialHolidayPay += ($record['total_hours'] / 60) * $hourlyRate * $specialHolidayRate;
+                                }
+                                // If employee didn't work on a special holiday, no additional pay
+                                $specialHolidayCount++;
+                            }
+                        }
+
+                        if ($record) {
+                            $totalHoursRendered += $record['total_hours'];
+                        }
+
+                        $currentDate->addDay();
+                    }
+
+                    
+                    // Gross salary holiday added
+                    $grossSalary = $grossSalary + $regularHolidayPay + $specialHolidayPay;
                     // Gross Salary less
                     $grossSalaryLess = $grossSalary - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount - $absentAmount;
-    
+                    
                     // Calculate withholding tax based on rendered days
                     if ($isSecondSemiMonthlyPay) {
                         $withholdingTax = $payrollsAllRecord->w_holding_tax;
@@ -297,6 +456,10 @@ class PayrollTable extends Component
                         'salary_grade' => $payrollsAllRecord->sg_step,
                         'daily_salary_rate' => $dailySalaryRate,
                         'no_of_days_covered' => $totalDays,
+                        'regular_holidays' => $regularHolidayCount,
+                        'regular_holidays_amount' => $regularHolidayPay,
+                        'special_holidays' => $specialHolidayCount,
+                        'special_holidays_amount' => $specialHolidayPay,
                         'gross_salary' => $grossSalary,
                         'absences_days' => $absentDays,
                         'absences_amount' => $absentAmount,
@@ -359,7 +522,7 @@ class PayrollTable extends Component
                 $payrollDTR[$employeeId]['total_days']++;
                 
                 // Convert time strings to integer minutes
-                $totalHours = $this->timeToMinutes($record->total_hours_endered);
+                $totalHours = $this->timeToMinutes($record->total_hours_rendered);
                 $late = $this->timeToMinutes($record->late);
                 $overtime = $this->timeToMinutes($record->overtime);
 
@@ -391,6 +554,16 @@ class PayrollTable extends Component
         }
         list($hours, $minutes) = explode(':', $timeString);
         return (int)$hours * 60 + (int)$minutes;
+    }
+
+    private function getHolidays($startDate, $endDate)
+    {
+        $holidays = Holiday::whereBetween('holiday_date', [$startDate, $endDate])->get();
+        return $holidays->mapWithKeys(function ($holiday) {
+            // Convert the date to a string in 'Y-m-d' format
+            $dateString = $holiday->holiday_date->format('Y-m-d');
+            return [$dateString => $holiday->type];
+        });
     }
 
     public function processPayroll($startDate, $endDate){
@@ -432,7 +605,6 @@ class PayrollTable extends Component
     public function exportPayroll(){
         try {
             if ($this->startDate && $this->endDate) {
-                $this->recordPayroll();
                 $startDate = Carbon::parse($this->startDate);
                 $endDate = Carbon::parse($this->endDate);
                 
