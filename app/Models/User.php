@@ -46,73 +46,89 @@ class User extends Authenticatable
         'two_factor_secret',
     ];
 
-    public function userData(){
+    public function userData()
+    {
         return $this->hasOne(UserData::class);
     }
 
-    public function admin(){
+    public function admin()
+    {
         return $this->hasOne(Admin::class);
     }
 
-    public function eligibility(){
+    public function eligibility()
+    {
         return $this->hasMany(Eligibility::class)->orderBy('date', 'DESC');
     }
 
-    public function workExperience(){
+    public function workExperience()
+    {
         return $this->hasMany(WorkExperience::class)->orderBy('end_date', 'DESC');
     }
 
-    public function employeesChildren(){
+    public function employeesChildren()
+    {
         return $this->hasMany(EmployeesChildren::class)->orderBy('childs_birth_date', 'ASC');
     }
 
-    public function employeesSpouse(){
+    public function employeesSpouse()
+    {
         return $this->hasOne(EmployeesSpouse::class);
     }
 
-    public function employeesFather(){
+    public function employeesFather()
+    {
         return $this->hasOne(EmployeesFather::class);
     }
 
-    public function employeesMother(){
+    public function employeesMother()
+    {
         return $this->hasOne(EmployeesMother::class);
     }
 
-    public function employeesEducation(){
+    public function employeesEducation()
+    {
         return $this->hasMany(EmployeesEducation::class)->orderBy('level_code', 'ASC');
     }
 
-    public function voluntaryWorks(){
+    public function voluntaryWorks()
+    {
         return $this->hasMany(VoluntaryWorks::class)->orderBy('end_date', 'DESC');
     }
 
-    public function learningAndDevelopment(){
+    public function learningAndDevelopment()
+    {
         return $this->hasMany(LearningAndDevelopment::class)->orderBy('end_date', 'DESC');
     }
 
-    public function skills(){
+    public function skills()
+    {
         return $this->hasMany(Skills::class);
     }
 
-    public function hobbies(){
+    public function hobbies()
+    {
         return $this->hasMany(Hobbies::class);
     }
 
-    public function nonAcadDistinctions(){
+    public function nonAcadDistinctions()
+    {
         return $this->hasMany(NonAcadDistinctions::class)->orderBy('date_received', 'DESC');
     }
 
-    public function assOrgMembership(){
+    public function assOrgMembership()
+    {
         return $this->hasMany(AssOrgMemberships::class);
     }
 
-    public function charReferences(){
+    public function charReferences()
+    {
         return $this->hasMany(CharReferences::class);
     }
 
     public function employeeDocuments()
     {
-    return $this->hasMany(EmployeeDocument::class);
+        return $this->hasMany(EmployeeDocument::class);
     }
 
     public function docRequests()
@@ -132,10 +148,11 @@ class User extends Authenticatable
 
     public function dtrSchedules()
     {
-    return $this->hasMany(DTRSchedule::class, 'emp_code', 'emp_code');
+        return $this->hasMany(DTRSchedule::class, 'emp_code', 'emp_code');
     }
-    
-    public function employeesPayroll(){
+
+    public function employeesPayroll()
+    {
         return $this->hasMany(EmployeesPayroll::class);
     }
     public function generalPayroll()
@@ -150,10 +167,8 @@ class User extends Authenticatable
 
     public function employeesDtr()
     {
-    return $this->hasMany(EmployeesDtr::class);
+        return $this->hasMany(EmployeesDtr::class);
     }
-
-
 
     /**
      * The attributes that should be cast.

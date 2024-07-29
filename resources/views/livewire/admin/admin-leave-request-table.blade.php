@@ -43,6 +43,9 @@
                                                     Remarks</th>
                                                 <th scope="col"
                                                     class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    Approved Days</th>
+                                                <th scope="col"
+                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
                                                     Status</th>
                                                 <th scope="col"
                                                     class="px-5 py-3 text-gray-100 text-sm font-medium text-right sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
@@ -87,13 +90,14 @@
                                                     @endif
                                                 </td>
                                                 <td class="px-4 py-2 text-center">{{ $leaveApplication->remarks }}</td>
+                                                <td class="px-4 py-2 text-center">{{ $leaveApplication->approved_days }}
+                                                </td>
                                                 <td class="px-4 py-2 text-center">
-                                                    <span class="inline-block px-3 py-1 text-sm font-semibold 
-                                                        {{ 
-                                                            str_starts_with($leaveApplication->status, 'Approved') ? 'text-green-800 bg-green-200' : 
-                                                            (str_starts_with($leaveApplication->status, 'Disapproved') ? 'text-red-800 bg-red-200' :
-                                                            (str_starts_with($leaveApplication->status, 'Other') ? 'text-green-800 bg-green-200' : 
-                                                            'text-yellow-800 bg-yellow-200')) 
+                                                    <span class="inline-block px-3 py-1 text-sm font-semibold
+                                                        {{
+                                                            $leaveApplication->status === 'Approved' ? 'text-green-800 bg-green-200' :
+                                                            ($leaveApplication->status === 'Disapproved' ? 'text-red-800 bg-red-200' :
+                                                            ($leaveApplication->status === 'Pending' ? 'text-yellow-800 bg-yellow-200' : ''))
                                                         }} rounded-lg">
                                                         {{ $leaveApplication->status }}
                                                     </span>
@@ -101,21 +105,21 @@
                                                 <td
                                                     class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                     <button @click="$wire.openApproveModal({{ $leaveApplication->id }})"
-                                                        class="text-blue-500 {{ $leaveApplication->status && !str_starts_with($leaveApplication->status, 'Pending') ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                        :disabled="{{ $leaveApplication->status && !str_starts_with($leaveApplication->status, 'Pending') ? 'true' : 'false' }}">
+                                                        class="text-blue-500 {{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                        :disabled="{{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'true' : 'false' }}">
                                                         <i class="bi bi-check-lg"></i>
                                                     </button>
                                                     <button
                                                         @click="$wire.openDisapproveModal({{ $leaveApplication->id }})"
-                                                        class="text-red-500 {{ $leaveApplication->status && !str_starts_with($leaveApplication->status, 'Pending') ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                        :disabled="{{ $leaveApplication->status && !str_starts_with($leaveApplication->status, 'Pending') ? 'true' : 'false' }}">
+                                                        class="text-red-500 {{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                        :disabled="{{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'true' : 'false' }}">
                                                         <i class="bi bi-x"></i>
                                                     </button>
                                                 </td>
-
                                             </tr>
                                             @endforeach
                                         </tbody>
+
                                     </table>
                                 </div>
                                 <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">

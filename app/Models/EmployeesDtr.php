@@ -36,4 +36,14 @@ class EmployeesDtr extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function leaveApplication()
+    {
+        return $this->hasMany(LeaveApplication::class);
+    }
+
+    public function vacationLeaveDetails()
+    {
+        return $this->hasMany(VacationLeaveDetails::class);
+    }
 }

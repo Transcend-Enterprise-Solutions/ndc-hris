@@ -19,6 +19,7 @@ class AdminLeaveRequestTable extends Component
     public $otherReason;
     public $days;
     public $disapproveReason;
+    public $balance; // Track balance for validation
 
     protected $rules = [
         'status' => 'required_if:showApproveModal,true',
@@ -26,7 +27,6 @@ class AdminLeaveRequestTable extends Component
         'days' => 'required_if:status,With Pay,Without Pay|numeric|min:1',
         'disapproveReason' => 'required_if:showDisapproveModal,true'
     ];
-    
 
     public function openApproveModal($applicationId)
     {
@@ -56,11 +56,23 @@ class AdminLeaveRequestTable extends Component
 
     public function updateStatus()
     {
-        if ($this->status === 'Other') {
+        if ($this->status === 'With Pay') {
             $this->validate([
                 'status' => 'required',
-                'otherReason' => 'required',
+                'days' => 'required|numeric|min:1',
             ]);
+
+            // Validate leave balance
+            $this->validateLeaveBalance($this->days);
+
+            // Check if balance is sufficient
+            if ($this->balance < $this->days) {
+                // Set a validation error message
+                $this->addError('days', "This employee has a remaining balance of {$this->balance}. Please approve it for fewer or equal to that amount.");
+
+                // Stop further processing
+                return;
+            }
         } else {
             $this->validate([
                 'status' => 'required',
@@ -70,50 +82,30 @@ class AdminLeaveRequestTable extends Component
 
         if ($this->selectedApplication) {
             if ($this->status === 'Other') {
-                $this->selectedApplication->status = "Other: {$this->otherReason}";
+                $this->validate([
+                    'status' => 'required',
+                    'otherReason' => 'required',
+                ]);
+                $this->selectedApplication->status = "Other";
+                $this->selectedApplication->remarks = $this->otherReason;
             } else {
-                $this->selectedApplication->status = "Approved for: {$this->days} days {$this->status}";
+                $this->selectedApplication->status = $this->status === 'With Pay' ? 'Approved' : 'Approved';
+                $this->selectedApplication->approved_days = $this->days;
                 $this->selectedApplication->remarks = $this->status === 'With Pay' ? 'With Pay' : 'Without Pay';
+                $this->updateLeaveDetails($this->days, $this->status);
             }
 
             $this->selectedApplication->save();
 
-            if (in_array('Vacation Leave', explode(',', $this->selectedApplication->type_of_leave))) {
-                $vacationLeaveDetails = VacationLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
-                if ($vacationLeaveDetails) {
-                    if ($this->status === 'Pending') {
-                        $vacationLeaveDetails->less_this_application = 1;
-                    } else {
-                        $vacationLeaveDetails->less_this_application = 0;
-                        $vacationLeaveDetails->total_earned += 1;
-                        $vacationLeaveDetails->balance -= 1;
-                    }
-                    $vacationLeaveDetails->save();
-                }
-            }
-
-            if (in_array('Sick Leave', explode(',', $this->selectedApplication->type_of_leave))) {
-                $sickLeaveDetails = SickLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
-                if ($sickLeaveDetails) {
-                    if ($this->status === 'Pending') {
-                        $sickLeaveDetails->less_this_application = 1;
-                    } else {
-                        $sickLeaveDetails->less_this_application = 0;
-                        $sickLeaveDetails->total_earned += 1;
-                        $sickLeaveDetails->balance -= 1;
-                    }
-                    $sickLeaveDetails->save();
-                }
-            }
-
             $this->dispatch('notify', [
-                'message' => "Leave application approved successfully!",
+                'message' => "Leave application {$this->status} successfully!",
                 'type' => 'success'
             ]);
 
             $this->closeApproveModal();
         }
     }
+
 
 
     public function disapproveLeave()
@@ -137,7 +129,9 @@ class AdminLeaveRequestTable extends Component
 
     public function render()
     {
-        $leaveApplications = LeaveApplication::orderBy('created_at', 'desc')->paginate(10);
+        $leaveApplications = LeaveApplication::orderBy('created_at', 'desc')
+            ->select('id', 'name', 'date_of_filing', 'type_of_leave', 'details_of_leave', 'number_of_days', 'start_date', 'end_date', 'file_name', 'file_path', 'status', 'remarks', 'approved_days')
+            ->paginate(10);
 
         return view('livewire.admin.admin-leave-request-table', [
             'leaveApplications' => $leaveApplications,
@@ -150,5 +144,45 @@ class AdminLeaveRequestTable extends Component
         $this->otherReason = null;
         $this->days = null;
         $this->disapproveReason = null;
+    }
+
+    public function validateLeaveBalance($days)
+    {
+        // Fetch current balance for the user
+        $vacationLeaveDetails = VacationLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
+        $this->balance = $vacationLeaveDetails ? $vacationLeaveDetails->balance : 0;
+
+        // Check if the balance is sufficient
+        if ($this->status === 'With Pay' && $this->balance < $days) {
+            $this->status = 'Without Pay';  // Automatically set status to Without Pay if balance is insufficient
+        }
+    }
+
+    protected function updateLeaveDetails($days, $status)
+    {
+        if (in_array('Vacation Leave', explode(',', $this->selectedApplication->type_of_leave))) {
+            $vacationLeaveDetails = VacationLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
+            if ($vacationLeaveDetails) {
+                if ($status === 'With Pay') {
+                    $vacationLeaveDetails->balance -= $days;
+                }
+                $vacationLeaveDetails->less_this_application = $status === 'Pending' ? 1 : 0;
+                $vacationLeaveDetails->save();
+            }
+        }
+
+        if (in_array('Sick Leave', explode(',', $this->selectedApplication->type_of_leave))) {
+            $sickLeaveDetails = SickLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
+            if ($sickLeaveDetails) {
+                if ($status === 'Pending') {
+                    $sickLeaveDetails->less_this_application = 1;
+                } else {
+                    $sickLeaveDetails->less_this_application = 0;
+                    $sickLeaveDetails->total_earned += 1;
+                    $sickLeaveDetails->balance -= 1;
+                }
+                $sickLeaveDetails->save();
+            }
+        }
     }
 }

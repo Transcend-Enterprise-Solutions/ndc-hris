@@ -5,8 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -30,8 +29,9 @@ return new class extends Migration
                 $table->string('commutation')->default('Not Requested');
                 $table->string('file_name')->nullable();
                 $table->string('file_path')->nullable();
-                $table->string('remarks')->nullable();
                 $table->string('status');
+                $table->integer('approved_days')->nullable();
+                $table->string('remarks')->nullable();
                 $table->timestamps();
             });
         }
