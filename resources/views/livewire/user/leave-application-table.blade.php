@@ -60,14 +60,33 @@
             <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Details of Action on Application
                 (Vacation Leave)
             </h1>
+
+            {{-- <div class="mb-4">
+                <label for="month-selector" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Select
+                    Month:</label>
+                <select id="month-selector" wire:model.live="selectedMonth"
+                    class="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    @foreach(range(1, 12) as $month)
+                    <option value="{{ str_pad($month, 2, '0', STR_PAD_LEFT) }}" {{ str_pad($month, 2, '0' ,
+                        STR_PAD_LEFT)==($selectedMonth ?? now()->format('m')) ? 'selected' : '' }}>
+                        {{ \DateTime::createFromFormat('!m', $month)->format('F') }}
+                    </option>
+                    @endforeach
+                </select>
+            </div> --}}
+
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                     <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                         <tr class="whitespace-nowrap">
+                            {{-- <th scope="col" class="px-4 py-2 text-center">Date</th> --}}
                             <th scope="col" class="px-4 py-2 text-center">Total Earned</th>
                             <th scope="col" class="px-4 py-2 text-center">Less this Application</th>
                             <th scope="col" class="px-4 py-2 text-center">Balance</th>
-                            {{-- <th scope="col" class="px-4 py-2 text-center">Recommendation</th> --}}
+                            <th scope="col" class="px-4 py-2 text-center">Month</th>
+                            <th scope="col" class="px-4 py-2 text-center">Total Late</th>
+                            <th scope="col" class="px-4 py-2 text-center">Earned Credits</th>
+                            <th scope="col" class="px-4 py-2 text-center">Total Earned Credits</th>
                             <th scope="col" class="px-4 py-2 text-center">Status</th>
                         </tr>
                     </thead>
@@ -75,10 +94,15 @@
                         @foreach($leaveApplications as $leaveApplication)
                         @foreach($leaveApplication->vacationLeaveDetails as $details)
                         <tr class="whitespace-nowrap">
+                            {{-- <td class="px-4 py-2 text-center">{{ $details->created_at->format('F j, Y') }}</td>
+                            --}}
                             <td class="px-4 py-2 text-center">{{ $details->total_earned }}</td>
                             <td class="px-4 py-2 text-center">{{ $details->less_this_application }}</td>
                             <td class="px-4 py-2 text-center">{{ $details->balance }}</td>
-                            {{-- <td class="px-4 py-2 text-center">{{ $details->recommendation }}</td> --}}
+                            <td class="px-4 py-2 text-center">{{ $details->month }}</td>
+                            <td class="px-4 py-2 text-center">{{ $leaveApplication->totalLateHours }}</td>
+                            <td class="px-4 py-2 text-center"></td>
+                            <td class="px-4 py-2 text-center"></td>
                             <td class="px-4 py-2 text-center">
                                 <span
                                     class="inline-block px-3 py-1 text-sm font-semibold 
@@ -128,6 +152,34 @@
                         </tr>
                         @endforeach
                         @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full flex justify-center mt-4 grid grid-cols-2 gap-2">
+        <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
+            <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Leave Credits
+            </h1>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
+                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                        <tr class="whitespace-nowrap">
+                            {{-- <th scope="col" class="px-4 py-2 text-center">Date</th> --}}
+                            <th scope="col" class="px-4 py-2 text-center">Total Earned</th>
+                            <th scope="col" class="px-4 py-2 text-center">Total Leave Credits</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr class="whitespace-nowrap">
+                            <td class="px-4 py-2 text-center">{{ $vacationLeaveDetails->leave_credits_earned ?? 'N/A' }}
+                            </td>
+                            <td class="px-4 py-2 text-center">{{ $vacationLeaveDetails->balance ?? 'N/A' }}</td>
+                        </tr>
+
                     </tbody>
                 </table>
             </div>

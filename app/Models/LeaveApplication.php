@@ -26,6 +26,7 @@ class LeaveApplication extends Model
         'commutation',
         'file_name',
         'file_path',
+        'approved_days',
         'remarks',
         'status',
     ];
@@ -48,5 +49,10 @@ class LeaveApplication extends Model
     public function sickLeaveDetails()
     {
         return $this->hasMany(SickLeaveDetails::class, 'application_id');
+    }
+
+    public function employeesDtr()
+    {
+        return $this->belongsTo(EmployeesDtr::class);
     }
 }
