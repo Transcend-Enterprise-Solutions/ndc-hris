@@ -57,7 +57,10 @@ class AdminDtrTable extends Component
             $query->where('employees_dtr.date', '<=', $this->endDate);
         }
 
-        if ($this->sortField === 'user.name') {
+        if ($this->sortField === 'date') {
+            $query->orderBy('employees_dtr.date', $this->sortDirection)
+                  ->orderBy('users.name', 'asc');
+        } elseif ($this->sortField === 'user.name') {
             $query->orderBy('users.name', $this->sortDirection);
         } elseif ($this->sortField === 'emp_code') {
             $query->orderBy('users.emp_code', $this->sortDirection);
