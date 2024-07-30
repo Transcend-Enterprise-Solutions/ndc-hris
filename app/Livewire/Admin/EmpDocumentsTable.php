@@ -21,8 +21,8 @@ class EmpDocumentsTable extends Component
             'bir1902' => 'BIR Form 1902',
             'bir1905' => 'BIR Form 1905',
             'bir2316' => 'BIR Form 2316',
-            'certificate' => 'Certificate of Employment',
-            'serviceRecord' => 'Service Record',
+            'employment_cert' => 'Certificate of Employment',
+            'service_record' => 'Service Record',
         ];
 
         $this->loadDocuments();
