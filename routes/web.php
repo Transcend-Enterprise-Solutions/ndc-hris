@@ -39,6 +39,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/admin-leave-request', function () {return view('livewire.admin.admin-leave-request');})->name('admin-leave-request');
     Route::get('/admin-leave-records', function () {return view('livewire.admin.admin-leave-records');})->name('admin-leave-records');
     Route::get('/admin-doc-request', function () {return view('livewire.admin.admin-doc-request');})->name('admin-doc-request');
+    Route::get('/emp-documents', function () {return view('livewire.admin.emp-documents');})->name('emp-documents');
     Route::get('/admin-dtr', function () {return view('livewire.admin.admin-dtr');})->name('admin-dtr');
     Route::get('/admin-schedule', function () {return view('livewire.admin.admin-schedule');})->name('admin-schedule');
     Route::get('/payroll-management', function () {return view('livewire.admin.payroll-management');})->name('payroll-management');

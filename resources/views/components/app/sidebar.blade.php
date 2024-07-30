@@ -285,6 +285,14 @@
                                         </a>
                                     </li>
                                     <li class="mb-1 last:mb-0">
+                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('emp-documents')){{ '!text-blue-500' }}@endif"
+                                            href="{{route('emp-documents')}}">
+                                            <span class="text-sm font-medium transition-opacity duration-300"
+                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Employee Documents
+                                                </span>
+                                        </a>
+                                    </li>
+                                    <li class="mb-1 last:mb-0">
                                         <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('admin-schedule')){{ '!text-blue-500' }}@endif"
                                             href="{{route('admin-schedule')}}">
                                             <span class="text-sm font-medium transition-opacity duration-300"
