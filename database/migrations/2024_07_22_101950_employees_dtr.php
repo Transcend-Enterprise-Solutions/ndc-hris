@@ -21,9 +21,9 @@ return new class extends Migration
                 $table->time('morning_out')->nullable();
                 $table->time('afternoon_in')->nullable();
                 $table->time('afternoon_out')->nullable();
-                $table->string('late')->nullable();  // Changed from float to string
-                $table->string('overtime')->nullable();  // Changed from float to string
-                $table->string('total_hours_rendered')->nullable();  // Changed from float to string
+                $table->string('late')->nullable();
+                $table->string('overtime')->nullable();
+                $table->string('total_hours_rendered')->nullable();
                 $table->string('remarks')->nullable();
                 $table->timestamps();
 

@@ -5,7 +5,7 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\EmployeesDtr;
-use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class AdminDtrTable extends Component
 {
@@ -14,34 +14,59 @@ class AdminDtrTable extends Component
     public $searchTerm;
     public $startDate;
     public $endDate;
+    public $sortField = 'date';
+    public $sortDirection = 'asc';
 
     protected $queryString = [
         'searchTerm' => ['except' => ''],
         'startDate' => ['except' => ''],
         'endDate' => ['except' => ''],
+        'sortField' => ['except' => 'date'],
+        'sortDirection' => ['except' => 'asc'],
     ];
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortDirection = 'asc';
+        }
+
+        $this->sortField = $field;
+    }
 
     public function render()
     {
-        $query = EmployeesDtr::query();
+        $query = EmployeesDtr::query()
+            ->join('users', 'employees_dtr.user_id', '=', 'users.id')
+            ->select('employees_dtr.*', 'users.name as user_name', 'users.emp_code');
 
         if ($this->searchTerm) {
-            $query->whereHas('user', function($q) {
-                $q->where('name', 'like', '%' . $this->searchTerm . '%')
-                  ->orWhere('emp_code', 'like', '%' . $this->searchTerm . '%');
+            $query->where(function($q) {
+                $q->where('users.emp_code', 'like', '%'.$this->searchTerm.'%')
+                  ->orWhere('users.name', 'like', '%'.$this->searchTerm.'%');
             });
         }
 
-        if ($this->startDate && $this->endDate) {
-            $query->whereBetween('date', [$this->startDate, $this->endDate]);
+        if ($this->startDate) {
+            $query->where('employees_dtr.date', '>=', $this->startDate);
         }
 
-        $dtrs = $query->with('user')
-                      ->orderBy('date', 'asc')
-                      ->paginate(30);
+        if ($this->endDate) {
+            $query->where('employees_dtr.date', '<=', $this->endDate);
+        }
 
-        return view('livewire.admin.admin-dtr-table', [
-            'dtrs' => $dtrs,
-        ]);
+        if ($this->sortField === 'user.name') {
+            $query->orderBy('users.name', $this->sortDirection);
+        } elseif ($this->sortField === 'emp_code') {
+            $query->orderBy('users.emp_code', $this->sortDirection);
+        } else {
+            $query->orderBy('employees_dtr.' . $this->sortField, $this->sortDirection);
+        }
+
+        $dtrs = $query->paginate(30);
+
+        return view('livewire.admin.admin-dtr-table', ['dtrs' => $dtrs]);
     }
 }

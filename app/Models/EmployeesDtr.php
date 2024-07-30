@@ -30,6 +30,9 @@ class EmployeesDtr extends Model
         'overtime' => 'string',  // Changed from float to string
         'total_hours_rendered' => 'string',  // Changed from float to string
     ];
+    protected $dates = [
+        'date',
+    ];
 
     // Define relationships if needed
     public function user()
