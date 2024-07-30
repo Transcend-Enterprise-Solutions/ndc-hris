@@ -67,7 +67,6 @@ class EmpDocumentsTable extends Component
                     'message' => 'An error occurred while deleting the document.',
                     'type' => 'error'
                 ]);
-                \Log::error('Document deletion error: ' . $e->getMessage());
             } finally {
                 $this->isDeleting = false;
                 $this->documentToDelete = null;
