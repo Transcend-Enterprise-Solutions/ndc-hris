@@ -3,7 +3,8 @@
     documentToDeleteId: null,
     notificationMessage: '',
     notificationType: '',
-    showNotification: false
+    showNotification: false,
+    selectedTab: '201_Documents'
 }" x-init="
     $wire.on('show-delete-modal', () => {
         showDeleteModal = true;
@@ -21,7 +22,7 @@
                 <div class="pt-4 pb-4">
                     <h1 class="text-lg font-bold text-center text-black dark:text-white">Employee Documents</h1>
                 </div>
-                <div x-data="{ selectedTab: 'saln' }" class="w-full">
+                <div class="w-full">
                     <div @keydown.right.prevent="$focus.wrap().next()" @keydown.left.prevent="$focus.wrap().previous()" class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700" role="tablist" aria-label="tab options">
                         @foreach ($tabs as $key => $label)
                             <button @click="selectedTab = '{{ $key }}'" :aria-selected="selectedTab === '{{ $key }}'" :tabindex="selectedTab === '{{ $key }}' ? '0' : '-1'" :class="selectedTab === '{{ $key }}' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" type="button" role="tab" aria-controls="tabpanel{{ ucfirst($key) }}">{{ $label }}</button>

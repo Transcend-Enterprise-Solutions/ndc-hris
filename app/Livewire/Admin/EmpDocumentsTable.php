@@ -16,13 +16,14 @@ class EmpDocumentsTable extends Component
     public function mount()
     {
         $this->tabs = [
-            'saln' => 'SALN',
-            'ipcr' => 'IPCR',
-            'bir1902' => 'BIR Form 1902',
-            'bir1905' => 'BIR Form 1905',
-            'bir2316' => 'BIR Form 2316',
-            'employment_cert' => 'Certificate of Employment',
-            'service_record' => 'Service Record',
+            '201_Documents' => '201 Documents',
+            'SALN' => 'SALN',
+            'IPCR' => 'IPCR',
+            'BIR1902' => 'BIR Form 1902',
+            'BIR1905' => 'BIR Form 1905',
+            'BIR2316' => 'BIR Form 2316',
+            'COE' => 'Certificate of Employment',
+            'Service Record' => 'Service Record',
         ];
 
         $this->loadDocuments();
