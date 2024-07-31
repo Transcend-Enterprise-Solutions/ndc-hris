@@ -5,18 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LeaveCredits extends Model
+class LeaveCreditsCalculation extends Model
 {
     use HasFactory;
 
-    protected $table = 'leave_credits';
+    protected $table = 'leave_credits_calculation';
 
     protected $fillable = [
         'user_id',
-        'total_credits',
-        'claimable_credits',
-        'total_claimed_credits',
-        'credits_transferred',
+        'month',
+        'year',
+        'late_time',
+        'total_credits_earned',
+        'leave_credits_earned',
     ];
 
     public function user()

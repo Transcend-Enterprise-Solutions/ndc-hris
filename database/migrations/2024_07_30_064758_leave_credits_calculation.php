@@ -10,15 +10,16 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        if (!Schema::hasTable('leave_credits')) {
-            Schema::create('leave_credits', function (Blueprint $table) {
+        if (!Schema::hasTable('leave_credits_calculation')) {
+            Schema::create('leave_credits_calculation', function (Blueprint $table) {
                 $table->id('id');
                 $table->unsignedBigInteger('user_id');
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-                $table->decimal('total_credits', 10, 3)->nullable();
-                $table->decimal('claimable_credits', 10, 3)->nullable();
-                $table->decimal('total_claimed_credits', 10, 3)->nullable();
-                $table->boolean('credits_transferred')->default(false);
+                $table->string('month')->nullable();
+                $table->string('year')->nullable();
+                $table->string('late_time')->nullable();
+                $table->decimal('total_credits_earned', 10, 3)->nullable();
+                $table->decimal('leave_credits_earned', 10, 3)->nullable();
                 $table->timestamps();
             });
         }
@@ -29,8 +30,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        if (Schema::hasTable('leave_credits')) {
-            Schema::dropIfExists('leave_credits');
+        if (Schema::hasTable('leave_credits_calculation')) {
+            Schema::dropIfExists('leave_credits_calculation');
         }
     }
 };

@@ -60,13 +60,14 @@
             <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Details of Action on Application
                 (Vacation Leave)
             </h1>
+
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                     <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                         <tr class="whitespace-nowrap">
                             <th scope="col" class="px-4 py-2 text-center">Balance</th>
-                            <th scope="col" class="px-4 py-2 text-center">Month</th>
-                            <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th>
+                            {{-- <th scope="col" class="px-4 py-2 text-center">Month</th>
+                            <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th> --}}
                             <th scope="col" class="px-4 py-2 text-center">Status</th>
                         </tr>
                     </thead>
@@ -74,9 +75,9 @@
                         @foreach($leaveApplications as $leaveApplication)
                         @foreach($leaveApplication->vacationLeaveDetails as $details)
                         <tr class="whitespace-nowrap">
-                            <td class="px-4 py-2 text-center">{{ $details->balance }}</td>
-                            <td class="px-4 py-2 text-center">{{ $details->month }}</td>
-                            <td class="px-4 py-2 text-center">{{ $claimableCredits }}</td>
+                            <td class="px-4 py-2 text-center">{{ $totalCredits }}</td>
+                            {{-- <td class="px-4 py-2 text-center">{{ $details->month }}</td>
+                            <td class="px-4 py-2 text-center"></td> --}}
                             <td class="px-4 py-2 text-center">
                                 <span
                                     class="inline-block px-3 py-1 text-sm font-semibold 
@@ -100,9 +101,9 @@
                 <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                     <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                         <tr class="whitespace-nowrap">
-                            <th scope="col" class="px-4 py-2 text-center">Balance</th>
-                            <th scope="col" class="px-4 py-2 text-center">Month</th>
-                            <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th>
+                            <th scope="col" class="px-4 py-2 text-center">Total Balance</th>
+                            {{-- <th scope="col" class="px-4 py-2 text-center">Month</th>
+                            <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th> --}}
                             <th scope="col" class="px-4 py-2 text-center">Status</th>
                         </tr>
                     </thead>
@@ -110,9 +111,9 @@
                         @foreach($leaveApplications as $leaveApplication)
                         @foreach($leaveApplication->sickLeaveDetails as $details)
                         <tr class="whitespace-nowrap">
-                            <td class="px-4 py-2 text-center">{{ $details->balance }}</td>
-                            <td class="px-4 py-2 text-center">{{ $details->month }}</td>
-                            <td class="px-4 py-2 text-center">{{ $claimableCredits }}</td>
+                            <td class="px-4 py-2 text-center">{{ $totalCredits }}</td>
+                            {{-- <td class="px-4 py-2 text-center">{{ $details->month }}</td>
+                            <td class="px-4 py-2 text-center"></td> --}}
                             <td class="px-4 py-2 text-center">
                                 <span
                                     class="inline-block px-3 py-1 text-sm font-semibold 
@@ -139,13 +140,13 @@
                     <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                         <tr class="whitespace-nowrap">
                             <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th>
-                            <th scope="col" class="px-4 py-2 text-center">Claimed Credits</th>
+                            {{-- <th scope="col" class="px-4 py-2 text-center">Claimed Credits</th> --}}
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="whitespace-nowrap">
-                            <td class="px-4 py-2 text-center">{{ $claimableCredits }}</td>
-                            <td class="px-4 py-2 text-center">{{ $totalClaimedCredits }}</td>
+                            <td class="px-4 py-2 text-center">{{ $totalCredits }}</td>
+                            {{-- <td class="px-4 py-2 text-center"></td> --}}
                         </tr>
                     </tbody>
                 </table>
