@@ -23,8 +23,7 @@ use App\Http\Controllers\CampaignController;
 */
 
 Route::redirect('/', '/login');
-Route::get('/register', function () {
-    return view('registeraccount'); })->name('register');
+Route::get('/register', function () {return view('registeraccount');})->name('register');
 
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
@@ -210,7 +209,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/component/icons', function () {
         return view('pages/component/icons-page');
     })->name('icons-page');
-    Route::fallback(function () {
+    Route::fallback(function() {
         return view('pages/utility/404');
     });
 });
