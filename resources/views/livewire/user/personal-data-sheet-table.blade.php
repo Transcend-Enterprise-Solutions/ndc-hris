@@ -69,7 +69,7 @@
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
                                 <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->surname }}</p>
                             </div>
-                    
+
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
                                 <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->first_name }}</p>
@@ -81,7 +81,7 @@
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 dark:bg-slate-700 bg-gray-50">Middlename</p>
                                 <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->middle_name }}</p>
                             </div>
-                    
+
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
                                 <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->name_extension }}</p>
@@ -89,7 +89,7 @@
                         </div>
 
                     </div>
-                    
+
                     <div class="custom-d flex w-full">
 
                         <div class="w-full sm:w-2/4 block">
@@ -227,7 +227,7 @@
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->surname }}</p>
                                 </div>
-                        
+
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->first_name }}</p>
@@ -239,7 +239,7 @@
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->middle_name }}</p>
                                 </div>
-                        
+
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->name_extension }}</p>
@@ -253,7 +253,7 @@
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($userSpouse->birth_date)->format('F d, Y') }}</p>
                                 </div>
-                        
+
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Occupation</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->occupation }}</p>
@@ -265,7 +265,7 @@
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Employer</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->employer }}</p>
                                 </div>
-                        
+
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Tel. No.</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->tel_number }}</p>
@@ -299,7 +299,7 @@
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->surname }}</p>
                                     </div>
-                            
+
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->first_name }}</p>
@@ -311,7 +311,7 @@
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->middle_name }}</p>
                                     </div>
-                            
+
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->name_extension }}</p>
@@ -337,7 +337,7 @@
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->surname }}</p>
                                     </div>
-                            
+
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->first_name }}</p>
@@ -349,7 +349,7 @@
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->middle_name }}</p>
                                     </div>
-                            
+
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->name_extension }}</p>
@@ -387,7 +387,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                                    
+
                             </div>
                         @endforeach
                     @endif
@@ -443,7 +443,7 @@
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->year_graduated }}</p>
                                 </div>
                             </div>
-                                                
+
                         </div>
                     @endforeach
                 </div>
@@ -613,7 +613,7 @@
                 <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $lds && $lds->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">VII. LEARNING AND DEVELOPMENT
                     <i class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddLearnAndDev"></i>
                     @if ($lds && $lds->isNotEmpty())
-                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditLearnAndDev"></i> 
+                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditLearnAndDev"></i>
                     @endif
                 </div>
 
@@ -671,7 +671,7 @@
 
                 {{-- Other Information --}}
                 <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">VIII. OTHER INFORMATION</div>
-                
+
                 <div class="m-scrollable">
 
                     {{-- SKILLS --}}
@@ -838,59 +838,59 @@
                     <div class="col-span-2 sm:col-span-1">
                         <label for="surname" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Surname</label>
                         <input type="text" id="surname" wire:model='surname' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                        @error('surname') 
-                            <span class="text-red-500 text-sm">The surname is required!</span> 
+                        @error('surname')
+                            <span class="text-red-500 text-sm">The surname is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Firstname</label>
                         <input type="text" id="first_name" wire:model='first_name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('first_name') 
-                            <span class="text-red-500 text-sm">The firstname is required!</span> 
+                        @error('first_name')
+                            <span class="text-red-500 text-sm">The firstname is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="middle_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Middlename</label>
                         <input type="text" id="middle_name" wire:model='middle_name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('middle_name') 
-                            <span class="text-red-500 text-sm">The middlename is required!</span> 
+                        @error('middle_name')
+                            <span class="text-red-500 text-sm">The middlename is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="name_extension" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name Extension</label>
                         <input type="text" id="name_extension" wire:model='name_extension' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('name_extension') 
-                            <span class="text-red-500 text-sm">The name extension is required!</span> 
+                        @error('name_extension')
+                            <span class="text-red-500 text-sm">The name extension is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="date_of_birth" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date of Birth</label>
                         <input type="date" id="date_of_birth" wire:model='date_of_birth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('date_of_birth') 
-                            <span class="text-red-500 text-sm">The date of birth is required!</span> 
+                        @error('date_of_birth')
+                            <span class="text-red-500 text-sm">The date of birth is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="place_of_birth" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Place of Birth</label>
                         <input type="text" id="place_of_birth" wire:model='place_of_birth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('place_of_birth') 
-                            <span class="text-red-500 text-sm">The place of birth is required!</span> 
+                        @error('place_of_birth')
+                            <span class="text-red-500 text-sm">The place of birth is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="sex" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Sex at Birth</label>
                         <input type="text" id="sex" wire:model='sex' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('sex') 
-                            <span class="text-red-500 text-sm">The sex is required!</span> 
+                        @error('sex')
+                            <span class="text-red-500 text-sm">The sex is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="civil_status" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Civil Status</label>
                         <select wire:model='civil_status' class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
@@ -901,74 +901,74 @@
                             <option value="Separated">Separated</option>
                             <option value="Other">Other</option>
                         </select>
-                        @error('civil_status') 
-                            <span class="text-red-500 text-sm">The civil status is required!</span> 
+                        @error('civil_status')
+                            <span class="text-red-500 text-sm">The civil status is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="citizenship" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Citizenship</label>
                         <input type="text" id="citizenship" wire:model='citizenship' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('citizenship') 
-                            <span class="text-red-500 text-sm">The citizenship is required!</span> 
+                        @error('citizenship')
+                            <span class="text-red-500 text-sm">The citizenship is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="height" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Height</label>
                         <input type="number" step="0.01" id="height" wire:model='height' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('height') 
-                            <span class="text-red-500 text-sm">The height is required!</span> 
+                        @error('height')
+                            <span class="text-red-500 text-sm">The height is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="weight" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Weight</label>
                         <input type="number" step="0.01" id="weight" wire:model='weight' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('weight') 
-                            <span class="text-red-500 text-sm">The weight is required!</span> 
+                        @error('weight')
+                            <span class="text-red-500 text-sm">The weight is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="blood_type" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Bloodtype</label>
                         <input type="text" id="blood_type" wire:model='blood_type' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('blood_type') 
-                            <span class="text-red-500 text-sm">The bloodtype is required!</span> 
+                        @error('blood_type')
+                            <span class="text-red-500 text-sm">The bloodtype is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="tel_number" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Tel Number</label>
                         <input type="text" id="tel_number" wire:model='tel_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('tel_number') 
-                            <span class="text-red-500 text-sm">The telephone number is required!</span> 
+                        @error('tel_number')
+                            <span class="text-red-500 text-sm">The telephone number is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="mobile_number" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Mobile Number</label>
                         <input type="text" id="mobile_number" wire:model='mobile_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('mobile_number') 
-                            <span class="text-red-500 text-sm">The mobile number is required!</span> 
+                        @error('mobile_number')
+                            <span class="text-red-500 text-sm">The mobile number is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="email" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Email</label>
                         <input type="email" id="email" wire:model='email' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('email') 
-                            <span class="text-red-500 text-sm">The email is required!</span> 
+                        @error('email')
+                            <span class="text-red-500 text-sm">The email is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="gsis" class="block text-sm font-medium text-gray-700 dark:text-slate-400">GSIS ID No.</label>
                         <input type="text" id="gsis" wire:model='gsis' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('gsis') 
-                            <span class="text-red-500 text-sm">The GSIS ID No. is required!</span> 
+                        @error('gsis')
+                            <span class="text-red-500 text-sm">The GSIS ID No. is required!</span>
                         @enderror
-                    </div>                    
+                    </div>
 
                     <div class="col-span-2 sm:col-span-1">
                         <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">SSS ID No.</label>
@@ -981,35 +981,35 @@
                     <div class="col-span-2 sm:col-span-1">
                         <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Pag-Ibig ID No.</label>
                         <input type="text" id="first_name" wire:model='pagibig' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('pagibig') 
-                            <span class="text-red-500 text-sm">The Pag-IBIG ID No. is required!</span> 
+                        @error('pagibig')
+                            <span class="text-red-500 text-sm">The Pag-IBIG ID No. is required!</span>
                         @enderror
                     </div>
 
                     <div class="col-span-2 sm:col-span-1">
                         <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">PhilHealth ID No.</label>
                         <input type="text" id="first_name" wire:model='philhealth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('philhealth') 
-                            <span class="text-red-500 text-sm">The Philhealth No. is required!</span> 
+                        @error('philhealth')
+                            <span class="text-red-500 text-sm">The Philhealth No. is required!</span>
                         @enderror
                     </div>
 
                     <div class="col-span-2 sm:col-span-1">
                         <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">TIN ID No.</label>
                         <input type="text" id="tin" wire:model='tin' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('tin') 
-                            <span class="text-red-500 text-sm">The TIN ID No. is required!</span> 
+                        @error('tin')
+                            <span class="text-red-500 text-sm">The TIN ID No. is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-2">
                         <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Agency Employee No.</label>
                         <input type="text" id="agency_employee_no" wire:model='agency_employee_no' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('agency_employee_no') 
-                            <span class="text-red-500 text-sm">The Agency Employee No. is required!</span> 
+                        @error('agency_employee_no')
+                            <span class="text-red-500 text-sm">The Agency Employee No. is required!</span>
                         @enderror
                     </div>
-                    
+
                     <fieldset class="col-span-2 sm:col-span-2 border border-gray-300 p-4 rounded-lg overflow-hidden w-full">
                         <legend class="px-2"> Permanent Address </legend>
                         <div class="grid grid-cols-2 gap-4">
@@ -1028,11 +1028,11 @@
                                         <option value="">Select a region</option>
                                     @endif
                                 </select>
-                                @error('p_province') 
-                                    <span class="text-red-500 text-sm">The province is required!</span> 
+                                @error('p_province')
+                                    <span class="text-red-500 text-sm">The province is required!</span>
                                 @enderror
                             </div>
-                    
+
                             <div class="col-span-2 sm:col-span-1">
                                 <label for="p_city" class="block text-sm font-medium text-gray-700 dark:text-slate-400">City</label>
                                 <select class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700"
@@ -1048,11 +1048,11 @@
                                         <option value="">Select a city/municipality</option>
                                     @endif
                                 </select>
-                                @error('p_city') 
-                                    <span class="text-red-500 text-sm">The city is required!</span> 
+                                @error('p_city')
+                                    <span class="text-red-500 text-sm">The city is required!</span>
                                 @enderror
                             </div>
-                    
+
                             <div class="col-span-2 sm:col-span-1">
                                 <label for="p_barangay" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Barangay</label>
                                 <select class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700"
@@ -1068,27 +1068,27 @@
                                         <option value="">Select a barangay</option>
                                     @endif
                                 </select>
-                                @error('p_barangay') 
-                                    <span class="text-red-500 text-sm">The barangay is required!</span> 
+                                @error('p_barangay')
+                                    <span class="text-red-500 text-sm">The barangay is required!</span>
                                 @enderror
                             </div>
-                    
+
                             <div class="col-span-2 sm:col-span-1">
                                 <label for="p_zipcode" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Zip Code</label>
                                 <input type="number" id="p_zipcode" wire:model='p_zipcode' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('p_zipcode') 
-                                    <span class="text-red-500 text-sm">The Zip Code is required!</span> 
+                                @error('p_zipcode')
+                                    <span class="text-red-500 text-sm">The Zip Code is required!</span>
                                 @enderror
                             </div>
-                    
+
                             <div class="col-span-2 sm:col-span-2">
                                 <label for="p_house_street" class="block text-sm font-medium text-gray-700 dark:text-slate-400">House | Street | Subdivision</label>
                                 <input type="text" id="p_house_street" wire:model='p_house_street' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('p_house_street') 
-                                    <span class="text-red-500 text-sm">The House/Street/Subdivision is required!</span> 
+                                @error('p_house_street')
+                                    <span class="text-red-500 text-sm">The House/Street/Subdivision is required!</span>
                                 @enderror
                             </div>
-                    
+
                         </div>
                     </fieldset>
 
@@ -1112,11 +1112,11 @@
                                         <option value="">Select a region</option>
                                     @endif
                                 </select>
-                                @error('r_province') 
-                                    <span class="text-red-500 text-sm">The province is required!</span> 
+                                @error('r_province')
+                                    <span class="text-red-500 text-sm">The province is required!</span>
                                 @enderror
                             </div>
-        
+
                             <div class="col-span-2 sm:col-span-1">
                                 <label for="surname" class="block text-sm font-medium text-gray-700 dark:text-slate-400">City</label>
                                 <select
@@ -1134,8 +1134,8 @@
                                         <option value="">Select a city/municipality</option>
                                     @endif
                                 </select>
-                                @error('r_city') 
-                                    <span class="text-red-500 text-sm">The city is required!</span> 
+                                @error('r_city')
+                                    <span class="text-red-500 text-sm">The city is required!</span>
                                 @enderror
                             </div>
 
@@ -1156,7 +1156,7 @@
                                         <option value="">Select a barangay</option>
                                     @endif
                                 </select>
-                                @error('r_barangay') 
+                                @error('r_barangay')
                                     <span class="text-red-500 text-sm">The barangay is required</span>
                                 @enderror
                             </div>
@@ -1164,16 +1164,16 @@
                             <div class="col-span-2 sm:col-span-1">
                                 <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Zip Code</label>
                                 <input type="number" id="first_name" wire:model='r_zipcode' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('r_zipcode') 
-                                    <span class="text-red-500 text-sm">The Zip Code is required!</span> 
+                                @error('r_zipcode')
+                                    <span class="text-red-500 text-sm">The Zip Code is required!</span>
                                 @enderror
                             </div>
-        
+
                             <div class="col-span-2 sm:col-span-2">
                                 <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">House | Street | Subdivision</label>
                                 <input type="text" id="first_name" wire:model='r_house_street' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('r_house_street') 
-                                    <span class="text-red-500 text-sm">The House/Street/Subdivision is required!</span> 
+                                @error('r_house_street')
+                                    <span class="text-red-500 text-sm">The House/Street/Subdivision is required!</span>
                                 @enderror
                             </div>
                         </div>
@@ -1212,23 +1212,23 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveSpouse'>
                 <div class="grid grid-cols-2 gap-4">
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="spouse_surname" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Surname</label>
                         <input type="text" id="spouse_surname" wire:model='spouse_surname' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('spouse_surname') 
-                            <span class="text-red-500 text-sm">The surname is required!</span> 
+                        @error('spouse_surname')
+                            <span class="text-red-500 text-sm">The surname is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="spouse_first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Firstname</label>
                         <input type="text" id="spouse_first_name" wire:model='spouse_first_name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('spouse_first_name')             
-                            <span class="text-red-500 text-sm">The firstname is required!</span> 
+                        @error('spouse_first_name')
+                            <span class="text-red-500 text-sm">The firstname is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="spouse_middle_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Middlename</label>
                         <input type="text" id="spouse_middle_name" wire:model='spouse_middle_name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
@@ -1236,11 +1236,11 @@
                             <span class="text-red-500 text-sm">The middlename is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="spouse_name_extension" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name Extension</label>
                         <input type="text" id="spouse_name_extension" wire:model='spouse_name_extension' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('spouse_name_extension') 
+                        @error('spouse_name_extension')
                             <span class="text-red-500 text-sm">The name extension is required!</span>
                         @enderror
                     </div>
@@ -1248,7 +1248,7 @@
                     <div class="col-span-2 sm:col-span-1">
                         <label for="spouse_date_of_birth" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date</label>
                         <input type="date" id="spouse_date_of_birth" wire:model='spouse_date_of_birth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('spouse_date_of_birth') 
+                        @error('spouse_date_of_birth')
                             <span class="text-red-500 text-sm">The date is required!</span>
                         @enderror
                     </div>
@@ -1256,7 +1256,7 @@
                     <div class="col-span-2 sm:col-span-1">
                         <label for="spouse_occupation" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Occupation</label>
                         <input type="text" id="spouse_occupation" wire:model='spouse_occupation' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('spouse_occupation') 
+                        @error('spouse_occupation')
                             <span class="text-red-500 text-sm">The occupation is required!</span>
                         @enderror
                     </div>
@@ -1264,7 +1264,7 @@
                     <div class="col-span-2 sm:col-span-1">
                         <label for="spouse_employer" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employer</label>
                         <input type="text" id="spouse_employer" wire:model='spouse_employer' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('spouse_employer') 
+                        @error('spouse_employer')
                             <span class="text-red-500 text-sm">The employer is required!</span>
                         @enderror
                     </div>
@@ -1272,7 +1272,7 @@
                     <div class="col-span-2 sm:col-span-1">
                         <label for="spouse_emp_tel_num" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Tel Number</label>
                         <input type="text" id="spouse_emp_tel_num" wire:model='spouse_emp_tel_num' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('spouse_emp_tel_num') 
+                        @error('spouse_emp_tel_num')
                             <span class="text-red-500 text-sm">The telephone number is required!</span>
                         @enderror
                     </div>
@@ -1280,13 +1280,13 @@
                     <div class="col-span-2 sm:col-span-2">
                         <label for="spouse_emp_business_address" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Business Address</label>
                         <input type="text" id="spouse_emp_business_address" wire:model='spouse_emp_business_address' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('spouse_emp_business_address') 
+                        @error('spouse_emp_business_address')
                             <span class="text-red-500 text-sm">The business address is required!</span>
                         @enderror
                     </div>
-                    
-                    
-                    
+
+
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-2 sm:col-span-2">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -1320,23 +1320,23 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveFather'>
                 <div class="grid grid-cols-2 gap-4">
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="father_surname" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Surname</label>
                         <input type="text" id="father_surname" wire:model='father_surname' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('father_surname') 
-                            <span class="text-red-500 text-sm">The surname is required!</span> 
+                        @error('father_surname')
+                            <span class="text-red-500 text-sm">The surname is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="father_first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Firstname</label>
                         <input type="text" id="father_first_name" wire:model='father_first_name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('father_first_name')             
-                            <span class="text-red-500 text-sm">The firstname is required!</span> 
+                        @error('father_first_name')
+                            <span class="text-red-500 text-sm">The firstname is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="father_middle_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Middlename</label>
                         <input type="text" id="father_middle_name" wire:model='father_middle_name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
@@ -1344,15 +1344,15 @@
                             <span class="text-red-500 text-sm">The middlename is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="father_name_extension" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name Extension</label>
                         <input type="text" id="father_name_extension" wire:model='father_name_extension' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('father_name_extension') 
+                        @error('father_name_extension')
                             <span class="text-red-500 text-sm">The name extension is required!</span>
                         @enderror
                     </div>
-                    
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-2 sm:col-span-2">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -1386,23 +1386,23 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveMother'>
                 <div class="grid grid-cols-2 gap-4">
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="mother_surname" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Surname</label>
                         <input type="text" id="mother_surname" wire:model='mother_surname' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('mother_surname') 
-                            <span class="text-red-500 text-sm">The surname is required!</span> 
+                        @error('mother_surname')
+                            <span class="text-red-500 text-sm">The surname is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="mother_first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Firstname</label>
                         <input type="text" id="mother_first_name" wire:model='mother_first_name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('mother_first_name')             
-                            <span class="text-red-500 text-sm">The firstname is required!</span> 
+                        @error('mother_first_name')
+                            <span class="text-red-500 text-sm">The firstname is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="mother_middle_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Middlename</label>
                         <input type="text" id="mother_middle_name" wire:model='mother_middle_name' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
@@ -1410,15 +1410,15 @@
                             <span class="text-red-500 text-sm">The middlename is required!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-2 sm:col-span-1">
                         <label for="mother_name_extension" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name Extension</label>
                         <input type="text" id="mother_name_extension" wire:model='mother_name_extension' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('mother_name_extension') 
+                        @error('mother_name_extension')
                             <span class="text-red-500 text-sm">The name extension is required!</span>
                         @enderror
                     </div>
-                    
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-2 sm:col-span-2">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -1452,7 +1452,7 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveChildren'>
                 <div class="grid grid-cols-1">
-                    
+
                     @if($addChildren != true)
                         @foreach ($children as $index => $child)
                             <div class="grid grid-cols-2 gap-4 mb-4  mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
@@ -1502,7 +1502,7 @@
                             Add Child
                         </button>
                     @endif
-                    
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -1527,7 +1527,7 @@
     <x-modal id="educBackgroundModal" maxWidth="2xl" wire:model="editEducBackground">
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                {{ $addEducBackground ? 'Add' : 'Edit' }} Educational Background 
+                {{ $addEducBackground ? 'Add' : 'Edit' }} Educational Background
                 <button @click="show = false" class="float-right focus:outline-none">
                     <i class="fas fa-times"></i>
                 </button>
@@ -1536,11 +1536,11 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveEducationBackground'>
                 <div class="grid grid-cols-1">
-                    
+
                     @if($addEducBackground != true)
                         @foreach ($education as $index => $educ)
                             <div class="grid grid-cols-2 gap-4 mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
-                                
+
                                 <div class="col-span-2 sm:col-span-2 mt-3 pt-2 border-b">
                                     <label for="education_level_{{ $index }}" class="block font-bold text-sm text-gray-700 dark:text-slate-300 uppercase">{{ $educ['level'] }}</label>
                                 </div>
@@ -1594,7 +1594,7 @@
                                         <span class="text-red-500 text-sm">The year graduated is required!</span>
                                     @enderror
                                 </div>
-                                
+
                             </div>
                         @endforeach
                     @else
@@ -1613,8 +1613,8 @@
                                         <option value="4">College</option>
                                         <option value="5">Graduate Studies</option>
                                     </select>
-                                    @error('newEducation.' . $index . '.level_code') 
-                                        <span class="text-red-500 text-sm">The level is required!</span> 
+                                    @error('newEducation.' . $index . '.level_code')
+                                        <span class="text-red-500 text-sm">The level is required!</span>
                                     @enderror
                                 </div>
 
@@ -1677,7 +1677,7 @@
                         </button>
                     @endif
 
-                    
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -1702,7 +1702,7 @@
     <x-modal id="eligibilityModal" maxWidth="2xl" wire:model="editEligibility">
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                {{ $addEligibility ? 'Add' : 'Edit' }} Civil Service Eligibility 
+                {{ $addEligibility ? 'Add' : 'Edit' }} Civil Service Eligibility
                 <button @click="show = false" class="float-right focus:outline-none">
                     <i class="fas fa-times"></i>
                 </button>
@@ -1711,7 +1711,7 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveEligibility'>
                 <div class="grid grid-cols-1">
-                    
+
                     @if($addEligibility != true)
                         @foreach ($eligibilities as $index => $elig)
                             <div class="grid grid-cols-2 gap-4 mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
@@ -1757,7 +1757,7 @@
                                     <label for="date_of_validity_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date of Validity</label>
                                     <input type="date" id="date_of_validity_{{ $index }}" wire:model="eligibilities.{{ $index }}.date_of_validity" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                 </div>
-                                
+
                             </div>
                         @endforeach
                     @else
@@ -1817,7 +1817,7 @@
                         </button>
                     @endif
 
-                    
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -1842,7 +1842,7 @@
     <x-modal id="workExpModal" maxWidth="2xl" wire:model="editWorkExp">
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                {{ $addWorkExp ? 'Add' : 'Edit' }} Work Experience 
+                {{ $addWorkExp ? 'Add' : 'Edit' }} Work Experience
                 <button @click="show = false" class="float-right focus:outline-none">
                     <i class="fas fa-times"></i>
                 </button>
@@ -1851,11 +1851,11 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveWorkExp'>
                 <div class="grid grid-cols-1">
-                    
+
                     @if($addWorkExp != true)
                         @foreach ($workExperiences as $index => $exp)
                             <div class="grid grid-cols-2 gap-4 mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
-    
+
                                 <div class="col-span-2 sm:col-span-2">
                                     <label for="comp_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Department/Agency/Office/Company</label>
                                     <input type="text" id="comp_{{ $index }}" wire:model="workExperiences.{{ $index }}.department" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
@@ -1863,7 +1863,7 @@
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
                                 </div>
-    
+
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="start_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
                                     <input type="date" id="start_date_{{ $index }}" wire:model="workExperiences.{{ $index }}.start_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
@@ -1871,7 +1871,7 @@
                                         <span class="text-red-500 text-sm">The start date is required!</span>
                                     @enderror
                                 </div>
-    
+
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
                                     <input type="date" id="end_date_{{ $index }}" wire:model="workExperiences.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
@@ -1879,7 +1879,7 @@
                                         <span class="text-red-500 text-sm">The end date is required!</span>
                                     @enderror
                                 </div>
-    
+
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="position_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
                                     <input type="text" id="position_{{ $index }}" wire:model="workExperiences.{{ $index }}.position" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
@@ -1887,17 +1887,17 @@
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
                                 </div>
-    
+
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="status_of_appointment_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Status of Appointment</label>
                                     <input type="text" id="status_of_appointment_{{ $index }}" wire:model="workExperiences.{{ $index }}.status_of_appointment" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                 </div>
-    
+
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="monthly_salary_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Monthly Salary</label>
                                     <input type="number" id="monthly_salary_{{ $index }}" wire:model="workExperiences.{{ $index }}.monthly_salary" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                 </div>
-    
+
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="gov_service_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Gov't Service</label>
                                     <div class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
@@ -1913,8 +1913,8 @@
                                     @error('workExperiences.' . $index . '.gov_service')
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
-                                </div>                            
-                                
+                                </div>
+
                             </div>
                         @endforeach
                     @else
@@ -1980,7 +1980,7 @@
                                     @error('newWorkExperiences.' . $index . '.gov_service')
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
-                                </div>                            
+                                </div>
 
                             </div>
                         @endforeach
@@ -1989,9 +1989,9 @@
                             Add Work Experience
                         </button>
                     @endif
-                    
 
-                    
+
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -2016,7 +2016,7 @@
     <x-modal id="voluntaryWorkModal" maxWidth="2xl" wire:model="editVoluntaryWorks">
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                {{ $addVoluntaryWorks ? 'Add' : 'Edit' }} Voluntary Work 
+                {{ $addVoluntaryWorks ? 'Add' : 'Edit' }} Voluntary Work
                 <button @click="show = false" class="float-right focus:outline-none">
                     <i class="fas fa-times"></i>
                 </button>
@@ -2025,7 +2025,7 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveVoluntaryWork'>
                 <div class="grid grid-cols-1">
-                    
+
                     @if($addVoluntaryWorks != true)
                         @foreach ($voluntaryWork as $index => $work)
                             <div class="grid grid-cols-2 gap-4 mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
@@ -2076,8 +2076,8 @@
                                     @error('voluntaryWork.' . $index . '.position_nature')
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
-                                </div>            
-                                
+                                </div>
+
                             </div>
                         @endforeach
                     @else
@@ -2134,8 +2134,8 @@
                                     @error('newVoluntaryWorks.' . $index . '.position_nature')
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
-                                </div>            
-                                
+                                </div>
+
                             </div>
                         @endforeach
 
@@ -2144,7 +2144,7 @@
                         </button>
                     @endif
 
-                    
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -2178,7 +2178,7 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveLearnAndDev'>
                 <div class="grid grid-cols-1">
-                    
+
                     @if($addLearnDev != true)
                         @foreach ($learnAndDevs as $index => $learnAndDev)
                             <div class="grid grid-cols-2 gap-4  mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
@@ -2229,8 +2229,8 @@
                                     @error('learnAndDevs.' . $index . '.conducted_by')
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
-                                </div>            
-                                
+                                </div>
+
                             </div>
                         @endforeach
                     @else
@@ -2287,8 +2287,8 @@
                                     @error('newLearnAndDevs.' . $index . '.conducted_by')
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
-                                </div>            
-                                
+                                </div>
+
                             </div>
                         @endforeach
 
@@ -2297,7 +2297,7 @@
                         </button>
                     @endif
 
-                    
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -2331,7 +2331,7 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveSkills'>
                 <div class="grid grid-cols-1">
-                    
+
                     @if($addSkills != true)
                         @foreach ($mySkills as $index => $skill)
                             <div class="grid grid-cols-1 gap-4">
@@ -2351,7 +2351,7 @@
                                     <input type="text" id="skill_{{ $index }}" wire:model="myNewSkills.{{ $index }}.skill" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                     <i class="fas fa-times cursor-pointer text-red-500 hover:text-red-700 float-right mr-3" wire:click="removeNewSkill({{ $index }})" style="margin-top: -30px"></i>
                                 </div>
-                                
+
                             </div>
                         @endforeach
 
@@ -2360,7 +2360,7 @@
                         </button>
                     @endif
 
-                    
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -2394,7 +2394,7 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveHobbies'>
                 <div class="grid grid-cols-1">
-                    
+
                     @if($addHobbies != true)
                         @foreach ($myHobbies as $index => $hbby)
                             <div class="grid grid-cols-1 gap-4">
@@ -2404,7 +2404,7 @@
                                     <input type="text" id="hobby_{{ $index }}" wire:model="myHobbies.{{ $index }}.hobby" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                     <i class="fas fa-trash cursor-pointer text-red-500 hover:text-red-700 float-right mr-3" wire:click="deleteHobby({{ $hbby['id'] }}, {{ $index }})" style="margin-top: -30px"></i>
                                 </div>
-                                
+
                             </div>
                         @endforeach
                     @else
@@ -2425,7 +2425,7 @@
                         </button>
                     @endif
 
-                    
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -2459,7 +2459,7 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveNonAcad'>
                 <div class="grid grid-cols-1">
-                    
+
                     @if($addNonAcad != true)
                         @foreach ($nonAcads as $index => $nonAcad)
                             <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
@@ -2486,8 +2486,8 @@
                                     @error('nonAcads.' . $index . '.date_received')
                                         <span class="text-red-500 text-sm">The date received is required!</span>
                                     @enderror
-                                </div>  
-                                
+                                </div>
+
                             </div>
                         @endforeach
                     @else
@@ -2518,17 +2518,17 @@
                                     @error('newNonAcads.' . $index . '.date_received')
                                         <span class="text-red-500 text-sm">The date received is required!</span>
                                     @enderror
-                                </div>  
-                                
+                                </div>
+
                             </div>
                         @endforeach
-                        
+
                         <button type="button" wire:click="addNewNonAcad" class="bg-blue-500 hover:text-white hover:bg-blue-700 text-slate-700 dark:text-gray-300 font-bold py-2 px-4 rounded mb-4">
                             Add Non-Academic Distinction/Recognition
                         </button>
                     @endif
 
-                    
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -2562,7 +2562,7 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveMemberships'>
                 <div class="grid grid-cols-1">
-                    
+
                     @if($addMemberships != true)
                         @foreach ($memberships as $index => $member)
                             <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
@@ -2582,7 +2582,7 @@
                                         <span class="text-red-500 text-sm">This position is required!</span>
                                     @enderror
                                 </div>
-                                
+
                             </div>
                         @endforeach
                     @else
@@ -2616,7 +2616,7 @@
                         </button>
                     @endif
 
-                    
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -2650,7 +2650,7 @@
             {{-- Form fields --}}
             <form wire:submit.prevent='saveReferences'>
                 <div class="grid grid-cols-1">
-                    
+
                     @if($addReferences != true)
                         @foreach ($myReferences as $index => $refs)
                             <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
@@ -2702,7 +2702,7 @@
                                         <span class="text-red-500 text-sm">This position is required!</span>
                                     @enderror
                                 </div>
-                                
+
                             </div>
                         @endforeach
                     @else
@@ -2768,7 +2768,7 @@
                         </button>
                     @endif
 
-                    
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -2819,5 +2819,5 @@
 
         </div>
     </x-modal>
-    
+
 </div>

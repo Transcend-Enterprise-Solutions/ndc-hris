@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\User;
 
 use Livewire\Component;
@@ -25,7 +24,7 @@ class MyDocumentsTable extends Component
 
     protected $rules = [
         'file' => 'required|file|mimes:pdf|max:5020',
-        'documentType' => 'required|string',
+        'documentType' => 'required|string|max:255', // Adjusted max length
     ];
 
     protected $listeners = ['file-dropped' => 'handleDroppedFile'];
@@ -49,7 +48,7 @@ class MyDocumentsTable extends Component
         }
         $this->validate([
             'file' => 'required',
-            'documentType' => 'required|string',
+            'documentType' => 'required|string|max:255', // Adjusted max length
         ]);
 
         if ($this->documentAlreadyUploaded()) {
@@ -74,6 +73,16 @@ class MyDocumentsTable extends Component
                 $mimeType = mime_content_type(Storage::path($filePath));
                 $fileSize = strlen($fileData);
             }
+
+            // Debugging: log the data being inserted
+            logger()->info('Inserting document data:', [
+                'user_id' => Auth::id(),
+                'document_type' => $this->documentType,
+                'file_name' => $fileName,
+                'file_path' => $filePath,
+                'mime_type' => $mimeType,
+                'file_size' => $fileSize,
+            ]);
 
             EmployeeDocument::create([
                 'user_id' => Auth::id(),
@@ -136,13 +145,14 @@ class MyDocumentsTable extends Component
     public function availableDocumentTypes()
     {
         $allDocumentTypes = [
-            'saln' => 'Statement of Assets, Liabilities and Net Worth (SALN)',
-            'ipcr' => 'Individual Performance Commitment Review (IPCR)',
-            'bir1902' => 'BIR Form 1902',
-            'bir1905' => 'BIR Form 1905',
-            'bir2316' => 'BIR Form 2316',
-            'employment_cert' => 'Certificate of Employment',
-            'service_record' => 'Service Record',
+            '201_Documents' => '201 Documents',
+            'SALN' => 'Statement of Assets, Liabilities and Net Worth (SALN)',
+            'IPCR' => 'Individual Performance Commitment Review (IPCR)',
+            'BIR1902' => 'BIR Form 1902',
+            'BIR1905' => 'BIR Form 1905',
+            'BIR2316' => 'BIR Form 2316',
+            'COE' => 'Certificate of Employment',
+            'Service Record' => 'Service Record',
         ];
         $uploadedDocumentTypes = EmployeeDocument::where('user_id', Auth::id())
             ->pluck('document_type')
@@ -150,6 +160,7 @@ class MyDocumentsTable extends Component
 
         return array_diff_key($allDocumentTypes, array_flip($uploadedDocumentTypes));
     }
+
     public function render()
     {
         $documents = EmployeeDocument::where('user_id', Auth::id())->get();
