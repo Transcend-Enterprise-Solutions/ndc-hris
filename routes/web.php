@@ -23,8 +23,7 @@ use App\Http\Controllers\CampaignController;
 */
 
 Route::redirect('/', '/login');
-Route::get('/register', function () {
-    return view('registeraccount'); })->name('register');
+Route::get('/register', function () {return view('registeraccount');})->name('register');
 
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
@@ -32,38 +31,23 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/json-data-feed', [DataFeedController::class, 'getDataFeed'])->name('json_data_feed');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/employees', function () {
-        return view('livewire.admin.employees'); })->name('employees');
-    Route::get('/my-documents', function () {
-        return view('livewire.user.my-documents'); })->name('my-documents');
-    Route::get('/doc-request', function () {
-        return view('livewire.user.doc-request'); })->name('doc-request');
-    Route::get('/leave-application', function () {
-        return view('livewire.user.leave-application'); })->name('leave-application');
-    Route::get('/payslip', function () {
-        return view('livewire.user.payslip'); })->name('payslip');
-    Route::get('/admin-leave-request', function () {
-        return view('livewire.admin.admin-leave-request'); })->name('admin-leave-request');
-    Route::get('/admin-leave-records', function () {
-        return view('livewire.admin.admin-leave-records'); })->name('admin-leave-records');
-    Route::get('/admin-doc-request', function () {
-        return view('livewire.admin.admin-doc-request'); })->name('admin-doc-request');
-    Route::get('/admin-dtr', function () {
-        return view('livewire.admin.admin-dtr'); })->name('admin-dtr');
-    Route::get('/admin-schedule', function () {
-        return view('livewire.admin.admin-schedule'); })->name('admin-schedule');
-    Route::get('/payroll-management', function () {
-        return view('livewire.admin.payroll-management'); })->name('payroll-management');
-    Route::get('/payroll', function () {
-        return view('livewire.admin.payroll'); })->name('payroll');
-    Route::get('/general-payroll', function () {
-        return view('livewire.admin.general-payroll'); })->name('general-payroll');
-    Route::get('/personal-data-sheet', function () {
-        return view('livewire.user.personal-data-sheet'); })->name('personal-data-sheet');
-    Route::get('/leave-monetization', function () {
-        return view('livewire.user.leave-monetization'); })->name('leave-monetization');
-    Route::get('/dtr', function () {
-        return view('livewire.user.dtr'); })->name('dtr');
+    Route::get('/employees', function () {return view('livewire.admin.employees');})->name('employees');
+    Route::get('/my-documents', function () {return view('livewire.user.my-documents');})->name('my-documents');
+    Route::get('/doc-request', function () {return view('livewire.user.doc-request');})->name('doc-request');
+    Route::get('/leave-application', function () {return view('livewire.user.leave-application');})->name('leave-application');
+    Route::get('/payslip', function () {return view('livewire.user.payslip');})->name('payslip');
+    Route::get('/admin-leave-request', function () {return view('livewire.admin.admin-leave-request');})->name('admin-leave-request');
+    Route::get('/admin-leave-records', function () {return view('livewire.admin.admin-leave-records');})->name('admin-leave-records');
+    Route::get('/admin-doc-request', function () {return view('livewire.admin.admin-doc-request');})->name('admin-doc-request');
+    Route::get('/emp-documents', function () {return view('livewire.admin.emp-documents');})->name('emp-documents');
+    Route::get('/admin-dtr', function () {return view('livewire.admin.admin-dtr');})->name('admin-dtr');
+    Route::get('/admin-schedule', function () {return view('livewire.admin.admin-schedule');})->name('admin-schedule');
+    Route::get('/payroll-management', function () {return view('livewire.admin.payroll-management');})->name('payroll-management');
+    Route::get('/payroll', function () {return view('livewire.admin.payroll');})->name('payroll');
+    Route::get('/general-payroll', function () {return view('livewire.admin.general-payroll');})->name('general-payroll');
+    Route::get('/personal-data-sheet', function () {return view('livewire.user.personal-data-sheet');})->name('personal-data-sheet');
+    Route::get('/leave-monetization', function () {return view('livewire.user.leave-monetization');})->name('leave-monetization');
+    Route::get('/dtr', function () {return view('livewire.user.dtr');})->name('dtr');
     Route::get('/dashboard/analytics', [DashboardController::class, 'analytics'])->name('analytics');
     Route::get('/dashboard/fintech', [DashboardController::class, 'fintech'])->name('fintech');
     // Route::get('/ecommerce/customers', [CustomerController::class, 'index'])->name('customers');
@@ -225,7 +209,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/component/icons', function () {
         return view('pages/component/icons-page');
     })->name('icons-page');
-    Route::fallback(function () {
+    Route::fallback(function() {
         return view('pages/utility/404');
     });
 });

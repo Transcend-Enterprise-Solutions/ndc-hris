@@ -15,13 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->enum('document_type', [
-                'saln',
-                'ipcr',
-                'bir1902',
-                'bir1905',
-                'bir2316',
-                'employment_cert',
-                'service_record'
+                '201_Documents',
+                'SALN',
+                'IPCR',
+                'BIR1902',
+                'BIR1905',
+                'BIR2316',
+                'COE',
+                'Service Record'
             ]);
             $table->string('file_name');
             $table->string('file_path');
