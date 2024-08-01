@@ -67,7 +67,7 @@ class MyDocumentsTable extends Component
                 $fileSize = $this->file->getSize();
             } else {
                 $fileData = base64_decode(preg_replace('#^data:.*?;base64,#', '', $this->file));
-                $fileName = 'document_' . time() . '.pdf';
+                $fileName = 'NYC' . time() . '.pdf';
                 $filePath = 'public/upload/employee_document/' . $fileName;
                 Storage::put($filePath, $fileData);
                 $mimeType = 'application/pdf';

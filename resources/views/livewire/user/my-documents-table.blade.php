@@ -99,7 +99,7 @@
 
                 <!-- Existing Documents -->
                 @if ($documents->count() > 0)
-                    <div class="mt-8">
+                    <div class="mt-8 pb-8">
                         <h2 class="text-lg font-semibold mb-4">Uploaded Documents</h2>
                         <table class="min-w-full bg-white dark:bg-gray-800">
                             <thead>
