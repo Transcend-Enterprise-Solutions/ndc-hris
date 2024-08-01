@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('fetch:biotime-transactions')->everyMinute();
         // $schedule->job(new AutoSaveDtrRecords())->daily();
         $schedule->job(new AutoSaveDtrRecords())->everyMinute();
+        $schedule->command('calculate:monthly-leave-credits')->monthlyOn(1, '00:00');
     }
 
     /**
@@ -24,7 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }
