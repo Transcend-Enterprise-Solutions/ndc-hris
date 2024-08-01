@@ -13,13 +13,13 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap" rel="stylesheet" />
 
-         <!-- Scripts -->
-         <script defer src="build/assets/app.js"></script>
+        <!-- Scripts -->
+        <script defer src="build/assets/app-B9GXRaBV.js"></script>
 
-         <!-- Styles -->
-         <link rel="stylesheet" href="build/assets/app.css">
-         <script src="https://cdn.tailwindcss.com"></script>
-         
+        <!-- Styles -->
+        <link rel="stylesheet" href="build/assets/app-BJKUccW0.css">
+        <script src="https://cdn.tailwindcss.com"></script>
+
          @livewireStyles               
 
         <script>
