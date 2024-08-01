@@ -24,8 +24,11 @@
 
 
 
+    <!-- Scripts -->
+    <script defer src="build/assets/app-B9GXRaBV.js"></script>
+
     <!-- Styles -->
-    <link rel="stylesheet" href="build/assets/app.css">
+    <link rel="stylesheet" href="build/assets/app-BJKUccW0.css">
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
@@ -80,7 +83,6 @@
 
     </div>
 
-    <script defer src="build/assets/app.js"></script>
     @livewireScripts
 </body>
 
