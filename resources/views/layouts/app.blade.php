@@ -29,7 +29,6 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="build/assets/app-BJKUccW0.css">
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         [x-cloak] {
