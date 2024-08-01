@@ -19,7 +19,6 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script defer src="build/assets/app.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/alpine.min.js" defer></script>
 
@@ -27,6 +26,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="build/assets/app.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         [x-cloak] {
@@ -80,6 +80,7 @@
 
     </div>
 
+    <script defer src="build/assets/app.js"></script>
     @livewireScripts
 </body>
 
