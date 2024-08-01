@@ -55,7 +55,33 @@
                             <td class="px-4 py-2 text-center">{{ $dtr->late ?? '--:--' }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->overtime ?? '--:--' }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->total_hours_rendered ?? '--:--' }}</td>
-                            <td class="px-4 py-2 text-center">{{ $dtr->remarks }}</td>
+                            <td class="px-4 py-2 text-center">@switch(strtolower($dtr->remarks))
+                                    @case('absent')
+                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-red-600 bg-white text-xs font-medium text-red-600 dark:border-red-600 dark:bg-slate-900 dark:text-red-600">
+                                            <span class="px-2 py-1 bg-red-600/10 dark:bg-red-600/10">Absent</span>
+                                        </span>
+                                        @break
+                                    @case('leave')
+                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-sky-600 bg-white text-xs font-medium text-sky-600 dark:border-sky-600 dark:bg-slate-900 dark:text-sky-600">
+                                            <span class="px-2 py-1 bg-sky-600/10 dark:bg-sky-600/10">Leave</span>
+                                        </span>
+                                        @break
+                                    @case('holiday')
+                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-green-600 bg-white text-xs font-medium text-green-600 dark:border-green-600 dark:bg-slate-900 dark:text-green-600">
+                                            <span class="px-2 py-1 bg-green-600/10 dark:bg-green-600/10">Holiday</span>
+                                        </span>
+                                        @break
+                                    @case('late')
+                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-amber-500 bg-white text-xs font-medium text-amber-500 dark:border-amber-500 dark:bg-slate-900 dark:text-amber-500">
+                                            <span class="px-2 py-1 bg-amber-500/10 dark:bg-amber-500/10">Late</span>
+                                        </span>
+                                        @break
+                                    @default
+                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-slate-300 bg-white text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                                            <span class="px-2 py-1 bg-slate-100/10 dark:bg-slate-800/10">{{ $dtr->remarks }}</span>
+                                        </span>
+                                @endswitch
+                            </td>
                         </tr>
                     @empty
                         <tr>
