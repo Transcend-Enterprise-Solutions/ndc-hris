@@ -14,11 +14,12 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap" rel="stylesheet" />
 
          <!-- Scripts -->
-         @vite(['resources/css/app.css', 'resources/js/app.js'])
-         <script defer src="/build/assets/app-B9GXRaBV.js"></script>
- 
+         <script defer src="build/assets/app.js"></script>
+
          <!-- Styles -->
-         <link rel="stylesheet" href="/build/assets/app-6skvEm6U.css">
+         <link rel="stylesheet" href="build/assets/app.css">
+         <script src="https://cdn.tailwindcss.com"></script>
+         
          @livewireStyles               
 
         <script>
