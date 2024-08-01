@@ -27,6 +27,8 @@ class LeaveApplication extends Model
         'file_name',
         'file_path',
         'approved_days',
+        'approved_end_date',
+        'approved_start_date',
         'remarks',
         'status',
     ];

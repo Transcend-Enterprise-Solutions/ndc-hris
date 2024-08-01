@@ -20,9 +20,12 @@
                             <th scope="col" class="px-4 py-2 text-center">Date of Filing</th>
                             <th scope="col" class="px-4 py-2 text-center">Type of Leave</th>
                             <th scope="col" class="px-4 py-2 text-center">Details of Leave</th>
-                            <th scope="col" class="px-4 py-2 text-center">Number of days</th>
-                            <th scope="col" class="px-4 py-2 text-center">Start Date</th>
-                            <th scope="col" class="px-4 py-2 text-center">End Date</th>
+                            <th scope="col" class="px-4 py-2 text-center">Requested Days</th>
+                            <th scope="col" class="px-4 py-2 text-center">Requested Start Date</th>
+                            <th scope="col" class="px-4 py-2 text-center">Requested End Date</th>
+                            <th scope="col" class="px-4 py-2 text-center">Approved Days</th>
+                            <th scope="col" class="px-4 py-2 text-center">Approved Start Date</th>
+                            <th scope="col" class="px-4 py-2 text-center">Approved End Date</th>
                             <th class="px-4 py-2 text-center">Status</th>
                         </tr>
                     </thead>
@@ -35,6 +38,9 @@
                             <td class="px-4 py-2 text-center">{{ $leaveApplication->number_of_days }}</td>
                             <td class="px-4 py-2 text-center">{{ $leaveApplication->start_date }}</td>
                             <td class="px-4 py-2 text-center">{{ $leaveApplication->end_date }}</td>
+                            <td class="px-4 py-2 text-center">{{ $leaveApplication->approved_days ?? 'N/A' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $leaveApplication->approved_start_date ?? 'N/A' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $leaveApplication->approved_end_date ?? 'N/A' }}</td>
                             <td class="px-4 py-2 text-center">
                                 <span
                                     class="inline-block px-3 py-1 text-sm font-semibold 
