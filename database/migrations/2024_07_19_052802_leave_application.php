@@ -30,6 +30,8 @@ return new class extends Migration {
                 $table->string('file_name')->nullable();
                 $table->string('file_path')->nullable();
                 $table->string('status');
+                $table->date('approved_start_date')->nullable();
+                $table->date('approved_end_date')->nullable();
                 $table->integer('approved_days')->nullable();
                 $table->string('remarks')->nullable();
                 $table->timestamps();

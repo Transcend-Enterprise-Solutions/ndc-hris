@@ -4,7 +4,7 @@
         <div class="flex justify-center w-full">
             <div class="w-full bg-white rounded-2xl p3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
                 <div class="pb-4 pt-4 sm:pt-1">
-                    <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Leave Records</h1>
+                    <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Leave Request</h1>
                 </div>
                 <div class="flex flex-col p-3">
                     <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -137,9 +137,9 @@
         <div class="p-4">
             <form wire:submit.prevent="updateStatus">
                 <div class="mb-4">
-                    <label for="status" class="block text-gray-700 dark:text-gray-300">Status</label>
+                    <label for="status" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Status</label>
                     <select wire:model.live="status" id="status"
-                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                        class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                         <option value="">Select Status</option>
                         <option value="With Pay">With Pay</option>
                         <option value="Without Pay">Without Pay</option>
@@ -159,10 +159,20 @@
                 @if ($status === 'With Pay' || $status === 'Without Pay')
                 <div class="mb-4">
                     <label for="days"
-                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">Number
+                        class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number
                         of Days</label>
-                    <input type="number" wire:model="days" id="days" class="form-input mt-1 block w-full" min="1">
+                    <input type="number" wire:model="days" id="days" class="form-input mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md  dark:text-gray-300 dark:bg-gray-700" min="1">
                     @error('days') <span class="text-red-500">{{ $message }}</span> @enderror
+                </div>
+                <div class="mb-4 col-span-2 sm:col-span-1">
+                    <label for="approved_start_date" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved Start Date</label>
+                    <input type="date" id="approved_start_date" wire:model="approvedStartDate" class="form-control mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    @error('approvedStartDate') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+                <div class="mb-4 col-span-2 sm:col-span-1">
+                    <label for="approved_end_date" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved End Date</label>
+                    <input type="date" id="approved_end_date" wire:model="approvedEndDate" class="form-control mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    @error('approvedEndDate') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
                 @endif
 

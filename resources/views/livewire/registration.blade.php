@@ -1,5 +1,5 @@
 <section>
-    <div class="px-8 py-24 mx-auto md:px-12 lg:px-32 max-w-7xl">
+    <div class="px-2 py-12 mx-auto md:px-12 lg:px-32 max-w-7xl">
         <div class="max-w-lg mx-auto md:max-w-xl md:w-full">
             <div class="flex flex-col text-center">
                 <h1 class="text-3xl font-semibold tracking-tight text-gray-900">
@@ -8,7 +8,7 @@
                 <p class="mt-4 text-base font-medium text-gray-500"></p>
             </div>
             <div class="p-2 mt-8 border bg-gray-50 rounded-3xl">
-                <div class="p-10 bg-white border shadow-lg rounded-2xl">
+                <div class="p-4 md:p-10 bg-white border shadow-lg rounded-2xl">
                     <!-- Step 1 -->
                     @if ($step === 1)
                     <div>
@@ -16,7 +16,7 @@
                             Step 1 out of 3: <span class="font-bold text-black">Personal Information</span>
                         </h2>
 
-                        <div class="mt-12 gap-2 columns-2">
+                        <div class="mt-12 gap-2 lg:columns-2 sm:columns-1">
                             <div class="w-full">
                                 <label for="firstname" class=" text-sm text-gray-700">First Name <span
                                         class="text-red-600">*</span></label>
@@ -33,7 +33,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 gap-2 columns-2">
+                        <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                             <div class="w-full">
                                 <label for="surname" class=" text-sm text-gray-700">Surname <span
                                         class="text-red-600">*</span></label>
@@ -56,7 +56,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 gap-2 columns-2">
+                        <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                             <div class="w-full">
                                 <label for="sex" class=" text-sm text-gray-700">Sex at Birth <span
                                         class="text-red-600">*</span></label>
@@ -81,7 +81,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 gap-2 columns-2">
+                        <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                             <div class="w-full">
                                 <label for="place_of_birth" class=" text-sm text-gray-700">Place of Birth <span
                                         class="text-red-600">*</span></label>
@@ -101,7 +101,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 gap-2 columns-2">
+                        <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                             <div class="w-full">
                                 <label for="citizenship" class=" text-sm text-gray-700">Citizenship <span
                                         class="text-red-600">*</span></label>
@@ -126,7 +126,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 gap-2 columns-2">
+                        <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                             <div class="w-full">
                                 <label for="height" class=" text-sm text-gray-700">Height (m) <span
                                         class="text-red-600">*</span></label>
@@ -165,7 +165,7 @@
                             Step 2 out of 3: <span class="font-bold text-black">Government IDs</span>
                         </h2>
 
-                        <div class="mt-12 gap-2 columns-2">
+                        <div class="mt-12 gap-2 lg:columns-2 sm:columns-1">
                             <div class="w-full">
                                 <label for="name" class="text-sm text-gray-700">GSIS ID No. <span
                                         class="text-red-600">*</span></label>
@@ -184,7 +184,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 gap-2 columns-2">
+                        <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                             <div class="w-full">
                                 <label for="name" class="text-sm text-gray-700">PhilHealth ID No. <span
                                         class="text-red-600">*</span></label>
@@ -203,7 +203,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 gap-2 columns-2">
+                        <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                             <div class="w-full">
                                 <label for="name" class="text-sm text-gray-700">TIN No. <span
                                         class="text-red-600">*</span></label>
@@ -223,7 +223,7 @@
                             </div>
                         </div>
 
-                        <div class="flex gap-2 mt-12 columns-2">
+                        <div class="lg:flex gap-2 mt-12 lg:columns-2 sm:columns-1">
                             <div class="w-full relative">
                                 <button
                                     class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
@@ -232,7 +232,7 @@
                                     <span wire:loading wire:target="prevStep">Loading...</span>
                                 </button>
                             </div>
-                            <div class="w-full relative">
+                            <div class="w-full relative mt-4">
                                 <button
                                     class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
                                     wire:click="toStep3" wire:loading.attr="disabled" wire:target="toStep3">
@@ -458,7 +458,7 @@
                         </fieldset>
                         @endif
 
-                        <div class="mt-4 gap-2 columns-2">
+                        <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                             <div class="w-full">
                                 <label for="tel_number" class="text-sm text-gray-700">Telephone No.</label>
                                 <input type="text" id="tel_number" wire:model.live="tel_number"
@@ -486,7 +486,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 gap-2 columns-2">
+                        <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                             <div class="relative w-full" x-data="{ show: false }">
                                 <label for="password" class="text-sm text-gray-700">Password <span
                                         class="text-red-600">*</span></label>
@@ -513,7 +513,7 @@
                             </div>
                         </div>
 
-                        <div class="flex gap-2 mt-12 columns-2">
+                        <div class="lg:flex gap-2 mt-12 lg:columns-2 sm:columns-1">
                             <div class="w-full relative">
                                 <button
                                     class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
@@ -522,7 +522,7 @@
                                     <span wire:loading wire:target="prevStep">Loading...</span>
                                 </button>
                             </div>
-                            <div class="w-full relative">
+                            <div class="w-full relative mt-4">
                                 <button
                                     class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
                                     wire:click="submit" wire:loading.attr="disabled" wire:target="submit">

@@ -22,18 +22,22 @@ class AdminLeaveRequestTable extends Component
     public $days;
     public $disapproveReason;
     public $balance;
+    public $approvedStartDate;
+    public $approvedEndDate;
 
     protected $rules = [
         'status' => 'required_if:showApproveModal,true',
         'otherReason' => 'required_if:status,Other|string',
         'days' => 'required_if:status,With Pay,Without Pay|numeric|min:1',
+        'approvedStartDate' => 'required_if:status,With Pay|date',
+        'approvedEndDate' => 'required_if:status,With Pay|date|after_or_equal:approvedStartDate',
         'disapproveReason' => 'required_if:showDisapproveModal,true'
     ];
 
     public function openApproveModal($applicationId)
     {
         $this->selectedApplication = LeaveApplication::find($applicationId);
-        $this->reset(['status', 'otherReason', 'days']);
+        $this->reset(['status', 'otherReason', 'days', 'approvedStartDate', 'approvedEndDate']);
         $this->showApproveModal = true;
     }
 
@@ -62,6 +66,8 @@ class AdminLeaveRequestTable extends Component
             $this->validate([
                 'status' => 'required',
                 'days' => 'required|numeric|min:1',
+                'approvedStartDate' => 'required|date',
+                'approvedEndDate' => 'required|date|after_or_equal:approvedStartDate',
             ]);
 
             // Validate leave balance
@@ -87,6 +93,8 @@ class AdminLeaveRequestTable extends Component
             } else {
                 $this->selectedApplication->status = $this->status === 'With Pay' ? 'Approved' : 'Approved';
                 $this->selectedApplication->approved_days = $this->days;
+                $this->selectedApplication->approved_start_date = $this->approvedStartDate;
+                $this->selectedApplication->approved_end_date = $this->approvedEndDate;
                 $this->selectedApplication->remarks = $this->status === 'With Pay' ? 'With Pay' : 'Without Pay';
                 $this->updateLeaveDetails($this->days, $this->status);
             }
@@ -144,25 +152,10 @@ class AdminLeaveRequestTable extends Component
         $this->status = null;
         $this->otherReason = null;
         $this->days = null;
+        $this->approvedStartDate = null;
+        $this->approvedEndDate = null;
         $this->disapproveReason = null;
     }
-
-    // public function validateLeaveBalance($days)
-    // {
-    //     // Fetch current balance for the user
-    //     $vacationLeaveDetails = VacationLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
-    //     $sickLeaveDetails = SickLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
-
-    //     $vacationBalance = $vacationLeaveDetails ? $vacationLeaveDetails->balance : 0;
-    //     $sickBalance = $sickLeaveDetails ? $sickLeaveDetails->balance : 0;
-
-    //     $this->balance = $vacationBalance + $sickBalance;
-
-    //     // Check if the balance is sufficient
-    //     if ($this->status === 'With Pay' && $this->balance < $days) {
-    //         $this->status = 'Without Pay';  // Automatically set status to Without Pay if balance is insufficient
-    //     }
-    // }
 
     public function validateLeaveBalance($days)
     {
@@ -227,3 +220,4 @@ class AdminLeaveRequestTable extends Component
         }
     }
 }
+
