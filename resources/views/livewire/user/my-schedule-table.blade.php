@@ -55,7 +55,7 @@
                                 @endforeach
 
                                 @if(!$scheduleFound && $day->month == $currentMonth)
-                                    <span class="block bg-yellow-500 text-white rounded-lg p-1">No Schedule</span>
+                                    <span class="block bg-yellow-500 text-white mt-1 rounded-lg p-1 text-xs">No Sched</span>
                                 @endif
                             @endif
 
