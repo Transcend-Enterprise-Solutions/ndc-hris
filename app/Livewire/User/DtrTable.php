@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\EmployeesDtr;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class DtrTable extends Component
 {
@@ -18,6 +19,11 @@ class DtrTable extends Component
         'startDate' => ['except' => ''],
         'endDate' => ['except' => ''],
     ];
+    public function mount()
+    {
+        $this->startDate = Carbon::now()->startOfMonth()->toDateString();
+        $this->endDate = Carbon::now()->endOfMonth()->toDateString();
+    }
 
     public function render()
     {
