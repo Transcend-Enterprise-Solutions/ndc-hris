@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use App\Models\DTRSchedule;
 use App\Models\User;
+use Carbon\Carbon;
 
 class AdminScheduleTable extends Component
 {
@@ -17,6 +18,7 @@ class AdminScheduleTable extends Component
     public $isEditMode = false;
     public $confirmingScheduleDeletion = false;
     public $scheduleToDelete;
+    public $selectedTab = 'current';
 
     protected $rules = [
         'emp_code' => 'required|string',
@@ -35,7 +37,36 @@ class AdminScheduleTable extends Component
 
     public function render()
     {
-        return view('livewire.admin.admin-schedule-table');
+        $filteredSchedules = $this->filterSchedules();
+        return view('livewire.admin.admin-schedule-table', [
+            'filteredSchedules' => $filteredSchedules
+        ]);
+    }
+
+    public function filterSchedules()
+    {
+        $now = Carbon::now();
+
+        return $this->schedules->filter(function ($schedule) use ($now) {
+            $startDate = Carbon::parse($schedule->start_date);
+            $endDate = Carbon::parse($schedule->end_date);
+
+            switch ($this->selectedTab) {
+                case 'current':
+                    return $now->between($startDate, $endDate);
+                case 'incoming':
+                    return $startDate->isFuture();
+                case 'expired':
+                    return $endDate->isPast();
+                default:
+                    return true;
+            }
+        });
+    }
+
+    public function setTab($tab)
+    {
+        $this->selectedTab = $tab;
     }
 
     public function openModal()
