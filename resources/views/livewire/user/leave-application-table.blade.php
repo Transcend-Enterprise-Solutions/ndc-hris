@@ -174,7 +174,7 @@
     {{-- Leave Application Form --}}
     <x-modal id="applyForLeave" maxWidth="5xl" wire:model="applyForLeave">
         <div class="p-4">
-            <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+            <div class="bg-slate-800 rounded-t-lg dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
                 Basic Information
             </div>
 
