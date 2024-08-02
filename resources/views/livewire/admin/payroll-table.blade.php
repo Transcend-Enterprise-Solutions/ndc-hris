@@ -1,6 +1,21 @@
 <div class="w-full flex justify-center">
 
     <style>
+        .scrollbar-thin1::-webkit-scrollbar {
+                        width: 5px;
+                    }
+
+        .scrollbar-thin1::-webkit-scrollbar-thumb {
+            background-color: #1a1a1a4b;
+            /* cursor: grab; */
+            border-radius: 0 50px 50px 0;
+        }
+
+        .scrollbar-thin1::-webkit-scrollbar-track {
+            background-color: #ffffff23;
+            border-radius: 0 50px 50px 0;
+        }
+
         @media (max-width: 1024px){
             .custom-d{
                 display: block;
@@ -47,9 +62,9 @@
     </style>
 
     <div class="flex justify-center w-full">
-        <div class="w-full bg-white rounded-2xl p3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
+        <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
 
-            <div class="pb-4 mb-3">
+            <div class="pb-4 mb-3 pt-4 sm:pt-0">
                 <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">
                     Payroll for the month of {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('F') : '' }} {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('Y') : '' }}
                 </h1>
@@ -58,52 +73,35 @@
                 </h1>
             </div>
 
-            <div class="block sm:flex items-center pb-2 justify-between">
-
-                <style>
-                    .scrollbar-thin1::-webkit-scrollbar {
-                        width: 5px;
-                    }
-
-                    .scrollbar-thin1::-webkit-scrollbar-thumb {
-                        background-color: #1a1a1a4b;
-                        /* cursor: grab; */
-                        border-radius: 0 50px 50px 0;
-                    }
-
-                    .scrollbar-thin1::-webkit-scrollbar-track {
-                        background-color: #ffffff23;
-                        border-radius: 0 50px 50px 0;
-                    }
-                </style>
+            <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
 
                 {{-- Search Input --}}
-                <div class="relative inline-block text-left">
-                    <input type="search" id="search" wire:model.live="search" 
-                    placeholder="Search..."
-                    class="py-2 px-3 block w-full shadow-sm text-sm font-medium border-gray-400 
-                    wire:text-neutral-800 dark:text-neutral-200 
-                    dark:hover:bg-slate-600 dark:border-slate-600 mb-4 sm:mb-0
-                    rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
+                <div class="w-full sm:w-1/3 sm:mr-4">
+                    <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                    <input type="text" id="search" wire:model.live="search"
+                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                            dark:hover:bg-slate-600 dark:border-slate-600
+                            dark:text-gray-300 dark:bg-gray-800"
+                        placeholder="Enter employee name or ID">
                 </div>
 
                 {{-- Filters --}}
-                <div class="block sm:flex items-center">
+                <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
 
                     <!-- Start Date -->
-                    <div class="mr-0 sm:mr-4 relative">
+                    <div class="w-full sm:w-auto">
                         <label for="startDate" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
                         <input type="date" id="startDate" wire:model.live='startDate' value="{{ $startDate }}"
-                        class="mb-4 sm:mb-0 mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
+                        class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                     </div>
 
                      <!-- End Date -->
-                    <div class="mr-0 sm:mr-4 relative">
+                    <div class="w-full sm:w-auto">
                         <label for="endDate" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
                         <input type="date" id="endDate" wire:model.live='endDate' value="{{ $endDate }}"
-                        class="mb-4 sm:mb-0 mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
+                        class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                     </div>
@@ -220,22 +218,26 @@
 
                     <!-- Save Payroll -->
                     @if($hasPayroll == false)
-                        <div class="relative inline-block text-left mr-0 sm:mr-4">
+                        <div class="w-full sm:w-auto">
                             <button wire:click="recordPayroll"
-                                class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                                justify-center px-4 pt-2 pb-1.5 mb-4 sm:mb-0 text-sm font-medium tracking-wide 
+                                class="mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                                justify-center px-2 py-1.5 text-sm font-medium tracking-wide 
                                 text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                                 rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                                 type="button">
+                                <div wire:loading wire:target="recordPayroll" style="margin-right: 5px">
+                                    <div class="spinner-border small text-primary" role="status">
+                                    </div>
+                                </div>
                                 Save Payroll
                             </button>
                         </div>
                     @endif
 
                     <!-- Export to Excel -->
-                    <div class="relative inline-block text-left">
+                    <div class="w-full sm:w-auto">
                         <button wire:click="exportPayroll"
-                            class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                            class="mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                             justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
@@ -244,8 +246,8 @@
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
                             </div>
-                            <img class="flex dark:hidden" src="/images/export-excel.png" width="25" alt="">
-                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="25" alt="">
+                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
+                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                         </button>
                     </div>
 
