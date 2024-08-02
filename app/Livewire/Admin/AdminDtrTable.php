@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\EmployeesDtr;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class AdminDtrTable extends Component
@@ -24,6 +25,11 @@ class AdminDtrTable extends Component
         'sortField' => ['except' => 'date'],
         'sortDirection' => ['except' => 'asc'],
     ];
+    public function mount()
+    {
+        $this->startDate = Carbon::now()->startOfMonth()->toDateString();
+        $this->endDate = Carbon::now()->endOfMonth()->toDateString();
+    }
 
     public function sortBy($field)
     {

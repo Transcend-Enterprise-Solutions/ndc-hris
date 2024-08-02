@@ -3,26 +3,29 @@
         <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Daily Time Record</h1>
 
         <!-- Date Range Picker -->
-        <div class="mb-6 flex flex-col sm:flex-row items-end justify-between space-y-4 sm:space-y-0">
+        <div class="mb-6 flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0">
             <!-- Date Range Picker -->
-            <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
+            <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:space-x-4">
                 <div class="w-full sm:w-auto">
                     <label for="startDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Start Date</label>
                     <input type="date" id="startDate" wire:model.live="startDate"
-                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                        class="px-4 py-2 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                 </div>
 
-                <div class="w-full sm:w-auto mt-4 sm:mt-0">
+                <div class="w-full sm:w-auto">
                     <label for="endDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">End Date</label>
                     <input type="date" id="endDate" wire:model.live="endDate"
-                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                        class="px-4 py-2 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                 </div>
             </div>
         </div>
+
+
+
 
         <!-- Table -->
         <div class="overflow-x-auto">
