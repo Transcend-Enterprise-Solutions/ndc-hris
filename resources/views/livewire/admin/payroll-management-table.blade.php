@@ -1,8 +1,8 @@
 <div class="w-full flex justify-center">
     <div class="flex justify-center w-full">
         <div class="w-full bg-white rounded-2xl p3 sm:p-0 shadow dark:bg-gray-800 overflow-x-visible">
-            <div class="pb-6 pt-6 sm:pt-1">
-                <h1 class="mb-6 text-lg font-bold text-center text-slate-800 dark:text-white">Payroll Management</h1>
+            <div class="pb-6 pt-6 sm:mt-2">
+                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Payroll Management</h1>
             </div>
 
             <div class="block sm:flex items-center justify-between pr-3 pl-3">
@@ -27,19 +27,18 @@
                 <div class="block sm:flex items-center">
                     <button wire:click="toggleAddPayroll" 
                         class="mb-4 sm:mb-0 mr-0 sm:mr-4 px-4 py-2 bg-green-500 text-white rounded-md 
-                        hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full sm:w-3 
+                        hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full sm:w-3/5
                         dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
                         Add Payroll
                     </button>
 
-                    <div class="relative inline-block text-left w-full sm:w-3">
-                        <input type="search" id="search" wire:model.live="search" 
-                        placeholder="Search..."
-                        class="py-2 px-3 block w-full shadow-sm text-sm font-medium border-gray-400 
-                        wire:text-neutral-800 dark:text-neutral-200
-                        dark:hover:bg-slate-600 dark:border-slate-600 mb-4 sm:mb-0
-                        rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
-                    </div>
+                    <input type="search" id="search" wire:model.live="search" 
+                    placeholder="Search..."
+                    class="py-2 px-3 block w-full shadow-sm text-sm font-medium border-gray-400 
+                    wire:text-neutral-800 dark:text-neutral-200
+                    dark:hover:bg-slate-600 dark:border-slate-600 mb-4 sm:mb-0
+                    rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
+  
                 </div>
 
                 <div class="flex items-center">
@@ -52,7 +51,7 @@
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button">
-                            Sort Column
+                            Filter Column
                             <i class="bi bi-chevron-down w-5 h-5 ml-2"></i>
                         </button>
                         @if($sortColumn)
@@ -217,7 +216,7 @@
                     <div class="relative inline-block text-left">
                         <button wire:click="exportExcel"
                             class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                            justify-center px-4 py-1.5 mb-0 sm:mb-4 sm:mb-0 text-sm font-medium tracking-wide 
+                            justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button">

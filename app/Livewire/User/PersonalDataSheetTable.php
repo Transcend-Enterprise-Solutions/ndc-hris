@@ -283,6 +283,7 @@ class PersonalDataSheetTable extends Component
         $this->newLearnAndDevs = [];
         $this->newNonAcads = [];
         $this->newMemberships = [];
+        $this->myReferences = [];
         $this->myNewReferences = [];
 
         $this->thisData = null;
@@ -1735,6 +1736,8 @@ class PersonalDataSheetTable extends Component
                     
                     $this->editReferences = null;
                     $this->addReferences = null;
+                    $this->myReferences = [];
+                    $this->myNewReferences = [];
                     $this->dispatch('notify', [
                         'message' => "Character References updated successfully!",
                         'type' => 'success'
@@ -1762,6 +1765,8 @@ class PersonalDataSheetTable extends Component
                     
                     $this->editReferences = null;
                     $this->addReferences = null;
+                    $this->myReferences = [];
+                    $this->myNewReferences = [];
                     $this->dispatch('notify', [
                         'message' => "Character References added successfully!",
                         'type' => 'success'

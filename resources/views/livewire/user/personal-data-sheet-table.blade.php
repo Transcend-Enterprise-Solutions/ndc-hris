@@ -2,7 +2,7 @@
 
     {{-- Main Display --}}
     <div class="flex justify-center w-full">
-        <div class="overflow-x-auto w-full sm:w-4/5 bg-white rounded-2xl p-3 shadow dark:bg-gray-800">
+        <div class="overflow-x-auto w-full bg-white rounded-2xl p-3 shadow dark:bg-gray-800">
 
             <div class="pt-4 pb-4">
                 <h1 class="text-3xl font-bold text-center text-slate-800 dark:text-white">PERSONAL DATA SHEET</h1>

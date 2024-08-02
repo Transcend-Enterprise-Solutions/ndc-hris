@@ -4,7 +4,7 @@
         {{-- Personal Data Sheet --}}
         @if($personalDataSheetOpen && $selectedUser)
         <div class="flex justify-center w-full">
-            <div class="overflow-x-auto w-full sm:w-4/5 bg-white rounded-2xl p-3 shadow dark:bg-gray-800">
+            <div class="overflow-x-auto w-full bg-white rounded-2xl p-3 shadow dark:bg-gray-800">
 
                 <div class="pt-4 pb-4">
                     <h1 class="text-3xl font-bold text-center text-slate-800 dark:text-white">PERSONAL DATA SHEET</h1>
@@ -545,8 +545,6 @@
                                     <p
                                         class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
                                         {{ \Carbon\Carbon::parse($child->childs_birth_date)->format('F d, Y') }}
-                                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer"
-                                            wire:click="toggleDelete('child', {{ $child->id }})"></i>
                                     </p>
                                 </div>
                             </div>
@@ -570,9 +568,7 @@
                                 Level</p>
                             <p
                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 font-bold uppercase dark:text-gray-200">
-                                {{ $educ->level }}
-                                <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer"
-                                    wire:click="toggleDelete('educ', {{ $educ->id }})"></i>
+                                {{ $educ->level }}>
                             </p>
                         </div>
                         <div class="custom-d flex w-full">
@@ -683,8 +679,6 @@
                                         $elig->license }}</td>
                                     <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{
                                         \Carbon\Carbon::parse($elig->date_of_validity)->format('F d, Y') }}
-                                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer"
-                                            wire:click="toggleDelete('elig', {{ $elig->id }})"></i>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -768,8 +762,6 @@
                                     <td
                                         class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
                                         {{ $exp->gov_service ? 'Yes' : 'No' }}
-                                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer"
-                                            wire:click="toggleDelete('exp', {{ $exp->id }})"></i>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -845,8 +837,6 @@
                                     <td
                                         class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">
                                         {{ $voluntary->position_nature }}
-                                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer"
-                                            wire:click="toggleDelete('voluntary', {{ $voluntary->id }})"></i>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -922,8 +912,6 @@
                                     <td
                                         class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
                                         {{ $ld->conducted_by }}
-                                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer"
-                                            wire:click="toggleDelete('ld', {{ $ld->id }})"></i>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -998,8 +986,6 @@
                                         class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">
                                         {{ \Carbon\Carbon::parse($non_acads_distinction->date_received)->format('F d,
                                         Y') }}
-                                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer"
-                                            wire:click="toggleDelete('nonacad', {{ $non_acads_distinction->id }})"></i>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -1033,8 +1019,6 @@
                                     <td
                                         class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">
                                         {{ $assOrgMembership->position }}
-                                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer"
-                                            wire:click="toggleDelete('membership', {{ $assOrgMembership->id }})"></i>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -1080,8 +1064,6 @@
                                     <td
                                         class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">
                                         {{ $reference->mobile_number }}
-                                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer"
-                                            wire:click="toggleDelete('refs', {{ $reference->id }})"></i>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -1112,45 +1094,48 @@
         </div>
         @else
         <div class="flex justify-center w-full">
-            <div class="w-full bg-white rounded-2xl p3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
+            <div class="w-full bg-white rounded-2xl p3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
                 <div class="pb-4 pt-4 sm:pt-1">
                     <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Employees List
                     </h1>
                 </div>
 
-                <div class="block sm:flex items-center justify-between">
+                <style>
+                    .scrollbar-thin1::-webkit-scrollbar {
+                        width: 5px;
+                    }
 
-                    <style>
-                        .scrollbar-thin1::-webkit-scrollbar {
-                            width: 5px;
-                        }
+                    .scrollbar-thin1::-webkit-scrollbar-thumb {
+                        background-color: #1a1a1a4b;
+                        /* cursor: grab; */
+                        border-radius: 0 50px 50px 0;
+                    }
 
-                        .scrollbar-thin1::-webkit-scrollbar-thumb {
-                            background-color: #1a1a1a4b;
-                            /* cursor: grab; */
-                            border-radius: 0 50px 50px 0;
-                        }
+                    .scrollbar-thin1::-webkit-scrollbar-track {
+                        background-color: #ffffff23;
+                        border-radius: 0 50px 50px 0;
+                    }
+                </style>
 
-                        .scrollbar-thin1::-webkit-scrollbar-track {
-                            background-color: #ffffff23;
-                            border-radius: 0 50px 50px 0;
-                        }
-                    </style>
+                <div class="mb-6 flex flex-col sm:flex-row items-end justify-between space-y-4 sm:space-y-0">
 
-
-                    <div class="relative inline-block text-left">
-                        <input type="search" id="search" wire:model.live="search" placeholder="Search..."
-                            class="py-2 px-3 block w-full shadow-sm text-sm font-medium border-gray-400
-                            wire:text-neutral-800 dark:text-neutral-200 mb-4 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
+                    <div class="w-full sm:w-1/3 sm:mr-4">
+                        <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                        <input type="text" id="search" wire:model.live="search"
+                            class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                                dark:hover:bg-slate-600 dark:border-slate-600
+                                dark:text-gray-300 dark:bg-gray-800"
+                            placeholder="Enter employee name or ID">
                     </div>
 
-                    <div class="block sm:flex items-center">
+
+                    <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
 
                         <!-- Filter Dropdown -->
-                        <div class="relative inline-block text-left mr-0 sm:mr-4">
+                        <div class="w-full sm:w-auto">
                             <button wire:click="toggleDropdownFilter"
                                 class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                                    justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide
+                                    justify-center px-2 py-1.5 text-sm font-medium tracking-wide
                                     text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none w-full sm:w-fit" type="button">
                                 Filter by
@@ -1378,13 +1363,13 @@
                         </div>
 
                         <!-- Sort Dropdown -->
-                        <div class="relative inline-block text-left mr-0 sm:mr-4">
+                        <div class="w-full sm:w-auto">
                             <button wire:click="toggleDropdown" class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                                    justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide
+                                    justify-center px-2 py-1.5 text-sm font-medium tracking-wide
                                     text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                                 type="button">
-                                Sort Column
+                                Filter Column
                                 <i class="bi bi-chevron-down w-5 h-5 ml-2"></i>
                             </button>
                             @if($dropdownForCategoryOpen)
@@ -1551,23 +1536,24 @@
                         </div>
 
                         <!-- Export to Excel -->
-                        <div class="relative inline-block text-left">
+                        <div class="w-full sm:w-auto">
                             <button wire:click="exportUsers" class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                                    justify-center px-4 py-1.5 mb-4 text-sm font-medium tracking-wide
+                                    justify-center px-4 py-1.5 text-sm font-medium tracking-wide
                                     text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                                 type="button">
-                                <img class="flex dark:hidden" src="/images/export-excel.png" width="25" alt="">
-                                <img class="hidden dark:block" src="/images/export-excel-dark.png" width="25" alt="">
+                                <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
+                                <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                             </button>
                         </div>
 
                     </div>
+                    
                 </div>
 
                 <!-- Table -->
-                <div class="flex flex-col p-3">
-                    <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="flex flex-col">
+                    <div class="-my-2 overflow-x-auto">
                         <div class="inline-block w-full py-2 align-middle">
                             <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
                                 <div class="overflow-x-auto">
