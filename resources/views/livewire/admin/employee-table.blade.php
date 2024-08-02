@@ -1139,7 +1139,7 @@
 
 
                     <div class="relative inline-block text-left">
-                        <input type="search" id="search" wire:model.live="search" placeholder="Search..."
+                        <input type="search" id="search" wire:model.live="search" placeholder="Enter employee name"
                             class="py-2 px-3 block w-full shadow-sm text-sm font-medium border-gray-400
                             wire:text-neutral-800 dark:text-neutral-200 mb-4 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
                     </div>

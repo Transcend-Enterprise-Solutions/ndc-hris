@@ -229,75 +229,146 @@
                 Details of Application
             </div>
 
-            <div class="border p-4 grid grid-cols-2 gap-4">
-
+            <div class="border p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 {{-- A. --}}
-                <div class="col-span-2 sm:col-span-1">
-                    {{-- A. --}}
-                    <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full">
-                        <legend class="text-gray-700 dark:text-slate-100">A. Type of Leave to be availed of</legend>
+                <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
+                    <legend class="text-gray-700 dark:text-slate-100">A. Type of Leave to be availed of</legend>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="Vacation Leave" wire:model.live="type_of_leave">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Vacation Leave</label>
+                    </div>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="Mandatory/Forced Leave" wire:model.live="type_of_leave">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Mandatory/Forced Leave</label>
+                    </div>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="Sick Leave" wire:model.live="type_of_leave">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Sick Leave</label>
+                    </div>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="Maternity Leave" wire:model.live="type_of_leave">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Maternity Leave</label>
+                    </div>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="Paternity Leave" wire:model.live="type_of_leave">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Paternity Leave</label>
+                    </div>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="Special Privilege Leave" wire:model.live="type_of_leave">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Special Privilege Leave</label>
+                    </div>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="Solo Parent Leave" wire:model.live="type_of_leave">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Solo Parent Leave</label>
+                    </div>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="Study Leave" wire:model.live="type_of_leave">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Study Leave</label>
+                    </div>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="10-Day VAWC Leave" wire:model.live="type_of_leave">
+                        <label class="text-md text-gray-700 dark:text-slate-100">10-Day VAWC Leave</label>
+                    </div>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="Rehabilitation Privilege" wire:model.live="type_of_leave">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Rehabilitation Privilege</label>
+                    </div>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="Special Leave Benefits for Women" wire:model.live="type_of_leave">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Special Leave Benefits for Women</label>
+                    </div>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="Special Emergency (Calamity) Leave" wire:model.live="type_of_leave">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Special Emergency (Calamity) Leave</label>
+                    </div>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="Adoption Leave" wire:model.live="type_of_leave">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Adoption Leave</label>
+                    </div>
+                    @error('type_of_leave') <span class="text-red-500 text-sm">Please choose one!</span> @enderror
+                </fieldset>
+            
+                {{-- B. --}}
+                <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
+                    <legend class="text-gray-700 dark:text-slate-100">B. Details of Leave</legend>
+                    <div class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto">
+                        <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
+                            Other purpose:
+                        </h6>
                         <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Vacation Leave" wire:model="type_of_leave">
-                            <label class="text-md text-gray-700 dark:text-slate-100">Vacation Leave</label>
+                            <input type="checkbox" class="ml-1" value="Monetization of Leave Credits" wire:model="details_of_leave">
+                            <label class="text-md text-gray-700 dark:text-slate-100">Monetization of Leave Credits</label>
                         </div>
-                        <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Mandatory/Forced Leave" wire:model="type_of_leave">
-                            <label class="text-md text-gray-700 dark:text-slate-100">Mandatory/Forced Leave</label>
+                        <div class="gap-2 columns-1 mt-4">
+                            <input type="checkbox" class="ml-1" value="Terminal Leave" wire:model="details_of_leave">
+                            <label class="text-md text-gray-700 dark:text-slate-100">Terminal Leave</label>
                         </div>
-                        <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Sick Leave" wire:model="type_of_leave">
-                            <label class="text-md text-gray-700 dark:text-slate-100">Sick Leave</label>
+                    </div>
+            
+                    @if ($type_of_leave === 'Vacation Leave' || $type_of_leave === 'Special Privilege Leave')    
+                    <div class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
+                        <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">In case of Vacation/Special Privilege Leave:</h6>
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="gap-2 columns-1">
+                                <input type="checkbox" class="ml-1" value="Within the Philippines" wire:model="details_of_leave">
+                                <label class="text-md text-gray-700 dark:text-slate-100">Within the Philippines</label>
+                                <input type="text" id="within_the_ph" wire:model="philippines"
+                                    class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
+                            </div>
+                            <div class="gap-2 columns-1">
+                                <input type="checkbox" class="ml-1" value="Abroad" wire:model="details_of_leave">
+                                <label class="text-md text-gray-700 dark:text-slate-100">Abroad (Specify)</label>
+                                <input type="text" id="abroad_value" wire:model="abroad"
+                                    class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
+                            </div>
                         </div>
-                        <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Maternity Leave" wire:model="type_of_leave">
-                            <label class="text-md text-gray-700 dark:text-slate-100">Maternity Leave</label>
+                    </div>
+                    @endif
+            
+                    @if($type_of_leave === 'Sick Leave')
+                    <div class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
+                        <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">In case of Sick Leave:</h6>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="gap-2 columns-1">
+                                <input type="checkbox" class="ml-1" value="In Hospital" wire:model="details_of_leave">
+                                <label class="text-md text-gray-700 dark:text-slate-100">In Hospital (Special Illness)</label>
+                                <input type="text" id="in_hospital" wire:model="inHospital"
+                                    class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
+                            </div>
+                            <div class="gap-2 columns-1">
+                                <input type="checkbox" class="ml-1" value="Out Patient" wire:model="details_of_leave">
+                                <label class="text-md text-gray-700 dark:text-slate-100">Out Patient (Special Illness)</label>
+                                <input type="text" id="out_patient" wire:model="outPatient"
+                                    class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
+                            </div>
                         </div>
-                        <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Paternity Leave" wire:model="type_of_leave">
-                            <label class="text-md text-gray-700 dark:text-slate-100">Paternity Leave</label>
+                    </div>
+                    @endif
+            
+                    @if($type_of_leave === 'Special Leave Benefits for Women')
+                    <div class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
+                        <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">In case of Special Leave Benefits for Women:</h6>
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="gap-2 columns-1">
+                                <input type="checkbox" class="ml-1" value="In Hospital" wire:model="details_of_leave">
+                                <label class="text-md text-gray-700 dark:text-slate-100">In Hospital</label>
+                                <input type="text" id="in_hospital" wire:model="inHospital"
+                                    class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
+                            </div>
+                            <div class="gap-2 columns-1">
+                                <input type="checkbox" class="ml-1" value="Out Patient" wire:model="details_of_leave">
+                                <label class="text-md text-gray-700 dark:text-slate-100">Out Patient</label>
+                                <input type="text" id="out_patient" wire:model="outPatient"
+                                    class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
+                            </div>
                         </div>
-                        <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Special Privilege Leave" wire:model="type_of_leave">
-                            <label class="text-md text-gray-700 dark:text-slate-100">Special Privilege Leave</label>
-                        </div>
-                        <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Solo Parent Leave" wire:model="type_of_leave">
-                            <label class="text-md text-gray-700 dark:text-slate-100">Solo Parent Leave</label>
-                        </div>
-                        <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Study Leave" wire:model="type_of_leave">
-                            <label class="text-md text-gray-700 dark:text-slate-100">Study Leave</label>
-                        </div>
-                        <div class="gap-2 columns-1">
-                            <input type="checkbox" value="10-Day VAWC Leave" wire:model="type_of_leave">
-                            <label class="text-md text-gray-700 dark:text-slate-100">10-Day VAWC Leave</label>
-                        </div>
-                        <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Rehabilitation Privilege" wire:model="type_of_leave">
-                            <label class="text-md text-gray-700 dark:text-slate-100">Rehabilitation Privilege</label>
-                        </div>
-                        <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Special Leave Benefits for Women" wire:model="type_of_leave">
-                            <label class="text-md text-gray-700 dark:text-slate-100">Special Leave Benefits for
-                                Women</label>
-                        </div>
-                        <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Special Emergency (Calamity) Leave"
-                                wire:model="type_of_leave">
-                            <label class="text-md text-gray-700 dark:text-slate-100">Special Emergency (Calamity)
-                                Leave</label>
-                        </div>
-                        <div class="gap-2 columns-1">
-                            <input type="checkbox" value="Adoption Leave" wire:model="type_of_leave">
-                            <label class="text-md text-gray-700 dark:text-slate-100">Adoption Leave</label>
-                        </div>
-                        @error('type_of_leave') <span class="text-red-500 text-sm">Please choose one!</span>
-                        @enderror
-                    </fieldset>
-
-                    {{-- C. --}}
-                    <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full mt-2">
-                        <legend class="text-gray-700 dark:text-slate-100">C. Number of Working Days Applied for</legend>
+                    </div>
+                    @endif
+                </fieldset>
+            
+                {{-- C. --}}
+                <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
+                    <legend class="text-gray-700 dark:text-slate-100">C. Number of Working Days Applied for</legend>
                         <div class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700">
                             <div class="gap-2 columns-1">
                                 <label class="text-sm text-gray-700 dark:text-slate-100">Days</label>
@@ -322,156 +393,23 @@
                                 @enderror
                             </div>
                         </div>
-                    </fieldset>
-
-                    {{-- D. --}}
-                    <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full mt-2">
-                        <legend class="text-gray-700 dark:text-slate-100">D. Commutation</legend>
-                        <div class="flex items-center">
-                            <input type="radio" id="not_requested" value="Not Requested" wire:model="commutation">
-                            <label for="not_requested" class="ml-2 text-md text-gray-700 dark:text-slate-100">Not
-                                Requested</label>
-                        </div>
-                        <div class="flex items-center mt-2">
-                            <input type="radio" id="requested" value="Requested" wire:model="commutation">
-                            <label for="requested"
-                                class="ml-2 text-md text-gray-700 dark:text-slate-100">Requested</label>
-                        </div>
-                        @error('commutation') <span class="text-red-500 text-sm">Please choose one!</span>
-                        @enderror
-                    </fieldset>
-                </div>
-
-                {{-- B. --}}
-                <div class="col-span-2 sm:col-span-1">
-                    <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full">
-                        <legend class="text-gray-700 dark:text-slate-100">B. Details of Leave</legend>
-                        <label class="text-md text-gray-700 dark:text-slate-100">(Note: Please fill up the
-                            corresponding
-                            fields.)</label>
-                        <div
-                            class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-2">
-                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
-                                In case
-                                of
-                                Vacation/Special Privilege Leave:</h6>
-                            <div class="grid grid-cols-1 gap-4">
-                                <div class="gap-2 columns-1">
-                                    <input type="checkbox" class="ml-1" value="Within the Philippines"
-                                        wire:model="details_of_leave">
-                                    <label class="text-md text-gray-700 dark:text-slate-100">Within the
-                                        Philippines</label>
-                                    <input type="text" id="within_the_ph" wire:model="philippines"
-                                        class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
-                                </div>
-                                <div class="gap-2 columns-1">
-                                    <input type="checkbox" class="ml-1" value="Abroad" wire:model="details_of_leave">
-                                    <label class="text-md text-gray-700 dark:text-slate-100">Abroad
-                                        (Specify)</label>
-                                    <input type="text" id="abroad_value" wire:model="abroad"
-                                        class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div
-                            class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
-                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">In
-                                case
-                                of
-                                Sick Leave:</h6>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="gap-2 columns-1">
-                                    <input type="checkbox" class="ml-1" value="In Hospital"
-                                        wire:model="details_of_leave">
-                                    <label class="text-md text-gray-700 dark:text-slate-100">In Hospital (Special
-                                        Illness)</label>
-                                    <input type="text" id="in_hospital" wire:model="inHospital"
-                                        class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
-                                </div>
-                                <div class="gap-2 columns-1">
-                                    <input type="checkbox" class="ml-1" value="Out Patient"
-                                        wire:model="details_of_leave">
-                                    <label class="text-md text-gray-700 dark:text-slate-100">Out Patient (Special
-                                        Illness)</label>
-                                    <input type="text" id="out_patient" wire:model="outPatient"
-                                        class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div
-                            class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
-                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">In
-                                case
-                                of
-                                Special
-                                Leave Benefits for Women:</h6>
-                            <div class="gap-2 columns-1">
-                                <input type="checkbox" class="ml-1" value="Women Special Illness"
-                                    wire:model="details_of_leave">
-                                <label class="text-md text-gray-700 dark:text-slate-100">(Special
-                                    Illness)</label>
-                                <input type="text" id="women_leave" wire:model="specialIllnessForWomen"
-                                    class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                            </div>
-                        </div>
-
-                        <div
-                            class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
-                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">In
-                                case
-                                of
-                                Study Leave:</h6>
-                            <div class="gap-2 columns-1">
-                                <input type="checkbox" class="ml-1" value="Completion of Masters Degree"
-                                    wire:model="details_of_leave">
-                                <label class="text-md text-gray-700 dark:text-slate-100">Completion of Master's
-                                    Degree</label>
-                            </div>
-                            <div class="gap-2 columns-1 mt-4">
-                                <input type="checkbox" class="ml-1" value="BAR/Board Examination Review"
-                                    wire:model="details_of_leave">
-                                <label class="text-md text-gray-700 dark:text-slate-100">BAR/Board Examination
-                                    Review</label>
-                            </div>
-                        </div>
-
-                        <div
-                            class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
-                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
-                                Other
-                                purpose:
-                            </h6>
-                            <div class="gap-2 columns-1">
-                                <input type="checkbox" class="ml-1" value="Monetization of Leave Credits"
-                                    wire:model="details_of_leave">
-                                <label class="text-md text-gray-700 dark:text-slate-100">Monetization of Leave
-                                    Credits</label>
-                            </div>
-                            <div class="gap-2 columns-1 mt-4">
-                                <input type="checkbox" class="ml-1" value="Terminal Leave"
-                                    wire:model="details_of_leave">
-                                <label class="text-md text-gray-700 dark:text-slate-100">Terminal Leave</label>
-                            </div>
-                        </div>
-                        @error('details_of_leave') <span class="text-red-500 text-sm">This field is required!</span>
-                        @enderror
-                    </fieldset>
-                </div>
-
-                {{-- C. --}}
-                {{-- <div class="col-span-2 sm:col-span-1">
-
-                </div> --}}
-
+                </fieldset>
+            
                 {{-- D. --}}
-                {{-- <div class="col-span-2 sm:col-span-1">
-
-                </div> --}}
+                <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
+                    <legend class="text-gray-700 dark:text-slate-100">D. Commutation</legend>
+                    <div class="gap-2 columns-1">
+                        <input type="radio" value="Requested" wire:model.live="commutation">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Requested</label>
+                    </div>
+                    <div class="gap-2 columns-1 mt-4">
+                        <input type="radio" value="Not Requested" wire:model.live="commutation">
+                        <label class="text-md text-gray-700 dark:text-slate-100">Not Requested</label>
+                    </div>
+                </fieldset>
 
                 <!-- File upload section -->
-                <div class="flex flex-col items-center justify-center w-full col-span-2">
+                <div class="flex flex-col items-center justify-center w-full col-span-1 md:col-span-2 mt-4 md:mt-0">
                     <label for="dropzone-file"
                         class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
                         <div class="flex flex-col items-center justify-center pt-5 pb-6">
@@ -482,24 +420,21 @@
                         </div>
                         <input id="dropzone-file" type="file" wire:model="files" multiple class="hidden" />
                     </label>
-
+    
                     <!-- Display selected files -->
                     @if ($files)
-                    <div class="mt-4">
-                        <ul class="list-disc list-inside">
-                            @foreach ($files as $file)
-                            <li class="text-sm text-gray-700 dark:text-gray-300">
-                                {{ $file->getClientOriginalName() }}
-                            </li>
-                            @endforeach
-                        </ul>
-                    </div>
+                        <div class="mt-4">
+                            <ul class="list-disc list-inside">
+                                @foreach ($files as $file)
+                                <li class="text-sm text-gray-700 dark:text-gray-300">
+                                    {{ $file->getClientOriginalName() }}
+                                </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     @endif
-
                     @error('files.*') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
-
-
             </div>
 
             <div class="bg-gray-800 dark:bg-gray-200 p-2 text-white flex justify-center rounded-b-lg border">

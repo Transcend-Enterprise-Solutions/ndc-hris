@@ -8,8 +8,17 @@
                     </div>
                     {{-- <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Leave Records</h1>
                     --}}
+                    
+                    
                     <div class="flex flex-col p-3">
+                        
                         <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                            <div class="relative inline-block text-left">
+                                <label for="status" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Search</label>
+                                <input type="search" id="search" wire:model.live="search" placeholder="Enter employee name"
+                                    class="py-2 px-3 block w-full shadow-sm text-sm font-medium border-gray-400
+                                    wire:text-neutral-800 dark:text-neutral-200 mb-2 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
+                            </div>
                             <div class="inline-block w-full py-2 align-middle">
                                 <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
                                     <div class="overflow-x-auto">

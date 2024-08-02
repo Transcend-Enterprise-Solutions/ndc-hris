@@ -27,7 +27,7 @@ class LeaveApplicationTable extends Component
     public $number_of_days;
     public $start_date;
     public $end_date;
-    public $type_of_leave = [];
+    public $type_of_leave = '';
     public $details_of_leave = [];
     public $philippines;
     public $abroad;
@@ -41,7 +41,7 @@ class LeaveApplicationTable extends Component
         'office_or_department' => 'required|string|max:255',
         'position' => 'required|string|max:255',
         'salary' => 'required|string|max:255',
-        'type_of_leave' => 'required|array|min:1',
+        'type_of_leave' => 'required',
         'files.*' => 'file|mimes:jpeg,png,jpg,gif,pdf|max:2048',
     ];
 
@@ -65,7 +65,7 @@ class LeaveApplicationTable extends Component
         $this->number_of_days = null;
         $this->start_date = null;
         $this->end_date = null;
-        $this->type_of_leave = [];
+        $this->type_of_leave = '';
         $this->details_of_leave = [];
         $this->commutation = null;
         $this->philippines = null;
@@ -93,7 +93,7 @@ class LeaveApplicationTable extends Component
             'office_or_department' => 'required',
             'position' => 'required',
             'salary' => 'required',
-            'type_of_leave' => 'required|array|min:1',
+            'type_of_leave' => 'required',
             'number_of_days' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
@@ -190,7 +190,7 @@ class LeaveApplicationTable extends Component
             'position' => $this->position,
             'salary' => $this->salary,
             'number_of_days' => $this->number_of_days,
-            'type_of_leave' => implode(',', $this->type_of_leave),
+            'type_of_leave' => $this->type_of_leave,
             'details_of_leave' => $leaveDetailsString,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
@@ -200,7 +200,7 @@ class LeaveApplicationTable extends Component
             'file_name' => implode(',', $fileNames),
         ]);
 
-        if (in_array('Vacation Leave', $this->type_of_leave)) {
+        if ($this->type_of_leave === 'Vacation Leave') {
             VacationLeaveDetails::create([
                 'application_id' => $leaveApplication->id,
                 'less_this_application' => 1,
@@ -210,7 +210,7 @@ class LeaveApplicationTable extends Component
             ]);
         }
 
-        if (in_array('Sick Leave', $this->type_of_leave)) {
+        if ($this->type_of_leave === 'Sick Leave') {
             SickLeaveDetails::create([
                 'application_id' => $leaveApplication->id,
                 'less_this_application' => 1,
