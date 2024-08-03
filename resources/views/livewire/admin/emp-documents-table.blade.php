@@ -69,28 +69,34 @@
         </div>
     </div>
 
-    <!-- Confirmation Modal -->
-    <div
+    <!-- delete Confirmation Modal -->
+    <div x-show="showDeleteModal" x-cloak
+    class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
+   <div @click.away="showDeleteModal = false"
         x-show="showDeleteModal"
-        x-cloak
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity"
-    >
-        <div
-            class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg max-w-sm w-full"
-            @click.away="showDeleteModal = false"
-            @keydown.escape.window="showDeleteModal = false"
-        >
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Confirm Deletion</h2>
-            <p class="mt-2 text-gray-600 dark:text-gray-300">Are you sure you want to delete this document? This action cannot be undone.</p>
-            <div class="mt-4 flex justify-end gap-4">
-                <button @click="showDeleteModal = false" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-400 dark:hover:bg-gray-700">Cancel</button>
-                <button wire:click="deleteDocument" @click="showDeleteModal = false" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600" :disabled="$wire.isDeleting">
-                    <span x-show="!$wire.isDeleting">Delete</span>
-                    <span x-show="$wire.isDeleting">Deleting...</span>
-                </button>
-            </div>
-        </div>
-    </div>
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 translate-y-4"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 translate-y-4"
+        class="bg-white dark:bg-gray-800 p-6 mx-auto max-w-lg rounded-2xl">
+       <div class="flex items-center justify-between pb-4">
+           <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">Confirm Deletion</h3>
+           <button @click="showDeleteModal = false" class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
+               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+               </svg>
+           </button>
+       </div>
+       <p class="mb-4 text-gray-800 dark:text-gray-300">Are you sure you want to delete this document request?</p>
+       <div class="flex justify-end space-x-4">
+           <button @click="showDeleteModal = false" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded">Cancel</button>
+           <button @click="$wire.deleteRequest(deleteRequestId); showDeleteModal = false" class="px-4 py-2 bg-red-500 text-white rounded">Delete</button>
+       </div>
+   </div>
+</div>
+
 
     <!-- Notification -->
     <div x-show="showNotification" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-90" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-90" class="fixed bottom-5 right-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4" :class="{ 'bg-green-100 border-green-400': notificationType === 'success', 'bg-red-100 border-red-400': notificationType === 'error' }">
