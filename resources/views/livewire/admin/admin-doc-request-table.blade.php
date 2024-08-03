@@ -5,7 +5,8 @@
     deleteRequestId: null,
     approveRequestId: null,
     rejectRequestId: null,
-    selectedTab: 'pending', // Default tab
+    selectedTab: 'pending',
+    open: false
 }" x-cloak>
     <div class="w-full">
         <div class="flex justify-center w-full">
@@ -13,6 +14,29 @@
                 <div class="pt-4 pb-4">
                     <h1 class="text-lg font-bold text-center text-black dark:text-white">Document Requests</h1>
                 </div>
+                <!-- Document Type Filter -->
+                <div class="mb-4">
+                    <label for="documentTypeFilter" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Filter by Document Type</label>
+                    <div class="relative inline-block w-full mb-5">
+                        <button @click="open = !open" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md py-2 px-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            {{ count($selectedDocumentTypes) ? implode(', ', $selectedDocumentTypes) : 'Select Document Types' }}
+                        </button>
+                        <div x-show="open" @click.away="open = false" class="absolute right-0 z-10 mt-1 w-full bg-white dark:bg-gray-700 shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                            <label class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                <input type="checkbox" wire:model="selectAll" class="form-checkbox h-5 w-5 text-indigo-600">
+                                <span class="ml-2 text-gray-900 dark:text-gray-200">Select All</span>
+                            </label>
+                            @foreach($documentTypes as $type)
+                                <label class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                    <input type="checkbox" wire:model.live="selectedDocumentTypes" value="{{ $type }}" class="form-checkbox h-5 w-5 text-indigo-600">
+                                    <span class="ml-2 text-gray-900 dark:text-gray-200">{{ $type }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+
+
                 <!-- Tabs -->
                 <div class="w-full">
                     <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700" role="tablist">
