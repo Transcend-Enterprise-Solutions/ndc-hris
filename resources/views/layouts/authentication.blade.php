@@ -27,13 +27,13 @@
         html, body {
             margin: 0;
             padding: 0;
-            overflow-x: hidden; /* Prevents horizontal scroll */
+            overflow-x: hidden;
         }
 
         .right-side-login {
             height: 100%;
             width: 100%;
-            overflow-x: hidden; /* Ensure no horizontal scroll on the right side */
+            overflow-x: hidden;
             overflow-y: hidden;
             position: absolute;
             top: 0;
@@ -63,7 +63,7 @@
         }
 
         .main-container {
-            overflow-x: hidden; /* Prevents any horizontal scroll within the main content */
+            overflow-x: hidden;
         }
     </style>
 </head>
