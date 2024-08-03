@@ -12,6 +12,8 @@ use Illuminate\Support\Carbon;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 
 class GeneralPayrollTable extends Component
 {
@@ -56,6 +58,7 @@ class GeneralPayrollTable extends Component
     public $userId;
     public $name;
     public $employee_number;
+    public $office_division;
     public $position;
     public $sg_step;
     public $rate_per_month;
@@ -91,7 +94,7 @@ class GeneralPayrollTable extends Component
     public $startDateSecondHalf;
     public $endDateSecondHalf;
     public $hasPayroll = true;
-
+    public $employeePayslip;
 
     public function mount(){
         $this->employees = User::all();
@@ -110,21 +113,25 @@ class GeneralPayrollTable extends Component
             $this->startDateSecondHalf = $carbonDate->copy()->day(16)->toDateString();
             $this->endDateSecondHalf = $carbonDate->endOfMonth()->toDateString();
 
-            $generalPayrollQuery = GeneralPayroll::where('date', $this->startDateFirstHalf);
+            $generalPayrollQuery = GeneralPayroll::where('date', $this->startDateFirstHalf)
+                                ->join('payrolls', 'general_payroll.user_id', '=', 'payrolls.user_id')
+                                ->select('payrolls.*', 
+                                    'general_payroll.net_amount_received as total_amount_due', 
+                                    'general_payroll.amount_due_first_half as net_amount_due_first_half', 
+                                    'general_payroll.gross_salary_less', 
+                                    'general_payroll.late_absences', 
+                                    'general_payroll.others', 
+                                    'general_payroll.total_earnings', 
+                                    'general_payroll.amount_due_second_half as net_amount_due_second_half')
+                                ->when($this->search, function ($query) {
+                                    return $query->search(trim($this->search));
+                                });
             if($generalPayrollQuery->exists()){
-                $payrolls = $generalPayrollQuery
-                    ->join('payrolls', 'general_payroll.user_id', '=', 'payrolls.user_id')
-                    ->select('payrolls.*', 
-                        'general_payroll.net_amount_received as total_amount_due', 
-                        'general_payroll.amount_due_first_half as net_amount_due_first_half', 
-                        'general_payroll.amount_due_second_half as net_amount_due_second_half')
-                    ->when($this->search, function ($query) {
-                        return $query->search(trim($this->search));
-                    })
-                    ->paginate(10);
+                $payrolls = $generalPayrollQuery->paginate(10);
                 $this->hasPayroll = true;
             }else{
-                $payrolls = $this->getGenPayroll();
+                $payrolls = $this->getGenPayroll()->paginate(10);
+                $this->employeePayslip = $this->getGenPayroll()->get();
                 $this->hasPayroll = false;
             }
         }
@@ -163,8 +170,7 @@ class GeneralPayrollTable extends Component
                             ->select('payrolls.*', 
                                     'payroll_aggregates.net_amount_due_first_half', 
                                     'payroll_aggregates.net_amount_due_second_half', 
-                                    'payroll_aggregates.total_amount_due')
-                            ->paginate(10);
+                                    'payroll_aggregates.total_amount_due');
             return $payrolls;
         }catch(Exception $e){
             throw $e;
@@ -200,7 +206,11 @@ class GeneralPayrollTable extends Component
             'search' => $this->search,
             'date' => $this->date,
         ];
-        $fileName = 'General Payroll.xlsx';
+        $payrollFor = \Carbon\Carbon::parse($this->startDateFirstHalf)->format('F') . " " .
+                              \Carbon\Carbon::parse($this->startDateFirstHalf)->format('d') .  "-" .
+                              \Carbon\Carbon::parse($this->endDateSecondHalf)->format('d') . " " .
+                              \Carbon\Carbon::parse($this->startDateFirstHalf)->format('Y');
+        $fileName = 'General Payroll ' . $payrollFor . '.xlsx';
         return Excel::download(new GeneralPayrollExport($filters), $fileName);
     }
 
@@ -219,6 +229,7 @@ class GeneralPayrollTable extends Component
             if ($payroll) {
                 $this->name = $payroll->name;
                 $this->employee_number = $payroll->employee_number;
+                $this->office_division = $payroll->office_division;
                 $this->position = $payroll->position;
                 $this->sg_step = $payroll->sg_step;
                 $this->rate_per_month = $payroll->rate_per_month;
@@ -341,6 +352,9 @@ class GeneralPayrollTable extends Component
                                     ELSE 0 
                                 END) as net_amount_due_second_half", [$startDateSecondHalf, $endDateSecondHalf])
                     ->selectRaw("SUM(net_amount_due) as total_amount_due")
+                    ->selectRaw("SUM(gross_salary_less) as gross_salary_less")
+                    ->selectRaw("SUM(leave_days_withoutpay_amount) as leave_days_withoutpay_amount")
+                    ->selectRaw("SUM(absences_amount + late_undertime_hours_amount + late_undertime_mins_amount) as late_absences")
                     ->groupBy('user_id');
         
                 // Join the aggregate results with the general_payroll table
@@ -348,19 +362,30 @@ class GeneralPayrollTable extends Component
                                     $join->on('payrolls.user_id', '=', 'payroll_aggregates.user_id');
                                 })
                                 ->select('payrolls.*', 
-                                        'payroll_aggregates.net_amount_due_first_half', 
-                                        'payroll_aggregates.net_amount_due_second_half', 
-                                        'payroll_aggregates.total_amount_due')
+                                        'payroll_aggregates.net_amount_due_first_half',
+                                        'payroll_aggregates.net_amount_due_second_half',
+                                        'payroll_aggregates.total_amount_due',
+                                        'payroll_aggregates.gross_salary_less',
+                                        'payroll_aggregates.leave_days_withoutpay_amount',
+                                        'payroll_aggregates.late_absences')
                                 ->get();
     
                 foreach ($payrolls as $payroll) {
                     $userId = $payroll->user_id;
+                    $lateAbsences = $payroll->late_absences;
+                    $grossSalaryLess = $payroll->rate_per_month - $lateAbsences;
+                    $totalEarnings = $payroll->rate_per_month - $lateAbsences + $payroll->personal_economic_relief_allowance;
                         
                     GeneralPayroll::create([
                             'user_id' => $userId,
                             'net_amount_received' => $payroll->total_amount_due,
                             'amount_due_first_half' => $payroll->net_amount_due_first_half,
                             'amount_due_second_half' => $payroll->net_amount_due_second_half,
+                            'gross_salary_less' => $grossSalaryLess,
+                            'late_absences' =>$lateAbsences,
+                            'leave_without_pay' =>$payroll->leave_days_withoutpay_amount,
+                            'others' => 0,
+                            'total_earnings' => $totalEarnings,
                             'date' => $startDateFirstHalf,
                         ]
                     );
@@ -382,6 +407,69 @@ class GeneralPayrollTable extends Component
                 'type' => 'error'
             ]);
             throw $e;
+        }
+    }
+
+    public function exportPayslip($userId){
+        try {
+            $user = User::where('id', $userId)->first();
+            if ($user) {
+                $preparedBy = Auth::user();
+                $payslip = null;
+                if ($this->hasPayroll) {
+                        $payslip = GeneralPayroll::where('general_payroll.user_id', $userId)
+                                ->where('date', $this->startDateFirstHalf)
+                                ->join('payrolls', 'general_payroll.user_id', '=', 'payrolls.user_id')
+                                ->select('payrolls.*', 
+                                    'general_payroll.net_amount_received as total_amount_due', 
+                                    'general_payroll.amount_due_first_half as net_amount_due_first_half',
+                                    'general_payroll.gross_salary_less', 
+                                    'general_payroll.late_absences', 
+                                    'general_payroll.leave_without_pay', 
+                                    'general_payroll.others', 
+                                    'general_payroll.total_earnings',  
+                                    'general_payroll.amount_due_second_half as net_amount_due_second_half')
+                                ->first();
+                } else {
+                    $payslip = $this->employeePayslip->where('user_id', $userId)->first();
+                }
+
+                $dates = [
+                    'startDateFirstHalf' => $this->startDateFirstHalf,
+                    'endDateFirstHalf' => $this->endDateFirstHalf,
+                    'startDateSecondHalf' => $this->startDateSecondHalf,
+                    'endDateSecondHalf' => $this->endDateSecondHalf,
+                ];
+
+                $payslipFor = \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('F') . " " .
+                              \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('d') .  "-" .
+                              \Carbon\Carbon::parse($dates['endDateSecondHalf'])->format('d') . " " .
+                              \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('Y');
+
+                if ($payslip) {
+                    $pdf = Pdf::loadView('pdf.monthly-payslip', [
+                        'preparedBy' => $preparedBy->payrolls,
+                        'payslip' => $payslip,
+                        'dates' => $dates,
+                    ]);
+                    $pdf->setPaper([0, 0, 396, 612], 'portrait');
+                    return response()->streamDownload(function () use ($pdf) {
+                        echo $pdf->stream();
+                    }, $payslip['name'] . ' ' . $payslipFor . ' Payslip.pdf');
+                } else {
+                    throw new Exception('Payslip not found for the user.');
+                }
+            }
+    
+            $this->dispatch('notify', [
+                'message' => 'Payslip exported!',
+                'type' => 'success'
+            ]);
+        } catch (Exception $e) {
+            $this->dispatch('notify', [
+                'message' => 'Unable to export payslip: ' . $e->getMessage(),
+                'type' => 'error'
+            ]);
         }
     }
 }

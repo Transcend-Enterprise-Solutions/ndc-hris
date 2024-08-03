@@ -47,7 +47,7 @@
                     </div>
 
                     <!-- Sort Dropdown -->
-                    <div class="w-full sm:w-auto">
+                    <div class="w-full sm:w-auto relative">
                         <button wire:click="toggleDropdown"
                             class="mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                             justify-center px-2 py-1.5 text-sm font-medium tracking-wide 
@@ -59,7 +59,7 @@
                         </button>
                         @if($sortColumn)
                             <div
-                                class="absolute top-12 z-20 w-56 p-3 border border-gray-400 bg-white rounded-lg 
+                                class="absolute top-14 z-20 w-56 p-3 border border-gray-400 bg-white rounded-lg 
                                 shadow-2xl dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
                                 <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Category</h6>
                                 <ul class="space-y-2 text-sm">
@@ -72,6 +72,11 @@
                                         <input id="employee_number" type="checkbox" wire:model.live="columns.employee_number"
                                             class="h-4 w-4">
                                         <label for="employee_number" class="ml-2 text-gray-900 dark:text-gray-300">Employee Number</label>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <input id="office_division" type="checkbox" wire:model.live="columns.office_division"
+                                            class="h-4 w-4">
+                                        <label for="office_division" class="ml-2 text-gray-900 dark:text-gray-300">Office/Division</label>
                                     </li>
                                     <li class="flex items-center">
                                         <input id="position" type="checkbox" wire:model.live="columns.position"
@@ -218,14 +223,15 @@
                     <!-- Export to Excel -->
                     <div class="relative inline-block text-left">
                         <button wire:click="exportExcel"
-                            class="mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                            class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                             justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
-                            type="button">
+                            type="button"  aria-describedby="excelExport">
                             <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
                             <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                         </button>
+                        <div id="excelExport" class="absolute -top-5 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap rounded bg-gray-600 px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:text-black" role="tooltip">Export Payroll</div>
                     </div>
 
                 </div>
@@ -296,9 +302,16 @@
                                                     @endif
                                                 @endforeach
                                                 <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                    <button wire:click="toggleEditPayroll({{ $payroll->user_id }})" class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 focus:outline-none">
-                                                        <i class="fas fa-pencil-alt ml-3"></i>
-                                                    </button>
+                                                    <div class="relative">
+                                                        <button wire:click="toggleEditPayroll({{ $payroll->user_id }})" 
+                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                            focus:outline-none"  aria-describedby="tooltip1">
+                                                            <i class="fas fa-pencil-alt ml-3"></i>
+                                                        </button>
+                                                        <!-- Tooltip Text -->
+                                                        <div id="tooltip1" class="absolute top-1/2 right-10 transform -translate-y-1/2 z-10 whitespace-nowrap rounded px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 bg-gray-600 dark:text-black" role="tooltip">Edit Payroll</div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -349,6 +362,14 @@
                         <input type="text" id="employee_number" wire:model='employee_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                         @error('employee_number') 
                             <span class="text-red-500 text-sm">The employee number is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
+                        <input type="text" id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        @error('office_division') 
+                            <span class="text-red-500 text-sm">The office/division is required!</span> 
                         @enderror
                     </div>
 

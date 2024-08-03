@@ -57,7 +57,7 @@
             border-radius: 50%;
             -webkit-animation: spinner-border .75s linear infinite;
             animation: spinner-border .75s linear infinite;
-            color: white;
+            color: rgb(0, 255, 98);
         }
     </style>
 
@@ -89,7 +89,7 @@
                 <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
 
                     <!-- Start Date -->
-                    <div class="w-full sm:w-auto">
+                    <div class="w-full sm:w-auto relative">
                         <label for="startDate" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
                         <input type="date" id="startDate" wire:model.live='startDate' value="{{ $startDate }}"
                         class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
@@ -98,7 +98,7 @@
                     </div>
 
                      <!-- End Date -->
-                    <div class="w-full sm:w-auto">
+                    <div class="w-full sm:w-auto relative">
                         <label for="endDate" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
                         <input type="date" id="endDate" wire:model.live='endDate' value="{{ $endDate }}"
                         class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
@@ -235,13 +235,13 @@
                     @endif
 
                     <!-- Export to Excel -->
-                    <div class="w-full sm:w-auto">
+                    <div class="w-full sm:w-auto relative">
                         <button wire:click="exportPayroll"
-                            class="mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                            class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                             justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
-                            type="button">
+                            type="button" aria-describedby="excelExport">
                             <div wire:loading wire:target="exportPayroll" style="margin-right: 5px">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
@@ -249,6 +249,7 @@
                             <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
                             <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                         </button>
+                        <div id="excelExport" class="absolute -top-5 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap rounded bg-gray-600 px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:text-black" role="tooltip">Export Payroll</div>
                     </div>
 
                 </div>
@@ -442,9 +443,23 @@
                                                     {{ currency_format($payroll['net_amount_due'] ?? 0) }}
                                                 </td>
                                                 <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-gray-100 dark:bg-gray-800">
-                                                    <button wire:click="sendPaylip" class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide hover:text-blue-600 focus:outline-none">
+                                                    {{-- <button wire:click="exportPayslip({{ $payroll['user_id'] }})" class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide hover:text-blue-600 focus:outline-none">
+                                                        <div wire:loading wire:target="exportPayslip" style="margin-right: 5px">
+                                                            <div class="spinner-border small text-primary" role="status">
+                                                            </div>
+                                                        </div>
                                                         <i class="fas fa-file-export ml-3"></i>
-                                                    </button>
+                                                    </button> --}}
+                                                    <div class="relative">
+                                                        <button wire:click="viewPayroll({{ $payroll['user_id'] }})" 
+                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                        -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                        focus:outline-none" aria-describedby="tooltip1">
+                                                            <i class="fas fa-eye ml-3"></i>
+                                                        </button>
+                                                        <!-- Tooltip Text -->
+                                                        <div id="tooltip1" class="absolute top-1/2 right-10 transform -translate-y-1/2 z-10 whitespace-nowrap rounded px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 bg-gray-600 dark:text-black" role="tooltip">View</div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach
