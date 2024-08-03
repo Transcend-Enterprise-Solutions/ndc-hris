@@ -1119,6 +1119,13 @@
 
                 <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
 
+<<<<<<< HEAD
+
+                    <div class="relative inline-block text-left">
+                        <input type="search" id="search" wire:model.live="search" placeholder="Enter employee name"
+                            class="py-2 px-3 block w-full shadow-sm text-sm font-medium border-gray-400
+                            wire:text-neutral-800 dark:text-neutral-200 mb-4 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
+=======
                     <div class="w-full sm:w-1/3 sm:mr-4">
                         <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
                         <input type="text" id="search" wire:model.live="search"
@@ -1126,6 +1133,7 @@
                                 dark:hover:bg-slate-600 dark:border-slate-600
                                 dark:text-gray-300 dark:bg-gray-800"
                             placeholder="Enter employee name or ID">
+>>>>>>> origin/alvindale
                     </div>
 
 

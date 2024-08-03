@@ -8,10 +8,17 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminLeaveRecordsTable extends Component
 {
+
+    public $search = '';
+
     public function render()
     {
         // Fetch all leave applications with the related user name
         $leaveApplications = LeaveApplication::with('user') // Assuming there's a relationship set up
+            ->whereHas('user', function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%');
+            })
+            ->whereIn('status', ['Approved', 'Disapproved'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 

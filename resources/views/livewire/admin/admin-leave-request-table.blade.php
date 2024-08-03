@@ -139,7 +139,7 @@
                 <div class="mb-4">
                     <label for="status" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Status</label>
                     <select wire:model.live="status" id="status"
-                        class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
                         <option value="">Select Status</option>
                         <option value="With Pay">With Pay</option>
                         <option value="Without Pay">Without Pay</option>
@@ -151,7 +151,7 @@
                 @if ($status === 'Other')
                 <div class="mb-4">
                     <label for="otherReason" class="block text-gray-700 dark:text-gray-300">Please specify</label>
-                    <input type="text" wire:model="otherReason" id="otherReason" class="form-input mt-1 block w-full">
+                    <input type="text" wire:model="otherReason" id="otherReason" class="form-control mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
                     @error('otherReason') <span class="text-red-500">{{ $message }}</span> @enderror
                 </div>
                 @endif
@@ -161,7 +161,7 @@
                     <label for="days"
                         class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number
                         of Days</label>
-                    <input type="number" wire:model="days" id="days" class="form-input mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md  dark:text-gray-300 dark:bg-gray-700" min="1">
+                    <input type="number" wire:model="days" id="days" class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700" min="1">
                     @error('days') <span class="text-red-500">{{ $message }}</span> @enderror
                 </div>
                 <div class="mb-4 col-span-2 sm:col-span-1">
