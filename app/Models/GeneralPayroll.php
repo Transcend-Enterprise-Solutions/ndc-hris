@@ -16,6 +16,11 @@ class GeneralPayroll extends Model
         'net_amount_received',
         'amount_due_first_half',
         'amount_due_second_half',
+        'gross_salary_less',               
+        'late_absences',               
+        'leave_without_pay',               
+        'others',               
+        'total_earnings',
         'date',
     ];
 

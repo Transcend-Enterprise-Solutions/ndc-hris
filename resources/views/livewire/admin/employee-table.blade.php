@@ -1094,7 +1094,7 @@
         </div>
         @else
         <div class="flex justify-center w-full">
-            <div class="w-full bg-white rounded-2xl p3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
+            <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
                 <div class="pb-4 pt-4 sm:pt-1">
                     <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Employees List
                     </h1>
@@ -1117,7 +1117,7 @@
                     }
                 </style>
 
-                <div class="mb-6 flex flex-col sm:flex-row items-end justify-between space-y-4 sm:space-y-0">
+                <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
 
 <<<<<<< HEAD
 
@@ -1142,7 +1142,7 @@
                         <!-- Filter Dropdown -->
                         <div class="w-full sm:w-auto">
                             <button wire:click="toggleDropdownFilter"
-                                class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                                class="mt-4 sm:mt-0 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                                     justify-center px-2 py-1.5 text-sm font-medium tracking-wide
                                     text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none w-full sm:w-fit" type="button">
@@ -1372,7 +1372,7 @@
 
                         <!-- Sort Dropdown -->
                         <div class="w-full sm:w-auto">
-                            <button wire:click="toggleDropdown" class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                            <button wire:click="toggleDropdown" class="mt-4 sm:mt-0 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                                     justify-center px-2 py-1.5 text-sm font-medium tracking-wide
                                     text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
@@ -1545,7 +1545,7 @@
 
                         <!-- Export to Excel -->
                         <div class="w-full sm:w-auto">
-                            <button wire:click="exportUsers" class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                            <button wire:click="exportUsers" class="mt-4 sm:mt-0 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                                     justify-center px-4 py-1.5 text-sm font-medium tracking-wide
                                     text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"

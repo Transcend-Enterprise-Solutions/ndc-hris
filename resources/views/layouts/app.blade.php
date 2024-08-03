@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    x-data
+    :class="{ 'dark': $store.darkMode }"
+    x-init="$store.darkMode = localStorage.getItem('dark-mode') === 'true'">
 
 <head>
     <meta charset="utf-8">
@@ -21,8 +24,6 @@
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/alpine.min.js" defer></script>
 
-
-
     <!-- Scripts -->
     <script defer src="build/assets/app-B9GXRaBV.js"></script>
 
@@ -35,30 +36,22 @@
         }
     </style>
     @livewireStyles
-
     <script>
-        if (localStorage.getItem('dark-mode') === 'false' || !('dark-mode' in localStorage)) {
-                document.querySelector('html').classList.remove('dark');
-                document.querySelector('html').style.colorScheme = 'light';
-            } else {
-                document.querySelector('html').classList.add('dark');
-                document.querySelector('html').style.colorScheme = 'dark';
-            }
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('darkMode', localStorage.getItem('dark-mode') === 'true');
+
+            Alpine.effect(() => {
+                document.documentElement.classList.toggle('dark', Alpine.store('darkMode'));
+                localStorage.setItem('dark-mode', Alpine.store('darkMode'));
+            })
+        });
     </script>
 </head>
 
 <body class="font-inter antialiased bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400"
     :class="{ 'sidebar-expanded': sidebarExpanded }"
-    x-data="{ sidebarOpen: false, sidebarExpanded: localStorage.getItem('sidebar-expanded') == 'true' }"
+    x-data="{ sidebarOpen: false, sidebarExpanded: localStorage.getItem('sidebar-expanded') === 'true' }"
     x-init="$watch('sidebarExpanded', value => localStorage.setItem('sidebar-expanded', value))">
-
-    <script>
-        if (localStorage.getItem('sidebar-expanded') == 'true') {
-                document.querySelector('body').classList.add('sidebar-expanded');
-            } else {
-                document.querySelector('body').classList.remove('sidebar-expanded');
-            }
-    </script>
 
     <!-- Page wrapper -->
     <div class="flex h-[100dvh] overflow-hidden">
@@ -82,6 +75,12 @@
     </div>
 
     @livewireScripts
+
+    <script>
+        document.addEventListener('livewire:navigating', () => {
+            Alpine.store('darkMode', localStorage.getItem('dark-mode') === 'true');
+        });
+    </script>
 </body>
 
 </html>

@@ -18,6 +18,7 @@ class PayrollManagementTable extends Component
     public $columns = [
         'name' => true,
         'employee_number' => true,
+        'office_division' => true,
         'position' => true,
         'sg_step' => true,
         'rate_per_month' => true,
@@ -51,6 +52,7 @@ class PayrollManagementTable extends Component
     public $userId;
     public $name;
     public $employee_number;
+    public $office_division;
     public $position;
     public $sg_step;
     public $rate_per_month;
@@ -178,6 +180,7 @@ class PayrollManagementTable extends Component
             $payrollData = [
                 'user_id' => $this->userId,
                 'employee_number' => $this->employee_number,
+                'office_division' => $this->office_division,
                 'position' => $this->position,
                 'sg_step' => $this->sg_step,
                 'rate_per_month' => $this->rate_per_month,
@@ -209,6 +212,7 @@ class PayrollManagementTable extends Component
             if ($payroll) {
                 $this->validate([
                     'employee_number' => 'required|max:100',
+                    'office_division' => 'required|max:100',
                     'position' => 'required|max:100',
                     'sg_step' => 'required|max:100',
                     'rate_per_month' => 'required|numeric',
@@ -224,6 +228,7 @@ class PayrollManagementTable extends Component
             } else {
                 $this->validate([
                     'employee_number' => 'required|max:100',
+                    'office_division' => 'required|max:100',
                     'position' => 'required|max:100',
                     'sg_step' => 'required|max:100',
                     'rate_per_month' => 'required|numeric',
@@ -263,6 +268,7 @@ class PayrollManagementTable extends Component
         $this->editPayroll = null;
         $this->name = null;
         $this->employee_number = null;
+        $this->office_division = null;
         $this->position = null;
         $this->sg_step = null;
         $this->rate_per_month = null;

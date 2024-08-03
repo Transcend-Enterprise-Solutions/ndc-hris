@@ -15,6 +15,7 @@ class EmployeesPayroll extends Model
         'user_id',
         'name',
         'employee_number',
+        'office_division',
         'position',
         'salary_grade',
         'daily_salary_rate',

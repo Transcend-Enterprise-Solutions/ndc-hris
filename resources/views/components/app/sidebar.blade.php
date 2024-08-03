@@ -121,7 +121,7 @@
                                 </li>
                                 <li class="mb-1 last:mb-0">
                                     <a class="block text-black dark:text-white hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if(Route::is('my-documents')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
-                                        href="{{route('my-documents')}}">
+                                        href="{{route('my-documents')}}" wire:navigate>
                                         <span
                                             class="text-sm font-medium @if(Route::is('my-documents')){{ 'text-blue-500 dark:text-blue-500' }}@endif">My
                                             Documents</span>
@@ -129,7 +129,7 @@
                                 </li>
                                 <li class="mb-1 last:mb-0">
                                     <a class="block text-black dark:text-white hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if(Route::is('doc-request')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
-                                        href="{{route('doc-request')}}">
+                                        href="{{route('doc-request')}}" wire:navigate>
                                         <span
                                             class="text-sm font-medium @if(Route::is('doc-request')){{ 'text-blue-500 dark:text-blue-500' }}@endif">Document
                                             Request</span>
@@ -148,7 +148,7 @@
                                 <div class="flex items-center">
                                     <i class="bi bi-clock text-slate-400 mr-3"></i>
                                     <span
-                                        class="text-sm font-medium @if(in_array(Request::segment(1), ['community'])){{ 'text-blue-500' }}@endif">Daily
+                                        class="text-sm font-medium @if(in_array(Request::segment(1), ['community'])){{ 'text-blue-500' }}@endif" >Daily
                                         Time Record</span>
                                 </div>
                                 <!-- Icon -->
@@ -165,14 +165,14 @@
                                 :class="open ? '!block' : 'hidden'">
                                 <li class="mb-1 last:mb-0">
                                     <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('dtr')){{ '!text-blue-500' }}@endif"
-                                        href="{{ route('dtr') }}">
+                                        href="{{ route('dtr') }}"wire:navigate>
                                         <span
                                             class="text-sm font-medium @if(Route::is('users-tabs')){{ 'text-blue-500' }}@endif">DTR</span>
                                     </a>
                                 </li>
                                 <li class="mb-1 last:mb-0">
                                     <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('my-schedule')){{ '!text-blue-500' }}@endif"
-                                        href="{{ route('my-schedule') }}">
+                                        href="{{ route('my-schedule') }}"wire:navigate>
                                         <span
                                             class="text-sm font-medium @if(Route::is('my-schedule')){{ 'text-blue-500' }}@endif">My Schedule</span>
                                     </a>
@@ -289,7 +289,7 @@
                                     </li>
                                     <li class="mb-1 last:mb-0">
                                         <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('admin-dtr')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('admin-dtr')}}">
+                                            href="{{route('admin-dtr')}}" wire:navigate>
                                             <span class="text-sm font-medium transition-opacity duration-300"
                                                 :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Daily
                                                 Time Record</span>
@@ -297,7 +297,7 @@
                                     </li>
                                     <li class="mb-1 last:mb-0">
                                         <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('admin-doc-request')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('admin-doc-request')}}">
+                                            href="{{route('admin-doc-request')}}" wire:navigate>
                                             <span class="text-sm font-medium transition-opacity duration-300"
                                                 :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Document
                                                 Request</span>
@@ -305,7 +305,7 @@
                                     </li>
                                     <li class="mb-1 last:mb-0">
                                         <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('emp-documents')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('emp-documents')}}">
+                                            href="{{route('emp-documents')}}"wire:navigate>
                                             <span class="text-sm font-medium transition-opacity duration-300"
                                                 :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Employee Documents
                                                 </span>
@@ -313,7 +313,7 @@
                                     </li>
                                     <li class="mb-1 last:mb-0">
                                         <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('admin-schedule')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('admin-schedule')}}">
+                                            href="{{route('admin-schedule')}}"wire:navigate>
                                             <span class="text-sm font-medium transition-opacity duration-300"
                                                 :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Schedule</span>
                                         </a>

@@ -16,6 +16,11 @@ return new class extends Migration
                 $table->double('net_amount_received')->nullable();
                 $table->double('amount_due_first_half')->nullable();
                 $table->double('amount_due_second_half')->nullable();                
+                $table->double('gross_salary_less')->nullable();                
+                $table->double('late_absences')->nullable();                
+                $table->double('leave_without_pay')->nullable();                
+                $table->double('others')->nullable();                
+                $table->double('total_earnings')->nullable();                
                 $table->date('date')->format('F d Y')->nullable();                
                 $table->timestamps();
             });

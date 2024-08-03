@@ -1,53 +1,56 @@
 <div class="w-full flex justify-center">
+
+    <style>
+        .scrollbar-thin1::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .scrollbar-thin1::-webkit-scrollbar-thumb {
+            background-color: #1a1a1a4b;
+            /* cursor: grab; */
+            border-radius: 0 50px 50px 0;
+        }
+
+        .scrollbar-thin1::-webkit-scrollbar-track {
+            background-color: #ffffff23;
+            border-radius: 0 50px 50px 0;
+        }
+    </style>
+
     <div class="flex justify-center w-full">
-        <div class="w-full bg-white rounded-2xl p3 sm:p-0 shadow dark:bg-gray-800 overflow-x-visible">
-            <div class="pb-6 pt-6 sm:mt-2">
+        <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
+            <div class="pb-4 mb-3 pt-4 sm:pt-0">
                 <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Payroll Management</h1>
             </div>
 
-            <div class="block sm:flex items-center justify-between pr-3 pl-3">
+            <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
 
-                <style>
-                    .scrollbar-thin1::-webkit-scrollbar {
-                        width: 5px;
-                    }
-
-                    .scrollbar-thin1::-webkit-scrollbar-thumb {
-                        background-color: #1a1a1a4b;
-                        /* cursor: grab; */
-                        border-radius: 0 50px 50px 0;
-                    }
-
-                    .scrollbar-thin1::-webkit-scrollbar-track {
-                        background-color: #ffffff23;
-                        border-radius: 0 50px 50px 0;
-                    }
-                </style>
-
-                <div class="block sm:flex items-center">
-                    <button wire:click="toggleAddPayroll" 
-                        class="mb-4 sm:mb-0 mr-0 sm:mr-4 px-4 py-2 bg-green-500 text-white rounded-md 
-                        hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full sm:w-3/5
-                        dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
-                        Add Payroll
-                    </button>
-
-                    <input type="search" id="search" wire:model.live="search" 
-                    placeholder="Search..."
-                    class="py-2 px-3 block w-full shadow-sm text-sm font-medium border-gray-400 
-                    wire:text-neutral-800 dark:text-neutral-200
-                    dark:hover:bg-slate-600 dark:border-slate-600 mb-4 sm:mb-0
-                    rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
-  
+                {{-- Search Input --}}
+                <div class="w-full sm:w-1/3 sm:mr-4">
+                    <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                    <input type="text" id="search" wire:model.live="search"
+                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                            dark:hover:bg-slate-600 dark:border-slate-600
+                            dark:text-gray-300 dark:bg-gray-800"
+                        placeholder="Enter employee name or ID">
                 </div>
 
-                <div class="flex items-center">
+                <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
+
+                    <div class="w-full sm:w-auto">
+                        <button wire:click="toggleAddPayroll" 
+                            class="mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
+                            hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full sm:w-3/5
+                            dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
+                            Add Payroll
+                        </button>
+                    </div>
 
                     <!-- Sort Dropdown -->
-                    <div class="relative flex text-left mr-4">
+                    <div class="w-full sm:w-auto relative">
                         <button wire:click="toggleDropdown"
-                            class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                            justify-center px-4 py-2 mb-0 sm:mb-0 text-sm font-medium tracking-wide 
+                            class="mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                            justify-center px-2 py-1.5 text-sm font-medium tracking-wide 
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button">
@@ -56,7 +59,7 @@
                         </button>
                         @if($sortColumn)
                             <div
-                                class="absolute top-12 z-20 w-56 p-3 border border-gray-400 bg-white rounded-lg 
+                                class="absolute top-14 z-20 w-56 p-3 border border-gray-400 bg-white rounded-lg 
                                 shadow-2xl dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
                                 <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Category</h6>
                                 <ul class="space-y-2 text-sm">
@@ -69,6 +72,11 @@
                                         <input id="employee_number" type="checkbox" wire:model.live="columns.employee_number"
                                             class="h-4 w-4">
                                         <label for="employee_number" class="ml-2 text-gray-900 dark:text-gray-300">Employee Number</label>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <input id="office_division" type="checkbox" wire:model.live="columns.office_division"
+                                            class="h-4 w-4">
+                                        <label for="office_division" class="ml-2 text-gray-900 dark:text-gray-300">Office/Division</label>
                                     </li>
                                     <li class="flex items-center">
                                         <input id="position" type="checkbox" wire:model.live="columns.position"
@@ -215,14 +223,15 @@
                     <!-- Export to Excel -->
                     <div class="relative inline-block text-left">
                         <button wire:click="exportExcel"
-                            class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                            class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                             justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
-                            type="button">
-                            <img class="flex dark:hidden" src="/images/export-excel.png" width="25" alt="">
-                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="25" alt="">
+                            type="button"  aria-describedby="excelExport">
+                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
+                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                         </button>
+                        <div id="excelExport" class="absolute -top-5 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap rounded bg-gray-600 px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:text-black" role="tooltip">Export Payroll</div>
                     </div>
 
                 </div>
@@ -230,8 +239,8 @@
             </div>
 
             <!-- Table -->
-            <div class="flex flex-col p-3">
-                <div class="inline-block w-full py-2 align-middle">
+            <div class="flex flex-col">
+                <div class="overflow-x-auto">
                     <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
                         <div class="overflow-x-auto">
 
@@ -293,9 +302,16 @@
                                                     @endif
                                                 @endforeach
                                                 <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                    <button wire:click="toggleEditPayroll({{ $payroll->user_id }})" class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 focus:outline-none">
-                                                        <i class="fas fa-pencil-alt ml-3"></i>
-                                                    </button>
+                                                    <div class="relative">
+                                                        <button wire:click="toggleEditPayroll({{ $payroll->user_id }})" 
+                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                            focus:outline-none"  aria-describedby="tooltip1">
+                                                            <i class="fas fa-pencil-alt ml-3"></i>
+                                                        </button>
+                                                        <!-- Tooltip Text -->
+                                                        <div id="tooltip1" class="absolute top-1/2 right-10 transform -translate-y-1/2 z-10 whitespace-nowrap rounded px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 bg-gray-600 dark:text-black" role="tooltip">Edit Payroll</div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -346,6 +362,14 @@
                         <input type="text" id="employee_number" wire:model='employee_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                         @error('employee_number') 
                             <span class="text-red-500 text-sm">The employee number is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
+                        <input type="text" id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        @error('office_division') 
+                            <span class="text-red-500 text-sm">The office/division is required!</span> 
                         @enderror
                     </div>
 

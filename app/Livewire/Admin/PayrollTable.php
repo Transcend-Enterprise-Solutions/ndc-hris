@@ -5,7 +5,6 @@ namespace App\Livewire\Admin;
 use App\Exports\PayrollExport;
 use App\Models\EmployeesDtr;
 use App\Models\EmployeesPayroll;
-use App\Models\GeneralPayroll;
 use App\Models\Holiday;
 use App\Models\LeaveApplication;
 use App\Models\Payrolls;
@@ -57,6 +56,7 @@ class PayrollTable extends Component
     public $weekdayRegularHolidays = 0;
     public $weekdaySpecialHolidays = 0;
     protected $savePayroll;
+    public $employeePayslip;
 
     public function render(){
         $users = User::paginate(10);
@@ -70,11 +70,14 @@ class PayrollTable extends Component
     
             if ($query->exists()) {
                 $payrolls = $query->paginate(10);
+                $this->employeePayslip = $query->get();
                 $this->hasPayroll = true;
             } else {
                 $payrolls = $this->getPayroll();
                 $this->hasPayroll = false;
+                $this->employeePayslip = $payrolls;
             }
+
         }
 
         // Check for holiday values
@@ -280,7 +283,7 @@ class PayrollTable extends Component
                             $deductionBalance = $newTotalDeduction - $grossSalaryLess;
                             $netAmountDue = 0;
                         } else {
-                            $netAmountDue = $grossSalaryLess - $newTotalDeduction;
+                            $netAmountDue = $grossSalaryLess - $newTotalDeduction + $payrollsAllRecord->personal_economic_relief_allowance;
                         }
                     }else{
                         $netAmountDue = $grossSalaryLess;
@@ -322,6 +325,7 @@ class PayrollTable extends Component
                         );
                     }else{
                         $payrolls->push([
+                            'user_id' => $user->id,
                             'name' => $user->name,
                             'employee_number' => $payrollsAllRecord->employee_number,
                             'position' => $payrollsAllRecord->position,
@@ -471,38 +475,6 @@ class PayrollTable extends Component
             ->get();
     }
 
-    public function processPayroll($startDate, $endDate){
-        $payrollData = $this->getDTRForPayroll($startDate, $endDate);
-
-        foreach ($payrollData as $employeeId => $dtrData) {
-            // Retrieve employee's base salary and other relevant information
-            $employee = User::find($employeeId);
-            $baseSalary = $employee->base_salary; // Assuming you have this field
-
-            // Calculate salary based on DTR data
-            $totalHours = $dtrData['total_hours'];
-            $totalLate = $dtrData['total_late'];
-            $totalOvertime = $dtrData['total_overtime'];
-
-            // Perform salary calculations here
-            // For example:
-            $salary = ($baseSalary / 160) * $totalHours; // Assuming 160 hours per month
-            $lateDeductions = $totalLate * ($baseSalary / 160 / 60); // Deduct per minute of late
-            $overtimePay = $totalOvertime * (($baseSalary / 160) * 1.25); // 1.25x pay for overtime
-
-            $grossPay = $salary + $overtimePay - $lateDeductions;
-
-            // Calculate deductions (taxes, benefits, etc.)
-            // ...
-
-            // Calculate net pay
-            // ...
-
-            // Store payroll results
-            // ...
-        }
-    }
-
     public function toggleDropdown(){
         $this->sortColumn = !$this->sortColumn;
     }
@@ -564,4 +536,40 @@ class PayrollTable extends Component
         }
     }
 
+    public function exportPayslip($userId){
+        try {
+            $user = User::where('id', $userId)->first();
+            if ($user) {
+                $payslip = null;
+            
+                if ($this->hasPayroll) {
+                    // If payroll exists in the database
+                    $payslip = $this->employeePayslip->where('user_id', $userId)->first();
+                } else {
+                    // If payroll is generated on the fly
+                    $payslip = collect($this->employeePayslip)->firstWhere('user_id', $userId);
+                }
+
+                if ($payslip) {
+                    $pdf = Pdf::loadView('pdf.semi-monthly-payslip', ['payslip' => (object)$payslip]);
+                    $pdf->setPaper([0, 0, 396, 612], 'portrait');
+                    return response()->streamDownload(function () use ($pdf) {
+                        echo $pdf->stream();
+                    }, $payslip['name'] . ' Payslip.pdf');
+                } else {
+                    throw new Exception('Payslip not found for the user.');
+                }
+            }
+    
+            $this->dispatch('notify', [
+                'message' => 'Payslip exported!',
+                'type' => 'success'
+            ]);
+        } catch (Exception $e) {
+            $this->dispatch('notify', [
+                'message' => 'Unable to export payslip: ' . $e->getMessage(),
+                'type' => 'error'
+            ]);
+        }
+    }
 }
