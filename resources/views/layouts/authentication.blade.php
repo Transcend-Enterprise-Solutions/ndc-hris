@@ -17,27 +17,37 @@
     <!-- Scripts -->
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
     <script defer src="build/assets/app-B9GXRaBV.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <!-- Styles -->
     <link rel="stylesheet" href="build/assets/app-BJKUccW0.css">
 
     @livewireStyles
     <style>
-        .right-side-login{
-            height: 100%;
-            width: 100%;
-            overflow-x: visible;
-            overflow-y: hidden;
-            position: absolute;
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
 
-        .right-side-login img{
-            position: relative;
+        .right-side-login {
             height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .right-side-login img {
+            position: absolute;
+            height: 100%;
+            right: 0;
             z-index: 1;
         }
 
-        .right-side-login div{
+        .right-side-login div {
             height: 100%;
             width: 50%;
             right: 0;
@@ -47,18 +57,22 @@
             z-index: 0;
         }
 
-        .login-logo{
+        .login-logo {
             position: relative;
             z-index: 1;
+        }
+
+        .main-container {
+            overflow-x: hidden;
         }
     </style>
 </head>
 
 <body class="font-inter antialiased bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400">
 
-    <main class="bg-white">
+    <main class="bg-white main-container">
 
-        <div class="relative flex">
+        <div class="relative flex overflow-hidden">
 
             <!-- Content -->
             <div class="w-full md:w-1/2">
@@ -84,17 +98,35 @@
             </div>
 
             <!-- Image -->
-            <div class="hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2" aria-hidden="true">
+            <div
+                x-data
+                x-init="$el.style.transform = 'translateX(100%)'; $el.style.opacity = 0;
+                        setTimeout(() => {
+                            $el.style.transition = 'transform 0.7s ease, opacity 0.7s ease';
+                            $el.style.transform = 'translateX(0)';
+                            $el.style.opacity = 1;
+                        }, 100);"
+                class="hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2 overflow-hidden" aria-hidden="true">
+
                 <div class="right-side-login">
                     <div></div>
                     <img src="/images/rimg.png" alt="login bg">
                 </div>
-                <div class="flex items-center justify-center w-full h-full login-logo">
+
+                <div
+                    x-data
+                    x-init="$el.style.transform = 'translateX(100%)'; $el.style.opacity = 0;
+                            setTimeout(() => {
+                                $el.style.transition = 'transform 0.7s ease, opacity 0.7s ease';
+                                $el.style.transform = 'translateX(0)';
+                                $el.style.opacity = 1;
+                            }, 300);"
+                    class="flex items-center justify-center w-full h-full login-logo">
+
                     <img class="w-1/2 h-1/2 object-contain" src="{{ asset('images/hris-logo.png') }}" width="760"
                         height="1024" alt="Authentication image" />
                 </div>
             </div>
-
 
         </div>
 

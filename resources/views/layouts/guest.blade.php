@@ -19,7 +19,7 @@
         <!-- Styles -->
         <link rel="stylesheet" href="build/assets/app-BJKUccW0.css">
 
-         @livewireStyles               
+         @livewireStyles
 
         <script>
             if (localStorage.getItem('dark-mode') === 'false' || !('dark-mode' in localStorage)) {
@@ -29,7 +29,7 @@
                 document.querySelector('html').classList.add('dark');
                 document.querySelector('html').style.colorScheme = 'dark';
             }
-        </script>         
+        </script>
     </head>
     <body class="font-inter antialiased bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400">
 
@@ -75,7 +75,7 @@
 
             </div>
 
-        </main>   
+        </main>
 
         @livewireScripts
     </body>
