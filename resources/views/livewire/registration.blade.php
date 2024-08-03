@@ -232,7 +232,7 @@
                                     <span wire:loading wire:target="prevStep">Loading...</span>
                                 </button>
                             </div>
-                            <div class="w-full relative mt-4">
+                            <div class="w-full relative sm:mt-4 lg:mt-0">
                                 <button
                                     class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
                                     wire:click="toStep3" wire:loading.attr="disabled" wire:target="toStep3">
@@ -522,7 +522,7 @@
                                     <span wire:loading wire:target="prevStep">Loading...</span>
                                 </button>
                             </div>
-                            <div class="w-full relative mt-4">
+                            <div class="w-full relative sm:mt-4">
                                 <button
                                     class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
                                     wire:click="submit" wire:loading.attr="disabled" wire:target="submit">
