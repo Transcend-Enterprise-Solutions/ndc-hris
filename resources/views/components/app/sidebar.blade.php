@@ -159,6 +159,13 @@
                                     </a>
                                 </li>
                                 <li class="mb-1 last:mb-0">
+                                    <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('my-schedule')){{ '!text-blue-500' }}@endif"
+                                        href="{{ route('my-schedule') }}">
+                                        <span
+                                            class="text-sm font-medium @if(Route::is('my-schedule')){{ 'text-blue-500' }}@endif">My Schedule</span>
+                                    </a>
+                                </li>
+                                <li class="mb-1 last:mb-0">
                                     <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('payslip')){{ '!text-blue-500' }}@endif"
                                         href="{{ route('payslip') }}">
                                         <span

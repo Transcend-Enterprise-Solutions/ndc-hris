@@ -1,7 +1,54 @@
 <div class="w-full flex justify-center">
+
+    <style>
+        @media (max-width: 1024px){
+            .custom-d{
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px){
+            .m-scrollable{
+                width: 100%;
+                overflow-x: scroll;
+            }
+        }
+
+        @media (min-width:1024px){
+            .custom-p{
+                padding-bottom: 14px !important;
+            }
+        }
+
+        @-webkit-keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner-border {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            vertical-align: text-bottom;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            -webkit-animation: spinner-border .75s linear infinite;
+            animation: spinner-border .75s linear infinite;
+            color: white;
+        }
+    </style>
+
     <div class="flex justify-center w-full">
         <div class="w-full bg-white rounded-2xl p3 sm:p-0 shadow dark:bg-gray-800 overflow-x-visible">
-            <div class="pb-6 pt-6 sm:pt-1 mb-3">
+            <div class="pb-6 pt-6 mb-3 sm:mt-2">
                 <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">
                     General Payroll for the month of {{ $date ? \Carbon\Carbon::parse($date)->format('F') : '' }} {{ $date ? \Carbon\Carbon::parse($date)->format('Y') : '' }}
                 </h1>
@@ -258,6 +305,10 @@
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button">
+                            <div wire:loading wire:target="exportExcel" style="margin-right: 5px">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
                             <img class="flex dark:hidden" src="/images/export-excel.png" width="25" alt="">
                             <img class="hidden dark:block" src="/images/export-excel-dark.png" width="25" alt="">
                         </button>

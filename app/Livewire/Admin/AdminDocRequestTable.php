@@ -14,15 +14,39 @@ class AdminDocRequestTable extends Component
     public $requests;
     public $uploadedFile = [];
     public $uploadRequestId;
+    public $documentTypes = [];
+    public $selectedDocumentTypes = [];
+    public $selectAll = false;
 
     public function mount()
     {
         $this->loadRequests();
+        $this->loadDocumentTypes();
+    }
+    public function loadDocumentTypes()
+    {
+        $this->documentTypes = DocRequest::distinct('document_type')->pluck('document_type')->toArray();
     }
 
     public function loadRequests()
     {
-        $this->requests = DocRequest::with('user')->get();
+        $query = DocRequest::with('user');
+
+        if (!empty($this->selectedDocumentTypes)) {
+            $query->whereIn('document_type', $this->selectedDocumentTypes);
+        }
+
+        $this->requests = $query->get();
+    }
+    public function updatedSelectedDocumentTypes()
+    {
+        $this->selectAll = count($this->selectedDocumentTypes) === count($this->documentTypes);
+        $this->loadRequests();
+    }
+    public function updatedSelectAll($value)
+    {
+        $this->selectedDocumentTypes = $value ? $this->documentTypes : [];
+        $this->loadRequests();
     }
 
     public function updateStatus($id)

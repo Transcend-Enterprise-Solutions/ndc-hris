@@ -23,7 +23,11 @@ return new class extends Migration
                 $table->double('regular_holidays_amount')->nullable();
                 $table->integer('special_holidays')->nullable();
                 $table->double('special_holidays_amount')->nullable();
+                $table->integer('leave_days_withpay')->nullable();
+                $table->double('leave_payment')->nullable();
                 $table->double('gross_salary')->nullable();
+                $table->integer('leave_days_withoutpay')->nullable();
+                $table->integer('leave_days_withoutpay_amount')->nullable();
                 $table->double('absences_days')->nullable();
                 $table->double('absences_amount')->nullable();
                 $table->integer('late_undertime_hours')->nullable();

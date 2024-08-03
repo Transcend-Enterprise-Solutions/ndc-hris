@@ -26,7 +26,7 @@
                     <div class="text-sm flex items-center">
                         <div class="flex items-center mr-3">
                             <input id="1" type="radio" wire:model.live="range" value="1"
-                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                class="h-4 w-4 text-blue-500 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                             <label for="1"
                                 class="ml-2 text-gray-900 dark:text-gray-300">
                                 1-15
@@ -34,7 +34,7 @@
                         </div>
                         <div class="flex items-center">
                             <input id="2" type="radio" wire:model.live="range" value="2"
-                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                class="h-4 w-4 text-blue-500 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                             <label for="2"
                                 class="ml-2 text-gray-900 dark:text-gray-300">
                                 16-{{ $monthsEnd ? \Carbon\Carbon::parse($monthsEnd)->format('d') : '30' }}

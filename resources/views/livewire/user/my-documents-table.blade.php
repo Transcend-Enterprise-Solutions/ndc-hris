@@ -99,7 +99,7 @@
 
                 <!-- Existing Documents -->
                 @if ($documents->count() > 0)
-                    <div class="mt-8">
+                    <div class="mt-8 pb-8">
                         <h2 class="text-lg font-semibold mb-4">Uploaded Documents</h2>
                         <table class="min-w-full bg-white dark:bg-gray-800">
                             <thead>
@@ -115,9 +115,9 @@
                                         <td class="py-2 px-4 border-b text-center align-middle">{{ $document->document_type }}</td>
                                         <td class="py-2 px-4 border-b text-center align-middle">{{ $document->created_at->format('M d, Y H:i') }}</td>
                                         <td class="py-2 px-4 border-b flex justify-center space-x-2">
-                                            <a href="{{ Storage::url($document->file_path) }}" download class="text-blue-500 hover:text-blue-700" title="Download">
+                                            <button wire:click="downloadDocument({{ $document->id }})" class="text-blue-500 hover:text-blue-700" title="Download">
                                                 <i class="fas fa-download"></i>
-                                            </a>
+                                            </button>
                                             <button wire:click="confirmDelete({{ $document->id }})" class="text-red-500 hover:text-red-700" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>

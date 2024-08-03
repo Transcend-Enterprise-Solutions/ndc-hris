@@ -24,7 +24,7 @@ class MyDocumentsTable extends Component
 
     protected $rules = [
         'file' => 'required|file|mimes:pdf|max:5020',
-        'documentType' => 'required|string|max:255', // Adjusted max length
+        'documentType' => 'required|string|max:255',
     ];
 
     protected $listeners = ['file-dropped' => 'handleDroppedFile'];
@@ -48,7 +48,7 @@ class MyDocumentsTable extends Component
         }
         $this->validate([
             'file' => 'required',
-            'documentType' => 'required|string|max:255', // Adjusted max length
+            'documentType' => 'required|string|max:255',
         ]);
 
         if ($this->documentAlreadyUploaded()) {
@@ -67,22 +67,12 @@ class MyDocumentsTable extends Component
                 $fileSize = $this->file->getSize();
             } else {
                 $fileData = base64_decode(preg_replace('#^data:.*?;base64,#', '', $this->file));
-                $fileName = 'document_' . time() . '.pdf'; // Ensure filename has PDF extension
+                $fileName = 'NYC' . time() . '.pdf';
                 $filePath = 'public/upload/employee_document/' . $fileName;
                 Storage::put($filePath, $fileData);
-                $mimeType = mime_content_type(Storage::path($filePath));
+                $mimeType = 'application/pdf';
                 $fileSize = strlen($fileData);
             }
-
-            // Debugging: log the data being inserted
-            logger()->info('Inserting document data:', [
-                'user_id' => Auth::id(),
-                'document_type' => $this->documentType,
-                'file_name' => $fileName,
-                'file_path' => $filePath,
-                'mime_type' => $mimeType,
-                'file_size' => $fileSize,
-            ]);
 
             EmployeeDocument::create([
                 'user_id' => Auth::id(),
@@ -140,6 +130,15 @@ class MyDocumentsTable extends Component
         $this->isDeleting = false;
         $this->confirmDeleteModal = false;
         $this->documentToDelete = null;
+    }
+
+    public function downloadDocument($documentId)
+    {
+        $document = EmployeeDocument::findOrFail($documentId);
+        return Storage::download($document->file_path, $document->file_name, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $document->file_name . '"',
+        ]);
     }
 
     public function availableDocumentTypes()

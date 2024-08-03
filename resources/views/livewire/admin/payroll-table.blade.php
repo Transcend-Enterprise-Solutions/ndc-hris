@@ -1,6 +1,54 @@
 <div class="w-full flex justify-center">
+
+    <style>
+        @media (max-width: 1024px){
+            .custom-d{
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px){
+            .m-scrollable{
+                width: 100%;
+                overflow-x: scroll;
+            }
+        }
+
+        @media (min-width:1024px){
+            .custom-p{
+                padding-bottom: 14px !important;
+            }
+        }
+
+        @-webkit-keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner-border {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            vertical-align: text-bottom;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            -webkit-animation: spinner-border .75s linear infinite;
+            animation: spinner-border .75s linear infinite;
+            color: white;
+        }
+    </style>
+
     <div class="flex justify-center w-full">
-        <div class="w-full bg-white rounded-2xl p3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
+        <div class="w-full bg-white rounded-2xl p3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
+
             <div class="pb-4 mb-3">
                 <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">
                     Payroll for the month of {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('F') : '' }} {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('Y') : '' }}
@@ -192,6 +240,10 @@
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button">
+                            <div wire:loading wire:target="exportPayroll" style="margin-right: 5px">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
                             <img class="flex dark:hidden" src="/images/export-excel.png" width="25" alt="">
                             <img class="hidden dark:block" src="/images/export-excel-dark.png" width="25" alt="">
                         </button>
@@ -202,8 +254,8 @@
             </div>
 
             <!-- Table -->
-            <div class="flex flex-col p-3">
-                <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="flex flex-col">
+                <div class="-my-2 overflow-x-auto">
                     <div class="inline-block w-full py-2 align-middle">
                         <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
                             <div class="overflow-x-auto">
@@ -243,9 +295,27 @@
                                                     Special Holiday/s (Amount)
                                                 </th>
                                             @endif
+                                         
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Leave With Pay
+                                            </th>
+                                            
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Leave With Pay (Amount)
+                                            </th>
+                            
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                 Gross Salary
                                             </th>
+                               
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Leave Without Pay
+                                            </th>
+
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                Leave Without Pay (Amount)
+                                            </th>
+                          
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                 Absences (Days)
                                             </th>
@@ -287,42 +357,89 @@
                                     <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
                                         @foreach($payrolls as $payroll)
                                             <tr class="text-neutral-800 dark:text-neutral-200">
-                                                @foreach($columns as $column)
-                                                @if(!in_array($column, [
-                                                    'regular_holidays_amount',
-                                                    'regular_holidays',
-                                                    'special_holidays_amount',
-                                                    'special_holidays'
-                                                ]) || (isset($payroll[$column]) && $payroll[$column] != 0))
-                                                        <td class="px-5 py-4 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium whitespace-nowrap">
-                                                            @if(in_array($column, [
-                                                                'daily_salary_rate',
-                                                                'gross_salary',
-                                                                'absences_amount',
-                                                                'late_undertime_hours_amount',
-                                                                'late_undertime_mins_amount',
-                                                                'regular_holidays_amount',
-                                                                'special_holidays_amount',
-                                                                'gross_salary_less',
-                                                                'withholding_tax',
-                                                                'nycempc',
-                                                                'total_deductions',
-                                                                'net_amount_due',
-                                                            ]))
-                                                                {{ currency_format($payroll[$column]) }}
-                                                            @elseif(in_array($column, [
-                                                                    'absences_days',
-                                                                    'late_undertime_hours',
-                                                                    'late_undertime_mins',
-                                                                ]))
-                                                                {{ zero_checker($payroll[$column]) }}
-                                                            @else
-                                                                {{ $payroll[$column] ?? '' }}
-                                                            @endif
-                                                        </td>
-                                                    @endif
-                                                @endforeach
-                                                <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-gray-100 dark:bg-gray-900">
+                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                    {{ $payroll['name'] ?? '' }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ $payroll['employee_number'] ?? '' }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ $payroll['position'] ?? '' }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ $payroll['salary_grade'] ?? '' }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ currency_format($payroll['daily_salary_rate'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ $payroll['no_of_days_covered'] ?? '' }}
+                                                </td>
+                                                @if($weekdayRegularHolidays)
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ zero_checker($payroll['regular_holidays'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['regular_holidays_amount'] ?? 0) }}
+                                                    </td>
+                                                @endif
+                                                @if($weekdaySpecialHolidays)
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ zero_checker($payroll['special_holidays'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['special_holidays_amount'] ?? 0) }}
+                                                    </td>
+                                                @endif
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ zero_checker($payroll['leave_days_withpay'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ currency_format($payroll['leave_payment'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ currency_format($payroll['gross_salary'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ zero_checker($payroll['leave_days_withoutpay'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ currency_format($payroll['leave_days_withoutpay_amount'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ zero_checker($payroll['absences_days'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ currency_format($payroll['absences_amount'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ zero_checker($payroll['late_undertime_hours'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ currency_format($payroll['late_undertime_hours_amount'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ zero_checker($payroll['late_undertime_mins'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ currency_format($payroll['late_undertime_mins_amount'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ currency_format($payroll['gross_salary_less'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ currency_format($payroll['withholding_tax'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ currency_format($payroll['nycempc'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ currency_format($payroll['total_deductions'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ currency_format($payroll['net_amount_due'] ?? 0) }}
+                                                </td>
+                                                <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-gray-100 dark:bg-gray-800">
                                                     <button wire:click="sendPaylip" class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide hover:text-blue-600 focus:outline-none">
                                                         <i class="fas fa-file-export ml-3"></i>
                                                     </button>

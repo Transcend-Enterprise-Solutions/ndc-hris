@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('id');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('eligibility');
             $table->string('rating');
             $table->date('date')->format('F d Y');
             $table->string('place_of_exam');
