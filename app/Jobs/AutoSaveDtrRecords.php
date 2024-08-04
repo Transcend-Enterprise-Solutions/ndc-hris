@@ -225,6 +225,8 @@ class AutoSaveDtrRecords implements ShouldQueue
             $remarks = 'Absent';
         } elseif ($late > 0) {
             $remarks = 'Late';
+        } else {
+            $remarks = 'Present';
         }
 
         return [
