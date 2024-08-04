@@ -11,7 +11,7 @@ use App\Models\User;
 use App\Models\LeaveApplication;
 use App\Models\VacationLeaveDetails;
 use App\Models\SickLeaveDetails;
-use App\Models\LeaveCredits;  // Import LeaveCredits model
+use App\Models\LeaveCredits;
 use Illuminate\Support\Facades\Storage;
 
 class LeaveApplicationTable extends Component

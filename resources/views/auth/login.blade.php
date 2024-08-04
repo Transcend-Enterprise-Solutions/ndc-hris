@@ -55,7 +55,7 @@
                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                     />
                     <button type="button" class="absolute top-1/2 right-0 px-3 flex items-center text-sm leading-5" @click="show = !show">
-                        <i x-bind:class="show ? 'bi bi-eye-slash' : 'bi bi-eye'" class="text-lg text-gray-500" ></i>
+                        <i x-bind:class="show ? 'bi bi-eye' : 'bi bi-eye-slash'" class="text-lg text-gray-500" ></i>
                     </button>
                 @error('password') 
                     <span class="text-red-500 text-sm mt-1">This field is required!</span>

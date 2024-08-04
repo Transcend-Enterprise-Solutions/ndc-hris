@@ -4,6 +4,7 @@ namespace App\Livewire\User;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Models\DTRSchedule;
 use App\Models\Transaction;
@@ -11,12 +12,10 @@ use App\Models\Transaction;
 class WfhAttendanceTable extends Component
 {
     public $isWFHDay;
-
-    public function render()
-    {
-        $this->checkWFHDay();
-        return view('livewire.user.wfh-attendance-table');
-    }
+    public $inputPassword = false;
+    public $password;
+    public $punchState;
+    public $errorMessage;
 
     public function checkWFHDay()
     {
@@ -29,6 +28,33 @@ class WfhAttendanceTable extends Component
             $this->isWFHDay = in_array($today, $wfhDays);
         } else {
             $this->isWFHDay = false;
+        }
+    }
+
+    public function confirmPunch($state)
+    {
+        $this->punchState = $state;
+        $this->inputPassword = true;
+    }
+
+    public function closeVerification()
+    {
+        $this->inputPassword = false;
+        $this->password = null;
+        $this->errorMessage = null;
+    }
+
+    public function verifyPassword()
+    {
+        $user = Auth::user();
+
+        if (Hash::check($this->password, $user->password)) {
+            $this->inputPassword = false;
+            $this->password = '';
+            $this->errorMessage = null;
+            $this->{$this->punchState}();
+        } else {
+            $this->errorMessage = 'Incorrect password. Please try again.';
         }
     }
 
@@ -49,21 +75,33 @@ class WfhAttendanceTable extends Component
 
     public function morningIn()
     {
-        $this->punch(0); // 0 for Morning In
+        $this->punch(0);
     }
 
     public function morningOut()
     {
-        $this->punch(1); // 1 for Morning Out
+        $this->punch(1);
     }
 
     public function afternoonIn()
     {
-        $this->punch(0); // 0 for Afternoon In
+        $this->punch(0);
     }
 
     public function afternoonOut()
     {
-        $this->punch(1); // 1 for Afternoon Out
+        $this->punch(1);
+    }
+
+    public function resetVariables()
+    {
+        $this->password = null;
+        $this->errorMessage = null;
+    }
+
+    public function render()
+    {
+        $this->checkWFHDay();
+        return view('livewire.user.wfh-attendance-table');
     }
 }
