@@ -8,14 +8,14 @@
         <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Employee Schedule</h1>
 
         <!-- Tabs -->
-        <button wire:click="openModal" class="mb-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:bg-gray-700 dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
+        <button wire:click="openModal" class="mb-4 px-4 py-2 bg-green-500 text-gray-100 rounded-md hover:bg-green-600 focus:outline-none dark:text-white">
             Add Schedule
         </button>
         <div class="w-full mb-4">
             <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700" role="tablist">
-                <button wire:click="setTab('current')" :class="{'font-bold text-violet-700 border-b-2 border-violet-700': selectedTab === 'current', 'text-slate-700 font-medium': selectedTab !== 'current'}" class="h-min px-4 py-2 text-sm" role="tab">Current</button>
-                <button wire:click="setTab('incoming')" :class="{'font-bold text-violet-700 border-b-2 border-violet-700': selectedTab === 'incoming', 'text-slate-700 font-medium': selectedTab !== 'incoming'}" class="h-min px-4 py-2 text-sm" role="tab">Incoming</button>
-                <button wire:click="setTab('expired')" :class="{'font-bold text-violet-700 border-b-2 border-violet-700': selectedTab === 'expired', 'text-slate-700 font-medium': selectedTab !== 'expired'}" class="h-min px-4 py-2 text-sm" role="tab">Expired</button>
+                <button wire:click="setTab('current')" :class="{'font-bold text-violet-700 border-b-2 border-violet-700': selectedTab === 'current', 'text-slate-700 font-medium dark:text-white': selectedTab !== 'current'}" class="h-min px-4 py-2 text-sm" role="tab">Current</button>
+                <button wire:click="setTab('incoming')" :class="{'font-bold text-violet-700 border-b-2 border-violet-700': selectedTab === 'incoming', 'text-slate-700 font-medium dark:text-white': selectedTab !== 'incoming'}" class="h-min px-4 py-2 text-sm" role="tab">Incoming</button>
+                <button wire:click="setTab('expired')" :class="{'font-bold text-violet-700 border-b-2 border-violet-700': selectedTab === 'expired', 'text-slate-700 font-medium dark:text-white': selectedTab !== 'expired'}" class="h-min px-4 py-2 text-sm" role="tab">Expired</button>
             </div>
         </div>
 
@@ -41,10 +41,10 @@
                             <td class="px-4 py-2 text-center">{{ $schedule->default_start_time }} - {{ $schedule->default_end_time }}</td>
                             <td class="px-4 py-2 text-center">{{ $schedule->start_date->format('Y-m-d') }} - {{ $schedule->end_date->format('Y-m-d') }}</td>
                             <td class="px-4 py-2 text-center">
-                                <button wire:click="edit({{ $schedule->id }})" class="text-indigo-600 hover:text-indigo-900 dark:text-gray-400 dark:hover:text-white" title="Edit">
+                                <button wire:click="edit({{ $schedule->id }})" class="text-indigo-600 hover:text-indigo-900 dark:text-blue-900 dark:hover:text-blue-800" title="Edit">
                                     <i class="fas fa-pencil-alt"></i>
                                 </button>
-                                <button wire:click="confirmDelete({{ $schedule->id }})" class="ml-2 text-red-600 hover:text-red-900 dark:text-gray-400 dark:hover:text-white" title="Delete">
+                                <button wire:click="confirmDelete({{ $schedule->id }})" class="ml-2 text-red-600 hover:text-red-900 dark:text-red-600 dark:hover:text-red-900" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>

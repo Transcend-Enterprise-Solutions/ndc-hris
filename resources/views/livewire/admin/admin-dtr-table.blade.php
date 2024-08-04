@@ -42,9 +42,7 @@
                         <th class="px-4 py-2 text-center">
                             <div class="flex items-center justify-center">
                                 <button wire:click="sortBy('emp_code')" class="{{ $sortField === 'emp_code' ? 'text-blue-600' : 'text-gray-400' }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
-                                    </svg>
+                                    <i class="bi bi-arrow-down-up"></i>
                                 </button>
                                 <span class="ml-2">Employee ID</span>
                             </div>
@@ -52,9 +50,7 @@
                         <th class="px-4 py-2 text-center">
                             <div class="flex items-center justify-center">
                                 <button wire:click="sortBy('user.name')" class="{{ $sortField === 'user.name' ? 'text-blue-600' : 'text-gray-400' }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
-                                    </svg>
+                                    <i class="bi bi-arrow-down-up"></i>
                                 </button>
                                 <span class="ml-2">Employee Name</span>
                             </div>
@@ -62,9 +58,7 @@
                         <th class="px-4 py-2 text-center">
                             <div class="flex items-center justify-center">
                                 <button wire:click="sortBy('date')" class="{{ $sortField === 'date' ? 'text-blue-600' : 'text-gray-400' }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
-                                    </svg>
+                                    <i class="bi bi-arrow-down-up"></i>
                                 </button>
                                 <span class="ml-2">Date</span>
                             </div>
@@ -78,9 +72,7 @@
                         <th class="px-4 py-2 text-center">
                             <div class="flex items-center justify-center">
                                 <button wire:click="sortBy('late')" class="{{ $sortField === 'late' ? 'text-blue-600' : 'text-gray-400' }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
-                                    </svg>
+                                    <i class="bi bi-arrow-down-up"></i>
                                 </button>
                                 <span class="ml-2">Late/Undertime</span>
                             </div>
@@ -118,10 +110,15 @@
                                         </span>
                                         @break
                                     @case('holiday')
-                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-green-600 bg-white text-xs font-medium text-green-600 dark:border-green-600 dark:bg-slate-900 dark:text-green-600">
+                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-blue-600 bg-white text-xs font-medium text-blue-600 dark:border-blue-600 dark:bg-slate-900 dark:text-blue-600">
                                             <span class="px-2 py-1 bg-green-600/10 dark:bg-green-600/10">Holiday</span>
                                         </span>
                                         @break
+                                    @case('present')
+                                    <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-green-600 bg-white text-xs font-medium text-green-600 dark:border-green-600 dark:bg-slate-900 dark:text-green-600">
+                                        <span class="px-2 py-1 bg-green-600/10 dark:bg-green-600/10">Present</span>
+                                    </span>
+                                    @break
                                     @case('late')
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-amber-500 bg-white text-xs font-medium text-amber-500 dark:border-amber-500 dark:bg-slate-900 dark:text-amber-500">
                                             <span class="px-2 py-1 bg-amber-500/10 dark:bg-amber-500/10">Late</span>

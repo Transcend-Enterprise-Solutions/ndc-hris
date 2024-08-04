@@ -4,11 +4,13 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\EmployeeDocument;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
 class EmpDocumentsTable extends Component
 {
     public $documentsByType = [];
+    public $employeesWithoutUpload = [];
     public $tabs;
     public $documentToDelete = null;
     public $isDeleting = false;
@@ -27,6 +29,7 @@ class EmpDocumentsTable extends Component
         ];
 
         $this->loadDocuments();
+        $this->loadEmployeesWithoutUpload();
     }
 
     public function loadDocuments()
@@ -35,6 +38,21 @@ class EmpDocumentsTable extends Component
         $this->documentsByType = [];
         foreach ($documents as $document) {
             $this->documentsByType[$document->document_type][] = $document;
+        }
+    }
+    public function loadEmployeesWithoutUpload()
+    {
+        $this->employeesWithoutUpload = [];
+        $allEmployees = User::all();
+
+        foreach ($this->tabs as $key => $label) {
+            $employeesWithDocument = EmployeeDocument::where('document_type', $key)
+                                        ->pluck('user_id')
+                                        ->toArray();
+
+            $this->employeesWithoutUpload[$key] = $allEmployees->reject(function ($employee) use ($employeesWithDocument) {
+                return in_array($employee->id, $employeesWithDocument);
+            });
         }
     }
 
@@ -84,6 +102,7 @@ class EmpDocumentsTable extends Component
     {
         return view('livewire.admin.emp-documents-table', [
             'documentsByType' => $this->documentsByType,
+            'employeesWithoutUpload' => $this->employeesWithoutUpload,
             'tabs' => $this->tabs
         ]);
     }
