@@ -70,6 +70,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         return view('livewire.user.leave-monetization'); })->name('leave-monetization');
     Route::get('/dtr', function () {
         return view('livewire.user.dtr'); })->name('dtr');
+    Route::get('/role-management', function () {
+        return view('livewire.admin.role-management'); })->name('role-management');
     Route::get('/dashboard/analytics', [DashboardController::class, 'analytics'])->name('analytics');
     Route::get('/dashboard/fintech', [DashboardController::class, 'fintech'])->name('fintech');
     // Route::get('/ecommerce/customers', [CustomerController::class, 'index'])->name('customers');

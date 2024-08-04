@@ -9,9 +9,11 @@ use App\Models\User;
 use Exception;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
+use Livewire\WithPagination;
 
 class PayrollManagementTable extends Component
 {
+    use WithPagination;
     public $sortColumn = false;
     public $search;
     public $allCol = false;
@@ -88,7 +90,7 @@ class PayrollManagementTable extends Component
         $payrolls = Payrolls::when($this->search, function ($query) {
                         return $query->search(trim($this->search));
                     })
-                    ->paginate(10);
+                    ->paginate(5);
         
         return view('livewire.admin.payroll-management-table', [
             'payrolls' => $payrolls,
@@ -134,6 +136,7 @@ class PayrollManagementTable extends Component
             if ($payroll) {
                 $this->name = $payroll->name;
                 $this->employee_number = $payroll->employee_number;
+                $this->office_division = $payroll->office_division;
                 $this->position = $payroll->position;
                 $this->sg_step = $payroll->sg_step;
                 $this->rate_per_month = $payroll->rate_per_month;
@@ -176,6 +179,7 @@ class PayrollManagementTable extends Component
     public function savePayroll(){
         try {
             $payroll = Payrolls::where('user_id', $this->userId)->first();
+            $user = User::where('id', $this->userId)->first();
     
             $payrollData = [
                 'user_id' => $this->userId,
@@ -238,11 +242,14 @@ class PayrollManagementTable extends Component
                     'philhealth' => 'required|numeric',
                     'total_deduction' => 'required|numeric',
                 ]);
-                $user = User::where('id', $this->userId)->first();
                 $payrollData['name'] = $user->name;
                 Payrolls::create($payrollData);
                 $message = "Payroll added successfully!";
             }
+
+            $user->update([
+                'emp_code' => $this->employee_number,
+            ]);
     
             $this->resetVariables();
             $this->editPayroll = null;
@@ -253,10 +260,11 @@ class PayrollManagementTable extends Component
             ]);
     
         } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => "Payroll update was unsuccessful!",
-                'type' => 'error'
-            ]);
+            // $this->resetVariables();
+            // $this->dispatch('notify', [
+            //     'message' => "Payroll update was unsuccessful!",
+            //     'type' => 'error'
+            // ]);
             throw $e;
         }
     }

@@ -16,9 +16,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Livewire\WithPagination;
 
 class PayrollTable extends Component
 {
+    use WithPagination;
     public $sortColumn = false;
     public $startDate;
     public $endDate;

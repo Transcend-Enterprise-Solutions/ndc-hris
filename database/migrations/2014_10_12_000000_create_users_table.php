@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('password', 1000);
             $table->string('user_role');
             $table->string('active_status');
-            $table->string('emp_code')->unique();
+            $table->string('emp_code')->unique()->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

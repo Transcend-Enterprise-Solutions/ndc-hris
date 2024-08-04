@@ -1,4 +1,4 @@
-<div class="w-full flex justify-center">
+<div class="w-full">
 
     <style>
         .scrollbar-thin1::-webkit-scrollbar {
@@ -243,7 +243,6 @@
                 <div class="overflow-x-auto">
                     <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
                         <div class="overflow-x-auto">
-
                             <table class="w-full min-w-full">
                                 <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                                     <tr class="whitespace-nowrap">
@@ -317,12 +316,10 @@
                                         @endforeach
                                 </tbody>
                             </table>
-                            
                         </div>
-                        <div class="p-5 border-t border-gray-200 dark:border-slate-600 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                        <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
                             {{ $payrolls->links() }}
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -561,4 +558,5 @@
             </form>
         </div>
     </x-modal>
+
 </div>

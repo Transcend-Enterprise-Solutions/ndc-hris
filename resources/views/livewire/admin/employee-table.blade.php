@@ -1,8 +1,7 @@
 <div class="w-full">
-    <div class="w-full">
 
-        {{-- Personal Data Sheet --}}
-        @if($personalDataSheetOpen && $selectedUser)
+    {{-- Personal Data Sheet --}}
+    @if($personalDataSheetOpen && $selectedUser)
         <div class="flex justify-center w-full">
             <div class="overflow-x-auto w-full bg-white rounded-2xl p-3 shadow dark:bg-gray-800">
 
@@ -1092,7 +1091,7 @@
 
             </div>
         </div>
-        @else
+    @else
         <div class="flex justify-center w-full">
             <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
                 <div class="pb-4 pt-4 sm:pt-1">
@@ -1120,10 +1119,14 @@
                 <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
 
 
-                    <div class="relative inline-block text-left">
-                        <input type="search" id="search" wire:model.live="search" placeholder="Enter employee name"
-                            class="py-2 px-3 block w-full shadow-sm text-sm font-medium border-gray-400
-                            wire:text-neutral-800 dark: text-neutral-200 mb-4 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
+                    {{-- Search Input --}}
+                    <div class="w-full sm:w-1/3 sm:mr-4">
+                        <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                        <input type="text" id="search" wire:model.live="search"
+                            class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                                dark:hover:bg-slate-600 dark:border-slate-600
+                                dark:text-gray-300 dark:bg-gray-800"
+                            placeholder="Enter employee name or ID">
                     </div>
 
 
@@ -1149,7 +1152,7 @@
                                     <button wire:click="toggleDropdownProvince" class="w-full mr-4 p-2 mb-4 text-left
                                                 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200
                                                 transition-colors duration-200 rounded-lg border border-gray-400
-                                                 hover:bg-gray-200 dark:hover:bg-slate-600 focus:outline-none"
+                                                hover:bg-gray-200 dark:hover:bg-slate-600 focus:outline-none"
                                         type="button">
                                         Filter by Province
                                         <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
@@ -1559,138 +1562,138 @@
                                         <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                                             <tr class="whitespace-nowrap">
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium text-left uppercase">
                                                     Name
                                                 </th>
                                                 @if($filters['date_of_birth'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Birth
                                                     Date</th>
                                                 @endif
                                                 @if($filters['place_of_birth'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Birth
                                                     Place</th>
                                                 @endif
                                                 @if($filters['sex'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Sex
                                                 </th>
                                                 @endif
                                                 @if($filters['citizenship'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Citizenship</th>
                                                 @endif
                                                 @if($filters['civil_status'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Civil
                                                     Status</th>
                                                 @endif
                                                 @if($filters['height'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Height
                                                 </th>
                                                 @endif
                                                 @if($filters['weight'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Weight
                                                 </th>
                                                 @endif
                                                 @if($filters['blood_type'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Blood
                                                     Type</th>
                                                 @endif
                                                 @if($filters['gsis'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     GSIS
                                                     ID No.</th>
                                                 @endif
                                                 @if($filters['pagibig'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     PAGIBIG ID No.</th>
                                                 @endif
                                                 @if($filters['philhealth'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     PhilHealth ID No.</th>
                                                 @endif
                                                 @if($filters['sss'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     SSS
                                                     No.</th>
                                                 @endif
                                                 @if($filters['tin'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     TIN
                                                     No.</th>
                                                 @endif
                                                 @if($filters['agency_employee_no'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Agency
                                                     Employee No.</th>
                                                 @endif
                                                 @if($filters['permanent_selectedProvince'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Permanent Address (Province)</th>
                                                 @endif
                                                 @if($filters['permanent_selectedCity'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Permanent Address (City)</th>
                                                 @endif
                                                 @if($filters['permanent_selectedBarangay'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Permanent Address (Barangay)</th>
                                                 @endif
                                                 @if($filters['p_house_street'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Permanent Address (Street)</th>
                                                 @endif
                                                 @if($filters['permanent_selectedZipcode'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Permanent Address (Zip Code)</th>
                                                 @endif
                                                 @if($filters['residential_selectedProvince'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Residential Address (Province)</th>
                                                 @endif
                                                 @if($filters['residential_selectedCity'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Residential Address (City)</th>
                                                 @endif
                                                 @if($filters['residential_selectedBarangay'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Residential Address (Barangay)</th>
                                                 @endif
                                                 @if($filters['r_house_street'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Residential Address (Street)</th>
                                                 @endif
                                                 @if($filters['residential_selectedZipcode'])
                                                 <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                     Residential Address (Zip Code)</th>
                                                 @endif
                                                 <th
@@ -1700,8 +1703,8 @@
                                         </thead>
                                         <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
                                             @foreach($users as $user)
-                                            <tr class="whitespace-nowrap">
-                                                <td class="px-4 py-2 text-center">
+                                            <tr class="text-sm whitespace-nowrap">
+                                                <td class="px-4 py-2 text-left">
                                                     {{
                                                     $user->name }}
                                                 </td>
@@ -1864,8 +1867,9 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
-        @endif
-    </div>
+    @endif
+
 </div>
