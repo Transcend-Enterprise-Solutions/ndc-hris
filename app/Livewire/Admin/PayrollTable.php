@@ -484,6 +484,11 @@ class PayrollTable extends Component
             if ($this->startDate && $this->endDate) {
                 $startDate = Carbon::parse($this->startDate);
                 $endDate = Carbon::parse($this->endDate);
+
+                $filters = [
+                    'startDate' => $startDate,
+                    'endDate' => $endDate,
+                ];
                 
                 $filename = 'Payroll ' . $startDate->format('F') . ' '
                                        . $startDate->format('d') . '-'
@@ -521,7 +526,7 @@ class PayrollTable extends Component
                     $payrolls = $this->getPayroll();
                 }
                 
-                return Excel::download(new PayrollExport($payrolls), $filename);
+                return Excel::download(new PayrollExport($payrolls, $filters), $filename);
             } else {
                 $this->dispatch('notify', [
                     'message' => 'Select start and end date!',
@@ -529,10 +534,11 @@ class PayrollTable extends Component
                 ]);
             }
         } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => 'Error exporting payroll: ' . $e->getMessage(),
-                'type' => 'error'
-            ]);
+            // $this->dispatch('notify', [
+            //     'message' => 'Error exporting payroll: ' . $e->getMessage(),
+            //     'type' => 'error'
+            // ]);
+            throw $e;
         }
     }
 
