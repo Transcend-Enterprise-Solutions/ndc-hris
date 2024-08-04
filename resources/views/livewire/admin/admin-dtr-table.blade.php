@@ -110,10 +110,15 @@
                                         </span>
                                         @break
                                     @case('holiday')
-                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-green-600 bg-white text-xs font-medium text-green-600 dark:border-green-600 dark:bg-slate-900 dark:text-green-600">
+                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-blue-600 bg-white text-xs font-medium text-blue-600 dark:border-blue-600 dark:bg-slate-900 dark:text-blue-600">
                                             <span class="px-2 py-1 bg-green-600/10 dark:bg-green-600/10">Holiday</span>
                                         </span>
                                         @break
+                                    @case('present')
+                                    <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-green-600 bg-white text-xs font-medium text-green-600 dark:border-green-600 dark:bg-slate-900 dark:text-green-600">
+                                        <span class="px-2 py-1 bg-green-600/10 dark:bg-green-600/10">Present</span>
+                                    </span>
+                                    @break
                                     @case('late')
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-amber-500 bg-white text-xs font-medium text-amber-500 dark:border-amber-500 dark:bg-slate-900 dark:text-amber-500">
                                             <span class="px-2 py-1 bg-amber-500/10 dark:bg-amber-500/10">Late</span>
