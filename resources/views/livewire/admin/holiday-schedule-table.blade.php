@@ -46,11 +46,13 @@
                     </div>
 
                     <div class="mt-4 flex justify-end">
-                        <button type="button" wire:click="closeModal" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:bg-gray-600 dark:text-gray-300 dark:hover:bg-gray-500 dark:hover:text-white">
+                        <button type="button" wire:click="closeModal" class="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 dark:text-gray-300">
+                            <span class="bg-gray-500 hover:bg-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 px-4 py-2 rounded-md">
                             Cancel
+                            </span>
                         </button>
-                        <button type="submit" class="ml-2 px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 dark:text-gray-300">
-                            <span class="bg-blue-500 hover:bg-blue-600 dark:bg-gray-700 dark:hover:bg-blue-600 px-4 py-2 rounded-md">
+                        <button type="submit" class="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 dark:text-gray-300">
+                            <span class="bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600 px-4 py-2 rounded-md">
                                 {{ $isEditMode ? 'Update' : 'Save' }}
                             </span>
                         </button>
@@ -60,7 +62,7 @@
         </div>
 
         <div class="mt-8 overflow-x-auto">
-            <button wire:click="openModal" class="mb-4 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:bg-gray-700 dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
+            <button wire:click="openModal" class="mb-4 px-4 py-2 bg-green-500 text-gray-100 rounded-md hover:bg-green-600 focus:outline-none dark:text-white">
                 Add Holiday
             </button>
 
@@ -80,10 +82,10 @@
                             <td class="px-4 py-2 text-center">{{ $holiday->holiday_date->format('Y-m-d') }}</td>
                             <td class="px-4 py-2 text-center">{{ $holiday->type }}</td>
                             <td class="px-4 py-2 text-center">
-                                <button wire:click="edit({{ $holiday->id }})" class="text-indigo-600 hover:text-indigo-900 dark:text-gray-400 dark:hover:text-white" title="Edit">
+                                <button wire:click="edit({{ $holiday->id }})" class="text-indigo-600 hover:text-indigo-900 dark:text-blue-900 dark:hover:text-blue-800" title="Edit">
                                     <i class="fas fa-pencil-alt"></i>
                                 </button>
-                                <button wire:click="confirmDelete({{ $holiday->id }})" class="ml-2 text-red-600 hover:text-red-900 dark:text-gray-400 dark:hover:text-white" title="Delete">
+                                <button wire:click="confirmDelete({{ $holiday->id }})" class="ml-2 text-red-600 hover:text-red-900 dark:text-red-600 dark:hover:text-red-900" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
