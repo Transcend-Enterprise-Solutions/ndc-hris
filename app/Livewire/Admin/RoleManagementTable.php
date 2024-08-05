@@ -36,7 +36,7 @@ class RoleManagementTable extends Component
     public $search3;
 
     public function mount(){
-        $this->employees = User::all();
+        $this->employees = User::where('user_role', '=', 'emp')->get();
     }
 
     public function render(){

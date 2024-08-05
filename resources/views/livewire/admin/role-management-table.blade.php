@@ -51,7 +51,7 @@
                     </div>
 
                     <!-- Export to Excel -->
-                    <div class="relative inline-block text-left">
+                    {{-- <div class="relative inline-block text-left">
                         <button wire:click="exportExcel"
                             class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                             justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
@@ -62,7 +62,7 @@
                             <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                         </button>
                         <div id="excelExport" class="absolute -top-5 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap rounded bg-gray-600 px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:text-black" role="tooltip">Export Roles</div>
-                    </div>
+                    </div> --}}
 
                 </div>
 
@@ -79,7 +79,7 @@
                     </div>
 
                     <!-- Export to Excel -->
-                    <div class="relative inline-block text-left">
+                    {{-- <div class="relative inline-block text-left">
                         <button wire:click="exportPayrollSignatory"
                             class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                             justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
@@ -90,7 +90,7 @@
                             <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                         </button>
                         <div id="excelExport" class="absolute -top-5 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap rounded bg-gray-600 px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:text-black" role="tooltip">Export Roles</div>
-                    </div>
+                    </div> --}}
 
                 </div>
 
@@ -107,7 +107,7 @@
                     </div>
 
                     <!-- Export to Excel -->
-                    <div class="relative inline-block text-left">
+                    {{-- <div class="relative inline-block text-left">
                         <button wire:click="exportPayrollSignatory"
                             class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                             justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
@@ -118,7 +118,7 @@
                             <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                         </button>
                         <div id="excelExport" class="absolute -top-5 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap rounded bg-gray-600 px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:text-black" role="tooltip">Export Roles</div>
-                    </div>
+                    </div> --}}
 
                 </div>
                 
@@ -303,7 +303,7 @@
                                         <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Payroll Footer View</h1>
                                     </div>
                                     <div class="overflow-x-auto bg-white text-xs text-black border border-black">
-                                        <div class="grid grid-cols-2 gap-0">
+                                        <div class="block sm:flex">
                                             <div class="col-span-1 block border-r border-black">
                                                 <div class="h-32 w-full block border-b border-black relative">
                                                     <div class="flex">
