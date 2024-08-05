@@ -31,8 +31,17 @@
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                 </div>
+
             </div>
+
         </div>
+        <div class="mb-6 flex justify-end">
+            <button wire:click="exportToPdf" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                Export to PDF
+            </button>
+        </div>
+        <!-- Add this after the search and date range picker, before the table -->
+
 
         <!-- Table -->
         <div class="overflow-x-auto">

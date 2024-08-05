@@ -5,8 +5,10 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\EmployeesDtr;
+use Barryvdh\DomPDF\PDF as DomPDFPDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminDtrTable extends Component
 {
@@ -78,4 +80,36 @@ class AdminDtrTable extends Component
 
         return view('livewire.admin.admin-dtr-table', ['dtrs' => $dtrs]);
     }
+
+    public function exportToPdf()
+    {
+        $query = EmployeesDtr::query()
+            ->join('users', 'employees_dtr.user_id', '=', 'users.id')
+            ->select('employees_dtr.*', 'users.name as user_name', 'users.emp_code')
+            ->whereBetween('employees_dtr.date', [$this->startDate, $this->endDate]);
+
+        // Apply the search term if it's set
+        if ($this->searchTerm) {
+            $query->where(function($q) {
+                $q->where('users.emp_code', 'like', '%'.$this->searchTerm.'%')
+                  ->orWhere('users.name', 'like', '%'.$this->searchTerm.'%');
+            });
+        }
+
+        $dtrs = $query->orderBy('users.name')
+                      ->orderBy('employees_dtr.date')
+                      ->get()
+                      ->groupBy('user_name');
+
+        $pdf = Pdf::loadView('pdf.dtr', [
+            'dtrs' => $dtrs,
+            'startDate' => $this->startDate,
+            'endDate' => $this->endDate,
+        ]);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, 'dtr_report.pdf');
+    }
+
 }

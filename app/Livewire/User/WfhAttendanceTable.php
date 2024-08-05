@@ -24,7 +24,7 @@ class WfhAttendanceTable extends Component
         $schedule = DTRSchedule::where('emp_code', $user->emp_code)->first();
 
         if ($schedule) {
-            $wfhDays = explode(', ', $schedule->wfh_days);
+            $wfhDays = explode(',', $schedule->wfh_days);
             $this->isWFHDay = in_array($today, $wfhDays);
         } else {
             $this->isWFHDay = false;
