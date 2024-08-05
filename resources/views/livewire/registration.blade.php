@@ -493,7 +493,7 @@
                                 <input :type="show ? 'text' : 'password'" id="password" wire:model.live="password"
                                     class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 <div class="absolute top-1/2 right-0 pr-3 flex items-center text-sm leading-5">
-                                    <i :class="show ? 'bi bi-eye-slash' : 'bi bi-eye'" @click="show = !show"
+                                    <i :class="show ? 'bi bi-eye' : 'bi bi-eye-slash'" @click="show = !show"
                                         class="cursor-pointer"></i>
                                 </div>
                                 @error('password') <span class="text-red-500 text-sm">This field is required!</span>
@@ -505,7 +505,7 @@
                                 <input :type="show ? 'text' : 'password'" id="c_password" wire:model.live="c_password"
                                     class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 <div class="absolute top-1/2 right-0 pr-3 flex items-center text-sm leading-5">
-                                    <i :class="show ? 'bi bi-eye-slash' : 'bi bi-eye'" @click="show = !show"
+                                    <i :class="show ? 'bi bi-eye' : 'bi bi-eye-slash'" @click="show = !show"
                                         class="cursor-pointer"></i>
                                 </div>
                                 @error('c_password') <span class="text-red-500 text-sm">This field is required!</span>

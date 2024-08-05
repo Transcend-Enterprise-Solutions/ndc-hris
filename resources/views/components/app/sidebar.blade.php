@@ -75,18 +75,6 @@
                         </a>
                     </li>
 
-                    <!-- WFH Attendace -->
-                    <li class="px-3 py-2 rounded-sm mb-0.5 last:mb-0 @if(in_array(Request::segment(1), ['wfh-attendace'])){{ 'bg-slate-700 dark:bg-slate-900' }}@endif"
-                        x-data="{ open: {{ in_array(Request::segment(1), ['wfh-attendace']) ? 1 : 0 }} }">
-                        <a class="block text-black dark:text-white hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if(Route::is('wfh-attendance')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
-                            href="{{ route('wfh-attendance') }}" wire:navigate>
-                            <div class="flex items-center">
-                                <i class="bi bi-alarm text-slate-400 dark:text-slate-300 mr-3"></i>
-                                <span class="text-sm font-medium @if(Route::is('wfh-attendance')){{ 'text-blue-500 dark:text-blue-500' }}@endif">WFH Attendance</span>
-                            </div>
-                        </a>
-                    </li>
-
                     <!-- My Records -->
                     <li class="px-3 py-2 rounded-sm mb-0.5 last:mb-0 @if(in_array(Request::segment(1), ['ecommerce'])){{ 'bg-slate-700 dark:bg-slate-900' }}@endif"
                         x-data="{ open: {{ in_array(Request::segment(1), ['ecommerce']) ? 1 : 0 }} }">
@@ -133,6 +121,13 @@
                                         <span
                                             class="text-sm font-medium @if(Route::is('doc-request')){{ 'text-blue-500 dark:text-blue-500' }}@endif">Document
                                             Request</span>
+                                    </a>
+                                </li>
+                                <li class="mb-1 last:mb-0">
+                                    <a class="block text-black dark:text-white hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if(Route::is('wfh-attendance')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
+                                        href="{{route('wfh-attendance')}}" wire:navigate>
+                                        <span
+                                            class="text-sm font-medium @if(Route::is('wfh-attendance')){{ 'text-blue-500 dark:text-blue-500' }}@endif">WFH Attendance</span>
                                     </a>
                                 </li>
                             </ul>
