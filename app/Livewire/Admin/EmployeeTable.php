@@ -252,7 +252,7 @@ class EmployeeTable extends Component
             ->when($this->filters['residential_selectedZipcode'], function ($query) {
             $query->addSelect('user_data.residential_selectedZipcode');
             })
-            ->where('users.user_role', 'emp')
+            // ->where('users.user_role', 'emp')
             ->when($this->search, function ($query) {
                 $query->where('users.name', 'like', '%' . $this->search . '%');
             })
@@ -275,7 +275,7 @@ class EmployeeTable extends Component
             ->when($this->selectedBarangay, function ($query) {
                 return $query->where('user_data.permanent_selectedBarangay', $this->selectedBarangay);
             })
-            ->paginate(10);
+            ->paginate(5);
 
             if($this->dropdownForCategoryOpen){
                 $this->dropdownForFilter = null;

@@ -239,8 +239,8 @@
                         <!-- Role Management -->
                         <li class="px-3 py-2 rounded-sm mb-0.5 last:mb-0 @if(in_array(Request::segment(1), ['tasks'])){{ 'bg-slate-700' }}@endif"
                             x-data="{ open: {{ in_array(Request::segment(1), ['tasks']) ? 1 : 0 }} }">
-                            <a class="block text-black dark:text-white hover:text-blue-500 transition duration-150 @if(in_array(Request::segment(1), ['tasks'])){{ 'text-blue-500' }}@endif"
-                                href="#0" @click.prevent="sidebarExpanded ? open = !open : sidebarExpanded = true">
+                            <a class="block text-black dark:text-white hover:text-blue-500 transition duration-150 @if(Route::is('role-management')){{ '!text-blue-500' }}@endif"
+                                href="{{ route('role-management') }}" @click.prevent="sidebarExpanded ? open = !open : sidebarExpanded = true">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center">
                                         <i class="bi bi-person-gear text-slate-400 mr-3"></i>

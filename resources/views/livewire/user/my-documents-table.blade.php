@@ -113,7 +113,7 @@
                                 @foreach ($documents as $document)
                                     <tr>
                                         <td class="py-2 px-4 border-b text-center align-middle">{{ $document->document_type }}</td>
-                                        <td class="py-2 px-4 border-b text-center align-middle">{{ $document->created_at->format('M d, Y H:i') }}</td>
+                                        <td class="py-2 px-4 border-b text-center align-middle">{{ $document->created_at->setTimezone('Asia/Manila')->format('M d, Y H:i') }}</td>
                                         <td class="py-2 px-4 border-b flex justify-center space-x-2">
                                             <button wire:click="downloadDocument({{ $document->id }})" class="text-blue-500 hover:text-blue-700" title="Download">
                                                 <i class="fas fa-download"></i>
@@ -128,7 +128,18 @@
                         </table>
                     </div>
                 @endif
-
+                <div class="mt-4">
+                    <h2 class="text-lg font-semibold text-black dark:text-white">Lacking Requirements:</h2>
+                    <ul class="flex flex-wrap gap-2 mt-2 text-sm text-red-600 dark:text-red-400 pb-5 list-none pl-0">
+                        @foreach ($availableDocumentTypes as $key => $label)
+                            @if (!$documents->contains('document_type', $key))
+                                <li class="inline-block bg-red-200 dark:bg-red-700 text-red-600 dark:text-red-400 rounded px-2 py-1">
+                                    {{ $label }}
+                                </li>
+                            @endif
+                        @endforeach
+                    </ul>
+                </div>
                 <!-- Confirmation Modal -->
                 <div x-data="{ open: @entangle('confirmDeleteModal') }" x-show="open" class="relative z-50 w-auto h-auto" @keydown.escape.window="open = false">
                     <template x-teleport="body">

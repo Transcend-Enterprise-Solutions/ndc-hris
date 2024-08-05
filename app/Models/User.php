@@ -175,6 +175,11 @@ class User extends Authenticatable
         return $this->hasOne(LeaveCredits::class);
     }
 
+    public function payrollSignatories()
+    {
+        return $this->hasMany(PayrollSignatories::class);
+    }
+
     /**
      * The attributes that should be cast.
      *

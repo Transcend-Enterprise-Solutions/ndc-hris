@@ -61,6 +61,18 @@
                                         No documents available.
                                     </div>
                                 @endif
+                                <!-- New section for employees without uploads -->
+                                <div class="mt-8">
+                                    <h3 class="text-xs font-semibold mb-4">Employees without {{ $label }} :</h3>
+                                    <ul class="flex flex-wrap gap-2 text-xs list-none pl-0">
+                                        @foreach ($employeesWithoutUpload[$key] ?? [] as $employee)
+                                            <li class="inline-block bg-gray-200 dark:bg-gray-700 rounded px-2 py-1">{{ $employee->name }}</li>
+                                        @endforeach
+                                    </ul>
+                                    @if (empty($employeesWithoutUpload[$key]))
+                                        <p class="text-xs text-gray-500 dark:text-gray-300">All employees have uploaded this document.</p>
+                                    @endif
+                                </div>
                             </div>
                         @endforeach
                     </div>

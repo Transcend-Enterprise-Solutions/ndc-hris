@@ -14,9 +14,11 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use Livewire\WithPagination;
 
 class GeneralPayrollTable extends Component
 {
+    use WithPagination;
     public $sortColumn = false;
     public $search;
     public $allCol = false;
