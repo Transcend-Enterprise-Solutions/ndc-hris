@@ -123,7 +123,12 @@
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-amber-500 bg-white text-xs font-medium text-amber-500 dark:border-amber-500 dark:bg-slate-900 dark:text-amber-500">
                                             <span class="px-2 py-1 bg-amber-500/10 dark:bg-amber-500/10">Late</span>
                                         </span>
-                                        @break
+                                    @break
+                                    @case('no schedule')
+                                    <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-orange-500 bg-white text-xs font-medium text-orange-500 dark:border-orange-500 dark:bg-slate-900 dark:text-orange-500">
+                                        <span class="px-2 py-1 bg-amber-500/10 dark:bg-amber-500/10">No Sched</span>
+                                    </span>
+                                    @break
                                     @default
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-slate-300 bg-white text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
                                             <span class="px-2 py-1 bg-slate-100/10 dark:bg-slate-800/10">{{ $dtr->remarks }}</span>
