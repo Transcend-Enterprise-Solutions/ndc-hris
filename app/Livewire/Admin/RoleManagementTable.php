@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\Admin;
 use App\Models\Payrolls;
 use App\Models\PayrollSignatories;
 use App\Models\Signatories;
@@ -26,6 +27,10 @@ class RoleManagementTable extends Component
     public $employee_number;
     public $position;
     public $user_role;
+    public $admin_email;
+    public $department;
+    public $password;
+    public $cpassword;
     public $search;
     public $search2;
     public $search3;
@@ -35,11 +40,18 @@ class RoleManagementTable extends Component
     }
 
     public function render(){
-        $users = Payrolls::join('users', 'users.id', 'payrolls.user_id')
-                    ->where('users.user_role', '!=', 'emp')
+        $admins = Admin::join('users', 'users.id', 'admin.user_id')
+                    ->join('payrolls', 'payrolls.user_id', 'admin.payroll_id')
                     ->when($this->search, function ($query) {
                         return $query->search(trim($this->search));
                     })
+                    ->select(
+                        'admin.*', 
+                        'payrolls.name', 
+                        'payrolls.employee_number', 
+                        'payrolls.office_division', 
+                        'payrolls.position', 
+                        'users.user_role')
                     ->paginate(5);
 
         $payrollSignatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
@@ -77,7 +89,7 @@ class RoleManagementTable extends Component
         ];
 
         return view('livewire.admin.role-management-table',[
-            'users' => $users,
+            'admins' => $admins,
             'payrollSignatories' => $payrollSignatories,
             'payslipSignatories' => $payslipSignatories,
             'signs' => $signs,
@@ -89,12 +101,23 @@ class RoleManagementTable extends Component
         $this->editRole = true;
         $this->userId = $userId;
         try {
-            $user = User::join('payrolls', 'payrolls.user_id', 'users.id')
-                    ->where('users.id', $userId)
-                    ->first();
-            if ($user) {
-                $this->name = $user->name;
-                $this->user_role = $user->user_role;
+            $admin = Admin::where('admin.user_id', $userId)
+                ->join('users', 'users.id', 'admin.user_id')
+                ->join('payrolls', 'payrolls.user_id', 'admin.payroll_id')
+                ->select(
+                    'admin.*', 
+                    'payrolls.name', 
+                    'payrolls.employee_number', 
+                    'payrolls.office_division', 
+                    'payrolls.position', 
+                    'users.user_role',
+                    'users.email')
+                ->first();
+            if ($admin) {
+                $this->name = $admin->name;
+                $this->user_role = $admin->user_role;
+                $this->admin_email = $admin->email;
+                $this->department = $admin->department;
             }
         } catch (Exception $e) {
             throw $e;
@@ -154,9 +177,62 @@ class RoleManagementTable extends Component
         try {
             $user = User::where('id', $this->userId)->first();
             if($user){
-                $user->update([
-                    'user_role' => $this->user_role,
-                ]);
+                if($this->addRole){
+                    $this->validate([
+                        'user_role' => 'required',
+                        'department' => 'required',
+                        'admin_email' => 'required|email|unique:users,email',
+                        'password' => 'required|min:8',
+                        'cpassword' => 'required|same:password',
+                    ]);
+
+                    if (!$this->isPasswordComplex($this->password)) {
+                        $this->addError('password', 'The password must contain at least one uppercase letter, one number, and one special character.');
+                        return;
+                    }
+
+                    $admin = User::create([
+                        'name' => $user->name,
+                        'email' => $this->admin_email,
+                        'password' => $this->password,
+                        'user_role' => $this->user_role,
+                    ]);
+                    Admin::create([
+                        'user_id' => $admin->id,
+                        'payroll_id' => $user->id,
+                        'department' => $this->department,
+                    ]);
+                }else{
+                    $admin = Admin::where('user_id', $user->id)
+                    ->first();
+
+                    if($this->user_role == "emp"){
+                        $admin->delete();
+                        $user->delete();
+                        $this->resetVariables();
+                        $this->dispatch('notify', [
+                            'message' => "Account role updated successfully!",
+                            'type' => 'success'
+                        ]);
+                        return;
+                    }
+
+                    $this->validate([
+                        'user_role' => 'required',
+                        'department' => 'required',
+                        'admin_email' => 'required|email|unique:users,email',
+                    ]);
+
+                    $admin = Admin::where('user_id', $user->id)
+                            ->first();
+                    $admin->update([
+                        'department' => $this->department,
+                    ]);
+                    $user->update([
+                        'email' => $this->admin_email,
+                        'user_role' => $this->user_role,
+                    ]);
+                }
             }
             $this->resetVariables();
             $this->dispatch('notify', [
@@ -183,12 +259,22 @@ class RoleManagementTable extends Component
                 if($this->signatory == "X"){
                     $signatory->delete();
                 }else{
+                    $this->validate([
+                        'signatory' => 'required',
+                        'userId' => 'required',
+                    ]);
+
                     $signatory->update([
                         'signatory' => $this->signatory,
                     ]);
                 }
                 $message = "Payroll signatory updated successfully!";
             }else{
+                $this->validate([
+                    'signatory' => 'required',
+                    'userId' => 'required',
+                ]);
+
                 Signatories::create([
                     'user_id' => $this->userId,
                     'signatory' => $this->signatory,
@@ -221,12 +307,22 @@ class RoleManagementTable extends Component
                 if($this->signatory == "X"){
                     $signatory->delete();
                 }else{
+                    $this->validate([
+                        'signatory' => 'required',
+                        'userId' => 'required',
+                    ]);
+
                     $signatory->update([
                         'signatory' => $this->signatory,
                     ]);
                 }
                 $message = "Payslip signatory updated successfully!";
             }else{
+                $this->validate([
+                    'signatory' => 'required',
+                    'userId' => 'required',
+                ]);
+
                 Signatories::create([
                     'user_id' => $this->userId,
                     'signatory' => $this->signatory,
@@ -262,5 +358,16 @@ class RoleManagementTable extends Component
         $this->editPayslipSignatory= null;
         $this->addPayslipSignatory= null;
         $this->signatory = null;
+        $this->admin_email = null;
+        $this->password = null;
+        $this->cpassword = null;
+        $this->department = null;
+    }
+
+    private function isPasswordComplex($password){
+        $containsUppercase = preg_match('/[A-Z]/', $password);
+        $containsNumber = preg_match('/\d/', $password);
+        $containsSpecialChar = preg_match('/[^A-Za-z0-9]/', $password); // Changed regex to include special characters
+        return $containsUppercase && $containsNumber && $containsSpecialChar;
     }
 }

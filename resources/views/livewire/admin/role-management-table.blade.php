@@ -44,7 +44,7 @@
                     <div class="w-full sm:w-auto">
                         <button wire:click="toggleAddRole" 
                             class="mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
-                            hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full sm:w-3/5
+                            hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
                             dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
                             Add Role
                         </button>
@@ -72,7 +72,7 @@
                     <div class="w-full sm:w-auto">
                         <button wire:click="toggleAddSignatory" 
                             class="mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
-                            hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full sm:w-3/5
+                            hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
                             dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
                             Add Payroll Signatory
                         </button>
@@ -100,7 +100,7 @@
                     <div class="w-full sm:w-auto">
                         <button wire:click="toggleAddPayslipSignatory" 
                             class="mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
-                            hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full sm:w-3/5
+                            hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
                             dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
                             Add Payslip Signatory
                         </button>
@@ -173,34 +173,34 @@
                                                 </tr>
                                             </thead>
                                             <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
-                                                @foreach ($users as $user)
+                                                @foreach ($admins as $admin)
                                                     <tr class="text-neutral-800 dark:text-neutral-200">
                                                         <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                            @if ($user->user_role === 'sa')
+                                                            @if ($admin->user_role === 'sa')
                                                                 Super Admin
-                                                            @elseif($user->user_role === 'hr')
+                                                            @elseif($admin->user_role === 'hr')
                                                                 HR 
-                                                            @elseif($user->user_role === 'sv')
+                                                            @elseif($admin->user_role === 'sv')
                                                                 Supervisor
-                                                            @elseif($user->user_role === 'pa')
+                                                            @elseif($admin->user_role === 'pa')
                                                                 Payroll
                                                             @endif
                                                         </td>
                                                         <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                            {{ $user->name }}
+                                                            {{ $admin->name }}
                                                         </td>
                                                         <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ $user->employee_number }}
+                                                            {{ $admin->employee_number }}
                                                         </td>
                                                         <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ $user->office_division }}
+                                                            {{ $admin->office_division }}
                                                         </td>
                                                         <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ $user->position }}
+                                                            {{ $admin->position }}
                                                         </td>
                                                         <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                             <div class="relative">
-                                                                <button wire:click="toggleEditRole({{ $user->user_id }})" 
+                                                                <button wire:click="toggleEditRole({{ $admin->user_id }})" 
                                                                     class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                                     -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
                                                                     focus:outline-none"  aria-describedby="tooltip1">
@@ -214,14 +214,14 @@
                                                 @endforeach
                                             </tbody>
                                         </table>
-                                        @if ($users->isEmpty())
+                                        @if ($admins->isEmpty())
                                             <div class="p-4 text-center text-gray-500 dark:text-gray-300">
                                                 No records!
                                             </div> 
                                         @endif
                                     </div>
                                     <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
-                                        {{ $users->links() }}
+                                        {{ $admins->links() }}
                                     </div>
                                 </div>
                             </div>
@@ -506,7 +506,7 @@
     <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="editRole" centered>
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                {{ $addRole ? 'Add' : 'Edit' }} Role
+                {{ $addRole ? 'Add' : 'Edit' }} Admin Role
                 <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
                     <i class="fas fa-times"></i>
                 </button>
@@ -532,6 +532,7 @@
                     <div class="col-span-1">
                         <label for="user_role" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Account Role</label>
                         <select id="userId" wire:model='user_role' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="">Select Role</option>
                             <option value="sa">Super Admin</option>
                             <option value="hr">Human Resource</option>
                             <option value="sv">Supervisor</option>
@@ -545,6 +546,38 @@
                         @enderror
                     </div>
 
+                    <div class="col-span-1">
+                        <label for="admin_email" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Admin Email</label>
+                        <input type="text" id="admin_email" wire:model='admin_email' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        @error('admin_email') 
+                            <span class="text-red-500 text-sm">The admin email is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="department" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Department</label>
+                        <input type="text" id="department" wire:model='department' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        @error('department') 
+                            <span class="text-red-500 text-sm">The department is required!</span> 
+                        @enderror
+                    </div>
+                    @if($addRole)
+                        <div class="col-span-1">
+                            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Password</label>
+                            <input type="password" id="password" wire:model='password' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            @error('password') 
+                                <span class="text-red-500 text-sm">{{ $message }}</span> 
+                            @enderror
+                        </div>
+
+                        <div class="col-span-1">
+                            <label for="cpassword" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Confirm Password</label>
+                            <input type="password" id="cpassword" wire:model='cpassword' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            @error('cpassword') 
+                                <span class="text-red-500 text-sm">{{ $message }}</span> 
+                            @enderror
+                        </div>
+                    @endif
 
                     <div class="mt-4 flex justify-end col-span-2">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">

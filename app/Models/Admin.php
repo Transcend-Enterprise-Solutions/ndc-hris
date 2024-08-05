@@ -19,10 +19,8 @@ class Admin extends AuthenticatableUser implements Authenticatable
     protected $keyType = 'string';
     protected $fillable = [
         'user_id', 
-        'surname',
-        'last_name',
-        'middle_name',
-        'profile_picture',
+        'payroll_id', 
+        'department',
     ];
 
     public function user(){
@@ -43,5 +41,19 @@ class Admin extends AuthenticatableUser implements Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function scopeSearch($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('admin.department', 'like', $term)
+                ->orWhere('payrolls.employee_number', 'like', $term)
+                ->orWhere('payrolls.position', 'like', $term)
+                ->orWhere('payrolls.office_division', 'like', $term)
+                ->orWhere('payrolls.department', 'like', $term)
+                ->orWhere('users.name', 'like', $term)
+                ->orWhere('users.email', 'like', $term);
+        });
+    }
+
 
 }
