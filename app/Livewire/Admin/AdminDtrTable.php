@@ -106,10 +106,15 @@ class AdminDtrTable extends Component
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
         ]);
+        $this->dispatch('notify', [
+            'message' => 'DTR Exported Successfully!',
+            'type' => 'success'
+        ]);
 
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->output();
         }, 'dtr_report.pdf');
+
     }
 
 }

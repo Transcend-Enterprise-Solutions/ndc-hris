@@ -31,16 +31,18 @@
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                 </div>
-
             </div>
+            <button wire:click="exportToPdf" class="p-2 flex items-center justify-center">
+                <img src="{{ asset('images/icons8-export-pdf-60.png') }}" alt="Export to PDF" class="w-8 h-8" wire:loading.remove>
+                <div wire:loading wire:target="exportToPdf">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-6 fill-red-600 motion-safe:animate-spin dark:fill-red-600">
+                        <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+                        <path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" />
+                    </svg>
+                </div>
+            </button>
 
         </div>
-        <div class="mb-6 flex justify-end">
-            <button wire:click="exportToPdf" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                Export to PDF
-            </button>
-        </div>
-        <!-- Add this after the search and date range picker, before the table -->
 
 
         <!-- Table -->
@@ -132,12 +134,7 @@
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-amber-500 bg-white text-xs font-medium text-amber-500 dark:border-amber-500 dark:bg-slate-900 dark:text-amber-500">
                                             <span class="px-2 py-1 bg-amber-500/10 dark:bg-amber-500/10">Late</span>
                                         </span>
-                                    @break
-                                    @case('no schedule')
-                                    <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-orange-500 bg-white text-xs font-medium text-orange-500 dark:border-orange-500 dark:bg-slate-900 dark:text-orange-500">
-                                        <span class="px-2 py-1 bg-amber-500/10 dark:bg-amber-500/10">No Sched</span>
-                                    </span>
-                                    @break
+                                        @break
                                     @default
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-slate-300 bg-white text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
                                             <span class="px-2 py-1 bg-slate-100/10 dark:bg-slate-800/10">{{ $dtr->remarks }}</span>
