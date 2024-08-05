@@ -175,9 +175,9 @@ class User extends Authenticatable
         return $this->hasOne(LeaveCredits::class);
     }
 
-    public function payrollSignatories()
+    public function signatories()
     {
-        return $this->hasMany(PayrollSignatories::class);
+        return $this->hasMany(Signatories::class);
     }
 
     /**

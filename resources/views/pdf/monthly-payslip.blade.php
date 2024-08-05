@@ -338,11 +338,11 @@
                 </tr>
                 <tr>
                     <td width="60%" style="font-weight: bold">{{ $preparedBy->name }}</td>
-                    <td width="40%" style="font-weight: bold">JULIE-ANNE S. SUA</td>
+                    <td width="40%" style="font-weight: bold">{{ $signatories ? $signatories->name : 'XXXXXXXXXX' }}</td>
                 </tr>
                 <tr>
                     <td width="60%" style="font-style: italic">{{ $preparedBy->position }}</td>
-                    <td width="40%" style="font-style: italic">AOV/HRMO III</td>
+                    <td width="40%" style="font-style: italic">{{ $signatories ? $signatories->position : 'Position' }}</td>
                 </tr>
             </tbody>
         </table>

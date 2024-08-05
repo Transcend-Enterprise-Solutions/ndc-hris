@@ -3,7 +3,8 @@
 
         <div>
 
-            @livewire('user.dtr-table')
+            {{-- @livewire('user.dtr-table') --}}
+            Home
 
         </div>
 

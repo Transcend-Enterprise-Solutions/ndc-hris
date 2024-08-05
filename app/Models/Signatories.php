@@ -5,15 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PayrollSignatories extends Model
+class Signatories extends Model
 {
     use HasFactory;
 
-    protected $table = 'payroll_signatories';
+    protected $table = 'signatories';
 
     protected $fillable = [
         'user_id',
         'signatory',
+        'signatory_type',
     ];
 
     public function user(){
@@ -23,7 +24,8 @@ class PayrollSignatories extends Model
     public function scopeSearch($query, $term){
         $term = "%$term%";
         $query->where(function ($query) use ($term) {
-            $query->where('payroll_signatories.signatory', 'like', $term);
+            $query->where('signatories.signatory', 'like', $term)
+            ->orWhere('signatories.signatory_type', 'like', $term);
         });
     }
 }
