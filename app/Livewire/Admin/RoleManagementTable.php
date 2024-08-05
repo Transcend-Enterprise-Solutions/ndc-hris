@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Payrolls;
+use App\Models\PayrollSignatories;
 use App\Models\User;
 use Exception;
 use Livewire\Component;
@@ -20,6 +21,7 @@ class RoleManagementTable extends Component
     public $position;
     public $user_role;
     public $search;
+    public $search2;
 
     public function mount(){
         $this->employees = User::all();
@@ -32,8 +34,16 @@ class RoleManagementTable extends Component
                         return $query->search(trim($this->search));
                     })
                     ->paginate(5);
+
+        $sigantories = Payrolls::join('payroll_signatories', 'payroll_signatories.user_id', 'payrolls.user_id')
+                    ->when($this->search2, function ($query) {
+                        return $query->search2(trim($this->search2));
+                    })
+                    ->paginate(5);
+
         return view('livewire.admin.role-management-table',[
             'users' => $users,
+            'payrollSignatories' => $sigantories,
         ]);
     }
 

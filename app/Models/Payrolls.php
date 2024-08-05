@@ -54,7 +54,20 @@ class Payrolls extends Model
             $query->where('payrolls.name', 'like', $term)
                 ->orWhere('payrolls.employee_number', 'like', $term)
                 ->orWhere('payrolls.position', 'like', $term)
+                ->orWhere('payrolls.office_division', 'like', $term)
                 ->orWhere('payrolls.sg_step', 'like', $term);
+        });
+    }
+
+    public function scopeSearch2($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('payrolls.name', 'like', $term)
+                ->orWhere('payrolls.employee_number', 'like', $term)
+                ->orWhere('payrolls.position', 'like', $term)
+                ->orWhere('payrolls.office_division', 'like', $term)
+                ->orWhere('payrolls.sg_step', 'like', $term)
+                ->orWhere('payroll_signatories.signatory', 'like', $term);
         });
     }
 }

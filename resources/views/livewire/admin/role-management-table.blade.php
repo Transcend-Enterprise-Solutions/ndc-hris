@@ -1,4 +1,4 @@
-<div class="w-full">
+<div class="w-full" x-data="{ selectedTab: 'role' }" x-cloak>
 
     <div class="flex justify-center w-full">
         <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
@@ -8,10 +8,20 @@
 
             <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
 
-                {{-- Search Input --}}
-                <div class="w-full sm:w-1/3 sm:mr-4">
+                {{-- Search Input 1 --}}
+                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'role'">
                     <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
                     <input type="text" id="search" wire:model.live="search"
+                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                            dark:hover:bg-slate-600 dark:border-slate-600
+                            dark:text-gray-300 dark:bg-gray-800"
+                        placeholder="Enter employee name or ID">
+                </div>
+
+                {{-- Search Input 2 --}}
+                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'payroll'">
+                    <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                    <input type="text" id="search" wire:model.live="search2"
                         class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800"
@@ -48,79 +58,171 @@
             </div>
 
             <!-- Table -->
-            <div class="flex flex-col">
-                <div class="-my-2 overflow-x-auto">
-                    <div class="inline-block w-full py-2 align-middle">
-                        <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
-                            <div class="overflow-x-auto">
-                                <table class="w-full min-w-full">
-                                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
-                                        <tr class="whitespace-nowrap">
-                                            <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">
-                                                Name
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
-                                                Employee Number
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
-                                                Office/Division
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
-                                                Position
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
-                                                Account Role
-                                            </th>
-                                            <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
-                                                Action
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
-                                        @foreach ($users as $user)
-                                            <tr class="text-neutral-800 dark:text-neutral-200">
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                    {{ $user->name }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ $user->employee_number }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ $user->office_division }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ $user->position }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    @if ($user->user_role === 'sa')
-                                                        Super Admin
-                                                    @elseif($user->user_role === 'hr')
-                                                        HR 
-                                                    @elseif($user->user_role === 'sv')
-                                                        Supervisor
-                                                    @elseif($user->user_role === 'pa')
-                                                        Payroll
-                                                    @endif
-                                                </td>
-                                                <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                    <div class="relative">
-                                                        <button wire:click="toggleEditRole({{ $user->user_id }})" 
-                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                            focus:outline-none"  aria-describedby="tooltip1">
-                                                            <i class="fas fa-pencil-alt ml-3"></i>
-                                                        </button>
-                                                        <!-- Tooltip Text -->
-                                                        <div id="tooltip1" class="absolute top-1/2 right-16 transform -translate-y-1/2 z-10 whitespace-nowrap rounded px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 bg-gray-600 dark:text-black" role="tooltip">Edit Role</div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+            <div class="w-full">
+                <div class="flex gap-2 overflow-x-auto -mb-2">
+                    <button @click="selectedTab = 'role'" 
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'role', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'role' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm">
+                        Account Role
+                    </button>
+                    <button @click="selectedTab = 'payroll'" 
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'payroll', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'payroll' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm">
+                        Payroll Signatory
+                    </button>
+                </div>
+                <div class="flex flex-col">
+                    <div class="-my-2 overflow-x-auto">
+                        <div class="inline-block w-full py-2 align-middle">
+                            <div x-show="selectedTab === 'role'">
+                                <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full min-w-full">
+                                            <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                                <tr class="whitespace-nowrap">
+                                                    <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
+                                                        Account Role
+                                                    </th>
+                                                    <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">
+                                                        Name
+                                                    </th>
+                                                    <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
+                                                        Employee Number
+                                                    </th>
+                                                    <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
+                                                        Office/Division
+                                                    </th>
+                                                    <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
+                                                        Position
+                                                    </th>
+                                                    <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                                @foreach ($users as $user)
+                                                    <tr class="text-neutral-800 dark:text-neutral-200">
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                            @if ($user->user_role === 'sa')
+                                                                Super Admin
+                                                            @elseif($user->user_role === 'hr')
+                                                                HR 
+                                                            @elseif($user->user_role === 'sv')
+                                                                Supervisor
+                                                            @elseif($user->user_role === 'pa')
+                                                                Payroll
+                                                            @endif
+                                                        </td>
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                            {{ $user->name }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                            {{ $user->employee_number }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                            {{ $user->office_division }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                            {{ $user->position }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                            <div class="relative">
+                                                                <button wire:click="toggleEditRole({{ $user->user_id }})" 
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none"  aria-describedby="tooltip1">
+                                                                    <i class="fas fa-pencil-alt ml-3"></i>
+                                                                </button>
+                                                                <!-- Tooltip Text -->
+                                                                <div id="tooltip1" class="absolute top-1/2 right-16 transform -translate-y-1/2 z-10 whitespace-nowrap rounded px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 bg-gray-600 dark:text-black" role="tooltip">Edit Role</div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                        @if ($users->isEmpty())
+                                            <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                                No role has been created yet!
+                                            </div> 
+                                        @endif
+                                    </div>
+                                    <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                        {{ $users->links() }}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
-                                {{ $users->links() }}
+                            <div x-show="selectedTab === 'payroll'">
+                                <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full min-w-full">
+                                            <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                                <tr class="whitespace-nowrap">
+                                                    <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">
+                                                        Payroll Signatory
+                                                    </th>
+                                                    <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">
+                                                        Name
+                                                    </th>
+                                                    <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
+                                                        Employee Number
+                                                    </th>
+                                                    <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
+                                                        Office/Division
+                                                    </th>
+                                                    <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
+                                                        Position
+                                                    </th>
+                                                    <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                                @foreach ($payrollSignatories as $signatory)
+                                                    <tr class="text-neutral-800 dark:text-neutral-200">
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                            {{ $signatory->signatory }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                            {{ $signatory->name }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                            {{ $signatory->employee_number }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                            {{ $signatory->office_division }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                            {{ $signatory->position }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                            <div class="relative">
+                                                                <button wire:click="toggleEditSignatory({{ $signatory->user_id }})" 
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none"  aria-describedby="tooltip1">
+                                                                    <i class="fas fa-pencil-alt ml-3"></i>
+                                                                </button>
+                                                                <!-- Tooltip Text -->
+                                                                <div id="tooltip1" class="absolute top-1/2 right-16 transform -translate-y-1/2 z-10 whitespace-nowrap rounded px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 bg-gray-600 dark:text-black" role="tooltip">Edit Signatory</div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                        @if ($payrollSignatories->isEmpty())
+                                            <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                                No signatory for payroll yet!
+                                            </div> 
+                                        @endif
+                                    </div>
+                                    <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                        {{ $users->links() }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
