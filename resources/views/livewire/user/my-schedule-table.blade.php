@@ -1,6 +1,7 @@
 <div class="w-full">
     <div class="flex flex-col sm:flex-row justify-between items-center w-full">
         <div class="overflow-x-auto w-full bg-white dark:bg-gray-800 rounded-2xl px-4 sm:px-6 shadow">
+            <h1 class="text-lg font-bold text-center text-black dark:text-white mt-5">My Schedule</h1>
             <div class="pt-4 pb-4 flex flex-col sm:flex-row sm:items-center justify-between">
                 <div class="flex flex-row justify-between items-center w-full">
                     <button wire:click="goToPreviousMonth" class="text-black dark:text-white px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-600 text-sm sm:text-base">Previous</button>
