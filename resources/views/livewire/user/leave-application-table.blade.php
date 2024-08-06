@@ -72,7 +72,7 @@
         </div>
     </div>
 
-    <div class="w-full flex justify-center mt-4 grid grid-cols-2 gap-2">
+    <div class="w-full flex justify-center mt-4 grid grid-cols-1 md:grid-cols-2 gap-2">
         <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
             <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Details of Action on Application
                 (Vacation Leave)
@@ -82,7 +82,7 @@
                 <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                     <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                         <tr class="whitespace-nowrap">
-                            <th scope="col" class="px-4 py-2 text-center">Balance</th>
+                            <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th>
                             {{-- <th scope="col" class="px-4 py-2 text-center">Month</th>
                             <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th> --}}
                             <th scope="col" class="px-4 py-2 text-center">Status</th>
@@ -118,7 +118,7 @@
                 <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                     <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                         <tr class="whitespace-nowrap">
-                            <th scope="col" class="px-4 py-2 text-center">Total Balance</th>
+                            <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th>
                             {{-- <th scope="col" class="px-4 py-2 text-center">Month</th>
                             <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th> --}}
                             <th scope="col" class="px-4 py-2 text-center">Status</th>
@@ -148,7 +148,7 @@
         </div>
     </div>
 
-    <div class="w-full flex justify-center mt-4 grid grid-cols-2 gap-2">
+    {{-- <div class="w-full flex justify-center mt-4 grid grid-cols-1 md:grid-cols-2 gap-2">
         <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
             <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Leave Credits
             </h1>
@@ -158,18 +158,18 @@
                         <tr class="whitespace-nowrap">
                             <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th>
                             {{-- <th scope="col" class="px-4 py-2 text-center">Claimed Credits</th> --}}
-                        </tr>
+                        {{-- </tr>
                     </thead>
                     <tbody>
                         <tr class="whitespace-nowrap">
-                            <td class="px-4 py-2 text-center">{{ $totalCredits }}</td>
+                            <td class="px-4 py-2 text-center">{{ $totalCredits }}</td> --}}
                             {{-- <td class="px-4 py-2 text-center"></td> --}}
-                        </tr>
+                        {{-- </tr>
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
+        </div> --}}
+    {{-- </div> --}}
 
     {{-- Leave Application Form --}}
     <x-modal id="applyForLeave" maxWidth="5xl" wire:model="applyForLeave">
