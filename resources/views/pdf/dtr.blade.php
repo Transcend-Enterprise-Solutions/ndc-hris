@@ -125,7 +125,7 @@
 
             Verified and found correct as to the prescribed office hours.
 
-            <strong>LEAH TALDE VILLALON</strong>
+            <strong>{{ $signatoryName }}</strong>
             Executive Director And COO
         </div>
 

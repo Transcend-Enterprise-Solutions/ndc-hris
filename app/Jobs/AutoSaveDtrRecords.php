@@ -228,7 +228,7 @@ class AutoSaveDtrRecords implements ShouldQueue
         } elseif ($transactions->isEmpty()) {
             $remarks = 'Absent';
         } elseif ($late > 0) {
-            $remarks = 'Late';
+            $remarks = 'Late/Undertime';
         } else {
             $remarks = 'Present';
         }
