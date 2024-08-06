@@ -8,6 +8,7 @@ use App\Models\EmployeesPayroll;
 use App\Models\Holiday;
 use App\Models\LeaveApplication;
 use App\Models\Payrolls;
+use App\Models\Signatories;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -486,10 +487,14 @@ class PayrollTable extends Component
             if ($this->startDate && $this->endDate) {
                 $startDate = Carbon::parse($this->startDate);
                 $endDate = Carbon::parse($this->endDate);
+                $signatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
+                    ->where('signatory_type', 'payroll')
+                    ->get();
 
                 $filters = [
                     'startDate' => $startDate,
                     'endDate' => $endDate,
+                    'signatories' => $signatories,
                 ];
                 
                 $filename = 'Payroll ' . $startDate->format('F') . ' '

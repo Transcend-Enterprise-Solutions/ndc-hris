@@ -417,6 +417,11 @@ class GeneralPayrollTable extends Component
             $user = User::where('id', $userId)->first();
             if ($user) {
                 $preparedBy = Auth::user();
+                $signatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
+                    ->where('signatory_type', 'payslip')
+                    ->where('signatory', 'Noted By')
+                    ->first();
+                    
                 $payslip = null;
                 if ($this->hasPayroll) {
                         $payslip = GeneralPayroll::where('general_payroll.user_id', $userId)
@@ -453,6 +458,7 @@ class GeneralPayrollTable extends Component
                         'preparedBy' => $preparedBy->payrolls,
                         'payslip' => $payslip,
                         'dates' => $dates,
+                        'signatories' => $signatories,
                     ]);
                     $pdf->setPaper([0, 0, 396, 612], 'portrait');
                     return response()->streamDownload(function () use ($pdf) {

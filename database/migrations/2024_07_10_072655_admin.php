@@ -12,10 +12,8 @@ return new class extends Migration
             $table->id('id');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->string('first_name', 50);
-            $table->string('middle_name', 50)->nullable();
-            $table->string('last_name', 50);
-            $table->string('profile_picture')->nullable();
+            $table->integer('payroll_id')->nullable();
+            $table->string('department')->nullable();
             $table->timestamps();
         });
     }

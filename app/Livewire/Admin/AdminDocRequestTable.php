@@ -13,7 +13,6 @@ class AdminDocRequestTable extends Component
 
     public $requests;
     public $uploadedFile = [];
-    public $uploadRequestId;
     public $documentTypes = [];
     public $selectedDocumentTypes = [];
     public $selectAll = false;
@@ -23,6 +22,7 @@ class AdminDocRequestTable extends Component
         $this->loadRequests();
         $this->loadDocumentTypes();
     }
+
     public function loadDocumentTypes()
     {
         $this->documentTypes = DocRequest::distinct('document_type')->pluck('document_type')->toArray();
@@ -38,28 +38,17 @@ class AdminDocRequestTable extends Component
 
         $this->requests = $query->get();
     }
+
     public function updatedSelectedDocumentTypes()
     {
         $this->selectAll = count($this->selectedDocumentTypes) === count($this->documentTypes);
         $this->loadRequests();
     }
+
     public function updatedSelectAll($value)
     {
         $this->selectedDocumentTypes = $value ? $this->documentTypes : [];
         $this->loadRequests();
-    }
-
-    public function updateStatus($id)
-    {
-        $request = DocRequest::find($id);
-        if ($request) {
-            $statusOrder = ['pending', 'preparing', 'completed', 'rejected'];
-            $currentIndex = array_search($request->status, $statusOrder);
-            $nextIndex = ($currentIndex + 1) % count($statusOrder);
-            $request->status = $statusOrder[$nextIndex];
-            $request->save();
-            $this->loadRequests();
-        }
     }
 
     public function approveRequest($id)
@@ -69,22 +58,7 @@ class AdminDocRequestTable extends Component
 
     public function rejectRequest($id)
     {
-        $request = DocRequest::find($id);
-        if ($request) {
-            $request->status = 'rejected';
-            $request->date_completed = now();
-            $request->save();
-            $this->dispatch('notify', [
-                'message' => 'Document request rejected!',
-                'type' => 'success'
-            ]);
-            $this->loadRequests();
-        } else {
-            $this->dispatch('notify', [
-                'message' => 'Document request not found!',
-                'type' => 'error'
-            ]);
-        }
+        $this->changeStatus($id, 'rejected', 'Document request rejected!');
     }
 
     private function changeStatus($id, $status, $message)
@@ -92,6 +66,9 @@ class AdminDocRequestTable extends Component
         $request = DocRequest::find($id);
         if ($request) {
             $request->status = $status;
+            if ($status === 'rejected') {
+                $request->date_completed = now();
+            }
             $request->save();
             $this->dispatch('notify', [
                 'message' => $message,
@@ -108,26 +85,14 @@ class AdminDocRequestTable extends Component
 
     public function uploadDocument($requestId)
     {
-        if (empty($requestId)) {
-            $this->dispatch('notify', [
-                'message' => 'No document request selected!',
-                'type' => 'error'
-            ]);
-            return;
-        }
+        $this->validate([
+            "uploadedFile.$requestId" => 'required|file|max:10240', // 10MB Max
+        ]);
 
         $request = DocRequest::find($requestId);
         if (!$request) {
             $this->dispatch('notify', [
                 'message' => 'Document request not found!',
-                'type' => 'error'
-            ]);
-            return;
-        }
-
-        if (empty($this->uploadedFile[$requestId])) {
-            $this->dispatch('notify', [
-                'message' => 'No File Uploaded!',
                 'type' => 'error'
             ]);
             return;
@@ -144,7 +109,8 @@ class AdminDocRequestTable extends Component
             'message' => 'Document uploaded successfully!',
             'type' => 'success'
         ]);
-        $this->resetUploadFields($requestId);
+
+        $this->uploadedFile[$requestId] = null;
         $this->loadRequests();
     }
 
@@ -189,12 +155,6 @@ class AdminDocRequestTable extends Component
                 'type' => 'error'
             ]);
         }
-    }
-
-    private function resetUploadFields($requestId)
-    {
-        unset($this->uploadedFile[$requestId]);
-        $this->uploadRequestId = null;
     }
 
     public function render()

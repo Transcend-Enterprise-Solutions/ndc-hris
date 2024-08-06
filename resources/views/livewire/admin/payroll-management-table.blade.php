@@ -40,7 +40,7 @@
                     <div class="w-full sm:w-auto">
                         <button wire:click="toggleAddPayroll" 
                             class="mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
-                            hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full sm:w-3/5
+                            hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
                             dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
                             Add Payroll
                         </button>

@@ -366,6 +366,20 @@ class PayrollExport implements FromCollection, WithEvents
         };
         $formattedAmount = number_format($totalNetAmount, 2, '.', '');
 
+        $signatoryA = $this->filters['signatories']->where('signatory', 'A')->first();
+        $aName = $signatoryA ? $signatoryA->name : 'XXXXXXXXXX';
+        $aPosition = $signatoryA ? $signatoryA->position : 'XXXXXXXXXX';
+        $signatoryB = $this->filters['signatories']->where('signatory', 'B')->first();
+        $bName = $signatoryB ? $signatoryB->name : 'XXXXXXXXXX';
+        $bPosition = $signatoryB ? $signatoryB->position : 'XXXXXXXXXX';
+        $signatoryC = $this->filters['signatories']->where('signatory', 'C')->first();
+        $cName = $signatoryC ? $signatoryC->name : 'XXXXXXXXXX';
+        $cPosition = $signatoryC ? $signatoryC->position : 'XXXXXXXXXX';
+        $signatoryD = $this->filters['signatories']->where('signatory', 'D')->first();
+        $dName = $signatoryD ? $signatoryD->name : 'XXXXXXXXXX';
+        $dPosition = $signatoryD ? $signatoryD->position : 'XXXXXXXXXX';
+        $date = now()->format("m/d/y");
+
         // Add footer content
         $sheet->setCellValue("A{$startRow}", "A.");
         $sheet->mergeCells("B{$startRow}:C{$startRow}");
@@ -386,36 +400,36 @@ class PayrollExport implements FromCollection, WithEvents
 
         $startRow += 2;
         $sheet->mergeCells("A{$startRow}:E{$startRow}");
-        $sheet->setCellValue("A{$startRow}", "XXXXXXXXX");
+        $sheet->setCellValue("A{$startRow}", $aName);
         $sheet->mergeCells("F{$startRow}:G{$startRow}");
-        $sheet->setCellValue("F{$startRow}", "06/19/24");
+        $sheet->setCellValue("F{$startRow}", $date);
 
         $sheet->mergeCells("J{$startRow}:Q{$startRow}");
-        $sheet->setCellValue("J{$startRow}", "XXXXXXXXXXXX");
-        $sheet->mergeCells("S{$startRow}:T{$startRow}");
-        $sheet->setCellValue("S{$startRow}", "06/19/24");
+        $sheet->setCellValue("J{$startRow}", $cName);
+        // $sheet->mergeCells("S{$startRow}:T{$startRow}");
+        // $sheet->setCellValue("S{$startRow}", "06/19/24");
         $sheet->getStyle("A{$startRow}:U{$startRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        $sheet->getStyle("S{$startRow}:T{$startRow}")->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THIN);
+        // $sheet->getStyle("S{$startRow}:T{$startRow}")->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THIN);
         $sheet->getStyle("F{$startRow}:G{$startRow}")->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THIN);
         $sheet->getStyle("A{$startRow}")->getFont()->setBold(true);
         $sheet->getStyle("J{$startRow}")->getFont()->setBold(true);
 
         $startRow++;
         $sheet->mergeCells("A{$startRow}:E{$startRow}");
-        $sheet->setCellValue("A{$startRow}", "HUMAN RESOURCE MANAGEMENT UNIT");
+        $sheet->setCellValue("A{$startRow}", $aPosition);
         $sheet->mergeCells("F{$startRow}:G{$startRow}");
         $sheet->setCellValue("F{$startRow}", "Date");
 
         $sheet->mergeCells("J{$startRow}:Q{$startRow}");
-        $sheet->setCellValue("J{$startRow}", "Executive Director and COO");
-        $sheet->mergeCells("S{$startRow}:T{$startRow}");
-        $sheet->setCellValue("S{$startRow}", "Date");
+        $sheet->setCellValue("J{$startRow}", $cPosition);
+        // $sheet->mergeCells("S{$startRow}:T{$startRow}");
+        // $sheet->setCellValue("S{$startRow}", "Date");
         $sheet->getStyle("A{$startRow}:U{$startRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle("A{$startRow}:U{$startRow}")->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THIN);
 
         $startRow++;
         $sheet->setCellValue("A{$startRow}", "B.");
-        $sheet->mergeCells("B{$startRow}:C{$startRow}");
+        $sheet->mergeCells("B{$startRow}:H{$startRow}");
         $sheet->setCellValue("B{$startRow}", "CERTIFIED: Supporting documents complete and proper; and cash available in the amount of");
         $sheet->setCellValue("I{$startRow}", "D.");
         $sheet->mergeCells("J{$startRow}:U{$startRow}");
@@ -436,18 +450,18 @@ class PayrollExport implements FromCollection, WithEvents
 
         $startRow += 2;
         $sheet->mergeCells("A{$startRow}:E{$startRow}");
-        $sheet->setCellValue("A{$startRow}", "XXXXXXXXX");
+        $sheet->setCellValue("A{$startRow}", $bName);
         $sheet->mergeCells("J{$startRow}:Q{$startRow}");
-        $sheet->setCellValue("J{$startRow}", "XXXXXXXXXXXX");
+        $sheet->setCellValue("J{$startRow}", $dName);
         $sheet->getStyle("A{$startRow}:U{$startRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle("A{$startRow}")->getFont()->setBold(true);
         $sheet->getStyle("J{$startRow}")->getFont()->setBold(true);
 
         $startRow++;
         $sheet->mergeCells("A{$startRow}:E{$startRow}");
-        $sheet->setCellValue("A{$startRow}", "Accountant III");
+        $sheet->setCellValue("A{$startRow}", $bPosition);
         $sheet->mergeCells("J{$startRow}:Q{$startRow}");
-        $sheet->setCellValue("J{$startRow}", "Administrative Officer V (Cashier)");
+        $sheet->setCellValue("J{$startRow}", $dPosition);
         $sheet->getStyle("A{$startRow}:U{$startRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle("A{$startRow}:U{$startRow}")->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THIN);
         $sheet->getStyle("I8:I{$startRow}")->getBorders()->getLeft()->setBorderStyle(Border::BORDER_THIN);

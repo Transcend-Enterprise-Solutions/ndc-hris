@@ -69,7 +69,7 @@
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-200">{{ $request->date_completed ? $request->date_completed->format('Y-m-d') : 'N/A' }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-200">
                                                     @if ($status === 'preparing')
-                                                        <input type="file" wire:model="uploadedFile.{{ $request->id }}" class="mt-2 mb-2">
+                                                    <input type="file" id="file-input-{{ $request->id }}" wire:model="uploadedFile.{{ $request->id }}" class="mt-2 mb-2">
                                                         <button wire:click="uploadDocument({{ $request->id }})" class="text-green-500 hover:text-green-700">
                                                             <i class="fas fa-upload"></i> Upload
                                                         </button>
