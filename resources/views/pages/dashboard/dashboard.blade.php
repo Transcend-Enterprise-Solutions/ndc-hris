@@ -44,7 +44,7 @@
             <x-dashboard.dashboard-card-03 />
 
             <!-- Bar chart (Direct vs Indirect) -->
-            <x-dashboard.dashboard-card-04 />
+            {{-- <x-dashboard.dashboard-card-04 /> --}}
 
             <!-- Line chart (Real Time Value) -->
             <x-dashboard.dashboard-card-05 />
