@@ -1,55 +1,46 @@
-<div x-data="dashboardDtr()" class="p-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-semibold mb-4">Employee DTR Dashboard</h2>
-
-    <div class="mb-4 flex space-x-4">
-        <div>
-            <label for="startDate" class="block text-sm font-medium text-gray-700">Start Date</label>
-            <input type="date" id="startDate" wire:model.live="startDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-        </div>
-        <div>
-            <label for="endDate" class="block text-sm font-medium text-gray-700">End Date</label>
-            <input type="date" id="endDate" wire:model.live="endDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-        </div>
-    </div>
+<div x-data="dashboardDtr()"
+     x-init="init()"
+     class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-white">Employee DTR For the last 30 days</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Attendance Chart -->
-        <div class="bg-gray-100 p-4 rounded-lg">
-            <h3 class="text-lg font-semibold mb-2">Attendance Overview</h3>
+        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Attendance Overview</h3>
             <canvas id="attendanceChart"></canvas>
         </div>
 
         <!-- Overtime Chart -->
-        <div class="bg-gray-100 p-4 rounded-lg">
-            <h3 class="text-lg font-semibold mb-2">Overtime Trends</h3>
+        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Overtime Trends</h3>
             <canvas id="overtimeChart"></canvas>
         </div>
 
         <!-- Late Chart -->
-        <div class="bg-gray-100 p-4 rounded-lg">
-            <h3 class="text-lg font-semibold mb-2">Late Arrivals</h3>
+        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Late Arrivals</h3>
             <canvas id="lateChart"></canvas>
         </div>
 
         <!-- Summary Stats -->
-        <div class="bg-gray-100 p-4 rounded-lg">
-            <h3 class="text-lg font-semibold mb-2">Summary</h3>
+        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">30-Day Summary</h3>
             <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Total Present</p>
-                    <p class="text-2xl font-bold">{{ $totalPresent }}</p>
+                <div class="bg-white dark:bg-gray-600 p-4 rounded-lg shadow">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Present</p>
+                    <p class="text-3xl font-bold text-green-600 dark:text-green-400">{{ $totalPresent }}</p>
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Total Absent</p>
-                    <p class="text-2xl font-bold">{{ $totalAbsent }}</p>
+                <div class="bg-white dark:bg-gray-600 p-4 rounded-lg shadow">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Absent</p>
+                    <p class="text-3xl font-bold text-red-600 dark:text-red-400">{{ $totalAbsent }}</p>
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Total Late</p>
-                    <p class="text-2xl font-bold">{{ $totalLate }}</p>
+                <div class="bg-white dark:bg-gray-600 p-4 rounded-lg shadow">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Late</p>
+                    <p class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{{ $totalLate }}</p>
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Avg. Overtime</p>
-                    <p class="text-2xl font-bold">{{ $avgOvertime }}</p>
+                <div class="bg-white dark:bg-gray-600 p-4 rounded-lg shadow">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Avg. Overtime</p>
+                    <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ $avgOvertime }}</p>
                 </div>
             </div>
         </div>
@@ -67,35 +58,42 @@
             },
             init() {
                 this.renderCharts();
-                Livewire.on('dataUpdated', () => {
-                    this.updateCharts();
-                });
             },
             renderCharts() {
                 this.renderAttendanceChart();
                 this.renderOvertimeChart();
                 this.renderLateChart();
             },
-            updateCharts() {
-                this.charts.attendance.data.labels = @this.attendanceData.map(day => day.date);
-                this.charts.attendance.data.datasets[0].data = @this.attendanceData.map(day => day.present_count);
-                this.charts.attendance.data.datasets[1].data = @this.attendanceData.map(day => day.absent_count);
-                this.charts.attendance.data.datasets[2].data = @this.attendanceData.map(day => day.late_count);
-                this.charts.attendance.update();
-
-                this.charts.overtime.data.labels = @this.overtimeData.map(day => day.date);
-                this.charts.overtime.data.datasets[0].data = @this.overtimeData.map(day => {
-                    const [hours, minutes] = day.total_overtime.split(':');
-                    return parseFloat(hours) + parseFloat(minutes) / 60;
-                });
-                this.charts.overtime.update();
-
-                this.charts.late.data.labels = @this.lateData.map(day => day.date);
-                this.charts.late.data.datasets[0].data = @this.lateData.map(day => {
-                    const [hours, minutes] = day.total_late.split(':');
-                    return parseFloat(hours) + parseFloat(minutes) / 60;
-                });
-                this.charts.late.update();
+            getChartOptions(title) {
+                return {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: document.querySelector('html').classList.contains('dark') ? 'white' : 'black'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: title,
+                            color: document.querySelector('html').classList.contains('dark') ? 'white' : 'black'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: document.querySelector('html').classList.contains('dark') ? 'white' : 'black'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: document.querySelector('html').classList.contains('dark') ? 'white' : 'black'
+                            }
+                        }
+                    }
+                };
             },
             renderAttendanceChart() {
                 const ctx = document.getElementById('attendanceChart').getContext('2d');
@@ -121,17 +119,7 @@
                             },
                         ],
                     },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            x: {
-                                stacked: true,
-                            },
-                            y: {
-                                stacked: true,
-                            },
-                        },
-                    },
+                    options: this.getChartOptions('Attendance Overview')
                 });
             },
             renderOvertimeChart() {
@@ -150,18 +138,7 @@
                             tension: 0.1,
                         }],
                     },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Hours',
-                                },
-                            },
-                        },
-                    },
+                    options: this.getChartOptions('Overtime Trends')
                 });
             },
             renderLateChart() {
@@ -180,18 +157,7 @@
                             tension: 0.1,
                         }],
                     },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Hours',
-                                },
-                            },
-                        },
-                    },
+                    options: this.getChartOptions('Late Arrivals')
                 });
             },
         };
