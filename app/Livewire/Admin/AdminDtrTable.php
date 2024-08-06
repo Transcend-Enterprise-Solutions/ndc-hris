@@ -19,6 +19,7 @@ class AdminDtrTable extends Component
     public $endDate;
     public $sortField = 'date';
     public $sortDirection = 'asc';
+    public $signatoryName='';
 
     protected $queryString = [
         'searchTerm' => ['except' => ''],
@@ -81,8 +82,9 @@ class AdminDtrTable extends Component
         return view('livewire.admin.admin-dtr-table', ['dtrs' => $dtrs]);
     }
 
-    public function exportToPdf()
+    public function exportToPdf($signatoryName)
     {
+        $this->signatoryName = $signatoryName;
         $query = EmployeesDtr::query()
             ->join('users', 'employees_dtr.user_id', '=', 'users.id')
             ->select('employees_dtr.*', 'users.name as user_name', 'users.emp_code')
@@ -105,6 +107,7 @@ class AdminDtrTable extends Component
             'dtrs' => $dtrs,
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
+            'signatoryName' => $this->signatoryName,
         ]);
         $this->dispatch('notify', [
             'message' => 'DTR Exported Successfully!',

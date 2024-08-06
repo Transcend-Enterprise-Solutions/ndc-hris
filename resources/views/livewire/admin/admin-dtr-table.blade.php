@@ -32,15 +32,39 @@
                             dark:text-gray-300 dark:bg-gray-800">
                 </div>
             </div>
-            <button wire:click="exportToPdf" class="p-2 flex items-center justify-center">
-                <img src="{{ asset('images/icons8-export-pdf-60.png') }}" alt="Export to PDF" class="w-8 h-8" wire:loading.remove>
-                <div wire:loading wire:target="exportToPdf">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-6 fill-red-600 motion-safe:animate-spin dark:fill-red-600">
-                        <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
-                        <path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" />
-                    </svg>
+            <div x-data="{ showModal: false, signatoryName: '' }" x-cloak>
+                <!-- Trigger Button -->
+                <button @click="showModal = true" class="p-2 flex items-center justify-center">
+                    <img src="{{ asset('images/icons8-export-pdf-60.png') }}" alt="Export to PDF" class="w-8 h-8" wire:loading.remove wire:target="exportToPdf">
+                    <div wire:loading wire:target="exportToPdf">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-6 fill-red-600 motion-safe:animate-spin dark:fill-red-600">
+                            <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+                            <path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" />
+                        </svg>
+                    </div>
+                </button>
+
+                <!-- Modal -->
+                <div x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
+                    <div @click.away="showModal = false"
+                         x-show="showModal"
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 translate-y-4"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 translate-y-4"
+                         class="bg-white dark:bg-gray-800 rounded-lg p-6 w-1/3 shadow-xl">
+                        <h2 class="text-lg font-semibold mb-4 text-left text-gray-900 dark:text-gray-100">Enter Signatory Name</h2>
+                        <input type="text" x-model="signatoryName" placeholder="Signatory Name"
+                            class="w-full mb-4 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-700 dark:text-gray-300 dark:border-slate-600">
+                        <div class="flex justify-end mt-5">
+                            <button @click="showModal = false" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 dark:bg-gray-600 dark:text-gray-200">Cancel</button>
+                            <button @click="showModal = false; $wire.exportToPdf(signatoryName)" class="bg-blue-500 text-white px-4 py-2 rounded-md">Generate PDF</button>
+                        </div>
+                    </div>
                 </div>
-            </button>
+            </div>
 
         </div>
 
