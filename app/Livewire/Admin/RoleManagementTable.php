@@ -34,6 +34,8 @@ class RoleManagementTable extends Component
     public $search;
     public $search2;
     public $search3;
+    public $deleteId;
+    public $deleteMessage;
 
     public function mount(){
         $this->employees = User::where('user_role', '=', 'emp')->get();
@@ -345,6 +347,51 @@ class RoleManagementTable extends Component
         }
     }
 
+    public function toggleDelete($userId, $message){
+        $this->deleteMessage = $message;
+        $this->deleteId = $userId;
+    }
+
+    public function deleteData(){
+        try {
+            $user = User::where('id', $this->deleteId)->first();
+            if ($user) {
+                $message = "";
+                switch($this->deleteMessage){
+                    case "role":
+                        $user->delete();
+                        $user->admin()->delete();
+                        $this->resetVariables();
+                        $message = "Role deleted successfully!";
+                        break;
+                    case "payroll signatory":
+                        $user->signatories()->where('signatory_type', 'payroll')->delete();
+                        $this->resetVariables();
+                        $message = "Payroll signatory deleted successfully!";
+                        break;
+                    case "payslip signatory":
+                        $user->signatories()->where('signatory_type', 'payslip')->delete();
+                        $this->resetVariables();
+                        $message = "Payslip signatory deleted successfully!";
+                        break;
+                    default:
+                        break;
+                } 
+                $this->dispatch('notify', [
+                    'message' => $message,
+                    'type' => 'success'
+                ]);            
+            }
+        } catch (Exception $e) {
+            $this->dispatch('notify', [
+                'message' => "Deletion of " . $this->deleteMessage . "was unsuccessful!",
+                'type' => 'error'
+            ]);
+            $this->resetVariables();
+            throw $e;
+        }
+    }
+
     public function resetVariables(){
         $this->resetValidation();
         $this->userId = null;
@@ -362,6 +409,8 @@ class RoleManagementTable extends Component
         $this->password = null;
         $this->cpassword = null;
         $this->department = null;
+        $this->deleteId = null;
+        $this->deleteMessage = null;
     }
 
     private function isPasswordComplex($password){

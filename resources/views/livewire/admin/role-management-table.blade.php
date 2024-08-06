@@ -203,11 +203,14 @@
                                                                 <button wire:click="toggleEditRole({{ $admin->user_id }})" 
                                                                     class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                                     -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                                    focus:outline-none"  aria-describedby="tooltip1">
-                                                                    <i class="fas fa-pencil-alt ml-3"></i>
+                                                                    focus:outline-none" title="Edit">
+                                                                    <i class="fas fa-pencil-alt"></i>
                                                                 </button>
-                                                                <!-- Tooltip Text -->
-                                                                <div id="tooltip1" class="absolute top-1/2 right-16 transform -translate-y-1/2 z-10 whitespace-nowrap rounded px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 bg-gray-600 dark:text-black" role="tooltip">Edit Role</div>
+                                                                <button wire:click="toggleDelete({{ $admin->user_id }}, 'role')" 
+                                                                    class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                    dark:hover:text-red-900" title="Delete">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -274,11 +277,14 @@
                                                                 <button wire:click="toggleEditSignatory({{ $sign->user_id }})" 
                                                                     class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                                     -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                                    focus:outline-none"  aria-describedby="tooltip1">
+                                                                    focus:outline-none" title="Edit">
                                                                     <i class="fas fa-pencil-alt ml-3"></i>
                                                                 </button>
-                                                                <!-- Tooltip Text -->
-                                                                <div id="tooltip1" class="absolute top-1/2 right-16 transform -translate-y-1/2 z-10 whitespace-nowrap rounded px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 bg-gray-600 dark:text-black" role="tooltip">Edit Signatory</div>
+                                                                <button wire:click="toggleDelete({{ $sign->user_id }}, 'payroll signatory')" 
+                                                                    class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                    dark:hover:text-red-900" title="Delete">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -424,11 +430,14 @@
                                                                 <button wire:click="toggleEditPayslipSignatory({{ $sign->user_id }})" 
                                                                     class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                                     -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                                    focus:outline-none"  aria-describedby="tooltip1">
+                                                                    focus:outline-none"  title="Edit">
                                                                     <i class="fas fa-pencil-alt ml-3"></i>
                                                                 </button>
-                                                                <!-- Tooltip Text -->
-                                                                <div id="tooltip1" class="absolute top-1/2 right-16 transform -translate-y-1/2 z-10 whitespace-nowrap rounded px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 bg-gray-600 dark:text-black" role="tooltip">Edit Signatory</div>
+                                                                <button wire:click="toggleDelete({{ $sign->user_id }}, 'payslip signatory')" 
+                                                                    class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                    dark:hover:text-red-900" title="Delete">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -448,7 +457,7 @@
                             </div>
                             {{-- Payslip View --}}
                             <div x-show="selectedTab === 'payslip'">
-                                <div class="overflow-hidden mt-10 w-full md:w-3/5">
+                                <div class="overflow-hidden mt-10">
                                     <div class="pb-4 mb-3 pt-4 sm:pt-0">
                                         <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Payslip Footer View</h1>
                                     </div>
@@ -708,6 +717,37 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </x-modal>
+
+      {{-- Delete Modal --}}
+      <x-modal id="deleteModal" maxWidth="md" wire:model="deleteId" centered>
+        <div class="p-4">
+            <div class="mb-4 text-slate-900 dark:text-gray-100 font-bold">
+                Confirm Deletion
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">
+                Are you sure you want to delete this {{ $deleteMessage }}?
+            </label>
+            <form wire:submit.prevent='deleteData'>
+                <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
+                    <button class="mr-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        <div wire:loading wire:target="deleteData" style="margin-bottom: 5px;">
+                            <div class="spinner-border small text-primary" role="status">
+                            </div>
+                        </div>
+                        Delete
+                    </button>
+                    <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                        Cancel
+                    </p>
+                </div>
+            </form>
+
         </div>
     </x-modal>
 
