@@ -1093,7 +1093,7 @@
         </div>
     @else
         <div class="flex justify-center w-full">
-            <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
+            <div class="w-full bg-white rounded-2xl p-3 shadow dark:bg-gray-800 overflow-x-visible">
                 <div class="pb-4 pt-4 sm:pt-1">
                     <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Employees List
                     </h1>
@@ -1542,7 +1542,7 @@
                                     justify-center px-4 py-1.5 text-sm font-medium tracking-wide
                                     text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
-                                type="button" title="Export List">
+                                type="button" title="Export to Excel">
                                 <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
                                 <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                             </button>
@@ -1851,10 +1851,8 @@
                                                 <td
                                                     class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                     <button wire:click="showUser({{ $user->id }})"
-                                                        class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm 
-                                                        font-medium tracking-wide text-blue-500 hover:text-blue-600 focus:outline-none"
-                                                        title="View">
-                                                        <i class="fas fa-eye"></i>
+                                                        class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 focus:outline-none">
+                                                        <i class="fas fa-eye" title="Show Details"></i>
                                                     </button>
                                                 </td>
                                             </tr>

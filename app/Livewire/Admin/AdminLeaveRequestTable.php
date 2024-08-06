@@ -119,6 +119,7 @@ class AdminLeaveRequestTable extends Component
         if ($this->selectedApplication) {
             $this->selectedApplication->status = "Disapproved";
             $this->selectedApplication->remarks = $this->disapproveReason;
+            $this->selectedApplication->approved_days = 0;
             $this->selectedApplication->save();
 
             $this->dispatch('notify', [

@@ -6,36 +6,34 @@
                     <div id="clock" class="text-lg font-semibold mb-4 text-gray-900 dark:text-white h-10 text-center">
                         <!-- Time will be displayed here -->
                     </div>
-                    <div class="flex justify-center items-center">
-                        <img src="images/nyclogo.png" alt="Left Image" class="hidden lg:block w-64 h-auto mx-16">
-                        
+                    <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-12">
                         <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700 relative">
                             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">NYC WFH ATTENDANCE</h5>
                             <div class="grid grid-cols-1 gap-4 p-4">
                                 <div class="flex justify-center">
-                                    <button wire:click="confirmPunch('morningIn')" class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64"> 
-                                        <span class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64">
+                                    <button wire:click="confirmPunch('morningIn', 'Morning In')" @if($morningInDisabled) disabled @endif class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed"> 
+                                        <span class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
                                             Morning In
                                         </span>
                                     </button>
                                 </div>
                                 <div class="flex justify-center">
-                                    <button wire:click="confirmPunch('morningOut')" class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64"> 
-                                        <span class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64">
+                                    <button wire:click="confirmPunch('morningOut', 'Morning Out')" @if($morningOutDisabled) disabled @endif class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed"> 
+                                        <span class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
                                             Morning Out
                                         </span>
                                     </button>
                                 </div>
                                 <div class="flex justify-center">
-                                    <button wire:click="confirmPunch('afternoonIn')" class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64"> 
-                                        <span class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64">
+                                    <button wire:click="confirmPunch('afternoonIn', 'Afternoon In')" @if($afternoonInDisabled) disabled @endif class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed"> 
+                                        <span class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
                                             Afternoon In
                                         </span>
                                     </button>
                                 </div>
                                 <div class="flex justify-center">
-                                    <button wire:click="confirmPunch('afternoonOut')" class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64"> 
-                                        <span class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64">
+                                    <button wire:click="confirmPunch('afternoonOut', 'Afternoon Out')" @if($afternoonOutDisabled) disabled @endif class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed"> 
+                                        <span class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
                                             Afternoon Out
                                         </span>
                                     </button>
@@ -51,7 +49,27 @@
                             @endif
                         </div>
 
-                        <img src="images/hris-logo.png" alt="Right Image" class="hidden lg:block w-64 h-auto mx-16">
+                        <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700 relative">
+                            <h3 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">WFH Punch Times</h3>
+                            <table class="min-w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md mt-2 w-64">
+                                <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                    <tr class="whitespace-nowrap">
+                                        <th class="px-5 py-3 text-sm font-medium uppercase text-center">Punch Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($transactions as $transaction)
+                                        <tr class="whitespace-nowrap">
+                                            <td class="px-4 py-2 text-center">{{ $transaction->punch_time }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <div class="p-5 border-t border-neutral-500 dark:border-neutral-200">
+                                {{ $transactions->links() }}
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -68,6 +86,8 @@
                         <button wire:click="closeVerification" class="btn bg-gray-200 dark:bg-gray-600 hover:bg-gray-700 text-gray-800 dark:text-white whitespace-nowrap mt-4">Cancel</button>
                     </div>
                 </x-modal>
+
+                
             </div>
         </div>
     </div>
