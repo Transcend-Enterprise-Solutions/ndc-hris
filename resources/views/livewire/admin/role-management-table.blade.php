@@ -720,8 +720,8 @@
         </div>
     </x-modal>
 
-      {{-- Delete Modal --}}
-      <x-modal id="deleteModal" maxWidth="md" wire:model="deleteId" centered>
+    {{-- Delete Modal --}}
+    <x-modal id="deleteModal" maxWidth="md" wire:model="deleteId" centered>
         <div class="p-4">
             <div class="mb-4 text-slate-900 dark:text-gray-100 font-bold">
                 Confirm Deletion

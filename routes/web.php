@@ -62,7 +62,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         return view('livewire.admin.payroll'); })->name('/payroll/payroll');
         
     Route::get('/report-generation', function () {
-        return view('livewire.admin.report-generatio'); })->name('report-generation');
+        return view('livewire.admin.report-generation'); })->name('report-generation');
     
     Route::get('/home', function () {
         return view('livewire.user.home'); })->name('home');
@@ -82,8 +82,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         return view('livewire.user.dtr'); })->name('/daily-time-record/dtr');
     Route::get('/daily-time-record/my-schedule', function () {
         return view('livewire.user.my-schedule'); })->name('/daily-time-record/my-schedule');
-    Route::get('/daily-time-record/payslip', function () {
-        return view('livewire.user.payslip'); })->name('/daily-time-record/payslip');
+    // Route::get('/daily-time-record/my-payroll', function () {
+    //     return view('livewire.user.user-payroll'); })->name('/daily-time-record/my-payroll');
+    // Route::get('/daily-time-record/payslip', function () {
+    //     return view('livewire.user.payslip'); })->name('/daily-time-record/payslip');
 
     // Filing and Approval Tabs --------------------------------------------------------------- //
     Route::get('/filing-and-approval/leave-application', function () {

@@ -224,7 +224,7 @@
 
                         <!-- Report Generation -->
                         <li class="px-3 py-2 rounded-lg mb-0 last:mb-0 @if(in_array(Request::segment(1), ['report-generation'])){{ 'bg-gray-200 dark:bg-slate-900' }}@endif">
-                            <a class="block text-black dark:text-white hover:text-blue-500 transition duration-150 @if(in_array(Request::segment(1), ['report-generation'])){{ 'text-blue-500' }}@endif"
+                            <a class="block transition duration-150 @if(Route::is('report-generation')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
                                 href="{{ route('report-generation') }}" wire:navigate>
                                 <div class="flex items-center justify-between">
                                     <div class="grow flex items-center">
@@ -356,15 +356,6 @@
                                             <span class="text-sm font-medium transition-opacity duration-300"
                                                 :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
                                                 My Schedule
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/daily-time-record/payslip')){{ '!text-blue-500' }}@endif"
-                                            href="{{ route('/daily-time-record/payslip') }}" wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                Payslip
                                             </span>
                                         </a>
                                     </li>

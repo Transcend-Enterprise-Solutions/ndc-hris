@@ -58,7 +58,7 @@
 
                 {{-- Employee's Data --}}
                 <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold rounded-t-lg">I. PERSONAL INFORMATION
-                    <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 cursor-pointer" wire:click="toggleEditPersonalInfo"></i>
+                    <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 cursor-pointer" wire:click="toggleEditPersonalInfo"></i>
                 </div>
                 <div>
 
@@ -215,9 +215,9 @@
                     {{-- Spouse --}}
                     <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
                         <p class="p-1 w-full font-bold dark:text-gray-200">Spouse</p>
-                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? '' : 'hidden' }}" wire:click="toggleEditSpouse"></i>
-                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? '' : 'hidden' }}" wire:click="toggleDelete('spouse', '')"></i>
-                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? 'hidden' : '' }}" wire:click="toggleAddSpouse"></i>
+                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? '' : 'hidden' }}" wire:click="toggleEditSpouse"></i>
+                        <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? '' : 'hidden' }}" wire:click="toggleDelete('spouse', '')"></i>
+                        <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? 'hidden' : '' }}" wire:click="toggleAddSpouse"></i>
                     </div>
 
                     @if($userSpouse)
@@ -286,9 +286,9 @@
                     {{-- Father --}}
                     <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
                         <p class="p-1 w-full font-bold dark:text-gray-200">Father</p>
-                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? '' : 'hidden' }}" wire:click="toggleEditFather"></i>
-                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? '' : 'hidden' }}" wire:click="toggleDelete('father', '')"></i>
-                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? 'hidden' : '' }}" wire:click="toggleAddFather"></i>
+                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? '' : 'hidden' }}" wire:click="toggleEditFather"></i>
+                        <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? '' : 'hidden' }}" wire:click="toggleDelete('father', '')"></i>
+                        <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? 'hidden' : '' }}" wire:click="toggleAddFather"></i>
                     </div>
 
                     @if($userFather)
@@ -324,9 +324,9 @@
                     {{-- Mother's Maiden Name --}}
                     <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
                         <p class="p-1 w-full font-bold dark:text-gray-200">Mother's Maiden Name</p>
-                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? '' : 'hidden' }}" wire:click="toggleEditMother"></i>
-                        <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? '' : 'hidden' }}" wire:click="toggleDelete('mother', '')"></i>
-                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? 'hidden' : '' }}" wire:click="toggleAddMother"></i>
+                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? '' : 'hidden' }}" wire:click="toggleEditMother"></i>
+                        <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? '' : 'hidden' }}" wire:click="toggleDelete('mother', '')"></i>
+                        <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? 'hidden' : '' }}" wire:click="toggleAddMother"></i>
                     </div>
 
                     @if($userMother)
@@ -363,9 +363,9 @@
                     <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
                         <p class="p-1 w-full font-bold dark:text-gray-200">Children</p>
                         @if ($userChildren && $userChildren->isNotEmpty())
-                            <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2 mr-2 cursor-pointer" wire:click="toggleEditChildren"></i>
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2 mr-2 cursor-pointer" wire:click="toggleEditChildren"></i>
                         @endif
-                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddChildren"></i>
+                        <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddChildren"></i>
                     </div>
 
                     @if($userChildren)
@@ -383,7 +383,7 @@
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($child->childs_birth_date)->format('F d, Y') }}
-                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('child', {{ $child->id }})"></i>
+                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('child', {{ $child->id }})"></i>
                                         </p>
                                     </div>
                                 </div>
@@ -396,9 +396,9 @@
 
                 {{-- Educational Background --}}
                 <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $educBackground && $educBackground->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">III. EDUCATIONAL BACKGROUND
-                    <i class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddEducBackground"></i>
+                    <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddEducBackground"></i>
                     @if ($educBackground && $educBackground->isNotEmpty())
-                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEducBackground"></i>
+                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEducBackground"></i>
                     @endif
                 </div>
                 <div>
@@ -406,7 +406,7 @@
                         <div class="flex w-full sm:w-auto">
                             <p class="border border-gray-200 dark:border-slate-600 p-1 w-1/7 bg-gray-200 font-bold dark:bg-slate-700 dark:text-gray-200">Level</p>
                             <p class="w-full border border-gray-200 dark:border-slate-600 p-1 font-bold uppercase dark:text-gray-200">{{ $educ->level }}
-                                <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('educ', {{ $educ->id }})"></i>
+                                <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('educ', {{ $educ->id }})"></i>
                             </p>
                         </div>
                         <div class="custom-d flex w-full">
@@ -450,9 +450,9 @@
 
                 {{-- Civil Service Eligibility --}}
                 <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $eligibility && $eligibility->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">IV. CIVIL SERVICE ELIGIBILITY
-                    <i class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddEligibility"></i>
+                    <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddEligibility"></i>
                     @if ($eligibility && $eligibility->isNotEmpty())
-                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEligibility"></i>
+                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEligibility"></i>
                     @endif
                 </div>
 
@@ -478,7 +478,7 @@
                                         <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->place_of_exam }}</td>
                                         <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->license }}</td>
                                         <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($elig->date_of_validity)->format('F d, Y') }}
-                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('elig', {{ $elig->id }})"></i>
+                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('elig', {{ $elig->id }})"></i>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -489,9 +489,9 @@
 
                 {{-- Work Experience --}}
                 <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $workExperience && $workExperience->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">V. WORK EXPERIENCE
-                    <i class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddWorkExp"></i>
+                    <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddWorkExp"></i>
                     @if ($workExperience && $workExperience->isNotEmpty())
-                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditWorkExp"></i>
+                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditWorkExp"></i>
                     @endif
                 </div>
 
@@ -540,7 +540,7 @@
                                         <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ '₱ ' . number_format($exp->monthly_salary, 2) }}</td>
                                         <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->status_of_appointment }}</td>
                                         <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->gov_service ? 'Yes' : 'No' }}
-                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('exp', {{ $exp->id }})"></i>
+                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('exp', {{ $exp->id }})"></i>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -551,9 +551,9 @@
 
                 {{-- Voluntary Work --}}
                 <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $voluntaryWorks && $voluntaryWorks->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">VI. VOLUNTARY WORK
-                    <i class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddVoluntaryWorks"></i>
+                    <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddVoluntaryWorks"></i>
                     @if ($voluntaryWorks && $voluntaryWorks->isNotEmpty())
-                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditVoluntaryWorks"></i>
+                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditVoluntaryWorks"></i>
                     @endif
                 </div>
 
@@ -600,7 +600,7 @@
                                         </td>
                                         <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">{{ $voluntary->no_of_hours }}</td>
                                         <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">{{ $voluntary->position_nature }}
-                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('voluntary', {{ $voluntary->id }})"></i>
+                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('voluntary', {{ $voluntary->id }})"></i>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -611,9 +611,9 @@
 
                 {{-- Learning and Development --}}
                 <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $lds && $lds->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">VII. LEARNING AND DEVELOPMENT
-                    <i class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddLearnAndDev"></i>
+                    <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddLearnAndDev"></i>
                     @if ($lds && $lds->isNotEmpty())
-                        <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditLearnAndDev"></i>
+                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditLearnAndDev"></i>
                     @endif
                 </div>
 
@@ -660,7 +660,7 @@
                                         <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->no_of_hours }}</td>
                                         <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->type_of_ld }}</td>
                                         <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->conducted_by }}
-                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('ld', {{ $ld->id }})"></i>
+                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('ld', {{ $ld->id }})"></i>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -678,9 +678,9 @@
                     <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
                         <p class="p-1 w-full font-bold">SKILLS</p>
                         @if ($skills && $skills->isNotEmpty())
-                            <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditSkills"></i>
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditSkills"></i>
                         @endif
-                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddSkills"></i>
+                        <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddSkills"></i>
                     </div>
 
                     <div class="custom-d flex w-full border-r-2 border-l-2 border-gray-200 dark:border-slate-600">
@@ -695,9 +695,9 @@
                     <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
                         <p class="p-1 w-full font-bold">HOBBIES</p>
                         @if ($hobbies && $hobbies->isNotEmpty())
-                            <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditHobbies"></i>
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditHobbies"></i>
                         @endif
-                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddHobbies"></i>
+                        <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddHobbies"></i>
                     </div>
 
                     <div class="custom-d flex w-full border-r-2 border-l-2 border-gray-200 dark:border-slate-600">
@@ -712,9 +712,9 @@
                     <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
                         <p class="p-1 w-full font-bold">NON-ACADEMIC DISTINCTIONS / RECOGNITION</p>
                         @if ($non_acads_distinctions && $non_acads_distinctions->isNotEmpty())
-                            <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditNonAcads"></i>
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditNonAcads"></i>
                         @endif
-                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddNonAcads"></i>
+                        <i  title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddNonAcads"></i>
                     </div>
 
                     @if ($non_acads_distinctions && $non_acads_distinctions->isNotEmpty())
@@ -732,7 +732,7 @@
                                         <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $non_acads_distinction->award }}</td>
                                         <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $non_acads_distinction->ass_org_name }}</td>
                                         <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($non_acads_distinction->date_received)->format('F d, Y') }}
-                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('nonacad', {{ $non_acads_distinction->id }})"></i>
+                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('nonacad', {{ $non_acads_distinction->id }})"></i>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -744,9 +744,9 @@
                     <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
                         <p class="p-1 w-full font-bold">MEMBERSHIP IN ASSOCIATION/ORGANIZATION</p>
                         @if ($assOrgMemberships && $assOrgMemberships->isNotEmpty())
-                            <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditMemberships"></i>
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditMemberships"></i>
                         @endif
-                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddMemberships"></i>
+                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddMemberships"  title="Add"></i>
                     </div>
 
                     @if ($assOrgMemberships && $assOrgMemberships->isNotEmpty())
@@ -762,7 +762,7 @@
                                     <tr class="dark:text-gray-200">
                                         <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $assOrgMembership->ass_org_name }}</td>
                                         <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $assOrgMembership->position }}
-                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('membership', {{ $assOrgMembership->id }})"></i>
+                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('membership', {{ $assOrgMembership->id }})"></i>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -774,9 +774,9 @@
                     <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
                         <p class="p-1 w-full font-bold">CHARACTER REFERENCES</p>
                         @if ($references && $references->isNotEmpty())
-                            <i class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditReferences"></i>
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditReferences"></i>
                         @endif
-                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddReferences"></i>
+                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddReferences" title="Add"></i>
                     </div>
 
                     @if ($references && $references->isNotEmpty())
@@ -796,7 +796,7 @@
                                         <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->address }}</td>
                                         <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->tel_number }}</td>
                                         <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->mobile_number }}
-                                            <i class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('refs', {{ $reference->id }})"></i>
+                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('refs', {{ $reference->id }})"></i>
                                         </td>
                                     </tr>
                                 @endforeach

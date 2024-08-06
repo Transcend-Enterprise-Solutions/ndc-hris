@@ -307,7 +307,7 @@
                             justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
-                            type="button" aria-describedby="excelExport">
+                            type="button" title="Export Payroll">
                             <div wire:loading wire:target="exportExcel" style="margin-right: 5px">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
@@ -315,7 +315,6 @@
                             <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
                             <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                         </button>
-                        <div id="excelExport" class="absolute -top-5 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap rounded bg-gray-600 px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:text-black" role="tooltip">Export Payroll</div>
                     </div>
 
                 </div>
@@ -419,25 +418,21 @@
                                                     <button wire:click="viewPayroll({{ $payroll->user_id }})" 
                                                         class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                         -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                        focus:outline-none" aria-describedby="tooltip1">
+                                                        focus:outline-none" title="View">
                                                         <i class="fas fa-eye ml-3"></i>
                                                     </button>
-                                                    <!-- Tooltip Text -->
-                                                    <div id="tooltip1" class="absolute top-1/2 right-10 transform -translate-y-1/2 z-10 whitespace-nowrap rounded px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 bg-gray-600 dark:text-black" role="tooltip">View</div>
                                                 </div>
                                                 <div class="relative">
                                                     <button wire:click="exportPayslip({{ $payroll->user_id }})" 
                                                         class="peer inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 
                                                         text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
-                                                        aria-describedby="tooltip2">
+                                                        title="Export Payslip">
                                                         <i class="fas fa-file-export ml-4"></i>
                                                         <div wire:loading wire:target="exportPayslip({{ $payroll->user_id }})" style="margin-left: 5px">
                                                             <div class="spinner-border small text-primary" role="status">
                                                             </div>
                                                         </div>
                                                     </button>
-                                                    <!-- Tooltip Text -->
-                                                    <div id="tooltip2" class="absolute top-1/2 right-10 transform -translate-y-1/2 z-10 whitespace-nowrap rounded px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 bg-gray-600 dark:text-black" role="tooltip">Export Payslip</div>
                                                 </div>
                                             </td>
                                         </tr>

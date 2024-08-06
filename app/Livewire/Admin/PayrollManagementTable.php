@@ -81,9 +81,11 @@ class PayrollManagementTable extends Component
     public $w_holding_tax;
     public $philhealth;
     public $total_deduction;
+    public $deleteId;
+    public $deleteMessage;
 
     public function mount(){
-        $this->employees = User::all();
+        $this->employees = User::where('user_role', '=', 'emp')->get();
     }
 
     public function render(){
@@ -269,6 +271,33 @@ class PayrollManagementTable extends Component
         }
     }
 
+    public function toggleDelete($userId){
+        $this->deleteMessage = "payroll";
+        $this->deleteId = $userId;
+    }
+
+    public function deleteData(){
+        try {
+            $user = User::where('id', $this->deleteId)->first();
+            if ($user) {
+                $user->payrolls()->delete();
+                $this->resetVariables();
+                $message = "Payroll deleted successfully!";
+                $this->dispatch('notify', [
+                    'message' => $message,
+                    'type' => 'success'
+                ]);            
+            }
+        } catch (Exception $e) {
+            $this->dispatch('notify', [
+                'message' => "Payroll deletion was unsuccessful!",
+                'type' => 'error'
+            ]);
+            $this->resetVariables();
+            throw $e;
+        }
+    }
+
     public function resetVariables(){
         $this->resetValidation();
         $this->userId = null;
@@ -303,5 +332,7 @@ class PayrollManagementTable extends Component
         $this->w_holding_tax = null;
         $this->philhealth = null;
         $this->total_deduction = null;
+        $this->deleteId = null;
+        $this->deleteMessage = null;
     }
 }

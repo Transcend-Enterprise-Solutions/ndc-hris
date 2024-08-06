@@ -227,13 +227,11 @@
                             justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
-                            type="button"  aria-describedby="excelExport">
+                            type="button"  title="Export Payroll">
                             <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
                             <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                         </button>
-                        <div id="excelExport" class="absolute -top-5 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap rounded bg-gray-600 px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:text-black" role="tooltip">Export Payroll</div>
                     </div>
-
                 </div>
                 
             </div>
@@ -305,11 +303,14 @@
                                                         <button wire:click="toggleEditPayroll({{ $payroll->user_id }})" 
                                                             class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                             -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                            focus:outline-none"  aria-describedby="tooltip1">
+                                                            focus:outline-none" title="Edit">
                                                             <i class="fas fa-pencil-alt ml-3"></i>
                                                         </button>
-                                                        <!-- Tooltip Text -->
-                                                        <div id="tooltip1" class="absolute top-1/2 right-10 transform -translate-y-1/2 z-10 whitespace-nowrap rounded px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 bg-gray-600 dark:text-black" role="tooltip">Edit Payroll</div>
+                                                        <button wire:click="toggleDelete({{ $payroll->user_id }})" 
+                                                            class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                            dark:hover:text-red-900" title="Delete">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -556,6 +557,37 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </x-modal>
+
+    {{-- Delete Modal --}}
+    <x-modal id="deleteModal" maxWidth="md" wire:model="deleteId" centered>
+        <div class="p-4">
+            <div class="mb-4 text-slate-900 dark:text-gray-100 font-bold">
+                Confirm Deletion
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">
+                Are you sure you want to delete this {{ $deleteMessage }}?
+            </label>
+            <form wire:submit.prevent='deleteData'>
+                <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
+                    <button class="mr-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        <div wire:loading wire:target="deleteData" style="margin-bottom: 5px;">
+                            <div class="spinner-border small text-primary" role="status">
+                            </div>
+                        </div>
+                        Delete
+                    </button>
+                    <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                        Cancel
+                    </p>
+                </div>
+            </form>
+
         </div>
     </x-modal>
 
