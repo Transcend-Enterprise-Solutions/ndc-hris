@@ -107,13 +107,13 @@
                                                     <button @click="$wire.openApproveModal({{ $leaveApplication->id }})"
                                                         class="text-blue-500 {{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                         :disabled="{{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'true' : 'false' }}">
-                                                        <i class="bi bi-check-lg"></i>
+                                                        <i class="bi bi-check-lg" title="Approve"></i>
                                                     </button>
                                                     <button
                                                         @click="$wire.openDisapproveModal({{ $leaveApplication->id }})"
                                                         class="text-red-500 {{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                         :disabled="{{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'true' : 'false' }}">
-                                                        <i class="bi bi-x"></i>
+                                                        <i class="bi bi-x" title="Disapprove"></i>
                                                     </button>
                                                 </td>
                                             </tr>
