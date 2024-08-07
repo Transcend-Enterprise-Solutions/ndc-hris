@@ -38,7 +38,7 @@ class MyDocumentsTable extends Component
     {
         $this->droppedFile = $fileData;
         $this->fileSelected = true;
-        $this->dispatch('swal', ['title' => 'Document selected successfully!', 'icon' => 'success']);
+        $this->dispatch('swal', ['title' => 'File selected please click upload document to save', 'icon' => 'success']);
     }
 
     public function uploadDocument()
