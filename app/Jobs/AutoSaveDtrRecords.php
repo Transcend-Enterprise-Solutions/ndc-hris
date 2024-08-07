@@ -32,7 +32,7 @@ class AutoSaveDtrRecords implements ShouldQueue
             echo "Processing date: {$currentDate}\n";
             Log::info("Processing date: {$currentDate}");
 
-            $users = User::all();
+            $users = User::where('user_role', 'emp')->get();
 
             foreach ($users as $user) {
                 echo "Processing user: {$user->emp_code}\n";

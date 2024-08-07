@@ -43,7 +43,7 @@ class EmpDocumentsTable extends Component
     public function loadEmployeesWithoutUpload()
     {
         $this->employeesWithoutUpload = [];
-        $allEmployees = User::all();
+        $allEmployees = User::where('user_role', 'emp')->get();
 
         foreach ($this->tabs as $key => $label) {
             $employeesWithDocument = EmployeeDocument::where('document_type', $key)
