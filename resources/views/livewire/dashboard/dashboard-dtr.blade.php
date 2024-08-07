@@ -1,46 +1,56 @@
-<div x-data="dashboardDtr()"
-     x-init="init()"
-     class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-    <h2 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-white">Employee DTR For the last 30 days</h2>
+<div x-data="dashboardDtr()" x-init="init()" class="p-6 bg-gradient-to-br from-indigo-100 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-xl">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">Employee DTR For the last 30 days</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Attendance Chart -->
-        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
-            <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Attendance Overview</h3>
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Attendance Overview</h3>
             <canvas id="attendanceChart"></canvas>
         </div>
 
         <!-- Overtime Chart -->
-        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
-            <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Overtime Trends</h3>
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Overtime Trends</h3>
             <canvas id="overtimeChart"></canvas>
         </div>
 
         <!-- Late Chart -->
-        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
-            <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Late Arrivals</h3>
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Late Arrivals</h3>
             <canvas id="lateChart"></canvas>
         </div>
 
         <!-- Summary Stats -->
-        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
-            <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">30-Day Summary</h3>
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">30-Day Summary</h3>
             <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white dark:bg-gray-600 p-4 rounded-lg shadow">
-                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Present</p>
-                    <p class="text-3xl font-bold text-green-600 dark:text-green-400">{{ $totalPresent }}</p>
+                <div class="bg-green-400 p-4 rounded-lg shadow text-white">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-user-check text-2xl mr-2"></i>
+                        <p class="text-sm font-medium">Total Present</p>
+                    </div>
+                    <p class="text-3xl font-bold">{{ $totalPresent }}</p>
                 </div>
-                <div class="bg-white dark:bg-gray-600 p-4 rounded-lg shadow">
-                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Absent</p>
-                    <p class="text-3xl font-bold text-red-600 dark:text-red-400">{{ $totalAbsent }}</p>
+                <div class="bg-red-500 p-4 rounded-lg shadow text-white">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-user-times text-2xl mr-2"></i>
+                        <p class="text-sm font-medium">Total Absent</p>
+                    </div>
+                    <p class="text-3xl font-bold">{{ $totalAbsent }}</p>
                 </div>
-                <div class="bg-white dark:bg-gray-600 p-4 rounded-lg shadow">
-                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Late</p>
-                    <p class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{{ $totalLate }}</p>
+                <div class="bg-yellow-300 p-4 rounded-lg shadow text-white">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-user-clock text-2xl mr-2"></i>
+                        <p class="text-sm font-medium">Total Late</p>
+                    </div>
+                    <p class="text-3xl font-bold">{{ $totalLate }}</p>
                 </div>
-                <div class="bg-white dark:bg-gray-600 p-4 rounded-lg shadow">
-                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Avg. Overtime</p>
-                    <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ $avgOvertime }}</p>
+                <div class="bg-blue-400 p-4 rounded-lg shadow text-white">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-clock text-2xl mr-2"></i>
+                        <p class="text-sm font-medium">Avg. Overtime</p>
+                    </div>
+                    <p class="text-3xl font-bold">{{ $avgOvertime }}</p>
                 </div>
             </div>
         </div>
@@ -48,6 +58,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.0.6/dist/alpine.min.js" defer></script>
 <script>
     function dashboardDtr() {
         return {
@@ -59,11 +70,6 @@
             init() {
                 this.renderCharts();
             },
-            renderCharts() {
-                this.renderAttendanceChart();
-                this.renderOvertimeChart();
-                this.renderLateChart();
-            },
             getChartOptions(title) {
                 return {
                     responsive: true,
@@ -71,29 +77,47 @@
                         legend: {
                             position: 'top',
                             labels: {
-                                color: document.querySelector('html').classList.contains('dark') ? 'white' : 'black'
+                                color: '#6B7280',
+                                font: {
+                                    weight: 'bold'
+                                }
                             }
                         },
                         title: {
                             display: true,
                             text: title,
-                            color: document.querySelector('html').classList.contains('dark') ? 'white' : 'black'
+                            color: '#374151',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
                         }
                     },
                     scales: {
                         x: {
                             ticks: {
-                                color: document.querySelector('html').classList.contains('dark') ? 'white' : 'black'
+                                color: '#6B7280'
+                            },
+                            grid: {
+                                color: 'rgba(107, 114, 128, 0.1)'
                             }
                         },
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                color: document.querySelector('html').classList.contains('dark') ? 'white' : 'black'
+                                color: '#6B7280'
+                            },
+                            grid: {
+                                color: 'rgba(107, 114, 128, 0.1)'
                             }
                         }
                     }
                 };
+            },
+            renderCharts() {
+                this.renderAttendanceChart();
+                this.renderOvertimeChart();
+                this.renderLateChart();
             },
             renderAttendanceChart() {
                 const ctx = document.getElementById('attendanceChart').getContext('2d');
@@ -105,17 +129,17 @@
                             {
                                 label: 'Present',
                                 data: @json($attendanceData->pluck('present_count')),
-                                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                                backgroundColor: 'rgba(52, 211, 153, 0.8)',
                             },
                             {
                                 label: 'Absent',
                                 data: @json($attendanceData->pluck('absent_count')),
-                                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                                backgroundColor: 'rgba(248, 113, 113, 0.8)',
                             },
                             {
                                 label: 'Late',
                                 data: @json($attendanceData->pluck('late_count')),
-                                backgroundColor: 'rgba(255, 206, 86, 0.6)',
+                                backgroundColor: 'rgba(251, 191, 36, 0.8)',
                             },
                         ],
                     },
@@ -134,8 +158,10 @@
                                 $parts = explode(':', $day['total_overtime']);
                                 return floatval($parts[0]) + floatval($parts[1]) / 60;
                             })),
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            tension: 0.1,
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            fill: true,
+                            tension: 0.4
                         }],
                     },
                     options: this.getChartOptions('Overtime Trends')
@@ -153,13 +179,15 @@
                                 $parts = explode(':', $day['total_late']);
                                 return floatval($parts[0]) + floatval($parts[1]) / 60;
                             })),
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            tension: 0.1,
+                            borderColor: 'rgba(234, 88, 12, 1)',
+                            backgroundColor: 'rgba(234, 88, 12, 0.2)',
+                            fill: true,
+                            tension: 0.4
                         }],
                     },
                     options: this.getChartOptions('Late Arrivals')
                 });
-            },
-        };
+            }
+        }
     }
 </script>
