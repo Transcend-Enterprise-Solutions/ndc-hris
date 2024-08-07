@@ -1,17 +1,17 @@
-<div class="p-6 bg-white dark:bg-gray-900 rounded-xl shadow-md">
+<div class="p-6 bg-gradient-to-br from-indigo-100 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-md">
     <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">
         Document Requests Analytics
     </h2>
 
     <div class="grid grid-cols-2 gap-6">
         <!-- Total Requests -->
-        <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+        <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-100 p-4 rounded-lg shadow-sm">
             <div class="flex flex-col">
                 <div class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mr-2">
                     Total Requests
                 </div>
 
-                <div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
+                <div class="text-2xl sm:text-3xl font-bold text-gray-900 ">
                     {{ $totalRequests }}
                 </div>
             </div>
@@ -23,7 +23,7 @@
         <!-- Pending Requests -->
         <div class="flex items-center justify-between bg-yellow-100 dark:bg-yellow-900 p-4 rounded-lg shadow-sm">
             <div class="flex flex-col">
-                <div class="text-xs sm:text-sm font-medium text-yellow-800 dark:text-yellow-300">
+                <div class="text-xs sm:text-sm font-medium text-yellow-800 dark:text-gray-300">
                     Pending Requests
                 </div>
                 <div class="text-2xl sm:text-3xl font-bold text-yellow-600 dark:text-yellow-400">
@@ -53,11 +53,11 @@
         <!-- Average Completion Time -->
         <div class="flex items-center justify-between bg-blue-100 dark:bg-blue-900 p-4 rounded-lg shadow-sm">
             <div class="flex flex-col">
-                <div class="text-xs sm:text-sm font-medium text-blue-800 dark:text-blue-300">
+                <div class="text-xs sm:text-xs font-medium text-blue-800 dark:text-blue-300">
                     Avg. Completion Time
                 </div>
                 <div class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">
-                    {{ gmdate('H:i:s', $averageCompletionTime) }}
+                    {{ gmdate('H:i', $averageCompletionTime) }}
                 </div>
             </div>
             <div class="flex-shrink-0 text-blue-400 dark:text-blue-500">
