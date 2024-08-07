@@ -48,7 +48,7 @@
                                                     <a href="{{ Storage::url($document->file_path) }}" download class="text-blue-500 hover:text-blue-700" title="Download">
                                                         <i class="fas fa-download"></i>
                                                     </a>
-                                                    <button @click="$wire.confirmDelete({{ $document->id }})" class="text-red-500 hover:text-red-700" title="Delete" :disabled="$wire.isDeleting">
+                                                    <button wire:click="confirmDelete({{ $document->id }})" class="text-red-500 hover:text-red-700" title="Delete" :disabled="$wire.isDeleting">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </td>
@@ -83,30 +83,33 @@
 
     <!-- delete Confirmation Modal -->
     <div x-show="showDeleteModal" x-cloak
-    class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
-   <div @click.away="showDeleteModal = false"
-        x-show="showDeleteModal"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 translate-y-4"
-        x-transition:enter-end="opacity-100 translate-y-0"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 translate-y-0"
-        x-transition:leave-end="opacity-0 translate-y-4"
-        class="bg-white dark:bg-gray-800 p-6 mx-auto max-w-lg rounded-2xl">
-       <div class="flex items-center justify-between pb-4">
-           <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">Confirm Deletion</h3>
-           <button @click="showDeleteModal = false" class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
-               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-               </svg>
-           </button>
-       </div>
-       <p class="mb-4 text-gray-800 dark:text-gray-300">Are you sure you want to delete this document request?</p>
-       <div class="flex justify-end space-x-4">
-           <button @click="showDeleteModal = false" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded">Cancel</button>
-           <button @click="$wire.deleteRequest(deleteRequestId); showDeleteModal = false" class="px-4 py-2 bg-red-500 text-white rounded">Delete</button>
-       </div>
-   </div>
+        class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
+        <div x-show="showDeleteModal" x-cloak
+        class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
+        <div @click.away="showDeleteModal = false"
+            x-show="showDeleteModal"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 translate-y-4"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 translate-y-4"
+            class="bg-white dark:bg-gray-800 p-6 mx-auto max-w-lg rounded-2xl">
+            <div class="flex items-center justify-between pb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">Confirm Deletion</h3>
+                <button @click="showDeleteModal = false" class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <p class="mb-4 text-gray-800 dark:text-gray-300">Are you sure you want to delete this document?</p>
+            <div class="flex justify-end space-x-4">
+                <button @click="showDeleteModal = false" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded">Cancel</button>
+                <button wire:click="deleteRequest" @click="showDeleteModal = false" class="px-4 py-2 bg-red-500 text-white rounded">Delete</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 

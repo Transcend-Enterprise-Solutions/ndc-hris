@@ -62,7 +62,7 @@ class EmpDocumentsTable extends Component
         $this->dispatch('show-delete-modal');
     }
 
-    public function deleteDocument()
+    public function deleteRequest()
     {
         if ($this->documentToDelete) {
             $this->isDeleting = true;
@@ -77,23 +77,24 @@ class EmpDocumentsTable extends Component
                 $document->delete();
 
                 $this->loadDocuments();
-                $this->dispatch('notify', [
-                    'message' => 'Document deleted successfully!',
-                    'type' => 'success'
+                $this->loadEmployeesWithoutUpload(); // Reload this as well
+                $this->dispatch('swal', [
+                    'title' => 'Document deleted successfully!',
+                    'icon' => 'success'
                 ]);
             } catch (\Exception $e) {
-                $this->dispatch('notify', [
-                    'message' => 'An error occurred while deleting the document.',
-                    'type' => 'error'
+                $this->dispatch('swal', [
+                    'title' => 'An error occurred while deleting the document.',
+                    'icon' => 'error'
                 ]);
             } finally {
                 $this->isDeleting = false;
                 $this->documentToDelete = null;
             }
         } else {
-            $this->dispatch('notify', [
-                'message' => 'No document selected for deletion!',
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => 'No document selected for deletion!',
+                'icon' => 'error'
             ]);
         }
     }

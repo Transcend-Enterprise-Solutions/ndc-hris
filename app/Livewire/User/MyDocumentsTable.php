@@ -38,7 +38,7 @@ class MyDocumentsTable extends Component
     {
         $this->droppedFile = $fileData;
         $this->fileSelected = true;
-        $this->dispatch('notify', ['message' => 'Document selected successfully!', 'type' => 'success']);
+        $this->dispatch('swal', ['title' => 'Document selected successfully!', 'icon' => 'success']);
     }
 
     public function uploadDocument()
@@ -85,7 +85,7 @@ class MyDocumentsTable extends Component
 
             $this->reset(['file', 'droppedFile', 'documentType']);
             $this->fileSelected = false;
-            $this->dispatch('notify', ['message' => 'Document uploaded successfully!', 'type' => 'success']);
+            $this->dispatch('swal', ['title' => 'Document uploaded successfully!', 'icon' => 'success']);
             $this->dispatch('documentUploaded');
         } catch (\Exception $e) {
             $this->error = 'Error uploading document: ' . $e->getMessage();
@@ -122,9 +122,9 @@ class MyDocumentsTable extends Component
         if ($document && $document->user_id === Auth::id()) {
             Storage::delete($document->file_path);
             $document->delete();
-            $this->dispatch('notify', ['message' => 'Document deleted successfully!', 'type' => 'success']);
+            $this->dispatch('swal', ['title' => 'Document deleted successfully!', 'icon' => 'success']);
         } else {
-            $this->dispatch('notify', ['message' => 'Document not found or unauthorized!', 'type' => 'error']);
+            $this->dispatch('swal', ['title' => 'Document not found or unauthorized!', 'icon' => 'error']);
         }
 
         $this->isDeleting = false;
