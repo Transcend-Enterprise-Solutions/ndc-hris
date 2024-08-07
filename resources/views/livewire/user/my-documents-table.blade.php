@@ -77,8 +77,8 @@
 
                     <!-- Remove File Button -->
                     <div x-show="$wire.fileSelected" class="mt-2 flex items-center">
-                        <p class="mr-2 text-sm text-slate-700 dark:text-slate-300">Selected File: <span x-text="file?.name"></span></p>
-                        <button @click="clearFile" class="text-red-500 hover:text-red-700" title="Remove File">
+                        <p class="mr-2 text-sm text-slate-700 dark:text-slate-300" wire:loading.remove wire:target="file">Selected File: <span x-text="file?.name"></span></p>
+                        <button @click="clearFile" class="text-red-500 hover:text-red-700" title="Remove File" wire:loading.remove wire:target="file">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
