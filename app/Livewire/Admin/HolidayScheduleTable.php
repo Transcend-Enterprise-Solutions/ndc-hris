@@ -60,9 +60,9 @@ class HolidayScheduleTable extends Component
             ]
         );
 
-        $this->dispatch('notify', [
-            'message' => $this->holidayId ? 'Holiday updated successfully.' : 'Holiday created successfully.',
-            'type' => 'success'
+        $this->dispatch('swal', [
+            'title' => $this->holidayId ? 'Holiday updated successfully.' : 'Holiday created successfully.',
+            'icon' => 'success'
         ]);
 
         $this->closeModal();
@@ -91,9 +91,9 @@ class HolidayScheduleTable extends Component
         Holiday::find($this->holidayToDelete)->delete();
         $this->confirmingHolidayDeletion = false;
         $this->loadHolidays();
-        $this->dispatch('notify', [
-            'message' => 'Holiday deleted successfully!',
-            'type' => 'success'
+        $this->dispatch('swal', [
+            'title' => 'Holiday deleted successfully!',
+            'icon' => 'success'
         ]);
     }
 

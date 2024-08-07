@@ -109,9 +109,9 @@ class AdminDtrTable extends Component
             'endDate' => $this->endDate,
             'signatoryName' => $this->signatoryName,
         ]);
-        $this->dispatch('notify', [
-            'message' => 'DTR Exported Successfully!',
-            'type' => 'success'
+        $this->dispatch('swal', [
+            'title' => 'DTR Exported Successfully!',
+            'icon' => 'success'
         ]);
 
         return response()->streamDownload(function () use ($pdf) {

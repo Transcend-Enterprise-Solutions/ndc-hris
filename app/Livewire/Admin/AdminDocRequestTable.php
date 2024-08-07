@@ -70,15 +70,15 @@ class AdminDocRequestTable extends Component
                 $request->date_completed = now();
             }
             $request->save();
-            $this->dispatch('notify', [
-                'message' => $message,
-                'type' => 'success'
+            $this->dispatch('swal', [
+                'title' => $message,
+                'icon' => 'success'
             ]);
             $this->loadRequests();
         } else {
-            $this->dispatch('notify', [
-                'message' => 'Document request not found!',
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => 'Document request not found!',
+                'icon' => 'error'
             ]);
         }
     }
@@ -91,9 +91,9 @@ class AdminDocRequestTable extends Component
 
         $request = DocRequest::find($requestId);
         if (!$request) {
-            $this->dispatch('notify', [
-                'message' => 'Document request not found!',
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => 'Document request not found!',
+                'icon' => 'error'
             ]);
             return;
         }
@@ -105,9 +105,9 @@ class AdminDocRequestTable extends Component
         $request->date_completed = now();
         $request->save();
 
-        $this->dispatch('notify', [
-            'message' => 'Document uploaded successfully!',
-            'type' => 'success'
+        $this->dispatch('swal', [
+            'title' => 'Document uploaded successfully!',
+            'icon' => 'success'
         ]);
 
         $this->uploadedFile[$requestId] = null;
@@ -118,9 +118,9 @@ class AdminDocRequestTable extends Component
     {
         $request = DocRequest::find($id);
         if (!$request || !$request->file_path) {
-            $this->dispatch('notify', [
-                'message' => 'Document not found!',
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => 'Document not found!',
+                'icon' => 'error'
             ]);
             return;
         }
@@ -129,9 +129,9 @@ class AdminDocRequestTable extends Component
         if (file_exists($filePath)) {
             return response()->download($filePath, $request->filename);
         } else {
-            $this->dispatch('notify', [
-                'message' => 'File not found!',
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => 'File not found!',
+                'icon' => 'error'
             ]);
         }
     }
@@ -144,15 +144,15 @@ class AdminDocRequestTable extends Component
                 Storage::disk('public')->delete($request->file_path);
             }
             $request->delete();
-            $this->dispatch('notify', [
-                'message' => 'Document Request Deleted!',
-                'type' => 'success'
+            $this->dispatch('swal', [
+                'title' => 'Document Request Deleted!',
+                'icon' => 'success'
             ]);
             $this->loadRequests();
         } else {
-            $this->dispatch('notify', [
-                'message' => 'Document request not found!',
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => 'Document request not found!',
+                'icon' => 'success'
             ]);
         }
     }

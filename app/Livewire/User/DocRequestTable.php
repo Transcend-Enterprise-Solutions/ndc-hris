@@ -30,9 +30,9 @@ class DocRequestTable extends Component
             'status' => 'pending',
         ]);
 
-        $this->dispatch('notify', [
-            'message' => 'Document Request sent successfully!',
-            'type' => 'success'
+        $this->dispatch('swal', [
+            'title' => 'Document Request sent successfully!',
+            'icon' => 'success'
         ]);
         $this->documentType = null;
     }
@@ -52,9 +52,9 @@ class DocRequestTable extends Component
         } else {
             session()->flash('error', 'File not found on the server.');
         }
-        $this->dispatch('notify', [
-            'message' => 'Document downloaded successfully!',
-            'type' => 'success'
+        $this->dispatch('swal', [
+            'title' => 'Document downloaded successfully!',
+            'icon' => 'success'
         ]);
     }
 

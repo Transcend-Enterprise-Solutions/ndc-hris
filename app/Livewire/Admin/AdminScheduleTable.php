@@ -123,9 +123,9 @@ class AdminScheduleTable extends Component
             ]
         );
 
-        $this->dispatch('notify', [
-            'message' => $this->scheduleId ? 'Schedule updated successfully.' : 'Schedule created successfully.',
-            'type' => 'success'
+        $this->dispatch('swal', [
+            'title' => $this->scheduleId ? 'Schedule updated successfully.' : 'Schedule created successfully.',
+            'icon' => 'success'
         ]);
 
         $this->closeModal();
@@ -157,9 +157,9 @@ class AdminScheduleTable extends Component
         DTRSchedule::find($this->scheduleToDelete)->delete();
         $this->confirmingScheduleDeletion = false;
         $this->loadSchedules();
-        $this->dispatch('notify', [
-            'message' => 'Schedule deleted successfully!',
-            'type' => 'success'
+        $this->dispatch('swal', [
+            'title' => 'Schedule deleted successfully!',
+            'icon' => 'success'
         ]);
     }
 
