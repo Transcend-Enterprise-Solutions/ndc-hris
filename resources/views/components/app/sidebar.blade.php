@@ -43,7 +43,11 @@
                                     <div class="flex items-center">
                                         <i class="bi bi-speedometer2 text-slate-400 dark:text-slate-300 mr-3"></i>
                                         <span
-                                            class="text-sm lg:hidden lg:sidebar-expanded:inline font-medium @if(Route::is('dashboard')){{ 'text-blue-500 dark:text-blue-500' }}@endif">Dashboard</span>
+                                            class="text-sm lg:hidden lg:sidebar-expanded:inline font-medium 
+                                            @if(Route::is('dashboard')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
+                                            :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                            Dashboard
+                                        </span>
                                     </div>
                                 </div>
                             </a>
@@ -224,12 +228,13 @@
 
                         <!-- Report Generation -->
                         <li class="px-3 py-2 rounded-lg mb-0 last:mb-0 @if(in_array(Request::segment(1), ['report-generation'])){{ 'bg-gray-200 dark:bg-slate-900' }}@endif">
-                            <a class="block transition duration-150 @if(Route::is('report-generation')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
+                            <a class="block text-black dark:text-white hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 @if(Route::is('report-generation')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
                                 href="{{ route('report-generation') }}" wire:navigate>
                                 <div class="flex items-center justify-between">
                                     <div class="grow flex items-center">
                                         <i class="bi bi-file-earmark-spreadsheet text-slate-400 mr-3"></i>
-                                        <span class="text-sm font-medium transition-opacity duration-300"
+                                        <span class="text-sm font-medium transition-opacity duration-300 
+                                            @if(Route::is('report-generation')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
                                             :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Report
                                             Generation</span>
                                     </div>
