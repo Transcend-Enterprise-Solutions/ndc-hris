@@ -420,21 +420,25 @@
                         </div>
                         <input id="dropzone-file" type="file" wire:model="files" multiple class="hidden" />
                     </label>
-    
+                
                     <!-- Display selected files -->
                     @if ($files)
                         <div class="mt-4">
                             <ul class="list-disc list-inside">
-                                @foreach ($files as $file)
-                                <li class="text-sm text-gray-700 dark:text-gray-300">
-                                    {{ $file->getClientOriginalName() }}
-                                </li>
+                                @foreach ($files as $index => $file)
+                                    <li class="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                                        {{ $file->getClientOriginalName() }}
+                                        <button type="button" wire:click="removeFile({{ $index }})" class="ml-2 text-red-500">
+                                            &times;
+                                        </button>
+                                    </li>
                                 @endforeach
                             </ul>
                         </div>
                     @endif
                     @error('files.*') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
+                
             </div>
 
             <div class="bg-gray-800 dark:bg-gray-200 p-2 text-white flex justify-center rounded-b-lg border">

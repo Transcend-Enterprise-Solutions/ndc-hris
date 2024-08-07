@@ -101,9 +101,14 @@ class AdminLeaveRequestTable extends Component
 
             $this->selectedApplication->save();
 
-            $this->dispatch('notify', [
-                'message' => "Leave application {$this->status} successfully!",
-                'type' => 'success'
+            // $this->dispatch('notify', [
+            //     'message' => "Leave application {$this->status} successfully!",
+            //     'type' => 'success'
+            // ]);
+
+            $this->dispatch('swal', [
+                'title' => "Leave application {$this->status} successfully!",
+                'icon' => 'success'
             ]);
 
             $this->closeApproveModal();
@@ -122,9 +127,14 @@ class AdminLeaveRequestTable extends Component
             $this->selectedApplication->approved_days = 0;
             $this->selectedApplication->save();
 
-            $this->dispatch('notify', [
-                'message' => "Leave application disapproved for reason: {$this->disapproveReason}!",
-                'type' => 'error'
+            // $this->dispatch('notify', [
+            //     'message' => "Leave application disapproved for reason: {$this->disapproveReason}!",
+            //     'type' => 'error'
+            // ]);
+
+            $this->dispatch('swal', [
+                'title' => "Leave application disapproved for reason: {$this->disapproveReason}!",
+                'icon' => 'success'
             ]);
 
             $this->closeDisapproveModal();

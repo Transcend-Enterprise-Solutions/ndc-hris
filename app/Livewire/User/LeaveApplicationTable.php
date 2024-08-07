@@ -220,14 +220,22 @@ class LeaveApplicationTable extends Component
             ]);
         }
 
-        $this->dispatch('notify', [
-            'message' => "Leave Application sent successfully!",
-            'type' => 'success'
+        $this->dispatch('swal', [
+            'title' => "Leave application sent successfully!",
+            'icon' => 'success'
         ]);
+
         $this->resetForm();
         $this->closeLeaveForm();
     }
 
+    public function removeFile($index)
+    {
+        if (isset($this->files[$index])) {
+            unset($this->files[$index]);
+            $this->files = array_values($this->files); // Reindex the array
+        }
+    }
 
     public function resetForm()
     {
