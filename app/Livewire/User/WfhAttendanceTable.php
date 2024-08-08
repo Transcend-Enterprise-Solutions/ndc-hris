@@ -41,11 +41,6 @@ class WfhAttendanceTable extends Component
 
     public function confirmPunch($state, $verifyType)
     {
-        if ($this->isButtonDisabled($state)) {
-            // If the button is disabled, don't proceed
-            return;
-        }
-
         $this->punchState = $state;
         $this->verifyType = $verifyType;
         $this->inputPassword = true;
@@ -75,11 +70,6 @@ class WfhAttendanceTable extends Component
 
     public function punch($state, $verifyType)
     {
-        if ($this->isButtonDisabled($state)) {
-            // If the button is disabled, don't proceed
-            return;
-        }
-
         $user = Auth::user();
         $punchTime = Carbon::now();
 
@@ -92,8 +82,6 @@ class WfhAttendanceTable extends Component
         ];
 
         Transaction::create($punchData);
-
-        // Update button states
         if ($verifyType == 'Morning In') {
             $this->morningInDisabled = true;
             $this->morningOutDisabled = false;
@@ -115,30 +103,22 @@ class WfhAttendanceTable extends Component
 
     public function morningIn()
     {
-        if (!$this->isButtonDisabled('morningIn')) {
-            $this->punch(0, 'Morning In');
-        }
+        $this->punch(0, 'Morning In');
     }
 
     public function morningOut()
     {
-        if (!$this->isButtonDisabled('morningOut')) {
-            $this->punch(1, 'Morning Out');
-        }
+        $this->punch(1, 'Morning Out');
     }
 
     public function afternoonIn()
     {
-        if (!$this->isButtonDisabled('afternoonIn')) {
-            $this->punch(0, 'Afternoon In');
-        }
+        $this->punch(0, 'Afternoon In');
     }
 
     public function afternoonOut()
     {
-        if (!$this->isButtonDisabled('afternoonOut')) {
-            $this->punch(1, 'Afternoon Out');
-        }
+        $this->punch(1, 'Afternoon Out');
     }
 
     public function resetVariables()
@@ -173,22 +153,6 @@ class WfhAttendanceTable extends Component
                     $this->afternoonOutDisabled = true;
                 }
             }
-        }
-    }
-
-    private function isButtonDisabled($button)
-    {
-        switch ($button) {
-            case 'morningIn':
-                return $this->morningInDisabled;
-            case 'morningOut':
-                return $this->morningOutDisabled;
-            case 'afternoonIn':
-                return $this->afternoonInDisabled;
-            case 'afternoonOut':
-                return $this->afternoonOutDisabled;
-            default:
-                return true;
         }
     }
 
