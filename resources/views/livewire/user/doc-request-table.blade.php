@@ -31,34 +31,36 @@
                 <div class="px-2 py-4 text-slate-700 dark:text-slate-300">
                     @foreach (['pending', 'preparing', 'completed', 'rejected'] as $status)
                         <div x-show="selectedTab === '{{ $status }}'" id="tabpanel{{ ucfirst($status) }}" role="tabpanel" aria-labelledby="tab{{ ucfirst($status) }}">
-                            <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
-                                <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
-                                    <tr class="whitespace-nowrap">
-                                        <th class="px-4 py-2 text-center">Document Type</th>
-                                        <th class="px-4 py-2 text-center">Date Requested</th>
-                                        <th class="px-4 py-2 text-center">Date Completed</th>
-                                        <th class="px-4 py-2 text-center">My Document</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($requests->where('status', $status) as $request)
-                                        <tr class="border-b dark:border-gray-600 whitespace-nowrap">
-                                            <td class="px-4 py-2 text-center">{{ $request->document_type }}</td>
-                                            <td class="px-4 py-2 text-center">{{ $request->date_requested->format('Y-m-d') }}</td>
-                                            <td class="px-4 py-2 text-center">{{ $request->date_completed ? $request->date_completed->format('Y-m-d') : 'N/A' }}</td>
-                                            <td class="px-4 py-2 text-center">
-                                                @if ($request->file_path)
-                                                    <button wire:click="downloadDocument({{ $request->id }})" class="text-blue-500 hover:underline">
-                                                        {{ $request->filename }} (Download)
-                                                    </button>
-                                                @else
-                                                    No Document
-                                                @endif
-                                            </td>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
+                                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                        <tr class="whitespace-nowrap">
+                                            <th class="px-4 py-2 text-center">Document Type</th>
+                                            <th class="px-4 py-2 text-center">Date Requested</th>
+                                            <th class="px-4 py-2 text-center">Date Completed</th>
+                                            <th class="px-4 py-2 text-center">My Document</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($requests->where('status', $status) as $request)
+                                            <tr class="border-b dark:border-gray-600 whitespace-nowrap">
+                                                <td class="px-4 py-2 text-center">{{ $request->document_type }}</td>
+                                                <td class="px-4 py-2 text-center">{{ $request->date_requested->format('Y-m-d') }}</td>
+                                                <td class="px-4 py-2 text-center">{{ $request->date_completed ? $request->date_completed->format('Y-m-d') : 'N/A' }}</td>
+                                                <td class="px-4 py-2 text-center">
+                                                    @if ($request->file_path)
+                                                        <button wire:click="downloadDocument({{ $request->id }})" class="text-blue-500 hover:underline">
+                                                            {{ $request->filename }} (Download)
+                                                        </button>
+                                                    @else
+                                                        No Document
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                             @if ($requests->where('status', $status)->isEmpty())
                                 <div class="p-4 text-center text-gray-500 dark:text-gray-300">
                                     No {{ ucfirst($status) }} requests available.
