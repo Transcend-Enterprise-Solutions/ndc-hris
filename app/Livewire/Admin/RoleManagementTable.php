@@ -213,9 +213,9 @@ class RoleManagementTable extends Component
                         $admin->delete();
                         $user->delete();
                         $this->resetVariables();
-                        $this->dispatch('notify', [
-                            'message' => "Account role updated successfully!",
-                            'type' => 'success'
+                        $this->dispatch('swal', [
+                            'title' => "Account role updated successfully!",
+                            'icon' => 'success'
                         ]);
                         return;
                     }
@@ -223,7 +223,7 @@ class RoleManagementTable extends Component
                     $this->validate([
                         'user_role' => 'required',
                         'department' => 'required',
-                        'admin_email' => 'required|email|unique:users,email',
+                        'admin_email' => 'required|email',
                     ]);
 
                     $admin = Admin::where('user_id', $user->id)
@@ -238,15 +238,15 @@ class RoleManagementTable extends Component
                 }
             }
             $this->resetVariables();
-            $this->dispatch('notify', [
-                'message' => "Account role updated successfully!",
-                'type' => 'success'
+            $this->dispatch('swal', [
+                'title' => "Account role updated successfully!",
+                'icon' => 'success'
             ]);
     
         } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => "Account role update was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Account role update was unsuccessful!",
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -281,20 +281,20 @@ class RoleManagementTable extends Component
                 Signatories::create([
                     'user_id' => $this->userId,
                     'signatory' => $this->signatory,
-                    'signatory_type' => 'payroll',
+                    'signatory_icon' => 'payroll',
                 ]);
                 $message = "Payroll signatory added successfully!";
             }
             $this->resetVariables();
-            $this->dispatch('notify', [
-                'message' => $message,
-                'type' => 'success'
+            $this->dispatch('swal', [
+                'title' => $message,
+                'icon' => 'success'
             ]);
     
         } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => "Payroll signatory update was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Payroll signatory update was unsuccessful!",
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -329,20 +329,20 @@ class RoleManagementTable extends Component
                 Signatories::create([
                     'user_id' => $this->userId,
                     'signatory' => $this->signatory,
-                    'signatory_type' => 'payslip',
+                    'signatory_icon' => 'payslip',
                 ]);
                 $message = "Payslip signatory added successfully!";
             }
             $this->resetVariables();
-            $this->dispatch('notify', [
-                'message' => $message,
-                'type' => 'success'
+            $this->dispatch('swal', [
+                'title' => $message,
+                'icon' => 'success'
             ]);
     
         } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => "Payslip signatory update was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Payslip signatory update was unsuccessful!",
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -378,15 +378,15 @@ class RoleManagementTable extends Component
                     default:
                         break;
                 } 
-                $this->dispatch('notify', [
-                    'message' => $message,
-                    'type' => 'success'
+                $this->dispatch('swal', [
+                    'title' => $message,
+                    'icon' => 'success'
                 ]);            
             }
         } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => "Deletion of " . $this->deleteMessage . "was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Deletion of " . $this->deleteMessage . "was unsuccessful!",
+                'icon' => 'error'
             ]);
             $this->resetVariables();
             throw $e;

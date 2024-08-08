@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use App\Exports\PayrollListExport;
 use App\Models\GeneralPayroll;
 use App\Models\Payrolls;
+use App\Models\SalaryGrade;
 use App\Models\User;
 use Exception;
 use Livewire\Component;
@@ -55,8 +56,10 @@ class PayrollManagementTable extends Component
     public $name;
     public $employee_number;
     public $office_division;
+    public $department;
     public $position;
-    public $sg_step;
+    public $sg;
+    public $step;
     public $rate_per_month;
     public $personal_economic_relief_allowance;
     public $gross_amount;
@@ -83,9 +86,11 @@ class PayrollManagementTable extends Component
     public $total_deduction;
     public $deleteId;
     public $deleteMessage;
+    public $salaryGrade;
 
     public function mount(){
         $this->employees = User::where('user_role', '=', 'emp')->get();
+        $this->salaryGrade = SalaryGrade::all();
     }
 
     public function render(){
@@ -94,9 +99,60 @@ class PayrollManagementTable extends Component
                     })
                     ->paginate(5);
         
+        if($this->userId){
+            $user = User::where('id', $this->userId)->first();
+            $this->employee_number = $user->emp_code;
+        }
+
+        if($this->rate_per_month && $this->personal_economic_relief_allowance){
+            $this->gross_amount = $this->rate_per_month + $this->personal_economic_relief_allowance;
+        }
+
+        $this->getRate();
+        
         return view('livewire.admin.payroll-management-table', [
             'payrolls' => $payrolls,
         ]);
+    }
+
+    public function getRate(){
+        if ($this->sg && $this->step) {
+            $salaryGrades = SalaryGrade::where('salary_grade', $this->sg);
+            switch ($this->step) {
+                case 1:
+                    $salaryGrade = $salaryGrades->select('step1 as step')->first();
+                    break;
+                case 2:
+                    $salaryGrade = $salaryGrades->select('step2 as step')->first();
+                    break;
+                case 3:
+                    $salaryGrade = $salaryGrades->select('step3 as step')->first();
+                    break;
+                case 4:
+                    $salaryGrade = $salaryGrades->select('step4 as step')->first();
+                    break;
+                case 5:
+                    $salaryGrade = $salaryGrades->select('step5 as step')->first();
+                    break;
+                case 6:
+                    $salaryGrade = $salaryGrades->select('step6 as step')->first();
+                    break;
+                case 7:
+                    $salaryGrade = $salaryGrades->select('step7 as step')->first();
+                    break;
+                case 8:
+                    $salaryGrade = $salaryGrades->select('step8 as step')->first();
+                    break;
+                default:
+                    $salaryGrade = null;
+                    break;
+            }
+            if ($salaryGrade) {
+                $this->rate_per_month = $salaryGrade->step;
+            } else {
+                $this->rate_per_month = 0;
+            }
+        }
     }
 
     public function toggleDropdown(){
@@ -122,6 +178,7 @@ class PayrollManagementTable extends Component
             $this->allCol = true;
         }
     }
+
     public function exportExcel(){
         $filters = [
             'search' => $this->search,
@@ -135,12 +192,14 @@ class PayrollManagementTable extends Component
         $this->userId = $userId;
         try {
             $payroll = Payrolls::where('user_id', $userId)->first();
+            $sg = explode('-', $payroll->sg_step);
             if ($payroll) {
                 $this->name = $payroll->name;
                 $this->employee_number = $payroll->employee_number;
                 $this->office_division = $payroll->office_division;
                 $this->position = $payroll->position;
-                $this->sg_step = $payroll->sg_step;
+                $this->sg = $sg[0];
+                $this->step = $sg[1];
                 $this->rate_per_month = $payroll->rate_per_month;
                 $this->personal_economic_relief_allowance = $payroll->personal_economic_relief_allowance;
                 $this->gross_amount = $payroll->gross_amount;
@@ -183,12 +242,15 @@ class PayrollManagementTable extends Component
             $payroll = Payrolls::where('user_id', $this->userId)->first();
             $user = User::where('id', $this->userId)->first();
     
+            $sg_step = implode('-', [$this->sg, $this->step]);
+      
             $payrollData = [
                 'user_id' => $this->userId,
                 'employee_number' => $this->employee_number,
                 'office_division' => $this->office_division,
+                'department' => $this->department,
                 'position' => $this->position,
-                'sg_step' => $this->sg_step,
+                'sg_step' => $sg_step,
                 'rate_per_month' => $this->rate_per_month,
                 'personal_economic_relief_allowance' => $this->personal_economic_relief_allowance,
                 'gross_amount' => $this->gross_amount,
@@ -220,7 +282,8 @@ class PayrollManagementTable extends Component
                     'employee_number' => 'required|max:100',
                     'office_division' => 'required|max:100',
                     'position' => 'required|max:100',
-                    'sg_step' => 'required|max:100',
+                    'sg' => 'required|numeric',
+                    'step' => 'required|numeric',
                     'rate_per_month' => 'required|numeric',
                     'gross_amount' => 'required|numeric',
                     'pagibig_contribution' => 'required|numeric',
@@ -236,7 +299,8 @@ class PayrollManagementTable extends Component
                     'employee_number' => 'required|max:100',
                     'office_division' => 'required|max:100',
                     'position' => 'required|max:100',
-                    'sg_step' => 'required|max:100',
+                    'sg' => 'required|numeric',
+                    'step' => 'required|numeric',
                     'rate_per_month' => 'required|numeric',
                     'gross_amount' => 'required|numeric',
                     'pagibig_contribution' => 'required|numeric',
@@ -256,16 +320,16 @@ class PayrollManagementTable extends Component
             $this->resetVariables();
             $this->editPayroll = null;
             $this->addPayroll = null;
-            $this->dispatch('notify', [
-                'message' => $message,
-                'type' => 'success'
+            $this->dispatch('swal', [
+                'title' => $message,
+                'icon' => 'success'
             ]);
     
         } catch (Exception $e) {
             // $this->resetVariables();
-            // $this->dispatch('notify', [
-            //     'message' => "Payroll update was unsuccessful!",
-            //     'type' => 'error'
+            // $this->dispatch('swal', [
+            //     'title' => "Payroll update was unsuccessful!",
+            //     'icon' => 'error'
             // ]);
             throw $e;
         }
@@ -283,15 +347,15 @@ class PayrollManagementTable extends Component
                 $user->payrolls()->delete();
                 $this->resetVariables();
                 $message = "Payroll deleted successfully!";
-                $this->dispatch('notify', [
-                    'message' => $message,
-                    'type' => 'success'
+                $this->dispatch('swal', [
+                    'title' => $message,
+                    'icon' => 'success'
                 ]);            
             }
         } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => "Payroll deletion was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Payroll deletion was unsuccessful!",
+                'icon' => 'error'
             ]);
             $this->resetVariables();
             throw $e;
@@ -307,7 +371,8 @@ class PayrollManagementTable extends Component
         $this->employee_number = null;
         $this->office_division = null;
         $this->position = null;
-        $this->sg_step = null;
+        $this->sg = null;
+        $this->step = null;
         $this->rate_per_month = null;
         $this->personal_economic_relief_allowance = null;
         $this->gross_amount = null;

@@ -559,7 +559,7 @@
                         <label for="admin_email" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Admin Email</label>
                         <input type="text" id="admin_email" wire:model='admin_email' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                         @error('admin_email') 
-                            <span class="text-red-500 text-sm">The admin email is required!</span> 
+                            <span class="text-red-500 text-sm">{{ $message }}</span> 
                         @enderror
                     </div>
 

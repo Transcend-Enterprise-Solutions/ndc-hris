@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Exports\GeneralPayrollExport;
+use App\Models\Admin;
 use App\Models\EmployeesPayroll;
 use App\Models\GeneralPayroll;
 use App\Models\Payrolls;
@@ -393,20 +394,20 @@ class GeneralPayrollTable extends Component
                     );
                 }
     
-                $this->dispatch('notify', [
-                    'message' => 'General Payroll Saved!',
-                    'type' => 'success'
+                $this->dispatch('swal', [
+                    'title' => 'General Payroll Saved!',
+                    'icon' => 'success'
                 ]);
             }else{
-                $this->dispatch('notify', [
-                    'message' => 'Select date!',
-                    'type' => 'info'
+                $this->dispatch('swal', [
+                    'title' => 'Select date!',
+                    'icon' => 'info'
                 ]);
             }
         } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => 'Error: ' . $e->getMessage(),
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => 'Error: ' . $e->getMessage(),
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -453,9 +454,12 @@ class GeneralPayrollTable extends Component
                               \Carbon\Carbon::parse($dates['endDateSecondHalf'])->format('d') . " " .
                               \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('Y');
 
+                $pb = Admin::where('admin.user_id', $preparedBy->id)
+                    ->join('payrolls', 'payrolls.user_id', 'admin.payroll_id')
+                    ->first();
                 if ($payslip) {
                     $pdf = Pdf::loadView('pdf.monthly-payslip', [
-                        'preparedBy' => $preparedBy->payrolls,
+                        'preparedBy' => $pb,
                         'payslip' => $payslip,
                         'dates' => $dates,
                         'signatories' => $signatories,
@@ -469,14 +473,14 @@ class GeneralPayrollTable extends Component
                 }
             }
     
-            $this->dispatch('notify', [
-                'message' => 'Payslip exported!',
-                'type' => 'success'
+            $this->dispatch('swal', [
+                'title' => 'Payslip exported!',
+                'icon' => 'success'
             ]);
         } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => 'Unable to export payslip: ' . $e->getMessage(),
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => 'Unable to export payslip: ' . $e->getMessage(),
+                'icon' => 'error'
             ]);
         }
     }

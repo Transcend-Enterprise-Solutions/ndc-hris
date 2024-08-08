@@ -26,6 +26,9 @@
 
     @php
         $formatCurrency = function($value) {
+            if($value == null){
+                return '-';
+            }
             return '₱ ' . number_format((float)$value, 2, '.', ',');
         };
     @endphp
@@ -86,7 +89,7 @@
                 <tr>
                     <td class="dots">Basic Salary............................................................................................................................
                     </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip->rate_per_month) }}</td>
+                    <td class="currency" width="30%">{{ $payslip->rate_per_month ? $formatCurrency($payslip->rate_per_month) : '-' }}</td>
                 </tr>
                 <tr>
                     <td class="dots">Less: Late & Absences...........................................................................................................
@@ -301,7 +304,7 @@
                     <td width="20%"></td>
                     <td width="20%" style="font-weight:bold;">NET PAY</td>
                     <td width="40%"></td>
-                    <td class="currency" width="20%" style="border-bottom: 1px solid black; font-weight:bold;">{{ $formatCurrency($payslip->total_amount_due) }}</td>
+                    <td class="currency" width="20%" style="border-bottom: 1px solid black; font-weight:bold;">{{ $payslip->total_amount_due ? $formatCurrency($payslip->total_amount_due) : '-' }}</td>
                 </tr>
                 <tr>
                     <td width="20%"></td>
@@ -312,7 +315,7 @@
                         {{ $dates['endDateSecondHalf'] ? \Carbon\Carbon::parse($dates['startDateSecondHalf'])->format('d') : '' }}
                         {{ $dates['startDateFirstHalf'] ? \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('Y') : '' }} 
                     </td>
-                    <td class="currency" width="20%" style="border-bottom: 1px solid black;">{{ $formatCurrency($payslip->net_amount_due_first_half) }}</td>
+                    <td class="currency" width="20%" style="border-bottom: 1px solid black;">{{ $payslip->net_amount_due_first_hal ? $formatCurrency($payslip->net_amount_due_first_half) : '-' }}</td>
                 </tr>
                 <tr>
                     <td width="20%"></td>
@@ -323,7 +326,7 @@
                         {{ $dates['endDateSecondHalf'] ? \Carbon\Carbon::parse($dates['endDateSecondHalf'])->format('d') : '' }}
                         {{ $dates['startDateFirstHalf'] ? \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('Y') : '' }} 
                     </td>
-                    <td class="currency" width="20%" style="border-bottom: 1px solid black;">{{ $formatCurrency($payslip->net_amount_due_second_half) }}</td>
+                    <td class="currency" width="20%" style="border-bottom: 1px solid black;">{{ $payslip->net_amount_due_second_half ? $formatCurrency($payslip->net_amount_due_second_half) : '-' }}</td>
                 </tr>
             </tbody>
         </table>

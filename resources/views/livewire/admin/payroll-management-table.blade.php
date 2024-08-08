@@ -343,7 +343,7 @@
                     
                     <div class="col-span-2">
                         <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
-                        <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
+                        <select id="userId" wire:model.live='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
                             {{ $addPayroll ? '' : 'disabled' }}>
                             <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
                             @foreach ($employees as $employee)
@@ -357,7 +357,7 @@
 
                     <div class="col-span-1">
                         <label for="employee_number" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Number</label>
-                        <input type="text" id="employee_number" wire:model='employee_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="text" id="employee_number" wire:model='employee_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('employee_number') 
                             <span class="text-red-500 text-sm">The employee number is required!</span> 
                         @enderror
@@ -372,6 +372,14 @@
                     </div>
 
                     <div class="col-span-1">
+                        <label for="department" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Department</label>
+                        <input type="text" id="department" wire:model='department' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        @error('department') 
+                            <span class="text-red-500 text-sm">The department is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
                         <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
                         <input type="text" id="position" wire:model='position' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                         @error('position') 
@@ -380,16 +388,39 @@
                     </div>
 
                     <div class="col-span-1">
-                        <label for="sg_step" class="block text-sm font-medium text-gray-700 dark:text-slate-400">SG - Step</label>
-                        <input type="text" id="sg_step" wire:model='sg_step' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                        @error('sg_step') 
-                            <span class="text-red-500 text-sm">The SG Step is required!</span> 
+                        <label for="sg" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Salary Grade</label>
+                        <select id="sg" wire:model.live='sg' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="">Select Salary Grade</option>
+                            @foreach ($salaryGrade as $sg)
+                                <option value="{{ $sg->salary_grade }}">{{ $sg->salary_grade }}</option>
+                            @endforeach
+                        </select>                        
+                        @error('sg') 
+                            <span class="text-red-500 text-sm">The salary grade is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="step" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Step</label>
+                        <select id="step" wire:model.live='step' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="">Select Step</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                        </select>                        
+                        @error('step') 
+                            <span class="text-red-500 text-sm">The step is required!</span> 
                         @enderror
                     </div>
 
                     <div class="col-span-1">
                         <label for="rate_per_month" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Rate per Month</label>
-                        <input type="number" step="0.01" id="rate_per_month" wire:model='rate_per_month' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="rate_per_month" wire:model='rate_per_month' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('rate_per_month') 
                             <span class="text-red-500 text-sm">The rate per month is required!</span> 
                         @enderror
@@ -397,12 +428,12 @@
 
                     <div class="col-span-1">
                         <label for="personal_economic_relief_allowance" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Personal Economic Relief Allowance</label>
-                        <input type="number" step="0.01" id="personal_economic_relief_allowance" wire:model='personal_economic_relief_allowance' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="personal_economic_relief_allowance" wire:model.live='personal_economic_relief_allowance' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
 
                     <div class="col-span-1">
                         <label for="gross_amount" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Gross Amount</label>
-                        <input type="number" step="0.01" id="gross_amount" wire:model='gross_amount' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="gross_amount" wire:model='gross_amount' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('gross_amount') 
                             <span class="text-red-500 text-sm">The gross amount is required!</span> 
                         @enderror

@@ -714,15 +714,15 @@ class PersonalDataSheetTable extends Component
                 ]);                
 
                 $this->personalInfo = null;                                                
-                $this->dispatch('notify', [
-                    'message' => 'Personal Information updated successfully!', 
-                    'type' => 'success'
+                $this->dispatch('swal', [
+                    'title' => 'Personal Information updated successfully!', 
+                    'icon' => 'success'
                 ]);
             }
         }catch(Exception $e){
-            $this->dispatch('notify', [
-                'message' => 'Personal Information update was unsuccessful!', 
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => 'Personal Information update was unsuccessful!', 
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -751,9 +751,9 @@ class PersonalDataSheetTable extends Component
                         'tel_number' => $this->spouse_emp_tel_num,
                     ]); 
                     
-                    $this->dispatch('notify', [
-                        'message' => "Spouse's info updated successfully!", 
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Spouse's info updated successfully!", 
+                        'icon' => 'success'
                     ]);
                 }else{
                     EmployeesSpouse::create([
@@ -769,9 +769,9 @@ class PersonalDataSheetTable extends Component
                         'tel_number' => $this->spouse_emp_tel_num,
                     ]);
 
-                    $this->dispatch('notify', [
-                        'message' => "Spouse's info added successfully!", 
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Spouse's info added successfully!", 
+                        'icon' => 'success'
                     ]); 
                 }
 
@@ -779,9 +779,9 @@ class PersonalDataSheetTable extends Component
                 $this->addSpouse = null;                                                
             }
         }catch(Exception $e){
-            $this->dispatch('notify', [
-                'message' => "Spouse's info update was unsuccessful!", 
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Spouse's info update was unsuccessful!", 
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -803,9 +803,9 @@ class PersonalDataSheetTable extends Component
                         'middle_name' => $this->father_middle_name,
                         'name_extension' => $this->father_name_extension,
                     ]);  
-                    $this->dispatch('notify', [
-                        'message' => "Father's name updated successfully!", 
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Father's name updated successfully!", 
+                        'icon' => 'success'
                     ]);           
                 }else{
                     EmployeesFather::create([
@@ -815,9 +815,9 @@ class PersonalDataSheetTable extends Component
                         'middle_name' => $this->father_middle_name,
                         'name_extension' => $this->father_name_extension,
                     ]);
-                    $this->dispatch('notify', [
-                        'message' => "Father's name added successfully!", 
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Father's name added successfully!", 
+                        'icon' => 'success'
                     ]);
                 }
 
@@ -825,9 +825,9 @@ class PersonalDataSheetTable extends Component
                 $this->addFather = null;
             }
         }catch(Exception $e){
-            $this->dispatch('notify', [
-                'message' => "Father's name update was unsuccessful!", 
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Father's name update was unsuccessful!", 
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -862,9 +862,9 @@ class PersonalDataSheetTable extends Component
                             ]);
                         }
                     }
-                    $this->dispatch('notify', [
-                        'message' => "Children's info updated successfully!", 
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Children's info updated successfully!", 
+                        'icon' => 'success'
                     ]);
                     $this->editChildren = null;
                     $this->addChildren = null;
@@ -882,9 +882,9 @@ class PersonalDataSheetTable extends Component
                             'childs_birth_date' => $child['childs_birth_date'],
                         ]);
                     }
-                    $this->dispatch('notify', [
-                        'message' => "Children's info added successfully!", 
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Children's info added successfully!", 
+                        'icon' => 'success'
                     ]);
                     $this->editChildren = null;
                     $this->addChildren = null;
@@ -893,9 +893,9 @@ class PersonalDataSheetTable extends Component
             }
         }catch(Exception $e){
             $this->resetValidation();
-            $this->dispatch('notify', [
-                'message' => "Children's info update was unsuccessful!", 
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Children's info update was unsuccessful!", 
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -917,9 +917,9 @@ class PersonalDataSheetTable extends Component
                         'middle_name' => $this->mother_middle_name,
                         'name_extension' => $this->mother_name_extension,
                     ]);      
-                    $this->dispatch('notify', [
-                        'message' => "Mother's name updated successfully!", 
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Mother's name updated successfully!", 
+                        'icon' => 'success'
                     ]);          
                 }else{
                     EmployeesMother::create([
@@ -929,9 +929,9 @@ class PersonalDataSheetTable extends Component
                         'middle_name' => $this->mother_middle_name,
                         'name_extension' => $this->mother_name_extension,
                     ]);  
-                    $this->dispatch('notify', [
-                        'message' => "Mother's name added successfully!", 
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Mother's name added successfully!", 
+                        'icon' => 'success'
                     ]);
                 }
 
@@ -939,9 +939,9 @@ class PersonalDataSheetTable extends Component
                 $this->addMother = null;                                                   
             }
         }catch(Exception $e){
-            $this->dispatch('notify', [
-                'message' => "Mother's name update was unsuccessful!", 
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Mother's name update was unsuccessful!", 
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -994,9 +994,9 @@ class PersonalDataSheetTable extends Component
                     $this->editEducBackground = null;
                     $this->addEducBackground = null;
                     $this->newEducation = [];
-                    $this->dispatch('notify', [
-                        'message' => "Education background updated successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Education background updated successfully!",
+                        'icon' => 'success'
                     ]);
                 }else{
                     $this->validate([
@@ -1045,17 +1045,17 @@ class PersonalDataSheetTable extends Component
                     $this->editEducBackground = null;
                     $this->addEducBackground = null;
                     $this->newEducation = [];
-                    $this->dispatch('notify', [
-                        'message' => "Education background added successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Education background added successfully!",
+                        'icon' => 'success'
                     ]);
                 }
             }
         } catch (Exception $e) {
             $this->resetValidation();
-            $this->dispatch('notify', [
-                'message' => "Education background update was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Education background update was unsuccessful!",
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -1102,9 +1102,9 @@ class PersonalDataSheetTable extends Component
                     }
                     $this->editEligibility = null;
                     $this->addEligibility = null;
-                    $this->dispatch('notify', [
-                        'message' => "Eligibilities updated successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Eligibilities updated successfully!",
+                        'icon' => 'success'
                     ]);
                 }else{
                     $this->validate([
@@ -1127,17 +1127,17 @@ class PersonalDataSheetTable extends Component
                     $this->editEligibility = null;
                     $this->addEligibility = null;
                     $this->newEligibilities = [];
-                    $this->dispatch('notify', [
-                        'message' => "Eligibilities added successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Eligibilities added successfully!",
+                        'icon' => 'success'
                     ]);
                 }
             }
         } catch (Exception $e) {
             $this->resetValidation();
-            $this->dispatch('notify', [
-                'message' => "Eligibilities update was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Eligibilities update was unsuccessful!",
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -1188,9 +1188,9 @@ class PersonalDataSheetTable extends Component
                     }
                     $this->editWorkExp = null;
                     $this->addWorkExp = null;
-                    $this->dispatch('notify', [
-                        'message' => "Work Experience updated successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Work Experience updated successfully!",
+                        'icon' => 'success'
                     ]);
                 }else{
                     $this->validate([
@@ -1217,17 +1217,17 @@ class PersonalDataSheetTable extends Component
                     $this->editWorkExp = null;
                     $this->addWorkExp = null;
                     $this->newWorkExperiences = [];
-                    $this->dispatch('notify', [
-                        'message' => "Work Experience added successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Work Experience added successfully!",
+                        'icon' => 'success'
                     ]);
                 }
             }
         } catch (Exception $e) {
             $this->resetValidation();
-            $this->dispatch('notify', [
-                'message' => "Work Experience update was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Work Experience update was unsuccessful!",
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -1276,9 +1276,9 @@ class PersonalDataSheetTable extends Component
                     }
                     $this->editVoluntaryWorks = null;
                     $this->addVoluntaryWorks = null;
-                    $this->dispatch('notify', [
-                        'message' => "Voluntary Works updated successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Voluntary Works updated successfully!",
+                        'icon' => 'success'
                     ]);
                 }else{
                     $this->validate([
@@ -1303,17 +1303,17 @@ class PersonalDataSheetTable extends Component
                     }
                     $this->editVoluntaryWorks = null;
                     $this->addVoluntaryWorks = null;
-                    $this->dispatch('notify', [
-                        'message' => "Voluntary Works added successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Voluntary Works added successfully!",
+                        'icon' => 'success'
                     ]);
                 }
             }
         } catch (Exception $e) {
             $this->resetValidation();
-            $this->dispatch('notify', [
-                'message' => "Voluntary Works update was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Voluntary Works update was unsuccessful!",
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -1362,9 +1362,9 @@ class PersonalDataSheetTable extends Component
                     }
                     $this->editLearnDev = null;
                     $this->addLearnDev = null;
-                    $this->dispatch('notify', [
-                        'message' => "Learning and Development updated successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Learning and Development updated successfully!",
+                        'icon' => 'success'
                     ]);
                 }else{
                     $this->validate([
@@ -1390,17 +1390,17 @@ class PersonalDataSheetTable extends Component
                     $this->editLearnDev = null;
                     $this->addLearnDev = null;
                     $this->newLearnAndDevs = [];
-                    $this->dispatch('notify', [
-                        'message' => "Learning and Development added successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Learning and Development added successfully!",
+                        'icon' => 'success'
                     ]);
                 }
             }
         } catch (Exception $e) {
             $this->resetValidation();
-            $this->dispatch('notify', [
-                'message' => "Learning and Development update was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Learning and Development update was unsuccessful!",
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -1443,9 +1443,9 @@ class PersonalDataSheetTable extends Component
     
                     $this->editSkills = null;
                     $this->addSkills = null;
-                    $this->dispatch('notify', [
-                        'message' => "Skills updated successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Skills updated successfully!",
+                        'icon' => 'success'
                     ]);
                 }else{
                     $this->validate([
@@ -1462,17 +1462,17 @@ class PersonalDataSheetTable extends Component
                     $this->editSkills = null;
                     $this->addSkills = null;
                     $this->myNewSkills = [];
-                    $this->dispatch('notify', [
-                        'message' => "Skills added successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Skills added successfully!",
+                        'icon' => 'success'
                     ]);
                 }
             }
         } catch (Exception $e) {
             $this->resetValidation();
-            $this->dispatch('notify', [
-                'message' => "Skills update was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Skills update was unsuccessful!",
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -1516,9 +1516,9 @@ class PersonalDataSheetTable extends Component
     
                     $this->editHobbies = null;
                     $this->addHobbies = null;
-                    $this->dispatch('notify', [
-                        'message' => "Hobbies updated successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Hobbies updated successfully!",
+                        'icon' => 'success'
                     ]);
                 }else{
                     $this->validate([
@@ -1535,17 +1535,17 @@ class PersonalDataSheetTable extends Component
                     $this->editHobbies = null;
                     $this->addHobbies = null;
                     $this->myNewHobbies = [];
-                    $this->dispatch('notify', [
-                        'message' => "Hobbies added successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Hobbies added successfully!",
+                        'icon' => 'success'
                     ]);
                 }
             }
         } catch (Exception $e) {
             $this->resetValidation();
-            $this->dispatch('notify', [
-                'message' => "Hobbies update was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Hobbies update was unsuccessful!",
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -1586,9 +1586,9 @@ class PersonalDataSheetTable extends Component
     
                     $this->editNonAcad = null;
                     $this->addNonAcad = null;
-                    $this->dispatch('notify', [
-                        'message' => "Non-Academic Distinction/Recognition updated successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Non-Academic Distinction/Recognition updated successfully!",
+                        'icon' => 'success'
                     ]);
                 }else{
                     $this->validate([
@@ -1609,17 +1609,17 @@ class PersonalDataSheetTable extends Component
                     $this->editNonAcad = null;
                     $this->addNonAcad = null;
                     $this->newNonAcads = [];
-                    $this->dispatch('notify', [
-                        'message' => "Non-Academic Distinction/Recognition added successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Non-Academic Distinction/Recognition added successfully!",
+                        'icon' => 'success'
                     ]);
                 }
             }
         } catch (Exception $e) {
             $this->resetValidation();
-            $this->dispatch('notify', [
-                'message' => "Non-Academic Distinction/Recognition update was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Non-Academic Distinction/Recognition update was unsuccessful!",
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -1656,9 +1656,9 @@ class PersonalDataSheetTable extends Component
     
                     $this->editMemberships = null;
                     $this->addMemberships = null;
-                    $this->dispatch('notify', [
-                        'message' => "Membership in Association/Organization updated successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Membership in Association/Organization updated successfully!",
+                        'icon' => 'success'
                     ]);
                 }else{
                     $this->validate([
@@ -1677,17 +1677,17 @@ class PersonalDataSheetTable extends Component
                     $this->editMemberships = null;
                     $this->addMemberships = null;
                     $this->newMemberships = [];
-                    $this->dispatch('notify', [
-                        'message' => "Membership in Association/Organization added successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Membership in Association/Organization added successfully!",
+                        'icon' => 'success'
                     ]);
                 }
             }
         } catch (Exception $e) {
             $this->resetValidation();
-            $this->dispatch('notify', [
-                'message' => "Membership in Association/Organization update was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Membership in Association/Organization update was unsuccessful!",
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -1738,9 +1738,9 @@ class PersonalDataSheetTable extends Component
                     $this->addReferences = null;
                     $this->myReferences = [];
                     $this->myNewReferences = [];
-                    $this->dispatch('notify', [
-                        'message' => "Character References updated successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Character References updated successfully!",
+                        'icon' => 'success'
                     ]);
                 }else{
                     $this->validate([
@@ -1767,17 +1767,17 @@ class PersonalDataSheetTable extends Component
                     $this->addReferences = null;
                     $this->myReferences = [];
                     $this->myNewReferences = [];
-                    $this->dispatch('notify', [
-                        'message' => "Character References added successfully!",
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => "Character References added successfully!",
+                        'icon' => 'success'
                     ]);
                 }
             }
         } catch (Exception $e) {
             $this->resetValidation();
-            $this->dispatch('notify', [
-                'message' => "Character References update was unsuccessful!",
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => "Character References update was unsuccessful!",
+                'icon' => 'error'
             ]);
             throw $e;
         }
@@ -1871,18 +1871,18 @@ class PersonalDataSheetTable extends Component
                 }
 
                 $this->delete = null;
-                $this->dispatch('notify', [
-                    'message' => $message . " deleted successfully!",
-                    'type' => 'success'
+                $this->dispatch('swal', [
+                    'title' => $message . " deleted successfully!",
+                    'icon' => 'success'
                 ]);
                 $this->thisData = null;
                 $this->thisDataId = null;
                 $this->deleteMessage = null;
             }
         }catch(Exception $e){
-            $this->dispatch('notify', [
-                'message' => "Deletion was unsuccessful!",
-                'type' => 'success'
+            $this->dispatch('swal', [
+                'title' => "Deletion was unsuccessful!",
+                'icon' => 'success'
             ]);
             throw $e;
         }
