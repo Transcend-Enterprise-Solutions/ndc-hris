@@ -52,6 +52,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         return view('livewire.admin.admin-leave-request'); })->name('/leave-management/admin-leave-request');
     Route::get('/leave-management/admin-leave-records', function () {
         return view('livewire.admin.admin-leave-records'); })->name('/leave-management/admin-leave-records');
+    Route::get('/leave-management/admin-leave-credits', function () {
+        return view('livewire.admin.admin-leave-credits'); })->name('/leave-management/admin-leave-credits');
 
     // Payroll Tabs -------------------------------------------------------------------------- //
     Route::get('/payroll/payroll-management', function () {
