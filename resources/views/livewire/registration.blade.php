@@ -487,7 +487,7 @@
                             <div class="w-full">
                                 <label for="emp_code" class="text-sm text-gray-700">Employee Code<span
                                         class="text-red-600">*</span></label>
-                                <input type="text" id="emp_code" wire:model.live="emp_code"
+                                <input type="number" id="emp_code" wire:model.live="emp_code"
                                     class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 @error('emp_code') <span class="text-red-500 text-sm">This field is required!</span>
                                 @enderror
