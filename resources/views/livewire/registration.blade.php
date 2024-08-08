@@ -475,13 +475,21 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 gap-2 columns-1">
+                        <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                             <div class="w-full">
-                                <label for="email" class="text-sm text-gray-700">Email Address <span
+                                <label for="email" class="text-sm text-gray-700">Email Address<span
                                         class="text-red-600">*</span></label>
                                 <input type="text" id="email" wire:model.live="email"
                                     class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                 @error('email') <span class="text-red-500 text-sm">This field is required!</span>
+                                @enderror
+                            </div>
+                            <div class="w-full">
+                                <label for="emp_code" class="text-sm text-gray-700">Employee Code<span
+                                        class="text-red-600">*</span></label>
+                                <input type="text" id="emp_code" wire:model.live="emp_code"
+                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                @error('emp_code') <span class="text-red-500 text-sm">This field is required!</span>
                                 @enderror
                             </div>
                         </div>
