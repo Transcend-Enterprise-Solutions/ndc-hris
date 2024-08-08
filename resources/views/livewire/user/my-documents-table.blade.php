@@ -1,7 +1,7 @@
 <div>
     <div class="w-full">
         <div class="flex justify-center w-full">
-            <div class="overflow-x-auto w-full bg-white dark:bg-gray-800 rounded-2xl px-6 shadow ">
+            <div class=" w-full bg-white dark:bg-gray-800 rounded-2xl px-6 shadow ">
                 <div class="pt-4 pb-4">
                     <h1 class="text-lg font-bold text-center text-black dark:text-white">My Documents</h1>
                 </div>
@@ -113,31 +113,33 @@
                 @if ($documents->count() > 0)
                     <div class="mt-8 pb-8">
                         <h2 class="text-lg font-semibold mb-4">Uploaded Documents</h2>
-                        <table class="min-w-full bg-white dark:bg-gray-800">
-                            <thead>
-                                <tr>
-                                    <th class="py-2 px-4 border-b">Document Type</th>
-                                    <th class="py-2 px-4 border-b">Uploaded At</th>
-                                    <th class="py-2 px-4 border-b">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($documents as $document)
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full bg-white dark:bg-gray-800">
+                                <thead>
                                     <tr>
-                                        <td class="py-2 px-4 border-b text-center align-middle">{{ $document->document_type }}</td>
-                                        <td class="py-2 px-4 border-b text-center align-middle">{{ $document->created_at->setTimezone('Asia/Manila')->format('M d, Y H:i') }}</td>
-                                        <td class="py-2 px-4 border-b flex justify-center space-x-2">
-                                            <button wire:click="downloadDocument({{ $document->id }})" class="text-blue-500 hover:text-blue-700" title="Download">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                            <button wire:click="confirmDelete({{ $document->id }})" class="text-red-500 hover:text-red-700" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
+                                        <th class="py-2 px-4 border-b whitespace-nowrap">Document Type</th>
+                                        <th class="py-2 px-4 border-b whitespace-nowrap">Uploaded At</th>
+                                        <th class="py-2 px-4 border-b whitespace-nowrap">Actions</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($documents as $document)
+                                        <tr>
+                                            <td class="py-2 px-4 border-b text-center align-middle whitespace-nowrap">{{ $document->document_type }}</td>
+                                            <td class="py-2 px-4 border-b text-center align-middle whitespace-nowrap">{{ $document->created_at->setTimezone('Asia/Manila')->format('M d, Y H:i') }}</td>
+                                            <td class="py-2 px-4 border-b flex justify-center space-x-2 whitespace-nowrap">
+                                                <button wire:click="downloadDocument({{ $document->id }})" class="text-blue-500 hover:text-blue-700" title="Download">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                                <button wire:click="confirmDelete({{ $document->id }})" class="text-red-500 hover:text-red-700" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 @endif
                 <div class="mt-4">
