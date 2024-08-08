@@ -118,7 +118,7 @@ class Registration extends Component
             'residential_selectedCity' => 'required',
             'residential_selectedBarangay' => 'required',
             'r_house_street' => 'required',
-            'mobile_number' => 'required',
+            'mobile_number' => ['required', 'regex:/^\+639\d{9}$|^\d{11}$/'],
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
             'c_password' => 'required|same:password',
