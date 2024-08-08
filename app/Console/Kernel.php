@@ -15,8 +15,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('fetch:biotime-transactions')->everyMinute();
-        // $schedule->job(new AutoSaveDtrRecords())->daily();
-        $schedule->job(new AutoSaveDtrRecords())->everyMinute();
+        $schedule->job(new AutoSaveDtrRecords())->daily();
         $schedule->command('calculate:monthly-leave-credits')->monthlyOn(1, '00:00');
     }
 
