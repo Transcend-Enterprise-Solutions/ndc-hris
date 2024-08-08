@@ -28,7 +28,7 @@ class LeaveApplicationTable extends Component
     public $start_date;
     public $end_date;
     public $type_of_leave = '';
-    public $details_of_leave = [];
+    public $details_of_leave = '';
     public $philippines;
     public $abroad;
     public $inHospital;
@@ -66,7 +66,7 @@ class LeaveApplicationTable extends Component
         $this->start_date = null;
         $this->end_date = null;
         $this->type_of_leave = '';
-        $this->details_of_leave = [];
+        $this->details_of_leave = '';
         $this->commutation = null;
         $this->philippines = null;
         $this->abroad = null;
@@ -87,6 +87,26 @@ class LeaveApplicationTable extends Component
         }
     }
 
+    public function updatedTypeOfLeave()
+    {
+        $this->details_of_leave = '';
+        $this->philippines = '';
+        $this->abroad = '';
+        $this->inHospital = '';
+        $this->outPatient = '';
+        $this->specialIllnessForWomen = '';
+    }
+
+    public function resetOtherFields($field)
+    {
+        $fields = ['philippines', 'abroad', 'inHospital', 'outPatient', 'specialIllnessForWomen'];
+        foreach ($fields as $f) {
+            if ($f !== $field) {
+                $this->{$f} = '';
+            }
+        }
+    }
+
     public function submitLeaveApplication()
     {
         $this->validate([
@@ -94,6 +114,7 @@ class LeaveApplicationTable extends Component
             'position' => 'required',
             'salary' => 'required',
             'type_of_leave' => 'required',
+            'details_of_leave' => 'required',
             'number_of_days' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
@@ -113,35 +134,25 @@ class LeaveApplicationTable extends Component
             }
         }
 
-        $leaveDetails = [];
-        foreach ($this->details_of_leave as $leaveType) {
-            if ($leaveType === 'Within the Philippines') {
-                $leaveDetails[] = $leaveType . ' = ' . $this->philippines;
-            }
-            if ($leaveType === 'Abroad') {
-                $leaveDetails[] = $leaveType . ' = ' . $this->abroad;
-            }
-            if ($leaveType === 'In Hospital') {
-                $leaveDetails[] = $leaveType . ' = ' . $this->inHospital;
-            }
-            if ($leaveType === 'Out Patient') {
-                $leaveDetails[] = $leaveType . ' = ' . $this->outPatient;
-            }
-            if ($leaveType === 'Women Special Illness') {
-                $leaveDetails[] = $leaveType . ' = ' . $this->specialIllnessForWomen;
-            }
-            if ($leaveType === 'Completion of Masters Degree') {
-                $leaveDetails[] = $leaveType;
-            }
-            if ($leaveType === 'BAR/Board Examination Review') {
-                $leaveDetails[] = $leaveType;
-            }
-            if ($leaveType === 'Monetization of Leave Credits') {
-                $leaveDetails[] = $leaveType;
-            }
-            if ($leaveType === 'Terminal Leave') {
-                $leaveDetails[] = $leaveType;
-            }
+        $leaveDetails = '';
+        switch ($this->details_of_leave) {
+            case 'Within the Philippines':
+                $leaveDetails = $this->details_of_leave . ' = ' . $this->philippines;
+                break;
+            case 'Abroad':
+                $leaveDetails = $this->details_of_leave . ' = ' . $this->abroad;
+                break;
+            case 'In Hospital':
+                $leaveDetails = $this->details_of_leave . ' = ' . $this->inHospital;
+                break;
+            case 'Out Patient':
+                $leaveDetails = $this->details_of_leave . ' = ' . $this->outPatient;
+                break;
+            case 'Women Special Illness':
+                $leaveDetails = $this->details_of_leave . ' = ' . $this->specialIllnessForWomen;
+                break;
+            default:
+                $leaveDetails = $this->details_of_leave;
         }
 
         $leaveDetailsString = implode(', ', $leaveDetails);
@@ -272,6 +283,8 @@ class LeaveApplicationTable extends Component
         return view('livewire.user.leave-application-table', [
             'leaveApplications' => $leaveApplications,
             'totalCredits' => $leaveCredits ? $leaveCredits->total_credits : 0,
+            'claimableCredits' => $leaveCredits ? $leaveCredits->claimable_credits : 0,
+            'totalClaimedCredits' => $leaveCredits ? $leaveCredits->total_claimed_credits : 0,
         ]);
     }
 }

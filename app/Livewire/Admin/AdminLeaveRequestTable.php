@@ -192,7 +192,8 @@ class AdminLeaveRequestTable extends Component
             $user_id = $this->selectedApplication->user_id;
             $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
             if ($leaveCredits) {
-                $leaveCredits->total_credits -= $days;
+                $leaveCredits->claimable_credits -= $days;
+                $leaveCredits->total_claimed_credits += $days;
                 $leaveCredits->save();
             }
 

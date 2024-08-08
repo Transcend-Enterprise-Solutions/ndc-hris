@@ -14,6 +14,7 @@ class Registration extends Component
 {
     public $user_role = 'emp';
     public $active_status = '';
+    public $emp_code;
 
     #Step 1
     public $first_name;
@@ -121,6 +122,7 @@ class Registration extends Component
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
             'c_password' => 'required|same:password',
+            'emp_code' => 'required',
         ]);
 
         if (!$this->isPasswordComplex($this->password)) {
@@ -130,7 +132,7 @@ class Registration extends Component
 
         $currentYear = now()->year;
         $userCount = User::whereYear('created_at', $currentYear)->count();
-        // $empCode = 'EMP' . $currentYear . ($userCount + 1);
+        //$empCode = $currentYear . ($userCount + 1);
 
         $user = User::create([
             'name' => $this->first_name . " " . $this->middle_name . " " . $this->surname,
@@ -138,6 +140,7 @@ class Registration extends Component
             'password' => $this->password,
             'user_role' => 'emp',
             'active_status' => $this->active_status,
+            'emp_code' => $this->emp_code,
         ]);
 
         $user->userData()->create([

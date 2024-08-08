@@ -5,20 +5,41 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use App\Models\LeaveApplication;
 use Illuminate\Support\Facades\Auth;
+use Livewire\WithPagination;
 
 class AdminLeaveRecordsTable extends Component
 {
+    use WithPagination;
 
     public $search = '';
+    public $activeTab = 'pending';
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function setActiveTab($tab)
+    {
+        $this->activeTab = $tab;
+        $this->resetPage();
+    }
 
     public function render()
     {
-        // Fetch all leave applications with the related user name
-        $leaveApplications = LeaveApplication::with('user') // Assuming there's a relationship set up
+        $leaveApplications = \App\Models\LeaveApplication::query()
             ->whereHas('user', function ($query) {
                 $query->where('name', 'like', '%' . $this->search . '%');
             })
-            ->whereIn('status', ['Approved', 'Disapproved'])
+            ->when($this->activeTab === 'pending', function ($query) {
+                return $query->where('status', 'Pending');
+            })
+            ->when($this->activeTab === 'approved', function ($query) {
+                return $query->where('status', 'Approved');
+            })
+            ->when($this->activeTab === 'disapproved', function ($query) {
+                return $query->where('status', 'Disapproved');
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
