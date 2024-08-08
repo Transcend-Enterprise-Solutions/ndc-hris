@@ -82,7 +82,7 @@
                         <tr class="whitespace-nowrap">
                             <th scope="col" class="px-4 py-2 text-center">Total Credits</th>
                             <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th>
-                            <th scope="col" class="px-4 py-2 text-center">Total Claimed Credits</th>
+                            <th scope="col" class="px-4 py-2 text-center">Claimed Credits</th>
                             {{-- <th scope="col" class="px-4 py-2 text-center">Month</th>
                             <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th> --}}
                             {{-- <th scope="col" class="px-4 py-2 text-center">Status</th> --}}
@@ -121,7 +121,7 @@
                         <tr class="whitespace-nowrap">
                             <th scope="col" class="px-4 py-2 text-center">Total Credits</th>
                             <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th>
-                            <th scope="col" class="px-4 py-2 text-center">Total Claimed Credits</th>
+                            <th scope="col" class="px-4 py-2 text-center">Claimed Credits</th>
                             {{-- <th scope="col" class="px-4 py-2 text-center">Month</th>
                             <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th> --}}
                             {{-- <th scope="col" class="px-4 py-2 text-center">Status</th> --}}
