@@ -36,7 +36,7 @@
                     @foreach ($filteredSchedules as $schedule)
                         <tr class="border-b dark:border-gray-600 whitespace-nowrap">
                             <td class="px-4 py-2 text-center">{{ $schedule->emp_code }}</td>
-                            <td class="px-4 py-2 text-center">{{ $schedule->user->name }}</td>
+                            <td class="px-4 py-2 text-center">{{ $schedule->user?->name ?? 'No User Assigned' }}</td>
                             <td class="px-4 py-2 text-center">{{ implode(', ', explode(',', $schedule->wfh_days)) }}</td>
                             <td class="px-4 py-2 text-center">{{ $schedule->default_start_time }} - {{ $schedule->default_end_time }}</td>
                             <td class="px-4 py-2 text-center">{{ $schedule->start_date->format('Y-m-d') }} - {{ $schedule->end_date->format('Y-m-d') }}</td>
