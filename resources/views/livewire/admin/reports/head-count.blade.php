@@ -1,20 +1,35 @@
-<div
-    class="flex flex-col col-span-full sm:col-span-full bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+<div class="flex flex-col col-span-full sm:col-span-full bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+
+    <style>
+        @-webkit-keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner-border {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            vertical-align: text-bottom;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            -webkit-animation: spinner-border .75s linear infinite;
+            animation: spinner-border .75s linear infinite;
+            color: rgb(0, 196, 75);
+        }
+    </style>
+
     <div class="px-5 pt-5">
         <header class="flex justify-between items-start mb-2">
             <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Head Count Report</h2>
-            <div class="relative inline-flex" x-data="{ open: false }">
-                <button class="rounded-full"
-                    :class="open ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400': 'text-slate-400 hover:text-slate-500 dark:text-slate-500 dark:hover:text-slate-400'"
-                    aria-haspopup="true" @click.prevent="open = !open" :aria-expanded="open">
-                    <span class="sr-only">Menu</span>
-                    <svg class="w-8 h-8 fill-current" viewBox="0 0 32 32">
-                        <circle cx="16" cy="16" r="2" />
-                        <circle cx="10" cy="16" r="2" />
-                        <circle cx="22" cy="16" r="2" />
-                    </svg>
-                </button>
-            </div>
         </header>
     </div>
     
@@ -36,24 +51,47 @@
                         <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
                         <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                     </button>
+                    <div wire:loading wire:target="exportTotalEmployee" style="margin-right: 5px">
+                        <div class="spinner-border small text-primary" role="status">
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <!-- New Employees This Month Card -->
-            <div class="col-span-full sm:col-span-6 bg-yellow-100 dark:bg-yellow-800 p-4 rounded-lg shadow flex justify-between">
-                <div>
-                    <h3 class="text-sm font-semibold text-yellow-800 dark:text-gray-100">New Employees This Month</h3>
-                    <p class="text-3xl font-bold text-yellow-700 dark:text-yellow-100">{{ $newEmployeesThisMonth }}</p>
-                </div>
+            <div class="col-span-full sm:col-span-6 bg-yellow-100 dark:bg-yellow-800 p-4 rounded-lg shadow block">
+                <div class="block sm:flex justify-between items-center">
+                    <div class="flex justify-left items-center">
+                        <h3 class="text-sm font-semibold text-yellow-800 dark:text-gray-100">
+                            @if($month)
+                                Employees for the month of {{ $month ? \Carbon\Carbon::parse($month)->format('F') : '' }} {{ $month ? \Carbon\Carbon::parse($month)->format('Y') : '' }}
+                            @else
+                                New Employees This Month
+                            @endif
+                        </h3>
+                    </div>
+                    <div class="w-full sm:w-auto flex items-center relative">
+                        <input type="month" id="month" wire:model.live='month' value="{{ $month }}"
+                        class="px-2 py-1.5 block w-32 sm:text-sm border border-teal-800 rounded-md 
+                            text-teal-800 dark:bg-teal-400 cursor-pointer">
 
-                 <!-- Export to Excel -->
-                 <div class="w-1/5 sm:w-auto flex justify-center items-center h-full">
-                    <button wire:click="exportUsers" 
-                        class="inline-flex items-center focus:outline-none"
-                        type="button" title="Export to Excel">
-                        <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
-                        <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
-                    </button>
+                        <!-- Export to Excel -->
+                        <div class="flex justify-center items-center w-1/5 h-full ml-2" style="width: 32px; height: 32px;">
+                            <button wire:click="exportTotalEmployeeThisMonth" 
+                                class="inline-flex items-center focus:outline-none"
+                                type="button" title="Export to Excel" wire:loading.remove>
+                                <img class="flex dark:hidden" src="/images/export-excel.png" alt="">
+                                <img class="hidden dark:block" src="/images/export-excel-dark.png" alt="">
+                            </button>
+                            <div wire:loading wire:target="exportTotalEmployeeThisMonth" style="margin-right: 5px">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-yellow-700 dark:text-yellow-100">{{ $newEmployeesThisMonth }}</p>
                 </div>
             </div>
                         
@@ -72,12 +110,16 @@
 
                                 <!-- Export to Excel -->
                                 <div class="w-1/5 sm:w-auto flex justify-center items-center h-full">
-                                    <button wire:click="exportUsers" 
+                                    <button wire:click="exportTotalEmployeeInDepartment('{{ $dept->department }}')" 
                                         class="inline-flex items-center focus:outline-none"
                                         type="button" title="Export to Excel">
                                         <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
                                         <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                                     </button>
+                                    <div wire:loading wire:target="exportTotalEmployeeInDepartment('{{ $dept->department }}')" style="margin-right: 5px">
+                                        <div class="spinner-border small text-primary" role="status">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </li>
@@ -89,23 +131,26 @@
             <div class="col-span-full sm:col-span-6 bg-teal-50 dark:bg-teal-800 p-4 rounded-lg shadow flex flex-col items-left">
                 <div class="block sm:flex justify-between items-center">
                     <div class="flex justify-left items-center">
-                        <img class="flex dark:hidden" src="/images/calendar.png" alt="">
+                        <img class="flex" src="/images/calendar.png" alt="">
                         <h3 class="text-sm font-semibold text-teal-800 dark:text-gray-100">Daily Attendance</h3>
                     </div>
                     <div class="w-full sm:w-auto flex items-center relative">
-                        <input type="date" id="endDate" wire:model.live='date' value="{{ $date }}"
-                        class="px-2 py-1.5 block w-4/5 sm:text-sm border border-teal-800 hover:bg-gray-300 rounded-md 
-                            dark:hover:bg-slate-600
-                            text-teal-800 dark:bg-teal-400">
+                        <input type="date" id="date" wire:model.live='date' value="{{ $date }}"
+                        class="px-2 py-1.5 block w-32 sm:text-sm border border-teal-800 rounded-md 
+                            text-teal-800 dark:bg-teal-400 cursor-pointer">
 
                          <!-- Export to Excel -->
                         <div class="flex justify-center items-center w-1/5 h-full ml-2" style="width: 32px; height: 32px;">
-                            <button wire:click="exportUsers" 
+                            <button wire:click="exportTotalEmployeeDaily" 
                                 class="inline-flex items-center focus:outline-none"
-                                type="button" title="Export to Excel">
+                                type="button" title="Export to Excel" wire:loading.remove>
                                 <img class="flex dark:hidden" src="/images/export-excel.png" alt="">
                                 <img class="hidden dark:block" src="/images/export-excel-dark.png" alt="">
                             </button>
+                            <div wire:loading wire:target="exportTotalEmployeeDaily" style="margin-right: 5px">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

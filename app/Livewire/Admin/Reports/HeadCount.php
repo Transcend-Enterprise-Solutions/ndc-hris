@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Reports;
 
+use App\Exports\AttendanceExport;
 use App\Models\EmployeesDtr;
 use Livewire\Component;
 use App\Models\User;
@@ -13,12 +14,24 @@ use App\Exports\EmployeeReportExport;
 class HeadCount extends Component
 {
     public $date;
+    public $month;
 
     public function render(){
         $totalEmployees = User::where('user_role', 'emp')->count();
-        $newEmployeesThisMonth = User::where('user_role', 'emp')
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->count();
+        $newEmployeesThisMonth = User::where('user_role', 'emp');
+        if ($this->month) {
+            $date = Carbon::createFromFormat('Y-m', $this->month);
+            $newEmployeesThisMonth = User::where('user_role', 'emp')
+                ->whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month)
+                ->count();
+        } else {
+            $newEmployeesThisMonth = User::where('user_role', 'emp')
+                ->whereYear('created_at', Carbon::now()->year)
+                ->whereMonth('created_at', Carbon::now()->month)
+                ->count();
+        }
+
         $departmentCounts = User::where('user_role', 'emp')
             ->join('payrolls', 'payrolls.user_id', 'users.id')
             ->selectRaw('payrolls.department, count(*) as count')
@@ -55,16 +68,30 @@ class HeadCount extends Component
     }
 
     public function exportTotalEmployeeThisMonth(){
-        try{
-
-        }catch(Exception $e){
+        try {
+            $month = null;
+            if ($this->month) {
+                $month = Carbon::createFromFormat('Y-m', $this->month)->format('Y-m');
+            } else {
+                $month = now()->format('Y-m');
+            }
+            $filters = [
+                'month' => $month,
+            ];
+            $filename = $month . ' EmployeesList.xlsx';
+            return Excel::download(new EmployeeReportExport($filters), $filename);
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
-    public function exportTotalEmployeeInDepartment(){
+    public function exportTotalEmployeeInDepartment($department){
         try{
-
+            $filters = [
+                'department' => $department,
+            ];
+            $filename = $department . ' EmployeesList.xlsx';
+            return Excel::download(new EmployeeReportExport($filters), $filename);
         }catch(Exception $e){
             throw $e;
         }
@@ -72,7 +99,11 @@ class HeadCount extends Component
 
     public function exportTotalEmployeeDaily(){
         try{
-
+            $filters = [
+                'date' => $this->date,
+            ];
+            $filename = $this->date . ' EmployeesList.xlsx';
+            return Excel::download(new AttendanceExport($filters), $filename);
         }catch(Exception $e){
             throw $e;
         }
