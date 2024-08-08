@@ -26,46 +26,54 @@ Route::redirect('/', '/login');
 Route::get('/register', function () {
     return view('registeraccount'); })->name('register');
 
-
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::get('/json-data-feed', [DataFeedController::class, 'getDataFeed'])->name('json_data_feed');
-
-
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+/* Super Admin and HR account role */
+Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
     Route::get('/role-management', function () {
         return view('livewire.admin.role-management'); })->name('role-management');
-
-    // Employee Magmt Tabs ------------------------------------------------------------------ //
     Route::get('/employee-management/employees', function () {
         return view('livewire.admin.employees'); })->name('/employee-management/employees');
-    Route::get('/employee-management/admin-dtr', function () {
-        return view('livewire.admin.admin-dtr'); })->name('/employee-management/admin-dtr');
     Route::get('/employee-management/admin-doc-request', function () {
         return view('livewire.admin.admin-doc-request'); })->name('/employee-management/admin-doc-request');
     Route::get('/employee-management/emp-documents', function () {
         return view('livewire.admin.emp-documents'); })->name('/employee-management/emp-documents');
     Route::get('/employee-management/admin-schedule', function () {
         return view('livewire.admin.admin-schedule'); })->name('/employee-management/admin-schedule');
+    Route::get('/report-generation', function () {
+        return view('livewire.admin.report-generation'); })->name('report-generation');
+});
 
-    // Leave Management Tabs ----------------------------------------------------------------- //
+/* Super Admin, HR, Supervisor, and Payroll account role */
+Route::middleware(['auth', 'checkrole:sa,hr,sv,pa'])->group(function () {
+    Route::get('/json-data-feed', [DataFeedController::class, 'getDataFeed'])->name('json_data_feed');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+  
+/* Super Admin, HR, and Supervisor account role */
+Route::middleware(['auth', 'checkrole:sa,hr,sv'])->group(function () {
+    Route::get('/employee-management/admin-dtr', function () {
+        return view('livewire.admin.admin-dtr'); })->name('/employee-management/admin-dtr');
     Route::get('/leave-management/admin-leave-request', function () {
         return view('livewire.admin.admin-leave-request'); })->name('/leave-management/admin-leave-request');
     Route::get('/leave-management/admin-leave-records', function () {
         return view('livewire.admin.admin-leave-records'); })->name('/leave-management/admin-leave-records');
     Route::get('/leave-management/admin-leave-credits', function () {
         return view('livewire.admin.admin-leave-credits'); })->name('/leave-management/admin-leave-credits');
+});
 
+/* Super Admin, HR, and Payroll account role */
+Route::middleware(['auth', 'checkrole:sa,hr,pa'])->group(function () {
     // Payroll Tabs -------------------------------------------------------------------------- //
     Route::get('/payroll/payroll-management', function () {
         return view('livewire.admin.payroll-management'); })->name('/payroll/payroll-management');
     Route::get('/payroll/general-payroll', function () {
         return view('livewire.admin.general-payroll'); })->name('/payroll/general-payroll');
-    Route::get('/payroll/payroll', function () {
-        return view('livewire.admin.payroll'); })->name('/payroll/payroll');
-        
-    Route::get('/report-generation', function () {
-        return view('livewire.admin.report-generation'); })->name('report-generation');
-    
+    Route::get('/payroll/cos-payroll', function () {
+        return view('livewire.admin.payroll'); })->name('/payroll/cos-payroll');
+});
+
+/* Employee account role */
+Route::middleware(['auth', 'checkrole:emp'])->group(function () {
     Route::get('/home', function () {
         return view('livewire.user.home'); })->name('home');
 

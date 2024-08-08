@@ -25,13 +25,15 @@ class Login extends Component
 
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             $user = Auth::user();
-            if ($user->user_role === 'sa') {
-                session(['user_role' => $user->user_role]);
-                return redirect()->intended('/dashboard');
-            }
-            elseif (($user->user_role === 'emp')) {
-                session(['user_role' => $user->user_role]);
+            if (($user->user_role === 'emp')) {
                 return redirect()->intended('/home');
+            }else if ($user->user_role === 'sa' ||
+                $user->user_role === 'hr' ||
+                $user->user_role === 'sv' ||
+                $user->user_role === 'pa'
+                ) 
+            {
+                return redirect()->intended('/dashboard');
             }
         } else {
             $this->addError('login', 'Invalid credentials.');

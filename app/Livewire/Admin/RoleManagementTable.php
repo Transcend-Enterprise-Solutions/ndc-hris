@@ -43,7 +43,7 @@ class RoleManagementTable extends Component
 
     public function render(){
         $admins = Admin::join('users', 'users.id', 'admin.user_id')
-                    ->join('payrolls', 'payrolls.user_id', 'admin.payroll_id')
+                    ->join('payrolls', 'payrolls.id', 'admin.payroll_id')
                     ->where('users.user_role', '!=', 'emp')
                     ->when($this->search, function ($query) {
                         return $query->search(trim($this->search));

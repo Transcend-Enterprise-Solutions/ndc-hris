@@ -23,25 +23,28 @@
 
 <!-- Admin Tabs ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
-                    @if(Auth::user()->user_role === 'sa')
-                        <!-- Dashboard -->
-                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
-                            @if(in_array(Request::segment(1), ['dashboard'])){{ 'bg-gray-200 dark:bg-slate-900' }}@endif"                            
-                            x-data="{ open: {{ in_array(Request::segment(1), ['dashboard']) ? 1 : 0 }} }">
-                            <a class="block text-gray-800 dark:text-gray-100 truncate transition 
-                                @if(Route::is('dashboard')){{ '!text-blue-500' }}@endif"
-                                href="{{ route('dashboard') }}" 
-                                wire:navigate>
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center">
-                                        <i class="bi bi-speedometer2 text-slate-400 dark:text-slate-300 mr-3"></i>
-                                        <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                            Dashboard
-                                        </span>
-                                    </div>
+                @if(Auth::user()->user_role != 'emp')
+                
+                    <!-- Dashboard -->
+                    <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                        @if(in_array(Request::segment(1), ['dashboard'])){{ 'bg-gray-200 dark:bg-slate-900' }}@endif"                            
+                        x-data="{ open: {{ in_array(Request::segment(1), ['dashboard']) ? 1 : 0 }} }">
+                        <a class="block text-gray-800 dark:text-gray-100 truncate transition 
+                            @if(Route::is('dashboard')){{ '!text-blue-500' }}@endif"
+                            href="{{ route('dashboard') }}" 
+                            wire:navigate>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="bi bi-speedometer2 text-slate-400 dark:text-slate-300 mr-3"></i>
+                                    <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                        Dashboard
+                                    </span>
                                 </div>
-                            </a>
-                        </li>
+                            </div>
+                        </a>
+                    </li>
+
+                    @if(Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
 
                         <!-- Role Management -->
                         <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
@@ -61,6 +64,9 @@
                                 </div>
                             </a>
                         </li>
+
+                    @endif
+                    @if(Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr' || Auth::user()->user_role === 'sv')
 
                         <!-- Employee Management -->
                         <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
@@ -86,54 +92,63 @@
                             <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
                                 <ul class="pl-9 mt-1 transition-all duration-300 overflow-hidden"
                                     :class="open ? '!block' : 'hidden'">
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/employee-management/employees')){{ '!text-blue-500' }}@endif"
-                                            href="{{ route('/employee-management/employees') }}" wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                Employees
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/employee-management/admin-dtr')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('/employee-management/admin-dtr')}}" wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                Daily Time Record
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/employee-management/admin-doc-request')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('/employee-management/admin-doc-request')}}" wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                Document Request
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/employee-management/emp-documents')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('/employee-management/emp-documents')}}"wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                Employee Documents
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/employee-management/admin-schedule')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('/employee-management/admin-schedule')}}"wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                Schedule
-                                            </span>
-                                        </a>
-                                    </li>
+                                    @if(Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
+                                        <li class="mb-1 last:mb-0">
+                                            <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/employee-management/employees')){{ '!text-blue-500' }}@endif"
+                                                href="{{ route('/employee-management/employees') }}" wire:navigate>
+                                                <span class="text-sm font-medium transition-opacity duration-300"
+                                                    :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                                    Employees
+                                                </span>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if(Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr' || Auth::user()->user_role === 'sv')
+                                        <li class="mb-1 last:mb-0">
+                                            <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/employee-management/admin-dtr')){{ '!text-blue-500' }}@endif"
+                                                href="{{route('/employee-management/admin-dtr')}}" wire:navigate>
+                                                <span class="text-sm font-medium transition-opacity duration-300"
+                                                    :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                                    Daily Time Record
+                                                </span>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if(Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
+                                        <li class="mb-1 last:mb-0">
+                                            <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/employee-management/admin-doc-request')){{ '!text-blue-500' }}@endif"
+                                                href="{{route('/employee-management/admin-doc-request')}}" wire:navigate>
+                                                <span class="text-sm font-medium transition-opacity duration-300"
+                                                    :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                                    Document Request
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="mb-1 last:mb-0">
+                                            <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/employee-management/emp-documents')){{ '!text-blue-500' }}@endif"
+                                                href="{{route('/employee-management/emp-documents')}}"wire:navigate>
+                                                <span class="text-sm font-medium transition-opacity duration-300"
+                                                    :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                                    Employee Documents
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="mb-1 last:mb-0">
+                                            <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/employee-management/admin-schedule')){{ '!text-blue-500' }}@endif"
+                                                href="{{route('/employee-management/admin-schedule')}}"wire:navigate>
+                                                <span class="text-sm font-medium transition-opacity duration-300"
+                                                    :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                                    Schedule
+                                                </span>
+                                            </a>
+                                        </li>
+                                    @endif
                                 </ul>
                             </div>
                         </li>
+
+                    @endif
+                    @if(Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr' || Auth::user()->user_role === 'sv')
 
                         <!-- Leave Management -->
                         <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
@@ -187,6 +202,9 @@
                             </div>
                         </li>
 
+                    @endif
+                    @if(Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr' || Auth::user()->user_role === 'pa')
+
                         <!-- Payroll Management -->
                         <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
                             @if(in_array(Request::segment(1), ['payroll'])){{ 'bg-gray-200 dark:bg-slate-900' }}@endif"
@@ -219,8 +237,8 @@
                                         </a>
                                     </li>
                                     <li class="mb-1 last:mb-0">
-                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/payroll/payroll')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('/payroll/payroll')}}" wire:navigate>
+                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/payroll/cos-payroll')){{ '!text-blue-500' }}@endif"
+                                            href="{{route('/payroll/cos-payroll')}}" wire:navigate>
                                             <span class="text-sm font-medium transition-opacity duration-300"
                                                 :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">COS Payroll</span>
                                         </a>
@@ -237,6 +255,9 @@
                                 </ul>
                             </div>
                         </li>
+
+                    @endif
+                    @if(Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
 
                         <!-- Report Generation -->
                         <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
@@ -259,190 +280,192 @@
 
                     @endif
 
+                @endif
+
 <!-- Employees Tabs ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------>
                     
-                    @if(Auth::user()->user_role === 'emp')
-                        <!-- Home -->
-                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
-                            @if(in_array(Request::segment(1), ['home'])){{ 'bg-gray-200 dark:bg-slate-900' }}@endif"                            
-                            x-data="{ open: {{ in_array(Request::segment(1), ['home']) ? 1 : 0 }} }">
-                            <a class="block text-gray-800 dark:text-gray-100 truncate transition 
-                                @if(Route::is('home')){{ '!text-blue-500' }}@endif"
-                                href="{{ route('home') }}" 
-                                wire:navigate>
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center">
-                                        <i class="bi bi-house-fill text-slate-400 dark:text-slate-300 mr-3"></i>
-                                        <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                            Home
-                                        </span>
-                                    </div>
+                @if(Auth::user()->user_role === 'emp')
+                    <!-- Home -->
+                    <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                        @if(in_array(Request::segment(1), ['home'])){{ 'bg-gray-200 dark:bg-slate-900' }}@endif"                            
+                        x-data="{ open: {{ in_array(Request::segment(1), ['home']) ? 1 : 0 }} }">
+                        <a class="block text-gray-800 dark:text-gray-100 truncate transition 
+                            @if(Route::is('home')){{ '!text-blue-500' }}@endif"
+                            href="{{ route('home') }}" 
+                            wire:navigate>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="bi bi-house-fill text-slate-400 dark:text-slate-300 mr-3"></i>
+                                    <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                        Home
+                                    </span>
                                 </div>
-                            </a>
-                        </li>
-
-                        <!-- My Records -->
-                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
-                            @if(in_array(Request::segment(1), ['my-records'])){{ 'bg-gray-200 dark:bg-slate-900' }}@endif"
-                            x-data="{ open: {{ in_array(Request::segment(1), ['my-records']) ? 1 : 0 }} }">
-                            <a class="block text-gray-800 dark:text-gray-100 truncate transition"
-                                href="#0" @click.prevent="sidebarExpanded ? open = !open : sidebarExpanded = true">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center">
-                                        <i class="bi bi-journal-check text-slate-400 dark:text-slate-300 mr-3"></i>
-                                        <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                            My Records
-                                        </span>
-                                    </div>
-                                    <div class="flex shrink-0 ml-2">
-                                        <svg class="lg:hidden lg:sidebar-expanded:inline w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
-                                            :class="open ? 'rotate-180' : 'rotate-0'" viewBox="0 0 12 12">
-                                            <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </a>
-                            <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                                <ul class="pl-9 mt-1 transition-all duration-300 overflow-hidden"
-                                    :class="open ? '!block' : 'hidden'">
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if(Route::is('/my-records/personal-data-sheet')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
-                                            href="{{ route('/my-records/personal-data-sheet') }}" wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                            :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                            Personal Data Sheet</span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if(Route::is('/my-records/my-documents')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
-                                            href="{{route('/my-records/my-documents')}}" wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                            :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                            My Documents</span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if(Route::is('/my-records/doc-request')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
-                                            href="{{route('/my-records/doc-request')}}" wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                            :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                            Document Request</span>
-                                        </a>
-                                    </li>
-                                </ul>
                             </div>
-                        </li>
+                        </a>
+                    </li>
 
-                        <!-- DTR -->
-                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
-                            @if(in_array(Request::segment(1), ['daily-time-record'])){{ 'bg-gray-200 dark:bg-slate-900' }}@endif"
-                            x-data="{ open: {{ in_array(Request::segment(1), ['daily-time-record']) ? 1 : 0 }} }">
-                            <a class="block text-gray-800 dark:text-gray-100 truncate transition"
-                                href="#0" @click.prevent="sidebarExpanded ? open = !open : sidebarExpanded = true">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center">
-                                        <i class="bi bi-clock text-slate-400 mr-3"></i>
-                                        <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                            Daily Time Record
-                                        </span>
-                                    </div>
-                                    <div class="flex shrink-0 ml-2">
-                                        <svg class="lg:hidden lg:sidebar-expanded:inline w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
-                                            :class="open ? 'rotate-180' : 'rotate-0'" viewBox="0 0 12 12">
-                                            <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                                        </svg>
-                                    </div>
+                    <!-- My Records -->
+                    <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                        @if(in_array(Request::segment(1), ['my-records'])){{ 'bg-gray-200 dark:bg-slate-900' }}@endif"
+                        x-data="{ open: {{ in_array(Request::segment(1), ['my-records']) ? 1 : 0 }} }">
+                        <a class="block text-gray-800 dark:text-gray-100 truncate transition"
+                            href="#0" @click.prevent="sidebarExpanded ? open = !open : sidebarExpanded = true">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="bi bi-journal-check text-slate-400 dark:text-slate-300 mr-3"></i>
+                                    <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                        My Records
+                                    </span>
                                 </div>
-                            </a>
-                            <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                                <ul class="pl-9 mt-1 transition-all duration-300 overflow-hidden"
-                                    :class="open ? '!block' : 'hidden'">
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if(Route::is('/daily-time-record/wfh-attendance')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
-                                            href="{{route('/daily-time-record/wfh-attendance')}}" wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                WFH Attendance
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/daily-time-record/dtr')){{ '!text-blue-500' }}@endif"
-                                            href="{{ route('/daily-time-record/dtr') }}"wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                DTR
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/daily-time-record/my-schedule')){{ '!text-blue-500' }}@endif"
-                                            href="{{ route('/daily-time-record/my-schedule') }}"wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                My Schedule
-                                            </span>
-                                        </a>
-                                    </li>
-                                </ul>
+                                <div class="flex shrink-0 ml-2">
+                                    <svg class="lg:hidden lg:sidebar-expanded:inline w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                                        :class="open ? 'rotate-180' : 'rotate-0'" viewBox="0 0 12 12">
+                                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                                    </svg>
+                                </div>
                             </div>
-                        </li>
+                        </a>
+                        <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                            <ul class="pl-9 mt-1 transition-all duration-300 overflow-hidden"
+                                :class="open ? '!block' : 'hidden'">
+                                <li class="mb-1 last:mb-0">
+                                    <a class="block text-black dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if(Route::is('/my-records/personal-data-sheet')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
+                                        href="{{ route('/my-records/personal-data-sheet') }}" wire:navigate>
+                                        <span class="text-sm font-medium transition-opacity duration-300"
+                                        :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                        Personal Data Sheet</span>
+                                    </a>
+                                </li>
+                                <li class="mb-1 last:mb-0">
+                                    <a class="block text-black dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if(Route::is('/my-records/my-documents')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
+                                        href="{{route('/my-records/my-documents')}}" wire:navigate>
+                                        <span class="text-sm font-medium transition-opacity duration-300"
+                                        :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                        My Documents</span>
+                                    </a>
+                                </li>
+                                <li class="mb-1 last:mb-0">
+                                    <a class="block text-black dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if(Route::is('/my-records/doc-request')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
+                                        href="{{route('/my-records/doc-request')}}" wire:navigate>
+                                        <span class="text-sm font-medium transition-opacity duration-300"
+                                        :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                        Document Request</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
 
-                        <!-- Filing and Approval -->
-                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
-                            @if(in_array(Request::segment(1), ['filing-and-approval'])){{ 'bg-gray-200 dark:bg-slate-900' }}@endif"
-                            x-data="{ open: {{ in_array(Request::segment(1), ['filing-and-approval']) ? 1 : 0 }} }">
-                            <a class="block text-gray-800 dark:text-gray-100 truncate transition"
-                                href="#0" @click.prevent="sidebarExpanded ? open = !open : sidebarExpanded = true">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center">
-                                        <i class="bi bi-card-checklist text-slate-400 mr-3"></i>
-                                        <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                            Filing and Approval
-                                        </span>
-                                    </div>
-                                    <div class="flex shrink-0 ml-2">
-                                        <svg class="lg:hidden lg:sidebar-expanded:inline w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
-                                            :class="open ? 'rotate-180' : 'rotate-0'" viewBox="0 0 12 12">
-                                            <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                                        </svg>
-                                    </div>
+                    <!-- DTR -->
+                    <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                        @if(in_array(Request::segment(1), ['daily-time-record'])){{ 'bg-gray-200 dark:bg-slate-900' }}@endif"
+                        x-data="{ open: {{ in_array(Request::segment(1), ['daily-time-record']) ? 1 : 0 }} }">
+                        <a class="block text-gray-800 dark:text-gray-100 truncate transition"
+                            href="#0" @click.prevent="sidebarExpanded ? open = !open : sidebarExpanded = true">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="bi bi-clock text-slate-400 mr-3"></i>
+                                    <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                        Daily Time Record
+                                    </span>
                                 </div>
-                            </a>
-                            <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                                <ul class="pl-9 mt-1 transition-all duration-300 overflow-hidden"
-                                    :class="open ? '!block' : 'hidden'">
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/filing-and-approval')){{ '!text-blue-500' }}@endif"
-                                            href="#0">
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                            :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                            Overtime
-                                        </span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/filing-and-approval/leave-application')){{ '!text-blue-500' }}@endif"
-                                            href="{{ route('/filing-and-approval/leave-application') }}" wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                            :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                Leave
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="mb-1 last:mb-0">
-                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/filing-and-approval/leave-monetization')){{ '!text-blue-500' }}@endif"
-                                            href="{{ route('/filing-and-approval/leave-monetization') }}" wire:navigate>
-                                            <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                Leave Monetization
-                                            </span>
-                                        </a>
-                                    </li>
-                                </ul>
+                                <div class="flex shrink-0 ml-2">
+                                    <svg class="lg:hidden lg:sidebar-expanded:inline w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                                        :class="open ? 'rotate-180' : 'rotate-0'" viewBox="0 0 12 12">
+                                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                                    </svg>
+                                </div>
                             </div>
-                        </li>
-                    @endif
+                        </a>
+                        <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                            <ul class="pl-9 mt-1 transition-all duration-300 overflow-hidden"
+                                :class="open ? '!block' : 'hidden'">
+                                <li class="mb-1 last:mb-0">
+                                    <a class="block text-black dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if(Route::is('/daily-time-record/wfh-attendance')){{ 'text-blue-500 dark:text-blue-500' }}@endif"
+                                        href="{{route('/daily-time-record/wfh-attendance')}}" wire:navigate>
+                                        <span class="text-sm font-medium transition-opacity duration-300"
+                                            :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                            WFH Attendance
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="mb-1 last:mb-0">
+                                    <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/daily-time-record/dtr')){{ '!text-blue-500' }}@endif"
+                                        href="{{ route('/daily-time-record/dtr') }}"wire:navigate>
+                                        <span class="text-sm font-medium transition-opacity duration-300"
+                                            :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                            DTR
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="mb-1 last:mb-0">
+                                    <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/daily-time-record/my-schedule')){{ '!text-blue-500' }}@endif"
+                                        href="{{ route('/daily-time-record/my-schedule') }}"wire:navigate>
+                                        <span class="text-sm font-medium transition-opacity duration-300"
+                                            :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                            My Schedule
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <!-- Filing and Approval -->
+                    <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                        @if(in_array(Request::segment(1), ['filing-and-approval'])){{ 'bg-gray-200 dark:bg-slate-900' }}@endif"
+                        x-data="{ open: {{ in_array(Request::segment(1), ['filing-and-approval']) ? 1 : 0 }} }">
+                        <a class="block text-gray-800 dark:text-gray-100 truncate transition"
+                            href="#0" @click.prevent="sidebarExpanded ? open = !open : sidebarExpanded = true">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="bi bi-card-checklist text-slate-400 mr-3"></i>
+                                    <span class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                        Filing and Approval
+                                    </span>
+                                </div>
+                                <div class="flex shrink-0 ml-2">
+                                    <svg class="lg:hidden lg:sidebar-expanded:inline w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                                        :class="open ? 'rotate-180' : 'rotate-0'" viewBox="0 0 12 12">
+                                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                            <ul class="pl-9 mt-1 transition-all duration-300 overflow-hidden"
+                                :class="open ? '!block' : 'hidden'">
+                                <li class="mb-1 last:mb-0">
+                                    <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/filing-and-approval')){{ '!text-blue-500' }}@endif"
+                                        href="#0">
+                                        <span class="text-sm font-medium transition-opacity duration-300"
+                                        :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                        Overtime
+                                    </span>
+                                    </a>
+                                </li>
+                                <li class="mb-1 last:mb-0">
+                                    <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/filing-and-approval/leave-application')){{ '!text-blue-500' }}@endif"
+                                        href="{{ route('/filing-and-approval/leave-application') }}" wire:navigate>
+                                        <span class="text-sm font-medium transition-opacity duration-300"
+                                        :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                            Leave
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="mb-1 last:mb-0">
+                                    <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/filing-and-approval/leave-monetization')){{ '!text-blue-500' }}@endif"
+                                        href="{{ route('/filing-and-approval/leave-monetization') }}" wire:navigate>
+                                        <span class="text-sm font-medium transition-opacity duration-300"
+                                            :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                            Leave Monetization
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                @endif
 
 <!-- End of Tabs --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 

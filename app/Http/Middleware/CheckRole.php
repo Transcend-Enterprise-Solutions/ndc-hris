@@ -19,7 +19,7 @@ class CheckRole
 
             if ($user->user_role === 'emp') {
                 return redirect()->route('home');
-            }else if($user->user_role === 'sa'){
+            } else {
                 return redirect()->route('dashboard');
             }
 

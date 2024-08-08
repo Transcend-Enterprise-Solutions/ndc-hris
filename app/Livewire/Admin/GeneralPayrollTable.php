@@ -455,7 +455,7 @@ class GeneralPayrollTable extends Component
                               \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('Y');
 
                 $pb = Admin::where('admin.user_id', $preparedBy->id)
-                    ->join('payrolls', 'payrolls.user_id', 'admin.payroll_id')
+                    ->join('payrolls', 'payrolls.id', 'admin.payroll_id')
                     ->first();
                 if ($payslip) {
                     $pdf = Pdf::loadView('pdf.monthly-payslip', [
