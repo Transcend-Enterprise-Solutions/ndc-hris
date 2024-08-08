@@ -130,7 +130,7 @@ class Registration extends Component
 
         $currentYear = now()->year;
         $userCount = User::whereYear('created_at', $currentYear)->count();
-        // $empCode = 'EMP' . $currentYear . ($userCount + 1);
+        $empCode = $currentYear . ($userCount + 1);
 
         $user = User::create([
             'name' => $this->first_name . " " . $this->middle_name . " " . $this->surname,
