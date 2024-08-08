@@ -77,7 +77,7 @@
 
                     <!-- Remove File Button -->
                     <div x-show="$wire.fileSelected" class="mt-2 flex items-center">
-                        <p class="mr-2 text-sm text-slate-700 dark:text-slate-300" wire:loading.remove wire:target="file">Selected File: <span x-text="file?.name"></span></p>
+                        <p class="mr-2 text-sm text-slate-700 dark:text-slate-300" wire:loading.remove wire:target="file"> <span x-text="file?.name"></span></p>
                         <button @click="clearFile" class="text-red-500 hover:text-red-700" title="Remove File" wire:loading.remove wire:target="file">
                             <i class="fas fa-times"></i>
                         </button>
@@ -145,7 +145,7 @@
                     <ul class="flex flex-wrap gap-2 mt-2 text-sm text-red-600 dark:text-red-400 pb-5 list-none pl-0">
                         @foreach ($availableDocumentTypes as $key => $label)
                             @if (!$documents->contains('document_type', $key))
-                                <li class="inline-block bg-red-200 dark:bg-red-700 text-red-600 dark:text-red-400 rounded px-2 py-1">
+                                <li class="inline-block bg-red-200  text-red-600  rounded px-2 py-1">
                                     {{ $label }}
                                 </li>
                             @endif

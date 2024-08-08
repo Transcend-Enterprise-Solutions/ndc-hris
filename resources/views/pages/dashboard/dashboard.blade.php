@@ -50,7 +50,7 @@
             <x-dashboard.dashboard-card-05 />
 
             <!-- Doughnut chart (Top Countries) -->
-            <x-dashboard.dashboard-card-06 />
+            {{-- <x-dashboard.dashboard-card-06 />
 
             <!-- Table (Top Channels) -->
             <x-dashboard.dashboard-card-07 />
@@ -71,7 +71,7 @@
             <x-dashboard.dashboard-card-12 />
 
             <!-- Card (Income/Expenses) -->
-            <x-dashboard.dashboard-card-13 />
+            <x-dashboard.dashboard-card-13 /> --}}
 
         </div>
 

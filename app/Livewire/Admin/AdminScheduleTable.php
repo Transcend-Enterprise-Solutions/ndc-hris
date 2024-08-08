@@ -32,7 +32,7 @@ class AdminScheduleTable extends Component
     public function mount()
     {
         $this->loadSchedules();
-        $this->employees = User::all();
+        $this->employees = User::where('user_role', 'emp')->get();
     }
 
     public function render()
