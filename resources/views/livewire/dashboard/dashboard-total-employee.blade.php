@@ -1,4 +1,4 @@
-<div class="p-6 bg-gradient-to-br h-full from-indigo-100 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-md">
+<div x-data="initEmployeeChart()" x-init="init()" class="p-6 bg-gradient-to-br h-full from-indigo-100 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-md">
     <div>
         <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">
             Total Employees
@@ -14,9 +14,9 @@
 
 <!-- Load Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.0.6/dist/alpine.min.js" defer></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    function initEmployeeChart() {
         const ctx = document.getElementById('employeeChart').getContext('2d');
 
         new Chart(ctx, {
@@ -81,5 +81,5 @@
                 }
             }
         });
-    });
+    }
 </script>
