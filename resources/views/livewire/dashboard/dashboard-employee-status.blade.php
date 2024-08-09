@@ -28,7 +28,7 @@
     </div>
 
     <!-- Chart.js graph -->
-    <div class="relative sm:absolute bottom-2 -ml-3 mb-4">
+    <div class="relative sm:absolute bottom-1 -ml-3">
         <canvas id="statusChart" class="w-full h-80 sm:h-auto"></canvas>
     </div>
 </div>

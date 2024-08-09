@@ -7,8 +7,10 @@
     </div>
 
     <!-- Chart.js graph -->
-    <div class="relative">
-        <canvas id="employeeChart" class="w-full"></canvas>
+    <div class="w-full flex justify-center items-center">
+        <div class="relative w-52">
+            <canvas id="employeeChart" class="w-full"></canvas>
+        </div>
     </div>
 </div>
 
