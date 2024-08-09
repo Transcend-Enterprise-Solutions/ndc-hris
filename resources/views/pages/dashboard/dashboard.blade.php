@@ -34,11 +34,11 @@
         <!-- Cards -->
         <div class="grid grid-cols-12 gap-6">
 
-            <!-- Line chart (Acme Plus) -->
-            <x-dashboard.dashboard-card-01 :dataFeed="$dataFeed" />
+            <!-- Total Employees -->
+            <x-dashboard.dashboard-card-01/>
 
-            <!-- Line chart (Acme Advanced) -->
-            <x-dashboard.dashboard-card-02 :dataFeed="$dataFeed" />
+            <!-- Employee Status -->
+            <x-dashboard.dashboard-card-02/>
 
             <!-- Pending Documents -->
             <x-dashboard.dashboard-card-03 />

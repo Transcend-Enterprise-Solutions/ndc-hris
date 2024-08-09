@@ -1,4 +1,4 @@
-<div class="p-6 bg-gradient-to-br from-indigo-100 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-md">
+<div class="p-6 h-full bg-gradient-to-br from-indigo-100 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-md">
     <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">
         Document Requests Analytics
     </h2>

@@ -13,7 +13,7 @@ use App\Models\PhilippineRegions;
 class Registration extends Component
 {
     public $user_role = 'emp';
-    public $active_status = '';
+    public $active_status = 1;
     public $emp_code;
 
     #Step 1

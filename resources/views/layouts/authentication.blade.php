@@ -111,7 +111,7 @@
 
                 <div class="right-side-login">
                     <div></div>
-                    <img src="/images/rimg.png" alt="login bg">
+                    <img src="/images/vector.png" alt="login bg" style="height: 101%;">
                 </div>
 
                 <div

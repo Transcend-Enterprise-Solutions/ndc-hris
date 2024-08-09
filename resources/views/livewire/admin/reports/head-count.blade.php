@@ -155,7 +155,7 @@
                     </div>
                 </div>
                 <div class="mt-2 sm:mt-0">
-                    <h3 class="text-xs text-teal-800 dark:text-gray-100">Total Present/Late</h3>
+                    <h3 class="text-xs text-teal-800 dark:text-gray-100">Total Present/Late {{ $date ? 'for ' . \Carbon\Carbon::parse($date)->format('F d, Y') : '' }}</h3>
                     <p class="text-3xl font-bold text-teal-700 dark:text-teal-100">{{ $dailyAttendance }}</p>
                 </div>
                 
