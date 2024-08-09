@@ -27,8 +27,8 @@ class LeaveApplicationTable extends Component
     public $number_of_days;
     public $start_date;
     public $end_date;
-    public $type_of_leave = '';
-    public $details_of_leave = '';
+    public $type_of_leave = [];
+    public $details_of_leave = [];
     public $philippines;
     public $abroad;
     public $inHospital;
@@ -41,7 +41,7 @@ class LeaveApplicationTable extends Component
         'office_or_department' => 'required|string|max:255',
         'position' => 'required|string|max:255',
         'salary' => 'required|string|max:255',
-        'type_of_leave' => 'required',
+        'type_of_leave' => 'required|array|min:1',
         'files.*' => 'file|mimes:jpeg,png,jpg,gif,pdf|max:2048',
     ];
 
@@ -65,8 +65,8 @@ class LeaveApplicationTable extends Component
         $this->number_of_days = null;
         $this->start_date = null;
         $this->end_date = null;
-        $this->type_of_leave = '';
-        $this->details_of_leave = '';
+        $this->type_of_leave = [];
+        $this->details_of_leave = [];
         $this->commutation = null;
         $this->philippines = null;
         $this->abroad = null;
@@ -87,15 +87,15 @@ class LeaveApplicationTable extends Component
         }
     }
 
-    public function updatedTypeOfLeave()
-    {
-        $this->details_of_leave = '';
-        $this->philippines = '';
-        $this->abroad = '';
-        $this->inHospital = '';
-        $this->outPatient = '';
-        $this->specialIllnessForWomen = '';
-    }
+    // public function updatedTypeOfLeave()
+    // {
+    //     $this->details_of_leave = '';
+    //     $this->philippines = '';
+    //     $this->abroad = '';
+    //     $this->inHospital = '';
+    //     $this->outPatient = '';
+    //     $this->specialIllnessForWomen = '';
+    // }
 
     public function resetOtherFields($field)
     {
@@ -113,7 +113,7 @@ class LeaveApplicationTable extends Component
             'office_or_department' => 'required',
             'position' => 'required',
             'salary' => 'required',
-            'type_of_leave' => 'required',
+            'type_of_leave' => 'required|array|min:1',
             'details_of_leave' => 'required',
             'number_of_days' => 'required',
             'start_date' => 'required',
@@ -134,25 +134,35 @@ class LeaveApplicationTable extends Component
             }
         }
 
-        $leaveDetails = '';
-        switch ($this->details_of_leave) {
-            case 'Within the Philippines':
-                $leaveDetails = $this->details_of_leave . ' = ' . $this->philippines;
-                break;
-            case 'Abroad':
-                $leaveDetails = $this->details_of_leave . ' = ' . $this->abroad;
-                break;
-            case 'In Hospital':
-                $leaveDetails = $this->details_of_leave . ' = ' . $this->inHospital;
-                break;
-            case 'Out Patient':
-                $leaveDetails = $this->details_of_leave . ' = ' . $this->outPatient;
-                break;
-            case 'Women Special Illness':
-                $leaveDetails = $this->details_of_leave . ' = ' . $this->specialIllnessForWomen;
-                break;
-            default:
-                $leaveDetails = $this->details_of_leave;
+        $leaveDetails = [];
+        foreach ($this->details_of_leave as $leaveType) {
+            if ($leaveType === 'Within the Philippines') {
+                $leaveDetails[] = $leaveType . ' = ' . $this->philippines;
+            }
+            if ($leaveType === 'Abroad') {
+                $leaveDetails[] = $leaveType . ' = ' . $this->abroad;
+            }
+            if ($leaveType === 'In Hospital') {
+                $leaveDetails[] = $leaveType . ' = ' . $this->inHospital;
+            }
+            if ($leaveType === 'Out Patient') {
+                $leaveDetails[] = $leaveType . ' = ' . $this->outPatient;
+            }
+            if ($leaveType === 'Women Special Illness') {
+                $leaveDetails[] = $leaveType . ' = ' . $this->specialIllnessForWomen;
+            }
+            if ($leaveType === 'Completion of Masters Degree') {
+                $leaveDetails[] = $leaveType;
+            }
+            if ($leaveType === 'BAR/Board Examination Review') {
+                $leaveDetails[] = $leaveType;
+            }
+            if ($leaveType === 'Monetization of Leave Credits') {
+                $leaveDetails[] = $leaveType;
+            }
+            if ($leaveType === 'Terminal Leave') {
+                $leaveDetails[] = $leaveType;
+            }
         }
 
         $leaveDetailsString = implode(', ', $leaveDetails);
@@ -201,7 +211,7 @@ class LeaveApplicationTable extends Component
             'position' => $this->position,
             'salary' => $this->salary,
             'number_of_days' => $this->number_of_days,
-            'type_of_leave' => $this->type_of_leave,
+            'type_of_leave' => implode(',', $this->type_of_leave),
             'details_of_leave' => $leaveDetailsString,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,

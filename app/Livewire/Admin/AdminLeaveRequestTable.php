@@ -172,7 +172,7 @@ class AdminLeaveRequestTable extends Component
     {
         // Fetch total_credits from LeaveCredits
         $leaveCredits = LeaveCredits::where('user_id', $this->selectedApplication->user_id)->first();
-        $totalCredits = $leaveCredits ? $leaveCredits->total_credits : 0;
+        $totalCredits = $leaveCredits ? $leaveCredits->claimable_credits : 0;
 
         $this->balance = $totalCredits;
 
