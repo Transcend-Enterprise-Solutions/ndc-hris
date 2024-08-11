@@ -4,8 +4,10 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\DocRequest;
+use App\Models\Notification;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Rating;
 
 class AdminDocRequestTable extends Component
 {
@@ -30,7 +32,7 @@ class AdminDocRequestTable extends Component
 
     public function loadRequests()
     {
-        $query = DocRequest::with('user');
+        $query = DocRequest::with(['user', 'rating']);
 
         if (!empty($this->selectedDocumentTypes)) {
             $query->whereIn('document_type', $this->selectedDocumentTypes);
@@ -53,15 +55,15 @@ class AdminDocRequestTable extends Component
 
     public function approveRequest($id)
     {
-        $this->changeStatus($id, 'preparing', 'Document request approved successfully.');
+        $this->changeStatus($id, 'preparing', 'Document request approved successfully.', 'approved');
     }
 
     public function rejectRequest($id)
     {
-        $this->changeStatus($id, 'rejected', 'Document request rejected!');
+        $this->changeStatus($id, 'rejected', 'Document request rejected!', 'rejected');
     }
 
-    private function changeStatus($id, $status, $message)
+    private function changeStatus($id, $status, $message, $notificationType)
     {
         $request = DocRequest::find($id);
         if ($request) {
@@ -70,6 +72,19 @@ class AdminDocRequestTable extends Component
                 $request->date_completed = now();
             }
             $request->save();
+
+            // Use updateOrCreate for notifications
+            Notification::updateOrCreate(
+                [
+                    'doc_request_id' => $request->id,
+                    'user_id' => $request->user_id,
+                ],
+                [
+                    'type' => $notificationType,
+                    'read' => false,
+                ]
+            );
+
             $this->dispatch('swal', [
                 'title' => $message,
                 'icon' => 'success'
@@ -105,6 +120,18 @@ class AdminDocRequestTable extends Component
         $request->date_completed = now();
         $request->save();
 
+        // Use updateOrCreate for notifications
+        Notification::updateOrCreate(
+            [
+                'doc_request_id' => $request->id,
+                'user_id' => $request->user_id,
+            ],
+            [
+                'type' => 'completed',
+                'read' => false,
+            ]
+        );
+
         $this->dispatch('swal', [
             'title' => 'Document uploaded successfully!',
             'icon' => 'success'
@@ -112,28 +139,6 @@ class AdminDocRequestTable extends Component
 
         $this->uploadedFile[$requestId] = null;
         $this->loadRequests();
-    }
-
-    public function downloadDocument($id)
-    {
-        $request = DocRequest::find($id);
-        if (!$request || !$request->file_path) {
-            $this->dispatch('swal', [
-                'title' => 'Document not found!',
-                'icon' => 'error'
-            ]);
-            return;
-        }
-
-        $filePath = storage_path('app/public/' . $request->file_path);
-        if (file_exists($filePath)) {
-            return response()->download($filePath, $request->filename);
-        } else {
-            $this->dispatch('swal', [
-                'title' => 'File not found!',
-                'icon' => 'error'
-            ]);
-        }
     }
 
     public function deleteRequest($id)
@@ -144,6 +149,19 @@ class AdminDocRequestTable extends Component
                 Storage::disk('public')->delete($request->file_path);
             }
             $request->delete();
+
+            // Use updateOrCreate for notifications
+            Notification::updateOrCreate(
+                [
+                    'doc_request_id' => $request->id,
+                    'user_id' => $request->user_id,
+                ],
+                [
+                    'type' => 'deleted',
+                    'read' => false,
+                ]
+            );
+
             $this->dispatch('swal', [
                 'title' => 'Document Request Deleted!',
                 'icon' => 'success'
@@ -152,7 +170,7 @@ class AdminDocRequestTable extends Component
         } else {
             $this->dispatch('swal', [
                 'title' => 'Document request not found!',
-                'icon' => 'success'
+                'icon' => 'error'
             ]);
         }
     }

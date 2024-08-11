@@ -157,7 +157,7 @@ class MyDocumentsTable extends Component
             ->pluck('document_type')
             ->toArray();
 
-        return array_diff_key($allDocumentTypes, array_flip($uploadedDocumentTypes));
+        return array_diff_key($allDocumentTypes);
     }
 
     public function render()

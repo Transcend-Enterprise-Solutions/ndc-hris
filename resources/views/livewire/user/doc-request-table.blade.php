@@ -38,7 +38,7 @@
                                                 <th class="px-4 py-2 text-center">Date Completed</th>
                                                 <th class="px-4 py-2 text-center">My Document</th>
                                                 @if($status === 'completed')
-                                                    <th class="px-4 py-2 text-center">Rating</th>
+                                                    <th class="px-4 py-2 text-center">My Rating</th>
                                                 @endif
                                             </tr>
                                         </thead>
