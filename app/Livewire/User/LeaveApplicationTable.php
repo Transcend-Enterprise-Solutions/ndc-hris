@@ -87,16 +87,6 @@ class LeaveApplicationTable extends Component
         }
     }
 
-    // public function updatedTypeOfLeave()
-    // {
-    //     $this->details_of_leave = '';
-    //     $this->philippines = '';
-    //     $this->abroad = '';
-    //     $this->inHospital = '';
-    //     $this->outPatient = '';
-    //     $this->specialIllnessForWomen = '';
-    // }
-
     public function resetOtherFields($field)
     {
         $fields = ['philippines', 'abroad', 'inHospital', 'outPatient', 'specialIllnessForWomen'];
@@ -197,7 +187,9 @@ class LeaveApplicationTable extends Component
             LeaveCredits::create([
                 'user_id' => $userId,
                 'total_credits' => $leaveCreditsEarned,
-                'claimable_credits' => $leaveCreditsEarned,
+                'vl_claimable_credits' => $leaveCreditsEarned,
+                'sl_claimable_credits' => $leaveCreditsEarned,
+                'spl_claimable_credits' => $leaveCreditsEarned,
                 'credits_transferred' => true
             ]);
         }
@@ -292,9 +284,6 @@ class LeaveApplicationTable extends Component
 
         return view('livewire.user.leave-application-table', [
             'leaveApplications' => $leaveApplications,
-            'totalCredits' => $leaveCredits ? $leaveCredits->total_credits : 0,
-            'claimableCredits' => $leaveCredits ? $leaveCredits->claimable_credits : 0,
-            'totalClaimedCredits' => $leaveCredits ? $leaveCredits->total_claimed_credits : 0,
         ]);
     }
 }

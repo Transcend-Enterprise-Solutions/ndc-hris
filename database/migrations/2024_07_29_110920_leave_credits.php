@@ -16,8 +16,12 @@ return new class extends Migration {
                 $table->unsignedBigInteger('user_id');
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
                 $table->decimal('total_credits', 10, 3)->nullable();
-                $table->decimal('claimable_credits', 10, 3)->nullable();
-                $table->decimal('total_claimed_credits', 10, 3)->nullable();
+                $table->decimal('vl_claimable_credits', 10, 3)->nullable();
+                $table->decimal('sl_claimable_credits', 10, 3)->nullable();
+                $table->decimal('spl_claimable_credits', 10, 3)->nullable();
+                $table->decimal('vl_claimed_credits', 10, 3)->nullable();
+                $table->decimal('sl_claimed_credits', 10, 3)->nullable();
+                $table->decimal('spl_claimed_credits', 10, 3)->nullable();
                 $table->boolean('credits_transferred')->default(false);
                 $table->timestamps();
             });

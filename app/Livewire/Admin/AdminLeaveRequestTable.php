@@ -170,46 +170,85 @@ class AdminLeaveRequestTable extends Component
 
     public function validateLeaveBalance($days)
     {
-        // Fetch total_credits from LeaveCredits
+        // Fetch leave credits from LeaveCredits for the specific user
         $leaveCredits = LeaveCredits::where('user_id', $this->selectedApplication->user_id)->first();
-        $totalCredits = $leaveCredits ? $leaveCredits->claimable_credits : 0;
 
-        $this->balance = $totalCredits;
+        // Calculate the total claimable credits by summing up the relevant columns
+        $totalClaimableCredits = ($leaveCredits->vl_claimable_credits ?? 0) +
+                                ($leaveCredits->sl_claimable_credits ?? 0) +
+                                ($leaveCredits->spl_claimable_credits ?? 0);
 
-        // Check if total_credits is sufficient and not less than 1
-        if ($this->status === 'With Pay' && ($totalCredits < $days || $totalCredits < 1)) {
-            $this->addError('days', "Insufficient leave credits. Total available credits: {$totalCredits}");
+        $this->balance = $totalClaimableCredits;
+
+        // Check if total claimable credits are sufficient and not less than 1
+        if ($this->status === 'With Pay' && ($totalClaimableCredits < $days || $totalClaimableCredits < 1)) {
+            $this->addError('days', "Insufficient leave credits. Total available credits: {$totalClaimableCredits}");
             return false;
         }
 
         return true;
     }
 
+
     protected function updateLeaveDetails($days, $status)
     {
-        if ($status === 'With Pay') {
-            // Update total_credits in leave_credits
-            $user_id = $this->selectedApplication->user_id;
-            $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
-            if ($leaveCredits) {
-                $leaveCredits->claimable_credits -= $days;
-                $leaveCredits->total_claimed_credits += $days;
-                $leaveCredits->save();
+        $user_id = $this->selectedApplication->user_id;
+        $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
+
+        if (!$leaveCredits) {
+            return; // Exit if leave credits record does not exist
+        }
+
+        $remainingDays = $days;
+
+        // Step 1: Subtract from SPL claimable credits first
+        if ($leaveCredits->spl_claimable_credits >= $remainingDays) {
+            $leaveCredits->spl_claimable_credits -= $remainingDays;
+            $leaveCredits->spl_claimed_credits += $remainingDays;
+            $remainingDays = 0;
+        } else {
+            $remainingDays -= $leaveCredits->spl_claimable_credits;
+            $leaveCredits->spl_claimed_credits += $leaveCredits->spl_claimable_credits;
+            $leaveCredits->spl_claimable_credits = 0;
+        }
+
+        // Step 2: If remaining days > 0, subtract from VL or SL depending on the type of leave
+        if ($remainingDays > 0) {
+            if (in_array('Vacation Leave', explode(',', $this->selectedApplication->type_of_leave))) {
+                if ($leaveCredits->vl_claimable_credits >= $remainingDays) {
+                    $leaveCredits->vl_claimable_credits -= $remainingDays;
+                    $leaveCredits->vl_claimed_credits += $remainingDays;
+                    $remainingDays = 0;
+                } else {
+                    $this->addError('days', "Insufficient vacation leave credits. Available: {$leaveCredits->vl_claimable_credits}");
+                    return;
+                }
+            } elseif (in_array('Sick Leave', explode(',', $this->selectedApplication->type_of_leave))) {
+                if ($leaveCredits->sl_claimable_credits >= $remainingDays) {
+                    $leaveCredits->sl_claimable_credits -= $remainingDays;
+                    $leaveCredits->sl_claimed_credits += $remainingDays;
+                    $remainingDays = 0;
+                } else {
+                    $this->addError('days', "Insufficient sick leave credits. Available: {$leaveCredits->sl_claimable_credits}");
+                    return;
+                }
             }
+        }
 
-            // Update leave_credits_earned in LeaveCreditsCalculation
-            $month = date('m', strtotime($this->selectedApplication->start_date));
-            $year = date('Y', strtotime($this->selectedApplication->start_date));
+        $leaveCredits->save();
 
-            $leaveCreditsCalculation = LeaveCreditsCalculation::where('user_id', $user_id)
-                ->where('month', $month)
-                ->where('year', $year)
-                ->first();
+        // Update leave_credits_earned in LeaveCreditsCalculation
+        $month = date('m', strtotime($this->selectedApplication->start_date));
+        $year = date('Y', strtotime($this->selectedApplication->start_date));
 
-            if ($leaveCreditsCalculation) {
-                $leaveCreditsCalculation->leave_credits_earned -= $days;
-                $leaveCreditsCalculation->save();
-            }
+        $leaveCreditsCalculation = LeaveCreditsCalculation::where('user_id', $user_id)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->first();
+
+        if ($leaveCreditsCalculation) {
+            $leaveCreditsCalculation->leave_credits_earned -= $days;
+            $leaveCreditsCalculation->save();
         }
 
         // Update status in VacationLeaveDetails and SickLeaveDetails
@@ -231,5 +270,6 @@ class AdminLeaveRequestTable extends Component
             }
         }
     }
+
 }
 
