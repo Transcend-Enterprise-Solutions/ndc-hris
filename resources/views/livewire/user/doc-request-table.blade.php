@@ -1,6 +1,4 @@
-<div x-data="{
-    selectedTab: 'pending', // Default tab
-}">
+<div x-data="{ selectedTab: 'pending' }">
     <div class="w-full flex justify-center">
         <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
             <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Request a Document</h1>
@@ -72,4 +70,80 @@
             </div>
         </div>
     </div>
+
+    <!-- Rating Modal -->
+    <div x-data="{ showModal: @entangle('showRatingModal') }"
+    x-show="showModal"
+    x-transition:enter="ease-out duration-300"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="ease-in duration-200"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    class="fixed inset-0 z-50 overflow-y-auto bg-gray-500 bg-opacity-75"
+    aria-labelledby="modal-title"
+    role="dialog" aria-modal="true"
+    x-cloak
+    @click.away="showModal = false">
+
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div @click.away="showModal = false"
+                x-show="showModal"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                class="inline-block bg-white rounded-lg shadow-xl transform transition-all sm:max-w-lg sm:w-full sm:mx-4"
+                style="max-height: 90vh; overflow-y: auto;">
+
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4" id="modal-title">
+                        To download your documents please rate your experience
+                    </h3>
+
+
+
+                    <div class="space-y-6">
+                        @foreach(['responsiveness', 'reliability', 'access_facilities', 'communication', 'cost', 'integrity', 'assurance', 'outcome'] as $criterion)
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div class="flex-1">
+                                <label for="{{ $criterion }}" class="block text-sm font-medium text-gray-700">
+                                    {{ ucfirst(str_replace('_', ' & ', $criterion)) }}
+                                </label>
+                                <p class="text-xs text-gray-500 mt-1">{{ $descriptions[$criterion] }}</p>
+                            </div>
+                            <div x-data="{ currentVal: @entangle('ratings.' . $criterion) }" class="flex items-center gap-1">
+                                @for($i = 1; $i <= 5; $i++)
+                                <label class="cursor-pointer transition-transform duration-150 hover:scale-110">
+                                    <input type="radio" class="sr-only" name="{{ $criterion }}" value="{{ $i }}" wire:model.live="ratings.{{ $criterion }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6" :class="currentVal >= {{ $i }} ? 'text-yellow-500' : 'text-gray-300'">
+                                        <path d="M12 2a1.5 1.5 0 01.71.19l2.45 1.14 1.63 2.78a1.5 1.5 0 00.78.59l3.07.45a1.5 1.5 0 01.83 2.56l-2.22 2.17.52 3.05a1.5 1.5 0 01-2.17 1.57l-2.73-1.43-2.73 1.43a1.5 1.5 0 01-2.17-1.57l.52-3.05-2.22-2.17a1.5 1.5 0 01.83-2.56l3.07-.45a1.5 1.5 0 00.78-.59L11.84 3.33 14.29 2.19A1.5 1.5 0 0112 2z"/>
+                                    </svg>
+                                </label>
+                                @endfor
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div x-show="$wire.errors.has('ratings')" class="mb-4 text-red-600">
+                    <p class="text-center">{{ $errors->first('ratings.*') }}</p>
+                </div>
+
+                <div class="bg-gray-50 px-4 py-3 text-right sm:px-6 border-t border-gray-200">
+
+                    <button @click="showModal = false" type="button" class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Cancel
+                    </button>
+                    <button @click="$wire.submitRating()" type="button" class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ml-3">
+                        Submit
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

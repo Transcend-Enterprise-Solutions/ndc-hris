@@ -4,8 +4,11 @@ namespace App\Livewire\User;
 
 use Livewire\Component;
 use App\Models\DocRequest;
+use App\Models\Rating;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DocRequestTable extends Component
 {
@@ -15,6 +18,30 @@ class DocRequestTable extends Component
         'employmentCompensation' => 'Certificate of Employment with Compensation',
         'leaveCredits' => 'Certificate of Leave Credits',
         'ipcrRatings' => 'Certificate of IPCR Ratings',
+    ];
+
+    public $showRatingModal = false;
+    public $currentDocRequestId;
+    public $ratings = [
+        'responsiveness' => null,
+        'reliability' => null,
+        'access_facilities' => null,
+        'communication' => null,
+        'cost' => null,
+        'integrity' => null,
+        'assurance' => null,
+        'outcome' => null,
+    ];
+
+    public $descriptions = [
+        'responsiveness' => 'I spent a reasonable amount of time for my transaction',
+        'reliability' => 'The office followed the transaction\'s requirements and steps based on the information provided',
+        'access_facilities' => 'The steps I needed to do for my transaction were easy and simple',
+        'communication' => 'I easily found information about my transaction from the office or its website',
+        'cost' => 'I paid a reasonable amount of fees for my transaction',
+        'integrity' => 'I feel the office was fair to everyone, or "walang palakasan", during my transaction',
+        'assurance' => 'I was treated courteously by the staff, and (if asked for help) the staff was helpful',
+        'outcome' => 'I got what I needed from the government office, or (if denied) denial of request was sufficiently explained to me',
     ];
 
     public function requestDocument()
@@ -40,23 +67,86 @@ class DocRequestTable extends Component
     public function downloadDocument($id)
     {
         $request = DocRequest::find($id);
-
         if (!$request || !$request->file_path) {
-            session()->flash('error', 'Document not found.');
+            $this->dispatch('swal', [
+                'title' => 'Document not found.',
+                'icon' => 'error'
+            ]);
             return;
         }
 
-        $filePath = storage_path('app/public/' . $request->file_path);
-        if (file_exists($filePath)) {
-            return response()->download($filePath, $request->filename);
+        $rating = Rating::where('user_id', Auth::id())
+            ->where('doc_request_id', $id)
+            ->first();
+
+        if (!$rating) {
+            $this->currentDocRequestId = $id;
+            $this->showRatingModal = true;
+            // Use $this->dispatch to trigger an event or manipulate Livewire state if needed
         } else {
-            session()->flash('error', 'File not found on the server.');
+            return $this->performDownload($request);
+
         }
-        $this->dispatch('swal', [
-            'title' => 'Document downloaded successfully!',
-            'icon' => 'success'
-        ]);
     }
+
+
+    public function performDownload($request)
+    {
+        $filePath = 'public/' . $request->file_path;
+
+        if (Storage::exists($filePath)) {
+            return Storage::download($filePath, $request->filename);
+            $this->dispatch('swal', [
+                'title' => 'Document downloaded successfully',
+                'icon' => 'success'
+            ]);
+        } else {
+            $this->dispatch('swal', [
+                'title' => 'File not found on the server.',
+                'icon' => 'error'
+            ]);
+        }
+    }
+
+    public function submitRating()
+    {
+        // Validate ratings to ensure each is greater than 0 and between 1 and 5
+        $this->validate([
+            'ratings.*' => 'required|integer|between:1,5',
+        ], [
+            'ratings.*.required' => 'Please rate all the criteria in the form!',
+        ]);
+
+        // Calculate the overall rating
+        $overallRating = array_sum($this->ratings) / count($this->ratings);
+
+        // Create or update the rating record
+        Rating::create([
+            'user_id' => Auth::id(),
+            'doc_request_id' => $this->currentDocRequestId,
+            'responsiveness' => $this->ratings['responsiveness'],
+            'reliability' => $this->ratings['reliability'],
+            'access_facilities' => $this->ratings['access_facilities'],
+            'communication' => $this->ratings['communication'],
+            'cost' => $this->ratings['cost'],
+            'integrity' => $this->ratings['integrity'],
+            'assurance' => $this->ratings['assurance'],
+            'outcome' => $this->ratings['outcome'],
+            'overall' => $overallRating,
+        ]);
+
+
+        // Close the modal
+        $this->showRatingModal = false;
+
+        // After submitting the rating, perform the download
+        $request = DocRequest::find($this->currentDocRequestId);
+        if ($request) {
+            return $this->performDownload($request);
+        }
+    }
+
+
 
     public function getRequestsProperty()
     {
