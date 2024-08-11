@@ -82,7 +82,7 @@ class DocRequestTable extends Component
         if (!$rating) {
             $this->currentDocRequestId = $id;
             $this->showRatingModal = true;
-            // Use $this->dispatch to trigger an event or manipulate Livewire state if needed
+
         } else {
             return $this->performDownload($request);
 
@@ -110,7 +110,6 @@ class DocRequestTable extends Component
 
     public function submitRating()
     {
-        // Validate ratings to ensure each is greater than 0 and between 1 and 5
         $this->validate([
             'ratings.*' => 'required|integer|between:1,5',
         ], [
@@ -151,6 +150,7 @@ class DocRequestTable extends Component
     public function getRequestsProperty()
     {
         return DocRequest::where('user_id', Auth::id())
+            ->with('rating')
             ->orderBy('date_requested', 'desc')
             ->get();
     }

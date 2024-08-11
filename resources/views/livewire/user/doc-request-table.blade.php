@@ -25,49 +25,83 @@
                     <button @click="selectedTab = 'rejected'" :class="selectedTab === 'rejected' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" role="tab">Rejected</button>
                 </div>
 
-                <!-- Tab Content -->
-                <div class="px-2 py-4 text-slate-700 dark:text-slate-300">
-                    @foreach (['pending', 'preparing', 'completed', 'rejected'] as $status)
-                        <div x-show="selectedTab === '{{ $status }}'" id="tabpanel{{ ucfirst($status) }}" role="tabpanel" aria-labelledby="tab{{ ucfirst($status) }}">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
-                                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
-                                        <tr class="whitespace-nowrap">
-                                            <th class="px-4 py-2 text-center">Document Type</th>
-                                            <th class="px-4 py-2 text-center">Date Requested</th>
-                                            <th class="px-4 py-2 text-center">Date Completed</th>
-                                            <th class="px-4 py-2 text-center">My Document</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($requests->where('status', $status) as $request)
-                                            <tr class="border-b dark:border-gray-600 whitespace-nowrap">
-                                                <td class="px-4 py-2 text-center">{{ $request->document_type }}</td>
-                                                <td class="px-4 py-2 text-center">{{ $request->date_requested->format('Y-m-d') }}</td>
-                                                <td class="px-4 py-2 text-center">{{ $request->date_completed ? $request->date_completed->format('Y-m-d') : 'N/A' }}</td>
-                                                <td class="px-4 py-2 text-center">
-                                                    @if ($request->file_path)
-                                                        <button wire:click="downloadDocument({{ $request->id }})" class="text-blue-500 hover:underline">
-                                                            {{ $request->filename }} (Download)
-                                                        </button>
-                                                    @else
-                                                        No Document
-                                                    @endif
-                                                </td>
+                    <!-- Tab Content -->
+                    <div class="px-2 py-4 text-slate-700 dark:text-slate-300">
+                        @foreach (['pending', 'preparing', 'completed', 'rejected'] as $status)
+                            <div x-show="selectedTab === '{{ $status }}'" id="tabpanel{{ ucfirst($status) }}" role="tabpanel" aria-labelledby="tab{{ ucfirst($status) }}">
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
+                                        <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                            <tr class="whitespace-nowrap">
+                                                <th class="px-4 py-2 text-center">Document Type</th>
+                                                <th class="px-4 py-2 text-center">Date Requested</th>
+                                                <th class="px-4 py-2 text-center">Date Completed</th>
+                                                <th class="px-4 py-2 text-center">My Document</th>
+                                                @if($status === 'completed')
+                                                    <th class="px-4 py-2 text-center">Rating</th>
+                                                @endif
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            @if ($requests->where('status', $status)->isEmpty())
-                                <div class="p-4 text-center text-gray-500 dark:text-gray-300">
-                                    No {{ ucfirst($status) }} requests available.
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($requests->where('status', $status) as $request)
+                                                <tr class="border-b dark:border-gray-600 whitespace-nowrap">
+                                                    <td class="px-4 py-2 text-center">{{ $request->document_type }}</td>
+                                                    <td class="px-4 py-2 text-center">{{ $request->date_requested->format('Y-m-d') }}</td>
+                                                    <td class="px-4 py-2 text-center">{{ $request->date_completed ? $request->date_completed->format('Y-m-d') : 'N/A' }}</td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        @if ($request->file_path)
+                                                            <button wire:click="downloadDocument({{ $request->id }})" class="text-blue-500 hover:underline">
+                                                                {{ $request->filename }} (Download)
+                                                            </button>
+                                                        @else
+                                                            No Document
+                                                        @endif
+                                                    </td>
+                                                    @if($status === 'completed')
+                                                        <td class="px-4 py-2 text-center">
+                                                            @if($request->rating)
+                                                            <div class="flex justify-center items-center">
+                                                                @for ($i = 1; $i <= 5; $i++)
+                                                                    <div class="relative w-5 h-5 flex-shrink-0">
+                                                                        <!-- Empty Star -->
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-gray-300">
+                                                                            <path d="M12 2a1.5 1.5 0 01.71.19l2.45 1.14 1.63 2.78a1.5 1.5 0 00.78.59l3.07.45a1.5 1.5 0 01.83 2.56l-2.22 2.17.52 3.05a1.5 1.5 0 01-2.17 1.57l-2.73-1.43-2.73 1.43a1.5 1.5 0 01-2.17-1.57l.52-3.05-2.22-2.17a1.5 1.5 0 01.83-2.56l3.07-.45a1.5 1.5 0 00.78-.59L11.84 3.33 14.29 2.19A1.5 1.5 0 0112 2z"/>
+                                                                        </svg>
+                                                                        <!-- Filled Star -->
+                                                                        @php
+                                                                            $ratingValue = $request->rating->overall;
+                                                                            $starPercentage = ($ratingValue - $i + 1) * 100;
+                                                                            $starPercentageRounded = round(max(0, min(100, $starPercentage)));
+                                                                        @endphp
+                                                                        <div class="absolute top-0 left-0 h-full overflow-hidden" style="width: {{ $starPercentageRounded }}%">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-yellow-500">
+                                                                                <path d="M12 2a1.5 1.5 0 01.71.19l2.45 1.14 1.63 2.78a1.5 1.5 0 00.78.59l3.07.45a1.5 1.5 0 01.83 2.56l-2.22 2.17.52 3.05a1.5 1.5 0 01-2.17 1.57l-2.73-1.43-2.73 1.43a1.5 1.5 0 01-2.17-1.57l.52-3.05-2.22-2.17a1.5 1.5 0 01.83-2.56l3.07-.45a1.5 1.5 0 00.78-.59L11.84 3.33 14.29 2.19A1.5 1.5 0 0112 2z"/>
+                                                                            </svg>
+                                                                        </div>
+                                                                    </div>
+                                                                @endfor
+                                                                <span class="ml-2">{{ number_format($request->rating->overall, 1) }}</span>
+                                                            </div>
+
+                                                            @else
+                                                                Not yet rated
+                                                            @endif
+                                                        </td>
+                                                    @endif
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
-                            @endif
-                        </div>
-                    @endforeach
+                                @if ($requests->where('status', $status)->isEmpty())
+                                    <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                        No {{ ucfirst($status) }} requests available.
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
         </div>
     </div>
 
