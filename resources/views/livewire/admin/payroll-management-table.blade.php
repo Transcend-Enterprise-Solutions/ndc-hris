@@ -1,4 +1,10 @@
-<div class="w-full">
+<div class="w-full" 
+    x-data="{ 
+        selectedTab: 'plantilla',
+        selectedSubTab: 'plantilla_payroll',
+        selectedSubTab2: 'plantilla_payslip'
+    }" 
+    x-cloak>
 
     <style>
         .scrollbar-thin1::-webkit-scrollbar {
@@ -25,8 +31,8 @@
 
             <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
 
-                {{-- Search Input --}}
-                <div class="w-full sm:w-1/3 sm:mr-4">
+                {{-- Search Plantilla Input --}}
+                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'plantilla'">
                     <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
                     <input type="text" id="search" wire:model.live="search"
                         class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
@@ -35,14 +41,24 @@
                         placeholder="Enter employee name or ID">
                 </div>
 
-                <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
+                {{-- Search COS Input --}}
+                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'cos'">
+                    <label for="search2" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                    <input type="text" id="search2" wire:model.live="search2"
+                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                            dark:hover:bg-slate-600 dark:border-slate-600
+                            dark:text-gray-300 dark:bg-gray-800"
+                        placeholder="Enter employee name or ID">
+                </div>
+
+                <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4" x-show="selectedTab === 'plantilla'">
 
                     <div class="w-full sm:w-auto">
                         <button wire:click="toggleAddPayroll" 
-                            class="mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
+                            class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
                             hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
                             dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
-                            Add Payroll
+                            Add Plantilla Payroll
                         </button>
                     </div>
 
@@ -233,93 +249,888 @@
                         </button>
                     </div>
                 </div>
+
+                <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4" x-show="selectedTab === 'cos'">
+
+                    <div class="w-full sm:w-auto">
+                        <button wire:click="toggleAddCosPayroll" 
+                            class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
+                            hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
+                            dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
+                            Add COS Payroll
+                        </button>
+                    </div>
+
+                    <!-- Export to Excel -->
+                    <div class="relative inline-block text-left">
+                        <button wire:click="exportCosExcel"
+                            class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                            justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
+                            text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                            rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
+                            type="button"  title="Export Payroll">
+                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
+                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
+                        </button>
+                    </div>
+                </div>
                 
             </div>
 
             <!-- Table -->
             <div class="flex flex-col">
+                <div class="flex gap-2 overflow-x-auto -mb-2">
+                    <button @click="selectedTab = 'plantilla'" 
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'plantilla', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'plantilla' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
+                        Plantilla Payroll
+                    </button>
+                    <button @click="selectedTab = 'cos'" 
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'cos', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'cos' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm">
+                        COS Payroll
+                    </button>
+                    <button @click="selectedTab = 'payroll_signatories'" 
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'payroll_signatories', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'payroll_signatories' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm">
+                        Payroll Signatories
+                    </button>
+                    <button @click="selectedTab = 'payslip_signatories'" 
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'payslip_signatories', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'payslip_signatories' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm">
+                        Payslip Signatories
+                    </button>
+                </div>
                 <div class="overflow-x-auto">
                     <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
-                        <div class="overflow-x-auto">
-                            <table class="w-full min-w-full">
-                                <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
-                                    <tr class="whitespace-nowrap">
-                                        @foreach($columns as $column => $visible)
-                                            @if($visible)
-                                                <th scope="col" class="px-5 py-3 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium text-left uppercase">
-                                                    {{ ucwords(str_replace('_', ' ', $column)) }}
-                                                </th>
-                                            @endif
-                                        @endforeach
-                                        <th class="px-5 py-3 text-gray-100 text-sm font-medium text-right uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
-                                            Action
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
-                                        @foreach($payrolls as $payroll)
-                                            <tr class="text-neutral-800 dark:text-neutral-200">
-                                                @foreach($columns as $column => $visible)
-                                                    @if($visible)
-                                                        <td class="px-5 py-4 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium whitespace-nowrap">
-                                                            @if(in_array($column, [
-                                                                'rate_per_month', 
-                                                                'personal_economic_relief_allowance', 
-                                                                'gross_amount', 
-                                                                'additional_gsis_premium', 
-                                                                'lbp_salary_loan', 
-                                                                'nycea_deductions', 
-                                                                'sc_membership', 
-                                                                'total_loans', 
-                                                                'salary_loan', 
-                                                                'policy_loan', 
-                                                                'eal', 
-                                                                'emergency_loan', 
-                                                                'mpl', 
-                                                                'housing_loan', 
-                                                                'ouli_prem', 
-                                                                'gfal', 
-                                                                'cpl', 
-                                                                'pagibig_mpl', 
-                                                                'other_deduction_philheath_diff', 
-                                                                'life_retirement_insurance_premiums', 
-                                                                'pagibig_contribution', 
-                                                                'w_holding_tax', 
-                                                                'philhealth', 
-                                                                'total_deduction', 
-                                                                'net_amount_received', 
-                                                                'amount_due_first_half', 
-                                                                'amount_due_second_half'
-                                                            ]))
-                                                                {{ currency_format($payroll->$column) }}
-                                                            @else
-                                                                {{ $payroll->$column ?? '' }}
-                                                            @endif
-                                                        </td>
-                                                    @endif
-                                                @endforeach
-                                                <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                    <div class="relative">
-                                                        <button wire:click="toggleEditPayroll({{ $payroll->user_id }})" 
-                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                            focus:outline-none" title="Edit">
-                                                            <i class="fas fa-pencil-alt ml-3"></i>
-                                                        </button>
-                                                        <button wire:click="toggleDelete({{ $payroll->user_id }})" 
-                                                            class=" text-red-600 hover:text-red-900 dark:text-red-600 
-                                                            dark:hover:text-red-900" title="Delete">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                </tbody>
-                            </table>
+                        <div x-show="selectedTab === 'plantilla'">
+                            <div class="overflow-x-auto">
+                                <table class="w-full min-w-full">
+                                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                        <tr class="whitespace-nowrap">
+                                            @foreach($columns as $column => $visible)
+                                                @if($visible)
+                                                    <th scope="col" class="px-5 py-3 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium text-left uppercase">
+                                                        {{ ucwords(str_replace('_', ' ', $column)) }}
+                                                    </th>
+                                                @endif
+                                            @endforeach
+                                            <th class="px-5 py-3 text-gray-100 text-sm font-medium text-right uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                            @foreach($payrolls as $payroll)
+                                                <tr class="text-neutral-800 dark:text-neutral-200">
+                                                    @foreach($columns as $column => $visible)
+                                                        @if($visible)
+                                                            <td class="px-5 py-4 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium whitespace-nowrap">
+                                                                @if(in_array($column, [
+                                                                    'rate_per_month', 
+                                                                    'personal_economic_relief_allowance', 
+                                                                    'gross_amount', 
+                                                                    'additional_gsis_premium', 
+                                                                    'lbp_salary_loan', 
+                                                                    'nycea_deductions', 
+                                                                    'sc_membership', 
+                                                                    'total_loans', 
+                                                                    'salary_loan', 
+                                                                    'policy_loan', 
+                                                                    'eal', 
+                                                                    'emergency_loan', 
+                                                                    'mpl', 
+                                                                    'housing_loan', 
+                                                                    'ouli_prem', 
+                                                                    'gfal', 
+                                                                    'cpl', 
+                                                                    'pagibig_mpl', 
+                                                                    'other_deduction_philheath_diff', 
+                                                                    'life_retirement_insurance_premiums', 
+                                                                    'pagibig_contribution', 
+                                                                    'w_holding_tax', 
+                                                                    'philhealth', 
+                                                                    'total_deduction', 
+                                                                    'net_amount_received', 
+                                                                    'amount_due_first_half', 
+                                                                    'amount_due_second_half'
+                                                                ]))
+                                                                    {{ currency_format($payroll->$column) }}
+                                                                @else
+                                                                    {{ $payroll->$column ?? '' }}
+                                                                @endif
+                                                            </td>
+                                                        @endif
+                                                    @endforeach
+                                                    <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                        <div class="relative">
+                                                            <button wire:click="toggleEditPayroll({{ $payroll->user_id }})" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i class="fas fa-pencil-alt ml-3"></i>
+                                                            </button>
+                                                            <button wire:click="toggleDelete({{ $payroll->user_id }})" 
+                                                                class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                dark:hover:text-red-900" title="Delete">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                    </tbody>
+                                </table>
+                                @if ($payrolls->isEmpty())
+                                    <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                        No records!
+                                    </div> 
+                                @endif
+                            </div>
+                            <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                {{ $payrolls->links() }}
+                            </div>
                         </div>
-                        <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
-                            {{ $payrolls->links() }}
+                        <div x-show="selectedTab === 'cos'">
+                            <div class="overflow-x-auto">
+                                <table class="w-full min-w-full">
+                                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                        <tr class="whitespace-nowrap">
+                                            @foreach($cosColumns as $column => $visible)
+                                                @if($visible)
+                                                    <th scope="col" class="px-5 py-3 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium text-left uppercase">
+                                                        {{ ucwords(str_replace('_', ' ', $column)) }}
+                                                    </th>
+                                                @endif
+                                            @endforeach
+                                            <th class="px-5 py-3 text-gray-100 text-sm font-medium text-right uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                            @foreach($cosPayrolls as $payroll)
+                                                <tr class="text-neutral-800 dark:text-neutral-200">
+                                                    @foreach($cosColumns as $column => $visible)
+                                                        @if($visible)
+                                                            <td class="px-5 py-4 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium whitespace-nowrap">
+                                                                @if(in_array($column, [
+                                                                    'rate_per_month', 
+                                                                ]))
+                                                                    {{ currency_format($payroll->$column) }}
+                                                                @else
+                                                                    {{ $payroll->$column ?? '' }}
+                                                                @endif
+                                                            </td>
+                                                        @endif
+                                                    @endforeach
+                                                    <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                        <div class="relative">
+                                                            <button wire:click="toggleEditCosPayroll({{ $payroll->user_id }})" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i class="fas fa-pencil-alt ml-3"></i>
+                                                            </button>
+                                                            <button wire:click="toggleCosDelete({{ $payroll->user_id }})" 
+                                                                class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                dark:hover:text-red-900" title="Delete">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                    </tbody>
+                                </table>
+                                @if ($cosPayrolls->isEmpty())
+                                    <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                        No records!
+                                    </div> 
+                                @endif
+                            </div>
+                            <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                {{ $cosPayrolls->links() }}
+                            </div>
+                        </div>
+                        <div x-show="selectedTab === 'payroll_signatories'">
+                            <div class="overflow-x-hidden">
+                                <div class="flex gap-2 overflow-x-auto dark:bg-gray-700 bg-gray-200 rounded-t-lg">
+                                    <button @click="selectedSubTab = 'plantilla_payroll'" 
+                                            :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab === 'plantilla_payroll', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab !== 'plantilla_payroll' }" 
+                                            class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
+                                        Plantilla Payroll Signatories
+                                    </button>
+                                    <button @click="selectedSubTab = 'cos_payroll'" 
+                                            :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab === 'cos_payroll', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab !== 'cos_payroll' }" 
+                                            class="h-min px-4 pt-2 pb-4 text-sm">
+                                        COS Payroll Signatories
+                                    </button>
+                                </div>
+                            </div>
+                            {{-- Plantilla Payroll View --}}
+                            <div x-show="selectedSubTab === 'plantilla_payroll'">
+                                <div class="overflow-hidden mt-10">
+                                    <div class="pb-4 mb-3 pt-4 sm:pt-0">
+                                        <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Plantilla Payroll Footer View</h1>
+                                    </div>
+                                    <div class="overflow-x-auto bg-white text-xs text-black border border-black">
+                                        <div class="block sm:flex">
+                                            <div class="col-span-1 block border-r border-black">
+                                                <div class="h-32 w-full block border-b border-black relative">
+                                                    <div class="flex">
+                                                        <p class="px-2 border-r border-b border-black">A.</p>
+                                                        <p class="pl-2">CERTIFIED: Services duly rendered as stated.</p>
+                                                    </div>
+                                                    <div class="absolute bottom-1 w-full flex">
+                                                        <div class="flex flex flex-col items-center w-4/5">
+                                                            @if($plantillaPayroll['a'])
+                                                                <img src="{{ $plantillaPayroll['a']->signature ? route('signature.file', basename($plantillaPayroll['a']->signature)) : '/images/signature.png' }}"
+                                                                    alt="signature" title="{{ $plantillaPayroll['a']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                                    class="cursor-pointer {{ $plantillaPayroll['a']->signature ? '-mb-4' : '' }}" onclick="document.getElementById('plantillaPayroll_A').click()"
+                                                                    style="height: {{ $plantillaPayroll['a']->signature ? '60px' : '30px' }}; width: auto;">
+                                                                    <input type="file" id="plantillaPayroll_A" 
+                                                                        wire:model="signatures.{{ $plantillaPayroll['a']->id }}" 
+                                                                        style="display: none;" 
+                                                                        accept="image/*">
+                                                                <div wire:loading wire:target="signatures.{{ $plantillaPayroll['a']->id }}" style="margin-left: 5px">
+                                                                    <div class="spinner-border small text-primary" role="status">
+                                                                    </div>
+                                                                </div>
+                                                                @error('signatures.' . $plantillaPayroll['a']->id) <span class="error">{{ $message }}</span> @enderror
+                                                            @endif
+                                                            <p class="text-center font-bold text-sm">{{ $plantillaPayroll['a'] ? $plantillaPayroll['a']->name : 'XXXXXXXXXX' }}</p>
+                                                            <p class="text-center">{{ $plantillaPayroll['a'] ? $plantillaPayroll['a']->position : 'Position' }}</p>
+                                                        </div>
+                                                        <div class="flex flex flex-col items-center justify-end w-1/5">
+                                                            <p class="text-center underline">01/01/2024</p>
+                                                            <p class="text-center">Date</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="absolute right-0 top-0 p-2 bg-white">
+                                                        @if($plantillaPayroll['a'])
+                                                            <button wire:click="toggleEditSignatory({{ $plantillaPayroll['a']->user_id }}, 'plantilla_payroll')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i title="Edit" class="fas fa-pencil-alt ml-3"></i>
+                                                            </button>
+                                                        @else
+                                                            <button wire:click="toggleAddSignatory('plantilla_payroll', 'A')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="h-32 w-full relative">
+                                                    <div class="flex">
+                                                        <p class="px-2 border-r border-b border-black">B.</p>
+                                                        <p class="pl-2">CERTIFIED: Supporting documents complete and proper; and cash available in the amount of</p>
+                                                    </div>
+                                                    <div class="flex">
+                                                        <p class="px-2"></p>
+                                                        <p class="pl-6 font-bold">₱ 4,884.16</p>
+                                                    </div>
+                                                    <div class="absolute bottom-1 w-full flex">
+                                                        <div class="flex flex flex-col items-center w-4/5">
+                                                            @if($plantillaPayroll['b'])
+                                                                <img src="{{ $plantillaPayroll['b']->signature ? route('signature.file', basename($plantillaPayroll['b']->signature)) : '/images/signature.png' }}"
+                                                                    alt="signature" title="{{ $plantillaPayroll['b']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                                    class="cursor-pointer {{ $plantillaPayroll['b']->signature ? '-mb-4' : '' }}" onclick="document.getElementById('plantillaPayroll_B').click()"
+                                                                    style="height: {{ $plantillaPayroll['b']->signature ? '60px' : '30px' }}; width: auto;">
+                                                                <input type="file" id="plantillaPayroll_B" 
+                                                                    wire:model="signatures.{{ $plantillaPayroll['b']->id }}" 
+                                                                    style="display: none;" 
+                                                                    accept="image/*">
+                                                                <div wire:loading wire:target="signatures.{{ $plantillaPayroll['b']->id }}" style="margin-left: 5px">
+                                                                    <div class="spinner-border small text-primary" role="status">
+                                                                    </div>
+                                                                </div>
+                                                                @error('signatures.' . $plantillaPayroll['b']->id) <span class="error">{{ $message }}</span> @enderror
+                                                            @endif
+                                                            <p class="text-center font-bold text-sm">{{ $plantillaPayroll['b'] ? $plantillaPayroll['b']->name : 'XXXXXXXXXX' }}</p>
+                                                            <p class="text-center">{{ $plantillaPayroll['b'] ? $plantillaPayroll['b']->position : 'Position' }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="absolute right-0 top-0 p-2 bg-white">
+                                                        @if($plantillaPayroll['b'])
+                                                            <button wire:click="toggleEditSignatory({{ $plantillaPayroll['b']->user_id }}, 'plantilla_payroll')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i class="fas fa-pencil-alt ml-3"></i>
+                                                            </button>
+                                                        @else
+                                                            <button wire:click="toggleAddSignatory('plantilla_payroll', 'B')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-span-1 block">
+                                                <div class="h-32 w-full border-b border-black relative">
+                                                    <div class="flex">
+                                                        <p class="px-2 border-r border-b border-black">C.</p>
+                                                        <p class="pl-2 font-bold">APPROVED FOR PAYMENT: FOUR THOUSAND, EIGHT HUNDRED AND EIGHTY-FOUR AND 16/100 PESOS ONLY</p>
+                                                    </div>
+                                                    <div class="flex">
+                                                        <p class="px-2"></p>
+                                                        <p class="pl-6 font-bold">₱ 4,884.16</p>
+                                                    </div>
+                                                    <div class="absolute bottom-1 w-full flex">
+                                                        <div class="flex flex flex-col items-center w-4/5">
+                                                            @if($plantillaPayroll['c'])
+                                                                <img src="{{ $plantillaPayroll['c']->signature ? route('signature.file', basename($plantillaPayroll['c']->signature)) : '/images/signature.png' }}"
+                                                                    alt="signature" title="{{ $plantillaPayroll['c']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                                    class="cursor-pointer {{ $plantillaPayroll['c']->signature ? '-mb-4' : '' }}" onclick="document.getElementById('plantillaPayroll_C').click()"
+                                                                    style="height: {{ $plantillaPayroll['c']->signature ? '60px' : '30px' }}; width: auto;">
+                                                                <input type="file" id="plantillaPayroll_C" 
+                                                                    wire:model="signatures.{{ $plantillaPayroll['c']->id }}" 
+                                                                    style="display: none;" 
+                                                                    accept="image/*">
+                                                                <div wire:loading wire:target="signatures.{{ $plantillaPayroll['c']->id }}" style="margin-left: 5px">
+                                                                    <div class="spinner-border small text-primary" role="status">
+                                                                    </div>
+                                                                </div>
+                                                                @error('signatures.' . $plantillaPayroll['c']->id) <span class="error">{{ $message }}</span> @enderror
+                                                            @endif
+                                                            <p class="text-center font-bold text-sm">{{ $plantillaPayroll['c'] ? $plantillaPayroll['c']->name : 'XXXXXXXXXX' }}</p>
+                                                            <p class="text-center">{{ $plantillaPayroll['c'] ? $plantillaPayroll['c']->position : 'Position' }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="absolute right-0 top-0 p-2 bg-white">
+                                                        @if($plantillaPayroll['c'])
+                                                            <button wire:click="toggleEditSignatory({{ $plantillaPayroll['c']->user_id }}, 'plantilla_payroll')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i class="fas fa-pencil-alt ml-3"></i>
+                                                            </button>
+                                                        @else
+                                                            <button wire:click="toggleAddSignatory('plantilla_payroll', 'C')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="h-32 w-full relative">
+                                                    <div class="flex">
+                                                        <p class="px-2 border-r border-b border-black">D.</p>
+                                                        <p class="pl-2">CERTIFIED: Each employee whose name <br>
+                                                            appears above has been paid the amount indicated <br>
+                                                            opposite on his/her name.
+                                                        </p>
+                                                    </div>
+                                                    <div class="absolute bottom-1 w-full flex">
+                                                        <div class="flex flex flex-col items-center w-4/5">
+                                                            @if($plantillaPayroll['d'])
+                                                                <img src="{{ $plantillaPayroll['d']->signature ? route('signature.file', basename($plantillaPayroll['d']->signature)) : '/images/signature.png' }}"
+                                                                    alt="signature" title="{{ $plantillaPayroll['d']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                                    class="cursor-pointer {{ $plantillaPayroll['d']->signature ? '-mb-4' : '' }}" onclick="document.getElementById('plantillaPayroll_D').click()"
+                                                                    style="height: {{ $plantillaPayroll['d']->signature ? '60px' : '30px' }}; width: auto;">
+                                                                <input type="file" id="plantillaPayroll_D" 
+                                                                    wire:model="signatures.{{ $plantillaPayroll['d']->id }}" 
+                                                                    style="display: none;" 
+                                                                    accept="image/*">
+                                                                <div wire:loading wire:target="signatures.{{ $plantillaPayroll['d']->id }}" style="margin-left: 5px">
+                                                                    <div class="spinner-border small text-primary" role="status">
+                                                                    </div>
+                                                                </div>
+                                                                @error('signatures.' . $plantillaPayroll['d']->id) <span class="error">{{ $message }}</span> @enderror
+                                                            @endif
+                                                            <p class="text-center font-bold text-sm">{{ $plantillaPayroll['d'] ? $plantillaPayroll['d']->name : 'XXXXXXXXXX' }}</p>
+                                                            <p class="text-center">{{ $plantillaPayroll['d'] ? $plantillaPayroll['d']->position : 'Position' }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="absolute right-0 top-0 p-2 bg-white">
+                                                        @if($plantillaPayroll['d'])
+                                                            <button wire:click="toggleEditSignatory({{ $plantillaPayroll['d']->user_id }}, 'plantilla_payroll')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i class="fas fa-pencil-alt ml-3"></i>
+                                                            </button>
+                                                        @else
+                                                            <button wire:click="toggleAddSignatory('plantilla_payroll', 'D')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            {{-- COS Payroll View --}}
+                            <div x-show="selectedSubTab === 'cos_payroll'">
+                                <div class="overflow-hidden mt-10">
+                                    <div class="pb-4 mb-3 pt-4 sm:pt-0">
+                                        <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">COS Payroll Footer View</h1>
+                                    </div>
+                                    <div class="overflow-x-auto bg-white text-xs text-black border border-black">
+                                        <div class="block sm:flex">
+                                            <div class="col-span-1 block border-r border-black">
+                                                <div class="h-32 w-full block border-b border-black relative">
+                                                    <div class="flex">
+                                                        <p class="px-2 border-r border-b border-black">A.</p>
+                                                        <p class="pl-2">CERTIFIED: Services duly rendered as stated.</p>
+                                                    </div>
+                                                    <div class="absolute bottom-1 w-full flex">
+                                                        <div class="flex flex flex-col items-center w-4/5">
+                                                            @if($cosPayroll['a'])
+                                                                <img src="{{ $cosPayroll['a']->signature ? route('signature.file', basename($cosPayroll['a']->signature)) : '/images/signature.png' }}"
+                                                                    alt="signature" title="{{ $cosPayroll['a']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                                    class="cursor-pointer {{ $cosPayroll['a']->signature ? '-mb-4' : '' }}" onclick="document.getElementById('cosPayroll_A').click()"
+                                                                    style="height: {{ $cosPayroll['a']->signature ? '60px' : '30px' }}; width: auto;">
+                                                                    <input type="file" id="cosPayroll_A" 
+                                                                        wire:model="signatures.{{ $cosPayroll['a']->id }}" 
+                                                                        style="display: none;" 
+                                                                        accept="image/*">
+                                                                <div wire:loading wire:target="signatures.{{ $cosPayroll['a']->id }}" style="margin-left: 5px">
+                                                                    <div class="spinner-border small text-primary" role="status">
+                                                                    </div>
+                                                                </div>
+                                                                @error('signatures.' . $cosPayroll['a']->id) <span class="error">{{ $message }}</span> @enderror
+                                                            @endif
+                                                            <p class="text-center font-bold text-sm">{{ $cosPayroll['a'] ? $cosPayroll['a']->name : 'XXXXXXXXXX' }}</p>
+                                                            <p class="text-center">{{ $cosPayroll['a'] ? $cosPayroll['a']->position : 'Position' }}</p>
+                                                        </div>
+                                                        <div class="flex flex flex-col items-center justify-end w-1/5">
+                                                            <p class="text-center underline">01/01/2024</p>
+                                                            <p class="text-center">Date</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="absolute right-0 top-0 p-2 bg-white">
+                                                        @if($cosPayroll['a'])
+                                                            <button wire:click="toggleEditSignatory({{ $cosPayroll['a']->user_id }}, 'cos_payroll')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i class="fas fa-pencil-alt ml-3"></i>
+                                                            </button>
+                                                        @else
+                                                            <button wire:click="toggleAddSignatory('cos_payroll', 'A')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="h-32 w-full relative">
+                                                    <div class="flex">
+                                                        <p class="px-2 border-r border-b border-black">B.</p>
+                                                        <p class="pl-2">CERTIFIED: Supporting documents complete and proper; and cash available in the amount of</p>
+                                                    </div>
+                                                    <div class="flex">
+                                                        <p class="px-2"></p>
+                                                        <p class="pl-6 font-bold">₱ 4,884.16</p>
+                                                    </div>
+                                                    <div class="absolute bottom-1 w-full flex">
+                                                        <div class="flex flex flex-col items-center w-4/5">
+                                                            @if($cosPayroll['b'])
+                                                                <img src="{{ $cosPayroll['b']->signature ? route('signature.file', basename($cosPayroll['b']->signature)) : '/images/signature.png' }}"
+                                                                    alt="signature" title="{{ $cosPayroll['b']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                                    class="cursor-pointer {{ $cosPayroll['b']->signature ? '-mb-4' : '' }}" 
+                                                                    onclick="document.getElementById('cosPayroll_B').click()"
+                                                                    style="height: {{ $cosPayroll['b']->signature ? '60px' : '30px' }}; width: auto;">
+                                                                    <input type="file" id="cosPayroll_B" 
+                                                                        wire:model="signatures.{{ $cosPayroll['b']->id }}" 
+                                                                        style="display: none;" 
+                                                                        accept="image/*">
+                                                                <div wire:loading wire:target="signatures.{{ $cosPayroll['b']->id }}" style="margin-left: 5px">
+                                                                    <div class="spinner-border small text-primary" role="status">
+                                                                    </div>
+                                                                </div>
+                                                                @error('signatures.' . $cosPayroll['b']->id) <span class="error">{{ $message }}</span> @enderror
+                                                            @endif
+                                                            <p class="text-center font-bold text-sm">{{ $cosPayroll['b'] ? $cosPayroll['b']->name : 'XXXXXXXXXX' }}</p>
+                                                            <p class="text-center">{{ $cosPayroll['b'] ? $cosPayroll['b']->position : 'Position' }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="absolute right-0 top-0 p-2 bg-white">
+                                                        @if($cosPayroll['b'])
+                                                            <button wire:click="toggleEditSignatory({{ $cosPayroll['b']->user_id }}, 'cos_payroll')"  
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i class="fas fa-pencil-alt ml-3"></i>
+                                                            </button>
+                                                        @else
+                                                            <button wire:click="toggleAddSignatory('cos_payroll', 'B')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-span-1 block">
+                                                <div class="h-32 w-full border-b border-black relative">
+                                                    <div class="flex">
+                                                        <p class="px-2 border-r border-b border-black">C.</p>
+                                                        <p class="pl-2 font-bold">APPROVED FOR PAYMENT: FOUR THOUSAND, EIGHT HUNDRED AND EIGHTY-FOUR AND 16/100 PESOS ONLY</p>
+                                                    </div>
+                                                    <div class="flex">
+                                                        <p class="px-2"></p>
+                                                        <p class="pl-6 font-bold">₱ 4,884.16</p>
+                                                    </div>
+                                                    <div class="absolute bottom-1 w-full flex">
+                                                        <div class="flex flex flex-col items-center w-4/5">
+                                                            @if($cosPayroll['c'])
+                                                                <img src="{{ $cosPayroll['c']->signature ? route('signature.file', basename($cosPayroll['c']->signature)) : '/images/signature.png' }}"
+                                                                    alt="signature" title="{{ $cosPayroll['c']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                                    class="cursor-pointer {{ $cosPayroll['c']->signature ? '-mb-4' : '' }}" 
+                                                                    onclick="document.getElementById('cosPayroll_C').click()"
+                                                                    style="height: {{ $cosPayroll['c']->signature ? '60px' : '30px' }}; width: auto;">
+                                                                    <input type="file" id="cosPayroll_C" 
+                                                                        wire:model="signatures.{{ $cosPayroll['c']->id }}" 
+                                                                        style="display: none;" 
+                                                                        accept="image/*">
+                                                                <div wire:loading wire:target="signatures.{{ $cosPayroll['c']->id }}" style="margin-left: 5px">
+                                                                    <div class="spinner-border small text-primary" role="status">
+                                                                    </div>
+                                                                </div>
+                                                                @error('signatures.' . $cosPayroll['c']->id) <span class="error">{{ $message }}</span> @enderror
+                                                            @endif
+                                                            <p class="text-center font-bold text-sm">{{ $cosPayroll['c'] ? $cosPayroll['c']->name : 'XXXXXXXXXX' }}</p>
+                                                            <p class="text-center">{{ $cosPayroll['c'] ? $cosPayroll['c']->position : 'Position' }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="absolute right-0 top-0 p-2 bg-white">
+                                                        @if($cosPayroll['c'])
+                                                            <button wire:click="toggleEditSignatory({{ $cosPayroll['c']->user_id }}, 'cos_payroll')"  
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i class="fas fa-pencil-alt ml-3"></i>
+                                                            </button>
+                                                        @else
+                                                            <button wire:click="toggleAddSignatory('cos_payroll', 'C')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="h-32 w-full relative">
+                                                    <div class="flex">
+                                                        <p class="px-2 border-r border-b border-black">D.</p>
+                                                        <p class="pl-2">CERTIFIED: Each employee whose name <br>
+                                                            appears above has been paid the amount indicated <br>
+                                                            opposite on his/her name.
+                                                        </p>
+                                                    </div>
+                                                    <div class="absolute bottom-1 w-full flex">
+                                                        <div class="flex flex flex-col items-center w-4/5">
+                                                            @if($cosPayroll['d'])
+                                                                <img src="{{ $cosPayroll['d']->signature ? route('signature.file', basename($cosPayroll['d']->signature)) : '/images/signature.png' }}"
+                                                                    alt="signature" title="{{ $cosPayroll['d']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                                    class="cursor-pointer {{ $cosPayroll['d']->signature ? '-mb-4' : '' }}" 
+                                                                    onclick="document.getElementById('cosPayroll_D').click()"
+                                                                    style="height: {{ $cosPayroll['d']->signature ? '60px' : '30px' }}; width: auto;">
+                                                                    <input type="file" id="cosPayroll_D" 
+                                                                        wire:model="signatures.{{ $cosPayroll['d']->id }}" 
+                                                                        style="display: none;" 
+                                                                        accept="image/*">
+                                                                <div wire:loading wire:target="signatures.{{ $cosPayroll['d']->id }}" style="margin-left: 5px">
+                                                                    <div class="spinner-border small text-primary" role="status">
+                                                                    </div>
+                                                                </div>
+                                                                @error('signatures.' . $cosPayroll['d']->id) <span class="error">{{ $message }}</span> @enderror
+                                                            @endif
+                                                            <p class="text-center font-bold text-sm">{{ $cosPayroll['d'] ? $cosPayroll['d']->name : 'XXXXXXXXXX' }}</p>
+                                                            <p class="text-center">{{ $cosPayroll['d'] ? $cosPayroll['d']->position : 'Position' }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="absolute right-0 top-0 p-2 bg-white">
+                                                        @if($cosPayroll['d'])
+                                                            <button wire:click="toggleEditSignatory({{ $cosPayroll['d']->user_id }}, 'cos_payroll')"  
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i class="fas fa-pencil-alt ml-3"></i>
+                                                            </button>
+                                                        @else
+                                                            <button wire:click="toggleAddSignatory('cos_payroll', 'D')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                            </div>
+                        </div>
+                        <div x-show="selectedTab === 'payslip_signatories'">
+                            <div class="overflow-x-hidden">
+                                <div class="flex gap-2 overflow-x-auto dark:bg-gray-700 bg-gray-200 rounded-t-lg">
+                                    <button @click="selectedSubTab2 = 'plantilla_payslip'" 
+                                            :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab2 === 'plantilla_payslip', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab2 !== 'plantilla_payslip' }" 
+                                            class="h-min px-4 pt-2 pb-4 text-sm">
+                                        Plantilla Payslip Signatories
+                                    </button>
+                                    <button @click="selectedSubTab2 = 'cos_payslip'" 
+                                            :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab2 === 'cos_payslip', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab2 !== 'cos_payslip' }" 
+                                            class="h-min px-4 pt-2 pb-4 text-sm">
+                                        COS Payslip Signatories
+                                    </button>
+                                </div>
+                            </div>
+                            {{-- Plantilla Payslip View --}}
+                            <div x-show="selectedSubTab2 === 'plantilla_payslip'">
+                                <div class="overflow-hidden mt-10">
+                                    <div class="pb-4 mb-3 pt-4 sm:pt-0">
+                                        <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Platilla Payslip Footer View</h1>
+                                    </div>
+                                    <div class="overflow-x-auto bg-white text-xs text-black border border-black px-2 py-6">
+                                        <div class="block">
+                                            <div class="flex border-b border-dashed border-black">
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 font-bold">NET PAY</div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 border-b font-bold border-solid border-black text-right">₱ 0,000.00</div>
+                                            </div>
+                                            <div class="flex">
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4">Amount Due &nbsp&nbsp&nbsp&nbsp January 01-15 2024</div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 border-b border-solid border-black text-right">₱ 0,000.00</div>
+                                            </div>
+                                            <div class="flex">
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4">Amount Due &nbsp&nbsp&nbsp&nbsp January 16-31 2024</div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 border-b border-solid border-black text-right">₱ 0,000.00</div>
+                                            </div>
+                                            <div class="flex mt-6">
+                                                <div class="w-1/4">Prepared By:</div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 relative">
+                                                    Noted By:
+                                                    <div class="absolute right-0 top-0 p-2 bg-white">
+                                                        @if($plantillaPayslipSigns['notedBy'])
+                                                            <button wire:click="toggleEditPayslipSignatory({{ $plantillaPayslipSigns['notedBy']->user_id }}, 'plantilla_payslip')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i class="fas fa-pencil-alt ml-3"></i>
+                                                            </button>
+                                                        @else
+                                                            <button wire:click="toggleAddPayslipSignatory('Noted By', 'plantilla_payslip')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="w-1/4"></div>
+                                            </div>
+                                            <div class="flex mt-6">
+                                                <div class="w-1/4 font-bold text-sm">
+                                                    @if($preparedBySignature)
+                                                        <img src="{{ $preparedBySignature->signature ? route('signature.file', basename($preparedBySignature->signature)) : '/images/signature.png' }}"
+                                                            alt="signature" title="Edit Signature"
+                                                            class="cursor-pointer {{ $preparedBySignature->signature ? '-mb-4' : '' }}" 
+                                                            onclick="document.getElementById('plantillaPayslip_PreparedBy').click()"
+                                                            style="height: {{ $preparedBySignature->signature ? '60px' : '30px' }}; width: auto;">
+                                                    @else
+                                                        <img src="/images/signature.png"
+                                                            alt="signature" title="Add Signature"
+                                                            class="cursor-pointer" 
+                                                            onclick="document.getElementById('plantillaPayslip_PreparedBy').click()"
+                                                            style="height: 30px; width: auto;">
+                                                    @endif
+                                                    <div wire:loading wire:target="preparedBySignature" style="margin-left: 5px">
+                                                        <div class="spinner-border small text-primary" role="status">
+                                                        </div>
+                                                    </div>
+                                                    <input type="file" id="plantillaPayslip_PreparedBy" 
+                                                        wire:model.live="preparedBySign" 
+                                                        style="display: none;" 
+                                                        accept="image/*">
+                                                    @error('preparedBySign') <span class="error">{{ $message }}</span> @enderror
+                                                </div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 font-bold text-sm">
+                                                    @if($plantillaPayslipSigns['notedBy'])
+                                                        <img src="{{ $plantillaPayslipSigns['notedBy']->signature ? route('signature.file', basename($plantillaPayslipSigns['notedBy']->signature)) : '/images/signature.png' }}"
+                                                            alt="signature" title="{{ $plantillaPayslipSigns['notedBy']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                            class="cursor-pointer {{ $plantillaPayslipSigns['notedBy']->signature ? '-mb-4' : '' }}" 
+                                                            onclick="document.getElementById('plantillaPayslip_NotedBy').click()"
+                                                            style="height: {{ $plantillaPayslipSigns['notedBy']->signature ? '60px' : '30px' }}; width: auto;">
+                                                            <input type="file" id="plantillaPayslip_NotedBy" 
+                                                                wire:model="signatures.{{ $plantillaPayslipSigns['notedBy']->id }}" 
+                                                                style="display: none;" 
+                                                                accept="image/*">
+                                                        <div wire:loading wire:target="signatures.{{ $plantillaPayslipSigns['notedBy']->id }}" style="margin-left: 5px">
+                                                            <div class="spinner-border small text-primary" role="status">
+                                                            </div>
+                                                        </div>
+                                                        @error('signatures.' . $plantillaPayslipSigns['notedBy']->id) <span class="error">{{ $message }}</span> @enderror
+                                                    @endif
+                                                </div>
+                                                <div class="w-1/4"></div>
+                                            </div>
+                                            <div class="flex mt-6">
+                                                <div class="w-1/4 font-bold text-sm">{{ $preparedBy->name }}</div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 font-bold text-sm">{{ $plantillaPayslipSigns['notedBy'] ? $plantillaPayslipSigns['notedBy']->name : 'XXXXXXXXXX' }}</div>
+                                                <div class="w-1/4"></div>
+                                            </div>
+                                            <div class="flex">
+                                                <div class="w-1/4">{{ $preparedBy->position }}</div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4">{{ $plantillaPayslipSigns['notedBy'] ? $plantillaPayslipSigns['notedBy']->position : 'Position' }}</div>
+                                                <div class="w-1/4"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- COS Payslip View --}}
+                            <div x-show="selectedSubTab2 === 'cos_payslip'">
+                                <div class="overflow-hidden mt-10">
+                                    <div class="pb-4 mb-3 pt-4 sm:pt-0">
+                                        <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">COS Payslip Footer View</h1>
+                                    </div>
+                                    <div class="overflow-x-auto bg-white text-xs text-black border border-black px-2 py-6">
+                                        <div class="block">
+                                            <div class="flex border-b border-dashed border-black">
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 font-bold">NET PAY</div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 border-b font-bold border-solid border-black text-right">₱ 0,000.00</div>
+                                            </div>
+                                            <div class="flex">
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4">Amount Due &nbsp&nbsp&nbsp&nbsp January 01-15 2024</div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 border-b border-solid border-black text-right">₱ 0,000.00</div>
+                                            </div>
+                                            <div class="flex">
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4">Amount Due &nbsp&nbsp&nbsp&nbsp January 16-31 2024</div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 border-b border-solid border-black text-right">₱ 0,000.00</div>
+                                            </div>
+                                            <div class="flex mt-6">
+                                                <div class="w-1/4">Prepared By:</div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 relative">
+                                                    Noted By:
+                                                    <div class="absolute right-0 top-0 p-2 bg-white">
+                                                        @if($cosPayslipSigns['notedBy'])
+                                                            <button wire:click="toggleEditPayslipSignatory({{ $cosPayslipSigns['notedBy']->user_id }}, 'cos_payslip')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i class="fas fa-pencil-alt ml-3"></i>
+                                                            </button>
+                                                        @else
+                                                            <button wire:click="toggleAddPayslipSignatory('Noted By', 'cos_payslip')" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="Edit">
+                                                                <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="w-1/4"></div>
+                                            </div>
+                                            <div class="flex mt-6">
+                                                <div class="w-1/4 font-bold text-sm">
+                                                    @if($preparedBySignature)
+                                                        <img src="{{ $preparedBySignature->signature ? route('signature.file', basename($preparedBySignature->signature)) : '/images/signature.png' }}"
+                                                            alt="signature" title="Edit Signature"
+                                                            class="cursor-pointer {{ $preparedBySignature->signature ? '-mb-4' : '' }}" 
+                                                            onclick="document.getElementById('plantillaPayslip_PreparedBy').click()"
+                                                            style="height: {{ $preparedBySignature->signature ? '60px' : '30px' }}; width: auto;">
+                                                    @else
+                                                        <img src="/images/signature.png"
+                                                            alt="signature" title="Add Signature"
+                                                            class="cursor-pointer" 
+                                                            onclick="document.getElementById('plantillaPayslip_PreparedBy').click()"
+                                                            style="height: 30px; width: auto;">
+                                                    @endif
+                                                    <div wire:loading wire:target="preparedBySignature" style="margin-left: 5px">
+                                                        <div class="spinner-border small text-primary" role="status">
+                                                        </div>
+                                                    </div>
+                                                    <input type="file" id="plantillaPayslip_PreparedBy" 
+                                                        wire:model.live="preparedBySign" 
+                                                        style="display: none;" 
+                                                        accept="image/*">
+                                                    @error('preparedBySign') <span class="error">{{ $message }}</span> @enderror
+                                                </div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 font-bold text-sm">
+                                                    @if($cosPayslipSigns['notedBy'])
+                                                        <img src="{{ $cosPayslipSigns['notedBy']->signature ? route('signature.file', basename($cosPayslipSigns['notedBy']->signature)) : '/images/signature.png' }}"
+                                                            alt="signature" title="{{ $cosPayslipSigns['notedBy']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                            class="cursor-pointer {{ $cosPayslipSigns['notedBy']->signature ? '-mb-4' : '' }}" 
+                                                            onclick="document.getElementById('plantillaPayslip_NotedBy').click()"
+                                                            style="height: {{ $cosPayslipSigns['notedBy']->signature ? '60px' : '30px' }}; width: auto;">
+                                                            <input type="file" id="plantillaPayslip_NotedBy" 
+                                                                wire:model="signatures.{{ $cosPayslipSigns['notedBy']->id }}" 
+                                                                style="display: none;" 
+                                                                accept="image/*">
+                                                        <div wire:loading wire:target="signatures.{{ $cosPayslipSigns['notedBy']->id }}" style="margin-left: 5px">
+                                                            <div class="spinner-border small text-primary" role="status">
+                                                            </div>
+                                                        </div>
+                                                        @error('signatures.' . $cosPayslipSigns['notedBy']->id) <span class="error">{{ $message }}</span> @enderror
+                                                    @endif
+                                                </div>
+                                                <div class="w-1/4"></div>
+                                            </div>
+                                            <div class="flex mt-6">
+                                                <div class="w-1/4 font-bold text-sm">{{ $preparedBy->name }}</div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4 font-bold text-sm">{{ $cosPayslipSigns['notedBy'] ? $cosPayslipSigns['notedBy']->name : 'XXXXXXXXXX' }}</div>
+                                                <div class="w-1/4"></div>
+                                            </div>
+                                            <div class="flex">
+                                                <div class="w-1/4">{{ $preparedBy->position }}</div>
+                                                <div class="w-1/4"></div>
+                                                <div class="w-1/4">{{ $cosPayslipSigns['notedBy'] ? $cosPayslipSigns['notedBy']->position : 'Position' }}</div>
+                                                <div class="w-1/4"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -328,8 +1139,8 @@
         </div>
     </div>
 
-   {{-- Add and Edit Payroll Modal --}}
-    <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="editPayroll">
+    {{-- Add and Edit Plantilla Payroll Modal --}}
+    <x-modal id="payroll" maxWidth="2xl" wire:model="editPayroll">
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
                 {{ $addPayroll ? 'Add' : 'Edit' }} Payroll
@@ -368,14 +1179,6 @@
                         <input type="text" id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                         @error('office_division') 
                             <span class="text-red-500 text-sm">The office/division is required!</span> 
-                        @enderror
-                    </div>
-
-                    <div class="col-span-1">
-                        <label for="department" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Department</label>
-                        <input type="text" id="department" wire:model='department' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                        @error('department') 
-                            <span class="text-red-500 text-sm">The department is required!</span> 
                         @enderror
                     </div>
 
@@ -557,28 +1360,120 @@
                         @enderror
                     </div>
 
-                    {{-- <div class="col-span-1">
-                        <label for="net_amount_received" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Net Amount Received</label>
-                        <input type="number" step="0.01" id="net_amount_received" wire:model='net_amount_received' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                        @error('net_amount_received') 
-                            <span class="text-red-500 text-sm">The net amount due is required!</span> 
-                        @enderror
-                    </div> --}}
+                    {{-- Save and Cancel buttons --}}
+                    <div class="mt-4 flex justify-end col-span-2">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="savePayroll" style="margin-right: 5px">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                            Cancel
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </x-modal>
 
-                    {{-- <div class="col-span-1">
-                        <label for="amount_due_first_half" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Amount Due First Half</label>
-                        <input type="number" step="0.01" id="amount_due_first_half" wire:model='amount_due_first_half' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+    {{-- Add and Edit COS Payroll Modal --}}
+    <x-modal id="cosPayroll" maxWidth="2xl" wire:model="editCosPayroll">
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addCosPayroll ? 'Add' : 'Edit' }} COS Payroll
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {{-- Form fields --}}
+            <form wire:submit.prevent='saveCosPayroll'>
+                <div class="grid grid-cols-2 gap-4">
+                    
+                    <div class="col-span-2">
+                        <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
+                        <select id="userId" wire:model.live='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
+                            {{ $addCosPayroll ? '' : 'disabled' }}>
+                            <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
+                            @foreach ($employees as $employee)
+                                <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('userId') 
+                            <span class="text-red-500 text-sm">Please select an employee!</span> 
+                        @enderror
                     </div>
 
                     <div class="col-span-1">
-                        <label for="amount_due_second_half" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Amount Due Second Half</label>
-                        <input type="number" step="0.01" id="amount_due_second_half" wire:model='amount_due_second_half' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                    </div> --}}
+                        <label for="employee_number" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Number</label>
+                        <input type="text" id="employee_number" wire:model='employee_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                        @error('employee_number') 
+                            <span class="text-red-500 text-sm">The employee number is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
+                        <input type="text" id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        @error('office_division') 
+                            <span class="text-red-500 text-sm">The office/division is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
+                        <input type="text" id="position" wire:model='position' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        @error('position') 
+                            <span class="text-red-500 text-sm">The position is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="sg" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Salary Grade</label>
+                        <select id="sg" wire:model.live='sg' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="">Select Salary Grade</option>
+                            @foreach ($salaryGrade as $sg)
+                                <option value="{{ $sg->salary_grade }}">{{ $sg->salary_grade }}</option>
+                            @endforeach
+                        </select>                        
+                        @error('sg') 
+                            <span class="text-red-500 text-sm">The salary grade is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="step" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Step</label>
+                        <select id="step" wire:model.live='step' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="">Select Step</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                        </select>                        
+                        @error('step') 
+                            <span class="text-red-500 text-sm">The step is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="rate_per_month" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Rate per Month</label>
+                        <input type="number" step="0.01" id="rate_per_month" wire:model='rate_per_month' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                        @error('rate_per_month') 
+                            <span class="text-red-500 text-sm">The rate per month is required!</span> 
+                        @enderror
+                    </div>
 
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-2">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            <div wire:loading wire:target="savePayroll" class="spinner-border small text-primary" role="status">
+                            <div wire:loading wire:target="saveCosPayroll" style="margin-right: 5px">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
                             </div>
                             Save
                         </button>
@@ -619,6 +1514,104 @@
                 </div>
             </form>
 
+        </div>
+    </x-modal>
+    
+    {{-- Add and Edit Payroll Signatory Modal --}}
+    <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="editSignatory" centered>
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addSignatory ? 'Add' : 'Edit' }} Payroll Signatory
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {{-- Form fields --}}
+            <form wire:submit.prevent='saveSignatory'>
+                <div class="grid grid-cols-1">
+                    
+                    <div class="col-span-1">
+                        <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
+                        <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
+                            @foreach ($empPayrolled as $employee)
+                                <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('userId') 
+                            <span class="text-red-500 text-sm">Please select an employee!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="mt-4 flex justify-end col-span-2">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveRole" class="spinner-border small text-primary" role="status">
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                            Cancel
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </x-modal>
+
+    {{-- Add and Edit Payslip Signatory Modal --}}
+    <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="editPayslipSignatory" centered>
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addPayslipSignatory ? 'Add' : 'Edit' }} Payslip Signatory
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {{-- Form fields --}}
+            <form wire:submit.prevent='savePayslipSignatory'>
+                <div class="grid grid-cols-2 gap-4">
+                    
+                    <div class="col-span-1">
+                        <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
+                        <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
+                            {{ $addPayslipSignatory ? '' : 'disabled' }}>
+                            <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
+                            @foreach ($empPayrolled as $employee)
+                                <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('userId') 
+                            <span class="text-red-500 text-sm">Please select an employee!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="signatory" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Payslip Signatory</label>
+                        <select id="userId" wire:model='signatory' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="">Select payslip signatory for</option>
+                            <option value="Noted By">Noted By</option>
+                            @if(!$addPayslipSignatory)
+                                <option value="X">Remove Signatory</option>
+                            @endif
+                        </select>                        
+                        @error('signatory') 
+                            <span class="text-red-500 text-sm">The signatory is required!</span> 
+                        @enderror
+                    </div>
+
+
+                    <div class="mt-4 flex justify-end col-span-2">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveRole" class="spinner-border small text-primary" role="status">
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                            Cancel
+                        </p>
+                    </div>
+                </div>
+            </form>
         </div>
     </x-modal>
 

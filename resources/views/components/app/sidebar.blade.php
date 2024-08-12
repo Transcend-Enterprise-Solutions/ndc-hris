@@ -248,7 +248,7 @@
                                             href="{{route('/payroll/general-payroll')}}" wire:navigate>
                                             <span class="text-sm font-medium transition-opacity duration-300"
                                                 :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                General Payroll
+                                                Plantilla Payroll
                                             </span>
                                         </a>
                                     </li>

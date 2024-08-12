@@ -16,11 +16,6 @@ class RoleManagementTable extends Component
     use WithPagination;
     public $addRole;
     public $editRole;
-    public $addSignatory;
-    public $editSignatory;
-    public $addPayslipSignatory;
-    public $editPayslipSignatory;
-    public $signatory;
     public $employees;
     public $userId;
     public $name;
@@ -57,46 +52,8 @@ class RoleManagementTable extends Component
                         'users.user_role')
                     ->paginate(5);
 
-        $payrollSignatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
-                    ->where('signatory_type', 'payroll')
-                    ->when($this->search2, function ($query) {
-                        return $query->search2(trim($this->search2));
-                    })
-                    ->orderBy('signatory', 'ASC')
-                    ->paginate(5);
-
-        $payslipSignatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
-                    ->where('signatory_type', 'payslip')
-                    ->when($this->search3, function ($query) {
-                        return $query->search3(trim($this->search3));
-                    })
-                    ->orderBy('signatory', 'ASC')
-                    ->paginate(5);
-
-        $a = $payrollSignatories->where('signatory', 'A')->first();
-        $b = $payrollSignatories->where('signatory', 'B')->first();
-        $c = $payrollSignatories->where('signatory', 'C')->first();
-        $d = $payrollSignatories->where('signatory', 'D')->first();
-
-        $notedBy = $payslipSignatories->where('signatory', 'Noted By')->first();
-
-        $signs = [
-            'a' => $a,
-            'b' => $b,
-            'c' => $c,
-            'd' => $d,
-        ];
-
-        $payslipSigns = [
-            'notedBy' => $notedBy,
-        ];
-
         return view('livewire.admin.role-management-table',[
             'admins' => $admins,
-            'payrollSignatories' => $payrollSignatories,
-            'payslipSignatories' => $payslipSignatories,
-            'signs' => $signs,
-            'payslipSigns' => $payslipSigns,
         ]);
     }
 
@@ -130,50 +87,6 @@ class RoleManagementTable extends Component
     public function toggleAddRole(){
         $this->editRole = true;
         $this->addRole = true;
-    }
-
-    public function toggleEditSignatory($userId){
-        $this->editSignatory = true;
-        $this->userId = $userId;
-        try {
-            $user = User::join('signatories', 'signatories.user_id', 'users.id')
-                    ->where('users.id', $userId)
-                    ->where('signatories.signatory_type', 'payroll')
-                    ->first();
-            if ($user) {
-                $this->name = $user->name;
-                $this->signatory = $user->signatory;
-            }
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
-    public function toggleAddSignatory(){
-        $this->editSignatory= true;
-        $this->addSignatory= true;
-    }
-
-    public function toggleEditPayslipSignatory($userId){
-        $this->editPayslipSignatory = true;
-        $this->userId = $userId;
-        try {
-            $user = User::join('signatories', 'signatories.user_id', 'users.id')
-                    ->where('users.id', $userId)
-                    ->where('signatories.signatory_type', 'payslip')
-                    ->first();
-            if ($user) {
-                $this->name = $user->name;
-                $this->signatory = $user->signatory;
-            }
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
-    public function toggleAddPayslipSignatory(){
-        $this->editPayslipSignatory= true;
-        $this->addPayslipSignatory= true;
     }
 
     public function saveRole(){
@@ -252,102 +165,6 @@ class RoleManagementTable extends Component
         }
     }
 
-    public function saveSignatory(){
-        try {
-            $signatory = Signatories::where('user_id', $this->userId)
-                        ->where('signatory_type', 'payroll')
-                        ->first();
-            $message = "";
-            if($signatory){
-                if($this->signatory == "X"){
-                    $signatory->delete();
-                }else{
-                    $this->validate([
-                        'signatory' => 'required',
-                        'userId' => 'required',
-                    ]);
-
-                    $signatory->update([
-                        'signatory' => $this->signatory,
-                    ]);
-                }
-                $message = "Payroll signatory updated successfully!";
-            }else{
-                $this->validate([
-                    'signatory' => 'required',
-                    'userId' => 'required',
-                ]);
-
-                Signatories::create([
-                    'user_id' => $this->userId,
-                    'signatory' => $this->signatory,
-                    'signatory_icon' => 'payroll',
-                ]);
-                $message = "Payroll signatory added successfully!";
-            }
-            $this->resetVariables();
-            $this->dispatch('swal', [
-                'title' => $message,
-                'icon' => 'success'
-            ]);
-    
-        } catch (Exception $e) {
-            $this->dispatch('swal', [
-                'title' => "Payroll signatory update was unsuccessful!",
-                'icon' => 'error'
-            ]);
-            throw $e;
-        }
-    }
-
-    public function savePayslipSignatory(){
-        try {
-            $signatory = Signatories::where('user_id', $this->userId)
-                        ->where('signatory_type', 'payslip')
-                        ->first();
-            $message = "";
-            if($signatory){
-                if($this->signatory == "X"){
-                    $signatory->delete();
-                }else{
-                    $this->validate([
-                        'signatory' => 'required',
-                        'userId' => 'required',
-                    ]);
-
-                    $signatory->update([
-                        'signatory' => $this->signatory,
-                    ]);
-                }
-                $message = "Payslip signatory updated successfully!";
-            }else{
-                $this->validate([
-                    'signatory' => 'required',
-                    'userId' => 'required',
-                ]);
-
-                Signatories::create([
-                    'user_id' => $this->userId,
-                    'signatory' => $this->signatory,
-                    'signatory_icon' => 'payslip',
-                ]);
-                $message = "Payslip signatory added successfully!";
-            }
-            $this->resetVariables();
-            $this->dispatch('swal', [
-                'title' => $message,
-                'icon' => 'success'
-            ]);
-    
-        } catch (Exception $e) {
-            $this->dispatch('swal', [
-                'title' => "Payslip signatory update was unsuccessful!",
-                'icon' => 'error'
-            ]);
-            throw $e;
-        }
-    }
-
     public function toggleDelete($userId, $message){
         $this->deleteMessage = $message;
         $this->deleteId = $userId;
@@ -401,11 +218,6 @@ class RoleManagementTable extends Component
         $this->position = null;
         $this->editRole = null;
         $this->addRole = null;
-        $this->editSignatory= null;
-        $this->addSignatory= null;
-        $this->editPayslipSignatory= null;
-        $this->addPayslipSignatory= null;
-        $this->signatory = null;
         $this->admin_email = null;
         $this->password = null;
         $this->cpassword = null;

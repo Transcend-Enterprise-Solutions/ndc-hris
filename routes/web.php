@@ -3,13 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataFeedController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\MemberController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\JobController;
-use App\Http\Controllers\CampaignController;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 /*
 |--------------------------------------------------------------------------
@@ -103,3 +98,17 @@ Route::middleware(['auth', 'checkrole:emp'])->group(function () {
     Route::get('/filing-and-approval/leave-monetization', function () {
         return view('livewire.user.leave-monetization'); })->name('/filing-and-approval/leave-monetization');
 });
+
+
+Route::get('/signature/{filename}', function ($filename) {
+    $path = 'signatures/' . $filename;
+    
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+    
+    $file = Storage::disk('public')->get($path);
+    $type = File::mimeType(storage_path('app/public/' . $path));
+
+    return response($file, 200)->header('Content-Type', $type);
+})->name('signature.file');

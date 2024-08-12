@@ -15,6 +15,7 @@ return new class extends Migration
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
                 $table->string('signatory')->nullable();
                 $table->string('signatory_type')->nullable();
+                $table->string('signature')->nullable();
                 $table->timestamps();
             });
         }

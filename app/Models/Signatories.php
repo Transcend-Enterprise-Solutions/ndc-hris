@@ -15,6 +15,7 @@ class Signatories extends Model
         'user_id',
         'signatory',
         'signatory_type',
+        'signature',
     ];
 
     public function user(){

@@ -180,6 +180,11 @@ class User extends Authenticatable
         return $this->hasMany(Signatories::class);
     }
 
+    public function cosPayrolls()
+    {
+        return $this->hasOne(CosPayrolls::class);
+    }
+
     /**
      * The attributes that should be cast.
      *

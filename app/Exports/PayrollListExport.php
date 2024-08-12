@@ -3,15 +3,23 @@
 namespace App\Exports;
 
 use App\Models\Payrolls;
-use Maatwebsite\Excel\Concerns\Exportable;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\BeforeSheet;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use Carbon\Exceptions\InvalidFormatException;
 
-class PayrollListExport implements FromCollection, WithHeadings
+class PayrollListExport implements FromCollection, WithEvents
 {
     use Exportable;
 
     protected $filters;
+    protected $rowNumber = 0;
 
     public function __construct($filters)
     {
@@ -23,7 +31,7 @@ class PayrollListExport implements FromCollection, WithHeadings
             return '₱ ' . number_format((float)$value, 2, '.', ',');
         };
 
-        $query = Payrolls::query();
+        $query = Payrolls::query()->where('position', '!=', 'Super Admin');
 
         if (!empty($this->filters['search'])) {
             $query->where(function ($q) {
@@ -35,13 +43,16 @@ class PayrollListExport implements FromCollection, WithHeadings
         }
 
         return $query->get()->map(function ($payroll) use ($formatCurrency) {
+            $this->rowNumber++;
             return [
+                $this->rowNumber,
                 'name' => $payroll->name,
                 'employee_number' => $payroll->employee_number,
                 'position' => $payroll->position,
+                'office_division' => $payroll->office_division,
                 'sg_step' => $payroll->sg_step,
                 'rate_per_month' => $formatCurrency($payroll->rate_per_month),
-                'personal_economic_relief_allowance' => $formatCurrency($payroll->personal_economic_relief_allowance),
+                'pera' => $formatCurrency($payroll->personal_economic_relief_allowance),
                 'gross_amount' => $formatCurrency($payroll->gross_amount),
                 'additional_gsis_premium' => $formatCurrency($payroll->additional_gsis_premium),
                 'lbp_salary_loan' => $formatCurrency($payroll->lbp_salary_loan),
@@ -67,38 +78,110 @@ class PayrollListExport implements FromCollection, WithHeadings
         });
     }
 
-
-    public function headings(): array
-    {
+    
+    public function registerEvents(): array{
         return [
-            'NAME',
-            'EMPLOYEE NUMBER',
-            'POSITION',
-            'SG-STEP',
-            'RATE PER MONTH',
-            'PERSONAL ECONOMIC RELIEF ALLOWANCE',
-            'GROSS AMOUNT',
-            'ADDITIONAL GSIS PREMIUM',
-            'LBP SALARY LOAN',
-            'NYCEA DEDUCTIONS',
-            'SC MEMBERSHIP',
-            'SALARY LOAN',
-            'POLICY LOAN',
-            'EAL',
-            'EMERGENCY LOAN',
-            'MPL',
-            'HOUSING LOAN',
-            'OULI PREM',
-            'GFAL',
-            'CPL',
-            'PAG-IBIG MPL',
-            'OTHER DEDUCTION PHILHEALTH DIFF',
-            'LIFE RETIREMENT INSURANCE PREMIUMS',
-            'PAG-IBIG CONTRIBUTION',
-            'WITHHOLDING TAX',
-            'PHILHEALTH',
-            'TOTAL DEDUCTION',
+            BeforeSheet::class => function(BeforeSheet $event) {
+                $this->addCustomHeader($event);
+            },
+            AfterSheet::class => function(AfterSheet $event) {
+                $sheet = $event->sheet;
+                $highestRow = $sheet->getHighestRow();
+
+                // Set column widths
+                $sheet->getColumnDimension('A')->setWidth(4);
+                $sheet->getColumnDimension('B')->setWidth(30);
+                $sheet->getColumnDimension('C')->setWidth(15);
+                $sheet->getColumnDimension('D')->setWidth(30);
+                for ($col = 'E'; $col <= 'Z'; $col++) {
+                    $sheet->getColumnDimension($col)->setWidth(15);
+                }
+                $sheet->getColumnDimension('AA')->setWidth(20);
+                $sheet->getColumnDimension('AB')->setWidth(20);
+                $sheet->getColumnDimension('AC')->setWidth(20);
+
+
+                // Set row height for row 4
+                $sheet->getRowDimension(4)->setRowHeight(40); 
+; 
+
+                // Merge cells A12 and A13
+                $sheet->setCellValue('A4', '');
+                $sheet->setCellValue('B4', 'NAME');
+                $sheet->setCellValue('C4', 'EMPLOYEE NO.');
+                $sheet->setCellValue('D4', 'POSITION');
+                $sheet->setCellValue('E4', 'OFFICE/ DIVISION');
+                $sheet->setCellValue('F4', 'SG/STEP');
+                $sheet->setCellValue('G4', 'RATE PER MONTH');
+                $sheet->setCellValue('H4', 'PERA');
+                $sheet->setCellValue('I4', 'GROSS AMOUNT');
+                $sheet->setCellValue('J4', 'ADDITIONAL GSIS PREMIUM');
+                $sheet->setCellValue('K4', 'LBP SALARY LOAN');
+                $sheet->setCellValue('L4', 'NYCEA DEDUCTIONS');
+                $sheet->setCellValue('M4', 'SC MEMBERSHIP');
+                $sheet->setCellValue('N4', 'SALARY LOAN');
+                $sheet->setCellValue('O4', 'POLICY LOAN');
+                $sheet->setCellValue('P4', 'EAL');
+                $sheet->setCellValue('Q4', 'EMERGENCY LOAN');
+                $sheet->setCellValue('R4', 'MPL');
+                $sheet->setCellValue('S4', 'HOUSING LOAN');
+                $sheet->setCellValue('T4', 'OULI PREM');
+                $sheet->setCellValue('U4', 'GFAL');
+                $sheet->setCellValue('V4', 'CPL');
+                $sheet->setCellValue('W4', 'PAG-IBIG MPL');
+                $sheet->setCellValue('X4', 'OTHER DEDUCTION PHILHEALTH DIFF');
+                $sheet->setCellValue('Y4', 'LIFE RETIREMENT INSURANCE PREMIUMS');
+                $sheet->setCellValue('Z4', 'PAG-IBIG CONTRIBUTION');
+                $sheet->setCellValue('AA4', 'WITHHOLDING TAX');
+                $sheet->setCellValue('AB4', 'PHILHEALTH');
+                $sheet->setCellValue('AC4', 'TOTAL DEDUCTION');
+
+                // Apply word wrap
+                $sheet->getStyle('A4:AC4')->getAlignment()->setWrapText(true);
+
+                // Column Header
+                $sheet->getStyle('A1:AC3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('A4:AC4')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
+
+                // Rows
+                $sheet->getStyle('A4:B' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+                $sheet->getStyle('C4:AC' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            },
         ];
+    }
+
+    private function addCustomHeader(BeforeSheet $event){
+        $sheet = $event->sheet;
+
+        // Add custom header
+        $sheet->mergeCells('A1:AC1');
+        $sheet->setCellValue('A1', "");
+
+        $sheet->mergeCells('A2:AC2');
+        $sheet->setCellValue('A2', "NATIONAL YOUTH COMMISSION");
+        $sheet->mergeCells('A3:AC3');
+        $sheet->setCellValue('A3', "Plantilla Payroll List");
+
+        // Apply some basic styling
+        $sheet->getStyle('A1:AC3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A1:AC3')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('A1:A3')->getFont()->setBold(true);
+        $sheet->getStyle('A1:AC3')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_NONE);
+        $sheet->getStyle('A4:AC4')->getFont()->setBold(true);
+        $sheet->getStyle('2:2')->getFont()->setSize(16);
+
+        $sheet->getStyle('A4:AC4')->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF000000'], // Black color
+                ],
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'color' => ['argb' => 'FFF0F0F0'], // Light gray background
+            ],
+        ]);
     }
     
 }
