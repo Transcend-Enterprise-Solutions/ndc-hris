@@ -10,6 +10,7 @@
                         <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700 relative">
                             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">NYC WFH ATTENDANCE</h5>
                             <div class="grid grid-cols-1 gap-4 p-4">
+
                                 <div class="flex justify-center">
                                     <button wire:click="confirmPunch('morningIn', 'Morning In')" @if($morningInDisabled) disabled @endif class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed"> 
                                         <span class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
@@ -38,7 +39,9 @@
                                         </span>
                                     </button>
                                 </div>
+                                
                             </div>
+
                             @if (!$isWFHDay)
                                 <div class="absolute inset-0 flex justify-center items-center bg-gray-700 bg-opacity-75">
                                     <div class="text-center">
@@ -50,25 +53,32 @@
                         </div>
 
                         <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700 relative">
-                            <h3 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">WFH Punch Times</h3>
-                            <table class="min-w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md mt-2 w-64">
-                                <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
-                                    <tr class="whitespace-nowrap">
-                                        <th class="px-5 py-3 text-sm font-medium uppercase text-center">Punch Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($transactions as $transaction)
-                                        <tr class="whitespace-nowrap">
-                                            <td class="px-4 py-2 text-center">{{ $transaction->punch_time }}</td>
-                                        </tr>
+                            <h3 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">WFH Punch Time</h3>
+                        
+                            @php
+                                use Carbon\Carbon;
+                                $today = Carbon::now()->format('l'); // Get the current day name
+                            @endphp
+                        
+                            <div class="mb-4">
+                                <h4 class="text-xl font-semibold text-gray-900 dark:text-white text-center border-b">{{ $today }}</h4>
+                        
+                                <div class="mt-2 text-center">
+                                    @foreach (['Morning In', 'Morning Out', 'Afternoon In', 'Afternoon Out'] as $type)
+                                        <div class="mb-2 text-center">
+                                            <strong>{{ $type }}</strong>
+                                            <div>
+                                                @forelse ($groupedTransactions[$type] ?? [] as $transaction)
+                                                    <div class="text-gray-700 dark:text-gray-300">{{ \Carbon\Carbon::parse($transaction->punch_time)->format('H:i:s') }}</div>
+                                                @empty
+                                                    <div class="text-gray-400">No punch time recorded</div>
+                                                @endforelse
+                                            </div>
+                                        </div>
                                     @endforeach
-                                </tbody>
-                            </table>
-                            <div class="p-5 border-t border-neutral-500 dark:border-neutral-200">
-                                {{ $transactions->links() }}
+                                </div>
                             </div>
-                        </div>
+                        </div>                                             
 
                     </div>
                 </div>

@@ -62,7 +62,8 @@ class WfhAttendanceTable extends Component
             $this->password = '';
             $this->errorMessage = null;
             // $this->{$this->punchState}();
-            $this->{$this->punchState}($this->verifyType);
+            // $this->{$this->punchState}($this->verifyType);
+            $this->punch($this->punchState, $this->verifyType);
         } else {
             $this->errorMessage = 'Incorrect password. Please try again.';
         }
@@ -82,16 +83,27 @@ class WfhAttendanceTable extends Component
         ];
 
         Transaction::create($punchData);
+
+        // Disable buttons based on the action
         if ($verifyType == 'Morning In') {
             $this->morningInDisabled = true;
             $this->morningOutDisabled = false;
+            $this->afternoonInDisabled = true;
+            $this->afternoonOutDisabled = true;
         } elseif ($verifyType == 'Morning Out') {
+            $this->morningInDisabled = true;
             $this->morningOutDisabled = true;
             $this->afternoonInDisabled = false;
+            $this->afternoonOutDisabled = true;
         } elseif ($verifyType == 'Afternoon In') {
+            $this->morningInDisabled = true;
+            $this->morningOutDisabled = true;
             $this->afternoonInDisabled = true;
             $this->afternoonOutDisabled = false;
         } elseif ($verifyType == 'Afternoon Out') {
+            $this->morningInDisabled = true;
+            $this->morningOutDisabled = true;
+            $this->afternoonInDisabled = true;
             $this->afternoonOutDisabled = true;
         }
 
@@ -100,6 +112,7 @@ class WfhAttendanceTable extends Component
             'icon' => 'success'
         ]);
     }
+
 
     public function morningIn()
     {
@@ -131,77 +144,66 @@ class WfhAttendanceTable extends Component
     {
         $user = Auth::user();
         $now = Carbon::now();
+        $currentHour = $now->hour;
         $today = $now->format('l');
         $schedule = DTRSchedule::where('emp_code', $user->emp_code)->first();
-
+    
         if ($schedule) {
             $wfhDays = explode(',', $schedule->wfh_days);
             $isWFHDay = in_array($today, $wfhDays);
-
+    
             if ($isWFHDay) {
-                // Check if there are any transactions for today
-                $todayTransactions = Transaction::where('emp_code', $user->emp_code)
-                    ->where('punch_state_display', 'WFH')
-                    ->whereDate('punch_time', $now->toDateString())
-                    ->count();
-
-                if ($todayTransactions == 0) {
-                    // Reset button states if it's a WFH day and no transactions have been made yet
+                // Reset button states based on current time
+                if ($currentHour >= 6 && $currentHour < 12) { // Morning: 6 AM to 12 PM
                     $this->morningInDisabled = false;
-                    $this->morningOutDisabled = true;
+                    $this->morningOutDisabled = false;
                     $this->afternoonInDisabled = true;
+                    $this->afternoonOutDisabled = true;
+                } else { // Afternoon: 12 PM onward
+                    $this->morningInDisabled = true;
+                    $this->morningOutDisabled = true;
+                    $this->afternoonInDisabled = false;
+                    $this->afternoonOutDisabled = false;
+                }
+    
+                // Additional check to ensure buttons are not enabled if already punched for the respective time
+                $transactions = Transaction::where('emp_code', $user->emp_code)
+                    ->where('punch_state_display', 'WFH')
+                    ->whereDate('punch_time', Carbon::today())
+                    ->pluck('verify_type_display');
+    
+                if ($transactions->contains('Morning In')) {
+                    $this->morningInDisabled = true;
+                }
+                if ($transactions->contains('Morning Out')) {
+                    $this->morningOutDisabled = true;
+                }
+                if ($transactions->contains('Afternoon In')) {
+                    $this->afternoonInDisabled = true;
+                }
+                if ($transactions->contains('Afternoon Out')) {
                     $this->afternoonOutDisabled = true;
                 }
             }
         }
-    }
+    }       
 
     public function render()
     {
         $this->checkWFHDay();
-        $this->resetButtonStatesIfNeeded(); // This will now reset buttons at the start of each WFH day
+        $this->resetButtonStatesIfNeeded(); // Ensure buttons are updated based on time and transactions
         
         $transactions = Transaction::where('emp_code', Auth::user()->emp_code)
                                     ->where('punch_state_display', 'WFH')
-                                    ->whereDate('punch_time', Carbon::today()) // Only get today's transactions
+                                    ->whereDate('punch_time', Carbon::today())
                                     ->orderBy('punch_time', 'asc')
                                     ->get();
-
-        // Reset button states before checking transactions
-        $this->morningInDisabled = false;
-        $this->morningOutDisabled = true;
-        $this->afternoonInDisabled = true;
-        $this->afternoonOutDisabled = true;
-
-        // Update button states based on today's transactions
-        foreach ($transactions as $transaction) {
-            switch ($transaction->verify_type_display) {
-                case 'Morning In':
-                    $this->morningInDisabled = true;
-                    $this->morningOutDisabled = false;
-                    break;
-                case 'Morning Out':
-                    $this->morningOutDisabled = true;
-                    $this->afternoonInDisabled = false;
-                    break;
-                case 'Afternoon In':
-                    $this->afternoonInDisabled = true;
-                    $this->afternoonOutDisabled = false;
-                    break;
-                case 'Afternoon Out':
-                    $this->afternoonOutDisabled = true;
-                    break;
-            }
-        }
-
-        // Paginate all transactions for display
-        $paginatedTransactions = Transaction::where('emp_code', Auth::user()->emp_code)
-                                            ->where('punch_state_display', 'WFH')
-                                            ->orderBy('punch_time', 'desc')
-                                            ->paginate(4);
+        
+        // Group transactions by punch type
+        $groupedTransactions = $transactions->groupBy('verify_type_display');
 
         return view('livewire.user.wfh-attendance-table', [
-            'transactions' => $paginatedTransactions,
+            'groupedTransactions' => $groupedTransactions,
         ]);
     }
 }
