@@ -8,10 +8,15 @@ use App\Models\Rating;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Notification;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DocRequestTable extends Component
 {
+
+    public $preparingCount = 0;
+    public $completedCount = 0;
+    public $rejectedCount = 0;
     public $documentType;
     public $availableDocumentTypes = [
         'employment' => 'Certificate of Employment',
@@ -43,6 +48,38 @@ class DocRequestTable extends Component
         'assurance' => 'I was treated courteously by the staff, and (if asked for help) the staff was helpful',
         'outcome' => 'I got what I needed from the government office, or (if denied) denial of request was sufficiently explained to me',
     ];
+    public function updateNotificationCounts()
+    {
+    $userId = Auth::id();
+
+    $this->preparingCount = Notification::where('user_id', $userId)
+        ->where('type', 'approved')
+        ->where('read', 0)
+        ->count();
+
+    $this->completedCount = Notification::where('user_id', $userId)
+        ->where('type', 'completed')
+        ->where('read', 0)
+        ->count();
+
+    $this->rejectedCount = Notification::where('user_id', $userId)
+        ->where('type', 'rejected')
+        ->where('read', 0)
+        ->count();
+    }
+    public function markNotificationsAsRead($type)
+    {
+    Notification::where('user_id', Auth::id())
+        ->where('type', $type)
+        ->where('read', 0)
+        ->update(['read' => 1]);
+
+    $this->updateNotificationCounts();
+    }
+    public function mount()
+    {
+    $this->updateNotificationCounts();
+    }
 
     public function requestDocument()
     {
@@ -157,8 +194,11 @@ class DocRequestTable extends Component
 
     public function render()
     {
-        return view('livewire.user.doc-request-table', [
-            'requests' => $this->requests,
-        ]);
+    return view('livewire.user.doc-request-table', [
+        'requests' => $this->requests,
+        'preparingCount' => $this->preparingCount,
+        'completedCount' => $this->completedCount,
+        'rejectedCount' => $this->rejectedCount,
+    ]);
     }
 }

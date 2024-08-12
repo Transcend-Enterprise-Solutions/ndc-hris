@@ -41,7 +41,19 @@
         style="top: 100%; {{ $align === 'right' ? 'right: 0;' : 'left: 0;' }}"
     >
         <!-- Dropdown header -->
-        <div class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase pt-1.5 pb-2 px-4">Notifications</div>
+        <div class="flex items-center justify-between text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase pt-1.5 pb-2 px-4">
+            <span>Notifications</span>
+            @if($unreadCount > 0)
+                <button
+                    class="text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                    wire:click="markAllAsRead"
+                >
+                    Mark all as read
+                </button>
+            @endif
+        </div>
+
+
 
         <!-- Dropdown items -->
         <ul class="max-h-64 overflow-y-auto">
@@ -50,7 +62,7 @@
                     <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
                         <div class="flex justify-between items-start">
 
-                            <a wire:navigate wire:click="markGroupAsRead('{{ $type }}')" href="{{ route('/my-records/doc-request') }}"
+                            <a wire:navigate href="{{ route('/my-records/doc-request') }}"
                             class="flex-grow">
                                 <span class="block text-sm mb-1">
                                     📣 <span class="font-medium text-slate-800 dark:text-slate-100">
@@ -61,12 +73,27 @@
                                     {{ $group['latest']->created_at->diffForHumans() }}
                                 </span>
                             </a>
-                            <button
-                                class="text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
-                                wire:click="markGroupAsRead('{{ $type }}')"
-                            >
-                                Mark as read
-                            </button>
+                            <div x-data="{ open: false }" class="relative inline-block">
+                                <!-- Three dots icon button -->
+                                <button @click="open = !open" @click.away="open = false"
+                                    class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                        class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 6.75c.69 0 1.25-.56 1.25-1.25S12.69 4.25 12 4.25 10.75 4.81 10.75 5.5 11.31 6.75 12 6.75zM12 13.25c.69 0 1.25-.56 1.25-1.25s-.56-1.25-1.25-1.25-1.25.56-1.25 1.25.56 1.25 1.25 1.25zM12 19.75c.69 0 1.25-.56 1.25-1.25s-.56-1.25-1.25-1.25-1.25.56-1.25 1.25.56 1.25 1.25 1.25z" />
+                                    </svg>
+                                </button>
+
+                                <!-- Dropdown for "Mark as read" -->
+                                <div x-show="open" x-transition class="absolute right-0 z-10 mt-2 w-36 bg-white dark:bg-gray-800 shadow-lg rounded-md">
+                                    <button
+                                        class="block w-full px-4 py-2 text-left text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                                        wire:click="markGroupAsRead('{{ $type }}')"
+                                    >
+                                        Mark as read
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </li>
@@ -76,15 +103,6 @@
         </ul>
 
         <!-- Mark all as read button -->
-        @if($unreadCount > 0)
-            <div class="border-t border-slate-200 dark:border-slate-700 mt-2 pt-2 px-4">
-                <button
-                    class="w-full text-center text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
-                    wire:click="markAllAsRead"
-                >
-                    Mark all as read
-                </button>
-            </div>
-        @endif
+
     </div>
 </div>
