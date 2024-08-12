@@ -179,6 +179,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Signatories::class);
     }
+    public function notifications()
+    {
+        // Assuming notifications are related to user via `user_id`
+        return $this->hasMany(Notification::class, 'user_id');
+    }
 
     public function cosPayrolls()
     {

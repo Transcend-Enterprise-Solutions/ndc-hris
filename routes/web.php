@@ -21,7 +21,7 @@ Route::redirect('/', '/login');
 Route::get('/register', function () {
     return view('registeraccount'); })->name('register');
 
-    
+
 /* Super Admin and HR account role */
 Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
     Route::get('/role-management', function () {
@@ -43,7 +43,7 @@ Route::middleware(['auth', 'checkrole:sa,hr,sv,pa'])->group(function () {
     Route::get('/json-data-feed', [DataFeedController::class, 'getDataFeed'])->name('json_data_feed');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
-  
+
 /* Super Admin, HR, and Supervisor account role */
 Route::middleware(['auth', 'checkrole:sa,hr,sv'])->group(function () {
     Route::get('/employee-management/admin-dtr', function () {

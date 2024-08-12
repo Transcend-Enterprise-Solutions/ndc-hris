@@ -45,8 +45,19 @@ class AdminDtrTable extends Component
         $this->sortField = $field;
     }
 
+    public function placeholder()
+    {
+        return <<<'HTML'
+        <div class="flex w-full flex-col gap-2">
+            <livewire:skeleton/>
+        </div>
+        HTML;
+    }
+
     public function render()
     {
+
+        // sleep(1);
         $query = EmployeesDtr::query()
             ->join('users', 'employees_dtr.user_id', '=', 'users.id')
             ->select('employees_dtr.*', 'users.name as user_name', 'users.emp_code');
@@ -119,5 +130,6 @@ class AdminDtrTable extends Component
         }, 'dtr_report.pdf');
 
     }
+
 
 }

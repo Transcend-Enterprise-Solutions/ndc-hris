@@ -80,61 +80,65 @@
     <div class="watermark"></div>
 
     @foreach($dtrs as $employeeName => $employeeDtrs)
-        <h2>{{ $employeeName }}</h2>
-        <p>{{ Carbon\Carbon::parse($startDate)->format('M d, Y') }} - {{ Carbon\Carbon::parse($endDate)->format('M d, Y') }}</p>
+        @if($employeeDtrs->isNotEmpty())
+            <h2>{{ $employeeName }}</h2>
+            <p>{{ Carbon\Carbon::parse($startDate)->format('M d, Y') }} - {{ Carbon\Carbon::parse($endDate)->format('M d, Y') }}</p>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>AM In</th>
-                    <th>AM Out</th>
-                    <th>PM In</th>
-                    <th>PM Out</th>
-                    <th>Total Hours</th>
-                    <th>Late/Undertime</th>
-                    <th>Day</th>
-                    <th>Arrangement</th>
-                    <th>Remarks</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($employeeDtrs as $dtr)
+            <table>
+                <thead>
                     <tr>
-                        <td>{{ Carbon\Carbon::parse($dtr->date)->format('d') }}</td>
-                        <td>{{ $dtr->morning_in ?? '--:--' }}</td>
-                        <td>{{ $dtr->morning_out ?? '--:--' }}</td>
-                        <td>{{ $dtr->afternoon_in ?? '--:--' }}</td>
-                        <td>{{ $dtr->afternoon_out ?? '--:--' }}</td>
-                        <td>{{ $dtr->total_hours_rendered }}</td>
-                        <td>{{ $dtr->late }}</td>
-                        <td>{{ Carbon\Carbon::parse($dtr->date)->format('D') }}</td>
-                        <td>{{ $dtr->location }}</td>
-                        <td>{{ $dtr->remarks }}</td>
+                        <th>Date</th>
+                        <th>AM In</th>
+                        <th>AM Out</th>
+                        <th>PM In</th>
+                        <th>PM Out</th>
+                        <th>Total Hours</th>
+                        <th>Late/Undertime</th>
+                        <th>Day</th>
+                        <th>Arrangement</th>
+                        <th>Remarks</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach($employeeDtrs as $dtr)
+                        @if($dtr)
+                            <tr>
+                                <td>{{ $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('d') : '--' }}</td>
+                                <td>{{ $dtr->morning_in ?? '--:--' }}</td>
+                                <td>{{ $dtr->morning_out ?? '--:--' }}</td>
+                                <td>{{ $dtr->afternoon_in ?? '--:--' }}</td>
+                                <td>{{ $dtr->afternoon_out ?? '--:--' }}</td>
+                                <td>{{ $dtr->total_hours_rendered }}</td>
+                                <td>{{ $dtr->late }}</td>
+                                <td>{{ $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('D') : '--' }}</td>
+                                <td>{{ $dtr->location }}</td>
+                                <td>{{ $dtr->remarks }}</td>
+                            </tr>
+                        @endif
+                    @endforeach
+                </tbody>
+            </table>
 
-        <div class="note-section">
-            ABSENCES AND UNDERTIME<br>
-            I hereby certify upon my honor that the entries on this time record, which were made daily at the time of arrival at and departure from the office, are a true and correct report of hours of work performed.
-            <br><br>
-            <strong>{{ $employeeName }}</strong>
-            Employee<br><br>
+            <div class="note-section">
+                ABSENCES AND UNDERTIME<br>
+                I hereby certify upon my honor that the entries on this time record, which were made daily at the time of arrival at and departure from the office, are a true and correct report of hours of work performed.
+                <br><br>
+                <strong>{{ $employeeName }}</strong>
+                Employee<br><br>
 
-            Verified and found correct as to the prescribed office hours.
+                Verified and found correct as to the prescribed office hours.
 
-            <strong>{{ $signatoryName }}</strong>
-            Executive Director And COO
-        </div>
+                <strong>{{ $signatoryName }}</strong>
+                Executive Director And COO
+            </div>
 
-        <div class="generation-time">
-            Generated on: {{ now()->format('F d, Y H:i:s') }}
-        </div>
+            <div class="generation-time">
+                Generated on: {{ now()->format('F d, Y H:i:s') }}
+            </div>
 
-        @if(!$loop->last)
-            <div class="page-break"></div>
+            @if(!$loop->last)
+                <div class="page-break"></div>
+            @endif
         @endif
     @endforeach
 </body>

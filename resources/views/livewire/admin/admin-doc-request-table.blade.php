@@ -53,22 +53,25 @@
                                     <table class="min-w-full divide-y divide-gray-200">
                                         <thead class="bg-gray-50 dark:bg-gray-700">
                                             <tr>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider whitespace-nowrap">Name</th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider whitespace-nowrap">Document Type</th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider whitespace-nowrap">Date Requested</th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider whitespace-nowrap">Date Completed</th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider whitespace-nowrap">Your Document</th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider whitespace-nowrap">Actions</th>
+                                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider whitespace-nowrap">Name</th>
+                                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider whitespace-nowrap">Document Type</th>
+                                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider whitespace-nowrap">Date Requested</th>
+                                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider whitespace-nowrap">Date Completed</th>
+                                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider whitespace-nowrap">Document</th>
+                                                @if($status === 'completed')
+                                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider whitespace-nowrap">Rating</th>
+                                                @endif
+                                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider whitespace-nowrap">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200">
                                             @foreach ($requests->where('status', $status) as $request)
                                                 <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">{{ $request->user->name }}</td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-200">{{ $request->document_type }}</td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-200">{{ $request->date_requested->format('Y-m-d') }}</td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-200">{{ $request->date_completed ? $request->date_completed->format('Y-m-d') : 'N/A' }}</td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-200">
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-gray-900 dark:text-gray-300">{{ $request->user->name }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500 dark:text-gray-200">{{ $request->document_type }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500 dark:text-gray-200">{{ $request->date_requested->format('Y-m-d') }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500 dark:text-gray-200">{{ $request->date_completed ? $request->date_completed->format('Y-m-d') : 'N/A' }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500 dark:text-gray-200">
                                                         @if ($status === 'preparing')
                                                             <div class="flex items-center space-x-2">
                                                                 <input type="file" id="file-input-{{ $request->id }}" wire:model="uploadedFile.{{ $request->id }}" class="mt-2 mb-2">
@@ -89,6 +92,37 @@
                                                             No Document
                                                         @endif
                                                     </td>
+                                                    @if($status === 'completed')
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500 dark:text-gray-200">
+                                                            @if($request->rating)
+                                                            <div class="flex justify-center items-center">
+                                                                @for ($i = 1; $i <= 5; $i++)
+                                                                    <div class="relative w-5 h-5 flex-shrink-0">
+                                                                        <!-- Empty Star -->
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-gray-300">
+                                                                            <path d="M12 2a1.5 1.5 0 01.71.19l2.45 1.14 1.63 2.78a1.5 1.5 0 00.78.59l3.07.45a1.5 1.5 0 01.83 2.56l-2.22 2.17.52 3.05a1.5 1.5 0 01-2.17 1.57l-2.73-1.43-2.73 1.43a1.5 1.5 0 01-2.17-1.57l.52-3.05-2.22-2.17a1.5 1.5 0 01.83-2.56l3.07-.45a1.5 1.5 0 00.78-.59L11.84 3.33 14.29 2.19A1.5 1.5 0 0112 2z"/>
+                                                                        </svg>
+                                                                        <!-- Filled Star -->
+                                                                        @php
+                                                                            $ratingValue = $request->rating->overall;
+                                                                            $starPercentage = ($ratingValue - $i + 1) * 100;
+                                                                            $starPercentageRounded = round(max(0, min(100, $starPercentage)));
+                                                                        @endphp
+                                                                        <div class="absolute top-0 left-0 h-full overflow-hidden" style="width: {{ $starPercentageRounded }}%">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-yellow-500">
+                                                                                <path d="M12 2a1.5 1.5 0 01.71.19l2.45 1.14 1.63 2.78a1.5 1.5 0 00.78.59l3.07.45a1.5 1.5 0 01.83 2.56l-2.22 2.17.52 3.05a1.5 1.5 0 01-2.17 1.57l-2.73-1.43-2.73 1.43a1.5 1.5 0 01-2.17-1.57l.52-3.05-2.22-2.17a1.5 1.5 0 01.83-2.56l3.07-.45a1.5 1.5 0 00.78-.59L11.84 3.33 14.29 2.19A1.5 1.5 0 0112 2z"/>
+                                                                            </svg>
+                                                                        </div>
+                                                                    </div>
+                                                                @endfor
+                                                                <span class="ml-2">{{ number_format($request->rating->overall, 1) }}</span>
+                                                            </div>
+
+                                                            @else
+                                                                Not yet rated
+                                                            @endif
+                                                        </td>
+                                                    @endif
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-200">
                                                         <div class="flex justify-center space-x-2">
                                                             @if ($status === 'pending')

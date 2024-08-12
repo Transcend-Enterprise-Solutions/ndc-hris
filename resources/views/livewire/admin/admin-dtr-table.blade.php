@@ -1,4 +1,5 @@
 <div class="w-full flex justify-center">
+
     <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
         <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Admin Daily Time Record</h1>
 
