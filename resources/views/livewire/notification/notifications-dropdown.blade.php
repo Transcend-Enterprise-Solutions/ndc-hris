@@ -23,7 +23,7 @@
 
     <!-- Dropdown menu -->
     <div
-        class="origin-top-right absolute z-10 mt-2 w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 py-1.5 rounded shadow-lg overflow-hidden"
+        class="origin-top-right absolute z-10 mt-2 w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 py-1.5 rounded-2xl shadow-lg overflow-hidden"
         @click.outside="open = false"
         @keydown.escape.window="open = false"
         x-show="open"

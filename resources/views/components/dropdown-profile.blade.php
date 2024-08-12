@@ -2,12 +2,12 @@
     'align' => 'right'
 ])
 
-<div class="relative inline-flex" x-data="{ open: false }">
+<div class="relative inline-flex pl-6" x-data="{ open: false }">
     <button
         class="inline-flex justify-center items-center group"
         aria-haspopup="true"
         @click.prevent="open = !open"
-        :aria-expanded="open"                        
+        :aria-expanded="open"
     >
         <img class="w-8 h-8 rounded-full" src="{{ Auth::user()->profile_photo_url }}" width="32" height="32" alt="{{ Auth::user()->name }}" />
         <div class="flex items-center truncate">
@@ -18,7 +18,7 @@
         </div>
     </button>
     <div
-        class="origin-top-right z-10 absolute top-full min-w-44 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 py-1.5 rounded shadow-lg overflow-hidden mt-1 {{$align === 'right' ? 'right-0' : 'left-0'}}"                
+        class="origin-top-right z-10 absolute top-full min-w-44 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 py-1.5 rounded shadow-lg overflow-hidden mt-1 {{$align === 'right' ? 'right-0' : 'left-0'}}"
         @click.outside="open = false"
         @keydown.escape.window="open = false"
         x-show="open"
@@ -28,7 +28,7 @@
         x-transition:leave="transition ease-out duration-200"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        x-cloak                    
+        x-cloak
     >
         <div class="pt-0.5 pb-2 px-3 mb-1 border-b border-slate-200 dark:border-slate-700">
             <div class="font-medium text-slate-800 dark:text-slate-100">{{ Auth::user()->name }}</div>
@@ -50,8 +50,8 @@
                     >
                         {{ __('Sign Out') }}
                     </a>
-                </form>                                
+                </form>
             </li>
-        </ul>                
+        </ul>
     </div>
 </div>

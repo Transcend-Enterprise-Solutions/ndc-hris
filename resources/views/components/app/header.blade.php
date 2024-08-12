@@ -26,7 +26,7 @@
             <div class="flex items-center space-x-3">
 
                 <!-- Search Button with Modal -->
-                <x-modal-search />
+                {{-- <x-modal-search /> --}}
 
                 <!-- Notifications button -->
                 {{-- <x-dropdown-notifications align="right" /> --}}
@@ -41,10 +41,12 @@
                 <x-theme-toggle />
 
                 <!-- Divider -->
+                <div class="pl-2"></div>
                 <hr class="w-px h-6 bg-slate-200 dark:bg-slate-700 border-none" />
 
+
                 <!-- User button -->
-                <x-dropdown-profile align="right" />
+                <x-dropdown-profile align="right"/>
 
             </div>
 
