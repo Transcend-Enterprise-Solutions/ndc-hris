@@ -3,9 +3,12 @@
 
         <div>
 
-            @livewire('admin.admin-dtr-table')
+            <livewire:admin.admin-dtr-table lazy />
 
         </div>
+
+
+
 
     </div>
 </x-app-layout>

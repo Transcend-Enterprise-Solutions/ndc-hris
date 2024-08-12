@@ -87,11 +87,19 @@ class DocRequestTable extends Component
             'documentType' => 'required',
         ]);
 
-        DocRequest::create([
+        $docRequest = DocRequest::create([
             'user_id' => Auth::id(),
             'document_type' => $this->documentType,
             'date_requested' => now(),
             'status' => 'pending',
+        ]);
+
+        // Create a notification entry
+        Notification::create([
+            'user_id' => Auth::id(),
+            'doc_request_id' => $docRequest->id,
+            'type' => 'request',
+            'read' => 0,
         ]);
 
         $this->dispatch('swal', [
@@ -100,6 +108,7 @@ class DocRequestTable extends Component
         ]);
         $this->documentType = null;
     }
+
 
     public function downloadDocument($id)
     {

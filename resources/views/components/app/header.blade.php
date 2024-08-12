@@ -28,9 +28,7 @@
                 <!-- Search Button with Modal -->
                 {{-- <x-modal-search /> --}}
 
-                <!-- Notifications button -->
-                {{-- <x-dropdown-notifications align="right" /> --}}
-                @livewire('notification.notifications-dropdown')
+
 
 
                 <!-- Info button -->
@@ -40,8 +38,11 @@
                 <!-- Dark mode toggle -->
                 <x-theme-toggle />
 
+                <!-- Notifications button -->
+                {{-- <x-dropdown-notifications align="right" /> --}}
+                @livewire('notification.notifications-dropdown')
+
                 <!-- Divider -->
-                <div class="pl-2"></div>
                 <hr class="w-px h-6 bg-slate-200 dark:bg-slate-700 border-none" />
 
 
