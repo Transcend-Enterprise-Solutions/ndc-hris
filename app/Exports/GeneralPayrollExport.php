@@ -6,7 +6,6 @@ use App\Models\Payrolls;
 use App\Models\GeneralPayroll;
 use Exception;
 use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -32,7 +31,7 @@ class GeneralPayrollExport implements WithEvents
 
     private function getMonthsRange(){
         $start = Carbon::parse($this->filters['startMonth']);
-        $end = isset($this->filters['endMonth']) ? Carbon::parse($this->filters['endMonth']) : $start;
+        $end = Carbon::parse($this->filters['endMonth']);
         $months = [];
 
         while ($start <= $end) {

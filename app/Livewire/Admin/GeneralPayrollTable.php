@@ -27,32 +27,33 @@ class GeneralPayrollTable extends Component
     public $columns = [
         'name' => true,
         'employee_number' => true,
-        'position' => true,
-        'sg_step' => true,
-        'rate_per_month' => true,
-        'personal_economic_relief_allowance' => true,
-        'gross_amount' => true,
-        'additional_gsis_premium' => true,
-        'lbp_salary_loan' => true,
-        'nycea_deductions' => true,
-        'sc_membership' => true,
-        'total_loans' => true,
-        'salary_loan' => true,
-        'policy_loan' => true,
-        'eal' => true,
-        'emergency_loan' => true,
-        'mpl' => true,
-        'housing_loan' => true,
-        'ouli_prem' => true,
-        'gfal' => true,
-        'cpl' => true,
-        'pagibig_mpl' => true,
-        'other_deduction_philheath_diff' => true,
-        'life_retirement_insurance_premiums' => true,
-        'pagibig_contribution' => true,
-        'w_holding_tax' => true,
-        'philhealth' => true,
-        'total_deduction' => true,
+        'office_division' => false,
+        'position' => false,
+        'sg_step' => false,
+        'rate_per_month' => false,
+        'personal_economic_relief_allowance' => false,
+        'gross_amount' => false,
+        'additional_gsis_premium' => false,
+        'lbp_salary_loan' => false,
+        'nycea_deductions' => false,
+        'sc_membership' => false,
+        'total_loans' => false,
+        'salary_loan' => false,
+        'policy_loan' => false,
+        'eal' => false,
+        'emergency_loan' => false,
+        'mpl' => false,
+        'housing_loan' => false,
+        'ouli_prem' => false,
+        'gfal' => false,
+        'cpl' => false,
+        'pagibig_mpl' => false,
+        'other_deduction_philheath_diff' => false,
+        'life_retirement_insurance_premiums' => false,
+        'pagibig_contribution' => false,
+        'w_holding_tax' => false,
+        'philhealth' => false,
+        'total_deduction' => false,
         'net_amount_received' => true,
         'amount_due_first_half' => true,
         'amount_due_second_half' => true,
@@ -133,6 +134,12 @@ class GeneralPayrollTable extends Component
                                 ->when($this->search, function ($query) {
                                     return $query->search(trim($this->search));
                                 });
+            if($this->endMonth){
+                $carbonEndMonth = Carbon::createFromFormat('Y-m', $this->endMonth);
+                $endDateEndMonth = $carbonEndMonth->endOfMonth()->toDateString();
+                $generalPayrollQuery->orWhereBetween('date', [$this->startDateFirstHalf, $endDateEndMonth]);
+            }
+
             if($generalPayrollQuery->exists()){
                 $payrolls = $generalPayrollQuery->paginate(10);
                 $this->hasPayroll = true;
@@ -141,6 +148,10 @@ class GeneralPayrollTable extends Component
                 $this->employeePayslip = $this->getGenPayroll()->get();
                 $this->hasPayroll = false;
             }
+        }
+
+        if($this->monthRange == false){
+            $this->endMonth = null;
         }
     
         return view('livewire.admin.general-payroll-table', [
@@ -183,15 +194,11 @@ class GeneralPayrollTable extends Component
             throw $e;
         }
     }
-    
-    public function toggleDropdown(){
-        $this->sortColumn = !$this->sortColumn;
-    }
 
     public function toggleAllColumn() {
         if ($this->allCol) {
             foreach (array_keys($this->columns) as $col) {
-                if($col == 'name' || $col == 'employee_number' || $col == 'position' || $col == 'sg_step' || $col == 'rate_per_month'){
+                if($col == 'name' || $col == 'employee_number' || $col == 'net_amount_received' || $col == 'amount_due_first_half' || $col == 'amount_due_second_half'){
                     continue;
                 }
                 $this->columns[$col] = false;
@@ -199,7 +206,7 @@ class GeneralPayrollTable extends Component
             $this->allCol = false;
         } else {
             foreach (array_keys($this->columns) as $col) {
-                if($col == 'name' || $col == 'employee_number' || $col == 'position' || $col == 'sg_step' || $col == 'rate_per_month'){
+                if($col == 'name' || $col == 'employee_number' || $col == 'net_amount_received' || $col == 'amount_due_first_half' || $col == 'amount_due_second_half'){
                     continue;
                 }
                 $this->columns[$col] = true;
@@ -207,16 +214,32 @@ class GeneralPayrollTable extends Component
             $this->allCol = true;
         }
     }
-
-    public function toggleMonth(){
-        $this->monthRange = !$this->monthRange;
-    }
     
     public function exportExcel()
     {
         $signatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
             ->where('signatories.signatory_type', 'plantilla_payroll')
             ->get();
+        
+        if($this->startMonth == null){
+            $this->dispatch('swal', [
+                'title' => 'Please select a month/start month!',
+                'icon' => 'error'
+            ]);
+            return;
+        }
+        
+        if($this->endMonth && $this->startMonth > $this->endMonth){
+            $this->dispatch('swal', [
+                'title' => 'Start month must not be ahead of the end month!',
+                'icon' => 'error'
+            ]);
+            return;
+        }
+
+        if(!$this->endMonth){
+            $this->endMonth = $this->startMonth;
+        }
     
         $filters = [
             'search' => $this->search,
@@ -241,7 +264,7 @@ class GeneralPayrollTable extends Component
         $this->payroll = true;
         $this->userId = $userId;
         try {
-            $carbonDate = Carbon::createFromFormat('Y-m', $this->date);
+            $carbonDate = Carbon::createFromFormat('Y-m', $this->startMonth);
             $date = $carbonDate->startOfMonth()->toDateString();
 
             $payroll = Payrolls::where('user_id', $userId)->first();

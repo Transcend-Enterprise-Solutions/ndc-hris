@@ -65,17 +65,25 @@
         <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
             <div class="pb-4 mb-3 pt-4 sm:pt-0">
                 <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">
-                    General Payroll for the month of {{ $startMonth ? \Carbon\Carbon::parse($startMonth)->format('F') : '' }} {{ $startMonth ? \Carbon\Carbon::parse($startMonth)->format('Y') : '' }}
+                    General Payroll for the month of 
+                    {{ $startMonth ? \Carbon\Carbon::parse($startMonth)->format('F') : '' }} 
+                    @if(\Carbon\Carbon::parse($startMonth)->format('Y') != \Carbon\Carbon::parse($endMonth)->format('Y'))
+                        {{ $startMonth ? \Carbon\Carbon::parse($startMonth)->format('Y') : '' }} - 
+                        {{ $endMonth ? \Carbon\Carbon::parse($endMonth)->format('F') : '' }} 
+                        {{ $endMonth ? \Carbon\Carbon::parse($endMonth)->format('Y') : '' }}
+                    @elseif($endMonth)
+                        - {{ $endMonth ? \Carbon\Carbon::parse($endMonth)->format('F') : '' }} 
+                        {{ $startMonth ? \Carbon\Carbon::parse($startMonth)->format('Y') : '' }}
+                    @else
+                        {{ $startMonth ? \Carbon\Carbon::parse($startMonth)->format('Y') : '' }}
+                    @endif
                 </h1>
-                {{-- <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">
-                    {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('d') : '' }} - {{ $endDate ? \Carbon\Carbon::parse($endDate)->format('d') : '' }}
-                </h1> --}}
             </div>
 
-            <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
+            <div class="mb-6 flex flex-col sm:flex-row md:flex-col lg:flex-row items-end justify-between md:items-start lg:items-end">
 
                  {{-- Search Input --}}
-                <div class="w-full sm:w-1/3 sm:mr-4">
+                <div class="w-full lg:w-1/4 sm:mr-4 md:w-full">
                     <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
                     <input type="text" id="search" wire:model.live="search"
                         class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
@@ -84,7 +92,7 @@
                         placeholder="Enter employee name or ID">
                 </div>
 
-                <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
+                <div class="w-full sm:w-3/4 md:w-full flex flex-col sm:flex-row sm:justify-end sm:space-x-4 md:mt-8 md:items-end">
 
                     <div class="w-full sm:w-auto relative mr-0 sm:mr-4 mt-4 sm:mt-0"  style="width: 50px;">
                         <div class="relative sm:absolute sm:bottom-0 sm:left-0 flex gap-2 items-center pb-4 sm:pb-0">
@@ -95,7 +103,7 @@
 
                     <!-- Select Start Date -->
                     <div class="w-full sm:w-auto relative">
-                        <label for="startMonth" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Select Month
+                        <label for="startMonth" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Select {{ $monthRange ? 'Start' : '' }} Month
                         </label>
                         <input type="month" id="startMonth" wire:model.live='startMonth' value="{{ $startMonth }}"
                         class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
@@ -104,200 +112,199 @@
                     </div>
 
                     <!-- Select End Date -->
-                    <div class="w-full sm:w-auto relative {{ $monthRange ? '' : 'hidden' }}">
-                        <label for="endMonth" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Select Month</label>
+                    <div class="w-full sm:w-auto relative {{ $monthRange ? '' : 'hidden' }} mt-4 sm:mt-0">
+                        <label for="endMonth" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Select End Month</label>
                         <input type="month" id="endMonth" wire:model.live='endMonth' value="{{ $endMonth }}"
                         class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                     </div>
 
-                    {{-- <!-- Sort Dropdown -->
-                    <div class="mr-0 sm:mr-4">
-                        <button wire:click="toggleDropdown"
-                            class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                            justify-center px-4 py-2 text-sm font-medium tracking-wide 
+                    <!-- Sort Dropdown -->
+                    <div class="mr-0 sm:mr-4 relative" x-data="{ open: false }" @click.outside="open = false">
+                        <button @click="open = !open"
+                            class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                            justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button">
-                            Sort Column
+                            Filter Column
                             <i class="bi bi-chevron-down w-5 h-5 ml-2"></i>
                         </button>
-                        @if($sortColumn)
-                            <div
-                                class="absolute top-12 z-20 w-56 p-3 border border-gray-400 bg-white rounded-lg 
-                                shadow-2xl dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
-                                <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Category</h6>
-                                <ul class="space-y-2 text-sm">
-                                    <li class="flex items-center" wire:click='toggleAllColumn'>
-                                        <input id="allCol" type="checkbox" wire:model.live="allCol"
-                                            class="h-4 w-4">
-                                        <label for="allCol" class="ml-2 text-gray-900 dark:text-gray-300">Select All</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="employee_number" type="checkbox" wire:model.live="columns.employee_number"
-                                            class="h-4 w-4">
-                                        <label for="employee_number" class="ml-2 text-gray-900 dark:text-gray-300">Employee Number</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="position" type="checkbox" wire:model.live="columns.position"
-                                            class="h-4 w-4">
-                                        <label for="position" class="ml-2 text-gray-900 dark:text-gray-300">Position</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="sg_step" type="checkbox" wire:model.live="columns.sg_step" class="h-4 w-4">
-                                        <label for="sg_step" class="ml-2 text-gray-900 dark:text-gray-300">SG/STEP</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="citizenship" type="checkbox" wire:model.live="columns.rate_per_month"
-                                            class="h-4 w-4">
-                                        <label for="citizenship"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Rate per Month</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="personal_economic_relief_allowance" type="checkbox" wire:model.live="columns.personal_economic_relief_allowance"
+         
+                        <div x-show="open"
+                            class="absolute top-12 z-20 w-56 p-3 border border-gray-400 bg-white rounded-lg 
+                            shadow-2xl dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
+                            <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Columns</h6>
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex items-center" wire:click='toggleAllColumn'>
+                                    <input id="allCol" type="checkbox" wire:model.live="allCol"
                                         class="h-4 w-4">
-                                        <label for="personal_economic_relief_allowance" class="ml-2 text-gray-900 dark:text-gray-300">Personal Economic Relief Allowance</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="gross_amount" type="checkbox" wire:model.live="columns.gross_amount"
-                                            class="h-4 w-4">
-                                        <label for="gross_amount"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Gross Amount</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="additional_gsis_premium" type="checkbox" wire:model.live="columns.additional_gsis_premium" class="h-4 w-4">
-                                        <label for="additional_gsis_premium" class="ml-2 text-gray-900 dark:text-gray-300">Additional GSIS Premium</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="lbp_salary_loan" type="checkbox" wire:model.live="columns.lbp_salary_loan" class="h-4 w-4">
-                                        <label for="lbp_salary_loan" class="ml-2 text-gray-900 dark:text-gray-300">LBP Salary Loan</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="nycea_deductions" type="checkbox" wire:model.live="columns.nycea_deductions"
-                                            class="h-4 w-4">
-                                        <label for="nycea_deductions" class="ml-2 text-gray-900 dark:text-gray-300">NYCEA Deductions</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="sc_membership" type="checkbox" wire:model.live="columns.sc_membership" class="h-4 w-4">
-                                        <label for="sc_membership" class="ml-2 text-gray-900 dark:text-gray-300">SC Membership</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="total_loans" type="checkbox" wire:model.live="columns.total_loans"
-                                            class="h-4 w-4">
-                                        <label for="total_loans" class="ml-2 text-gray-900 dark:text-gray-300">Total Loans</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="salary_loan" type="checkbox" wire:model.live="columns.salary_loan"
-                                            class="h-4 w-4">
-                                        <label for="salary_loan" class="ml-2 text-gray-900 dark:text-gray-300">Salary Loan</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="policy_loan" type="checkbox" wire:model.live="columns.policy_loan" class="h-4 w-4">
-                                        <label for="policy_loan" class="ml-2 text-gray-900 dark:text-gray-300">Policy Loan</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="eal" type="checkbox" wire:model.live="columns.eal" class="h-4 w-4">
-                                        <label for="eal" class="ml-2 text-gray-900 dark:text-gray-300">EAL</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="emergency_loan" type="checkbox"
-                                            wire:model.live="columns.emergency_loan" class="h-4 w-4">
-                                        <label for="emergency_loan" class="ml-2 text-gray-900 dark:text-gray-300">Emergency Loan</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="mpl" type="checkbox"
-                                            wire:model.live="columns.mpl" class="h-4 w-4">
-                                        <label for="mpl"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">MPL</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="housing_loan" type="checkbox"
-                                            wire:model.live="columns.housing_loan" class="h-4 w-4">
-                                        <label for="housing_loan"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Housing Loan</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="ouli_prem" type="checkbox"
-                                            wire:model.live="columns.ouli_prem" class="h-4 w-4">
-                                        <label for="ouli_prem"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">OULI PREM</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="gfal" type="checkbox" wire:model.live="columns.gfal"
-                                            class="h-4 w-4">
-                                        <label for="gfal" class="ml-2 text-gray-900 dark:text-gray-300">GFAL</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="cpl" type="checkbox"
-                                            wire:model.live="columns.cpl" class="h-4 w-4">
-                                        <label for="cpl"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">CPL</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="pagibig_mpl" type="checkbox"
-                                            wire:model.live="columns.pagibig_mpl" class="h-4 w-4">
-                                        <label for="pagibig_mpl"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Pag-Ibig MPL</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="other_deduction_philheath_diff" type="checkbox"
-                                            wire:model.live="columns.other_deduction_philheath_diff" class="h-4 w-4">
-                                        <label for="other_deduction_philheath_diff"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Other Deduction Philhealth Differencial</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="life_retirement_insurance_premiums" type="checkbox"
-                                            wire:model.live="columns.life_retirement_insurance_premiums" class="h-4 w-4">
-                                        <label for="life_retirement_insurance_premiums"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Life Retirement Insurance Premiums</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="pagibig_contribution" type="checkbox" wire:model.live="columns.pagibig_contribution"
-                                            class="h-4 w-4">
-                                        <label for="pagibig_contribution"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Pag-Ibig Contribution</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="w_holding_tax" type="checkbox"
-                                            wire:model.live="columns.w_holding_tax" class="h-4 w-4">
-                                        <label for="w_holding_tax"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">W Holding Tax</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="philhealth" type="checkbox"
-                                            wire:model.live="columns.philhealth" class="h-4 w-4">
-                                        <label for="philhealth"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Philhealth</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="total_deduction" type="checkbox"
-                                            wire:model.live="columns.total_deduction" class="h-4 w-4">
-                                        <label for="total_deduction"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Total Deduction</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="net_amount_received" type="checkbox"
-                                            wire:model.live="columns.net_amount_received" class="h-4 w-4">
-                                        <label for="net_amount_received"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Net Amount Received</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="amount_due_first_half" type="checkbox"
-                                            wire:model.live="columns.amount_due_first_half" class="h-4 w-4">
-                                        <label for="amount_due_first_half"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Amount Due (First Half)</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="amount_due_second_half" type="checkbox"
-                                            wire:model.live="columns.amount_due_second_half" class="h-4 w-4">
-                                        <label for="amount_due_second_half"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Amount Due (Second Half)</label>
-                                    </li>
-                                </ul>
-                            </div>
-                        @endif
-                    </div> --}}
+                                    <label for="allCol" class="ml-2 text-gray-900 dark:text-gray-300">Select All</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="employee_number" type="checkbox" wire:model.live="columns.employee_number"
+                                        class="h-4 w-4">
+                                    <label for="employee_number" class="ml-2 text-gray-900 dark:text-gray-300">Employee Number</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="position" type="checkbox" wire:model.live="columns.position"
+                                        class="h-4 w-4">
+                                    <label for="position" class="ml-2 text-gray-900 dark:text-gray-300">Position</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="sg_step" type="checkbox" wire:model.live="columns.sg_step" class="h-4 w-4">
+                                    <label for="sg_step" class="ml-2 text-gray-900 dark:text-gray-300">SG/STEP</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="citizenship" type="checkbox" wire:model.live="columns.rate_per_month"
+                                        class="h-4 w-4">
+                                    <label for="citizenship"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">Rate per Month</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="personal_economic_relief_allowance" type="checkbox" wire:model.live="columns.personal_economic_relief_allowance"
+                                    class="h-4 w-4">
+                                    <label for="personal_economic_relief_allowance" class="ml-2 text-gray-900 dark:text-gray-300">Personal Economic Relief Allowance</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="gross_amount" type="checkbox" wire:model.live="columns.gross_amount"
+                                        class="h-4 w-4">
+                                    <label for="gross_amount"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">Gross Amount</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="additional_gsis_premium" type="checkbox" wire:model.live="columns.additional_gsis_premium" class="h-4 w-4">
+                                    <label for="additional_gsis_premium" class="ml-2 text-gray-900 dark:text-gray-300">Additional GSIS Premium</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="lbp_salary_loan" type="checkbox" wire:model.live="columns.lbp_salary_loan" class="h-4 w-4">
+                                    <label for="lbp_salary_loan" class="ml-2 text-gray-900 dark:text-gray-300">LBP Salary Loan</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="nycea_deductions" type="checkbox" wire:model.live="columns.nycea_deductions"
+                                        class="h-4 w-4">
+                                    <label for="nycea_deductions" class="ml-2 text-gray-900 dark:text-gray-300">NYCEA Deductions</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="sc_membership" type="checkbox" wire:model.live="columns.sc_membership" class="h-4 w-4">
+                                    <label for="sc_membership" class="ml-2 text-gray-900 dark:text-gray-300">SC Membership</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="total_loans" type="checkbox" wire:model.live="columns.total_loans"
+                                        class="h-4 w-4">
+                                    <label for="total_loans" class="ml-2 text-gray-900 dark:text-gray-300">Total Loans</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="salary_loan" type="checkbox" wire:model.live="columns.salary_loan"
+                                        class="h-4 w-4">
+                                    <label for="salary_loan" class="ml-2 text-gray-900 dark:text-gray-300">Salary Loan</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="policy_loan" type="checkbox" wire:model.live="columns.policy_loan" class="h-4 w-4">
+                                    <label for="policy_loan" class="ml-2 text-gray-900 dark:text-gray-300">Policy Loan</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="eal" type="checkbox" wire:model.live="columns.eal" class="h-4 w-4">
+                                    <label for="eal" class="ml-2 text-gray-900 dark:text-gray-300">EAL</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="emergency_loan" type="checkbox"
+                                        wire:model.live="columns.emergency_loan" class="h-4 w-4">
+                                    <label for="emergency_loan" class="ml-2 text-gray-900 dark:text-gray-300">Emergency Loan</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="mpl" type="checkbox"
+                                        wire:model.live="columns.mpl" class="h-4 w-4">
+                                    <label for="mpl"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">MPL</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="housing_loan" type="checkbox"
+                                        wire:model.live="columns.housing_loan" class="h-4 w-4">
+                                    <label for="housing_loan"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">Housing Loan</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="ouli_prem" type="checkbox"
+                                        wire:model.live="columns.ouli_prem" class="h-4 w-4">
+                                    <label for="ouli_prem"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">OULI PREM</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="gfal" type="checkbox" wire:model.live="columns.gfal"
+                                        class="h-4 w-4">
+                                    <label for="gfal" class="ml-2 text-gray-900 dark:text-gray-300">GFAL</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="cpl" type="checkbox"
+                                        wire:model.live="columns.cpl" class="h-4 w-4">
+                                    <label for="cpl"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">CPL</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="pagibig_mpl" type="checkbox"
+                                        wire:model.live="columns.pagibig_mpl" class="h-4 w-4">
+                                    <label for="pagibig_mpl"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">Pag-Ibig MPL</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="other_deduction_philheath_diff" type="checkbox"
+                                        wire:model.live="columns.other_deduction_philheath_diff" class="h-4 w-4">
+                                    <label for="other_deduction_philheath_diff"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">Other Deduction Philhealth Differencial</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="life_retirement_insurance_premiums" type="checkbox"
+                                        wire:model.live="columns.life_retirement_insurance_premiums" class="h-4 w-4">
+                                    <label for="life_retirement_insurance_premiums"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">Life Retirement Insurance Premiums</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="pagibig_contribution" type="checkbox" wire:model.live="columns.pagibig_contribution"
+                                        class="h-4 w-4">
+                                    <label for="pagibig_contribution"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">Pag-Ibig Contribution</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="w_holding_tax" type="checkbox"
+                                        wire:model.live="columns.w_holding_tax" class="h-4 w-4">
+                                    <label for="w_holding_tax"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">W Holding Tax</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="philhealth" type="checkbox"
+                                        wire:model.live="columns.philhealth" class="h-4 w-4">
+                                    <label for="philhealth"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">Philhealth</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="total_deduction" type="checkbox"
+                                        wire:model.live="columns.total_deduction" class="h-4 w-4">
+                                    <label for="total_deduction"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">Total Deduction</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="net_amount_received" type="checkbox"
+                                        wire:model.live="columns.net_amount_received" class="h-4 w-4">
+                                    <label for="net_amount_received"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">Net Amount Received</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="amount_due_first_half" type="checkbox"
+                                        wire:model.live="columns.amount_due_first_half" class="h-4 w-4">
+                                    <label for="amount_due_first_half"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">Amount Due (First Half)</label>
+                                </li>
+                                <li class="flex items-center">
+                                    <input id="amount_due_second_half" type="checkbox"
+                                        wire:model.live="columns.amount_due_second_half" class="h-4 w-4">
+                                    <label for="amount_due_second_half"
+                                        class="ml-2 text-gray-900 dark:text-gray-300">Amount Due (Second Half)</label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 
                     <!-- Save Payroll -->
                     @if($hasPayroll == false)
@@ -347,43 +354,43 @@
                             <table class="w-full min-w-full">
                                 <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                                     <tr class="whitespace-nowrap">
-                                        <th scope="col" class="px-5 py-3 text-left text-sm font-medium text-left uppercase">Name</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Employee Number</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Office/Division</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Position</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">SG Step</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Rate Per Month</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">PERA</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Gross Amount</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Additional GSIS Premium</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">LBP Salary Loan</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">NYCEA Deductions</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">SC Membership</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Total Loans</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Salary Loan</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Policy Loan</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">EAL</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Emergency Loan</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">MPL</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Housing Loan</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">OULI Prem</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">GFAL</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">CPL</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Pag-IBIG MPL</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Other Deduction PhilHealth Diff</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Life Retirement Insurance Premiums</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Pag-IBIG Contribution</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Withholding Tax</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">PhilHealth</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Total Deduction</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">Net Amount Received</th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                        <th scope="col" class="px-5 py-3 text-left text-sm font-medium text-left uppercase {{ $columns['name'] ? '' : 'hidden' }}">Name</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['employee_number'] ? '' : 'hidden' }}">Employee Number</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['office_division'] ? '' : 'hidden' }}">Office/Division</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['position'] ? '' : 'hidden' }}">Position</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['sg_step'] ? '' : 'hidden' }}">SG Step</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['rate_per_month'] ? '' : 'hidden' }}">Rate Per Month</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['personal_economic_relief_allowance'] ? '' : 'hidden' }}">PERA</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['gross_amount'] ? '' : 'hidden' }}">Gross Amount</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['additional_gsis_premium'] ? '' : 'hidden' }}">Additional GSIS Premium</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['lbp_salary_loan'] ? '' : 'hidden' }}">LBP Salary Loan</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['nycea_deductions'] ? '' : 'hidden' }}">NYCEA Deductions</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['sc_membership'] ? '' : 'hidden' }}">SC Membership</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['total_loans'] ? '' : 'hidden' }}">Total Loans</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['salary_loan'] ? '' : 'hidden' }}">Salary Loan</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['policy_loan'] ? '' : 'hidden' }}">Policy Loan</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['eal'] ? '' : 'hidden' }}">EAL</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['emergency_loan'] ? '' : 'hidden' }}">Emergency Loan</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['mpl'] ? '' : 'hidden' }}">MPL</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['housing_loan'] ? '' : 'hidden' }}">Housing Loan</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['ouli_prem'] ? '' : 'hidden' }}">OULI Prem</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['gfal'] ? '' : 'hidden' }}">GFAL</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['cpl'] ? '' : 'hidden' }}">CPL</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['pagibig_mpl'] ? '' : 'hidden' }}">Pag-IBIG MPL</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['other_deduction_philheath_diff'] ? '' : 'hidden' }}">Other Deduction PhilHealth Diff</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['life_retirement_insurance_premiums'] ? '' : 'hidden' }}">Life Retirement Insurance Premiums</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['pagibig_contribution'] ? '' : 'hidden' }}">Pag-IBIG Contribution</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['w_holding_tax'] ? '' : 'hidden' }}">Withholding Tax</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['philhealth'] ? '' : 'hidden' }}">PhilHealth</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['total_deduction'] ? '' : 'hidden' }}">Total Deduction</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['net_amount_received'] ? '' : 'hidden' }}">Net Amount Received</th>
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['amount_due_first_half'] ? '' : 'hidden' }}">
                                             Amount Due <br>
                                             ({{ $startDateFirstHalf ? \Carbon\Carbon::parse($startDateFirstHalf)->format('F') : '' }} 
                                             {{ $startDateFirstHalf ? \Carbon\Carbon::parse($startDateFirstHalf)->format('d') : '' }} - {{ $endDateFirstHalf ? \Carbon\Carbon::parse($endDateFirstHalf)->format('d') : '' }}
                                             {{ $startDateFirstHalf ? \Carbon\Carbon::parse($startDateFirstHalf)->format('Y') : '' }})
                                         </th>
-                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                        <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['amount_due_second_half'] ? '' : 'hidden' }}">
                                             Amount Due <br>
                                             ({{ $startDateSecondHalf ? \Carbon\Carbon::parse($startDateSecondHalf)->format('F') : '' }} 
                                             {{ $startDateSecondHalf ? \Carbon\Carbon::parse($startDateSecondHalf)->format('d') : '' }} - {{ $endDateSecondHalf ? \Carbon\Carbon::parse($endDateSecondHalf)->format('d') : '' }}
@@ -397,35 +404,35 @@
                                 <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
                                     @foreach($payrolls as $payroll)
                                         <tr class="text-neutral-800 dark:text-neutral-200">
-                                            <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">{{ $payroll->name }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ $payroll->employee_number }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ $payroll->office_division }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ $payroll->position }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ $payroll->sg_step }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->rate_per_month) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->personal_economic_relief_allowance) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->gross_amount) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->additional_gsis_premium) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->lbp_salary_loan) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->nycea_deductions) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->sc_membership) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->total_loans) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->salary_loan) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->policy_loan) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->eal) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->emergency_loan) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->mpl) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->housing_loan) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->ouli_prem) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->gfal) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->cpl) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->pagibig_mpl) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->other_deduction_philheath_diff) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->life_retirement_insurance_premiums) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->pagibig_contribution) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->w_holding_tax) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->philhealth) }}</td>
-                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->total_deduction) }}</td>
+                                            <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap {{ $columns['name'] ? '' : 'hidden' }}">{{ $payroll->name }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['employee_number'] ? '' : 'hidden' }}">{{ $payroll->employee_number }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['office_division'] ? '' : 'hidden' }}">{{ $payroll->office_division }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['position'] ? '' : 'hidden' }}">{{ $payroll->position }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['sg_step'] ? '' : 'hidden' }}">{{ $payroll->sg_step }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['rate_per_month'] ? '' : 'hidden' }}">{{ currency_format($payroll->rate_per_month) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['personal_economic_relief_allowance'] ? '' : 'hidden' }}">{{ currency_format($payroll->personal_economic_relief_allowance) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['gross_amount'] ? '' : 'hidden' }}">{{ currency_format($payroll->gross_amount) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['additional_gsis_premium'] ? '' : 'hidden' }}">{{ currency_format($payroll->additional_gsis_premium) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['lbp_salary_loan'] ? '' : 'hidden' }}">{{ currency_format($payroll->lbp_salary_loan) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['nycea_deductions'] ? '' : 'hidden' }}">{{ currency_format($payroll->nycea_deductions) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['sc_membership'] ? '' : 'hidden' }}">{{ currency_format($payroll->sc_membership) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['total_loans'] ? '' : 'hidden' }}">{{ currency_format($payroll->total_loans) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['salary_loan'] ? '' : 'hidden' }}">{{ currency_format($payroll->salary_loan) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['policy_loan'] ? '' : 'hidden' }}">{{ currency_format($payroll->policy_loan) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['eal'] ? '' : 'hidden' }}">{{ currency_format($payroll->eal) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['emergency_loan'] ? '' : 'hidden' }}">{{ currency_format($payroll->emergency_loan) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['mpl'] ? '' : 'hidden' }}">{{ currency_format($payroll->mpl) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['housing_loan'] ? '' : 'hidden' }}">{{ currency_format($payroll->housing_loan) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['ouli_prem'] ? '' : 'hidden' }}">{{ currency_format($payroll->ouli_prem) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['gfal'] ? '' : 'hidden' }}">{{ currency_format($payroll->gfal) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['cpl'] ? '' : 'hidden' }}">{{ currency_format($payroll->cpl) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['pagibig_mpl'] ? '' : 'hidden' }}">{{ currency_format($payroll->pagibig_mpl) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['other_deduction_philheath_diff'] ? '' : 'hidden' }}">{{ currency_format($payroll->other_deduction_philheath_diff) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['life_retirement_insurance_premiums'] ? '' : 'hidden' }}">{{ currency_format($payroll->life_retirement_insurance_premiums) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['pagibig_contribution'] ? '' : 'hidden' }}">{{ currency_format($payroll->pagibig_contribution) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['w_holding_tax'] ? '' : 'hidden' }}">{{ currency_format($payroll->w_holding_tax) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['philhealth'] ? '' : 'hidden' }}">{{ currency_format($payroll->philhealth) }}</td>
+                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['total_deduction'] ? '' : 'hidden' }}">{{ currency_format($payroll->total_deduction) }}</td>
                                             <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->total_amount_due) }}</td>
                                             <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->net_amount_due_first_half) }}</td>
                                             <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->net_amount_due_second_half) }}</td>
