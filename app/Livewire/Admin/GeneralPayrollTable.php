@@ -15,6 +15,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Livewire\WithPagination;
 
 class GeneralPayrollTable extends Component
@@ -91,13 +92,16 @@ class GeneralPayrollTable extends Component
     public $net_amount_received;
     public $amount_due_first_half;
     public $amount_due_second_half;
-    public $date;
+    // public $date;
     public $startDateFirstHalf;
     public $endDateFirstHalf;
     public $startDateSecondHalf;
     public $endDateSecondHalf;
     public $hasPayroll = true;
     public $employeePayslip;
+    public $startMonth;
+    public $endMonth;
+    public $monthRange = false;
 
     public function mount(){
         $this->employees = User::all();
@@ -106,9 +110,9 @@ class GeneralPayrollTable extends Component
     public function render(){
         $payrolls = collect();
     
-        if ($this->date) {
+        if ($this->startMonth) {
             // Create a Carbon instance from the month input
-            $carbonDate = Carbon::createFromFormat('Y-m', $this->date);
+            $carbonDate = Carbon::createFromFormat('Y-m', $this->startMonth);
     
             // Set the date ranges for the first and second halves of the month
             $this->startDateFirstHalf = $carbonDate->startOfMonth()->toDateString();
@@ -203,17 +207,33 @@ class GeneralPayrollTable extends Component
             $this->allCol = true;
         }
     }
+
+    public function toggleMonth(){
+        $this->monthRange = !$this->monthRange;
+    }
     
-    public function exportExcel(){
+    public function exportExcel()
+    {
+        $signatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
+            ->where('signatories.signatory_type', 'plantilla_payroll')
+            ->get();
+    
         $filters = [
             'search' => $this->search,
-            'date' => $this->date,
+            'startMonth' => $this->startMonth,
+            'endMonth' => $this->endMonth,
+            'signatories' => $signatories,
         ];
-        $payrollFor = \Carbon\Carbon::parse($this->startDateFirstHalf)->format('F') . " " .
-                              \Carbon\Carbon::parse($this->startDateFirstHalf)->format('d') .  "-" .
-                              \Carbon\Carbon::parse($this->endDateSecondHalf)->format('d') . " " .
-                              \Carbon\Carbon::parse($this->startDateFirstHalf)->format('Y');
-        $fileName = 'General Payroll ' . $payrollFor . '.xlsx';
+    
+        $startDate = Carbon::parse($this->startMonth);
+        $endDate = $this->endMonth ? Carbon::parse($this->endMonth) : $startDate;
+    
+        $fileName = 'General Payroll ' . $startDate->format('F Y');
+        if ($startDate->format('Y-m') !== $endDate->format('Y-m')) {
+            $fileName .= ' to ' . $endDate->format('F Y');
+        }
+        $fileName .= '.xlsx';
+    
         return Excel::download(new GeneralPayrollExport($filters), $fileName);
     }
 
@@ -419,8 +439,8 @@ class GeneralPayrollTable extends Component
             if ($user) {
                 $preparedBy = Auth::user();
                 $signatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
-                    ->where('signatory_type', 'payslip')
-                    ->where('signatory', 'Noted By')
+                    ->where('signatories.signatory_type', 'plantilla_payslip')
+                    ->where('signatories.signatory', 'Noted By')
                     ->first();
                     
                 $payslip = null;
@@ -456,13 +476,22 @@ class GeneralPayrollTable extends Component
 
                 $pb = Admin::where('admin.user_id', $preparedBy->id)
                     ->join('payrolls', 'payrolls.id', 'admin.payroll_id')
+                    ->join('signatories', 'signatories.user_id', 'admin.user_id')
                     ->first();
+        
+        
+                // Generate temporary paths for signatures
+                $preparedBySignaturePath = $this->getTemporarySignaturePath($pb);
+                $signatoriesSignaturePath = $this->getTemporarySignaturePath($signatories);
+                
                 if ($payslip) {
                     $pdf = Pdf::loadView('pdf.monthly-payslip', [
                         'preparedBy' => $pb,
                         'payslip' => $payslip,
                         'dates' => $dates,
                         'signatories' => $signatories,
+                        'preparedBySignaturePath' => $preparedBySignaturePath,
+                        'signatoriesSignaturePath' => $signatoriesSignaturePath,
                     ]);
                     $pdf->setPaper([0, 0, 396, 612], 'portrait');
                     return response()->streamDownload(function () use ($pdf) {
@@ -483,5 +512,22 @@ class GeneralPayrollTable extends Component
                 'icon' => 'error'
             ]);
         }
+    }
+
+    private function getTemporarySignaturePath($signatory){
+        if ($signatory->signature) {
+            $path = str_replace('public/', '', $signatory->signature);
+            $originalPath = Storage::disk('public')->get($path);
+            $filename = str_replace('public/signatures/', '', $signatory->signature);
+            $tempPath = public_path('temp/' . $filename);
+            if (!file_exists(dirname($tempPath))) {
+                mkdir(dirname($tempPath), 0755, true);
+            }
+
+            file_put_contents($tempPath, $originalPath);
+            
+            return $tempPath;
+        }
+        return null;
     }
 }

@@ -65,7 +65,7 @@
         <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
             <div class="pb-4 mb-3 pt-4 sm:pt-0">
                 <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">
-                    General Payroll for the month of {{ $date ? \Carbon\Carbon::parse($date)->format('F') : '' }} {{ $date ? \Carbon\Carbon::parse($date)->format('Y') : '' }}
+                    General Payroll for the month of {{ $startMonth ? \Carbon\Carbon::parse($startMonth)->format('F') : '' }} {{ $startMonth ? \Carbon\Carbon::parse($startMonth)->format('Y') : '' }}
                 </h1>
                 {{-- <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">
                     {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('d') : '' }} - {{ $endDate ? \Carbon\Carbon::parse($endDate)->format('d') : '' }}
@@ -86,10 +86,27 @@
 
                 <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
 
-                    <!-- Select Date -->
+                    <div class="w-full sm:w-auto relative mr-0 sm:mr-4 mt-4 sm:mt-0"  style="width: 50px;">
+                        <div class="relative sm:absolute sm:bottom-0 sm:left-0 flex gap-2 items-center pb-4 sm:pb-0">
+                            <input id="range" type="checkbox" wire:model.live='monthRange'>
+                            <label for="range" class="text-sm">Range?</label>
+                        </div>
+                    </div>
+
+                    <!-- Select Start Date -->
                     <div class="w-full sm:w-auto relative">
-                        <label for="date" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Select Date</label>
-                        <input type="month" id="date" wire:model.live='date' value="{{ $date }}"
+                        <label for="startMonth" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Select Month
+                        </label>
+                        <input type="month" id="startMonth" wire:model.live='startMonth' value="{{ $startMonth }}"
+                        class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
+                            dark:hover:bg-slate-600 dark:border-slate-600
+                            dark:text-gray-300 dark:bg-gray-800" placeholder="Select month...">
+                    </div>
+
+                    <!-- Select End Date -->
+                    <div class="w-full sm:w-auto relative {{ $monthRange ? '' : 'hidden' }}">
+                        <label for="endMonth" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Select Month</label>
+                        <input type="month" id="endMonth" wire:model.live='endMonth' value="{{ $endMonth }}"
                         class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
@@ -322,7 +339,6 @@
             </div>
 
             <!-- Table -->
-
             <div class="flex flex-col">
                 <div class="overflow-x-auto">
                     <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
@@ -439,7 +455,11 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                            
+                            @if ($payrolls->isEmpty())
+                                <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                    Select a date!
+                                </div> 
+                            @endif
                         </div>
                         {{-- <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
                             {{ $payrolls->links() ?? '' }}
@@ -448,6 +468,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 

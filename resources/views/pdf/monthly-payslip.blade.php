@@ -336,8 +336,20 @@
         <table>
             <tbody>
                 <tr>
-                    <td width="60%" style="padding-bottom: 20px;">Prepared By:</td>
-                    <td width="40%" style="padding-bottom: 20px;">Noted By:</td>
+                    <td width="60%" style="padding-bottom: 10px;">Prepared By:</td>
+                    <td width="40%" style="padding-bottom: 10px;">Noted By:</td>
+                </tr>
+                <tr>
+                    <td width="60%">
+                        @if($preparedBySignaturePath)
+                            <img src="{{ $preparedBySignaturePath }}" alt="" style="height: 50px; margin-bottom: -20px;">
+                        @endif
+                    </td>
+                    <td width="40%">
+                        @if($signatoriesSignaturePath)
+                            <img src="{{ $signatoriesSignaturePath }}" alt="" style="height: 50px; margin-bottom: -20px;">
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td width="60%" style="font-weight: bold">{{ $preparedBy->name }}</td>
@@ -349,7 +361,6 @@
                 </tr>
             </tbody>
         </table>
-
 
     </div>
 </body>
