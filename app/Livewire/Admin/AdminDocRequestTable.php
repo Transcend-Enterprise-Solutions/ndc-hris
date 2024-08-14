@@ -135,6 +135,7 @@ class AdminDocRequestTable extends Component
                 'read' => false,
             ]
         );
+        $this->dispatch('upload-complete');
 
         $this->dispatch('swal', [
             'title' => 'Document uploaded successfully!',
@@ -154,7 +155,17 @@ class AdminDocRequestTable extends Component
             }
             $request->delete();
 
-
+            // Use updateOrCreate for notifications
+            Notification::updateOrCreate(
+                [
+                    'doc_request_id' => $request->id,
+                    'user_id' => $request->user_id,
+                ],
+                [
+                    'type' => 'deleted',
+                    'read' => false,
+                ]
+            );
 
             $this->dispatch('swal', [
                 'title' => 'Document Request Deleted!',
@@ -168,6 +179,20 @@ class AdminDocRequestTable extends Component
             ]);
         }
     }
+    public function downloadDocument($id)
+    {
+        $request = DocRequest::findOrFail($id);
+
+        if ($request->file_path && Storage::disk('public')->exists($request->file_path)) {
+            return Storage::disk('public')->download($request->file_path, $request->filename);
+        } else {
+            $this->dispatch('swal', [
+                'title' => 'File not found!',
+                'icon' => 'error'
+            ]);
+        }
+    }
+
 
     public function render()
     {

@@ -92,7 +92,7 @@
                     <div class="w-full sm:w-auto relative">
                         <label for="startDate" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
                         <input type="date" id="startDate" wire:model.live='startDate' value="{{ $startDate }}"
-                        class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
+                        class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                     </div>
@@ -101,7 +101,7 @@
                     <div class="w-full sm:w-auto relative">
                         <label for="endDate" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
                         <input type="date" id="endDate" wire:model.live='endDate' value="{{ $endDate }}"
-                        class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
+                        class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                     </div>
@@ -110,8 +110,8 @@
                     {{-- <div class="relative inline-block text-left mr-0 sm:mr-4">
                         <button wire:click="toggleDropdown"
                             class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                            justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide 
-                            text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                            justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide
+                            text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button">
                             Sort Column
@@ -119,7 +119,7 @@
                         </button>
                         @if($sortColumn)
                             <div
-                                class="absolute z-20 w-56 p-3 border border-gray-400 bg-white rounded-lg 
+                                class="absolute z-20 w-56 p-3 border border-gray-400 bg-white rounded-lg
                                 shadow-2xl dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
                                 <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Category</h6>
                                 <ul class="space-y-2 text-sm">
@@ -221,8 +221,8 @@
                         <div class="w-full sm:w-auto">
                             <button wire:click="recordPayroll"
                                 class="mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                                justify-center px-2 py-1.5 text-sm font-medium tracking-wide 
-                                text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                                justify-center px-2 py-1.5 text-sm font-medium tracking-wide
+                                text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                 rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                                 type="button">
                                 <div wire:loading wire:target="recordPayroll" style="margin-right: 5px">
@@ -238,8 +238,8 @@
                     <div class="w-full sm:w-auto relative">
                         <button wire:click="exportPayroll"
                             class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                            justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
-                            text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                            justify-center px-4 py-1.5 text-sm font-medium tracking-wide
+                            text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button" title="Export Payroll">
                             <div wire:loading wire:target="exportPayroll" style="margin-right: 5px">
@@ -297,19 +297,19 @@
                                                     Special Holiday/s (Amount)
                                                 </th>
                                             @endif
-                                         
+
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                 Leave With Pay
                                             </th>
-                                            
+
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                 Leave With Pay (Amount)
                                             </th>
-                            
+
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                 Gross Salary
                                             </th>
-                               
+
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                 Leave Without Pay
                                             </th>
@@ -317,7 +317,7 @@
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                 Leave Without Pay (Amount)
                                             </th>
-                          
+
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                 Absences (Days)
                                             </th>
@@ -450,9 +450,9 @@
                                                         <i class="fas fa-file-export ml-3"></i>
                                                     </button> --}}
                                                     <div class="relative">
-                                                        <button wire:click="viewPayroll({{ $payroll['user_id'] }})" 
-                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                        -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                        <button wire:click="viewPayroll({{ $payroll['user_id'] }})"
+                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5
+                                                        -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600
                                                         focus:outline-none" title="View">
                                                             <i class="fas fa-eye ml-3"></i>
                                                         </button>
@@ -462,7 +462,7 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                                
+
                             </div>
 
                         </div>

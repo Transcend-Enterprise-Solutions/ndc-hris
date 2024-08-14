@@ -34,7 +34,7 @@
                                 <thead class="bg-gray-50 dark:bg-gray-700">
                                     <tr>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Employee Name</th>
-                                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Upload Date</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Upload Date</th>
                                         <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
@@ -42,7 +42,7 @@
                                     @foreach ($documents as $document)
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium text-gray-900 dark:text-gray-300">{{ $document->user->name }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500 dark:text-gray-200">{{ $document->created_at->format('Y-m-d H:i:s') }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500 dark:text-gray-200">{{ $document->created_at->format('Y-m-d H:i:s') }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500 dark:text-gray-200">
                                                 <a href="{{ Storage::url($document->file_path) }}" download class="text-blue-500 hover:text-blue-700" title="Download">
                                                     <i class="fas fa-download"></i>
