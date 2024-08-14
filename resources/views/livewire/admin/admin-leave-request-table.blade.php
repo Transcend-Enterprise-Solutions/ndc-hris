@@ -31,10 +31,7 @@
                                                     Number of days</th>
                                                 <th scope="col"
                                                     class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                                    Start Date</th>
-                                                <th scope="col"
-                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                                    End Date</th>
+                                                    List of Date</th>
                                                 <th scope="col"
                                                     class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
                                                     Uploaded File</th>
@@ -54,69 +51,75 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($leaveApplications as $leaveApplication)
-                                            <tr class="whitespace-nowrap">
-                                                <td class="px-4 py-2 text-center">{{ $leaveApplication->name }}</td>
-                                                <td class="px-4 py-2 text-center">{{ $leaveApplication->date_of_filing
-                                                    }}</td>
-                                                <td class="px-4 py-2 text-center">{{ $leaveApplication->type_of_leave }}
-                                                </td>
-                                                <td class="px-4 py-2 text-center">{{ $leaveApplication->details_of_leave
-                                                    }}</td>
-                                                <td class="px-4 py-2 text-center">{{ $leaveApplication->number_of_days
-                                                    }}</td>
-                                                <td class="px-4 py-2 text-center">{{ $leaveApplication->start_date }}
-                                                </td>
-                                                <td class="px-4 py-2 text-center">{{ $leaveApplication->end_date }}</td>
-                                                <td class="px-4 py-2 text-center">
-                                                    @if ($leaveApplication->file_name)
-                                                    @php
-                                                    $fileNames = explode(',', $leaveApplication->file_name);
-                                                    $filePaths = explode(',', $leaveApplication->file_path);
-                                                    @endphp
+                                                <tr class="whitespace-nowrap">
+                                                    <td class="px-4 py-2 text-center">{{ $leaveApplication->name }}</td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        {{ $leaveApplication->date_of_filing }}</td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        {{ $leaveApplication->type_of_leave }}
+                                                    </td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        {{ $leaveApplication->details_of_leave }}</td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        {{ $leaveApplication->number_of_days }}</td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        {{ $leaveApplication->list_of_dates }}
+                                                    <td class="px-4 py-2 text-center">
+                                                        @if ($leaveApplication->file_name)
+                                                            @php
+                                                                $fileNames = explode(',', $leaveApplication->file_name);
+                                                                $filePaths = explode(',', $leaveApplication->file_path);
+                                                            @endphp
 
-                                                    @foreach ($fileNames as $index => $fileName)
-                                                    @if (isset($filePaths[$index]))
-                                                    <div class="mb-1">
-                                                        <a href="{{ Storage::url($filePaths[$index]) }}" download
-                                                            class="text-blue-500 hover:underline">
-                                                            {{ strlen($fileName) > 10 ? substr($fileName, 0, 10) . '...'
-                                                            : $fileName }}
-                                                        </a>
-                                                    </div>
-                                                    @endif
-                                                    @endforeach
-                                                    @else
-                                                    No file
-                                                    @endif
-                                                </td>
-                                                <td class="px-4 py-2 text-center">{{ $leaveApplication->remarks }}</td>
-                                                <td class="px-4 py-2 text-center">{{ $leaveApplication->approved_days }}
-                                                </td>
-                                                <td class="px-4 py-2 text-center">
-                                                    <span class="inline-block px-3 py-1 text-sm font-semibold
-                                                        {{
-                                                            $leaveApplication->status === 'Approved' ? 'text-green-800 bg-green-200' :
-                                                            ($leaveApplication->status === 'Disapproved' ? 'text-red-800 bg-red-200' :
-                                                            ($leaveApplication->status === 'Pending' ? 'text-yellow-800 bg-yellow-200' : ''))
-                                                        }} rounded-lg">
-                                                        {{ $leaveApplication->status }}
-                                                    </span>
-                                                </td>
-                                                <td
-                                                    class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                    <button @click="$wire.openApproveModal({{ $leaveApplication->id }})"
-                                                        class="text-blue-500 {{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                        :disabled="{{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'true' : 'false' }}">
-                                                        <i class="bi bi-check-lg" title="Approve"></i>
-                                                    </button>
-                                                    <button
-                                                        @click="$wire.openDisapproveModal({{ $leaveApplication->id }})"
-                                                        class="text-red-500 {{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                        :disabled="{{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'true' : 'false' }}">
-                                                        <i class="bi bi-x" title="Disapprove"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                                            @foreach ($fileNames as $index => $fileName)
+                                                                @if (isset($filePaths[$index]))
+                                                                    <div class="mb-1">
+                                                                        <a href="{{ Storage::url($filePaths[$index]) }}"
+                                                                            download
+                                                                            class="text-blue-500 hover:underline">
+                                                                            {{ strlen($fileName) > 10 ? substr($fileName, 0, 10) . '...' : $fileName }}
+                                                                        </a>
+                                                                    </div>
+                                                                @endif
+                                                            @endforeach
+                                                        @else
+                                                            No file
+                                                        @endif
+                                                    </td>
+                                                    <td class="px-4 py-2 text-center">{{ $leaveApplication->remarks }}
+                                                    </td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        {{ $leaveApplication->approved_days }}
+                                                    </td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        <span
+                                                            class="inline-block px-3 py-1 text-sm font-semibold
+                                                        {{ $leaveApplication->status === 'Approved'
+                                                            ? 'text-green-800 bg-green-200'
+                                                            : ($leaveApplication->status === 'Disapproved'
+                                                                ? 'text-red-800 bg-red-200'
+                                                                : ($leaveApplication->status === 'Pending'
+                                                                    ? 'text-yellow-800 bg-yellow-200'
+                                                                    : '')) }} rounded-lg">
+                                                            {{ $leaveApplication->status }}
+                                                        </span>
+                                                    </td>
+                                                    <td
+                                                        class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                        <button
+                                                            @click="$wire.openApproveModal({{ $leaveApplication->id }})"
+                                                            class="text-blue-500 {{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                            :disabled="{{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'true' : 'false' }}">
+                                                            <i class="bi bi-check-lg" title="Approve"></i>
+                                                        </button>
+                                                        <button
+                                                            @click="$wire.openDisapproveModal({{ $leaveApplication->id }})"
+                                                            class="text-red-500 {{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                            :disabled="{{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'true' : 'false' }}">
+                                                            <i class="bi bi-x" title="Disapprove"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
                                             @endforeach
                                         </tbody>
 
@@ -137,7 +140,8 @@
         <div class="p-4">
             <form wire:submit.prevent="updateStatus">
                 <div class="mb-4">
-                    <label for="status" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Status</label>
+                    <label for="status"
+                        class="block text-sm font-medium text-gray-700 dark:text-slate-400">Status</label>
                     <select wire:model.live="status" id="status"
                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
                         <option value="">Select Status</option>
@@ -145,35 +149,49 @@
                         <option value="Without Pay">Without Pay</option>
                         <option value="Other">Other</option>
                     </select>
-                    @error('status') <span class="text-red-500">{{ $message }}</span> @enderror
+                    @error('status')
+                        <span class="text-red-500">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 @if ($status === 'Other')
-                <div class="mb-4">
-                    <label for="otherReason" class="block text-gray-700 dark:text-gray-300">Please specify</label>
-                    <input type="text" wire:model="otherReason" id="otherReason" class="form-control mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
-                    @error('otherReason') <span class="text-red-500">{{ $message }}</span> @enderror
-                </div>
+                    <div class="mb-4">
+                        <label for="otherReason" class="block text-gray-700 dark:text-gray-300">Please specify</label>
+                        <input type="text" wire:model="otherReason" id="otherReason"
+                            class="form-control mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        @error('otherReason')
+                            <span class="text-red-500">{{ $message }}</span>
+                        @enderror
+                    </div>
                 @endif
 
                 @if ($status === 'With Pay' || $status === 'Without Pay')
-                <div class="mb-4">
-                    <label for="days"
-                        class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number
-                        of Days</label>
-                    <input type="number" wire:model="days" id="days" class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700" min="1">
-                    @error('days') <span class="text-red-500">{{ $message }}</span> @enderror
-                </div>
-                <div class="mb-4 col-span-2 sm:col-span-1">
-                    <label for="approved_start_date" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved Start Date</label>
-                    <input type="date" id="approved_start_date" wire:model="approvedStartDate" class="form-control mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
-                    @error('approvedStartDate') <span class="text-danger">{{ $message }}</span> @enderror
-                </div>
-                <div class="mb-4 col-span-2 sm:col-span-1">
-                    <label for="approved_end_date" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved End Date</label>
-                    <input type="date" id="approved_end_date" wire:model="approvedEndDate" class="form-control mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
-                    @error('approvedEndDate') <span class="text-danger">{{ $message }}</span> @enderror
-                </div>
+                    <div class="mb-4">
+                        <label for="days" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number
+                            of Days</label>
+                        <input type="number" wire:model="days" id="days"
+                            class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700"
+                            min="1">
+                        @error('days')
+                            <span class="text-red-500">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="list_of_dates" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
+                            Approved Dates
+                        </label>
+                        <ul class="list-disc">
+                            @foreach ($listOfDates as $date)
+                                <li class="flex items-center text-gray-700 dark:text-gray-300">
+                                    <input type="checkbox" wire:model="selectedDates" value="{{ $date }}"
+                                        class="mr-2">
+                                    <span>{{ $date }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+
                 @endif
 
                 <div class="flex justify-end">
@@ -193,7 +211,9 @@
                         Disapproval</label>
                     <input type="text" wire:model="disapproveReason" id="disapproveReason"
                         class="form-input mt-1 block w-full">
-                    @error('disapproveReason') <span class="text-red-500">{{ $message }}</span> @enderror
+                    @error('disapproveReason')
+                        <span class="text-red-500">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="flex justify-end">

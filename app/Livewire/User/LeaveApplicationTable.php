@@ -12,7 +12,10 @@ use App\Models\LeaveApplication;
 use App\Models\VacationLeaveDetails;
 use App\Models\SickLeaveDetails;
 use App\Models\LeaveCredits;
+use App\Models\Payrolls;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 
 class LeaveApplicationTable extends Component
 {
@@ -25,8 +28,7 @@ class LeaveApplicationTable extends Component
     public $position;
     public $salary;
     public $number_of_days;
-    public $start_date;
-    public $end_date;
+
     public $type_of_leave = [];
     public $details_of_leave = [];
     public $philippines;
@@ -36,6 +38,11 @@ class LeaveApplicationTable extends Component
     public $specialIllnessForWomen;
     public $commutation;
     public $files = [];
+    public $other_leave;
+
+    public $list_of_dates = [];
+    public $new_date;
+
 
     protected $rules = [
         'office_or_department' => 'required|string|max:255',
@@ -63,8 +70,6 @@ class LeaveApplicationTable extends Component
         $this->position = null;
         $this->salary = null;
         $this->number_of_days = null;
-        $this->start_date = null;
-        $this->end_date = null;
         $this->type_of_leave = [];
         $this->details_of_leave = [];
         $this->commutation = null;
@@ -74,6 +79,8 @@ class LeaveApplicationTable extends Component
         $this->outPatient = null;
         $this->specialIllnessForWomen = null;
         $this->files = [];
+        $this->list_of_dates = [];
+        $this->new_date = null;
     }
 
     public function loadUserData()
@@ -85,6 +92,14 @@ class LeaveApplicationTable extends Component
             $this->name = $user->name;
             $this->date_of_filing = now()->toDateString();
         }
+
+        $payroll = Payrolls::where('user_id', $user->id)->first();
+
+        
+            $this->office_or_department = $payroll->office_division ?? 'N/A';
+            $this->position = $payroll->position ?? 'N/A';
+            $this->salary = $payroll->rate_per_month ?? 0;
+        
     }
 
     public function resetOtherFields($field)
@@ -97,6 +112,19 @@ class LeaveApplicationTable extends Component
         }
     }
 
+    public function addDate()
+    {
+        $this->validate([
+            'new_date' => 'required|date',
+        ]);
+
+        if (!in_array($this->new_date, $this->list_of_dates)) {
+            $this->list_of_dates[] = $this->new_date;
+        }
+
+        $this->new_date = ''; // Reset the new_date input
+    }
+
     public function submitLeaveApplication()
     {
         $this->validate([
@@ -106,10 +134,15 @@ class LeaveApplicationTable extends Component
             'type_of_leave' => 'required|array|min:1',
             'details_of_leave' => 'required',
             'number_of_days' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
             'commutation' => 'required',
         ]);
+
+        if (in_array('Others', $this->type_of_leave)) {
+            $this->type_of_leave = array_filter($this->type_of_leave, function($leave) {
+                return $leave !== 'Others';
+            });
+            $this->type_of_leave[] = 'Others: ' . $this->other_leave;
+        }
 
         $filePaths = [];
         $fileNames = [];
@@ -157,12 +190,12 @@ class LeaveApplicationTable extends Component
 
         $leaveDetailsString = implode(', ', $leaveDetails);
         $filePathsString = implode(',', $filePaths);
+        $datesString = implode(',', $this->list_of_dates);
 
         $currentMonth = now()->month;
         $currentYear = now()->year;
         $userId = Auth::id();
 
-        // Get leave credits earned from LeaveCreditsCalculation table
         $leaveCreditsCalculation = \App\Models\LeaveCreditsCalculation::where('user_id', $userId)
             ->where('month', $currentMonth)
             ->where('year', $currentYear)
@@ -170,20 +203,16 @@ class LeaveApplicationTable extends Component
 
         $leaveCreditsEarned = $leaveCreditsCalculation ? $leaveCreditsCalculation->leave_credits_earned : 0;
 
-        // Check if credits have already been transferred
         $leaveCredits = LeaveCredits::where('user_id', $userId)->first();
         if ($leaveCredits) {
             if (!$leaveCredits->credits_transferred) {
-                // Transfer data to LeaveCredits table
                 $leaveCredits->total_credits = $leaveCreditsEarned;
                 $leaveCredits->save();
 
-                // Update the credits_transferred flag
                 $leaveCredits->credits_transferred = true;
                 $leaveCredits->save();
             }
         } else {
-            // Create a new record and set the credits_transferred flag to true
             LeaveCredits::create([
                 'user_id' => $userId,
                 'total_credits' => $leaveCreditsEarned,
@@ -194,7 +223,6 @@ class LeaveApplicationTable extends Component
             ]);
         }
 
-        // Create leave application
         $leaveApplication = LeaveApplication::create([
             'user_id' => $userId,
             'name' => $this->name,
@@ -205,21 +233,19 @@ class LeaveApplicationTable extends Component
             'number_of_days' => $this->number_of_days,
             'type_of_leave' => implode(',', $this->type_of_leave),
             'details_of_leave' => $leaveDetailsString,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
             'commutation' => $this->commutation,
             'status' => 'Pending',
-            'file_path' => implode(',', $filePaths),  // Concatenate file paths
+            'file_path' => implode(',', $filePaths),
             'file_name' => implode(',', $fileNames),
+            'list_of_dates' => $datesString,
         ]);
 
         if ($this->type_of_leave === 'Vacation Leave') {
             VacationLeaveDetails::create([
                 'application_id' => $leaveApplication->id,
                 'less_this_application' => 1,
-                // 'balance' => $leaveCreditsEarned,
                 'recommendation' => 'For approval',
-                'status' => 'Pending', // You may update this based on your requirements
+                'status' => 'Pending',
             ]);
         }
 
@@ -227,9 +253,8 @@ class LeaveApplicationTable extends Component
             SickLeaveDetails::create([
                 'application_id' => $leaveApplication->id,
                 'less_this_application' => 1,
-                // 'balance' => $leaveCreditsEarned,
                 'recommendation' => 'For approval',
-                'status' => 'Pending', // You may update this based on your requirements
+                'status' => 'Pending',
             ]);
         }
 
@@ -246,7 +271,7 @@ class LeaveApplicationTable extends Component
     {
         if (isset($this->files[$index])) {
             unset($this->files[$index]);
-            $this->files = array_values($this->files); // Reindex the array
+            $this->files = array_values($this->files);
         }
     }
 
@@ -259,8 +284,6 @@ class LeaveApplicationTable extends Component
             'number_of_days',
             'type_of_leave',
             'details_of_leave',
-            'start_date',
-            'end_date',
             'commutation',
             'philippines',
             'abroad',
@@ -268,9 +291,61 @@ class LeaveApplicationTable extends Component
             'outPatient',
             'specialIllnessForWomen',
             'files',
+            'other_leave',
+            'list_of_dates',
+            'new_date',
         ]);
     }
 
+    public function exportPDF($leaveApplicationId)
+    {
+        $leaveApplication = LeaveApplication::findOrFail($leaveApplicationId);
+        
+        $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
+        
+        $otherLeave = '';
+        foreach ($selectedLeaveTypes as $leaveType) {
+            if (strpos($leaveType, 'Others: ') === 0) {
+                $otherLeave = str_replace('Others: ', '', $leaveType);
+                break;
+            }
+        }
+
+        $detailsOfLeave = $leaveApplication->details_of_leave ? explode(',', $leaveApplication->details_of_leave) : [];
+
+        $isDetailPresent = function($detail) use ($detailsOfLeave) {
+            foreach ($detailsOfLeave as $item) {
+                if (Str::startsWith($item, $detail)) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        $getDetailValue = function($detail) use ($detailsOfLeave) {
+            foreach ($detailsOfLeave as $item) {
+                if (Str::startsWith($item, $detail)) {
+                    $parts = explode('=', $item, 2);
+                    return count($parts) > 1 ? trim($parts[1]) : '';
+                }
+            }
+            return '';
+        };
+
+        $pdf = PDF::loadView('pdf.leave-application', [
+            'leaveApplication' => $leaveApplication,
+            'selectedLeaveTypes' => $selectedLeaveTypes,
+            'otherLeave' => $otherLeave,
+            'detailsOfLeave' => $detailsOfLeave,
+            'isDetailPresent' => $isDetailPresent,
+            'getDetailValue' => $getDetailValue
+        ]);
+
+        return response()->streamDownload(function() use ($pdf) {
+            echo $pdf->output();
+        }, 'LeaveApplication' . $leaveApplicationId . '.pdf');
+    }
+    
     public function render()
     {
         $userId = Auth::id();
@@ -279,7 +354,6 @@ class LeaveApplicationTable extends Component
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        // Fetch total credits from LeaveCredits table
         $leaveCredits = LeaveCredits::where('user_id', $userId)->first();
 
         return view('livewire.user.leave-application-table', [

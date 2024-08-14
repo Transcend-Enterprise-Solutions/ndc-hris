@@ -154,7 +154,7 @@ class WfhAttendanceTable extends Component
     
             if ($isWFHDay) {
                 // Reset button states based on current time
-                if ($currentHour >= 6 && $currentHour < 12) { // Morning: 6 AM to 12 PM
+                if ($currentHour >= 7 && $currentHour < 12) { // Morning: 6 AM to 12 PM
                     $this->morningInDisabled = false;
                     $this->morningOutDisabled = false;
                     $this->afternoonInDisabled = true;
