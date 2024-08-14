@@ -22,7 +22,8 @@ return new class extends Migration
                 'BIR1905',
                 'BIR2316',
                 'COE',
-                'Service Record'
+                'Service Record',
+                'Notarized PDS',
             ]);
             $table->string('file_name');
             $table->string('file_path');

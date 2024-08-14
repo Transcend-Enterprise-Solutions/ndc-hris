@@ -38,12 +38,23 @@
 
 
                 <!-- Tabs -->
-                <div class="w-full">
+                <div class="w-full" wire:poll.10s='loadRequests'>
                     <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700" role="tablist">
-                        <button @click="selectedTab = 'pending'" :class="selectedTab === 'pending' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" role="tab">Pending</button>
-                        <button @click="selectedTab = 'preparing'" :class="selectedTab === 'preparing' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" role="tab">Preparing</button>
-                        <button @click="selectedTab = 'completed'" :class="selectedTab === 'completed' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" role="tab">Completed</button>
-                        <button @click="selectedTab = 'rejected'" :class="selectedTab === 'rejected' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" role="tab">Rejected</button>
+                        <button @click="selectedTab = 'pending'" :class="selectedTab === 'pending' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600 mt-2' : 'mt-2 text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm relative" role="tab">
+                            Pending
+                            @if($pendingCount > 0)
+                                <span class="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full">{{ $pendingCount }}</span>
+                            @endif
+                            </button>
+                        <button @click="selectedTab = 'preparing'" :class="selectedTab === 'preparing' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600 mt-2' : 'mt-2 text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm relative" role="tab">
+                            Preparing
+                            @if($preparingCount > 0)
+                                <span class="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full">{{ $preparingCount }}</span>
+                            @endif
+                            </button>
+
+                        <button @click="selectedTab = 'completed'" :class="selectedTab === 'completed' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600 mt-2' : 'mt-2 text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" role="tab">Completed</button>
+                        <button @click="selectedTab = 'rejected'" :class="selectedTab === 'rejected' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600 mt-2' : 'mt-2 text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" role="tab">Rejected</button>
                     </div>
                     <!-- Tab Content -->
                     <div class="px-2 py-4 text-slate-700 dark:text-slate-300">
@@ -86,7 +97,7 @@
                                                             </div>
                                                         @elseif ($request->file_path)
                                                             <button wire:click="downloadDocument({{ $request->id }})" class="text-blue-500 hover:underline">
-                                                                {{ $request->filename }} (Download)
+                                                                {{ Str::limit($request->filename, 15, '...') }}
                                                             </button>
                                                         @else
                                                             No Document

@@ -18,6 +18,8 @@ class AdminDocRequestTable extends Component
     public $documentTypes = [];
     public $selectedDocumentTypes = [];
     public $selectAll = false;
+    public $pendingCount = 0;
+    public $preparingCount = 0;
 
     public function mount()
     {
@@ -39,6 +41,8 @@ class AdminDocRequestTable extends Component
         }
 
         $this->requests = $query->get();
+        $this->pendingCount = $this->requests->where('status', 'pending')->count();
+        $this->preparingCount = $this->requests->where('status', 'preparing')->count();
     }
 
     public function updatedSelectedDocumentTypes()
@@ -150,17 +154,7 @@ class AdminDocRequestTable extends Component
             }
             $request->delete();
 
-            // Use updateOrCreate for notifications
-            Notification::updateOrCreate(
-                [
-                    'doc_request_id' => $request->id,
-                    'user_id' => $request->user_id,
-                ],
-                [
-                    'type' => 'deleted',
-                    'read' => false,
-                ]
-            );
+
 
             $this->dispatch('swal', [
                 'title' => 'Document Request Deleted!',
