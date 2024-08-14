@@ -130,10 +130,10 @@
                 <div style="position: relative; margin-top: 10px; min-height: 60px;">
                     @if($eSignaturePath)
                         <img src="{{ storage_path('app/public/' . $eSignaturePath) }}"
-                             style="width: 90px; height: auto; position: absolute; top: -5px; left: 0; z-index: 2;">
+                             style="width: 90px; height: auto; position: absolute; top: -5px; left: 0; z-index: 1;">
                     @endif
-                    <div style="position: relative; z-index: 1; padding-top: 20px;">
-                        <strong style="text-decoration: underline;">{{ $signatoryName }}</strong>
+                    <div style="position: relative; z-index: 2; padding-top: 20px;">
+                        <strong style="text-decoration: underline; z-index: 2;">{{ $signatoryName }}</strong>
                         Executive Director And COO
                     </div>
                 </div>

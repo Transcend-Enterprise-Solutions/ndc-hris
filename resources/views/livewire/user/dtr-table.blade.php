@@ -60,19 +60,25 @@
                             class="w-full mb-4 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-700 dark:text-gray-300 dark:border-slate-600">
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Upload E-Signature</label>
-                            <input type="file" wire:model="eSignature" accept="image/*"
+                            <input wire:loading.remove wire:target='eSignature' type="file" wire:model="eSignature" accept="image/*"
                                 class="mt-1 block w-full text-sm text-gray-500
                                 file:mr-4 file:py-2 file:px-4
                                 file:rounded-full file:border-0
                                 file:text-sm file:font-semibold
                                 file:bg-blue-50 file:text-blue-700
-                                hover:file:bg-blue-100
-                                dark:file:bg-gray-700 dark:file:text-gray-200">
+                                hover:file:bg-blue-200
+                                dark:hover:file:bg-gray-700
+                                dark:file:bg-gray-600 dark:file:text-gray-200">
+                                <svg wire:loading wire:target='eSignature' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-6 fill-slate-700 motion-safe:animate-spin dark:fill-slate-300">
+                                    <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+                                    <path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" />
+                                </svg>
+
                             @error('eSignature') <span class="text-red-500">{{ $message }}</span> @enderror
                         </div>
                         <div class="flex justify-end mt-5">
                             <button @click="showModal = false" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 dark:bg-gray-600 dark:text-gray-200">Cancel</button>
-                            <button @click="showModal = false; $wire.exportToPdf(signatoryName)" class="bg-blue-500 text-white px-4 py-2 rounded-md">Generate PDF</button>
+                            <button @click="showModal = false; $wire.exportToPdf(signatoryName)" class="bg-blue-500 text-white px-4 py-2 rounded-md" wire:loading.attr="disabled">Generate PDF</button>
                         </div>
                     </div>
                 </div>
