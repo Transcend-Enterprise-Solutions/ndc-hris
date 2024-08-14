@@ -16,7 +16,7 @@ class EmpDocumentsTable extends Component
     public $tabs;
     public $documentToDelete = null;
     public $isDeleting = false;
-    public $perPage = 10;
+    public $perPage = 1;
     public $selectedTab = '201_Documents';
 
     protected $queryString = ['selectedTab'];

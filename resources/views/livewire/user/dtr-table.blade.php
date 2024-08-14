@@ -55,9 +55,21 @@
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-4"
                          class="bg-white dark:bg-gray-800 rounded-lg p-6 w-1/3 shadow-xl">
-                        <h2 class="text-lg font-semibold mb-4 text-left text-gray-900 dark:text-gray-100">Enter Signatory Name</h2>
+                        <h2 class="text-lg font-semibold mb-4 text-left text-gray-900 dark:text-gray-100">Enter Signatory Details</h2>
                         <input type="text" x-model="signatoryName" placeholder="Signatory Name"
                             class="w-full mb-4 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-700 dark:text-gray-300 dark:border-slate-600">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Upload E-Signature</label>
+                            <input type="file" wire:model="eSignature" accept="image/*"
+                                class="mt-1 block w-full text-sm text-gray-500
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-full file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-blue-50 file:text-blue-700
+                                hover:file:bg-blue-100
+                                dark:file:bg-gray-700 dark:file:text-gray-200">
+                            @error('eSignature') <span class="text-red-500">{{ $message }}</span> @enderror
+                        </div>
                         <div class="flex justify-end mt-5">
                             <button @click="showModal = false" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 dark:bg-gray-600 dark:text-gray-200">Cancel</button>
                             <button @click="showModal = false; $wire.exportToPdf(signatoryName)" class="bg-blue-500 text-white px-4 py-2 rounded-md">Generate PDF</button>

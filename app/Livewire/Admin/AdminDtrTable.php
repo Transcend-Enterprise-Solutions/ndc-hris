@@ -20,6 +20,7 @@ class AdminDtrTable extends Component
     public $sortField = 'date';
     public $sortDirection = 'asc';
     public $signatoryName='';
+    public $eSignaturePath='';
 
     protected $queryString = [
         'searchTerm' => ['except' => ''],
@@ -117,6 +118,7 @@ class AdminDtrTable extends Component
         $pdf = Pdf::loadView('pdf.dtr', [
             'dtrs' => $dtrs,
             'startDate' => $this->startDate,
+            'eSignaturePath' => $this->eSignaturePath,
             'endDate' => $this->endDate,
             'signatoryName' => $this->signatoryName,
         ]);
