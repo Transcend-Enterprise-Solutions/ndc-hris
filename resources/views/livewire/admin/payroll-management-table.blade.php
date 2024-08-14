@@ -1,6 +1,6 @@
 <div class="w-full" 
     x-data="{ 
-        selectedTab: 'plantilla',
+        selectedTab: 'none',
         selectedSubTab: 'plantilla_payroll',
         selectedSubTab2: 'plantilla_payslip'
     }" 
@@ -279,7 +279,7 @@
 
             <!-- Table -->
             <div class="flex flex-col">
-                <div class="flex gap-2 overflow-x-auto -mb-2">
+                <div class="flex gap-2 overflow-x-auto -mb-2 hidden">
                     <button @click="selectedTab = 'plantilla'" 
                             :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'plantilla', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'plantilla' }" 
                             class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
@@ -288,7 +288,12 @@
                     <button @click="selectedTab = 'cos'" 
                             :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'cos', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'cos' }" 
                             class="h-min px-4 pt-2 pb-4 text-sm">
-                        COS Payroll
+                        COS Regular Payroll
+                    </button>
+                    <button @click="selectedTab = 'cos'" 
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'cos', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'cos' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm">
+                        COS SK Payroll
                     </button>
                     <button @click="selectedTab = 'payroll_signatories'" 
                             :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'payroll_signatories', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'payroll_signatories' }" 

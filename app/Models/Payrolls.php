@@ -56,7 +56,6 @@ class Payrolls extends Model
                 ->orWhere('payrolls.employee_number', 'like', $term)
                 ->orWhere('payrolls.position', 'like', $term)
                 ->orWhere('payrolls.office_division', 'like', $term)
-                ->orWhere('payrolls.department', 'like', $term)
                 ->orWhere('payrolls.sg_step', 'like', $term);
         });
     }
@@ -68,7 +67,6 @@ class Payrolls extends Model
                 ->orWhere('payrolls.employee_number', 'like', $term)
                 ->orWhere('payrolls.position', 'like', $term)
                 ->orWhere('payrolls.office_division', 'like', $term)
-                ->orWhere('payrolls.department', 'like', $term)
                 ->orWhere('payrolls.sg_step', 'like', $term)
                 ->orWhere('signatories.signatory', 'like', $term)
                 ->orWhere('signatories.signatory_type', 'like', $term);
@@ -82,7 +80,6 @@ class Payrolls extends Model
                 ->orWhere('payrolls.employee_number', 'like', $term)
                 ->orWhere('payrolls.position', 'like', $term)
                 ->orWhere('payrolls.office_division', 'like', $term)
-                ->orWhere('payrolls.department', 'like', $term)
                 ->orWhere('payrolls.sg_step', 'like', $term)
                 ->orWhere('signatories.signatory', 'like', $term)
                 ->orWhere('signatories.signatory_type', 'like', $term);

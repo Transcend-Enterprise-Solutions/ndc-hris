@@ -230,10 +230,10 @@
                                 <ul class="pl-9 mt-1 transition-all duration-300 overflow-hidden"
                                     :class="open ? '!block' : 'hidden'">
                                     <li class="mb-1 last:mb-0">
-                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/payroll/payroll-management')){{ '!text-blue-500' }}@endif"
-                                            href="{{route('/payroll/payroll-management')}}"  wire:navigate>
+                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/payroll/settings')){{ '!text-blue-500' }}@endif"
+                                            href="{{route('/payroll/settings')}}"  wire:navigate>
                                             <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Payroll Management</span>
+                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">Settings</span>
                                         </a>
                                     </li>
                                     <li class="mb-1 last:mb-0">
@@ -249,7 +249,14 @@
                                         <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('/payroll/cos-payroll')){{ '!text-blue-500' }}@endif"
                                             href="{{route('/payroll/cos-payroll')}}" wire:navigate>
                                             <span class="text-sm font-medium transition-opacity duration-300"
-                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">COS Payroll</span>
+                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">COS Regular Payroll</span>
+                                        </a>
+                                    </li>
+                                    <li class="mb-1 last:mb-0">
+                                        <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if(Route::is('')){{ '!text-blue-500' }}@endif"
+                                            href="{{route('/payroll/cos-payroll')}}" wire:navigate>
+                                            <span class="text-sm font-medium transition-opacity duration-300"
+                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">COS SK Payroll</span>
                                         </a>
                                     </li>
                                 </ul>

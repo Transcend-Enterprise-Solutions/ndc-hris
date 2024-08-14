@@ -1,4 +1,9 @@
-<div class="w-full flex justify-center">
+<div class="w-full flex justify-center"
+x-data="{ 
+    selectedTab: 'cos',
+     selectedSubTab: 'payroll',
+}" 
+x-cloak>
 
     <style>
         .scrollbar-thin1::-webkit-scrollbar {
@@ -57,7 +62,7 @@
             border-radius: 50%;
             -webkit-animation: spinner-border .75s linear infinite;
             animation: spinner-border .75s linear infinite;
-            color: rgb(0, 255, 98);
+            color: rgb(0, 255, 42);
         }
     </style>
 
@@ -65,18 +70,30 @@
         <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
 
             <div class="pb-4 mb-3 pt-4 sm:pt-0">
-                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">
+                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'cos'">Manage COS Regular Payroll</h1>
+                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'signatories'">Manage Payroll & Payslip Signatories</h1>
+                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'export'">
                     Payroll for the month of {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('F') : '' }} {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('Y') : '' }}
                 </h1>
-                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">
+                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'export'">
                     {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('d') : '' }} - {{ $endDate ? \Carbon\Carbon::parse($endDate)->format('d') : '' }}
                 </h1>
             </div>
 
             <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
 
-                {{-- Search Input --}}
-                <div class="w-full sm:w-1/3 sm:mr-4">
+                {{-- Search COS Input --}}
+                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'cos'">
+                    <label for="search2" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                    <input type="text" id="search2" wire:model.live="search2"
+                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                            dark:hover:bg-slate-600 dark:border-slate-600
+                            dark:text-gray-300 dark:bg-gray-800"
+                        placeholder="Enter employee name or ID">
+                </div>
+
+                {{-- Search Input Export --}}
+                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'export'">
                     <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
                     <input type="text" id="search" wire:model.live="search"
                         class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
@@ -85,8 +102,7 @@
                         placeholder="Enter employee name or ID">
                 </div>
 
-                {{-- Filters --}}
-                <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
+                <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4" x-show="selectedTab === 'export'">
 
                     <!-- Start Date -->
                     <div class="w-full sm:w-auto relative">
@@ -105,116 +121,6 @@
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                     </div>
-
-                    <!-- Sort Dropdown -->
-                    {{-- <div class="relative inline-block text-left mr-0 sm:mr-4">
-                        <button wire:click="toggleDropdown"
-                            class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                            justify-center px-4 py-2 mb-4 text-sm font-medium tracking-wide 
-                            text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
-                            rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
-                            type="button">
-                            Sort Column
-                            <i class="bi bi-chevron-down w-5 h-5 ml-2"></i>
-                        </button>
-                        @if($sortColumn)
-                            <div
-                                class="absolute z-20 w-56 p-3 border border-gray-400 bg-white rounded-lg 
-                                shadow-2xl dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
-                                <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Category</h6>
-                                <ul class="space-y-2 text-sm">
-                                    <li class="flex items-center" wire:click='toggleAllColumn'>
-                                        <input id="allCol" type="checkbox" wire:model.live="allCol"
-                                            class="h-4 w-4">
-                                        <label for="allCol" class="ml-2 text-gray-900 dark:text-gray-300">Select All</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="employee_number" type="checkbox" wire:model.live="columns.employee_number"
-                                            class="h-4 w-4">
-                                        <label for="employee_number" class="ml-2 text-gray-900 dark:text-gray-300">Employee Number</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="position" type="checkbox" wire:model.live="columns.position"
-                                            class="h-4 w-4">
-                                        <label for="position" class="ml-2 text-gray-900 dark:text-gray-300">Position</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="salary_grade" type="checkbox" wire:model.live="columns.salary_grade" class="h-4 w-4">
-                                        <label for="salary_grade" class="ml-2 text-gray-900 dark:text-gray-300">Salary Grade</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="daily_salary_rate" type="checkbox" wire:model.live="columns.daily_salary_rate"
-                                            class="h-4 w-4">
-                                        <label for="daily_salary_rate"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Daily Salary Rate</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="no_of_days_covered" type="checkbox" wire:model.live="columns.no_of_days_covered"
-                                        class="h-4 w-4">
-                                        <label for="no_of_days_covered" class="ml-2 text-gray-900 dark:text-gray-300">No. of Days Covered</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="gross_salary" type="checkbox" wire:model.live="columns.gross_salary"
-                                            class="h-4 w-4">
-                                        <label for="gross_salary"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Gross Salary</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="absences_days" type="checkbox" wire:model.live="columns.absences_days" class="h-4 w-4">
-                                        <label for="absences_days" class="ml-2 text-gray-900 dark:text-gray-300">Absences (Days)</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="absences_amount" type="checkbox" wire:model.live="columns.absences_amount" class="h-4 w-4">
-                                        <label for="absences_amount" class="ml-2 text-gray-900 dark:text-gray-300">Absences (Amount)</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="late_undertime_hours" type="checkbox" wire:model.live="columns.late_undertime_hours"
-                                            class="h-4 w-4">
-                                        <label for="late_undertime_hours" class="ml-2 text-gray-900 dark:text-gray-300">Late/Undertime (Hours)</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="late_undertime_hours_amount" type="checkbox" wire:model.live="columns.late_undertime_hours_amount" class="h-4 w-4">
-                                        <label for="late_undertime_hours_amount" class="ml-2 text-gray-900 dark:text-gray-300">Late/Undertime (Hours -Amount)</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="late_undertime_mins" type="checkbox" wire:model.live="columns.late_undertime_mins"
-                                            class="h-4 w-4">
-                                        <label for="late_undertime_mins" class="ml-2 text-gray-900 dark:text-gray-300">Late/Undertime (Minutes)</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="late_undertime_mins_amount" type="checkbox" wire:model.live="columns.late_undertime_mins_amount"
-                                            class="h-4 w-4">
-                                        <label for="late_undertime_mins_amount" class="ml-2 text-gray-900 dark:text-gray-300">Late/Undertime (Mins - Amount)</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="gross_salary_less" type="checkbox" wire:model.live="columns.gross_salary_less" class="h-4 w-4">
-                                        <label for="gross_salary_less" class="ml-2 text-gray-900 dark:text-gray-300">Gross Salary (Less)</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="withholding_tax" type="checkbox" wire:model.live="columns.withholding_tax" class="h-4 w-4">
-                                        <label for="withholding_tax" class="ml-2 text-gray-900 dark:text-gray-300">Withholding Tax</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="nycempc" type="checkbox"
-                                            wire:model.live="columns.nycempc" class="h-4 w-4">
-                                        <label for="nycempc" class="ml-2 text-gray-900 dark:text-gray-300">NYCEMPC</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="total_deductions" type="checkbox"
-                                            wire:model.live="columns.total_deductions" class="h-4 w-4">
-                                        <label for="total_deductions"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Total Deduction</label>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <input id="net_amount_due" type="checkbox"
-                                            wire:model.live="columns.net_amount_due" class="h-4 w-4">
-                                        <label for="net_amount_due"
-                                            class="ml-2 text-gray-900 dark:text-gray-300">Net Amount Due</label>
-                                    </li>
-                                </ul>
-                            </div>
-                        @endif
-                    </div> --}}
 
                     <!-- Save Payroll -->
                     @if($hasPayroll == false)
@@ -242,229 +148,685 @@
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button" title="Export Payroll">
-                            <div wire:loading wire:target="exportPayroll" style="margin-right: 5px">
+                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
+                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
+                            <div wire:loading wire:target="exportPayroll" style="margin-left: 5px">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
                             </div>
-                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
-                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                         </button>
                     </div>
 
+                </div>
+
+                <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4" x-show="selectedTab === 'cos'">
+
+                    <div class="w-full sm:w-auto">
+                        <button wire:click="toggleAddCosPayroll" 
+                            class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
+                            hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
+                            dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
+                            Add COS Payroll
+                        </button>
+                    </div>
+
+                    <!-- Export to Excel -->
+                    <div class="relative inline-block text-left">
+                        <button wire:click="exportCosExcel"
+                            class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                            justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
+                            text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                            rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
+                            type="button"  title="Export Payroll">
+                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
+                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
+                            <div wire:loading wire:target="exportCosExcel" style="margin-left: 5px">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                        </button>
+                    </div>
                 </div>
 
             </div>
 
             <!-- Table -->
             <div class="flex flex-col">
+                <div class="flex gap-2 overflow-x-auto -mb-2">
+                    <button @click="selectedTab = 'cos'" 
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'cos', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'cos' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
+                        Manage Payroll
+                    </button>
+                    <button @click="selectedTab = 'export'" 
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'export', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'export' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm">
+                        Export Payroll
+                    </button>
+                    <button @click="selectedTab = 'signatories'" 
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'signatories', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'signatories' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm">
+                        Signatories
+                    </button>
+                </div>
                 <div class="-my-2 overflow-x-auto">
                     <div class="inline-block w-full py-2 align-middle">
                         <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
-                            <div class="overflow-x-auto">
+                            <div x-show="selectedTab === 'cos'">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full min-w-full">
+                                        <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                            <tr class="whitespace-nowrap">
+                                                @foreach($cosColumns as $column => $visible)
+                                                    @if($visible)
+                                                        <th scope="col" class="px-5 py-3 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium text-left uppercase">
+                                                            {{ ucwords(str_replace('_', ' ', $column)) }}
+                                                        </th>
+                                                    @endif
+                                                @endforeach
+                                                <th class="px-5 py-3 text-gray-100 text-sm font-medium text-right uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                    Action
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                                @foreach($cosPayrolls as $payroll)
+                                                    <tr class="text-neutral-800 dark:text-neutral-200">
+                                                        @foreach($cosColumns as $column => $visible)
+                                                            @if($visible)
+                                                                <td class="px-5 py-4 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium whitespace-nowrap">
+                                                                    @if(in_array($column, [
+                                                                        'rate_per_month', 
+                                                                    ]))
+                                                                        {{ currency_format($payroll->$column) }}
+                                                                    @else
+                                                                        {{ $payroll->$column ?? '' }}
+                                                                    @endif
+                                                                </td>
+                                                            @endif
+                                                        @endforeach
+                                                        <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                            <div class="relative">
+                                                                <button wire:click="toggleEditCosPayroll({{ $payroll->user_id }})" 
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none" title="Edit">
+                                                                    <i class="fas fa-pencil-alt ml-3"></i>
+                                                                </button>
+                                                                <button wire:click="toggleCosDelete({{ $payroll->user_id }})" 
+                                                                    class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                    dark:hover:text-red-900" title="Delete">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                        </tbody>
+                                    </table>
+                                    @if ($cosPayrolls->isEmpty())
+                                        <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                            No records!
+                                        </div> 
+                                    @endif
+                                </div>
+                                <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                    {{ $cosPayrolls->links() }}
+                                </div>
+                            </div>
+                            <div x-show="selectedTab === 'export'">
+                                <div class="overflow-x-auto">
 
-                                <table class="w-full min-w-full">
-                                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
-                                        <tr class="whitespace-nowrap">
-                                            <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Name</th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Employee Number
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Position
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Salary Grade
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Daily Salary Rate
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                No. of Days Covered
-                                            </th>
-                                            @if($weekdayRegularHolidays)
+                                    <table class="w-full min-w-full">
+                                        <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                            <tr class="whitespace-nowrap">
+                                                <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Name</th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                    Regular Holiday/s
+                                                    Employee Number
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                    Regular Holiday/s (Amount)
-                                                </th>
-                                            @endif
-                                            @if($weekdaySpecialHolidays)
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                    Special Holiday/s
+                                                    Position
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                    Special Holiday/s (Amount)
+                                                    Salary Grade
                                                 </th>
-                                            @endif
-                                         
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Leave With Pay
-                                            </th>
-                                            
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Leave With Pay (Amount)
-                                            </th>
-                            
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Gross Salary
-                                            </th>
-                               
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Leave Without Pay
-                                            </th>
-
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Leave Without Pay (Amount)
-                                            </th>
-                          
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Absences (Days)
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Absences (Amount)
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Late/Undertime (Hours)
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Late/Undertime (Hours -Amount)
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Late/Undertime (Minutes)
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Late/Undertime (Mins - Amount)
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Gross Salary Less<br>(Absences/Lates/Undertime)
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Withholding Tax
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                NYCEMPC
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Total Deduction
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Net Amount Due
-                                            </th>
-                                            <th class="px-5 py-3 text-gray-100 text-sm font-medium text-right uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
-                                                Action
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
-                                        @foreach($payrolls as $payroll)
-                                            <tr class="text-neutral-800 dark:text-neutral-200">
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                    {{ $payroll['name'] ?? '' }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ $payroll['employee_number'] ?? '' }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ $payroll['position'] ?? '' }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ $payroll['salary_grade'] ?? '' }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ currency_format($payroll['daily_salary_rate'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ $payroll['no_of_days_covered'] ?? '' }}
-                                                </td>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Daily Salary Rate
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    No. of Days Covered
+                                                </th>
                                                 @if($weekdayRegularHolidays)
-                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                        {{ zero_checker($payroll['regular_holidays'] ?? 0) }}
-                                                    </td>
-                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                        {{ currency_format($payroll['regular_holidays_amount'] ?? 0) }}
-                                                    </td>
+                                                    <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                        Regular Holiday/s
+                                                    </th>
+                                                    <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                        Regular Holiday/s (Amount)
+                                                    </th>
                                                 @endif
                                                 @if($weekdaySpecialHolidays)
-                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                        {{ zero_checker($payroll['special_holidays'] ?? 0) }}
-                                                    </td>
-                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                        {{ currency_format($payroll['special_holidays_amount'] ?? 0) }}
-                                                    </td>
+                                                    <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                        Special Holiday/s
+                                                    </th>
+                                                    <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                        Special Holiday/s (Amount)
+                                                    </th>
                                                 @endif
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ zero_checker($payroll['leave_days_withpay'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ currency_format($payroll['leave_payment'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ currency_format($payroll['gross_salary'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ zero_checker($payroll['leave_days_withoutpay'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ currency_format($payroll['leave_days_withoutpay_amount'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ zero_checker($payroll['absences_days'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ currency_format($payroll['absences_amount'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ zero_checker($payroll['late_undertime_hours'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ currency_format($payroll['late_undertime_hours_amount'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ zero_checker($payroll['late_undertime_mins'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ currency_format($payroll['late_undertime_mins_amount'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ currency_format($payroll['gross_salary_less'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ currency_format($payroll['withholding_tax'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ currency_format($payroll['nycempc'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ currency_format($payroll['total_deductions'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ currency_format($payroll['net_amount_due'] ?? 0) }}
-                                                </td>
-                                                <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-gray-100 dark:bg-gray-800">
-                                                    {{-- <button wire:click="exportPayslip({{ $payroll['user_id'] }})" class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide hover:text-blue-600 focus:outline-none">
-                                                        <div wire:loading wire:target="exportPayslip" style="margin-right: 5px">
+                                            
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Leave With Pay
+                                                </th>
+                                                
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Leave With Pay (Amount)
+                                                </th>
+                                
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Gross Salary
+                                                </th>
+                                
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Leave Without Pay
+                                                </th>
+
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Leave Without Pay (Amount)
+                                                </th>
+                            
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Absences (Days)
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Absences (Amount)
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Late/Undertime (Hours)
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Late/Undertime (Hours -Amount)
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Late/Undertime (Minutes)
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Late/Undertime (Mins - Amount)
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Gross Salary Less<br>(Absences/Lates/Undertime)
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Withholding Tax
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    NYCEMPC
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Total Deduction
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Net Amount Due
+                                                </th>
+                                                <th class="px-5 py-3 text-gray-100 text-sm font-medium text-right uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                    Action
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                            @foreach($payrolls as $payroll)
+                                                <tr class="text-neutral-800 dark:text-neutral-200">
+                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                        {{ $payroll['name'] ?? '' }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ $payroll['employee_number'] ?? '' }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ $payroll['position'] ?? '' }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ $payroll['salary_grade'] ?? '' }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['daily_salary_rate'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ $payroll['no_of_days_covered'] ?? '' }}
+                                                    </td>
+                                                    @if($weekdayRegularHolidays)
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                            {{ zero_checker($payroll['regular_holidays'] ?? 0) }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                            {{ currency_format($payroll['regular_holidays_amount'] ?? 0) }}
+                                                        </td>
+                                                    @endif
+                                                    @if($weekdaySpecialHolidays)
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                            {{ zero_checker($payroll['special_holidays'] ?? 0) }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                            {{ currency_format($payroll['special_holidays_amount'] ?? 0) }}
+                                                        </td>
+                                                    @endif
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ zero_checker($payroll['leave_days_withpay'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['leave_payment'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['gross_salary'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ zero_checker($payroll['leave_days_withoutpay'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['leave_days_withoutpay_amount'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ zero_checker($payroll['absences_days'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['absences_amount'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ zero_checker($payroll['late_undertime_hours'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['late_undertime_hours_amount'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ zero_checker($payroll['late_undertime_mins'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['late_undertime_mins_amount'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['gross_salary_less'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['withholding_tax'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['nycempc'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['total_deductions'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['net_amount_due'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-gray-100 dark:bg-gray-800">
+                                                        {{-- <button wire:click="exportPayslip({{ $payroll['user_id'] }})" class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide hover:text-blue-600 focus:outline-none">
+                                                            <div wire:loading wire:target="exportPayslip" style="margin-right: 5px">
+                                                                <div class="spinner-border small text-primary" role="status">
+                                                                </div>
+                                                            </div>
+                                                            <i class="fas fa-file-export ml-3"></i>
+                                                        </button> --}}
+                                                        <div class="relative">
+                                                            <button wire:click="viewPayroll({{ $payroll['user_id'] }})" 
+                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                            focus:outline-none" title="View">
+                                                                <i class="fas fa-eye ml-3"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    @if ($payrolls->isEmpty())
+                                        <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                            No records!
+                                        </div> 
+                                    @endif
+                                </div>
+                                <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                </div>
+                            </div>
+                            <div x-show="selectedTab === 'signatories'">
+                                <div class="overflow-x-hidden">
+                                    <div class="flex gap-2 overflow-x-auto dark:bg-gray-700 bg-gray-200 rounded-t-lg">
+                                        <button @click="selectedSubTab = 'payroll'" 
+                                                :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab === 'payroll', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab !== 'payroll' }" 
+                                                class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
+                                            Payroll Signatories
+                                        </button>
+                                        <button @click="selectedSubTab = 'payslip'" 
+                                                :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab === 'payslip', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab !== 'payslip' }" 
+                                                class="h-min px-4 pt-2 pb-4 text-sm">
+                                            Payslip Signatories
+                                        </button>
+                                    </div>
+                                </div>
+                                 {{-- COS Payroll View --}}
+                                 <div x-show="selectedSubTab === 'payroll'">
+                                    <div class="overflow-hidden mt-10">
+                                        <div class="pb-4 mb-3 pt-4 sm:pt-0">
+                                            <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">COS Payroll Footer View</h1>
+                                        </div>
+                                        <div class="overflow-x-auto bg-white text-xs text-black border border-black">
+                                            <div class="block sm:flex">
+                                                <div class="col-span-1 block border-r border-black">
+                                                    <div class="h-32 w-full block border-b border-black relative">
+                                                        <div class="flex">
+                                                            <p class="px-2 border-r border-b border-black">A.</p>
+                                                            <p class="pl-2">CERTIFIED: Services duly rendered as stated.</p>
+                                                        </div>
+                                                        <div class="absolute bottom-1 w-full flex">
+                                                            <div class="flex flex flex-col items-center w-4/5">
+                                                                @if($cosPayroll['a'])
+                                                                    <img src="{{ $cosPayroll['a']->signature ? route('signature.file', basename($cosPayroll['a']->signature)) : '/images/signature.png' }}"
+                                                                        alt="signature" title="{{ $cosPayroll['a']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                                        class="cursor-pointer {{ $cosPayroll['a']->signature ? '-mb-4' : '' }}" onclick="document.getElementById('cosPayroll_A').click()"
+                                                                        style="height: {{ $cosPayroll['a']->signature ? '60px' : '30px' }}; width: auto;">
+                                                                        <input type="file" id="cosPayroll_A" 
+                                                                            wire:model="signatures.{{ $cosPayroll['a']->id }}" 
+                                                                            style="display: none;" 
+                                                                            accept="image/*">
+                                                                    <div wire:loading wire:target="signatures.{{ $cosPayroll['a']->id }}" style="margin-left: 5px">
+                                                                        <div class="spinner-border small text-primary" role="status">
+                                                                        </div>
+                                                                    </div>
+                                                                    @error('signatures.' . $cosPayroll['a']->id) <span class="error">{{ $message }}</span> @enderror
+                                                                @endif
+                                                                <p class="text-center font-bold text-sm">{{ $cosPayroll['a'] ? $cosPayroll['a']->name : 'XXXXXXXXXX' }}</p>
+                                                                <p class="text-center">{{ $cosPayroll['a'] ? $cosPayroll['a']->position : 'Position' }}</p>
+                                                            </div>
+                                                            <div class="flex flex flex-col items-center justify-end w-1/5">
+                                                                <p class="text-center underline">01/01/2024</p>
+                                                                <p class="text-center">Date</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="absolute right-0 top-0 p-2 bg-white">
+                                                            @if($cosPayroll['a'])
+                                                                <button wire:click="toggleEditSignatory({{ $cosPayroll['a']->user_id }}, 'cos_payroll')" 
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none" title="Edit">
+                                                                    <i class="fas fa-pencil-alt ml-3"></i>
+                                                                </button>
+                                                            @else
+                                                                <button wire:click="toggleAddSignatory('cos_payroll', 'A')" 
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none" title="Edit">
+                                                                    <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="h-32 w-full relative">
+                                                        <div class="flex">
+                                                            <p class="px-2 border-r border-b border-black">B.</p>
+                                                            <p class="pl-2">CERTIFIED: Supporting documents complete and proper; and cash available in the amount of</p>
+                                                        </div>
+                                                        <div class="flex">
+                                                            <p class="px-2"></p>
+                                                            <p class="pl-6 font-bold">₱ 4,884.16</p>
+                                                        </div>
+                                                        <div class="absolute bottom-1 w-full flex">
+                                                            <div class="flex flex flex-col items-center w-4/5">
+                                                                @if($cosPayroll['b'])
+                                                                    <img src="{{ $cosPayroll['b']->signature ? route('signature.file', basename($cosPayroll['b']->signature)) : '/images/signature.png' }}"
+                                                                        alt="signature" title="{{ $cosPayroll['b']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                                        class="cursor-pointer {{ $cosPayroll['b']->signature ? '-mb-4' : '' }}" 
+                                                                        onclick="document.getElementById('cosPayroll_B').click()"
+                                                                        style="height: {{ $cosPayroll['b']->signature ? '60px' : '30px' }}; width: auto;">
+                                                                        <input type="file" id="cosPayroll_B" 
+                                                                            wire:model="signatures.{{ $cosPayroll['b']->id }}" 
+                                                                            style="display: none;" 
+                                                                            accept="image/*">
+                                                                    <div wire:loading wire:target="signatures.{{ $cosPayroll['b']->id }}" style="margin-left: 5px">
+                                                                        <div class="spinner-border small text-primary" role="status">
+                                                                        </div>
+                                                                    </div>
+                                                                    @error('signatures.' . $cosPayroll['b']->id) <span class="error">{{ $message }}</span> @enderror
+                                                                @endif
+                                                                <p class="text-center font-bold text-sm">{{ $cosPayroll['b'] ? $cosPayroll['b']->name : 'XXXXXXXXXX' }}</p>
+                                                                <p class="text-center">{{ $cosPayroll['b'] ? $cosPayroll['b']->position : 'Position' }}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="absolute right-0 top-0 p-2 bg-white">
+                                                            @if($cosPayroll['b'])
+                                                                <button wire:click="toggleEditSignatory({{ $cosPayroll['b']->user_id }}, 'cos_payroll')"  
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none" title="Edit">
+                                                                    <i class="fas fa-pencil-alt ml-3"></i>
+                                                                </button>
+                                                            @else
+                                                                <button wire:click="toggleAddSignatory('cos_payroll', 'B')" 
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none" title="Edit">
+                                                                    <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-span-1 block">
+                                                    <div class="h-32 w-full border-b border-black relative">
+                                                        <div class="flex">
+                                                            <p class="px-2 border-r border-b border-black">C.</p>
+                                                            <p class="pl-2 font-bold">APPROVED FOR PAYMENT: FOUR THOUSAND, EIGHT HUNDRED AND EIGHTY-FOUR AND 16/100 PESOS ONLY</p>
+                                                        </div>
+                                                        <div class="flex">
+                                                            <p class="px-2"></p>
+                                                            <p class="pl-6 font-bold">₱ 4,884.16</p>
+                                                        </div>
+                                                        <div class="absolute bottom-1 w-full flex">
+                                                            <div class="flex flex flex-col items-center w-4/5">
+                                                                @if($cosPayroll['c'])
+                                                                    <img src="{{ $cosPayroll['c']->signature ? route('signature.file', basename($cosPayroll['c']->signature)) : '/images/signature.png' }}"
+                                                                        alt="signature" title="{{ $cosPayroll['c']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                                        class="cursor-pointer {{ $cosPayroll['c']->signature ? '-mb-4' : '' }}" 
+                                                                        onclick="document.getElementById('cosPayroll_C').click()"
+                                                                        style="height: {{ $cosPayroll['c']->signature ? '60px' : '30px' }}; width: auto;">
+                                                                        <input type="file" id="cosPayroll_C" 
+                                                                            wire:model="signatures.{{ $cosPayroll['c']->id }}" 
+                                                                            style="display: none;" 
+                                                                            accept="image/*">
+                                                                    <div wire:loading wire:target="signatures.{{ $cosPayroll['c']->id }}" style="margin-left: 5px">
+                                                                        <div class="spinner-border small text-primary" role="status">
+                                                                        </div>
+                                                                    </div>
+                                                                    @error('signatures.' . $cosPayroll['c']->id) <span class="error">{{ $message }}</span> @enderror
+                                                                @endif
+                                                                <p class="text-center font-bold text-sm">{{ $cosPayroll['c'] ? $cosPayroll['c']->name : 'XXXXXXXXXX' }}</p>
+                                                                <p class="text-center">{{ $cosPayroll['c'] ? $cosPayroll['c']->position : 'Position' }}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="absolute right-0 top-0 p-2 bg-white">
+                                                            @if($cosPayroll['c'])
+                                                                <button wire:click="toggleEditSignatory({{ $cosPayroll['c']->user_id }}, 'cos_payroll')"  
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none" title="Edit">
+                                                                    <i class="fas fa-pencil-alt ml-3"></i>
+                                                                </button>
+                                                            @else
+                                                                <button wire:click="toggleAddSignatory('cos_payroll', 'C')" 
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none" title="Edit">
+                                                                    <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="h-32 w-full relative">
+                                                        <div class="flex">
+                                                            <p class="px-2 border-r border-b border-black">D.</p>
+                                                            <p class="pl-2">CERTIFIED: Each employee whose name <br>
+                                                                appears above has been paid the amount indicated <br>
+                                                                opposite on his/her name.
+                                                            </p>
+                                                        </div>
+                                                        <div class="absolute bottom-1 w-full flex">
+                                                            <div class="flex flex flex-col items-center w-4/5">
+                                                                @if($cosPayroll['d'])
+                                                                    <img src="{{ $cosPayroll['d']->signature ? route('signature.file', basename($cosPayroll['d']->signature)) : '/images/signature.png' }}"
+                                                                        alt="signature" title="{{ $cosPayroll['d']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                                        class="cursor-pointer {{ $cosPayroll['d']->signature ? '-mb-4' : '' }}" 
+                                                                        onclick="document.getElementById('cosPayroll_D').click()"
+                                                                        style="height: {{ $cosPayroll['d']->signature ? '60px' : '30px' }}; width: auto;">
+                                                                        <input type="file" id="cosPayroll_D" 
+                                                                            wire:model="signatures.{{ $cosPayroll['d']->id }}" 
+                                                                            style="display: none;" 
+                                                                            accept="image/*">
+                                                                    <div wire:loading wire:target="signatures.{{ $cosPayroll['d']->id }}" style="margin-left: 5px">
+                                                                        <div class="spinner-border small text-primary" role="status">
+                                                                        </div>
+                                                                    </div>
+                                                                    @error('signatures.' . $cosPayroll['d']->id) <span class="error">{{ $message }}</span> @enderror
+                                                                @endif
+                                                                <p class="text-center font-bold text-sm">{{ $cosPayroll['d'] ? $cosPayroll['d']->name : 'XXXXXXXXXX' }}</p>
+                                                                <p class="text-center">{{ $cosPayroll['d'] ? $cosPayroll['d']->position : 'Position' }}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="absolute right-0 top-0 p-2 bg-white">
+                                                            @if($cosPayroll['d'])
+                                                                <button wire:click="toggleEditSignatory({{ $cosPayroll['d']->user_id }}, 'cos_payroll')"  
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none" title="Edit">
+                                                                    <i class="fas fa-pencil-alt ml-3"></i>
+                                                                </button>
+                                                            @else
+                                                                <button wire:click="toggleAddSignatory('cos_payroll', 'D')" 
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none" title="Edit">
+                                                                    <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{-- COS Payslip View --}}
+                                <div x-show="selectedSubTab === 'payslip'">
+                                    <div class="overflow-hidden mt-10">
+                                        <div class="pb-4 mb-3 pt-4 sm:pt-0">
+                                            <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">COS Payslip Footer View</h1>
+                                        </div>
+                                        <div class="overflow-x-auto bg-white text-xs text-black border border-black px-2 py-6">
+                                            <div class="block">
+                                                <div class="flex border-b border-dashed border-black">
+                                                    <div class="w-1/4"></div>
+                                                    <div class="w-1/4 font-bold">NET PAY</div>
+                                                    <div class="w-1/4"></div>
+                                                    <div class="w-1/4 border-b font-bold border-solid border-black text-right">₱ 0,000.00</div>
+                                                </div>
+                                                <div class="flex">
+                                                    <div class="w-1/4"></div>
+                                                    <div class="w-1/4">Amount Due &nbsp&nbsp&nbsp&nbsp January 01-15 2024</div>
+                                                    <div class="w-1/4"></div>
+                                                    <div class="w-1/4 border-b border-solid border-black text-right">₱ 0,000.00</div>
+                                                </div>
+                                                <div class="flex">
+                                                    <div class="w-1/4"></div>
+                                                    <div class="w-1/4">Amount Due &nbsp&nbsp&nbsp&nbsp January 16-31 2024</div>
+                                                    <div class="w-1/4"></div>
+                                                    <div class="w-1/4 border-b border-solid border-black text-right">₱ 0,000.00</div>
+                                                </div>
+                                                <div class="flex mt-6">
+                                                    <div class="w-1/4">Prepared By:</div>
+                                                    <div class="w-1/4"></div>
+                                                    <div class="w-1/4 relative">
+                                                        Noted By:
+                                                        <div class="absolute right-0 top-0 p-2 bg-white">
+                                                            @if($cosPayslipSigns['notedBy'])
+                                                                <button wire:click="toggleEditPayslipSignatory({{ $cosPayslipSigns['notedBy']->user_id }}, 'cos_payslip')" 
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none" title="Edit">
+                                                                    <i class="fas fa-pencil-alt ml-3"></i>
+                                                                </button>
+                                                            @else
+                                                                <button wire:click="toggleAddPayslipSignatory('Noted By', 'cos_payslip')" 
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none" title="Edit">
+                                                                    <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-1/4"></div>
+                                                </div>
+                                                <div class="flex mt-6">
+                                                    <div class="w-1/4 font-bold text-sm">
+                                                        @if($preparedBySignature)
+                                                            <img src="{{ $preparedBySignature->signature ? route('signature.file', basename($preparedBySignature->signature)) : '/images/signature.png' }}"
+                                                                alt="signature" title="Edit Signature"
+                                                                class="cursor-pointer {{ $preparedBySignature->signature ? '-mb-4' : '' }}" 
+                                                                onclick="document.getElementById('plantillaPayslip_PreparedBy').click()"
+                                                                style="height: {{ $preparedBySignature->signature ? '60px' : '30px' }}; width: auto;">
+                                                        @else
+                                                            <img src="/images/signature.png"
+                                                                alt="signature" title="Add Signature"
+                                                                class="cursor-pointer" 
+                                                                onclick="document.getElementById('plantillaPayslip_PreparedBy').click()"
+                                                                style="height: 30px; width: auto;">
+                                                        @endif
+                                                        <div wire:loading wire:target="preparedBySignature" style="margin-left: 5px">
                                                             <div class="spinner-border small text-primary" role="status">
                                                             </div>
                                                         </div>
-                                                        <i class="fas fa-file-export ml-3"></i>
-                                                    </button> --}}
-                                                    <div class="relative">
-                                                        <button wire:click="viewPayroll({{ $payroll['user_id'] }})" 
-                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                        -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                        focus:outline-none" title="View">
-                                                            <i class="fas fa-eye ml-3"></i>
-                                                        </button>
+                                                        <input type="file" id="plantillaPayslip_PreparedBy" 
+                                                            wire:model.live="preparedBySign" 
+                                                            style="display: none;" 
+                                                            accept="image/*">
+                                                        @error('preparedBySign') <span class="error">{{ $message }}</span> @enderror
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                
+                                                    <div class="w-1/4"></div>
+                                                    <div class="w-1/4 font-bold text-sm">
+                                                        @if($cosPayslipSigns['notedBy'])
+                                                            <img src="{{ $cosPayslipSigns['notedBy']->signature ? route('signature.file', basename($cosPayslipSigns['notedBy']->signature)) : '/images/signature.png' }}"
+                                                                alt="signature" title="{{ $cosPayslipSigns['notedBy']->signature ? 'Edit Signature' : 'Add Signature' }}"
+                                                                class="cursor-pointer {{ $cosPayslipSigns['notedBy']->signature ? '-mb-4' : '' }}" 
+                                                                onclick="document.getElementById('plantillaPayslip_NotedBy').click()"
+                                                                style="height: {{ $cosPayslipSigns['notedBy']->signature ? '60px' : '30px' }}; width: auto;">
+                                                                <input type="file" id="plantillaPayslip_NotedBy" 
+                                                                    wire:model="signatures.{{ $cosPayslipSigns['notedBy']->id }}" 
+                                                                    style="display: none;" 
+                                                                    accept="image/*">
+                                                            <div wire:loading wire:target="signatures.{{ $cosPayslipSigns['notedBy']->id }}" style="margin-left: 5px">
+                                                                <div class="spinner-border small text-primary" role="status">
+                                                                </div>
+                                                            </div>
+                                                            @error('signatures.' . $cosPayslipSigns['notedBy']->id) <span class="error">{{ $message }}</span> @enderror
+                                                        @endif
+                                                    </div>
+                                                    <div class="w-1/4"></div>
+                                                </div>
+                                                <div class="flex mt-6">
+                                                    <div class="w-1/4 font-bold text-sm">{{ $preparedBy->name }}</div>
+                                                    <div class="w-1/4"></div>
+                                                    <div class="w-1/4 font-bold text-sm">{{ $cosPayslipSigns['notedBy'] ? $cosPayslipSigns['notedBy']->name : 'XXXXXXXXXX' }}</div>
+                                                    <div class="w-1/4"></div>
+                                                </div>
+                                                <div class="flex">
+                                                    <div class="w-1/4">{{ $preparedBy->position }}</div>
+                                                    <div class="w-1/4"></div>
+                                                    <div class="w-1/4">{{ $cosPayslipSigns['notedBy'] ? $cosPayslipSigns['notedBy']->position : 'Position' }}</div>
+                                                    <div class="w-1/4"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -472,5 +834,242 @@
 
         </div>
     </div>
+
+    {{-- Add and Edit COS Payroll Modal --}}
+    <x-modal id="cosPayroll" maxWidth="2xl" wire:model="editCosPayroll">
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addCosPayroll ? 'Add' : 'Edit' }} COS Payroll
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {{-- Form fields --}}
+            <form wire:submit.prevent='saveCosPayroll'>
+                <div class="grid grid-cols-2 gap-4">
+                    
+                    <div class="col-span-2">
+                        <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
+                        <select id="userId" wire:model.live='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
+                            {{ $addCosPayroll ? '' : 'disabled' }}>
+                            <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
+                            @foreach ($employees as $employee)
+                                <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('userId') 
+                            <span class="text-red-500 text-sm">Please select an employee!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="employee_number" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Number</label>
+                        <input type="text" id="employee_number" wire:model='employee_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                        @error('employee_number') 
+                            <span class="text-red-500 text-sm">The employee number is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
+                        <input type="text" id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        @error('office_division') 
+                            <span class="text-red-500 text-sm">The office/division is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
+                        <input type="text" id="position" wire:model='position' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        @error('position') 
+                            <span class="text-red-500 text-sm">The position is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="sg" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Salary Grade</label>
+                        <select id="sg" wire:model.live='sg' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="">Select Salary Grade</option>
+                            @foreach ($salaryGrade as $sg)
+                                <option value="{{ $sg->salary_grade }}">{{ $sg->salary_grade }}</option>
+                            @endforeach
+                        </select>                        
+                        @error('sg') 
+                            <span class="text-red-500 text-sm">The salary grade is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="step" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Step</label>
+                        <select id="step" wire:model.live='step' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="">Select Step</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                        </select>                        
+                        @error('step') 
+                            <span class="text-red-500 text-sm">The step is required!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="rate_per_month" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Rate per Month</label>
+                        <input type="number" step="0.01" id="rate_per_month" wire:model='rate_per_month' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                        @error('rate_per_month') 
+                            <span class="text-red-500 text-sm">The rate per month is required!</span> 
+                        @enderror
+                    </div>
+
+                    {{-- Save and Cancel buttons --}}
+                    <div class="mt-4 flex justify-end col-span-2">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveCosPayroll" style="margin-right: 5px">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                            Cancel
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </x-modal>
+
+    {{-- Delete Modal --}}
+    <x-modal id="deleteModal" maxWidth="md" wire:model="deleteId" centered>
+        <div class="p-4">
+            <div class="mb-4 text-slate-900 dark:text-gray-100 font-bold">
+                Confirm Deletion
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">
+                Are you sure you want to delete this {{ $deleteMessage }}?
+            </label>
+            <form wire:submit.prevent='deleteData'>
+                <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
+                    <button class="mr-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        <div wire:loading wire:target="deleteData" style="margin-bottom: 5px;">
+                            <div class="spinner-border small text-primary" role="status">
+                            </div>
+                        </div>
+                        Delete
+                    </button>
+                    <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                        Cancel
+                    </p>
+                </div>
+            </form>
+
+        </div>
+    </x-modal>
+    
+    {{-- Add and Edit Payroll Signatory Modal --}}
+    <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="editSignatory" centered>
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addSignatory ? 'Add' : 'Edit' }} Payroll Signatory
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {{-- Form fields --}}
+            <form wire:submit.prevent='saveSignatory'>
+                <div class="grid grid-cols-1">
+                    
+                    <div class="col-span-1">
+                        <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
+                        <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
+                            @foreach ($empPayrolled as $employee)
+                                <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('userId') 
+                            <span class="text-red-500 text-sm">Please select an employee!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="mt-4 flex justify-end col-span-2">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveRole" class="spinner-border small text-primary" role="status">
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                            Cancel
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </x-modal>
+
+    {{-- Add and Edit Payslip Signatory Modal --}}
+    <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="editPayslipSignatory" centered>
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addPayslipSignatory ? 'Add' : 'Edit' }} Payslip Signatory
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {{-- Form fields --}}
+            <form wire:submit.prevent='savePayslipSignatory'>
+                <div class="grid grid-cols-2 gap-4">
+                    
+                    <div class="col-span-1">
+                        <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
+                        <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
+                            {{ $addPayslipSignatory ? '' : 'disabled' }}>
+                            <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
+                            @foreach ($empPayrolled as $employee)
+                                <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('userId') 
+                            <span class="text-red-500 text-sm">Please select an employee!</span> 
+                        @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="signatory" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Payslip Signatory</label>
+                        <select id="userId" wire:model='signatory' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="">Select payslip signatory for</option>
+                            <option value="Noted By">Noted By</option>
+                            @if(!$addPayslipSignatory)
+                                <option value="X">Remove Signatory</option>
+                            @endif
+                        </select>                        
+                        @error('signatory') 
+                            <span class="text-red-500 text-sm">The signatory is required!</span> 
+                        @enderror
+                    </div>
+
+
+                    <div class="mt-4 flex justify-end col-span-2">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveRole" class="spinner-border small text-primary" role="status">
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                            Cancel
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </x-modal>
 
 </div>
