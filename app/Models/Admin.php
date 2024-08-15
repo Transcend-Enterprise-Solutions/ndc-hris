@@ -21,6 +21,7 @@ class Admin extends AuthenticatableUser implements Authenticatable
         'user_id', 
         'payroll_id', 
         'department',
+        'office_division',
     ];
 
     public function user(){
@@ -45,11 +46,19 @@ class Admin extends AuthenticatableUser implements Authenticatable
     public function scopeSearch($query, $term){
         $term = "%$term%";
         $query->where(function ($query) use ($term) {
-            $query->where('admin.department', 'like', $term)
-                ->orWhere('payrolls.employee_number', 'like', $term)
-                ->orWhere('payrolls.position', 'like', $term)
-                ->orWhere('payrolls.office_division', 'like', $term)
-                ->orWhere('payrolls.department', 'like', $term)
+            $query->where('admin.office_division', 'like', $term)
+                ->orWhere(function ($query) use ($term) {
+                    $query->where('payrolls.employee_number', 'like', $term)
+                        ->orWhere('payrolls.position', 'like', $term)
+                        ->orWhere('payrolls.office_division', 'like', $term)
+                        ->orWhere('payrolls.department', 'like', $term);
+                })
+                ->orWhere(function ($query) use ($term) {
+                    $query->where('cos_payrolls.employee_number', 'like', $term)
+                        ->orWhere('cos_payrolls.position', 'like', $term)
+                        ->orWhere('cos_payrolls.office_division', 'like', $term)
+                        ->orWhere('cos_payrolls.department', 'like', $term);
+                })
                 ->orWhere('users.name', 'like', $term)
                 ->orWhere('users.email', 'like', $term);
         });

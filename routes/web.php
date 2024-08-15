@@ -24,8 +24,8 @@ Route::get('/register', function () {
 
 /* Super Admin and HR account role */
 Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
-    Route::get('/role-management', function () {
-        return view('livewire.admin.role-management'); })->name('role-management');
+    Route::get('/org-management', function () {
+        return view('livewire.admin.role-management'); })->name('org-management');
     Route::get('/employee-management/employees', function () {
         return view('livewire.admin.employees'); })->name('/employee-management/employees');
     Route::get('/employee-management/admin-doc-request', function () {

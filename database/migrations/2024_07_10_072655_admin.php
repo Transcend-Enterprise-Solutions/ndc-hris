@@ -14,6 +14,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('payroll_id')->nullable();
             $table->string('department')->nullable();
+            $table->string('office_division')->nullable();
             $table->timestamps();
         });
     }

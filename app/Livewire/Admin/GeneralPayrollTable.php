@@ -220,11 +220,11 @@ class GeneralPayrollTable extends Component
         ];
 
         if($this->signatures) {
-        foreach ($this->signatures as $id => $signature) {
-            if ($signature) {
-                $this->saveSignature($id);
+            foreach ($this->signatures as $id => $signature) {
+                if ($signature) {
+                    $this->saveSignature($id);
+                }
             }
-        }
         }
 
         if($this->preparedBySign){
@@ -245,10 +245,7 @@ class GeneralPayrollTable extends Component
         $payrolls = collect();
     
         if ($this->startMonth) {
-            // Create a Carbon instance from the month input
             $carbonDate = Carbon::createFromFormat('Y-m', $this->startMonth);
-    
-            // Set the date ranges for the first and second halves of the month
             $this->startDateFirstHalf = $carbonDate->startOfMonth()->toDateString();
             $this->endDateFirstHalf = $carbonDate->copy()->day(15)->toDateString();
             $this->startDateSecondHalf = $carbonDate->copy()->day(16)->toDateString();
