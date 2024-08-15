@@ -156,7 +156,7 @@
                         </h3>
                     </div>
                     <div class="w-full sm:w-auto flex items-center relative">
-                        <input type="month" id="doc_request_month" wire:model.live='month' value="{{ $month }}"
+                        <input type="month" id="doc_request_month" wire:model.live='docRequestMonth' value="{{ $month }}"
                         class="px-2 py-1.5 block w-32 sm:text-sm border border-green-800 rounded-md
                             text-green-800 dark:bg-gray-200 cursor-pointer">
 
