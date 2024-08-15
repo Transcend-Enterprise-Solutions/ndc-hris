@@ -69,7 +69,7 @@ x-cloak>
     <div class="flex justify-center w-full">
         <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
             <div class="pb-4 mb-3 pt-4 sm:pt-0">
-                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'plantilla'">Manage Plantilla Payroll</h1>
+                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'plantilla'">Plantilla Payroll</h1>
                 <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'signatories'">Manage Payroll & Payslip Signatories</h1>
                 <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'export'">
                     General Payroll for the month of 
@@ -593,7 +593,11 @@ x-cloak>
                                             @foreach($payrollColumns as $column => $visible)
                                                 @if($visible)
                                                     <th scope="col" class="px-5 py-3 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium text-left uppercase">
-                                                        {{ ucwords(str_replace('_', ' ', $column)) }}
+                                                        @if($column == 'emp_code')
+                                                            EMPLOYEE NUMBER
+                                                        @else
+                                                            {{ ucwords(str_replace('_', ' ', $column)) }}
+                                                        @endif
                                                     </th>
                                                 @endif
                                             @endforeach
@@ -680,7 +684,7 @@ x-cloak>
                                     <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                                         <tr class="whitespace-nowrap">
                                             <th scope="col" class="px-5 py-3 text-left text-sm font-medium text-left uppercase {{ $columns['name'] ? '' : 'hidden' }}">Name</th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['employee_number'] ? '' : 'hidden' }}">Employee Number</th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['emp_code'] ? '' : 'hidden' }}">Employee Number</th>
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['office_division'] ? '' : 'hidden' }}">Office/Division</th>
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['position'] ? '' : 'hidden' }}">Position</th>
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['sg_step'] ? '' : 'hidden' }}">SG Step</th>
@@ -730,7 +734,7 @@ x-cloak>
                                         @foreach($genPayrolls as $payroll)
                                             <tr class="text-neutral-800 dark:text-neutral-200">
                                                 <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap {{ $columns['name'] ? '' : 'hidden' }}">{{ $payroll->name }}</td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['employee_number'] ? '' : 'hidden' }}">{{ $payroll->employee_number }}</td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['emp_code'] ? '' : 'hidden' }}">{{ $payroll->emp_code }}</td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['office_division'] ? '' : 'hidden' }}">{{ $payroll->office_division }}</td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['position'] ? '' : 'hidden' }}">{{ $payroll->position }}</td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['sg_step'] ? '' : 'hidden' }}">{{ $payroll->sg_step }}</td>
@@ -1376,7 +1380,7 @@ x-cloak>
 
                     <div class="col-span-1">
                         <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
-                        <input type="text" id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="text" id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('office_division') 
                             <span class="text-red-500 text-sm">The office/division is required!</span> 
                         @enderror
@@ -1384,7 +1388,7 @@ x-cloak>
 
                     <div class="col-span-1">
                         <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
-                        <input type="text" id="position" wire:model='position' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="text" id="position" wire:model='position' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('position') 
                             <span class="text-red-500 text-sm">The position is required!</span> 
                         @enderror
@@ -1626,7 +1630,7 @@ x-cloak>
                         <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
                         <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
-                            @foreach ($empPayrolled as $employee)
+                            @foreach ($employees as $employee)
                                 <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                             @endforeach
                         </select>
@@ -1668,7 +1672,7 @@ x-cloak>
                         <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
                             {{ $addPayslipSignatory ? '' : 'disabled' }}>
                             <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
-                            @foreach ($empPayrolled as $employee)
+                            @foreach ($employees as $employee)
                                 <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                             @endforeach
                         </select>

@@ -70,7 +70,7 @@ x-cloak>
         <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
 
             <div class="pb-4 mb-3 pt-4 sm:pt-0">
-                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'cos'">Manage COS Regular Payroll</h1>
+                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'cos'">COS Regular Payroll</h1>
                 <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'signatories'">Manage Payroll & Payslip Signatories</h1>
                 <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'export'">
                     Payroll for the month of {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('F') : '' }} {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('Y') : '' }}
@@ -872,7 +872,7 @@ x-cloak>
 
                     <div class="col-span-1">
                         <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
-                        <input type="text" id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="text" id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('office_division') 
                             <span class="text-red-500 text-sm">The office/division is required!</span> 
                         @enderror
@@ -880,7 +880,7 @@ x-cloak>
 
                     <div class="col-span-1">
                         <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
-                        <input type="text" id="position" wire:model='position' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="text" id="position" wire:model='position' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('position') 
                             <span class="text-red-500 text-sm">The position is required!</span> 
                         @enderror
@@ -991,7 +991,7 @@ x-cloak>
                         <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
                         <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
-                            @foreach ($empPayrolled as $employee)
+                            @foreach ($employees as $employee)
                                 <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                             @endforeach
                         </select>
@@ -1033,7 +1033,7 @@ x-cloak>
                         <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
                             {{ $addPayslipSignatory ? '' : 'disabled' }}>
                             <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
-                            @foreach ($empPayrolled as $employee)
+                            @foreach ($employees as $employee)
                                 <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                             @endforeach
                         </select>

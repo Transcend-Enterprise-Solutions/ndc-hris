@@ -14,4 +14,5 @@ class OfficeDivisions extends Model
     protected $fillable = [
         'office_division',
     ];
+
 }

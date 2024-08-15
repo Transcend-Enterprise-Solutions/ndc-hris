@@ -13,11 +13,6 @@ return new class extends Migration
                 $table->id('id');
                 $table->unsignedBigInteger('user_id');
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-                $table->string('employee_number')->nullable();
-                $table->string('office_division')->nullable();
-                $table->string('department')->nullable();
-                $table->string('name')->nullable();
-                $table->string('position')->nullable();
                 $table->string('sg_step')->nullable();
                 $table->double('rate_per_month')->nullable();
                 $table->double('personal_economic_relief_allowance')->nullable();

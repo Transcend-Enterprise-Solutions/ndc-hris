@@ -13,10 +13,6 @@ class CosPayrolls extends Model
 
     protected $fillable = [
         'user_id',
-        'name',
-        'employee_number',
-        'position',
-        'office_division',
         'sg_step',
         'rate_per_month',      
     ];

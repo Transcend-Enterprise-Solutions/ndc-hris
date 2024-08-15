@@ -19,11 +19,12 @@ return new class extends Migration
             $table->string('user_role')->nullable();
             $table->string('active_status')->nullable();
             $table->string('emp_code')->unique()->nullable();
+            $table->unsignedBigInteger('position_id')->nullable();
+            $table->unsignedBigInteger('office_division_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */

@@ -30,6 +30,8 @@ class User extends Authenticatable
         'user_role',
         'active_status',
         'emp_code',
+        'position_id',
+        'office_division_id',
     ];
 
     /**

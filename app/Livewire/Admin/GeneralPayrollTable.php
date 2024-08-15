@@ -8,7 +8,9 @@ use App\Models\Admin;
 use App\Models\CosPayrolls;
 use App\Models\EmployeesPayroll;
 use App\Models\GeneralPayroll;
+use App\Models\OfficeDivisions;
 use App\Models\Payrolls;
+use App\Models\Positions;
 use App\Models\SalaryGrade;
 use App\Models\Signatories;
 use App\Models\User;
@@ -32,7 +34,7 @@ class GeneralPayrollTable extends Component
     public $allCol = false;
     public $columns = [
         'name' => true,
-        'employee_number' => true,
+        'emp_code' => true,
         'office_division' => false,
         'position' => false,
         'sg_step' => false,
@@ -67,7 +69,7 @@ class GeneralPayrollTable extends Component
 
     public $payrollColumns = [
         'name' => true,
-        'employee_number' => true,
+        'emp_code' => true,
         'office_division' => true,
         'position' => true,
         'sg_step' => true,
@@ -143,7 +145,6 @@ class GeneralPayrollTable extends Component
     public $startMonth;
     public $endMonth;
     public $monthRange = false;
-
     public $addPayroll;
     public $editPayroll;
     public $deleteId;
@@ -166,24 +167,29 @@ class GeneralPayrollTable extends Component
 
     public function mount(){
         $this->employees = User::where('user_role', '=', 'emp')->get();
-        $this->empPayrolled = User::where('user_role', '=', 'emp')
-                            ->join('payrolls', 'payrolls.user_id', 'users.id')->get();
         $this->salaryGrade = SalaryGrade::all();
     }
 
     public function render(){
         $this->GeneralPayrolls();
 
-        $payrolls = Payrolls::when($this->search, function ($query) {
+        $payrolls = User::when($this->search, function ($query) {
                     return $query->search(trim($this->search));
                 })
-                ->where('position', '!=', 'Super Admin')
+                ->join('payrolls', 'payrolls.user_id', 'users.id')
+                ->join('positions', 'positions.id', 'users.position_id')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
                 ->paginate(5);
 
 
         if($this->userId){
             $user = User::where('id', $this->userId)->first();
+            $pos = Positions::where('id', $user->position_id)->first();
+            $officeDiv = OfficeDivisions::where('id', $user->office_division_id)->first();
             $this->employee_number = $user->emp_code;
+            $this->position = $pos->position;
+            $this->office_division = $officeDiv->office_division;
         }
 
 
@@ -193,8 +199,11 @@ class GeneralPayrollTable extends Component
 
         $this->getRate();
 
-        $plantillaPayrollSignatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
-            ->where('signatories.signatory_type', 'plantilla_payroll')->get();
+        $plantillaPayrollSignatories = User::join('signatories', 'signatories.user_id', 'users.id')
+            ->join('positions', 'positions.id', 'users.position_id')
+            ->where('signatories.signatory_type', 'plantilla_payroll')
+            ->select('users.name', 'positions.*', 'signatories.*')
+            ->get();
         $aPlantila = $plantillaPayrollSignatories->where('signatory', 'A')->first();
         $bPlantila = $plantillaPayrollSignatories->where('signatory', 'B')->first();
         $cPlantila = $plantillaPayrollSignatories->where('signatory', 'C')->first();
@@ -208,12 +217,16 @@ class GeneralPayrollTable extends Component
 
 
         $user = Auth::user();
-        $payrollId = Admin::where('user_id', $user->id)->select('payroll_id')->first();
-        $preparedBy = Payrolls::where('payrolls.id', $payrollId->payroll_id)->first();
+        $preparedBy = User::where('users.id', $user->id)
+                    ->join('positions', 'positions.id', 'users.position_id')
+                    ->first();
         $preparedBySignature = Signatories::where('user_id', $user->id)->first();
 
-        $plantillaPayslipSignatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
-                        ->where('signatories.signatory_type', 'plantilla_payslip')->get();
+        $plantillaPayslipSignatories = User::join('signatories', 'signatories.user_id', 'users.id')
+                        ->join('positions', 'positions.id', 'users.position_id')
+                        ->where('signatories.signatory_type', 'plantilla_payslip')
+                        ->select('users.name', 'positions.*', 'signatories.*')
+                        ->get();
         $plantillaNotedBy = $plantillaPayslipSignatories->where('signatory', 'Noted By')->first();
         $plantillaPayslipSigns = [
             'notedBy' => $plantillaNotedBy,
@@ -536,6 +549,9 @@ class GeneralPayrollTable extends Component
         $this->employee_number = null;
         $this->position = null;
         $this->sg_step = null;
+        $this->sg = null;
+        $this->step = null;
+        $this->office_division = null;
         $this->rate_per_month = null;
         $this->personal_economic_relief_allowance = null;
         $this->gross_amount = null;
@@ -568,6 +584,8 @@ class GeneralPayrollTable extends Component
         $this->signatory = null;
         $this->signatures = [];
         $this->preparedBySign = null;
+        $this->deleteMessage = null;
+        $this->deleteId = null;
         
     }
 
@@ -811,9 +829,6 @@ class GeneralPayrollTable extends Component
             if(!$cos){
                 $payrollData = [
                     'user_id' => $this->userId,
-                    'employee_number' => $this->employee_number,
-                    'office_division' => $this->office_division,
-                    'position' => $this->position,
                     'sg_step' => $sg_step,
                     'rate_per_month' => $this->rate_per_month,
                     'personal_economic_relief_allowance' => $this->personal_economic_relief_allowance,

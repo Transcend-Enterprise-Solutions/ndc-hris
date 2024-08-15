@@ -14,4 +14,5 @@ class Positions extends Model
     protected $fillable = [
         'position',
     ];
+
 }

@@ -1,6 +1,6 @@
 <div class="w-full"
 x-data="{ 
-    selectedTab: 'settings',
+    selectedTab: 'org',
 }" 
 x-cloak>
 
@@ -81,7 +81,7 @@ x-cloak>
                         <button @click="selectedTab = 'sgstep'" 
                                 :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'sgstep', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'sgstep' }" 
                                 class="h-min px-4 pt-2 pb-4 text-sm">
-                            SG/STEP
+                            SG/STEP 
                         </button>
                     </div>
                     <div class="-my-2 overflow-x-auto">
@@ -302,31 +302,27 @@ x-cloak>
                                                                             @foreach ($salaryGrades as $salaryGrade)
                                                                                 <tr class="border-b border-gray-200 hover:bg-gray-100 !hover:text-gray-800">
                                                                                     <td class="py-2 px-2 text-left whitespace-nowrap text-gray-800 dark:text-gray-300">
-                                                                                        @if ($editingId === $salaryGrade->id)
-                                                                                            <input type="number" class="w-full px-2 py-1 border rounded text-gray-800" wire:model.defer="editedData.salary_grade" style="font-size: 11px">
-                                                                                        @else
-                                                                                            {{ $salaryGrade->salary_grade }}
-                                                                                        @endif
+                                                                                        {{ $salaryGrade->salary_grade }}
                                                                                     </td>
                                                                                     @for ($i = 1; $i <= 8; $i++)
                                                                                         <td class="py-2 px-2 text-left">
-                                                                                            @if ($editingId === $salaryGrade->id)
-                                                                                                <input type="number" step="0.01" class="w-full px-2 py-1 border rounded" wire:model.defer="editedData.step{{ $i }}" style="font-size: 11px">
-                                                                                            @else
-                                                                                                {{ number_format($salaryGrade->{"step$i"}, 2) }}
-                                                                                            @endif
+                                                                                            {{ number_format($salaryGrade->{"step$i"}, 2) }}
                                                                                         </td>
                                                                                     @endfor
                                                                                     <td class="py-2 px-2 text-center sticky right-0 z-10 bg-white dark:bg-gray-700">
-                                                                                        @if ($editingId === $salaryGrade->id)
-                                                                                            <button wire:click="saveRow({{ $salaryGrade->id }})" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">
-                                                                                                Save
+                                                                                        <div class="relative">
+                                                                                            <button wire:click="editSG({{ $salaryGrade->id }})" 
+                                                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                                                focus:outline-none" title="Edit">
+                                                                                                <i class="fas fa-pencil-alt"></i>
                                                                                             </button>
-                                                                                        @else
-                                                                                            <button wire:click="editRow({{ $salaryGrade->id }})" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
-                                                                                                Edit
+                                                                                            <button wire:click="toggleDeleteSG({{ $salaryGrade->id }}, 'salary grade')" 
+                                                                                                class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                                                dark:hover:text-red-900" title="Delete">
+                                                                                                <i class="fas fa-trash"></i>
                                                                                             </button>
-                                                                                        @endif
+                                                                                        </div>
                                                                                     </td>
                                                                                 </tr>
                                                                             @endforeach
@@ -334,7 +330,7 @@ x-cloak>
                                                                     </table>
                                                                 </div>
                                                                 <div class="text-xs flex justify-center items-center mt-4">
-                                                                    <button wire:click="toggleAddSG" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">
+                                                                    <button wire:click="openSGModal" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">
                                                                         Add Salary Grade
                                                                     </button>
                                                                 </div>
@@ -369,7 +365,7 @@ x-cloak>
             <form wire:submit.prevent='saveRole'>
                 <div class="grid grid-cols-2 gap-4">
                     
-                    <div class="col-span-1">
+                    <div class="col-span-full sm:col-span-1">
                         <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
                         <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
                             {{ $addRole ? '' : 'disabled' }}>
@@ -383,7 +379,7 @@ x-cloak>
                         @enderror
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-full sm:col-span-1">
                         <label for="user_role" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Account Role</label>
                         <select id="userId" wire:model='user_role' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             <option value="">Select Role</option>
@@ -400,7 +396,7 @@ x-cloak>
                         @enderror
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-full sm:col-span-1">
                         <label for="admin_email" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Admin Email</label>
                         <input type="text" id="admin_email" wire:model='admin_email' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                         @error('admin_email') 
@@ -408,7 +404,7 @@ x-cloak>
                         @enderror
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-full sm:col-span-1">
                         <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
                         <input type="text" id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                         @error('office_division') 
@@ -416,7 +412,7 @@ x-cloak>
                         @enderror
                     </div>
                     @if($addRole)
-                        <div class="col-span-1">
+                        <div class="col-span-full sm:col-span-1">
                             <label for="password" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Password</label>
                             <input type="password" id="password" wire:model='password' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             @error('password') 
@@ -424,7 +420,7 @@ x-cloak>
                             @enderror
                         </div>
 
-                        <div class="col-span-1">
+                        <div class="col-span-full sm:col-span-1">
                             <label for="cpassword" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Confirm Password</label>
                             <input type="password" id="cpassword" wire:model='cpassword' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             @error('cpassword') 
@@ -459,26 +455,37 @@ x-cloak>
             </div>
             {{-- Form fields --}}
             <form wire:submit.prevent='saveSettings'>
-                <div class="grid grid-cols-1">
-            
-
+                <div class="grid grid-cols-1 gap-4">
+                    @foreach ($settingsData as $index => $setting)
+                        <div class="col-span-1 relative">
+                            <label for="settings_data_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
+                            <input type="text" id="settings_data_{{ $index }}" wire:model='settingsData.{{ $index }}.value' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            @if (count($settingsData) > 1)
+                                <button type="button" wire:click="removeSetting({{ $index }})" class="absolute right-2 top-9 text-red-500 hover:text-red-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            @endif
+                            @error('settingsData.' . $index . '.value')
+                                <span class="text-red-500 text-sm">This field is required!</span>
+                            @enderror
+                        </div>
+                    @endforeach
+                    
                     <div class="col-span-1">
-                        <label for="settings_data" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
-                        <input type="text" id="settings_data" wire:model='settings_data' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                        @error('settings_data') 
-                            <span class="text-red-500 text-sm">This field is required!</span> 
-                        @enderror
+                        <button type="button" wire:click="addNewSetting" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Add Another {{ $data }}
+                        </button>
                     </div>
 
-                    <div class="mt-4 flex justify-end col-span-2">
-                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            <div wire:loading wire:target="saveRole" class="spinner-border small text-primary" role="status">
+                    <div class="mt-4 flex justify-end col-span-1">
+                        <button type="submit" class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveSettings" class="spinner-border small text-primary" role="status">
                             </div>
                             Save
                         </button>
-                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                        <button type="button" @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
                             Cancel
-                        </p>
+                        </button>
                     </div>
                 </div>
             </form>
@@ -513,6 +520,46 @@ x-cloak>
                 </div>
             </form>
 
+        </div>
+    </x-modal>
+
+    {{-- Add Salary Grade Modal --}}
+    <x-modal id="addSalaryGradeModal" maxWidth="2xl" wire:model="showSGModal">
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold uppercase">
+                {{ $isEditing ? 'Edit' : 'Add' }} Salary Grade
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {{-- Form fields --}}
+            <form wire:submit.prevent='saveSalaryGrade'>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label for="salary_grade" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">Salary Grade</label>
+                        <input type="number" id="salary_grade" wire:model='salaryGradeData.salary_grade' {{ $isEditing ? 'readonly' : '' }}
+                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" required>
+                        @error('salaryGradeData.salary_grade') <span class="text-red-500 text-sm">This field is required!</span> @enderror
+                    </div>
+                    @for ($i = 1; $i <= 8; $i++)
+                        <div class="col-span-full sm:col-span-1">
+                            <label for="step{{ $i }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">Step {{ $i }}</label>
+                            <input type="number" step="0.01" id="step{{ $i }}" wire:model='salaryGradeData.step{{ $i }}' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            @error('salaryGradeData.step'.$i) <span class="text-red-500 text-sm">This field is required!</span> @enderror
+                        </div>
+                    @endfor
+                    <div class="mt-4 flex justify-end col-span-2">
+                        <button type="submit" class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveSalaryGrade" class="spinner-border small text-primary" role="status">
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                            Cancel
+                        </p>
+                    </div>
+                </div>
+            </form>
         </div>
     </x-modal>
 

@@ -10,7 +10,9 @@ use App\Models\EmployeesDtr;
 use App\Models\EmployeesPayroll;
 use App\Models\Holiday;
 use App\Models\LeaveApplication;
+use App\Models\OfficeDivisions;
 use App\Models\Payrolls;
+use App\Models\Positions;
 use App\Models\SalaryGrade;
 use App\Models\Signatories;
 use App\Models\User;
@@ -104,8 +106,6 @@ class PayrollTable extends Component
 
     public function mount(){
         $this->employees = User::where('user_role', '=', 'emp')->get();
-        $this->empPayrolled = User::where('user_role', '=', 'emp')
-                            ->join('payrolls', 'payrolls.user_id', 'users.id')->get();
         $this->salaryGrade = SalaryGrade::all();
     }
 
@@ -148,21 +148,33 @@ class PayrollTable extends Component
                 })
                 ->paginate(5);
 
-        $cosPayrolls = CosPayrolls::when($this->search2, function ($query) {
+
+        $cosPayrolls = User::when($this->search2, function ($query) {
                     return $query->search(trim($this->search2));
                 })
+                ->join('cos_payrolls', 'cos_payrolls.user_id', 'users.id')
+                ->join('positions', 'positions.id', 'users.position_id')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->select('users.name', 'users.emp_code as employee_number', 'cos_payrolls.*', 'positions.*', 'office_divisions.*')
                 ->paginate(5);
 
         if($this->userId){
             $user = User::where('id', $this->userId)->first();
+            $pos = Positions::where('id', $user->position_id)->first();
+            $officeDiv = OfficeDivisions::where('id', $user->office_division_id)->first();
             $this->employee_number = $user->emp_code;
+            $this->position = $pos->position;
+            $this->office_division = $officeDiv->office_division;
         }
 
         $this->getRate();
 
 
-        $cosPayrollSignatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
-        ->where('signatories.signatory_type', 'cos_payroll')->get();
+        $cosPayrollSignatories = User::join('signatories', 'signatories.user_id', 'users.id')
+            ->join('positions', 'positions.id', 'users.position_id')
+            ->where('signatories.signatory_type', 'cos_payroll')
+            ->select('users.name', 'positions.*', 'signatories.*')
+            ->get();
         $aCos = $cosPayrollSignatories->where('signatory', 'A')->first();
         $bCos = $cosPayrollSignatories->where('signatory', 'B')->first();
         $cCos = $cosPayrollSignatories->where('signatory', 'C')->first();
@@ -175,12 +187,16 @@ class PayrollTable extends Component
         ];
 
         $user = Auth::user();
-        $payrollId = Admin::where('user_id', $user->id)->select('payroll_id')->first();
-        $preparedBy = Payrolls::where('payrolls.id', $payrollId->payroll_id)->first();
+        $preparedBy = User::where('users.id', $user->id)
+            ->join('positions', 'positions.id', 'users.position_id')
+            ->first();
         $preparedBySignature = Signatories::where('user_id', $user->id)->first();
 
-        $cosPayslipSignatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
-                        ->where('signatories.signatory_type', 'cos_payslip')->get();
+        $cosPayslipSignatories = User::join('signatories', 'signatories.user_id', 'users.id')
+                        ->join('positions', 'positions.id', 'users.position_id')
+                        ->where('signatories.signatory_type', 'cos_payslip')
+                        ->select('users.name', 'positions.*', 'signatories.*')
+                        ->get();
         $cosNotedBy = $cosPayslipSignatories->where('signatory', 'Noted By')->first();
         $cosPayslipSigns = [
             'notedBy' => $cosNotedBy,
@@ -773,9 +789,6 @@ class PayrollTable extends Component
             if(!$plantilla){
                 $payrollData = [
                     'user_id' => $this->userId,
-                    'employee_number' => $this->employee_number,
-                    'office_division' => $this->office_division,
-                    'position' => $this->position,
                     'sg_step' => $sg_step,
                     'rate_per_month' => $this->rate_per_month,
                 ];
@@ -802,7 +815,6 @@ class PayrollTable extends Component
                         'step' => 'required|numeric',
                         'rate_per_month' => 'required|numeric',
                     ]);
-                    $payrollData['name'] = $user->name;
                     CosPayrolls::create($payrollData);
                     $message = "COS Payroll added successfully!";
                     $icon = "success";

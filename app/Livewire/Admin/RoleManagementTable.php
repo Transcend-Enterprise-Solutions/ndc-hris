@@ -41,9 +41,17 @@ class RoleManagementTable extends Component
     public $settings;
     public $settingsId;
     public $settings_data;
+    public $settingsData = [['value' => '']];
     public $salaryGrades;
     public $editingId = null;
+    public $isEditing = false;
     public $editedData = [];
+    public $showSGModal = false;
+    public $salaryGradeData = [
+        'salary_grade' => '',
+        'step1' => '', 'step2' => '', 'step3' => '', 'step4' => '',
+        'step5' => '', 'step6' => '', 'step7' => '', 'step8' => '',
+    ];
 
     public function mount(){
         $this->employees = User::where('user_role', '=', 'emp')->get();
@@ -79,10 +87,23 @@ class RoleManagementTable extends Component
         ]);
     }
 
-    public function toggleAddSettings($data){
+    public function toggleAddSettings($data)
+    {
         $this->data = $data;
         $this->settings = true;
         $this->add = true;
+        $this->settingsData = [['value' => '']];
+    }
+
+    public function addNewSetting()
+    {
+        $this->settingsData[] = ['value' => ''];
+    }
+
+    public function removeSetting($index)
+    {
+        unset($this->settingsData[$index]);
+        $this->settingsData = array_values($this->settingsData);
     }
 
     public function toggleDeleteSettings($id, $data){ 
@@ -105,42 +126,30 @@ class RoleManagementTable extends Component
     }
 
     public function saveSettings(){
-        try{
+        $this->validate([
+            'settingsData.*.value' => 'required|string|max:255',
+        ]);
+        try {
             $message = null;
-            if($this->data == "office/division"){
-                if($this->add){
+            foreach ($this->settingsData as $setting) {
+                if ($this->data == "office/division") {
                     OfficeDivisions::create([
-                        'office_division' => $this->settings_data,
+                        'office_division' => $setting['value'],
                     ]);
-                    $message = "Office/Division added successfully!";
-                }else{
-                    $officeDivisions = OfficeDivisions::where('id', $this->settingsId)->first();
-                    $officeDivisions->update([
-                        'office_division' => $this->settings_data,
-                    ]);
-                    $message = "Office/Division updated successfully!";
-                }
-            }else if($this->data == "position"){
-                if($this->add){
+                    $message = "Office/Division(s) added successfully!";
+                } else if ($this->data == "position") {
                     Positions::create([
-                        'position' => $this->settings_data,
+                        'position' => $setting['value'],
                     ]);
-                    $message = "Position added successfully!";
-                }else{
-                    $positions = Positions::where('id', $this->settingsId)->first();
-                    $positions->update([
-                        'position' => $this->settings_data,
-                    ]);
-                    $message = "Position updated successfully!";
+                    $message = "Position(s) added successfully!";
                 }
             }
-
             $this->resetVariables();
             $this->dispatch('swal', [
                 'title' => $message,
                 'icon' => 'success'
             ]);
-        }catch(Exception $e){
+        } catch(Exception $e) {
             throw $e;
         }
     }
@@ -287,6 +296,10 @@ class RoleManagementTable extends Component
                     $positions = Positions::where('id', $this->deleteId)->first();
                     $positions->delete();
                     $message = "Position deleted successfully!";
+                }else if($this->data == "salary grade"){
+                    $sg = SalaryGrade::where('id', $this->deleteId)->first();
+                    $sg->delete();
+                    $message = "Salary grade deleted successfully!";
                 }
             }else{
                 $user = User::where('id', $this->deleteId)->first();
@@ -326,20 +339,67 @@ class RoleManagementTable extends Component
         }
     }
 
-    public function editRow($id)
-    {
+    public function editSG($id){
+        $this->isEditing = true;
         $this->editingId = $id;
-        $this->editedData = $this->salaryGrades->firstWhere('id', $id)->toArray();
+        $salaryGrade = $this->salaryGrades->firstWhere('id', $id);
+        
+        $this->salaryGradeData = [
+            'salary_grade' => $salaryGrade->salary_grade,
+            'step1' => $salaryGrade->step1,
+            'step2' => $salaryGrade->step2,
+            'step3' => $salaryGrade->step3,
+            'step4' => $salaryGrade->step4,
+            'step5' => $salaryGrade->step5,
+            'step6' => $salaryGrade->step6,
+            'step7' => $salaryGrade->step7,
+            'step8' => $salaryGrade->step8,
+        ];
+        
+        $this->showSGModal = true;
     }
 
-    public function saveRow($id)
-    {
-        $salaryGrade = SalaryGrade::findOrFail($id);
-        $salaryGrade->update($this->editedData);
-        $this->editingId = null;
-        $this->editedData = [];
-        $this->salaryGrades = SalaryGrade::orderBy('salary_grade')->get();
+    public function openSGModal(){
+        $this->showSGModal = true;
     }
+
+    public function saveSalaryGrade(){
+        try{
+            $message = null;
+            $this->validate([
+                'salaryGradeData.salary_grade' => 'required|integer',
+                'salaryGradeData.step1' => 'required|numeric',
+                'salaryGradeData.step2' => 'required|numeric',
+                'salaryGradeData.step3' => 'required|numeric',
+                'salaryGradeData.step4' => 'required|numeric',
+                'salaryGradeData.step5' => 'required|numeric',
+                'salaryGradeData.step6' => 'required|numeric',
+                'salaryGradeData.step7' => 'required|numeric',
+                'salaryGradeData.step8' => 'required|numeric',
+            ]);
+            if ($this->isEditing) {
+                SalaryGrade::find($this->editingId)->update($this->salaryGradeData);
+                $message = "Salary grade updated successfully!";
+            } else {
+                SalaryGrade::create($this->salaryGradeData);
+                $message = "Salary grade added successfully!";
+            }
+            $this->resetVariables();
+            $this->dispatch('swal', [
+                'title' => $message,
+                'icon' => 'success'
+            ]);
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+
+    public function toggleDeleteSG($id, $data){
+        $this->deleteId = $id;
+        $this->data = $data;
+        $this->deleteMessage = $data;
+    }
+
 
     public function resetVariables(){
         $this->resetValidation();
@@ -359,7 +419,15 @@ class RoleManagementTable extends Component
         $this->settingsId = null;
         $this->add = null;
         $this->settings_data = null;
+        $this->settingsData = [['value' => '']];
         $this->data = null;
+        $this->showSGModal = null;
+        $this->editingId = null;
+        $this->salaryGradeData = [
+            'salary_grade' => '',
+            'step1' => '', 'step2' => '', 'step3' => '', 'step4' => '',
+            'step5' => '', 'step6' => '', 'step7' => '', 'step8' => '',
+        ];
     }
 
     private function isPasswordComplex($password){

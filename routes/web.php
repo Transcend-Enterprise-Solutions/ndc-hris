@@ -59,8 +59,8 @@ Route::middleware(['auth', 'checkrole:sa,hr,sv'])->group(function () {
 /* Super Admin, HR, and Payroll account role */
 Route::middleware(['auth', 'checkrole:sa,hr,pa'])->group(function () {
     // Payroll Tabs -------------------------------------------------------------------------- //
-    Route::get('/payroll/settings', function () {
-        return view('livewire.admin.payroll-management'); })->name('/payroll/settings');
+    // Route::get('/payroll/settings', function () {
+    //     return view('livewire.admin.payroll-management'); })->name('/payroll/settings');
     Route::get('/payroll/plantilla-payroll', function () {
         return view('livewire.admin.general-payroll'); })->name('/payroll/plantilla-payroll');
     Route::get('/payroll/cos-payroll', function () {
