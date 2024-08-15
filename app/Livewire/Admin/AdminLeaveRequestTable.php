@@ -22,22 +22,23 @@ class AdminLeaveRequestTable extends Component
     public $days;
     public $disapproveReason;
     public $balance;
-    public $approvedStartDate;
-    public $approvedEndDate;
+    public $listOfDates = [];
+    public $selectedDates = [];
 
     protected $rules = [
         'status' => 'required_if:showApproveModal,true',
         'otherReason' => 'required_if:status,Other|string',
         'days' => 'required_if:status,With Pay,Without Pay|numeric|min:1',
-        'approvedStartDate' => 'required_if:status,With Pay|date',
-        'approvedEndDate' => 'required_if:status,With Pay|date|after_or_equal:approvedStartDate',
+        // 'approvedStartDate' => 'required_if:status,With Pay|date',
+        // 'approvedEndDate' => 'required_if:status,With Pay|date|after_or_equal:approvedStartDate',
         'disapproveReason' => 'required_if:showDisapproveModal,true'
     ];
 
     public function openApproveModal($applicationId)
     {
         $this->selectedApplication = LeaveApplication::find($applicationId);
-        $this->reset(['status', 'otherReason', 'days', 'approvedStartDate', 'approvedEndDate']);
+        $this->listOfDates = explode(',', $this->selectedApplication->list_of_dates);
+        $this->reset(['status', 'otherReason', 'days']);
         $this->showApproveModal = true;
     }
 
@@ -66,13 +67,13 @@ class AdminLeaveRequestTable extends Component
             $this->validate([
                 'status' => 'required',
                 'days' => 'required|numeric|min:1',
-                'approvedStartDate' => 'required|date',
-                'approvedEndDate' => 'required|date|after_or_equal:approvedStartDate',
+                // 'approvedStartDate' => 'required|date',
+                // 'approvedEndDate' => 'required|date|after_or_equal:approvedStartDate',
             ]);
 
             // Validate leave balance
             if (!$this->validateLeaveBalance($this->days)) {
-                // Stop further processing if validation fails
+
                 return;
             }
         } else {
@@ -93,18 +94,15 @@ class AdminLeaveRequestTable extends Component
             } else {
                 $this->selectedApplication->status = $this->status === 'With Pay' ? 'Approved' : 'Approved';
                 $this->selectedApplication->approved_days = $this->days;
-                $this->selectedApplication->approved_start_date = $this->approvedStartDate;
-                $this->selectedApplication->approved_end_date = $this->approvedEndDate;
+                // $this->selectedApplication->approved_start_date = $this->approvedStartDate;
+                // $this->selectedApplication->approved_end_date = $this->approvedEndDate;
                 $this->selectedApplication->remarks = $this->status === 'With Pay' ? 'With Pay' : 'Without Pay';
                 $this->updateLeaveDetails($this->days, $this->status);
             }
 
-            $this->selectedApplication->save();
+            $this->selectedApplication->approved_dates = implode(',', $this->selectedDates);
 
-            // $this->dispatch('notify', [
-            //     'message' => "Leave application {$this->status} successfully!",
-            //     'type' => 'success'
-            // ]);
+            $this->selectedApplication->save();
 
             $this->dispatch('swal', [
                 'title' => "Leave application {$this->status} successfully!",
@@ -127,11 +125,6 @@ class AdminLeaveRequestTable extends Component
             $this->selectedApplication->approved_days = 0;
             $this->selectedApplication->save();
 
-            // $this->dispatch('notify', [
-            //     'message' => "Leave application disapproved for reason: {$this->disapproveReason}!",
-            //     'type' => 'error'
-            // ]);
-
             $this->dispatch('swal', [
                 'title' => "Leave application disapproved for reason: {$this->disapproveReason}!",
                 'icon' => 'success'
@@ -144,7 +137,7 @@ class AdminLeaveRequestTable extends Component
     public function render()
     {
         $leaveApplications = LeaveApplication::orderBy('created_at', 'desc')
-            ->select('id', 'name', 'date_of_filing', 'type_of_leave', 'details_of_leave', 'number_of_days', 'start_date', 'end_date', 'file_name', 'file_path', 'status', 'remarks', 'approved_days')
+            ->select('id', 'name', 'date_of_filing', 'type_of_leave', 'details_of_leave', 'number_of_days', 'list_of_dates', 'approved_dates', 'file_name', 'file_path', 'status', 'remarks', 'approved_days')
             ->paginate(10);
 
         $vacationLeaveDetails = VacationLeaveDetails::orderBy('created_at', 'desc')->paginate(10);
@@ -163,24 +156,20 @@ class AdminLeaveRequestTable extends Component
         $this->status = null;
         $this->otherReason = null;
         $this->days = null;
-        $this->approvedStartDate = null;
-        $this->approvedEndDate = null;
+        $this->listOfDates = [];
         $this->disapproveReason = null;
     }
 
     public function validateLeaveBalance($days)
     {
-        // Fetch leave credits from LeaveCredits for the specific user
         $leaveCredits = LeaveCredits::where('user_id', $this->selectedApplication->user_id)->first();
 
-        // Calculate the total claimable credits by summing up the relevant columns
         $totalClaimableCredits = ($leaveCredits->vl_claimable_credits ?? 0) +
                                 ($leaveCredits->sl_claimable_credits ?? 0) +
                                 ($leaveCredits->spl_claimable_credits ?? 0);
 
         $this->balance = $totalClaimableCredits;
 
-        // Check if total claimable credits are sufficient and not less than 1
         if ($this->status === 'With Pay' && ($totalClaimableCredits < $days || $totalClaimableCredits < 1)) {
             $this->addError('days', "Insufficient leave credits. Total available credits: {$totalClaimableCredits}");
             return false;
@@ -196,12 +185,11 @@ class AdminLeaveRequestTable extends Component
         $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
 
         if (!$leaveCredits) {
-            return; // Exit if leave credits record does not exist
+            return;
         }
 
         $remainingDays = $days;
 
-        // Step 1: Subtract from SPL claimable credits first
         if ($leaveCredits->spl_claimable_credits >= $remainingDays) {
             $leaveCredits->spl_claimable_credits -= $remainingDays;
             $leaveCredits->spl_claimed_credits += $remainingDays;
@@ -212,7 +200,6 @@ class AdminLeaveRequestTable extends Component
             $leaveCredits->spl_claimable_credits = 0;
         }
 
-        // Step 2: If remaining days > 0, subtract from VL or SL depending on the type of leave
         if ($remainingDays > 0) {
             if (in_array('Vacation Leave', explode(',', $this->selectedApplication->type_of_leave))) {
                 if ($leaveCredits->vl_claimable_credits >= $remainingDays) {
@@ -237,7 +224,6 @@ class AdminLeaveRequestTable extends Component
 
         $leaveCredits->save();
 
-        // Update leave_credits_earned in LeaveCreditsCalculation
         $month = date('m', strtotime($this->selectedApplication->start_date));
         $year = date('Y', strtotime($this->selectedApplication->start_date));
 
@@ -251,7 +237,6 @@ class AdminLeaveRequestTable extends Component
             $leaveCreditsCalculation->save();
         }
 
-        // Update status in VacationLeaveDetails and SickLeaveDetails
         if (in_array('Vacation Leave', explode(',', $this->selectedApplication->type_of_leave))) {
             $vacationLeaveDetails = VacationLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
             if ($vacationLeaveDetails) {

@@ -1,0 +1,490 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>5adf2989-8ef5-4c6f-8de4-516de56668c0</title>
+    <meta name="author" content="Art Audea" />
+
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            text-indent: 0;
+        }
+
+        h3 {
+            color: black;
+            font-family: Calibri, sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 6.5pt;
+        }
+
+        .s1 {
+            color: black;
+            font-family: "Arial Narrow", sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 6pt;
+        }
+
+        .s2 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 7.5pt;
+        }
+
+        h2 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 7.5pt;
+        }
+
+        p {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 7.5pt;
+            margin: 0pt;
+        }
+
+        .s3 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: italic;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 7.5pt;
+        }
+
+        .s4 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 8pt;
+        }
+
+        h1 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 13.5pt;
+        }
+
+        .s5 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 8pt;
+        }
+
+        .s7 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 9pt;
+        }
+
+        .s8 {
+            color: black;
+            font-family: "Arial Narrow", sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 5pt;
+        }
+
+        .s9 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: italic;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 7.5pt;
+        }
+
+        .s10 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 7.5pt;
+        }
+
+        table,
+        tbody {
+            vertical-align: top;
+            overflow: visible;
+        }
+    </style>
+</head>
+
+<body>
+    <h3 style="padding-top: 3pt;padding-left: 6pt;text-indent: 0pt;line-height: 112%;text-align: left;">Civil Service
+        Form No. 6</h3>
+    <h3 style="padding-top: 3pt;padding-left: 6pt;text-indent: 0pt;line-height: 112%;text-align: left;">Revised 2020</h3>
+
+    <p style="text-indent: 0pt;text-align: left;" />
+
+    {{-- Header --}}
+    <p class="s2" style="padding-top: 9pt; text-indent: 0pt; text-align: center;">Republic of the Philippines</p>
+    <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;">(Agency Name)</h2>
+    <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;"> (Agency Address)</h2>
+
+    <p style="padding-top: 4pt; text-indent: 0pt; text-align: left;"><br /></p>
+
+    {{-- Title --}}
+    <h1 style="text-indent: 0pt; text-align: center;">APPLICATION FOR LEAVE</h1>
+
+    <p style="text-indent: 0pt; text-align: left;"><br /></p>
+
+    {{-- Border --}}
+    <div style="text-align: center;">
+        <table style="border-collapse: collapse; margin: 0 auto;" cellspacing="0">
+            <tr style="height:29pt">
+                <td style="width: 165pt; border-top-style: solid; border-top-width: 1pt; border-left-style: solid;border-left-width: 1pt; border-bottom-style: solid; border-bottom-width: 1pt"
+                    colspan="3">
+                    <p class="s5" style="padding-top: 1pt; padding-left: 1pt; text-indent: 0pt; text-align: left;">
+                        1.
+                        OFFICE/DEPARTMENT</p>
+                    <u
+                        style="margin-left: 25px; color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $leaveApplication->office_or_department }}</u>
+                </td>
+                <td style="width:303pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="3">
+                    <p class="s5" style="padding-top: 1pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">2.
+                        NAME : (Last) (First) (Middle)</p>
+                    <u
+                        style="margin-left: 25px; color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $leaveApplication->name }}</u>
+                </td>
+            </tr>
+            <tr style="height: 29pt;">
+                <td style="width:212pt; border-top-style: solid; border-top-width: 1pt; border-left-style: solid; border-left-width: 1pt; border-bottom-style: solid;border-bottom-width: 1pt; "
+                    colspan="3">
+                    <p class="s5"
+                        style="padding-top: 8pt;padding-left: 1pt;text-indent: 0pt;text-align: left; padding-bottom: 5pt;">
+                        3. DATE OF FILING:
+                        <u
+                            style="margin-left: 10px; color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $leaveApplication->date_of_filing }}</u>
+                    </p>
+                </td>
+                <td style="width:303pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="3">
+                    <p class="s5"
+                        style="padding-top: 8pt;padding-left: 1pt;text-indent: 0pt;text-align: left; padding-bottom: 5pt;">
+                        4. POSITION:
+                        <u
+                            style="margin-left: 10px; margin-right: 15px; color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $leaveApplication->position }}</u>
+                        5. SALARY:
+                        <u
+                            style="margin-left: 10px; color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $leaveApplication->salary }}</u>
+                    </p>
+                </td>
+            </tr>
+            <tr style="height:13pt">
+                <td style="width:468pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="6">
+                    <p class="s7"
+                        style="text-indent: 0pt;text-align: center; padding-top: 1pt; padding-bottom: 1pt;">6. DETAILS
+                        OF
+                        APPLICATION</p>
+                </td>
+            </tr>
+            <tr style="height:16pt">
+                <td style="width:165pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt"
+                    colspan="3">
+                    <p class="s5"
+                        style="padding-top: 3pt; padding-bottom: 3pt; padding-left: 1pt; text-indent: 0pt; text-align: left;">
+                        6.A TYPE OF LEAVE TO BE AVAILED OF
+                    </p>
+                    <div style="padding-left: 3px; display: grid;">
+                        @foreach (['Vacation Leave', 'Mandatory/Forced Leave', 'Sick Leave', 'Maternity Leave', 'Paternity Leave', 'Special Privilege Leave', 'Solo Parent Leave', 'Study Leave', '10-Day VAWC Leave', 'Rehabilitation Privilege', 'Special Leave Benefits for Women', 'Special Emergency (Calamity) Leave', 'Adoption Leave'] as $leaveType)
+                            <div style="display: block; width: 100%; margin-left: 5px;">
+                                <div style="display: inline-block; vertical-align: middle;">
+                                    <input type="checkbox"
+                                        {{ in_array($leaveType, $selectedLeaveTypes) ? 'checked' : '' }}>
+                                </div>
+                                <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                                    <span class="s5">{{ $leaveType }}</span>
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <label style="display: flex; align-items: center; margin-left: 15px;">
+                            <span class="s5">Others:</span>
+                        </label>
+
+                        <div style="display: block; width: 100%; margin-left: 5px;">
+                            <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                                <u
+                                    style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $otherLeave ?: str_repeat('_', 20) }}</u>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td style="width:73pt;border-top-style:solid;border-top-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:18pt;border-top-style:solid;border-top-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:212pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s5" style="padding-top: 3pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">
+                        6.B DETAILS OF LEAVE</p>
+
+                    <div style="display: block; width: 100%;">
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5" style="font-style: italic !important; font-weight: bold !important;">
+                                In case of Vacation/Special Privilege Leave:</span>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <input type="checkbox" {{ $isDetailPresent('Within the Philippines') ? 'checked' : '' }}>
+                        </div>
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5">Within the Philippines:</span>
+                        </div>
+                        <u
+                            style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">
+                            {{ $getDetailValue('Within the Philippines') ?: str_repeat('_', 20) }}
+                        </u>
+                    </div>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <input type="checkbox" {{ $isDetailPresent('Abroad') ? 'checked' : '' }}>
+                        </div>
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5">Abroad (Specify):</span>
+                            <u>{{ $getDetailValue('Abroad') ?: str_repeat('_', 18) }}</u>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%;">
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5" style="font-style: italic !important; font-weight: bold !important;">In
+                                case of Sick Leave:</span>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <input type="checkbox" {{ $isDetailPresent('In Hospital') ? 'checked' : '' }}>
+                        </div>
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5">In Hospital (Special Illness):</span>
+                            <u>{{ $getDetailValue('In Hospital') ?: str_repeat('_', 14) }}</u>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <input type="checkbox" {{ $isDetailPresent('Out Patient') ? 'checked' : '' }}>
+                        </div>
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5">Out Patient (Special Illness):</span>
+                            <u>{{ $getDetailValue('Out Patient') ?: str_repeat('_', 13) }}</u>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%;">
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5"
+                                style="font-style: italic !important; font-weight: bold !important;">In case of Special
+                                Leave Benefits for Women:</span>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <input type="checkbox" {{ $isDetailPresent('Women Special Illness') ? 'checked' : '' }}>
+                        </div>
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5">(Special Illness):</span>
+                            <u>{{ $getDetailValue('Women Special Illness') ?: str_repeat('_', 20) }}</u>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%;">
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5"
+                                style="font-style: italic !important; font-weight: bold !important;">In case of Study
+                                Leave:</span>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <input type="checkbox"
+                                {{ $isDetailPresent('Completion of Masters Degree') ? 'checked' : '' }}>
+                        </div>
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5">Completion of Master's Degree</span>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <input type="checkbox"
+                                {{ $isDetailPresent('BAR/Board Examination Review') ? 'checked' : '' }}>
+                        </div>
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5">BAR/Board Examination Review</span>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%;">
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5"
+                                style="font-style: italic !important; font-weight: bold !important;">Other
+                                Purpose:</span>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <input type="checkbox"
+                                {{ $isDetailPresent('Monetization of Leave Credits') ? 'checked' : '' }}>
+                        </div>
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5">Monetization of Leave Credits</span>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <input type="checkbox" {{ $isDetailPresent('Terminal Leave') ? 'checked' : '' }}>
+                        </div>
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5">Terminal Leave</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            <tr style="height:16pt">
+                <td style="width:165pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt"
+                    colspan="3">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:73pt;border-bottom-style:solid;border-bottom-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:18pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                </td>
+            </tr>
+            <tr style="height:14pt">
+                <td style="width:238pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt"
+                    colspan="4">
+                    <p class="s5" style="padding-top: 2pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">
+                        6.C NUMBER OF WORKING DAYS APPLIED FOR
+                    </p>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <u
+                                style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $leaveApplication->number_of_days }}</u>
+                        </div>
+                    </div>
+
+                    <p class="s5"
+                        style="padding-top: 2pt; padding-left: 1pt; text-indent: 0pt; text-align: left; margin-left: 15px;">
+                        INCLUSIVE DATES
+                    </p>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <u
+                                style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">
+                                {{ $leaveApplication->list_of_dates }}
+                            </u>
+                        </div>
+                    </div>
+                </td>
+
+                <td
+                    style="width:18pt;border-top-style:solid;border-top-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+
+                <td
+                    style="width:212pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"></p>
+                    <p class="s5" style="padding-top: 2pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">
+                        6.D COMMUTATION
+                    </p>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <input type="checkbox" @if ($leaveApplication->commutation == 'Requested') checked @endif>
+                        </div>
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5">Requested</span>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <input type="checkbox" @if ($leaveApplication->commutation == 'Not Requested') checked @endif>
+                        </div>
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5">Not Requested</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr style="height:25pt">
+                <td
+                    style="width:19pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:219pt;border-bottom-style:solid;border-bottom-width:1pt" colspan="3">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;line-height: 1pt;text-align: left;" />
+                </td>
+                <td
+                    style="width:18pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="padding-top: 3pt;text-indent: 0pt;text-align: left;"><br /></p>
+                    {{-- <p class="s5" style="padding-left: 66pt;text-indent: 0pt;text-align: left;">(Signature of
+                        Applicant)</p> --}}
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

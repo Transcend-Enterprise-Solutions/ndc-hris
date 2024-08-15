@@ -24,14 +24,12 @@ return new class extends Migration {
                 $table->string('type_of_leave');
                 $table->text('details_of_leave')->nullable();
                 $table->integer('number_of_days');
-                $table->date('start_date');
-                $table->date('end_date');
+                $table->string('list_of_dates')->nullable();
                 $table->string('commutation')->default('Not Requested');
                 $table->string('file_name')->nullable();
                 $table->string('file_path')->nullable();
                 $table->string('status');
-                $table->date('approved_start_date')->nullable();
-                $table->date('approved_end_date')->nullable();
+                $table->string('approved_dates')->nullable();
                 $table->integer('approved_days')->nullable();
                 $table->string('remarks')->nullable();
                 $table->timestamps();
