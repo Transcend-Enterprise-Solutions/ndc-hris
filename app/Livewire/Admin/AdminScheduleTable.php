@@ -6,9 +6,12 @@ use Livewire\Component;
 use App\Models\DTRSchedule;
 use App\Models\User;
 use Carbon\Carbon;
+use Livewire\WithPagination;
 
 class AdminScheduleTable extends Component
 {
+    use WithPagination;
+
     public $schedules;
     public $employees;
     public $scheduleId;
@@ -19,6 +22,7 @@ class AdminScheduleTable extends Component
     public $confirmingScheduleDeletion = false;
     public $scheduleToDelete;
     public $selectedTab = 'current';
+    public $perPage = 10;
 
     protected $rules = [
         'emp_code' => 'required|string',
@@ -31,7 +35,6 @@ class AdminScheduleTable extends Component
 
     public function mount()
     {
-        $this->loadSchedules();
         $this->employees = User::where('user_role', 'emp')->get();
     }
 
@@ -39,7 +42,7 @@ class AdminScheduleTable extends Component
     {
         $filteredSchedules = $this->filterSchedules();
         return view('livewire.admin.admin-schedule-table', [
-            'filteredSchedules' => $filteredSchedules
+            'filteredSchedules' => $filteredSchedules->paginate($this->perPage)
         ]);
     }
 
@@ -47,19 +50,14 @@ class AdminScheduleTable extends Component
     {
         $now = Carbon::now();
 
-        return $this->schedules->filter(function ($schedule) use ($now) {
-            $startDate = Carbon::parse($schedule->start_date);
-            $endDate = Carbon::parse($schedule->end_date);
-
+        return DTRSchedule::with('user')->when($this->selectedTab, function ($query) use ($now) {
             switch ($this->selectedTab) {
                 case 'current':
-                    return $now->between($startDate, $endDate);
+                    return $query->where('start_date', '<=', $now)->where('end_date', '>=', $now);
                 case 'incoming':
-                    return $startDate->isFuture();
+                    return $query->where('start_date', '>', $now);
                 case 'expired':
-                    return $endDate->isPast();
-                default:
-                    return true;
+                    return $query->where('end_date', '<', $now);
             }
         });
     }
@@ -67,6 +65,7 @@ class AdminScheduleTable extends Component
     public function setTab($tab)
     {
         $this->selectedTab = $tab;
+        $this->resetPage();
     }
 
     public function openModal()
@@ -85,13 +84,11 @@ class AdminScheduleTable extends Component
 
     public function saveSchedule()
     {
-        // Format time fields to H:i format before validation
         $this->default_start_time = date('H:i', strtotime($this->default_start_time));
         $this->default_end_time = date('H:i', strtotime($this->default_end_time));
 
         $this->validate();
 
-        // Check for overlapping schedules
         $overlappingSchedule = DTRSchedule::where('emp_code', $this->emp_code)
             ->where(function ($query) {
                 $query->whereBetween('start_date', [$this->start_date, $this->end_date])
@@ -129,7 +126,6 @@ class AdminScheduleTable extends Component
         ]);
 
         $this->closeModal();
-        $this->loadSchedules();
     }
 
     public function edit($id)
@@ -156,7 +152,6 @@ class AdminScheduleTable extends Component
     {
         DTRSchedule::find($this->scheduleToDelete)->delete();
         $this->confirmingScheduleDeletion = false;
-        $this->loadSchedules();
         $this->dispatch('swal', [
             'title' => 'Schedule deleted successfully!',
             'icon' => 'success'
@@ -178,10 +173,5 @@ class AdminScheduleTable extends Component
         $this->start_date = null;
         $this->end_date = null;
         $this->isEditMode = false;
-    }
-
-    private function loadSchedules()
-    {
-        $this->schedules = DTRSchedule::with('user')->get();
     }
 }
