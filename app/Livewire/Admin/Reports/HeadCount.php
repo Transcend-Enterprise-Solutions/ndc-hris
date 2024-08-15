@@ -6,18 +6,22 @@ use App\Exports\AttendanceExport;
 use App\Models\EmployeesDtr;
 use Livewire\Component;
 use App\Models\User;
+use App\Models\DocRequest;
 use Carbon\Carbon;
 use Exception;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\EmployeeReportExport;
+use App\Exports\DocRequestExport;
 
 class HeadCount extends Component
 {
     public $date;
     public $month;
 
-    public function render(){
+    public function render()
+    {
         $totalEmployees = User::where('user_role', 'emp')->count();
+
         $newEmployeesThisMonth = User::where('user_role', 'emp');
         if ($this->month) {
             $date = Carbon::createFromFormat('Y-m', $this->month);
@@ -46,35 +50,42 @@ class HeadCount extends Component
                                         ->orWhere('remarks', 'Late');
                             })
                             ->count();
-        }else{
+        } else {
             $dailyAttendance = 0;
         }
 
-        return view('livewire.admin.reports.head-count',[
+        $docRequestsCount = DocRequest::when($this->month, function ($query) {
+            $date = Carbon::createFromFormat('Y-m', $this->month);
+            return $query->whereYear('date_requested', $date->year)
+                         ->whereMonth('date_requested', $date->month);
+        }, function ($query) {
+            return $query->whereYear('date_requested', Carbon::now()->year)
+                         ->whereMonth('date_requested', Carbon::now()->month);
+        })->count();
+
+        return view('livewire.admin.reports.head-count', [
             'totalEmployees' => $totalEmployees,
             'newEmployeesThisMonth' => $newEmployeesThisMonth,
             'departmentCounts' => $departmentCounts,
             'dailyAttendance' => $dailyAttendance,
+            'docRequestsCount' => $docRequestsCount,
         ]);
     }
 
-    public function exportTotalEmployee(){
-        try{
+    public function exportTotalEmployee()
+    {
+        try {
             $filters = null;
             return Excel::download(new EmployeeReportExport($filters), 'EmployeesList.xlsx');
-        }catch(Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
-    public function exportTotalEmployeeThisMonth(){
+    public function exportTotalEmployeeThisMonth()
+    {
         try {
-            $month = null;
-            if ($this->month) {
-                $month = Carbon::createFromFormat('Y-m', $this->month)->format('Y-m');
-            } else {
-                $month = now()->format('Y-m');
-            }
+            $month = $this->month ? Carbon::createFromFormat('Y-m', $this->month)->format('Y-m') : now()->format('Y-m');
             $filters = [
                 'month' => $month,
             ];
@@ -85,26 +96,42 @@ class HeadCount extends Component
         }
     }
 
-    public function exportTotalEmployeeInDepartment($department){
-        try{
+    public function exportTotalEmployeeInDepartment($department)
+    {
+        try {
             $filters = [
                 'department' => $department,
             ];
             $filename = $department . ' EmployeesList.xlsx';
             return Excel::download(new EmployeeReportExport($filters), $filename);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
-    public function exportTotalEmployeeDaily(){
-        try{
+    public function exportTotalEmployeeDaily()
+    {
+        try {
             $filters = [
                 'date' => $this->date,
             ];
             $filename = $this->date . ' EmployeesList.xlsx';
             return Excel::download(new AttendanceExport($filters), $filename);
-        }catch(Exception $e){
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function exportDocRequests()
+    {
+        try {
+            $month = $this->month ? Carbon::createFromFormat('Y-m', $this->month)->format('Y-m') : now()->format('Y-m');
+            $filters = [
+                'month' => $month,
+            ];
+            $filename = $month . ' DocRequestsList.xlsx';
+            return Excel::download(new DocRequestExport($filters), $filename);
+        } catch (Exception $e) {
             throw $e;
         }
     }

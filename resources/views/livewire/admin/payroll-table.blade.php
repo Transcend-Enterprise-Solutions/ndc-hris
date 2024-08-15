@@ -108,7 +108,7 @@ x-cloak>
                     <div class="w-full sm:w-auto relative">
                         <label for="startDate" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
                         <input type="date" id="startDate" wire:model.live='startDate' value="{{ $startDate }}"
-                        class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
+                        class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                     </div>
@@ -117,7 +117,7 @@ x-cloak>
                     <div class="w-full sm:w-auto relative">
                         <label for="endDate" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
                         <input type="date" id="endDate" wire:model.live='endDate' value="{{ $endDate }}"
-                        class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
+                        class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                     </div>
@@ -127,8 +127,8 @@ x-cloak>
                         <div class="w-full sm:w-auto">
                             <button wire:click="recordPayroll"
                                 class="mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                                justify-center px-2 py-1.5 text-sm font-medium tracking-wide 
-                                text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                                justify-center px-2 py-1.5 text-sm font-medium tracking-wide
+                                text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                 rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                                 type="button">
                                 <div wire:loading wire:target="recordPayroll" style="margin-right: 5px">
@@ -144,8 +144,8 @@ x-cloak>
                     <div class="w-full sm:w-auto relative">
                         <button wire:click="exportPayroll"
                             class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                            justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
-                            text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                            justify-center px-4 py-1.5 text-sm font-medium tracking-wide
+                            text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button" title="Export Payroll">
                             <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">

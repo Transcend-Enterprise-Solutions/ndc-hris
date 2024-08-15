@@ -4,7 +4,6 @@
     notificationMessage: '',
     notificationType: '',
     showNotification: false,
-    selectedTab: '201_Documents'
 }" x-init="
     $wire.on('show-delete-modal', () => {
         showDeleteModal = true;
@@ -18,65 +17,67 @@
 ">
     <div class="w-full">
         <div class="flex justify-center w-full">
-            <div class=" w-full bg-white dark:bg-gray-800 rounded-2xl px-6 shadow">
+            <div class="w-full bg-white dark:bg-gray-800 rounded-2xl px-6 shadow">
                 <div class="pt-4 pb-4">
                     <h1 class="text-lg font-bold text-center text-black dark:text-white">Employee Documents</h1>
                 </div>
                 <div class="w-full">
                     <div @keydown.right.prevent="$focus.wrap().next()" @keydown.left.prevent="$focus.wrap().previous()" class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700" role="tablist" aria-label="tab options">
                         @foreach ($tabs as $key => $label)
-                            <button @click="selectedTab = '{{ $key }}'" :aria-selected="selectedTab === '{{ $key }}'" :tabindex="selectedTab === '{{ $key }}' ? '0' : '-1'" :class="selectedTab === '{{ $key }}' ? 'font-bold text-violet-700 border-b-2 whitespace-nowrap border-violet-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium whitespace-nowrap dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm whitespace-nowrap" type="button" role="tab" aria-controls="tabpanel{{ ucfirst($key) }}">{{ $label }}</button>
+                            <button wire:click="$set('selectedTab', '{{ $key }}')" :aria-selected="$wire.selectedTab === '{{ $key }}'" :tabindex="$wire.selectedTab === '{{ $key }}' ? '0' : '-1'" :class="$wire.selectedTab === '{{ $key }}' ? 'font-bold text-violet-700 border-b-2 whitespace-nowrap border-violet-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium whitespace-nowrap dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm whitespace-nowrap" type="button" role="tab" aria-controls="tabpanel{{ ucfirst($key) }}">{{ $label }}</button>
                         @endforeach
                     </div>
                     <div class="px-2 py-4 text-slate-700 dark:text-slate-300">
-                        @foreach ($tabs as $key => $label)
-                            <div x-show="selectedTab === '{{ $key }}'" id="tabpanel{{ ucfirst($key) }}" role="tabpanel" aria-labelledby="tab{{ ucfirst($key) }}">
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full divide-y divide-gray-200">
-                                        <thead class="bg-gray-50 dark:bg-gray-700">
-                                            <tr>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Employee Name</th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Upload Date</th>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                                            @foreach ($documentsByType[$key] ?? [] as $document)
-                                                <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">{{ $document->user->name }}</td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-200">{{ $document->created_at->format('Y-m-d H:i:s') }}</td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-200">
-                                                        <a href="{{ Storage::url($document->file_path) }}" download class="text-blue-500 hover:text-blue-700" title="Download">
-                                                            <i class="fas fa-download"></i>
-                                                        </a>
-                                                        <button wire:click="confirmDelete({{ $document->id }})" class="text-red-500 hover:text-red-700" title="Delete" :disabled="$wire.isDeleting">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                                @if (empty($documentsByType[$key]))
-                                    <div class="p-4 text-center text-gray-500 dark:text-gray-300">
-                                        No documents available.
-                                    </div>
-                                @endif
-                                <!-- New section for employees without uploads -->
-                                <div class="mt-8">
-                                    <h3 class="text-xs font-semibold mb-4">Employees without {{ $label }} :</h3>
-                                    <ul class="flex flex-wrap gap-2 text-xs list-none pl-0">
-                                        @foreach ($employeesWithoutUpload[$key] ?? [] as $employee)
-                                            <li class="inline-block bg-gray-200 dark:bg-gray-700 rounded px-2 py-1">{{ $employee->name }}</li>
-                                        @endforeach
-                                    </ul>
-                                    @if (empty($employeesWithoutUpload[$key]))
-                                        <p class="text-xs text-gray-500 dark:text-gray-300">All employees have uploaded this document.</p>
-                                    @endif
-                                </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Employee Name</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Upload Date</th>
+                                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200">
+                                    @foreach ($documents as $document)
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium text-gray-900 dark:text-gray-300">{{ $document->user->name }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500 dark:text-gray-200">{{ $document->created_at->format('Y-m-d H:i:s') }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500 dark:text-gray-200">
+                                                <a href="{{ Storage::url($document->file_path) }}" download class="text-blue-500 hover:text-blue-700" title="Download">
+                                                    <i class="fas fa-download"></i>
+                                                </a>
+                                                <button wire:click="confirmDelete({{ $document->id }})" class="text-red-500 hover:text-red-700" title="Delete" :disabled="$wire.isDeleting">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        @if ($documents->isEmpty())
+                            <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                No documents available.
                             </div>
-                        @endforeach
+                        @else
+                            <div class="mt-4">
+                                {{ $documents->links() }}
+                            </div>
+                        @endif
+
+                        <!-- Employees without uploads section -->
+                        <div class="mt-8">
+                            <h3 class="text-xs font-semibold mb-4">Employees without {{ $tabs[$selectedTab] }} :</h3>
+                            <ul class="flex flex-wrap gap-2 text-xs list-none pl-0">
+                                @foreach ($employeesWithoutUpload[$selectedTab] ?? [] as $employee)
+                                    <li class="inline-block bg-gray-200 dark:bg-gray-700 rounded px-2 py-1">{{ $employee->name }}</li>
+                                @endforeach
+                            </ul>
+                            @if (empty($employeesWithoutUpload[$selectedTab]))
+                                <p class="text-xs text-gray-500 dark:text-gray-300">All employees have uploaded this document.</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

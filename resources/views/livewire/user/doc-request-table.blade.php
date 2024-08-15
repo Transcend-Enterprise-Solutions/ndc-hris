@@ -81,7 +81,7 @@
                                                     <td class="px-4 py-2 text-center">
                                                         @if ($request->file_path)
                                                             <button wire:click="downloadDocument({{ $request->id }})" class="text-blue-500 hover:underline">
-                                                                {{ $request->filename }} (Download)
+                                                                {{ Str::limit($request->filename, 15, '...') }}
                                                             </button>
                                                         @else
                                                             No Document

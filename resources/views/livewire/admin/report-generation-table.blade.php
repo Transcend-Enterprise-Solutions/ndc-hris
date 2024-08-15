@@ -9,18 +9,18 @@
             <!-- Table -->
             <div class="w-full">
                 <div class="flex gap-2 overflow-x-auto -mb-2">
-                    <button @click="selectedTab = 'hc'" 
-                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'hc', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'hc' }" 
+                    <button @click="selectedTab = 'hc'"
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'hc', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'hc' }"
                             class="h-min px-4 pt-2 pb-4 text-sm">
-                        Head Count
+                        Employee
                     </button>
-                    <button @click="selectedTab = 'la'" 
-                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'la', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'la' }" 
+                    <button @click="selectedTab = 'la'"
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'la', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'la' }"
                             class="h-min px-4 pt-2 pb-4 text-sm">
                         Leave Availment
                     </button>
-                    <button @click="selectedTab = 'alc'" 
-                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'alc', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'alc' }" 
+                    <button @click="selectedTab = 'alc'"
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'alc', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'alc' }"
                             class="h-min px-4 pt-2 pb-4 text-sm">
                         Accumulated Leave Credits
                     </button>
@@ -36,16 +36,17 @@
                             <div x-show="selectedTab === 'la'">
                                 @livewire('admin.reports.leave-availment')
                             </div>
-    
+
                             <div x-show="selectedTab === 'alc'">
                                 @livewire('admin.reports.accumulated-leave-credits')
                             </div>
+
 
                         </div>
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
 

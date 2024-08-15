@@ -3,17 +3,23 @@
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\EmployeeDocument;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
 class EmpDocumentsTable extends Component
 {
-    public $documentsByType = [];
+    use WithPagination;
+
     public $employeesWithoutUpload = [];
     public $tabs;
     public $documentToDelete = null;
     public $isDeleting = false;
+    public $perPage = 1;
+    public $selectedTab = '201_Documents';
+
+    protected $queryString = ['selectedTab'];
 
     public function mount()
     {
@@ -21,25 +27,17 @@ class EmpDocumentsTable extends Component
             '201_Documents' => '201 Documents',
             'SALN' => 'SALN',
             'IPCR' => 'IPCR',
-            'BIR1902' => 'BIR Form 1902',
-            'BIR1905' => 'BIR Form 1905',
-            'BIR2316' => 'BIR Form 2316',
+            'BIR1902' => 'BIR Form1902',
+            'BIR1905' => 'BIR Form1905',
+            'BIR2316' => 'BIR Form2316',
             'COE' => 'Certificate of Employment',
             'Service Record' => 'Service Record',
+            'Notarized PDS' => 'PDS',
         ];
 
-        $this->loadDocuments();
         $this->loadEmployeesWithoutUpload();
     }
 
-    public function loadDocuments()
-    {
-        $documents = EmployeeDocument::with('user')->get();
-        $this->documentsByType = [];
-        foreach ($documents as $document) {
-            $this->documentsByType[$document->document_type][] = $document;
-        }
-    }
     public function loadEmployeesWithoutUpload()
     {
         $this->employeesWithoutUpload = [];
@@ -76,8 +74,7 @@ class EmpDocumentsTable extends Component
 
                 $document->delete();
 
-                $this->loadDocuments();
-                $this->loadEmployeesWithoutUpload(); // Reload this as well
+                $this->loadEmployeesWithoutUpload();
                 $this->dispatch('swal', [
                     'title' => 'Document deleted successfully!',
                     'icon' => 'success'
@@ -99,10 +96,22 @@ class EmpDocumentsTable extends Component
         }
     }
 
+    public function updatingPerPage()
+    {
+        $this->resetPage();
+    }
+
+    public function getDocumentsProperty()
+    {
+        return EmployeeDocument::where('document_type', $this->selectedTab)
+            ->with('user')
+            ->paginate($this->perPage);
+    }
+
     public function render()
     {
         return view('livewire.admin.emp-documents-table', [
-            'documentsByType' => $this->documentsByType,
+            'documents' => $this->documents,
             'employeesWithoutUpload' => $this->employeesWithoutUpload,
             'tabs' => $this->tabs
         ]);

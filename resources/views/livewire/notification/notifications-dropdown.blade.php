@@ -50,13 +50,13 @@
             @endif
         </div>
         <!-- Dropdown items -->
-        <ul class="max-h-64 overflow-y-auto">
+        <ul class="max-h-64 overflow-y-auto" x-auto-animate>
             @if (Auth::user()->user_role === 'sa')
                 @forelse ($notifications as $notification)
                     <li class="border-b border-slate-200 dark:border-slate-700 last:border-0">
                         <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
                             <div class="flex justify-between items-start">
-                                <a wire:navigate href="{{ route('/my-records/doc-request') }}" class="flex-grow">
+                                <a wire:navigate href="{{ route('/employee-management/admin-doc-request') }}" class="flex-grow">
                                     <span class="block text-sm mb-1">
                                         📣 <span class="font-medium text-slate-800 dark:text-slate-100">
                                             New Document Request {{ $notification->type }}

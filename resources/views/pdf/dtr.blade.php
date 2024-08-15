@@ -122,14 +122,21 @@
             <div class="note-section">
                 ABSENCES AND UNDERTIME<br>
                 I hereby certify upon my honor that the entries on this time record, which were made daily at the time of arrival at and departure from the office, are a true and correct report of hours of work performed.
-                <br><br>
-                <strong>{{ $employeeName }}</strong>
-                Employee<br><br>
+                <br><br><br><br>
+                <strong style="text-decoration: underline;">{{ $employeeName }}</strong>
+                Employee<br><br><br>
 
                 Verified and found correct as to the prescribed office hours.
-
-                <strong>{{ $signatoryName }}</strong>
-                Executive Director And COO
+                <div style="position: relative; margin-top: 10px; min-height: 60px;">
+                    @if($eSignaturePath)
+                        <img src="{{ storage_path('app/public/' . $eSignaturePath) }}"
+                             style="width: 90px; height: auto; position: absolute; top: -5px; left: 0; z-index: 1;">
+                    @endif
+                    <div style="position: relative; z-index: 2; padding-top: 20px;">
+                        <strong style="text-decoration: underline; z-index: 2;">{{ $signatoryName }}</strong>
+                        Executive Director And COO
+                    </div>
+                </div>
             </div>
 
             <div class="generation-time">

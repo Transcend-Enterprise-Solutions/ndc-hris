@@ -18,6 +18,8 @@ class AdminDocRequestTable extends Component
     public $documentTypes = [];
     public $selectedDocumentTypes = [];
     public $selectAll = false;
+    public $pendingCount = 0;
+    public $preparingCount = 0;
 
     public function mount()
     {
@@ -39,6 +41,8 @@ class AdminDocRequestTable extends Component
         }
 
         $this->requests = $query->get();
+        $this->pendingCount = $this->requests->where('status', 'pending')->count();
+        $this->preparingCount = $this->requests->where('status', 'preparing')->count();
     }
 
     public function updatedSelectedDocumentTypes()
@@ -131,6 +135,7 @@ class AdminDocRequestTable extends Component
                 'read' => false,
             ]
         );
+        $this->dispatch('upload-complete');
 
         $this->dispatch('swal', [
             'title' => 'Document uploaded successfully!',
@@ -174,6 +179,20 @@ class AdminDocRequestTable extends Component
             ]);
         }
     }
+    public function downloadDocument($id)
+    {
+        $request = DocRequest::findOrFail($id);
+
+        if ($request->file_path && Storage::disk('public')->exists($request->file_path)) {
+            return Storage::disk('public')->download($request->file_path, $request->filename);
+        } else {
+            $this->dispatch('swal', [
+                'title' => 'File not found!',
+                'icon' => 'error'
+            ]);
+        }
+    }
+
 
     public function render()
     {

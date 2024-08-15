@@ -8,16 +8,20 @@ use App\Models\EmployeesDtr;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
+use Livewire\WithFileUploads;
 
 class DtrTable extends Component
 {
     use WithPagination;
+    use WithFileUploads;
 
     public $searchTerm = '';
     public $startDate;
     public $endDate;
     public $sortField = 'date';
     public $sortDirection = 'asc';
+    public $eSignature;
 
     protected $queryString = [
         'searchTerm' => ['except' => ''],
@@ -96,8 +100,14 @@ class DtrTable extends Component
 
     public function exportToPdf($signatoryName)
     {
+        $user = Auth::user();
+
+        $this->validate([
+            'eSignature' => 'nullable|image|max:1024', // 1MB Max
+        ]);
+
         $query = EmployeesDtr::query()
-            ->where('user_id', Auth::id())
+            ->where('user_id', $user->id)
             ->whereBetween('date', [$this->startDate, $this->endDate]);
 
         if ($this->searchTerm) {
@@ -108,8 +118,7 @@ class DtrTable extends Component
             });
         }
 
-        // Group by employee name
-        $dtrs = $query->orderBy('date')->get()->groupBy('employee_name'); // Assuming 'employee_name' is a valid column
+        $dtrs = $query->orderBy('date')->get();
 
         if ($dtrs->isEmpty()) {
             $this->dispatch('swal', [
@@ -119,13 +128,22 @@ class DtrTable extends Component
             return;
         }
 
+        $eSignaturePath = null;
+        if ($this->eSignature) {
+            $eSignaturePath = $this->eSignature->store('temp', 'public');
+        }
+
+        // Create a collection with a single key-value pair
+        $groupedDtrs = collect([$user->name => $dtrs]);
+
         $pdf = Pdf::loadView('pdf.dtr', [
-            'dtrs' => $dtrs,
+            'dtrs' => $groupedDtrs,
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
             'signatoryName' => $signatoryName,
-            'userName' => Auth::user()->name,
-            'empCode' => Auth::user()->emp_code,
+            'eSignaturePath' => $eSignaturePath,
+            'userName' => $user->name,
+            'empCode' => $user->emp_code,
         ]);
 
         $this->dispatch('swal', [
@@ -136,6 +154,10 @@ class DtrTable extends Component
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->output();
         }, 'dtr_report.pdf');
+
+        if ($eSignaturePath) {
+            Storage::disk('public')->delete($eSignaturePath);
+        }
     }
 
 }

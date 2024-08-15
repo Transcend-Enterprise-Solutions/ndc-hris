@@ -1,6 +1,6 @@
 <div class="w-full">
     <div class="flex flex-col sm:flex-row justify-between items-center w-full">
-        <div class="overflow-x-auto w-full bg-white dark:bg-gray-800 rounded-2xl px-4 sm:px-6 shadow">
+        <div class=" w-full bg-white dark:bg-gray-800 rounded-2xl px-4 sm:px-6 shadow">
             <h1 class="text-lg font-bold text-center text-black dark:text-white mt-5">My Schedule</h1>
             <div class="pt-4 pb-4 flex flex-col sm:flex-row sm:items-center justify-between">
                 <div class="flex flex-row justify-between items-center w-full">
@@ -12,8 +12,8 @@
                 </div>
             </div>
 
-            <div class="pb-6">
-                <div class="grid grid-cols-7 gap-1 text-center text-black dark:text-white">
+            <div class="pb-6" x-auto-animate>
+                <div class="grid grid-cols-7 gap-1 text-center text-black dark:text-white" x-auto-animate>
                     <!-- Days of the week header -->
                     @foreach(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as $day)
                         <div class="font-semibold text-xs sm:text-sm">{{ $day }}</div>

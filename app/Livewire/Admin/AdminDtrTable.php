@@ -20,6 +20,7 @@ class AdminDtrTable extends Component
     public $sortField = 'date';
     public $sortDirection = 'asc';
     public $signatoryName='';
+    public $eSignaturePath='';
 
     protected $queryString = [
         'searchTerm' => ['except' => ''],
@@ -57,7 +58,7 @@ class AdminDtrTable extends Component
     public function render()
     {
 
-        // sleep(1);
+        //sleep(3);
         $query = EmployeesDtr::query()
             ->join('users', 'employees_dtr.user_id', '=', 'users.id')
             ->select('employees_dtr.*', 'users.name as user_name', 'users.emp_code');
@@ -117,6 +118,7 @@ class AdminDtrTable extends Component
         $pdf = Pdf::loadView('pdf.dtr', [
             'dtrs' => $dtrs,
             'startDate' => $this->startDate,
+            'eSignaturePath' => $this->eSignaturePath,
             'endDate' => $this->endDate,
             'signatoryName' => $this->signatoryName,
         ]);

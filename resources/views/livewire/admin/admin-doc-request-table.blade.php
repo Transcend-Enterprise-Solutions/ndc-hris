@@ -2,11 +2,18 @@
     showDeleteModal: false,
     showApproveModal: false,
     showRejectModal: false,
+    showSpinnerModal: false,
     deleteRequestId: null,
     approveRequestId: null,
     rejectRequestId: null,
     selectedTab: 'pending',
-    open: false
+    open: false,
+    handleFileUpload(requestId) {
+        this.showSpinnerModal = true;
+        $wire.uploadDocument(requestId).then(() => {
+            this.showSpinnerModal = false;
+        });
+    }
 }" x-cloak>
     <div class="w-full">
         <div class="flex justify-center w-full">
@@ -38,12 +45,23 @@
 
 
                 <!-- Tabs -->
-                <div class="w-full">
+                <div class="w-full" wire:poll.10s='loadRequests'>
                     <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700" role="tablist">
-                        <button @click="selectedTab = 'pending'" :class="selectedTab === 'pending' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" role="tab">Pending</button>
-                        <button @click="selectedTab = 'preparing'" :class="selectedTab === 'preparing' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" role="tab">Preparing</button>
-                        <button @click="selectedTab = 'completed'" :class="selectedTab === 'completed' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" role="tab">Completed</button>
-                        <button @click="selectedTab = 'rejected'" :class="selectedTab === 'rejected' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600' : 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" role="tab">Rejected</button>
+                        <button @click="selectedTab = 'pending'" :class="selectedTab === 'pending' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600 mt-2' : 'mt-2 text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm relative" role="tab">
+                            Pending
+                            @if($pendingCount > 0)
+                                <span class="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full">{{ $pendingCount }}</span>
+                            @endif
+                            </button>
+                        <button @click="selectedTab = 'preparing'" :class="selectedTab === 'preparing' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600 mt-2' : 'mt-2 text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm relative" role="tab">
+                            Preparing
+                            @if($preparingCount > 0)
+                                <span class="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full">{{ $preparingCount }}</span>
+                            @endif
+                            </button>
+
+                        <button @click="selectedTab = 'completed'" :class="selectedTab === 'completed' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600 mt-2' : 'mt-2 text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" role="tab">Completed</button>
+                        <button @click="selectedTab = 'rejected'" :class="selectedTab === 'rejected' ? 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600 mt-2' : 'mt-2 text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black'" class="h-min px-4 py-2 text-sm" role="tab">Rejected</button>
                     </div>
                     <!-- Tab Content -->
                     <div class="px-2 py-4 text-slate-700 dark:text-slate-300">
@@ -75,18 +93,17 @@
                                                         @if ($status === 'preparing')
                                                             <div class="flex items-center space-x-2">
                                                                 <input type="file" id="file-input-{{ $request->id }}" wire:model="uploadedFile.{{ $request->id }}" class="mt-2 mb-2">
-                                                                <button wire:click="uploadDocument({{ $request->id }})" class="text-green-500 hover:text-green-700">
-                                                                    <i wire:loading.remove wire:target="uploadedFile.{{ $request->id }}" class="fas fa-upload"></i>
-                                                                    <svg wire:loading wire:target="uploadedFile.{{ $request->id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-green-600 motion-safe:animate-spin dark:fill-green-600">
+                                                                <button @click="handleFileUpload({{ $request->id }})" class="text-green-500 hover:text-green-700">
+                                                                    <i x-show="!showSpinnerModal" class="fas fa-upload"></i>
+                                                                    <svg x-show="showSpinnerModal" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-green-600 motion-safe:animate-spin dark:fill-green-600">
                                                                         <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
                                                                         <path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" />
                                                                     </svg>
-
                                                                 </button>
                                                             </div>
                                                         @elseif ($request->file_path)
                                                             <button wire:click="downloadDocument({{ $request->id }})" class="text-blue-500 hover:underline">
-                                                                {{ $request->filename }} (Download)
+                                                                {{ Str::limit($request->filename, 15, '...') }}
                                                             </button>
                                                         @else
                                                             No Document
@@ -212,4 +229,20 @@
             </div>
         </div>
     </div>
+    <!-- Spinner Modal -->
+    <div x-show="showSpinnerModal" class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl">
+            <div class="flex flex-col items-center">
+                <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+                <p class="mt-4 text-gray-700 dark:text-gray-300">Uploading file...</p>
+            </div>
+        </div>
+    </div>
 </div>
+<script>
+    document.addEventListener('livewire:load', function () {
+        Livewire.on('upload-complete', function () {
+            Alpine.store('showSpinnerModal', false);
+        });
+    });
+</script>

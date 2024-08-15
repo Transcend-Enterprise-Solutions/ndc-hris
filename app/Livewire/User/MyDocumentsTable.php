@@ -152,6 +152,7 @@ class MyDocumentsTable extends Component
             'BIR2316' => 'BIR Form 2316',
             'COE' => 'Certificate of Employment',
             'Service Record' => 'Service Record',
+            'Notarized PDS' => 'Notarized PDS',
         ];
         $uploadedDocumentTypes = EmployeeDocument::where('user_id', Auth::id())
             ->pluck('document_type')
