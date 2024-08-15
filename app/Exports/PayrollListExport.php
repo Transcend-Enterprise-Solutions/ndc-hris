@@ -2,8 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\Payrolls;
-use Carbon\Carbon;
+use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -12,7 +11,6 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use Carbon\Exceptions\InvalidFormatException;
 
 class PayrollListExport implements FromCollection, WithEvents
 {
@@ -31,7 +29,10 @@ class PayrollListExport implements FromCollection, WithEvents
             return '₱ ' . number_format((float)$value, 2, '.', ',');
         };
 
-        $query = Payrolls::query()->where('position', '!=', 'Super Admin');
+        $query = User::query()
+                ->join('payrolls', 'payrolls.user_id', 'users.id')
+                ->join('positions', 'positions.id', 'users.position_id')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id');
 
         if (!empty($this->filters['search'])) {
             $query->where(function ($q) {
@@ -47,7 +48,7 @@ class PayrollListExport implements FromCollection, WithEvents
             return [
                 $this->rowNumber,
                 'name' => $payroll->name,
-                'employee_number' => $payroll->employee_number,
+                'employee_number' => $payroll->emp_code,
                 'position' => $payroll->position,
                 'office_division' => $payroll->office_division,
                 'sg_step' => $payroll->sg_step,

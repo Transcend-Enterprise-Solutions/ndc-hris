@@ -673,11 +673,13 @@ class GeneralPayrollTable extends Component
         try {
             $user = User::where('id', $userId)->first();
             if ($user) {
-                $preparedBy = Auth::user();
-                $signatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
-                    ->where('signatories.signatory_type', 'plantilla_payslip')
-                    ->where('signatories.signatory', 'Noted By')
-                    ->first();
+                $admin = Auth::user();
+                $signatories = User::join('signatories', 'signatories.user_id', 'users.id')
+                        ->join('positions', 'positions.id', 'users.position_id')
+                        ->where('signatories.signatory_type', 'plantilla_payslip')
+                        ->where('signatories.signatory', 'Noted By')
+                        ->select('users.name', 'positions.*', 'signatories.*')
+                        ->get();
                     
                 $payslip = null;
                 if ($this->hasPayroll) {
@@ -709,20 +711,20 @@ class GeneralPayrollTable extends Component
                               \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('d') .  "-" .
                               \Carbon\Carbon::parse($dates['endDateSecondHalf'])->format('d') . " " .
                               \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('Y');
-
-                $pb = Admin::where('admin.user_id', $preparedBy->id)
-                    ->join('payrolls', 'payrolls.id', 'admin.payroll_id')
-                    ->join('signatories', 'signatories.user_id', 'admin.user_id')
+                
+                $preparedBy = User::where('users.id', $admin->id)
+                    ->join('positions', 'positions.id', 'users.position_id')
+                    ->join('signatories', 'signatories.user_id', 'users.id')
                     ->first();
         
         
                 // Generate temporary paths for signatures
-                $preparedBySignaturePath = $this->getTemporarySignaturePath($pb);
+                $preparedBySignaturePath = $this->getTemporarySignaturePath($preparedBy);
                 $signatoriesSignaturePath = $this->getTemporarySignaturePath($signatories);
                 
                 if ($payslip) {
                     $pdf = Pdf::loadView('pdf.monthly-payslip', [
-                        'preparedBy' => $pb,
+                        'preparedBy' => $preparedBy,
                         'payslip' => $payslip,
                         'dates' => $dates,
                         'signatories' => $signatories,
@@ -766,7 +768,6 @@ class GeneralPayrollTable extends Component
         }
         return null;
     }
-
     
     public function toggleEditPayroll($userId){
         $this->editPayroll = true;

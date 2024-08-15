@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\CosPayrolls;
 use App\Models\Payrolls;
+use App\Models\User;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\Exportable;
@@ -31,7 +32,10 @@ class CosPayrollListExport implements FromCollection, WithEvents
             return '₱ ' . number_format((float)$value, 2, '.', ',');
         };
 
-        $query = CosPayrolls::query();
+        $query = User::query()
+                ->join('cos_payrolls', 'cos_payrolls.user_id', 'users.id')
+                ->join('positions', 'positions.id', 'users.position_id')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id');
 
         if (!empty($this->filters['search'])) {
             $query->where(function ($q) {
@@ -47,7 +51,7 @@ class CosPayrollListExport implements FromCollection, WithEvents
             return [
                 $this->rowNumber,
                 'name' => $payroll->name,
-                'employee_number' => $payroll->employee_number,
+                'employee_number' => $payroll->emp_code,
                 'position' => $payroll->position,
                 'office_division' => $payroll->office_division,
                 'sg_step' => $payroll->sg_step,
@@ -71,7 +75,8 @@ class CosPayrollListExport implements FromCollection, WithEvents
                 $sheet->getColumnDimension('B')->setWidth(30);
                 $sheet->getColumnDimension('C')->setWidth(15);
                 $sheet->getColumnDimension('D')->setWidth(30);
-                for ($col = 'E'; $col <= 'G'; $col++) {
+                $sheet->getColumnDimension('E')->setWidth(30);
+                for ($col = 'F'; $col <= 'G'; $col++) {
                     $sheet->getColumnDimension($col)->setWidth(15);
                 }
 
