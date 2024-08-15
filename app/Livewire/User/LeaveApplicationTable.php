@@ -138,10 +138,12 @@ class LeaveApplicationTable extends Component
         ]);
 
         if (in_array('Others', $this->type_of_leave)) {
-            $this->type_of_leave = array_filter($this->type_of_leave, function($leave) {
+            // Remove "Others" from the array
+            $this->type_of_leave = array_filter($this->type_of_leave, function ($leave) {
                 return $leave !== 'Others';
             });
-            $this->type_of_leave[] = 'Others: ' . $this->other_leave;
+    
+            $this->type_of_leave[] = $this->other_leave;
         }
 
         $filePaths = [];
@@ -161,29 +163,18 @@ class LeaveApplicationTable extends Component
         foreach ($this->details_of_leave as $leaveType) {
             if ($leaveType === 'Within the Philippines') {
                 $leaveDetails[] = $leaveType . ' = ' . $this->philippines;
-            }
-            if ($leaveType === 'Abroad') {
+            } elseif ($leaveType === 'Abroad') {
                 $leaveDetails[] = $leaveType . ' = ' . $this->abroad;
-            }
-            if ($leaveType === 'In Hospital') {
+            } elseif ($leaveType === 'In Hospital') {
                 $leaveDetails[] = $leaveType . ' = ' . $this->inHospital;
-            }
-            if ($leaveType === 'Out Patient') {
+            } elseif ($leaveType === 'Out Patient') {
                 $leaveDetails[] = $leaveType . ' = ' . $this->outPatient;
-            }
-            if ($leaveType === 'Women Special Illness') {
+            } elseif ($leaveType === 'Women Special Illness') {
                 $leaveDetails[] = $leaveType . ' = ' . $this->specialIllnessForWomen;
-            }
-            if ($leaveType === 'Completion of Masters Degree') {
-                $leaveDetails[] = $leaveType;
-            }
-            if ($leaveType === 'BAR/Board Examination Review') {
-                $leaveDetails[] = $leaveType;
-            }
-            if ($leaveType === 'Monetization of Leave Credits') {
-                $leaveDetails[] = $leaveType;
-            }
-            if ($leaveType === 'Terminal Leave') {
+            } elseif ($leaveType === 'Completion of Masters Degree' ||
+                      $leaveType === 'BAR/Board Examination Review' ||
+                      $leaveType === 'Monetization of Leave Credits' ||
+                      $leaveType === 'Terminal Leave') {
                 $leaveDetails[] = $leaveType;
             }
         }
