@@ -58,7 +58,7 @@ class AdminDtrTable extends Component
     public function render()
     {
 
-        // sleep(1);
+        sleep(3);
         $query = EmployeesDtr::query()
             ->join('users', 'employees_dtr.user_id', '=', 'users.id')
             ->select('employees_dtr.*', 'users.name as user_name', 'users.emp_code');
