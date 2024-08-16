@@ -10,4 +10,5 @@ class LogIndex extends Component
     {
         return view('livewire.log-index');
     }
+
 }

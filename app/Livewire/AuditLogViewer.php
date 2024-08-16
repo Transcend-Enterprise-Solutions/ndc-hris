@@ -78,4 +78,12 @@ class AuditLogViewer extends Component
             'audits' => $audits,
         ]);
     }
+    public function placeholder()
+    {
+        return <<<'HTML'
+        <div class="flex w-full flex-col gap-2">
+            <livewire:skeleton/>
+        </div>
+        HTML;
+    }
 }

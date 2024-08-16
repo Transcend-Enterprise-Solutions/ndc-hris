@@ -1,6 +1,6 @@
 <div class="w-full flex justify-center">
     <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-md">
-        <h1 class="text-xl font-bold text-center text-black dark:text-white mb-6">Admin Daily Time Record</h1>
+        <h1 class="text-xl font-bold text-center text-black dark:text-white mb-6"></h1>
 
         <!-- Search and Date Range Picker Skeleton -->
         <div class="mb-6 flex flex-col sm:flex-row items-end justify-between gap-4">

@@ -155,18 +155,6 @@ class AdminDocRequestTable extends Component
             }
             $request->delete();
 
-            // Use updateOrCreate for notifications
-            Notification::updateOrCreate(
-                [
-                    'doc_request_id' => $request->id,
-                    'user_id' => $request->user_id,
-                ],
-                [
-                    'type' => 'deleted',
-                    'read' => false,
-                ]
-            );
-
             $this->dispatch('swal', [
                 'title' => 'Document Request Deleted!',
                 'icon' => 'success'
