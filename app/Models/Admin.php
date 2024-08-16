@@ -7,19 +7,20 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Auth\User as AuthenticatableUser;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 
-
-class Admin extends AuthenticatableUser implements Authenticatable
+class Admin extends AuthenticatableUser implements Authenticatable, Auditable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, AuditableTrait;
 
     protected $table = 'admin';
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
     protected $fillable = [
-        'user_id', 
-        'payroll_id', 
+        'user_id',
+        'payroll_id',
         'department',
         'office_division',
     ];
@@ -43,6 +44,29 @@ class Admin extends AuthenticatableUser implements Authenticatable
         'password' => 'hashed',
     ];
 
+    /**
+     * Attributes to include in the Audit.
+     *
+     * @var array
+     */
+    protected $auditInclude = [
+        'user_id',
+        'payroll_id',
+        'department',
+        'office_division',
+    ];
+
+    /**
+     * Audit events to record.
+     *
+     * @var array
+     */
+    protected $auditEvents = [
+        'created',
+        'updated',
+        'deleted',
+    ];
+
     public function scopeSearch($query, $term){
         $term = "%$term%";
         $query->where(function ($query) use ($term) {
@@ -63,6 +87,4 @@ class Admin extends AuthenticatableUser implements Authenticatable
                 ->orWhere('users.email', 'like', $term);
         });
     }
-
-
 }
