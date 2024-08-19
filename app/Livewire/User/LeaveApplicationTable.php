@@ -40,6 +40,8 @@ class LeaveApplicationTable extends Component
     public $files = [];
     public $other_leave;
 
+    public $start_date;
+    public $end_date;
     public $list_of_dates = [];
     public $new_date;
 
@@ -81,6 +83,9 @@ class LeaveApplicationTable extends Component
         $this->files = [];
         $this->list_of_dates = [];
         $this->new_date = null;
+        $this->new_date = null;
+        $this->start_date = null;
+        $this->end_date = null;
     }
 
     public function loadUserData()
@@ -122,7 +127,7 @@ class LeaveApplicationTable extends Component
             $this->list_of_dates[] = $this->new_date;
         }
 
-        $this->new_date = ''; // Reset the new_date input
+        $this->new_date = '';
     }
 
     public function submitLeaveApplication()
@@ -137,8 +142,14 @@ class LeaveApplicationTable extends Component
             'commutation' => 'required',
         ]);
 
+        if (empty($this->new_date)) {
+            $rules['start_date'] = 'required|date';
+            $rules['end_date'] = 'required|date|after_or_equal:start_date';
+        } else {
+            $rules['new_date'] = 'required|date';
+        }
+
         if (in_array('Others', $this->type_of_leave)) {
-            // Remove "Others" from the array
             $this->type_of_leave = array_filter($this->type_of_leave, function ($leave) {
                 return $leave !== 'Others';
             });
@@ -181,7 +192,17 @@ class LeaveApplicationTable extends Component
 
         $leaveDetailsString = implode(', ', $leaveDetails);
         $filePathsString = implode(',', $filePaths);
-        $datesString = implode(',', $this->list_of_dates);
+
+        if ($this->start_date && $this->end_date) {
+            $datesInRange = $this->list_of_dates;
+            if (in_array($this->start_date, $datesInRange) && in_array($this->end_date, $datesInRange)) {
+                $datesString = $this->start_date . ' - ' . $this->end_date;
+            } else {
+                $datesString = $this->start_date . ' - ' . $this->end_date . ',' . implode(',', $datesInRange);
+            }
+        } else {
+            $datesString = implode(',', $this->list_of_dates);
+        }
 
         $currentMonth = now()->month;
         $currentYear = now()->year;
@@ -266,6 +287,14 @@ class LeaveApplicationTable extends Component
         }
     }
 
+    public function removeDate($index)
+    {
+        unset($this->list_of_dates[$index]);
+
+        // Re-index the array to avoid issues with non-sequential keys
+        $this->list_of_dates = array_values($this->list_of_dates);
+    }
+
     public function resetForm()
     {
         $this->reset([
@@ -285,6 +314,8 @@ class LeaveApplicationTable extends Component
             'other_leave',
             'list_of_dates',
             'new_date',
+            'start_date',
+            'end_date',
         ]);
     }
 

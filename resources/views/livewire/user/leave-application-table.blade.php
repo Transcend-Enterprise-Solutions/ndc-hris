@@ -4,11 +4,6 @@
         Apply for Leave
     </button>
 
-    {{-- <button wire:click="openLeaveForm"
-        class="btn bg-emerald-200 dark:bg-emerald-500 hover:bg-emerald-600 text-gray-800 dark:text-white whitespace-nowrap mx-2 mb-2">
-        See Status of Application
-    </button> --}}
-
     {{-- Leave Application Table --}}
     <div class="w-full flex justify-center">
         <div class="flex justify-center w-full">
@@ -65,11 +60,13 @@
                                                     <td class="px-4 py-2 text-center">
                                                         {{ $leaveApplication->number_of_days }}</td>
                                                     <td class="px-4 py-2 text-center">
-                                                        {{ $leaveApplication->list_of_dates }}</td>
+                                                        {{ \Illuminate\Support\Str::limit($leaveApplication->list_of_dates, 10, '...') }}
+                                                    </td>
                                                     <td class="px-4 py-2 text-center">
                                                         {{ $leaveApplication->approved_days ?? 'N/A' }}</td>
                                                     <td class="px-4 py-2 text-center">
-                                                        {{ $leaveApplication->approved_dates ?? 'N/A' }}</td>
+                                                        {{ \Illuminate\Support\Str::limit($leaveApplication->approved_dates, 10, '...') ?? 'N/A' }}
+                                                    </td>
                                                     <td class="px-4 py-2 text-center">
                                                         <span
                                                             class="inline-block px-3 py-1 text-sm font-semibold 
@@ -174,7 +171,7 @@
                         <label class="text-md text-gray-700 dark:text-slate-100">Vacation Leave</label>
                     </div>
                     <div class="gap-2 columns-1">
-                        <input type="checkbox" value="Mandatory/Forced Leave" wire:model="type_of_leave">
+                        <input type="checkbox" value="Mandatory/Forced Leave" wire:model.live="type_of_leave">
                         <label class="text-md text-gray-700 dark:text-slate-100">Mandatory/Forced Leave</label>
                     </div>
                     <div class="gap-2 columns-1">
@@ -182,11 +179,11 @@
                         <label class="text-md text-gray-700 dark:text-slate-100">Sick Leave</label>
                     </div>
                     <div class="gap-2 columns-1">
-                        <input type="checkbox" value="Maternity Leave" wire:model="type_of_leave">
+                        <input type="checkbox" value="Maternity Leave" wire:model.live="type_of_leave">
                         <label class="text-md text-gray-700 dark:text-slate-100">Maternity Leave</label>
                     </div>
                     <div class="gap-2 columns-1">
-                        <input type="checkbox" value="Paternity Leave" wire:model="type_of_leave">
+                        <input type="checkbox" value="Paternity Leave" wire:model.live="type_of_leave">
                         <label class="text-md text-gray-700 dark:text-slate-100">Paternity Leave</label>
                     </div>
                     <div class="gap-2 columns-1">
@@ -194,7 +191,7 @@
                         <label class="text-md text-gray-700 dark:text-slate-100">Special Privilege Leave</label>
                     </div>
                     <div class="gap-2 columns-1">
-                        <input type="checkbox" value="Solo Parent Leave" wire:model="type_of_leave">
+                        <input type="checkbox" value="Solo Parent Leave" wire:model.live="type_of_leave">
                         <label class="text-md text-gray-700 dark:text-slate-100">Solo Parent Leave</label>
                     </div>
                     <div class="gap-2 columns-1">
@@ -202,11 +199,11 @@
                         <label class="text-md text-gray-700 dark:text-slate-100">Study Leave</label>
                     </div>
                     <div class="gap-2 columns-1">
-                        <input type="checkbox" value="10-Day VAWC Leave" wire:model="type_of_leave">
+                        <input type="checkbox" value="10-Day VAWC Leave" wire:model.live="type_of_leave">
                         <label class="text-md text-gray-700 dark:text-slate-100">10-Day VAWC Leave</label>
                     </div>
                     <div class="gap-2 columns-1">
-                        <input type="checkbox" value="Rehabilitation Privilege" wire:model="type_of_leave">
+                        <input type="checkbox" value="Rehabilitation Privilege" wire:model.live="type_of_leave">
                         <label class="text-md text-gray-700 dark:text-slate-100">Rehabilitation Privilege</label>
                     </div>
                     <div class="gap-2 columns-1">
@@ -216,12 +213,13 @@
                             Women</label>
                     </div>
                     <div class="gap-2 columns-1">
-                        <input type="checkbox" value="Special Emergency (Calamity) Leave" wire:model="type_of_leave">
+                        <input type="checkbox" value="Special Emergency (Calamity) Leave"
+                            wire:model.live="type_of_leave">
                         <label class="text-md text-gray-700 dark:text-slate-100">Special Emergency (Calamity)
                             Leave</label>
                     </div>
                     <div class="gap-2 columns-1">
-                        <input type="checkbox" value="Adoption Leave" wire:model="type_of_leave">
+                        <input type="checkbox" value="Adoption Leave" wire:model.live="type_of_leave">
                         <label class="text-md text-gray-700 dark:text-slate-100">Adoption Leave</label>
                     </div>
 
@@ -261,7 +259,6 @@
                         </div>
                     </div>
 
-                    {{-- For Vacation Leave or Special Privilege Leave --}}
                     @if (in_array('Vacation Leave', $type_of_leave) || in_array('Special Privilege Leave', $type_of_leave))
                         <div
                             class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
@@ -292,7 +289,6 @@
                         </div>
                     @endif
 
-                    {{-- For Sick Leave --}}
                     @if (in_array('Sick Leave', $type_of_leave))
                         <div
                             class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
@@ -324,7 +320,6 @@
                         </div>
                     @endif
 
-                    {{-- For Special Leave Benefits for Women --}}
                     @if (in_array('Special Leave Benefits for Women', $type_of_leave))
                         <div
                             class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
@@ -343,7 +338,6 @@
                         </div>
                     @endif
 
-                    {{-- For Study Leave --}}
                     @if (in_array('Study Leave', $type_of_leave))
                         <div
                             class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
@@ -383,23 +377,62 @@
                                     required!</span>
                             @enderror
                         </div>
-                        <div class="gap-2 columns-1 mt-2">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-slate-100">List of
-                                Dates</label>
-                            <div class="gap-2 columns-2">
-                                <input type="date" wire:model="new_date"
+
+                        @if (in_array('Study Leave', $type_of_leave) ||
+                                in_array('Maternity Leave', $type_of_leave) ||
+                                in_array('Rehabilitation Privilege', $type_of_leave) ||
+                                in_array('Special Leave Benefits for Women', $type_of_leave))
+                            <div class="gap-2 columns-1 mt-2">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-100">Start
+                                    date</label>
+                                <input type="date" id="start_date" wire:model="start_date"
                                     class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
-                                <button><i
-                                        class="bi bi-plus-square dark:text-slate-50 text-slate-900 hover:text-slate-400"
-                                        wire:click="addDate" style="font-size: 2rem;"></i></button>
+                                @error('start_date')
+                                    <span class="text-red-500 text-sm">Please set a start date!</span>
+                                @enderror
+
+                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-100 mt-2">End
+                                    date</label>
+                                <input type="date" id="end_date" wire:model="end_date"
+                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                @error('end_date')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
                             </div>
-                        </div>
+                        @endif
+
+                        @if (in_array('Vacation Leave', $type_of_leave) ||
+                                in_array('Sick Leave', $type_of_leave) ||
+                                in_array('Paternity Leave', $type_of_leave) ||
+                                in_array('Special Privilege Leave', $type_of_leave) ||
+                                in_array('Mandatory/Forced Leave', $type_of_leave) ||
+                                in_array('Solo Parent Leave', $type_of_leave) ||
+                                in_array('10-Day VAWC Leave', $type_of_leave) ||
+                                in_array('Special Emergency (Calamity) Leave', $type_of_leave) ||
+                                in_array('Adoption Leave', $type_of_leave))
+                            <div class="gap-2 columns-1 mt-2">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-100">List of
+                                    Dates</label>
+                                <div class="gap-2 columns-2">
+                                    <input type="date" wire:model="new_date"
+                                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                    <button><i
+                                            class="bi bi-plus-square dark:text-slate-50 text-slate-900 hover:text-slate-400"
+                                            wire:click="addDate" style="font-size: 2rem;"></i></button>
+                                </div>
+                            </div>
+                        @endif
 
                         <div class="gap-2 columns-1 mt-2">
                             <ul>
-                                @foreach ($list_of_dates as $date)
-                                    <li class="dark:text-slate-50 text-slate-900"><i
-                                            class="bi bi-check-lg pr-4 text-green-600"></i>{{ $date }}</li>
+                                @foreach ($list_of_dates as $index => $date)
+                                    <li class="dark:text-slate-50 text-slate-900 flex items-center">
+                                        <i class="bi bi-check-lg pr-4 text-green-600"></i>{{ $date }}
+                                        <button wire:click="removeDate({{ $index }})"
+                                            class="ml-4 text-red-600">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </li>
                                 @endforeach
                             </ul>
 
