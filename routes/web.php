@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataFeedController;
 use App\Http\Controllers\DashboardController;
+use App\Livewire\AuditLogViewer;
+use App\Livewire\LogIndex;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
@@ -22,6 +24,8 @@ Route::get('/register', function () {
     return view('registeraccount'); })->name('register');
 
 
+
+
 /* Super Admin and HR account role */
 Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
     Route::get('/org-management', function () {
@@ -36,6 +40,10 @@ Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
         return view('livewire.admin.admin-schedule'); })->name('/employee-management/admin-schedule');
     Route::get('/report-generation', function () {
         return view('livewire.admin.report-generation'); })->name('report-generation');
+    Route::get('/audit-logs', function () {
+        return view('livewire.log-index'); })->name('audit-log-viewer');
+
+
 });
 
 /* Super Admin, HR, Supervisor, and Payroll account role */
@@ -104,11 +112,11 @@ Route::middleware(['auth', 'checkrole:emp'])->group(function () {
 
 Route::get('/signature/{filename}', function ($filename) {
     $path = 'signatures/' . $filename;
-    
+
     if (!Storage::disk('public')->exists($path)) {
         abort(404);
     }
-    
+
     $file = Storage::disk('public')->get($path);
     $type = File::mimeType(storage_path('app/public/' . $path));
 

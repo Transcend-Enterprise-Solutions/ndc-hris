@@ -149,14 +149,14 @@
                     <div class="flex justify-left items-center">
                         <h3 class="text-sm font-semibold text-green-800 dark:text-gray-100">
                             @if($month)
-                                Employee Document Requests for {{ $month ? \Carbon\Carbon::parse($month)->format('F Y') : '' }}
+                                Employee Document Requests for {{ $docRequestMonth ? \Carbon\Carbon::parse($docRequestMonth)->format('F Y') : '' }}
                             @else
                                 Employee Document Requests This Month
                             @endif
                         </h3>
                     </div>
                     <div class="w-full sm:w-auto flex items-center relative">
-                        <input type="month" id="doc_request_month" wire:model.live='month' value="{{ $month }}"
+                        <input type="month" id="doc_request_month" wire:model.live='docRequestMonth' value="{{ $docRequestMonth }}"
                         class="px-2 py-1.5 block w-32 sm:text-sm border border-green-800 rounded-md
                             text-green-800 dark:bg-gray-200 cursor-pointer">
 

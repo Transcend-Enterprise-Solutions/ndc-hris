@@ -17,6 +17,7 @@ class HeadCount extends Component
 {
     public $date;
     public $month;
+    public $docRequestMonth;
 
     public function render()
     {
@@ -25,12 +26,12 @@ class HeadCount extends Component
         $newEmployeesThisMonth = User::where('user_role', 'emp');
         if ($this->month) {
             $date = Carbon::createFromFormat('Y-m', $this->month);
-            $newEmployeesThisMonth = User::where('user_role', 'emp')
+            $newEmployeesThisMonth = $newEmployeesThisMonth
                 ->whereYear('created_at', $date->year)
                 ->whereMonth('created_at', $date->month)
                 ->count();
         } else {
-            $newEmployeesThisMonth = User::where('user_role', 'emp')
+            $newEmployeesThisMonth = $newEmployeesThisMonth
                 ->whereYear('created_at', Carbon::now()->year)
                 ->whereMonth('created_at', Carbon::now()->month)
                 ->count();
@@ -42,20 +43,15 @@ class HeadCount extends Component
             ->groupBy('department')
             ->get();
 
-        $dailyAttendance = null;
-        if ($this->date) {
-            $dailyAttendance = EmployeesDtr::where('date', $this->date)
+        $dailyAttendance = $this->date ? EmployeesDtr::where('date', $this->date)
                             ->where(function ($query) {
                                 $query->where('remarks', 'Present')
                                         ->orWhere('remarks', 'Late');
                             })
-                            ->count();
-        } else {
-            $dailyAttendance = 0;
-        }
+                            ->count() : 0;
 
-        $docRequestsCount = DocRequest::when($this->month, function ($query) {
-            $date = Carbon::createFromFormat('Y-m', $this->month);
+        $docRequestsCount = DocRequest::when($this->docRequestMonth, function ($query) {
+            $date = Carbon::createFromFormat('Y-m', $this->docRequestMonth);
             return $query->whereYear('date_requested', $date->year)
                          ->whereMonth('date_requested', $date->month);
         }, function ($query) {
@@ -125,7 +121,7 @@ class HeadCount extends Component
     public function exportDocRequests()
     {
         try {
-            $month = $this->month ? Carbon::createFromFormat('Y-m', $this->month)->format('Y-m') : now()->format('Y-m');
+            $month = $this->docRequestMonth ? Carbon::createFromFormat('Y-m', $this->docRequestMonth)->format('Y-m') : now()->format('Y-m');
             $filters = [
                 'month' => $month,
             ];

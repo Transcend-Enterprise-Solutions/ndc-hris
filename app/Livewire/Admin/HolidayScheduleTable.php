@@ -4,10 +4,12 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\Holiday;
+use Livewire\WithPagination;
 
 class HolidayScheduleTable extends Component
 {
-    public $holidays;
+    use WithPagination;
+
     public $holidayId;
     public $description;
     public $holiday_date;
@@ -25,12 +27,14 @@ class HolidayScheduleTable extends Component
 
     public function mount()
     {
-        $this->loadHolidays();
+        $this->resetPage(); // Ensure page resets when component is mounted
     }
 
     public function render()
     {
-        return view('livewire.admin.holiday-schedule-table');
+        return view('livewire.admin.holiday-schedule-table', [
+            'holidays' => $this->loadHolidays(),
+        ]);
     }
 
     public function openModal()
@@ -66,7 +70,6 @@ class HolidayScheduleTable extends Component
         ]);
 
         $this->closeModal();
-        $this->loadHolidays();
     }
 
     public function edit($id)
@@ -74,7 +77,7 @@ class HolidayScheduleTable extends Component
         $holiday = Holiday::findOrFail($id);
         $this->holidayId = $id;
         $this->description = $holiday->description;
-        $this->holiday_date = $holiday->holiday_date->format('Y-m-d'); // Ensure date is formatted as Y-m-d
+        $this->holiday_date = $holiday->holiday_date->format('Y-m-d');
         $this->type = $holiday->type;
         $this->isEditMode = true;
         $this->isModalOpen = true;
@@ -90,7 +93,6 @@ class HolidayScheduleTable extends Component
     {
         Holiday::find($this->holidayToDelete)->delete();
         $this->confirmingHolidayDeletion = false;
-        $this->loadHolidays();
         $this->dispatch('swal', [
             'title' => 'Holiday deleted successfully!',
             'icon' => 'success'
@@ -113,6 +115,6 @@ class HolidayScheduleTable extends Component
 
     private function loadHolidays()
     {
-        $this->holidays = Holiday::all();
+        return Holiday::paginate(10);
     }
 }
