@@ -67,14 +67,12 @@ class AdminLeaveRequestTable extends Component
             $this->validate([
                 'status' => 'required',
                 'days' => 'required|numeric|min:1',
-                // 'approvedStartDate' => 'required|date',
-                // 'approvedEndDate' => 'required|date|after_or_equal:approvedStartDate',
             ]);
-
-            // Validate leave balance
-            if (!$this->validateLeaveBalance($this->days)) {
-
-                return;
+    
+            if (in_array($this->selectedApplication->type_of_leave, ['Vacation Leave', 'Sick Leave', 'Special Privilege Leave'])) {
+                if (!$this->validateLeaveBalance($this->days)) {
+                    return;
+                }
             }
         } else {
             $this->validate([
@@ -82,7 +80,7 @@ class AdminLeaveRequestTable extends Component
                 'days' => 'required|numeric|min:1',
             ]);
         }
-
+    
         if ($this->selectedApplication) {
             if ($this->status === 'Other') {
                 $this->validate([
@@ -92,23 +90,35 @@ class AdminLeaveRequestTable extends Component
                 $this->selectedApplication->status = "Other";
                 $this->selectedApplication->remarks = $this->otherReason;
             } else {
-                $this->selectedApplication->status = $this->status === 'With Pay' ? 'Approved' : 'Approved';
+                $this->selectedApplication->status = 'Approved';
                 $this->selectedApplication->approved_days = $this->days;
-                // $this->selectedApplication->approved_start_date = $this->approvedStartDate;
-                // $this->selectedApplication->approved_end_date = $this->approvedEndDate;
                 $this->selectedApplication->remarks = $this->status === 'With Pay' ? 'With Pay' : 'Without Pay';
-                $this->updateLeaveDetails($this->days, $this->status);
+    
+                $allApprovedDates = [];
+
+                foreach ($this->selectedDates as $date) {
+                    if (strpos($date, ' - ') !== false) {
+                        $range = explode(' - ', $date);
+                        $allApprovedDates = array_merge($allApprovedDates, $range);
+                    } else {
+                        $allApprovedDates[] = $date;
+                    }
+                }
+
+                $this->selectedApplication->approved_dates = implode(',', $allApprovedDates);
+    
+                if (in_array($this->selectedApplication->type_of_leave, ['Vacation Leave', 'Sick Leave', 'Special Privilege Leave'])) {
+                    $this->updateLeaveDetails($this->days, $this->status);
+                }
             }
-
-            $this->selectedApplication->approved_dates = implode(',', $this->selectedDates);
-
+    
             $this->selectedApplication->save();
-
+    
             $this->dispatch('swal', [
                 'title' => "Leave application {$this->status} successfully!",
                 'icon' => 'success'
             ]);
-
+    
             $this->closeApproveModal();
         }
     }

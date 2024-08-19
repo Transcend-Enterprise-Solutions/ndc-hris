@@ -8,7 +8,8 @@ use App\Models\PhilippineProvinces;
 use App\Models\PhilippineCities;
 use App\Models\PhilippineBarangays;
 use App\Models\PhilippineRegions;
-// use App\Models\EmployeesChildren;
+use App\Models\EmployeesLeaves;
+use Carbon\Carbon;
 
 class Registration extends Component
 {
@@ -141,6 +142,18 @@ class Registration extends Component
             'user_role' => 'emp',
             'active_status' => $this->active_status,
             'emp_code' => $this->emp_code,
+        ]);
+
+        $employeesLeaves = EmployeesLeaves::create([
+            'user_id' => $user->id,
+            'paternity' => 7,
+            'study' => Carbon::now()->addMonths(6)->diffInDays(Carbon::now()), // 6 months to days
+            'maternity' => 105,
+            'solo_parent' => 7,
+            'vawc' => 10,
+            'rehabilitation' => Carbon::now()->addMonths(6)->diffInDays(Carbon::now()), // 6 months to days
+            'leave_for_women' => Carbon::now()->addMonths(2)->diffInDays(Carbon::now()), // 2 months to days
+            'emergency_leave' => 5,
         ]);
 
         $user->userData()->create([
