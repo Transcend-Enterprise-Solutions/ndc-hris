@@ -239,22 +239,24 @@ x-cloak>
 
                                                         <div class="w-full sm:w-auto block relative">
                                                             @foreach ($positions as $item)
-                                                                <div class="flex justify-between items-center w-full py-1.5">
-                                                                    <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400">{{ $item->position }}</h3>
-                                                                    <div class="relative">
-                                                                        <button wire:click="toggleEditSettings({{ $item->id }}, 'position')" 
-                                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                                            focus:outline-none" title="Edit">
-                                                                            <i class="fas fa-pencil-alt"></i>
-                                                                        </button>
-                                                                        <button wire:click="toggleDeleteSettings({{ $item->id }}, 'position')" 
-                                                                            class=" text-red-600 hover:text-red-900 dark:text-red-600 
-                                                                            dark:hover:text-red-900" title="Delete">
-                                                                            <i class="fas fa-trash"></i>
-                                                                        </button>
+                                                                @if($item->position != "Super Admin")
+                                                                    <div class="flex justify-between items-center w-full py-1.5">
+                                                                        <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400">{{ $item->position }}</h3>
+                                                                        <div class="relative">
+                                                                            <button wire:click="toggleEditSettings({{ $item->id }}, 'position')" 
+                                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                                focus:outline-none" title="Edit">
+                                                                                <i class="fas fa-pencil-alt"></i>
+                                                                            </button>
+                                                                            <button wire:click="toggleDeleteSettings({{ $item->id }}, 'position')" 
+                                                                                class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                                dark:hover:text-red-900" title="Delete">
+                                                                                <i class="fas fa-trash"></i>
+                                                                            </button>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
+                                                                @endif
                                                             @endforeach
                                                         </div>
                                                     </div>
