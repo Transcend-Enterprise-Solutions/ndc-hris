@@ -35,33 +35,33 @@ class GeneralPayrollTable extends Component
     public $columns = [
         'name' => true,
         'emp_code' => true,
-        'office_division' => false,
-        'position' => false,
-        'sg_step' => false,
-        'rate_per_month' => false,
-        'personal_economic_relief_allowance' => false,
-        'gross_amount' => false,
-        'additional_gsis_premium' => false,
-        'lbp_salary_loan' => false,
-        'nycea_deductions' => false,
-        'sc_membership' => false,
-        'total_loans' => false,
-        'salary_loan' => false,
-        'policy_loan' => false,
-        'eal' => false,
-        'emergency_loan' => false,
-        'mpl' => false,
-        'housing_loan' => false,
-        'ouli_prem' => false,
-        'gfal' => false,
-        'cpl' => false,
-        'pagibig_mpl' => false,
-        'other_deduction_philheath_diff' => false,
-        'life_retirement_insurance_premiums' => false,
-        'pagibig_contribution' => false,
-        'w_holding_tax' => false,
-        'philhealth' => false,
-        'total_deduction' => false,
+        'office_division' => true,
+        'position' => true,
+        'sg_step' => true,
+        'rate_per_month' => true,
+        'personal_economic_relief_allowance' => true,
+        'gross_amount' => true,
+        'additional_gsis_premium' => true,
+        'lbp_salary_loan' => true,
+        'nycea_deductions' => true,
+        'sc_membership' => true,
+        'total_loans' => true,
+        'salary_loan' => true,
+        'policy_loan' => true,
+        'eal' => true,
+        'emergency_loan' => true,
+        'mpl' => true,
+        'housing_loan' => true,
+        'ouli_prem' => true,
+        'gfal' => true,
+        'cpl' => true,
+        'pagibig_mpl' => true,
+        'other_deduction_philheath_diff' => true,
+        'life_retirement_insurance_premiums' => true,
+        'pagibig_contribution' => true,
+        'w_holding_tax' => true,
+        'philhealth' => true,
+        'total_deduction' => true,
         'net_amount_received' => true,
         'amount_due_first_half' => true,
         'amount_due_second_half' => true,
@@ -264,33 +264,43 @@ class GeneralPayrollTable extends Component
             $this->startDateSecondHalf = $carbonDate->copy()->day(16)->toDateString();
             $this->endDateSecondHalf = $carbonDate->endOfMonth()->toDateString();
 
-            $generalPayrollQuery = GeneralPayroll::where('date', $this->startDateFirstHalf)
-                                ->join('payrolls', 'general_payroll.user_id', '=', 'payrolls.user_id')
-                                ->select('payrolls.*', 
-                                    'general_payroll.net_amount_received as total_amount_due', 
-                                    'general_payroll.amount_due_first_half as net_amount_due_first_half', 
-                                    'general_payroll.gross_salary_less', 
-                                    'general_payroll.late_absences', 
-                                    'general_payroll.others', 
-                                    'general_payroll.total_earnings', 
-                                    'general_payroll.amount_due_second_half as net_amount_due_second_half')
-                                ->when($this->search2, function ($query) {
-                                    return $query->search(trim($this->search2));
-                                });
-            if($this->endMonth){
-                $carbonEndMonth = Carbon::createFromFormat('Y-m', $this->endMonth);
-                $endDateEndMonth = $carbonEndMonth->endOfMonth()->toDateString();
-                $generalPayrollQuery->orWhereBetween('date', [$this->startDateFirstHalf, $endDateEndMonth]);
-            }
+            $payrolls = User::when($this->search, function ($query) {
+                    return $query->search(trim($this->search));
+                })
+                ->join('payrolls', 'payrolls.user_id', 'users.id')
+                ->join('positions', 'positions.id', 'users.position_id')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
+                ->get()
+                ->map(function ($payroll) {
+                    $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
+                    $half_amount = $net_amount_received / 2;
+                    $half_amount = $net_amount_received / 2;
+                
+                    $amount_due_second_half = floor($half_amount);
+                    $amount_due_first_half = $net_amount_received - $amount_due_second_half;
 
-            if($generalPayrollQuery->exists()){
-                $payrolls = $generalPayrollQuery->paginate(10);
-                $this->hasPayroll = true;
-            }else{
-                $payrolls = $this->getGenPayroll()->paginate(10);
-                $this->employeePayslip = $this->getGenPayroll()->get();
-                $this->hasPayroll = false;
-            }
+                    $payroll->net_amount_received = $net_amount_received;
+                    $payroll->amount_due_first_half = $amount_due_first_half;
+                    $payroll->amount_due_second_half = $amount_due_second_half;
+
+                    return $payroll;
+                });
+           
+            // if($this->endMonth){
+            //     $carbonEndMonth = Carbon::createFromFormat('Y-m', $this->endMonth);
+            //     $endDateEndMonth = $carbonEndMonth->endOfMonth()->toDateString();
+            //     $generalPayrollQuery->orWhereBetween('date', [$this->startDateFirstHalf, $endDateEndMonth]);
+            // }
+
+            // if($generalPayrollQuery->exists()){
+            //     $payrolls = $generalPayrollQuery->paginate(10);
+            //     $this->hasPayroll = true;
+            // }else{
+            //     $payrolls = $this->getGenPayroll()->paginate(10);
+            //     $this->employeePayslip = $this->getGenPayroll()->get();
+            //     $this->hasPayroll = false;
+            // }
         }
 
         if($this->monthRange == false){
@@ -418,9 +428,10 @@ class GeneralPayrollTable extends Component
     
     public function exportExcel()
     {
-        $signatories = Payrolls::join('signatories', 'signatories.user_id', 'payrolls.user_id')
+        $signatories = User::join('signatories', 'signatories.user_id', 'users.id')
+            ->join('positions', 'positions.id', 'users.position_id')
             ->where('signatories.signatory_type', 'plantilla_payroll')
-            ->get();
+            ->select('users.name', 'positions.position', 'signatories.*');
         
         if($this->startMonth == null){
             $this->dispatch('swal', [
@@ -441,7 +452,7 @@ class GeneralPayrollTable extends Component
         if(!$this->endMonth){
             $this->endMonth = $this->startMonth;
         }
-    
+
         $filters = [
             'search' => $this->search,
             'startMonth' => $this->startMonth,
@@ -468,14 +479,31 @@ class GeneralPayrollTable extends Component
             $carbonDate = Carbon::createFromFormat('Y-m', $this->startMonth);
             $date = $carbonDate->startOfMonth()->toDateString();
 
-            $payroll = Payrolls::where('user_id', $userId)->first();
-            $generalPayroll = GeneralPayroll::where('user_id', $userId)
-                                ->where('date', $date)
-                                ->first();
-                                
+            $payroll = User::where('users.id', $userId)
+                ->join('payrolls', 'payrolls.user_id', 'users.id')
+                ->join('positions', 'positions.id', 'users.position_id')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
+                ->get()
+                ->map(function ($p) {
+                    $net_amount_received = $p->gross_amount - $p->total_deduction;
+                    $half_amount = $net_amount_received / 2;
+            
+                    $amount_due_second_half = floor($half_amount);
+                    $amount_due_first_half = $net_amount_received - $amount_due_second_half;
+            
+                    $p->net_amount_received = $net_amount_received;
+                    $p->amount_due_first_half = $amount_due_first_half;
+                    $p->amount_due_second_half = $amount_due_second_half;
+            
+                    return $p;
+                });
+            
+            $payroll = $payroll->first(); 
+          
             if ($payroll) {
                 $this->name = $payroll->name;
-                $this->employee_number = $payroll->employee_number;
+                $this->employee_number = $payroll->emp_code;
                 $this->office_division = $payroll->office_division;
                 $this->position = $payroll->position;
                 $this->sg_step = $payroll->sg_step;
@@ -503,35 +531,11 @@ class GeneralPayrollTable extends Component
                 $this->w_holding_tax = $payroll->w_holding_tax;
                 $this->philhealth = $payroll->philhealth;
                 $this->total_deduction = $payroll->total_deduction;
-                if($generalPayroll){
-                    $this->net_amount_received = $generalPayroll->net_amount_received;
-                    $this->amount_due_first_half = $generalPayroll->amount_due_first_half;
-                    $this->amount_due_second_half = $generalPayroll->amount_due_second_half;
-                }else{
-                    $thisPayroll = EmployeesPayroll::where('user_id', $userId)
-                                ->selectRaw("SUM(CASE
-                                                WHEN start_date >= ? AND end_date <= ?
-                                                THEN net_amount_due
-                                                ELSE 0
-                                            END) as net_amount_due_first_half", [$this->startDateFirstHalf, $this->endDateFirstHalf])
-                                ->selectRaw("SUM(CASE
-                                                WHEN start_date >= ? AND end_date <= ?
-                                                THEN net_amount_due
-                                                ELSE 0
-                                            END) as net_amount_due_second_half", [$this->startDateSecondHalf, $this->endDateSecondHalf])
-                                ->selectRaw("SUM(net_amount_due) as total_amount_due")
-                                ->where(function ($query) {
-                                    $query->where('start_date', '>=', $this->startDateFirstHalf)
-                                        ->where('end_date', '<=', $this->endDateSecondHalf);
-                                })
-                                ->groupBy('user_id')
-                                ->first();
-                    $this->net_amount_received = $thisPayroll->total_amount_due;
-                    $this->amount_due_first_half = $thisPayroll->net_amount_due_first_half;
-                    $this->amount_due_second_half = $thisPayroll->net_amount_due_second_half;
-                }
+                $this->net_amount_received = $payroll->net_amount_received;
+                $this->amount_due_first_half = $payroll->amount_due_first_half;
+                $this->amount_due_second_half = $payroll->amount_due_second_half;
+
             } else {
-                // If no payroll exists, you might want to reset all fields
                 $this->resetPayrollFields();
             }
         } catch (Exception $e) {
@@ -679,26 +683,29 @@ class GeneralPayrollTable extends Component
                         ->where('signatories.signatory_type', 'plantilla_payslip')
                         ->where('signatories.signatory', 'Noted By')
                         ->select('users.name', 'positions.*', 'signatories.*')
-                        ->get();
+                        ->first();
                     
-                $payslip = null;
-                if ($this->hasPayroll) {
-                        $payslip = GeneralPayroll::where('general_payroll.user_id', $userId)
-                                ->where('date', $this->startDateFirstHalf)
-                                ->join('payrolls', 'general_payroll.user_id', '=', 'payrolls.user_id')
-                                ->select('payrolls.*', 
-                                    'general_payroll.net_amount_received as total_amount_due', 
-                                    'general_payroll.amount_due_first_half as net_amount_due_first_half',
-                                    'general_payroll.gross_salary_less', 
-                                    'general_payroll.late_absences', 
-                                    'general_payroll.leave_without_pay', 
-                                    'general_payroll.others', 
-                                    'general_payroll.total_earnings',  
-                                    'general_payroll.amount_due_second_half as net_amount_due_second_half')
-                                ->first();
-                } else {
-                    $payslip = $this->employeePayslip->where('user_id', $userId)->first();
-                }
+                $payslip = User::where('users.id', $userId)
+                    ->join('payrolls', 'payrolls.user_id', 'users.id')
+                    ->join('positions', 'positions.id', 'users.position_id')
+                    ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                    ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
+                    ->get()
+                    ->map(function ($p) {
+                        $net_amount_received = $p->gross_amount - $p->total_deduction;
+                        $half_amount = $net_amount_received / 2;
+
+                        $amount_due_second_half = floor($half_amount);
+                        $amount_due_first_half = $net_amount_received - $amount_due_second_half;
+
+                        $p->net_amount_received = $net_amount_received;
+                        $p->amount_due_first_half = $amount_due_first_half;
+                        $p->amount_due_second_half = $amount_due_second_half;
+
+                        return $p;
+                    });
+
+                $payslip = $payslip->first(); 
 
                 $dates = [
                     'startDateFirstHalf' => $this->startDateFirstHalf,
@@ -721,7 +728,7 @@ class GeneralPayrollTable extends Component
                 // Generate temporary paths for signatures
                 $preparedBySignaturePath = $this->getTemporarySignaturePath($preparedBy);
                 $signatoriesSignaturePath = $this->getTemporarySignaturePath($signatories);
-                
+
                 if ($payslip) {
                     $pdf = Pdf::loadView('pdf.monthly-payslip', [
                         'preparedBy' => $preparedBy,
@@ -749,6 +756,7 @@ class GeneralPayrollTable extends Component
                 'title' => 'Unable to export payslip: ' . $e->getMessage(),
                 'icon' => 'error'
             ]);
+            throw $e;
         }
     }
 

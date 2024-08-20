@@ -27,10 +27,13 @@
     @php
         $formatCurrency = function($value) {
             if($value == null){
-                return '-';
+                return '₱ 0.00';
             }
             return '₱ ' . number_format((float)$value, 2, '.', ',');
         };
+
+        $gross_earnings = $payslip->rate_per_month - $payslip->late_absences;
+        $total_earnings = $gross_earnings + $payslip->personal_economic_relief_allowance;
     @endphp
 
     <div class="container">
@@ -75,7 +78,7 @@
                     <td width="20%">Position:</td>
                     <td width="30%">{{ $payslip->position }}</td>
                     <td width="15%">Employee No: </td>
-                    <td width="20%">{{ $payslip->employee_number }}</td>
+                    <td width="20%">{{ $payslip->emp_code }}</td>
                     <td width="10%">Acct. No: </td>
                     <td></td>
                 </tr>
@@ -104,7 +107,7 @@
                 <tr>
                     <td class="dots">Gross Earnings........................................................................................................................
                     </td>
-                    <td class="currency" width="30%" style="border-top: 1px solid black;">{{ $formatCurrency($payslip->gross_salary_less) }}</td>
+                    <td class="currency" width="30%" style="border-top: 1px solid black;">{{ $formatCurrency($gross_earnings) }}</td>
                 </tr>
                 <tr>
                     <td class="dots">PERA......................................................................................................................................
@@ -118,7 +121,7 @@
                 </tr>
                 <tr>
                     <td class="dots" style="text-align: right !important; padding-right: 20px; font-weight:bold;">Total Earnings</td>
-                    <td class="currency" width="30%" style="border-bottom: 1px solid black; font-weight:bold; border-top: 1px solid black;">{{ $formatCurrency($payslip->total_earnings) }}</td>
+                    <td class="currency" width="30%" style="border-bottom: 1px solid black; font-weight:bold; border-top: 1px solid black;">{{ $formatCurrency($total_earnings) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -304,7 +307,7 @@
                     <td width="20%"></td>
                     <td width="20%" style="font-weight:bold;">NET PAY</td>
                     <td width="40%"></td>
-                    <td class="currency" width="20%" style="border-bottom: 1px solid black; font-weight:bold;">{{ $formatCurrency($payslip->total_amount_due) }}</td>
+                    <td class="currency" width="20%" style="border-bottom: 1px solid black; font-weight:bold;">{{ $formatCurrency($payslip->net_amount_received) }}</td>
                 </tr>
                 <tr>
                     <td width="20%"></td>
@@ -315,7 +318,7 @@
                         {{ $dates['endDateSecondHalf'] ? \Carbon\Carbon::parse($dates['startDateSecondHalf'])->format('d') : '' }}
                         {{ $dates['startDateFirstHalf'] ? \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('Y') : '' }} 
                     </td>
-                    <td class="currency" width="20%" style="border-bottom: 1px solid black;">{{ $formatCurrency($payslip->net_amount_due_first_half) }}</td>
+                    <td class="currency" width="20%" style="border-bottom: 1px solid black;">{{ $formatCurrency($payslip->amount_due_first_half) }}</td>
                 </tr>
                 <tr>
                     <td width="20%"></td>
@@ -326,7 +329,7 @@
                         {{ $dates['endDateSecondHalf'] ? \Carbon\Carbon::parse($dates['endDateSecondHalf'])->format('d') : '' }}
                         {{ $dates['startDateFirstHalf'] ? \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('Y') : '' }} 
                     </td>
-                    <td class="currency" width="20%" style="border-bottom: 1px solid black;">{{ $formatCurrency($payslip->net_amount_due_second_half) }}</td>
+                    <td class="currency" width="20%" style="border-bottom: 1px solid black;">{{ $formatCurrency($payslip->amount_due_second_half) }}</td>
                 </tr>
             </tbody>
         </table>

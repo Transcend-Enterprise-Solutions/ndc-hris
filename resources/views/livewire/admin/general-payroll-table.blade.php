@@ -340,7 +340,7 @@ x-cloak>
                     </div>
 
                     <!-- Sort Dropdown -->
-                    <div class="mr-0 sm:mr-4 relative" x-data="{ open: false }" @click.outside="open = false">
+                    {{-- <div class="mr-0 sm:mr-4 relative" x-data="{ open: false }" @click.outside="open = false">
                         <button @click="open = !open"
                             class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                             justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
@@ -523,7 +523,7 @@ x-cloak>
                                 </li>
                             </ul>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <!-- Save Payroll -->
                     @if($hasPayroll == false)
@@ -762,9 +762,9 @@ x-cloak>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['w_holding_tax'] ? '' : 'hidden' }}">{{ currency_format($payroll->w_holding_tax) }}</td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['philhealth'] ? '' : 'hidden' }}">{{ currency_format($payroll->philhealth) }}</td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['total_deduction'] ? '' : 'hidden' }}">{{ currency_format($payroll->total_deduction) }}</td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->total_amount_due) }}</td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->net_amount_due_first_half) }}</td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->net_amount_due_second_half) }}</td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->net_amount_received) }}</td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->amount_due_first_half) }}</td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->amount_due_second_half) }}</td>
                                                 <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                     <div class="relative">
                                                         <button wire:click="viewPayroll({{ $payroll->user_id }})" 

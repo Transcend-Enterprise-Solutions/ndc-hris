@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\Payrolls;
 use App\Models\GeneralPayroll;
+use App\Models\User;
 use Exception;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -13,8 +14,12 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use Maatwebsite\Excel\Concerns\WithDrawings;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
-class GeneralPayrollExport implements WithEvents
+class GeneralPayrollExport implements WithEvents, WithDrawings
 {
     use Exportable;
 
@@ -23,6 +28,10 @@ class GeneralPayrollExport implements WithEvents
     protected $totalPayroll;
     protected $months;
     protected $currentRow = 1;
+
+    public function drawings(){
+        return [];
+    }
 
     public function __construct($filters){
         $this->filters = $filters;
@@ -359,27 +368,35 @@ class GeneralPayrollExport implements WithEvents
         $startDateFirstHalf = $carbonDate->copy()->startOfMonth()->toDateString();
         $endDateSecondHalf = $carbonDate->copy()->endOfMonth()->toDateString();
     
-        $query = Payrolls::query();
-    
+        $query = User::join('payrolls', 'payrolls.user_id', 'users.id')
+            ->join('positions', 'positions.id', 'users.position_id')
+            ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+            ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*');
+
         if (!empty($this->filters['search'])) {
             $query->where(function ($q) {
-                $q->where('name', 'LIKE', '%' . $this->filters['search'] . '%')
-                  ->orWhere('employee_number', 'LIKE', '%' . $this->filters['search'] . '%')
-                  ->orWhere('sg_step', 'LIKE', '%' . $this->filters['search'] . '%')
-                  ->orWhere('position', 'LIKE', '%' . $this->filters['search'] . '%');
+                $q->where('users.name', 'LIKE', '%' . $this->filters['search'] . '%')
+                ->orWhere('users.emp_code', 'LIKE', '%' . $this->filters['search'] . '%')
+                ->orWhere('payrolls.sg_step', 'LIKE', '%' . $this->filters['search'] . '%')
+                ->orWhere('positions.position', 'LIKE', '%' . $this->filters['search'] . '%')
+                ->orWhere('office_divisions.office_division', 'LIKE', '%' . $this->filters['search'] . '%');
             });
         }
-        
-        $generalPayrollQuery = GeneralPayroll::where('date', $startDateFirstHalf);
-        if($generalPayrollQuery->exists()){
-            $query->join('general_payroll', 'payrolls.user_id', '=', 'general_payroll.user_id')
-                  ->where('payrolls.position', '!=', 'Super Admin')
-                  ->where('date', $startDateFirstHalf);
-        } else {
-            $query = $this->getGenPayroll($startDateFirstHalf, $endDateSecondHalf);
-        }
-    
-        $data = $query->get();
+
+        $data = $query->get()->map(function ($payroll) {
+            $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
+            $half_amount = $net_amount_received / 2;
+            
+            $amount_due_second_half = floor($half_amount);
+            $amount_due_first_half = $net_amount_received - $amount_due_second_half;
+
+            $payroll->net_amount_received = $net_amount_received;
+            $payroll->amount_due_first_half = $amount_due_first_half;
+            $payroll->amount_due_second_half = $amount_due_second_half;
+
+            return $payroll;
+        });
+
         $totals = $data->reduce(function ($carry, $item) {
             $numericColumns = [
                 'rate_per_month', 'personal_economic_relief_allowance', 'gross_amount',
@@ -546,19 +563,36 @@ class GeneralPayrollExport implements WithEvents
         };
         $formattedAmount = number_format($this->totalPayroll, 2, '.', '');
         $startRow = $this->currentRow;
+        $imageOptions = [
+            'height' => 50,
+            'width' => 100
+        ];
+        $worksheet = $sheet->getDelegate();
 
-        $signatoryA = $this->filters['signatories']->where('signatory', 'A')->first();
-        $aName = $signatoryA ? $signatoryA->name : 'XXXXXXXXXX';
-        $aPosition = $signatoryA ? $signatoryA->position : 'XXXXXXXXXX';
-        $signatoryB = $this->filters['signatories']->where('signatory', 'B')->first();
-        $bName = $signatoryB ? $signatoryB->name : 'XXXXXXXXXX';
-        $bPosition = $signatoryB ? $signatoryB->position : 'XXXXXXXXXX';
-        $signatoryC = $this->filters['signatories']->where('signatory', 'C')->first();
-        $cName = $signatoryC ? $signatoryC->name : 'XXXXXXXXXX';
-        $cPosition = $signatoryC ? $signatoryC->position : 'XXXXXXXXXX';
-        $signatoryD = $this->filters['signatories']->where('signatory', 'D')->first();
-        $dName = $signatoryD ? $signatoryD->name : 'XXXXXXXXXX';
-        $dPosition = $signatoryD ? $signatoryD->position : 'XXXXXXXXXX';
+        $signatories = $this->filters['signatories']->get()->groupBy('signatory');
+        $getSignatoryInfo = function($key) use ($signatories) {
+            $signatory = $signatories->get($key, collect())->first();
+            return [
+                'name' => $signatory['name'] ?? 'XXXXXXXXXX',
+                'position' => $signatory['position'] ?? 'XXXXXXXXXX',
+                'signature' => $signatory['signature'] ?? null
+            ];
+        };
+        
+        $signatoryA = $getSignatoryInfo('A');
+        $signatoryB = $getSignatoryInfo('B');
+        $signatoryC = $getSignatoryInfo('C');
+        $signatoryD = $getSignatoryInfo('D');
+        
+        $aName = $signatoryA['name'];
+        $aPosition = $signatoryA['position'];
+        $bName = $signatoryB['name'];
+        $bPosition = $signatoryB['position'];
+        $cName = $signatoryC['name'];
+        $cPosition = $signatoryC['position'];
+        $dName = $signatoryD['name'];
+        $dPosition = $signatoryD['position'];
+        
         $date = now()->format("m/d/y");
 
         $iBorderLeftStart = $startRow;
@@ -580,7 +614,39 @@ class GeneralPayrollExport implements WithEvents
         $sheet->setCellValue("J{$startRow}", $formatCurrency($this->totalPayroll));
         $sheet->getStyle("J{$startRow}")->getFont()->setBold(true);
 
-        $startRow += 2;
+        // Signature A
+        $startRow++;
+        $sheet->mergeCells("A{$startRow}:E{$startRow}");
+        $signatureA = $this->getTemporarySignaturePath($signatoryA);
+        if ($signatureA) {
+            $drawingA = new Drawing();
+            $drawingA->setName('Signature A');
+            $drawingA->setDescription('Signature A');
+            $drawingA->setPath($signatureA);
+            $drawingA->setHeight($imageOptions['height']);
+            $drawingA->setWidth($imageOptions['width']);
+            $drawingA->setCoordinates("C{$startRow}");
+            $drawingA->setOffsetX(100);
+            $drawingA->setWorksheet($worksheet);
+        }
+
+        // Signature C
+        $sheet->mergeCells("K{$startRow}:O{$startRow}");
+        $signatureC = $this->getTemporarySignaturePath($signatoryC);
+        if ($signatureC) {
+            $drawingC = new Drawing();
+            $drawingC->setName('Signature C');
+            $drawingC->setDescription('Signature C');
+            $drawingC->setPath($signatureC);
+            $drawingC->setHeight($imageOptions['height']);
+            $drawingC->setWidth($imageOptions['width']);
+            $drawingC->setCoordinates("M{$startRow}");
+            $drawingC->setOffsetX(50);
+            $drawingC->setWorksheet($worksheet);
+        }
+        $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] - 2);
+
+        $startRow ++;
         $sheet->mergeCells("A{$startRow}:E{$startRow}");
         $sheet->setCellValue("A{$startRow}", $aName);
         $sheet->mergeCells("F{$startRow}:G{$startRow}");
@@ -624,11 +690,42 @@ class GeneralPayrollExport implements WithEvents
         $sheet->getStyle("B{$startRow}")->getFont()->setBold(true);
 
         $startRow++;
+        // Signature B
+        $sheet->mergeCells("A{$startRow}:E{$startRow}");
+        $signatureB = $this->getTemporarySignaturePath($signatoryB);
+        if ($signatureB) {
+            $drawingB = new Drawing();
+            $drawingB->setName('Signature A');
+            $drawingB->setDescription('Signature A');
+            $drawingB->setPath($signatureB);
+            $drawingB->setHeight($imageOptions['height']);
+            $drawingB->setWidth($imageOptions['width']);
+            $drawingB->setCoordinates("C{$startRow}");
+            $drawingB->setOffsetX(100);
+            $drawingB->setWorksheet($worksheet);
+        }
+
+        // Signature D
+        $sheet->mergeCells("K{$startRow}:O{$startRow}");
+        $signatureD = $this->getTemporarySignaturePath($signatoryD);
+        if ($signatureD) {
+            $drawingD = new Drawing();
+            $drawingD->setName('Signature D');
+            $drawingD->setDescription('Signature D');
+            $drawingD->setPath($signatureD);
+            $drawingD->setHeight($imageOptions['height']);
+            $drawingD->setWidth($imageOptions['width']);
+            $drawingD->setCoordinates("M{$startRow}");
+            $drawingD->setOffsetX(50);
+            $drawingD->setWorksheet($worksheet);
+        }
+        $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] / 2);
         $sheet->mergeCells("J{$startRow}:Q{$startRow}");
         $sheet->setCellValue("J{$startRow}", "");
         $sheet->mergeCells("AD{$startRow}:AF{$startRow}");
         $sheet->setCellValue("AD{$startRow}", "ORS/BURS No.:______________________");
         $sheet->getStyle("AD{$startRow}")->getFont()->setBold(true);
+
 
         $startRow++;
         $sheet->mergeCells("AD{$startRow}:AF{$startRow}");
@@ -812,6 +909,22 @@ class GeneralPayrollExport implements WithEvents
         }
     
         return $string;
+    }
+
+    private function getTemporarySignaturePath($signatory){
+        if ($signatory && isset($signatory['signature'])) {
+            $path = str_replace('public/', '', $signatory['signature']);
+            $originalPath = Storage::disk('public')->get($path);
+            $filename = str_replace('public/signatures/', '', $signatory['signature']);
+            $tempPath = public_path('temp/' . $filename);
+            if (!file_exists(dirname($tempPath))) {
+                mkdir(dirname($tempPath), 0755, true);
+            }
+            file_put_contents($tempPath, $originalPath);
+           
+            return $tempPath;
+        }
+        return null;
     }
     
 }
