@@ -69,7 +69,13 @@ class AdminLeaveRequestTable extends Component
                 'days' => 'required|numeric|min:1',
             ]);
     
-            if (in_array($this->selectedApplication->type_of_leave, ['Vacation Leave', 'Sick Leave', 'Special Privilege Leave'])) {
+            $leaveTypeColumns = $this->getLeaveTypeColumns($this->selectedApplication->type_of_leave);
+
+            if (!empty($leaveTypeColumns)) {
+                if (!$this->validateSpecificLeaveBalance($leaveTypeColumns, $this->days)) {
+                    return;
+                }
+            } elseif (in_array($this->selectedApplication->type_of_leave, ['Vacation Leave', 'Sick Leave', 'Special Privilege Leave'])) {
                 if (!$this->validateLeaveBalance($this->days)) {
                     return;
                 }
@@ -107,7 +113,9 @@ class AdminLeaveRequestTable extends Component
 
                 $this->selectedApplication->approved_dates = implode(',', $allApprovedDates);
     
-                if (in_array($this->selectedApplication->type_of_leave, ['Vacation Leave', 'Sick Leave', 'Special Privilege Leave'])) {
+                if (!empty($leaveTypeColumns)) {
+                    $this->updateSpecificLeaveDetails($leaveTypeColumns, $this->days);
+                } elseif (in_array($this->selectedApplication->type_of_leave, ['Vacation Leave', 'Sick Leave', 'Special Privilege Leave'])) {
                     $this->updateLeaveDetails($this->days, $this->status);
                 }
             }
@@ -266,5 +274,66 @@ class AdminLeaveRequestTable extends Component
         }
     }
 
+    private function getLeaveTypeColumns($leaveTypes)
+    {
+        $leaveTypes = is_array($leaveTypes) ? $leaveTypes : explode(',', $leaveTypes);
+        
+        $columnMap = [
+            'Study Leave' => 'study',
+            'Maternity Leave' => 'maternity',
+            'Rehabilitation Privilege' => 'rehabilitation',
+            'Paternity Leave' => 'paternity',
+            'Solo Parent Leave' => 'solo_parent',
+            '10-Day VAWC Leave' => 'vawc',
+            'Special Emergency (Calamity) Leave' => 'emergency_leave',
+            'Special Leave Benefits for Women' => 'leave_for_women',
+        ];
+    
+        $columns = [];
+        foreach ($leaveTypes as $leaveType) {
+            $leaveType = trim($leaveType);
+            if (isset($columnMap[$leaveType])) {
+                $columns[] = $columnMap[$leaveType];
+            }
+        }
+    
+        return $columns;
+    }
+
+    private function validateSpecificLeaveBalance($leaveTypeColumns, $days)
+    {
+        $employeesLeaves = $this->selectedApplication->user->employeesLeaves;
+    
+        if (!$employeesLeaves) {
+            $this->addError('days', "Employee leave record not found.");
+            return false;
+        }
+    
+        foreach ($leaveTypeColumns as $column) {
+            if ($employeesLeaves->{$column} < $days) {
+                $this->addError('days', "Insufficient {$column} leave days. Available: {$employeesLeaves->{$column}}");
+                return false;
+            }
+        }
+    
+        return true;
+    }
+    
+    private function updateSpecificLeaveDetails($leaveTypeColumns, $days)
+    {
+        $employeesLeaves = $this->selectedApplication->user->employeesLeaves;
+    
+        if ($employeesLeaves) {
+            foreach ($leaveTypeColumns as $column) {
+                if ($employeesLeaves->{$column} >= $days) {
+                    $employeesLeaves->{$column} -= $days;
+                } else {
+                    // If there are not enough days in this leave type, set it to 0
+                    $employeesLeaves->{$column} = 0;
+                }
+            }
+            $employeesLeaves->save();
+        }
+    }
 }
 

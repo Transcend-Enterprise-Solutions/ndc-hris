@@ -192,6 +192,11 @@ class User extends Authenticatable
         return $this->hasOne(CosPayrolls::class);
     }
 
+    public function employeesLeaves()
+    {
+        return $this->hasOne(EmployeesLeaves::class);
+    }
+
     /**
      * The attributes that should be cast.
      *

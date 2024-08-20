@@ -16,14 +16,14 @@ return new class extends Migration
                 $table->id('id');
                 $table->unsignedBigInteger('user_id');
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-                $table->string('paternity')->nullable();
-                $table->string('study')->nullable();
-                $table->string('maternity')->nullable();
-                $table->string('solo_parent')->nullable();
-                $table->string('vawc')->nullable();
-                $table->string('rehabilitation')->nullable();
-                $table->string('leave_for_women')->nullable();
-                $table->string('emergency_leave')->nullable();
+                $table->integer('paternity')->nullable();
+                $table->integer('study')->nullable();
+                $table->integer('maternity')->nullable();
+                $table->integer('solo_parent')->nullable();
+                $table->integer('vawc')->nullable();
+                $table->integer('rehabilitation')->nullable();
+                $table->integer('leave_for_women')->nullable();
+                $table->integer('emergency_leave')->nullable();
                 $table->timestamps();
             });
         }

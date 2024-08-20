@@ -23,6 +23,7 @@ class Registration extends Component
     public $surname;
     public $name_extension;
     public $sex;
+    public $otherSex;
     public $date_of_birth;
     public $place_of_birth;
     public $citizenship;
@@ -155,6 +156,10 @@ class Registration extends Component
             'leave_for_women' => Carbon::now()->addMonths(2)->diffInDays(Carbon::now()), // 2 months to days
             'emergency_leave' => 5,
         ]);
+
+        if ($this->sex === 'Others') {
+            $this->sex = 'Others: ' . $this->otherSex;
+        }
 
         $user->userData()->create([
             'user_id' => $user->id,
