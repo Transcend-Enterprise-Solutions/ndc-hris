@@ -8,8 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('employees_payroll')) {
-            Schema::create('employees_payroll', function (Blueprint $table) {
+        if (!Schema::hasTable('cos_reg_semi_monthly_payrolls')) {
+            Schema::create('cos_reg_semi_monthly_payrolls', function (Blueprint $table) {
                 $table->id('id');
                 $table->unsignedBigInteger('user_id');
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
@@ -20,15 +20,7 @@ return new class extends Migration
                 $table->string('salary_grade')->nullable();
                 $table->double('daily_salary_rate')->nullable();
                 $table->integer('no_of_days_covered')->nullable();
-                $table->integer('regular_holidays')->nullable();
-                $table->double('regular_holidays_amount')->nullable();
-                $table->integer('special_holidays')->nullable();
-                $table->double('special_holidays_amount')->nullable();
-                $table->integer('leave_days_withpay')->nullable();
-                $table->double('leave_payment')->nullable();
                 $table->double('gross_salary')->nullable();
-                $table->integer('leave_days_withoutpay')->nullable();
-                $table->integer('leave_days_withoutpay_amount')->nullable();
                 $table->double('absences_days')->nullable();
                 $table->double('absences_amount')->nullable();
                 $table->integer('late_undertime_hours')->nullable();
@@ -52,8 +44,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (Schema::hasTable('employees_payroll')) {
-            Schema::dropIfExists('employees_payroll');
+        if (Schema::hasTable('cos_reg_semi_monthly_payrolls')) {
+            Schema::dropIfExists('cos_reg_semi_monthly_payrolls');
         }
     }
 };

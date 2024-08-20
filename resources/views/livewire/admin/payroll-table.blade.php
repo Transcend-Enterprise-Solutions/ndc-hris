@@ -1,6 +1,6 @@
 <div class="w-full flex justify-center"
 x-data="{ 
-    selectedTab: 'cos',
+    selectedTab: 'export',
      selectedSubTab: 'payroll',
 }" 
 x-cloak>
@@ -295,44 +295,10 @@ x-cloak>
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                     No. of Days Covered
-                                                </th>
-                                                @if($weekdayRegularHolidays)
-                                                    <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                        Regular Holiday/s
-                                                    </th>
-                                                    <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                        Regular Holiday/s (Amount)
-                                                    </th>
-                                                @endif
-                                                @if($weekdaySpecialHolidays)
-                                                    <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                        Special Holiday/s
-                                                    </th>
-                                                    <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                        Special Holiday/s (Amount)
-                                                    </th>
-                                                @endif
-                                            
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                    Leave With Pay
-                                                </th>
-                                                
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                    Leave With Pay (Amount)
-                                                </th>
-                                
+                                                </th>                            
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                     Gross Salary
                                                 </th>
-                                
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                    Leave Without Pay
-                                                </th>
-
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                    Leave Without Pay (Amount)
-                                                </th>
-                            
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                     Absences (Days)
                                                 </th>
@@ -392,36 +358,8 @@ x-cloak>
                                                     <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                         {{ $payroll['no_of_days_covered'] ?? '' }}
                                                     </td>
-                                                    @if($weekdayRegularHolidays)
-                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ zero_checker($payroll['regular_holidays'] ?? 0) }}
-                                                        </td>
-                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ currency_format($payroll['regular_holidays_amount'] ?? 0) }}
-                                                        </td>
-                                                    @endif
-                                                    @if($weekdaySpecialHolidays)
-                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ zero_checker($payroll['special_holidays'] ?? 0) }}
-                                                        </td>
-                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ currency_format($payroll['special_holidays_amount'] ?? 0) }}
-                                                        </td>
-                                                    @endif
-                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                        {{ zero_checker($payroll['leave_days_withpay'] ?? 0) }}
-                                                    </td>
-                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                        {{ currency_format($payroll['leave_payment'] ?? 0) }}
-                                                    </td>
                                                     <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                         {{ currency_format($payroll['gross_salary'] ?? 0) }}
-                                                    </td>
-                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                        {{ zero_checker($payroll['leave_days_withoutpay'] ?? 0) }}
-                                                    </td>
-                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                        {{ currency_format($payroll['leave_days_withoutpay_amount'] ?? 0) }}
                                                     </td>
                                                     <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                         {{ zero_checker($payroll['absences_days'] ?? 0) }}

@@ -426,8 +426,7 @@ class GeneralPayrollTable extends Component
         }
     }
     
-    public function exportExcel()
-    {
+    public function exportExcel(){
         $signatories = User::join('signatories', 'signatories.user_id', 'users.id')
             ->join('positions', 'positions.id', 'users.position_id')
             ->where('signatories.signatory_type', 'plantilla_payroll')

@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EmployeesPayroll extends Model
+class CosRegSemiMonthlyPayrolls extends Model
 {
     use HasFactory;
 
-    protected $table = 'employees_payroll';
+    protected $table = 'cos_reg_semi_monthly_payrolls';
 
     protected $fillable = [
         'user_id',
@@ -20,15 +20,7 @@ class EmployeesPayroll extends Model
         'salary_grade',
         'daily_salary_rate',
         'no_of_days_covered',
-        'regular_holidays',
-        'regular_holidays_amount',
-        'special_holidays',
-        'special_holidays_amount',
-        'leave_days_withpay',
-        'leave_payment',
         'gross_salary',
-        'leave_days_withoutpay',
-        'leave_days_withoutpay_amount',
         'absences_days',
         'absences_amount',
         'late_undertime_hours',
