@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Exports\CosPayrollListExport;
+use App\Exports\IndivCosPayrollExport;
 use App\Exports\PayrollExport;
 use App\Models\CosPayrolls;
 use App\Models\CosRegSemiMonthlyPayrolls;
@@ -67,14 +68,30 @@ class PayrollTable extends Component
         'rate_per_month' => true,
     ];
 
+    public $view;
     public $userId;
     public $name;
     public $employee_number;
+    public $sg_step;
     public $office_division;
     public $position;
     public $sg;
     public $step;
     public $rate_per_month;
+    public $daily_salary_rate;
+    public $no_of_days_covered;
+    public $gross_salary;
+    public $absences_days;
+    public $absences_amount;
+    public $late_undertime_hours;
+    public $late_undertime_hours_amount;
+    public $late_undertime_mins;
+    public $late_undertime_mins_amount;
+    public $gross_salary_less;
+    public $w_holding_tax;
+    public $nycempc;
+    public $total_deduction;
+    public $net_amount_due;
     public $weekdayRegularHolidays = 0;
     public $weekdaySpecialHolidays = 0;
     protected $savePayroll;
@@ -240,7 +257,6 @@ class PayrollTable extends Component
         }
     }
 
-
     public function toggleAllColumn() {
         if ($this->allCol) {
             foreach (array_keys($this->columns) as $col) {
@@ -260,7 +276,7 @@ class PayrollTable extends Component
         $this->getPayroll();
     }
 
-    public function getPayroll(){
+    public function getPayroll($employeeId = null){
         $payrolls = collect();
         try {
             if ($this->startDate && $this->endDate) {
@@ -271,9 +287,13 @@ class PayrollTable extends Component
                                 'users.emp_code', 
                                 'cos_payrolls.*', 
                                 'positions.position', 
-                                'office_divisions.office_division')
-                            ->get();
+                                'office_divisions.office_division');
 
+                if ($employeeId) {
+                    $payrollsAll->where('user_id', $employeeId)->get();
+                }else{
+                    $payrollsAll->get();
+                }
                 $payrollDTR = $this->getDTRForPayroll($this->startDate, $this->endDate);
                 $startDate = Carbon::parse($this->startDate);
                 $endDate = Carbon::parse($this->endDate);
@@ -972,6 +992,93 @@ class PayrollTable extends Component
         $this->deleteId = $userId;
     }
 
+    public function viewPayroll($id){
+        try{
+            $this->view = true;
+            $payrolls = null;
+            $query = CosRegSemiMonthlyPayrolls::where('start_date', $this->startDate)
+                ->where('end_date', $this->endDate)
+                ->where('user_id', $id);
+    
+            if ($query->exists()) {
+                $payrolls = $query->first();
+                $this->employeePayslip = $query->first();
+                $this->hasPayroll = true;
+                $this->userId = $payrolls->user_id;
+                $this->name = $payrolls->name;
+                $this->employee_number = $payrolls->emp_code;
+                $this->sg_step = $payrolls->salary_grade;
+                $this->office_division = $payrolls->office_division;
+                $this->position = $payrolls->position;
+                $this->daily_salary_rate = $payrolls->daily_salary_rate;
+                $this->no_of_days_covered = $payrolls->no_of_days_covered;
+                $this->gross_salary = $payrolls->gross_salary;
+                $this->absences_days = $payrolls->absences_days;
+                $this->absences_amount = $payrolls->absences_amount;
+                $this->late_undertime_hours = $payrolls->late_undertime_hours;
+                $this->late_undertime_hours_amount = $payrolls->late_undertime_hours_amount;
+                $this->late_undertime_mins = $payrolls->late_undertime_mins;
+                $this->late_undertime_mins_amount = $payrolls->late_undertime_mins_amount;
+                $this->gross_salary_less = $payrolls->gross_salary_less;
+                $this->w_holding_tax = $payrolls->withholding_tax;
+                $this->nycempc = $payrolls->nycempc;
+                $this->total_deduction = $payrolls->total_deductions;
+                $this->net_amount_due = $payrolls->net_amount_due;
+            } else {
+                $payrolls = $this->getPayroll($id);
+                $this->hasPayroll = false;
+                $this->employeePayslip = $payrolls;
+                $this->userId = $payrolls['user_id'];
+                $this->name = $payrolls['name'];
+                $this->employee_number = $payrolls['emp_code'];
+                $this->sg_step = $payrolls['salary_grade'];
+                $this->office_division = $payrolls['office_division'];
+                $this->position = $payrolls['position'];
+                $this->daily_salary_rate = $payrolls['daily_salary_rate'];
+                $this->no_of_days_covered = $payrolls['no_of_days_covered'];
+                $this->gross_salary = $payrolls['gross_salary'];
+                $this->absences_days = $payrolls['absences_days'];
+                $this->absences_amount = $payrolls['absences_amount'];
+                $this->late_undertime_hours = $payrolls['late_undertime_hours'];
+                $this->late_undertime_hours_amount = $payrolls['late_undertime_hours_amount'];
+                $this->late_undertime_mins = $payrolls['late_undertime_mins'];
+                $this->late_undertime_mins_amount = $payrolls['late_undertime_mins_amount'];
+                $this->gross_salary_less = $payrolls['gross_salary_less'];
+                $this->w_holding_tax = $payrolls['withholding_tax'];
+                $this->nycempc = $payrolls['nycempc'];
+                $this->total_deduction = $payrolls['total_deductions'];
+                $this->net_amount_due = $payrolls['net_amount_due'];
+            }
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+
+    public function exportIndivPayroll($id){
+        try{
+            $payroll = null;
+            $query = CosRegSemiMonthlyPayrolls::where('start_date', $this->startDate)
+                ->where('end_date', $this->endDate)
+                ->where('user_id', $id);
+    
+            if ($query->exists()) {
+                $payroll = $query->first();
+            } else {
+                $payroll = $this->getPayroll($id);
+            }
+
+            $filters = [
+                'payroll' => $payroll,
+                'startDate' => $this->startDate,
+                'endDate' => $this->endDate,
+            ];
+            $fileName = 'COS Reg Individual Payroll.xlsx';
+            return Excel::download(new IndivCosPayrollExport($filters), $fileName);
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+
     public function deleteData(){
         try {
             $user = User::where('id', $this->deleteId)->first();
@@ -1017,5 +1124,6 @@ class PayrollTable extends Component
         $this->signatory = null;
         $this->signatures = [];
         $this->preparedBySign = null;
+        $this->view = null;
     }
 }

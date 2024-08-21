@@ -395,13 +395,6 @@ x-cloak>
                                                         {{ currency_format($payroll['net_amount_due'] ?? 0) }}
                                                     </td>
                                                     <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-gray-100 dark:bg-gray-800">
-                                                        {{-- <button wire:click="exportPayslip({{ $payroll['user_id'] }})" class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide hover:text-blue-600 focus:outline-none">
-                                                            <div wire:loading wire:target="exportPayslip" style="margin-right: 5px">
-                                                                <div class="spinner-border small text-primary" role="status">
-                                                                </div>
-                                                            </div>
-                                                            <i class="fas fa-file-export ml-3"></i>
-                                                        </button> --}}
                                                         <div class="relative">
                                                             <button wire:click="viewPayroll({{ $payroll['user_id'] }})" 
                                                             class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
@@ -410,6 +403,14 @@ x-cloak>
                                                                 <i class="fas fa-eye ml-3"></i>
                                                             </button>
                                                         </div>
+                                                        <button wire:click="exportIndivPayroll({{ $payroll['user_id'] }})" class="inline-flex items-center justify-center 
+                                                            px-4 py-2 -m-5 -mr-3 text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none" title="Export Payroll">
+                                                            <div wire:loading wire:target="exportIndivPayroll({{ $payroll['user_id'] }})" style="margin-right: 5px">
+                                                                <div class="spinner-border small text-primary" role="status">
+                                                                </div>
+                                                            </div>
+                                                            <i class="fas fa-file-export ml-3"></i>
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -1002,6 +1003,129 @@ x-cloak>
                             Save
                         </button>
                         <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                            Cancel
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </x-modal>
+
+    {{-- View Modal --}}
+    <x-modal id="viewPayroll" maxWidth="2xl" wire:model="view">
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                Payroll for {{ $name }}
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {{-- Form fields --}}
+            <form wire:submit.prevent=''>
+                <div class="grid grid-cols-2 gap-4">
+                    
+                    <div class="col-span-1">
+                        <label for="name" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Name: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200 text-left">&nbsp{{ $name }}</p>
+                    </div>
+                    
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="employee_number" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Employee Number: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200 text-left">&nbsp{{ $employee_number }}</p>
+                    </div>
+
+                    <div class="col-span-2 border-b border-slate-800">
+                        <label for="position" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Position: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $position }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="sg_step" class="block text-xs font-medium text-gray-700 dark:text-slate-400"><SG>Step: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $sg_step }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="daily_salary_rate" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Daily salary rate: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $daily_salary_rate == 0 ? '-' : currency_format($daily_salary_rate) }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="no_of_days_covered" class="block text-xs font-medium text-gray-700 dark:text-slate-400">No. of Days Covered: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $no_of_days_covered }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="gross_salary" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Gross Salary: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $gross_salary == 0 ? '-' : currency_format($gross_salary) }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="absences_days" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Absences Days: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $absences_days }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="absences_amount" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Absences Amount: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $absences_amount == 0 ? '-' : currency_format($absences_amount) }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="gross_amount" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Late/Undertime (hours): </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $late_undertime_hours }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="late_undertime_hours_amount" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Late/Undertime (hours) Amt.: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $late_undertime_hours_amount == 0 ? '-' : currency_format($late_undertime_hours_amount) }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="late_undertime_mins" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Late/Undertime (minutes): </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $late_undertime_mins }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="late_undertime_mins_amount" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Late/Undertime (minutes) Amt.: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $late_undertime_mins_amount == 0 ? '-' : currency_format($late_undertime_mins_amount) }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="gross_salary_less" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Gross Salary Less: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $gross_salary_less == 0 ? '-' : currency_format($gross_salary_less) }}</p>
+                    </div>
+                    
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="w_holding_tax" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Withholding Tax: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $w_holding_tax == 0 ? '-' : currency_format($w_holding_tax) }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="nycempc" class="block text-xs font-medium text-gray-700 dark:text-slate-400">NYCEMPC: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $nycempc == 0 ? '-' : currency_format($nycempc) }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="total_deduction" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Total Deduction: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $total_deduction == 0 ? '-' : currency_format($total_deduction) }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="net_amount_due" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Net Amount Received: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ currency_format($net_amount_due) }}</p>
+                    </div>
+
+                    {{-- Save and Cancel buttons --}}
+                    <div class="mt-4 flex justify-end col-span-2">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" wire:click="exportPayslip({{ $userId }})">
+                            <div wire:loading wire:target="" class="spinner-border small text-primary" role="status">
+                            </div>
+                            Export
+                            <div wire:loading wire:target="exportPayslip({{ $userId }})" style="margin-left: 5px">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
                             Cancel
                         </p>
                     </div>

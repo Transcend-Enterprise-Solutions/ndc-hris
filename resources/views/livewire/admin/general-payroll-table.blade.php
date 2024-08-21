@@ -1145,7 +1145,7 @@ x-cloak>
     </div>
 
    {{-- View Modal --}}
-    <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="payroll">
+    <x-modal id="viewPayroll" maxWidth="2xl" wire:model="payroll">
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
                 Payroll for {{ $name }}
@@ -1157,149 +1157,154 @@ x-cloak>
             <form wire:submit.prevent=''>
                 <div class="grid grid-cols-2 gap-4">
                     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="employee_number" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Number: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="name" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Name: </label>
+                        <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $name }}</p>
+                    </div>
+
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="employee_number" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Employee Number: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $employee_number }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division: </label>
+                    <div class="col-span-2 border-b border-slate-800">
+                        <label for="position" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Office/Division: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $office_division }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="position" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Position: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $position }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="sg_step" class="block text-sm font-medium text-gray-700 dark:text-slate-400">SG - Step: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="sg_step" class="block text-xs font-medium text-gray-700 dark:text-slate-400">SG - Step: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $sg_step }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="rate_per_month" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Rate per Month: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="rate_per_month" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Rate per Month: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $rate_per_month == 0 ? '-' : currency_format($rate_per_month) }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="personal_economic_relief_allowance" class="block text-sm font-medium text-gray-700 dark:text-slate-400">PERA: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="personal_economic_relief_allowance" class="block text-xs font-medium text-gray-700 dark:text-slate-400">PERA: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $personal_economic_relief_allowance == 0 ? '-' : currency_format($personal_economic_relief_allowance) }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="gross_amount" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Gross Amount: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="gross_amount" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Gross Amount: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $gross_amount == 0 ? '-' : currency_format($gross_amount) }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="additional_gsis_premium" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Additional GSIS Premium: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="additional_gsis_premium" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Additional GSIS Premium: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $additional_gsis_premium == 0 ? '-' : currency_format($additional_gsis_premium) }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="lbp_salary_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">LBP Salary Loan: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="lbp_salary_loan" class="block text-xs font-medium text-gray-700 dark:text-slate-400">LBP Salary Loan: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $lbp_salary_loan == 0 ? '-' : currency_format($lbp_salary_loan) }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="nycea_deductions" class="block text-sm font-medium text-gray-700 dark:text-slate-400">NYCEA Deductions: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="nycea_deductions" class="block text-xs font-medium text-gray-700 dark:text-slate-400">NYCEA Deductions: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $nycea_deductions == 0 ? '-' : currency_format($nycea_deductions) }}</p>
                     </div>
     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="sc_membership" class="block text-sm font-medium text-gray-700 dark:text-slate-400">SC Membership: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="sc_membership" class="block text-xs font-medium text-gray-700 dark:text-slate-400">SC Membership: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $sc_membership == 0 ? '-' : currency_format($sc_membership) }}</p>
                     </div>
     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="total_loans" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Total Loans: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="total_loans" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Total Loans: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $total_loans == 0 ? '-' : currency_format($total_loans) }}</p>
                     </div>
     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="salary_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Salary Loan: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="salary_loan" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Salary Loan: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $salary_loan == 0 ? '-' : currency_format($salary_loan) }}</p>
                     </div>
     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="policy_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Policy Loan: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="policy_loan" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Policy Loan: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $policy_loan == 0 ? '-' : currency_format($policy_loan) }}</p>
                     </div>
     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="eal" class="block text-sm font-medium text-gray-700 dark:text-slate-400">EAL: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="eal" class="block text-xs font-medium text-gray-700 dark:text-slate-400">EAL: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $eal == 0 ? '-' : currency_format($eal) }}</p>
                     </div>
     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="emergency_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Emergency Loan: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="emergency_loan" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Emergency Loan: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $emergency_loan == 0 ? '-' : currency_format($emergency_loan) }}</p>
                     </div>
     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="mpl" class="block text-sm font-medium text-gray-700 dark:text-slate-400">MPL: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="mpl" class="block text-xs font-medium text-gray-700 dark:text-slate-400">MPL: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $mpl == 0 ? '-' : currency_format($mpl) }}</p>
                     </div>
     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="housing_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Housing Loan: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="housing_loan" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Housing Loan: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $housing_loan == 0 ? '-' : currency_format($housing_loan) }}</p>
                     </div>
     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="ouli_prem" class="block text-sm font-medium text-gray-700 dark:text-slate-400">OULI Premium: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="ouli_prem" class="block text-xs font-medium text-gray-700 dark:text-slate-400">OULI Premium: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $ouli_prem == 0 ? '-' : currency_format($ouli_prem) }}</p>
                     </div>
     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="gfal" class="block text-sm font-medium text-gray-700 dark:text-slate-400">GFAL: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="gfal" class="block text-xs font-medium text-gray-700 dark:text-slate-400">GFAL: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $gfal == 0 ? '-' : currency_format($gfal) }}</p>
                     </div>
     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="cpl" class="block text-sm font-medium text-gray-700 dark:text-slate-400">CPL: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="cpl" class="block text-xs font-medium text-gray-700 dark:text-slate-400">CPL: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $cpl == 0 ? '-' : currency_format($cpl) }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="pagibig_mpl" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Pag-Ibig MPL: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="pagibig_mpl" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Pag-Ibig MPL: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $pagibig_mpl == 0 ? '-' : currency_format($pagibig_mpl) }}</p>
                     </div>
 
-                    <div class="col-span-2 border-b border-slate-800 flex">
-                        <label for="other_deduction_philheath_diff" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Other Deduction Philheath Differential: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="other_deduction_philheath_diff" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Other Deduction Philheath Differential: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $other_deduction_philheath_diff == 0 ? '-' : currency_format($other_deduction_philheath_diff) }}</p>
                     </div>
 
                     
-                    <div class="col-span-2 border-b border-slate-800 flex">
-                        <label for="life_retirement_insurance_premiums" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Life Retirement Insurance Premiums: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="life_retirement_insurance_premiums" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Life Retirement Insurance Premiums: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $life_retirement_insurance_premiums == 0 ? '-' : currency_format($life_retirement_insurance_premiums) }}</p>
                     </div>
                     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="pagibig_contribution" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Pag-Ibig Contribution: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="pagibig_contribution" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Pag-Ibig Contribution: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $pagibig_contribution == 0 ? '-' : currency_format($pagibig_contribution) }}</p>
                     </div>
                     
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="w_holding_tax" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Withholding Tax: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="w_holding_tax" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Withholding Tax: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $w_holding_tax == 0 ? '-' : currency_format($w_holding_tax) }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="philhealth" class="block text-sm font-medium text-gray-700 dark:text-slate-400">PhilHealth: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="philhealth" class="block text-xs font-medium text-gray-700 dark:text-slate-400">PhilHealth: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $philhealth == 0 ? '-' : currency_format($philhealth) }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="total_deduction" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Total Deduction: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="total_deduction" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Total Deduction: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ $total_deduction == 0 ? '-' : currency_format($total_deduction) }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="amount_due_first_half" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="amount_due_first_half" class="block text-xs font-medium text-gray-700 dark:text-slate-400">
                             Amount Due 
                             ({{ $startDateFirstHalf ? \Carbon\Carbon::parse($startDateFirstHalf)->format('F') : '' }} 
                             {{ $startDateFirstHalf ? \Carbon\Carbon::parse($startDateFirstHalf)->format('d') : '' }} - {{ $endDateFirstHalf ? \Carbon\Carbon::parse($endDateFirstHalf)->format('d') : '' }}
@@ -1308,8 +1313,8 @@ x-cloak>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ currency_format($amount_due_first_half) }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="amount_due_second_half" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="amount_due_second_half" class="block text-xs font-medium text-gray-700 dark:text-slate-400">
                             Amount Due 
                             ({{ $startDateSecondHalf ? \Carbon\Carbon::parse($startDateSecondHalf)->format('F') : '' }} 
                             {{ $startDateSecondHalf ? \Carbon\Carbon::parse($startDateSecondHalf)->format('d') : '' }} - {{ $endDateSecondHalf ? \Carbon\Carbon::parse($endDateSecondHalf)->format('d') : '' }}
@@ -1318,8 +1323,8 @@ x-cloak>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ currency_format($amount_due_second_half) }}</p>
                     </div>
 
-                    <div class="col-span-1 border-b border-slate-800 flex">
-                        <label for="net_amount_received" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Net Amount Received: </label>
+                    <div class="col-span-1 border-b border-slate-800">
+                        <label for="net_amount_received" class="block text-xs font-medium text-gray-700 dark:text-slate-400">Net Amount Received: </label>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ currency_format($net_amount_received) }}</p>
                     </div>
 
@@ -1614,7 +1619,7 @@ x-cloak>
     </x-modal>
 
     {{-- Add and Edit Payroll Signatory Modal --}}
-    <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="editSignatory" centered>
+    <x-modal id="editAddPayroll" maxWidth="2xl" wire:model="editSignatory" centered>
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
                 {{ $addSignatory ? 'Add' : 'Edit' }} Payroll Signatory
@@ -1655,7 +1660,7 @@ x-cloak>
     </x-modal>
 
     {{-- Add and Edit Payslip Signatory Modal --}}
-    <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="editPayslipSignatory" centered>
+    <x-modal id="editAddPayslip" maxWidth="2xl" wire:model="editPayslipSignatory" centered>
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
                 {{ $addPayslipSignatory ? 'Add' : 'Edit' }} Payslip Signatory
