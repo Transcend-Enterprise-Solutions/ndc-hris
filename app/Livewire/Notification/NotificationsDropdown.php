@@ -51,6 +51,9 @@ class NotificationsDropdown extends Component
 
         if (Auth::user()->user_role === 'sa') {
             $query->where('type', 'request');
+        }
+        if (Auth::user()->user_role === 'sa') {
+            $query->where('type', 'Leave request');
         } else {
             $query->where('user_id', Auth::id());
         }

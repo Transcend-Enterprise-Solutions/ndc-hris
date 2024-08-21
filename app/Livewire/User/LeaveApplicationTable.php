@@ -100,11 +100,11 @@ class LeaveApplicationTable extends Component
 
         $payroll = Payrolls::where('user_id', $user->id)->first();
 
-        
+
             $this->office_or_department = $payroll->office_division ?? 'N/A';
             $this->position = $payroll->position ?? 'N/A';
             $this->salary = $payroll->rate_per_month ?? 0;
-        
+
     }
 
     public function resetOtherFields($field)
@@ -153,7 +153,7 @@ class LeaveApplicationTable extends Component
             $this->type_of_leave = array_filter($this->type_of_leave, function ($leave) {
                 return $leave !== 'Others';
             });
-    
+
             $this->type_of_leave[] = $this->other_leave;
         }
 
@@ -322,9 +322,9 @@ class LeaveApplicationTable extends Component
     public function exportPDF($leaveApplicationId)
     {
         $leaveApplication = LeaveApplication::findOrFail($leaveApplicationId);
-        
+
         $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
-        
+
         $otherLeave = '';
         foreach ($selectedLeaveTypes as $leaveType) {
             if (strpos($leaveType, 'Others: ') === 0) {
@@ -367,7 +367,7 @@ class LeaveApplicationTable extends Component
             echo $pdf->output();
         }, 'LeaveApplication' . $leaveApplicationId . '.pdf');
     }
-    
+
     public function render()
     {
         $userId = Auth::id();

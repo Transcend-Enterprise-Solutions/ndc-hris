@@ -59,7 +59,7 @@
                                 <a wire:navigate href="{{ route('/employee-management/admin-doc-request') }}" class="flex-grow">
                                     <span class="block text-sm mb-1">
                                         📣 <span class="font-medium text-slate-800 dark:text-slate-100">
-                                            New Document Request {{ $notification->type }}
+                                            New document {{ $notification->type }}
                                         </span>
                                     </span>
                                     <!-- Display the name and document type -->

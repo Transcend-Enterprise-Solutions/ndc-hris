@@ -134,8 +134,6 @@ class DocRequestTable extends Component
 
         }
     }
-
-
     public function performDownload($request)
     {
         $filePath = 'public/' . $request->file_path;
@@ -161,11 +159,8 @@ class DocRequestTable extends Component
         ], [
             'ratings.*.required' => 'Please rate all the criteria in the form!',
         ]);
-
         // Calculate the overall rating
         $overallRating = array_sum($this->ratings) / count($this->ratings);
-
-        // Create or update the rating record
         Rating::create([
             'user_id' => Auth::id(),
             'doc_request_id' => $this->currentDocRequestId,
@@ -180,11 +175,7 @@ class DocRequestTable extends Component
             'overall' => $overallRating,
         ]);
 
-
-        // Close the modal
         $this->showRatingModal = false;
-
-        // After submitting the rating, perform the download
         $request = DocRequest::find($this->currentDocRequestId);
         if ($request) {
             return $this->performDownload($request);

@@ -2,7 +2,7 @@
 
     <div class="px-5 pt-5">
         <header class="flex justify-between items-start mb-2">
-            <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Employee Reports</h2>
+            <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100">   ee Reports</h2>
         </header>
     </div>
 
@@ -147,7 +147,7 @@
             <div class="col-span-full sm:col-span-6 bg-green-100 dark:bg-green-800 p-4 rounded-lg shadow block">
                 <div class="block sm:flex justify-between items-center">
                     <div class="flex justify-left items-center">
-                        <h3 class="text-sm font-semibold text-green-800 dark:text-gray-100">
+                        <h3 class="text-sm font-semibold text-green-800 ">
                             @if($month)
                                 Employee Document Requests for {{ $docRequestMonth ? \Carbon\Carbon::parse($docRequestMonth)->format('F Y') : '' }}
                             @else
@@ -166,7 +166,7 @@
                                 class="inline-flex items-center focus:outline-none"
                                 type="button" title="Export to Excel" wire:loading.remove>
                                 <img class="flex dark:hidden" src="/images/export-excel.png" alt="">
-                                <img class="hidden dark:block" src="/images/export-excel-dark.png" alt="">
+                                <img class="hidden dark:block" src="/images/export-excel.png" alt="">
                             </button>
                             <div style="margin-right: 5px">
                                 <svg wire:loading wire:target="exportDocRequests" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-green-600 motion-safe:animate-spin dark:fill-green-600">

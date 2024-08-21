@@ -5,6 +5,10 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\WithPagination;
 use OwenIt\Auditing\Models\Audit;
+use App\Models\User;
+use App\Models\DocRequest;
+use App\Models\DTRSchedule;
+use App\Models\Holiday;
 
 class AuditLogViewer extends Component
 {
@@ -45,8 +49,7 @@ class AuditLogViewer extends Component
                                    ->orWhereRaw("JSON_CONTAINS(LOWER(old_values), LOWER(?), '$')", [$this->search]);
                       })
                       ->orWhereHas('user', function ($query) use ($searchTerm) {
-                          $query->where('name', 'like', $searchTerm)
-                                ->orWhere('id', 'like', $searchTerm);
+                          $query->where('name', 'like', $searchTerm);
                       })
                       ->orWhereRaw("LOWER(CONCAT(
                           'User ',
@@ -74,10 +77,35 @@ class AuditLogViewer extends Component
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
 
+        foreach ($audits as $audit) {
+            $audit->resolved_new_values = $this->resolveValues($audit, $audit->new_values);
+            $audit->resolved_old_values = $this->resolveValues($audit, $audit->old_values);
+        }
+
         return view('livewire.audit-log-viewer', [
             'audits' => $audits,
         ]);
     }
+
+    private function resolveValues($audit, $values)
+    {
+        $resolved = $values;
+
+        if ($audit->auditable_type === DocRequest::class) {
+            if (isset($resolved['user_id'])) {
+                $user = User::find($resolved['user_id']);
+                $resolved['user_name'] = $user ? $user->name : 'Unknown User';
+            }
+        } elseif ($audit->auditable_type === DTRSchedule::class) {
+            if (isset($resolved['emp_code'])) {
+                $user = User::where('emp_code', $resolved['emp_code'])->first();
+                $resolved['employee_name'] = $user ? $user->name : 'Unknown Employee';
+            }
+        }
+
+        return $resolved;
+    }
+
     public function placeholder()
     {
         return <<<'HTML'

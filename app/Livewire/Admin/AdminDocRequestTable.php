@@ -7,7 +7,7 @@ use App\Models\DocRequest;
 use App\Models\Notification;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Rating;
+
 
 class AdminDocRequestTable extends Component
 {

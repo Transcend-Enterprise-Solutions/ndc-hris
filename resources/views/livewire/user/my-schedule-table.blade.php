@@ -12,8 +12,8 @@
                 </div>
             </div>
 
-            <div class="pb-6" x-auto-animate>
-                <div class="grid grid-cols-7 gap-1 text-center text-black dark:text-white" x-auto-animate>
+            <div class="pb-6 overflow-x-auto"  x-auto-animate>
+                <div class="grid grid-cols-7 gap-1 text-center text-black dark:text-white min-w-[600px]" x-auto-animate>
                     <!-- Days of the week header -->
                     @foreach(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as $day)
                         <div class="font-semibold text-xs sm:text-sm">{{ $day }}</div>
