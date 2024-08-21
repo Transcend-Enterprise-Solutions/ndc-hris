@@ -193,15 +193,28 @@ class LeaveApplicationTable extends Component
         $leaveDetailsString = implode(', ', $leaveDetails);
         $filePathsString = implode(',', $filePaths);
 
+        // if ($this->start_date && $this->end_date) {
+        //     $datesInRange = $this->list_of_dates;
+        //     if (in_array($this->start_date, $datesInRange) && in_array($this->end_date, $datesInRange)) {
+        //         $datesString = $this->start_date . ' - ' . $this->end_date;
+        //     } else {
+        //         $datesString = $this->start_date . ' - ' . $this->end_date . ',' . implode(',', $datesInRange);
+        //     }
+        // } else {
+        //     $datesString = implode(',', $this->list_of_dates);
+        // }
+        // Only include dates that are actually provided
+        $datesString = '';
+
         if ($this->start_date && $this->end_date) {
-            $datesInRange = $this->list_of_dates;
-            if (in_array($this->start_date, $datesInRange) && in_array($this->end_date, $datesInRange)) {
-                $datesString = $this->start_date . ' - ' . $this->end_date;
-            } else {
-                $datesString = $this->start_date . ' - ' . $this->end_date . ',' . implode(',', $datesInRange);
+            $datesString = $this->start_date . ' - ' . $this->end_date;
+        }
+
+        if (!empty($this->list_of_dates)) {
+            if (!empty($datesString)) {
+                $datesString .= ', ';
             }
-        } else {
-            $datesString = implode(',', $this->list_of_dates);
+            $datesString .= implode(',', $this->list_of_dates);
         }
 
         $currentMonth = now()->month;

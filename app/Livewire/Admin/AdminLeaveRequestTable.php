@@ -69,6 +69,7 @@ class AdminLeaveRequestTable extends Component
                 'days' => 'required|numeric|min:1',
             ]);
     
+            // Validate leave balance only for specified leave types
             if (in_array($this->selectedApplication->type_of_leave, ['Vacation Leave', 'Sick Leave', 'Special Privilege Leave'])) {
                 if (!$this->validateLeaveBalance($this->days)) {
                     return;
@@ -98,6 +99,7 @@ class AdminLeaveRequestTable extends Component
 
                 foreach ($this->selectedDates as $date) {
                     if (strpos($date, ' - ') !== false) {
+                        // Split the range into start and end dates
                         $range = explode(' - ', $date);
                         $allApprovedDates = array_merge($allApprovedDates, $range);
                     } else {

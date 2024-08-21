@@ -11,25 +11,29 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id('id');
-            $table->string('name');
-            $table->string('email', 50);
-            $table->string('password', 1000);
-            $table->string('user_role')->nullable();
-            $table->string('active_status')->nullable();
-            $table->string('emp_code')->unique()->nullable();
-            $table->unsignedBigInteger('position_id')->nullable();
-            $table->unsignedBigInteger('office_division_id')->nullable();
-            $table->rememberToken();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('users')) {
+            Schema::create('users', function (Blueprint $table) {
+                $table->id('id');
+                $table->string('name');
+                $table->string('email', 50);
+                $table->string('password', 1000);
+                $table->string('user_role')->nullable();
+                $table->string('active_status')->nullable();
+                $table->string('emp_code')->unique()->nullable();
+                $table->unsignedBigInteger('position_id')->nullable();
+                $table->unsignedBigInteger('office_division_id')->nullable();
+                $table->rememberToken();
+                $table->timestamps();
+            });
+        }
     }
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        if (Schema::hasTable('users')) {
+            Schema::dropIfExists('users');
+        }
     }
 };

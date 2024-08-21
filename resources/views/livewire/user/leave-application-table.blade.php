@@ -373,33 +373,9 @@
                             <input type="number" id="number_of_days" wire:model="number_of_days"
                                 class="mt-1 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                             @error('number_of_days')
-                                <span class="text-red-500 text-sm">This field is
-                                    required!</span>
+                                <span class="text-red-500 text-sm">This field is required!</span>
                             @enderror
                         </div>
-
-                        @if (in_array('Study Leave', $type_of_leave) ||
-                                in_array('Maternity Leave', $type_of_leave) ||
-                                in_array('Rehabilitation Privilege', $type_of_leave) ||
-                                in_array('Special Leave Benefits for Women', $type_of_leave))
-                            <div class="gap-2 columns-1 mt-2">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-100">Start
-                                    date</label>
-                                <input type="date" id="start_date" wire:model="start_date"
-                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
-                                @error('start_date')
-                                    <span class="text-red-500 text-sm">Please set a start date!</span>
-                                @enderror
-
-                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-100 mt-2">End
-                                    date</label>
-                                <input type="date" id="end_date" wire:model="end_date"
-                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
-                                @error('end_date')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        @endif
 
                         @if (in_array('Vacation Leave', $type_of_leave) ||
                                 in_array('Sick Leave', $type_of_leave) ||
@@ -440,6 +416,35 @@
                                 <span class="text-red-500 text-sm">Please set a valid date!</span>
                             @enderror
                         </div>
+
+                        @if (in_array('Study Leave', $type_of_leave) ||
+                                in_array('Maternity Leave', $type_of_leave) ||
+                                in_array('Rehabilitation Privilege', $type_of_leave) ||
+                                in_array('Special Leave Benefits for Women', $type_of_leave))
+                            <div class="gap-2 columns-1 mt-2">
+                                <h6
+                                    class="mt-2 mb-2 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
+                                    In case of Study Leave, Maternity Leave, Special Leave Benefits for Women, and
+                                    Rehabilitation
+                                    Leave:</h6>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-100">Start
+                                    date</label>
+                                <input type="date" id="start_date" wire:model="start_date"
+                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                @error('start_date')
+                                    <span class="text-red-500 text-sm">Please set a start date!</span>
+                                @enderror
+
+                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-100 mt-2">End
+                                    date</label>
+                                <input type="date" id="end_date" wire:model="end_date"
+                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                @error('end_date')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        @endif
+
                     </div>
                 </fieldset>
 

@@ -141,9 +141,10 @@
 </head>
 
 <body>
-    <h3 style="padding-top: 3pt;padding-left: 6pt;text-indent: 0pt;line-height: 112%;text-align: left;">Civil Service
+    <h3 style="padding-top: 3pt;padding-left: 60pt;text-indent: 0pt;line-height: 112%;text-align: left;">Civil Service
         Form No. 6</h3>
-    <h3 style="padding-top: 3pt;padding-left: 6pt;text-indent: 0pt;line-height: 112%;text-align: left;">Revised 2020</h3>
+    <h3 style="padding-top: 3pt;padding-left: 60pt;text-indent: 0pt;line-height: 112%;text-align: left;">Revised 2020
+    </h3>
 
     <p style="text-indent: 0pt;text-align: left;" />
 
@@ -174,7 +175,9 @@
                 <td style="width:303pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     colspan="3">
                     <p class="s5" style="padding-top: 1pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">2.
-                        NAME : (Last) (First) (Middle)</p>
+                        NAME :
+                        (First)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Middle)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Last)
+                    </p>
                     <u
                         style="margin-left: 25px; color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $leaveApplication->name }}</u>
                 </td>
@@ -481,6 +484,339 @@
                     <p style="padding-top: 3pt;text-indent: 0pt;text-align: left;"><br /></p>
                     {{-- <p class="s5" style="padding-left: 66pt;text-indent: 0pt;text-align: left;">(Signature of
                         Applicant)</p> --}}
+                </td>
+            </tr>
+            <tr style="height:13pt">
+                <td style="width:468pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="6">
+                    <p class="s7"
+                        style="text-indent: 0pt;text-align: center; padding-top: 1pt; padding-bottom: 1pt;">7. DETAILS
+                        OF
+                        ACTION ON APPLICATION</p>
+                </td>
+            </tr>
+            <tr style="height:15pt">
+                <td style="width:165pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt"
+                    colspan="3">
+                    <p class="s5" style="padding-top: 3pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">
+                        7.A CERTIFICATION OF LEAVE CREDITS</p>
+                </td>
+
+                <td style="width:73pt;border-top-style:solid;border-top-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+
+                <td
+                    style="width:18pt;border-top-style:solid;border-top-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+
+                <td
+                    style="width:212pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s5" style="padding-top: 3pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">
+                        7.B RECOMMENDATION</p>
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <input type="checkbox">
+                        </div>
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5">For approval</span>
+                        </div>
+                    </div>
+
+                    <div style="display: block; width: 100%; margin-left: 5px;">
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <input type="checkbox">
+                        </div>
+                        <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <span class="s5">For disapproval due to</span>
+                        </div>
+                        <u
+                            style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">
+                            {{ str_repeat('_', 20) }}
+                        </u>
+                    </div>
+                </td>
+            </tr>
+
+            <tr style="height:15pt">
+                <td style="width:256pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="5">
+
+                    <p class="s5"
+                        style="padding-top: 1pt;padding-left: 30pt; padding-bottom: 10px;text-indent: 0pt;text-align: left;">
+                        As of
+                        <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>
+                    </p>
+                </td>
+                <td
+                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                </td>
+            </tr>
+            <tr style="height:9pt">
+                <td style="width:19pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    rowspan="7">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:74pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:72pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s5" style="padding-left: 10pt;text-indent: 0pt;line-height: 8pt;text-align: left;">
+                        Vacation Leave</p>
+                </td>
+                <td
+                    style="width:73pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s5" style="padding-left: 17pt;text-indent: 0pt;line-height: 8pt;text-align: left;">
+                        Sick Leave</p>
+                </td>
+                <td style="width:18pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    rowspan="7">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                </td>
+            </tr>
+            <tr style="height:4pt">
+                <td
+                    style="width:74pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:72pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:73pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:4pt">
+                <td
+                    style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Total Earned</p>
+                </td>
+                <td
+                    style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:4pt">
+                <td
+                    style="width:74pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:72pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:73pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:4pt">
+                <td
+                    style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Less this
+                        application</p>
+                </td>
+                <td
+                    style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:4pt">
+                <td
+                    style="width:74pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:72pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:73pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:4pt">
+                <td
+                    style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Balance</p>
+                </td>
+                <td
+                    style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:22pt">
+                <td style="width:256pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="5" rowspan="2">
+                    <p style="padding-top: 10pt;text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="padding-left: 18pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
+                    <p class="s5"
+                        style="padding-left: 1pt; text-indent: 0pt; text-align: center; border-top-style: solid; border-top-width: medium; width: 50%; margin: 0 auto;">
+                        (Authorized Officer)
+                    </p>
+
+                </td>
+                <td
+                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;text-align: left;" />
+                    <p class="s5" style="padding-right: 7pt;text-indent: 0pt;line-height: 7pt;text-align: right;">
+                    </p>
+                </td>
+            </tr>
+            <tr style="height:14pt">
+                <td
+                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s5"
+                        style="padding-left: 1pt; text-indent: 0pt; text-align: center; border-top-style: solid; border-top-width: medium; width: 50%; margin: 0 auto;">
+                        (Authorized Officer)
+                    </p>
+                </td>
+            </tr>
+            <tr style="height:13pt">
+                <td style="width:93pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt"
+                    colspan="2">
+                    <p class="s5"
+                        style="padding-top: 3pt;padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">
+                        7.C APPROVED FOR:</p>
+                </td>
+                <td style="width:72pt;border-top-style:solid;border-top-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:73pt;border-top-style:solid;border-top-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:18pt;border-top-style:solid;border-top-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td
+                    style="width:212pt;border-top-style:solid;border-top-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;" />
+                    <p class="s5"
+                        style="padding-top: 3pt;padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">
+                        7.D DISAPPROVED DUE TO:{{ str_repeat('_', 20) }}</p>
+                </td>
+            </tr>
+            <tr style="height:10pt">
+                <td style="width:19pt;border-left-style:solid;border-left-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:146pt" colspan="2">
+                    <p class="s5"
+                        style="padding-top: 2pt;padding-left: 1pt;text-indent: 0pt;line-height: 7pt;text-align: left;">
+                        {{ str_repeat('_', 10) }}
+                        days with pay</p>
+                </td>
+                <td style="width:73pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:18pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:212pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:10pt">
+                <td style="width:19pt;border-left-style:solid;border-left-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:146pt" colspan="2">
+                    <p style="text-indent: 0pt;text-align: left;" />
+                    <p class="s5"
+                        style="padding-top: 1pt;padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">
+                        {{ str_repeat('_', 10) }}
+                        days without pay</p>
+                </td>
+                <td style="width:73pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:18pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:212pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:28pt">
+                <td style="width:19pt;border-left-style:solid;border-left-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:146pt" colspan="2">
+                    <p class="s5" style="padding-top: 1pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">
+                        {{ str_repeat('_', 10) }} others (Specify)
+                    </p>
+                </td>
+                <td style="width:73pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:18pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:212pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:36pt">
+                <td
+                    style="width:19pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:146pt;border-bottom-style:solid;border-bottom-width:1pt" colspan="2">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+                <td style="width:303pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="3">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;text-align: left;" />
+                    <p style="text-indent: 0pt;line-height: 1pt;text-align: left;" />
+                    <p class="s10"
+                        style="text-indent: 0pt;line-height: 7pt;text-align: center; border-top-style: solid; border-top-width: medium; width: 50%; margin: 0 auto;">
+                        (Authorized Official)</p>
                 </td>
             </tr>
         </table>
