@@ -59,13 +59,13 @@
 
                             <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                                 <div x-data="{ showOthers: @entangle('sex').defer === 'Others' }" class="w-full">
-                                    <label for="sex" class="text-sm text-gray-700">Sex at Birth <span
+                                    <label for="sex" class="text-sm text-gray-700">Gender <span
                                             class="text-red-600">*</span></label>
 
                                     <select id="sex" wire:model.live="sex"
                                         @change="showOthers = (event.target.value === 'Others')"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                        <option value="">Select Sex</option>
+                                        <option value="">Select Gender</option>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
                                         <option value="Others">Others:</option>
@@ -156,6 +156,43 @@
                                     @error('weight')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
+                                </div>
+                            </div>
+
+                            <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
+
+                                <div class="w-full">
+                                    <label for="office_division" class="text-sm text-gray-700">Office Division <span class="text-red-600">*</span></label>
+                                    <select id="office_division" wire:model="selectedOfficeDivision"
+                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <option value="" selected >Select an office division</option>
+                                        @foreach($officeDivisions as $officeDivision)
+                                            <option value="{{ $officeDivision->id }}">{{ $officeDivision->office_division }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('selectedOfficeDivision')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="w-full">
+                                    <label for="position" class="text-sm text-gray-700">Position <span class="text-red-600">*</span></label>
+                                    <select id="position" wire:model="selectedPosition"
+                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <option value="" selected>Select a position</option>
+                                        @foreach($positions as $position)
+                                            <option value="{{ $position->id }}">{{ $position->position }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('selectedPosition')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
+                                <div class="w-full flex items-center">
+                                    <input type="checkbox" id="pwd" wire:model.live="pwd"
+                                        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                    <label for="pwd" class="ml-2 text-sm text-gray-700">Person with Disability (PWD)</label>
                                 </div>
                             </div>
 

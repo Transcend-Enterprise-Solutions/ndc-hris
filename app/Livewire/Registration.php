@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\PhilippineProvinces;
 use App\Models\PhilippineCities;
 use App\Models\PhilippineBarangays;
+use App\Models\Positions;
+use App\Models\OfficeDivisions;
 use App\Models\PhilippineRegions;
 use App\Models\EmployeesLeaves;
 use Carbon\Carbon;
@@ -16,6 +18,11 @@ class Registration extends Component
     public $user_role = 'emp';
     public $active_status = 1;
     public $emp_code;
+    public $pwd=0;
+    public $positions;
+    public $officeDivisions;
+    public $selectedPosition;
+    public $selectedOfficeDivision;
 
     #Step 1
     public $first_name;
@@ -83,6 +90,10 @@ class Registration extends Component
             'height' => 'required|numeric',
             'weight' => 'required|numeric',
             'blood_type' => 'required|max:3',
+            'blood_type' => 'required|max:3',
+            'selectedPosition' => 'required|exists:positions,id',
+            'selectedOfficeDivision' => 'required|exists:office_divisions,id',
+
         ]);
 
         $this->step++;
@@ -143,6 +154,9 @@ class Registration extends Component
             'user_role' => 'emp',
             'active_status' => $this->active_status,
             'emp_code' => $this->emp_code,
+            'position_id' => $this->selectedPosition,
+            'office_division_id' => $this->selectedOfficeDivision,
+
         ]);
 
         // $employeesLeaves = EmployeesLeaves::create([
@@ -194,6 +208,7 @@ class Registration extends Component
             'r_house_street' => $this->r_house_street,
             'tel_number' => $this->tel_number,
             'mobile_number' => $this->mobile_number,
+            'pwd' => $this->pwd,
         ]);
 
         session()->flash('message', 'Registration successful!');
@@ -202,6 +217,8 @@ class Registration extends Component
 
     public function mount(){
         $this->getProvicesAndCities();
+        $this->positions = Positions::all();
+        $this->officeDivisions = OfficeDivisions::all();
     }
 
     public function render()
