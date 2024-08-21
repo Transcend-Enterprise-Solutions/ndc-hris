@@ -23,7 +23,7 @@
                                     <input type="text" id="first_name" wire:model.live="first_name"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('first_name')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="w-full">
@@ -40,7 +40,7 @@
                                     <input type="text" id="surname" wire:model.live="surname"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('surname')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="w-full">
@@ -75,7 +75,7 @@
                                         class="mt-2 w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
 
                                     @error('sex')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
 
@@ -85,8 +85,7 @@
                                     <input type="date" id="date_of_birth" wire:model.live="date_of_birth"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('date_of_birth')
-                                        <span class="text-red-500 text-sm">This field is
-                                            required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -98,8 +97,7 @@
                                     <input type="text" id="place_of_birth" wire:model.live="place_of_birth"
                                         class=" w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('place_of_birth')
-                                        <span class="text-red-500 text-sm">This field is
-                                            required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="w-full">
@@ -108,7 +106,7 @@
                                     <input type="text" id="blood_type" wire:model.live="blood_type"
                                         class=" w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('blood_type')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -120,7 +118,7 @@
                                     <input type="text" id="citizenship" wire:model.live="citizenship"
                                         class=" w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('citizenship')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="w-full">
@@ -135,7 +133,7 @@
                                         <option value="Separated">Separated</option>
                                     </select>
                                     @error('civil_status')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -147,7 +145,7 @@
                                     <input type="number" id="height" wire:model.live="height"
                                         class=" w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('height')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="w-full">
@@ -156,7 +154,7 @@
                                     <input type="number" id="weight" wire:model.live="weight"
                                         class=" w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('weight')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -188,7 +186,7 @@
                                     <input type="text" id="gsis" wire:model.live="gsis"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('gsis')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="w-full">
@@ -197,7 +195,7 @@
                                     <input type="text" id="pagibig" wire:model.live="pagibig"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('pagibig')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -209,7 +207,7 @@
                                     <input type="text" id="philhealth" wire:model.live="philhealth"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('philhealth')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="w-full">
@@ -218,7 +216,7 @@
                                     <input type="text" id="sss" wire:model.live="sss"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('sss')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -230,7 +228,7 @@
                                     <input type="text" id="tin" wire:model.live="tin"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('tin')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="w-full">
@@ -240,8 +238,7 @@
                                         wire:model.live="agency_employee_no"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('agency_employee_no')
-                                        <span class="text-red-500 text-sm">This field is
-                                            required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -299,8 +296,7 @@
                                             @endif
                                         </select>
                                         @error('permanent_selectedProvince')
-                                            <span class="text-red-500 text-sm">This field
-                                                is required!</span>
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
                                         @enderror
                                     </div>
 
@@ -327,8 +323,7 @@
                                             @endif
                                         </select>
                                         @error('permanent_selectedCity')
-                                            <span class="text-red-500 text-sm">This field is
-                                                required!</span>
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
                                         @enderror
                                     </div>
 
@@ -355,8 +350,7 @@
                                             @endif
                                         </select>
                                         @error('permanent_selectedBarangay')
-                                            <span class="text-red-500 text-sm">This field
-                                                is required!</span>
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
                                         @enderror
                                     </div>
 
@@ -367,8 +361,7 @@
                                             class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                                             name="p_house_street" required>
                                         @error('p_house_street')
-                                            <span class="text-red-500 text-sm">This field is
-                                                required!</span>
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
                                         @enderror
                                     </div>
 
@@ -421,8 +414,7 @@
                                                 @endif
                                             </select>
                                             @error('residential_selectedProvince')
-                                                <span class="text-red-500 text-sm">This field
-                                                    is required!</span>
+                                                <span class="text-red-500 text-sm">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -449,8 +441,7 @@
                                                 @endif
                                             </select>
                                             @error('residential_selectedCity')
-                                                <span class="text-red-500 text-sm">This field is
-                                                    required!</span>
+                                                <span class="text-red-500 text-sm">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -479,8 +470,7 @@
                                                 @endif
                                             </select>
                                             @error('residential_selectedBarangay')
-                                                <span class="text-red-500 text-sm">This field
-                                                    is required!</span>
+                                                <span class="text-red-500 text-sm">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -493,8 +483,7 @@
                                                 class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                                                 name="r_house_street" required>
                                             @error('r_house_street')
-                                                <span class="text-red-500 text-sm">The Street and Barangay
-                                                    field is required</span>
+                                                <span class="text-red-500 text-sm">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -507,8 +496,7 @@
                                                     wire:model.live="residential_selectedZipcode"
                                                     class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                                 @error('residential_selectedZipcode')
-                                                    <span class="text-red-500 text-sm">This
-                                                        field is required!</span>
+                                                    <span class="text-red-500 text-sm">{{ $message }}</span>
                                                 @enderror
                                             </div>
                                         </div>
@@ -528,8 +516,7 @@
                                     <input type="number" id="mobile_number" wire:model.live="mobile_number"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('mobile_number')
-                                        <span class="text-red-500 text-sm">This field is
-                                            required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -541,7 +528,7 @@
                                     <input type="text" id="email" wire:model.live="email"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('email')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="w-full">
@@ -550,7 +537,7 @@
                                     <input type="number" id="emp_code" wire:model.live="emp_code"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('emp_code')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
@@ -567,7 +554,7 @@
                                             class="cursor-pointer"></i>
                                     </div>
                                     @error('password')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="relative w-full" x-data="{ show: false }">
@@ -581,7 +568,7 @@
                                             class="cursor-pointer"></i>
                                     </div>
                                     @error('c_password')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>

@@ -124,7 +124,7 @@ class Registration extends Component
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
             'c_password' => 'required|same:password',
-            'emp_code' => 'required',
+            'emp_code' => 'required|unique:users,emp_code',
         ]);
 
         if (!$this->isPasswordComplex($this->password)) {
