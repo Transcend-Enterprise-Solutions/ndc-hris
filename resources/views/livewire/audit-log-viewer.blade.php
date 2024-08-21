@@ -43,111 +43,62 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
                                 @if ($audit->auditable_type === App\Models\DocRequest::class)
-                                    @if ($audit->event === 'created')
-                                        <span>User {{ $audit->user->name ?? 'System' }} created a new document request (ID: {{ $audit->auditable_id }}).</span>
-                                        <div class="mt-1 text-xs">
+                                    <span>User {{ $audit->user->name ?? 'System' }} {{ $audit->event }} document request (ID: {{ $audit->auditable_id }}).</span>
+                                    <div class="mt-1 text-xs">
+                                        @if ($audit->event === 'created' || $audit->event === 'updated')
                                             <strong>Details:</strong><br>
-                                            @foreach ($audit->new_values as $key => $value)
+                                            @foreach ($audit->resolved_new_values as $key => $value)
                                                 <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
                                             @endforeach
-                                        </div>
-                                    @elseif ($audit->event === 'updated')
-                                        <span>User {{ $audit->user->name ?? 'System' }} updated document request (ID: {{ $audit->auditable_id }}).</span>
-                                        <div class="mt-1 text-xs">
+                                        @endif
+                                        @if ($audit->event === 'updated' || $audit->event === 'deleted')
                                             <strong>Old values:</strong><br>
-                                            @foreach ($audit->old_values as $key => $value)
+                                            @foreach ($audit->resolved_old_values as $key => $value)
                                                 <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
                                             @endforeach
-                                            <br>
-                                            <strong>New values:</strong><br>
-                                            @foreach ($audit->new_values as $key => $value)
-                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
-                                            @endforeach
-                                        </div>
-                                    @elseif ($audit->event === 'deleted')
-                                        <span>User {{ $audit->user->name ?? 'System' }} deleted document request (ID: {{ $audit->auditable_id }}).</span>
-                                        <div class="mt-1 text-xs">
-                                            <strong>Old values:</strong><br>
-                                            @foreach ($audit->old_values as $key => $value)
-                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
-                                            @endforeach
-                                        </div>
-                                    @endif
+                                        @endif
+                                    </div>
                                 @elseif ($audit->auditable_type === App\Models\DTRSchedule::class)
-                                    @if ($audit->event === 'created')
-                                        <span>User {{ $audit->user->name ?? 'System' }} created a new schedule (ID: {{ $audit->auditable_id }}).</span>
-                                        <div class="mt-1 text-xs">
+                                    <span>User {{ $audit->user->name ?? 'System' }} {{ $audit->event }} a schedule (ID: {{ $audit->auditable_id }}).</span>
+                                    <div class="mt-1 text-xs">
+                                        @if ($audit->event === 'created' || $audit->event === 'updated')
                                             <strong>Schedule Details:</strong><br>
-                                            @foreach ($audit->new_values as $key => $value)
+                                            @foreach ($audit->resolved_new_values as $key => $value)
                                                 <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
                                             @endforeach
-                                        </div>
-                                    @elseif ($audit->event === 'updated')
-                                        <span>User {{ $audit->user->name ?? 'System' }} updated schedule (ID: {{ $audit->auditable_id }}).</span>
-                                        <div class="mt-1 text-xs">
+                                        @endif
+                                        @if ($audit->event === 'updated' || $audit->event === 'deleted')
                                             <strong>Old values:</strong><br>
-                                            @foreach ($audit->old_values as $key => $value)
+                                            @foreach ($audit->resolved_old_values as $key => $value)
                                                 <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
                                             @endforeach
-                                            <br>
-                                            <strong>New values:</strong><br>
-                                            @foreach ($audit->new_values as $key => $value)
-                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
-                                            @endforeach
-                                        </div>
-                                    @elseif ($audit->event === 'deleted')
-                                        <span>User {{ $audit->user->name ?? 'System' }} deleted schedule (ID: {{ $audit->auditable_id }}).</span>
-                                        <div class="mt-1 text-xs">
-                                            <strong>Old values:</strong><br>
-                                            @foreach ($audit->old_values as $key => $value)
-                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
-                                            @endforeach
-                                        </div>
-                                    @endif
+                                        @endif
+                                    </div>
                                 @elseif ($audit->auditable_type === App\Models\Holiday::class)
-                                    @if ($audit->event === 'created')
-                                        <span>User {{ $audit->user->name ?? 'System' }} created a new holiday (ID: {{ $audit->auditable_id }}).</span>
-                                        <div class="mt-1 text-xs">
+                                    <span>User {{ $audit->user->name ?? 'System' }} {{ $audit->event }} a holiday (ID: {{ $audit->auditable_id }}).</span>
+                                    <div class="mt-1 text-xs">
+                                        @if ($audit->event === 'created' || $audit->event === 'updated')
                                             <strong>Holiday Details:</strong><br>
-                                            @foreach ($audit->new_values as $key => $value)
+                                            @foreach ($audit->resolved_new_values as $key => $value)
                                                 <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
                                             @endforeach
-                                        </div>
-                                    @elseif ($audit->event === 'updated')
-                                        <span>User {{ $audit->user->name ?? 'System' }} updated holiday (ID: {{ $audit->auditable_id }}).</span>
-                                        <div class="mt-1 text-xs">
+                                        @endif
+                                        @if ($audit->event === 'updated' || $audit->event === 'deleted')
                                             <strong>Old values:</strong><br>
-                                            @foreach ($audit->old_values as $key => $value)
+                                            @foreach ($audit->resolved_old_values as $key => $value)
                                                 <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
                                             @endforeach
-                                            <br>
-                                            <strong>New values:</strong><br>
-                                            @foreach ($audit->new_values as $key => $value)
-                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
-                                            @endforeach
-                                        </div>
-                                    @elseif ($audit->event === 'deleted')
-                                        <span>User {{ $audit->user->name ?? 'System' }} deleted holiday (ID: {{ $audit->auditable_id }}).</span>
-                                        <div class="mt-1 text-xs">
-                                            <strong>Old values:</strong><br>
-                                            @foreach ($audit->old_values as $key => $value)
-                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
-                                            @endforeach
-                                        </div>
-                                    @endif
+                                        @endif
+                                    </div>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                {{ $audit->created_at->format('Y-m-d H:i:s') }}
+                                {{ $audit->created_at->format('F j, Y, g:i a') }}
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
-        </div>
-
-        <div class="mt-4">
-            {{ $audits->links() }}
         </div>
     </div>
 </div>

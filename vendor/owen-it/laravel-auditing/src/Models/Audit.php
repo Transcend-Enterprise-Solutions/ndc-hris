@@ -2,6 +2,7 @@
 
 namespace OwenIt\Auditing\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -40,5 +41,9 @@ class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
     public function getSerializedDate($date)
     {
         return $this->serializeDate($date);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
