@@ -51,6 +51,8 @@ class UserData extends Model
         'r_house_street',
         'residential_selectedZipcode',
         'pwd',
+        'date_hired',
+        'appointment',
     ];
     protected $attributes = [
         'pwd' => 0,

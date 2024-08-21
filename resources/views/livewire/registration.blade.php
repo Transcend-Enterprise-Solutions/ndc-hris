@@ -158,41 +158,11 @@
                                     @enderror
                                 </div>
                             </div>
-
-                            <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
-
-                                <div class="w-full">
-                                    <label for="office_division" class="text-sm text-gray-700">Office Division <span class="text-red-600">*</span></label>
-                                    <select id="office_division" wire:model="selectedOfficeDivision"
-                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                        <option value="" selected >Select an office division</option>
-                                        @foreach($officeDivisions as $officeDivision)
-                                            <option value="{{ $officeDivision->id }}">{{ $officeDivision->office_division }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('selectedOfficeDivision')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="w-full">
-                                    <label for="position" class="text-sm text-gray-700">Position <span class="text-red-600">*</span></label>
-                                    <select id="position" wire:model="selectedPosition"
-                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                        <option value="" selected>Select a position</option>
-                                        @foreach($positions as $position)
-                                            <option value="{{ $position->id }}">{{ $position->position }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('selectedPosition')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
+                            <div class="mt-4 gap-2 lg:columns-1 sm:columns-1">
                                 <div class="w-full flex items-center">
                                     <input type="checkbox" id="pwd" wire:model.live="pwd"
                                         class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                    <label for="pwd" class="ml-2 text-sm text-gray-700">Person with Disability (PWD)</label>
+                                    <label for="pwd" class="ml-2 text-sm text-gray-700">Are you a person with disability (PWD) ?</label>
                                 </div>
                             </div>
 
@@ -305,7 +275,7 @@
                     @if ($step === 3)
                         <div>
                             <h2 class="mb-4 text-lg font-medium text-gray-500">
-                                Step 3 out of 3: <span class="font-bold text-black">Contact Information</span>
+                                Step 3 out of 3: <span class="font-bold text-black">Other Information</span>
                             </h2>
 
                             <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full mb-4">
@@ -557,14 +527,57 @@
                                     @enderror
                                 </div>
                             </div>
+                            <div class="mt-4 gap-2 lg:columns-1 sm:columns-1">
+                                <div class="w-full">
+                                    <label for="office_division" class="text-sm text-gray-700">Nature of Appointment <span class="text-red-600">*</span></label>
+                                    <select id="office_division" wire:model="appointment"
+                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <option value="">Please Choose one</option>
+                                        <option value="plantilla">Plantilla</option>
+                                        <option value="cos">Contract of Service</option>
+                                        <option value="cossk">COS SK</option>
+                                    </select>
+                                    @error('appointment')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
 
                             <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
+
                                 <div class="w-full">
-                                    <label for="email" class="text-sm text-gray-700">Email Address<span
-                                            class="text-red-600">*</span></label>
-                                    <input type="text" id="email" wire:model.live="email"
+                                    <label for="office_division" class="text-sm text-gray-700">Office Division <span class="text-red-600">*</span></label>
+                                    <select id="office_division" wire:model="selectedOfficeDivision"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                    @error('email')
+                                        <option value="" selected >Select an office division</option>
+                                        @foreach($officeDivisions as $officeDivision)
+                                            <option value="{{ $officeDivision->id }}">{{ $officeDivision->office_division }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('selectedOfficeDivision')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="w-full">
+                                    <label for="position" class="text-sm text-gray-700">Position <span class="text-red-600">*</span></label>
+                                    <select id="position" wire:model="selectedPosition"
+                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <option value="" selected>Select a position</option>
+                                        @foreach($positions as $position)
+                                            <option value="{{ $position->id }}">{{ $position->position }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('selectedPosition')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
+                                <div class="w-full">
+                                    <label for="date_hired" class="text-sm text-gray-700">Date Hired <span class="text-red-600">*</span></label>
+                                    <input type="date" id="date_hired" wire:model.live="date_hired"
+                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                    @error('date_hired')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -579,36 +592,48 @@
                                 </div>
                             </div>
 
-                            <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
-                                <div class="relative w-full" x-data="{ show: false }">
-                                    <label for="password" class="text-sm text-gray-700">Password <span
-                                            class="text-red-600">*</span></label>
-                                    <input :type="show ? 'text' : 'password'" id="password"
-                                        wire:model.live="password"
+                            <div class="mt-4 gap-2 lg:columns-1 sm:columns-1">
+                                <div class="w-full">
+                                    <label for="email" class="text-sm text-gray-700">Email Address<span class="text-red-600">*</span></label>
+                                    <input type="text" id="email" wire:model.live="email"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                    <div class="absolute top-1/2 right-0 pr-3 flex items-center text-sm leading-5">
-                                        <i :class="show ? 'bi bi-eye' : 'bi bi-eye-slash'" @click="show = !show"
-                                            class="cursor-pointer"></i>
+                                    @error('email')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="relative w-full" x-data="{ show: false }">
+                                    <label for="password" class="text-sm text-gray-700">Password <span class="text-red-600">*</span></label>
+                                    <div class="relative">
+                                        <input :type="show ? 'text' : 'password'" id="password"
+                                            wire:model.live="password"
+                                            class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm pr-12">
+                                        <div class="absolute inset-y-0 right-0 flex items-center px-3">
+                                            <i :class="show ? 'bi bi-eye' : 'bi bi-eye-slash'" @click="show = !show"
+                                                class="cursor-pointer text-gray-500"></i>
+                                        </div>
                                     </div>
                                     @error('password')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="relative w-full" x-data="{ show: false }">
-                                    <label for="c_password" class="text-sm text-gray-700">Confirm Password <span
-                                            class="text-red-600">*</span></label>
-                                    <input :type="show ? 'text' : 'password'" id="c_password"
-                                        wire:model.live="c_password"
-                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                    <div class="absolute top-1/2 right-0 pr-3 flex items-center text-sm leading-5">
-                                        <i :class="show ? 'bi bi-eye' : 'bi bi-eye-slash'" @click="show = !show"
-                                            class="cursor-pointer"></i>
+                                    <label for="c_password" class="text-sm text-gray-700">Confirm Password <span class="text-red-600">*</span></label>
+                                    <div class="relative">
+                                        <input :type="show ? 'text' : 'password'" id="c_password"
+                                            wire:model.live="c_password"
+                                            class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm pr-12">
+                                        <div class="absolute inset-y-0 right-0 flex items-center px-3">
+                                            <i :class="show ? 'bi bi-eye' : 'bi bi-eye-slash'" @click="show = !show"
+                                                class="cursor-pointer text-gray-500"></i>
+                                        </div>
                                     </div>
                                     @error('c_password')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
+
+
 
                             <div class="lg:flex gap-2 mt-12 lg:columns-2 sm:columns-1">
                                 <div class="w-full relative">

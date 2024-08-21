@@ -23,6 +23,8 @@ class Registration extends Component
     public $officeDivisions;
     public $selectedPosition;
     public $selectedOfficeDivision;
+    public $date_hired;
+    public $appointment;
 
     #Step 1
     public $first_name;
@@ -91,8 +93,7 @@ class Registration extends Component
             'weight' => 'required|numeric',
             'blood_type' => 'required|max:3',
             'blood_type' => 'required|max:3',
-            'selectedPosition' => 'required|exists:positions,id',
-            'selectedOfficeDivision' => 'required|exists:office_divisions,id',
+
 
         ]);
 
@@ -136,6 +137,11 @@ class Registration extends Component
             'password' => 'required|min:8',
             'c_password' => 'required|same:password',
             'emp_code' => 'required|unique:users,emp_code',
+            'selectedPosition' => 'required|exists:positions,id',
+            'selectedOfficeDivision' => 'required|exists:office_divisions,id',
+            'date_hired' => 'required|date',
+            'appointment' => 'required',
+
         ]);
 
         if (!$this->isPasswordComplex($this->password)) {
@@ -209,6 +215,9 @@ class Registration extends Component
             'tel_number' => $this->tel_number,
             'mobile_number' => $this->mobile_number,
             'pwd' => $this->pwd,
+            'date_hired' => $this->date_hired,
+            'appointment' => $this->appointment,
+
         ]);
 
         session()->flash('message', 'Registration successful!');
