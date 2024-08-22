@@ -256,7 +256,7 @@
                                 </div>
                             </div>
 
-                            <div class="lg:flex gap-2 mt-12 lg:columns-2 sm:columns-1">
+                            <div class="lg:flex gap-2 mt-12 columns-2">
                                 <div class="w-full relative">
                                     <button
                                         class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
@@ -667,7 +667,7 @@
 
 
 
-                            <div class="lg:flex gap-2 mt-12 lg:columns-2 sm:columns-1">
+                            <div class="lg:flex gap-2 mt-12 columns-2">
                                 <div class="w-full relative">
                                     <button
                                         class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
