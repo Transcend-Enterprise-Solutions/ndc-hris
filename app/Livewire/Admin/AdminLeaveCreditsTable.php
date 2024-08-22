@@ -14,6 +14,7 @@ class AdminLeaveCreditsTable extends Component
 
     public function render()
     {
+        // Ensure proper use of pagination
         $leaveCredits = LeaveCredits::with('user')
             ->whereHas('user', function ($query) {
                 $query->where('name', 'like', '%' . $this->search . '%');
@@ -25,3 +26,5 @@ class AdminLeaveCreditsTable extends Component
         ]);
     }
 }
+
+

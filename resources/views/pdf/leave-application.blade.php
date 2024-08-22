@@ -517,7 +517,7 @@
                         7.B RECOMMENDATION</p>
                     <div style="display: block; width: 100%; margin-left: 5px;">
                         <div style="display: inline-block; vertical-align: middle;">
-                            <input type="checkbox">
+                            <input type="checkbox" @if ($leaveApplication->status === 'Approved') checked @endif>
                         </div>
                         <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
                             <span class="s5">For approval</span>
@@ -526,15 +526,16 @@
 
                     <div style="display: block; width: 100%; margin-left: 5px;">
                         <div style="display: inline-block; vertical-align: middle;">
-                            <input type="checkbox">
+                            <input type="checkbox" @if ($leaveApplication->status === 'Disapproved') checked @endif>
                         </div>
                         <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
-                            <span class="s5">For disapproval due to</span>
+                            <span class="s5">For disapproval due to: </span>
+                            <u
+                                style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">
+                                {{ $leaveApplication->status === 'Disapproved' ? $leaveApplication->remarks : str_repeat('_', 20) }}
+                            </u>
                         </div>
-                        <u
-                            style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">
-                            {{ str_repeat('_', 20) }}
-                        </u>
+
                     </div>
                 </td>
             </tr>
@@ -546,7 +547,7 @@
                     <p class="s5"
                         style="padding-top: 1pt;padding-left: 30pt; padding-bottom: 10px;text-indent: 0pt;text-align: left;">
                         As of
-                        <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>
+                        <u>{{ $leaveApplication->date_of_filing }}</u>
                     </p>
                 </td>
                 <td
@@ -580,6 +581,7 @@
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                 </td>
             </tr>
+
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -598,24 +600,29 @@
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Total Earned</p>
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Claimable Credits
+                    </p>
                 </td>
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
+                        {{ $leaveCredits->vl_claimable_credits }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
+                        {{ $leaveCredits->sl_claimable_credits }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -634,25 +641,29 @@
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Less this
-                        application</p>
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Claimed Credits
+                    </p>
                 </td>
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
+                        {{ $leaveCredits->vl_claimed_credits }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
+                        {{ $leaveCredits->sl_claimed_credits }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -671,24 +682,28 @@
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Balance</p>
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Total Credits</p>
                 </td>
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
+                        {{ $leaveCredits->total_credits }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
+                        {{ $leaveCredits->total_credits }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+
             <tr style="height:22pt">
                 <td style="width:256pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     colspan="5" rowspan="2">
@@ -738,7 +753,9 @@
                     <p style="text-indent: 0pt;text-align: left;" />
                     <p class="s5"
                         style="padding-top: 3pt;padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">
-                        7.D DISAPPROVED DUE TO:{{ str_repeat('_', 20) }}</p>
+                        7.D DISAPPROVED DUE TO:
+                        <u>{{ $leaveApplication->status === 'Disapproved' ? $leaveApplication->remarks : str_repeat('_', 20) }}</u>
+                    </p>
                 </td>
             </tr>
             <tr style="height:10pt">
@@ -748,8 +765,8 @@
                 <td style="width:146pt" colspan="2">
                     <p class="s5"
                         style="padding-top: 2pt;padding-left: 1pt;text-indent: 0pt;line-height: 7pt;text-align: left;">
-                        {{ str_repeat('_', 10) }}
-                        days with pay</p>
+                        <u>{{ str_pad($daysWithPay ?? '', 10, '_', STR_PAD_BOTH) }}</u> days with pay
+                    </p>
                 </td>
                 <td style="width:73pt">
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -766,11 +783,11 @@
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
                 <td style="width:146pt" colspan="2">
-                    <p style="text-indent: 0pt;text-align: left;" />
+                    <p style="text-indent: 0pt;text-align: left;"></p>
                     <p class="s5"
                         style="padding-top: 1pt;padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">
-                        {{ str_repeat('_', 10) }}
-                        days without pay</p>
+                        <u>{{ str_pad($daysWithoutPay ?? '', 10, '_', STR_PAD_BOTH) }}</u> days without pay
+                    </p>
                 </td>
                 <td style="width:73pt">
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -786,11 +803,16 @@
                 <td style="width:19pt;border-left-style:solid;border-left-width:1pt">
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
+
                 <td style="width:146pt" colspan="2">
                     <p class="s5" style="padding-top: 1pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">
-                        {{ str_repeat('_', 10) }} others (Specify)
+                        Others (Specify):
+                        <u>{{ $otherRemarks . str_repeat('_', max(20 - strlen($otherRemarks), 0)) }}</u>
                     </p>
                 </td>
+
+
+
                 <td style="width:73pt">
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
@@ -801,6 +823,7 @@
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+
             <tr style="height:36pt">
                 <td
                     style="width:19pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">

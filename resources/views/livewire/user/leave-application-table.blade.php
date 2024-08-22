@@ -80,11 +80,19 @@
                                                     </td>
                                                     <td
                                                         class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                        <button type="button"
-                                                            wire:click.prevent="exportPDF({{ $leaveApplication->id }})">
-                                                            <i class="bi bi-file-earmark-arrow-down"></i>
-                                                        </button>
+                                                        @if ($leaveApplication->status === 'Approved' || $leaveApplication->status === 'Disapproved')
+                                                            <button type="button"
+                                                                wire:click.prevent="exportPDF({{ $leaveApplication->id }})">
+                                                                <i class="bi bi-file-earmark-arrow-down"></i>
+                                                            </button>
+                                                        @else
+                                                            <button type="button" disabled title="Wait for the action"
+                                                                class="cursor-not-allowed">
+                                                                <i class="bi bi-file-earmark-arrow-down"></i>
+                                                            </button>
+                                                        @endif
                                                     </td>
+
                                                 </tr>
                                             @endforeach
                                         </tbody>

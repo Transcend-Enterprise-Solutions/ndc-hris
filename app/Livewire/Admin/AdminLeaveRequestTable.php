@@ -75,6 +75,11 @@ class AdminLeaveRequestTable extends Component
                     return;
                 }
             }
+        } elseif ($this->status === 'Other') {
+            $this->validate([
+                'status' => 'required',
+                'otherReason' => 'required|string',
+            ]);
         } else {
             $this->validate([
                 'status' => 'required',
@@ -84,19 +89,16 @@ class AdminLeaveRequestTable extends Component
     
         if ($this->selectedApplication) {
             if ($this->status === 'Other') {
-                $this->validate([
-                    'status' => 'required',
-                    'otherReason' => 'required',
-                ]);
-                $this->selectedApplication->status = "Other";
+                $this->selectedApplication->status = "Approved";
                 $this->selectedApplication->remarks = $this->otherReason;
+                $this->selectedApplication->approved_days = 0;
             } else {
                 $this->selectedApplication->status = 'Approved';
                 $this->selectedApplication->approved_days = $this->days;
                 $this->selectedApplication->remarks = $this->status === 'With Pay' ? 'With Pay' : 'Without Pay';
     
                 $allApprovedDates = [];
-
+    
                 foreach ($this->selectedDates as $date) {
                     if (strpos($date, ' - ') !== false) {
                         // Split the range into start and end dates
@@ -106,7 +108,7 @@ class AdminLeaveRequestTable extends Component
                         $allApprovedDates[] = $date;
                     }
                 }
-
+    
                 $this->selectedApplication->approved_dates = implode(',', $allApprovedDates);
     
                 if (in_array($this->selectedApplication->type_of_leave, ['Vacation Leave', 'Sick Leave', 'Special Privilege Leave'])) {
