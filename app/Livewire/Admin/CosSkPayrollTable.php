@@ -6,8 +6,8 @@ use App\Exports\CosPayrollListExport;
 use App\Exports\IndivCosPayrollExport;
 use App\Exports\PayrollExport;
 use App\Models\CosRegPayrolls;
-use App\Models\CosRegSemiMonthlyPayrolls;
 use App\Models\CosSkPayrolls;
+use App\Models\CosSkSemiMonthlyPayrolls;
 use App\Models\EmployeesDtr;
 use App\Models\Holiday;
 use App\Models\LeaveApplication;
@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 
-class PayrollTable extends Component
+class CosSkPayrollTable  extends Component
 {
     use WithPagination, WithFileUploads;
     public $sortColumn = false;
@@ -123,7 +123,7 @@ class PayrollTable extends Component
         $users = User::paginate(10);
         $payrolls = collect();
         if ($this->startDate && $this->endDate) {
-            $query = CosRegSemiMonthlyPayrolls::where('start_date', $this->startDate)
+            $query = CosSkSemiMonthlyPayrolls::where('start_date', $this->startDate)
                 ->where('end_date', $this->endDate)
                 ->when($this->search, function ($query) {
                     return $query->search(trim($this->search));
@@ -145,10 +145,10 @@ class PayrollTable extends Component
         $cosPayrolls = User::when($this->search2, function ($query) {
                     return $query->search(trim($this->search2));
                 })
-                ->join('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
+                ->join('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                ->select('users.name', 'users.emp_code as employee_number', 'cos_reg_payrolls.*', 'positions.*', 'office_divisions.*')
+                ->select('users.name', 'users.emp_code as employee_number', 'cos_sk_payrolls.*', 'positions.*', 'office_divisions.*')
                 ->paginate(5);
 
         if($this->userId){
@@ -211,7 +211,7 @@ class PayrollTable extends Component
 
         }
 
-        return view('livewire.admin.payroll-table', [
+        return view('livewire.admin.cos-sk-payroll-table', [
             'users' => $users,
             'payrolls' => $payrolls,
             'cosPayrolls' => $cosPayrolls,
@@ -288,22 +288,22 @@ class PayrollTable extends Component
                 $payrollsAll = null;
                 if ($employeeId) {
                     $payrollsAll =User::join('positions', 'positions.id', 'users.position_id')
-                        ->join('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
+                        ->join('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
                         ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                         ->select('users.name', 
                             'users.emp_code', 
-                            'cos_reg_payrolls.*', 
+                            'cos_sk_payrolls.*', 
                             'positions.position', 
                             'office_divisions.office_division')
                         ->where('user_id', $employeeId)
                         ->get();
                 }else{
                     $payrollsAll = User::join('positions', 'positions.id', 'users.position_id')
-                        ->join('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
+                        ->join('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
                         ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                         ->select('users.name', 
                             'users.emp_code', 
-                            'cos_reg_payrolls.*', 
+                            'cos_sk_payrolls.*', 
                             'positions.position', 
                             'office_divisions.office_division')
                         ->get();
@@ -437,7 +437,7 @@ class PayrollTable extends Component
 
     
                     if($this->savePayroll){
-                        CosRegSemiMonthlyPayrolls::updateOrCreate(
+                        CosSkSemiMonthlyPayrolls::updateOrCreate(
                             [
                                 'user_id' => $userId,
                                 'start_date' => $this->startDate,
@@ -642,7 +642,7 @@ class PayrollTable extends Component
                     'signatories' => $signatories,
                 ];
                 
-                $filename = 'COS Regular Payroll ' . $startDate->format('F') . ' '
+                $filename = 'COS SK Payroll ' . $startDate->format('F') . ' '
                                        . $startDate->format('d') . '-'
                                        . $endDate->format('d') . ' '
                                        . $startDate->format('Y') . '.xlsx';
@@ -702,7 +702,7 @@ class PayrollTable extends Component
         $this->editCosPayroll = true;
         $this->userId = $userId;
         try {
-            $payroll = CosRegPayrolls::where('user_id', $userId)->first();
+            $payroll = CosSkPayrolls::where('user_id', $userId)->first();
             $sg = explode('-', $payroll->sg_step);
             if ($payroll) {
                 $this->name = $payroll->name;
@@ -726,14 +726,14 @@ class PayrollTable extends Component
     
     public function saveCosPayroll(){
         try {
-            $payroll = CosRegPayrolls::where('user_id', $this->userId)->first();
+            $payroll = CosSkPayrolls::where('user_id', $this->userId)->first();
             $user = User::where('id', $this->userId)->first();
             $sg_step = implode('-', [$this->sg, $this->step]);
             $message = null;
             $icon = null;
             $plantilla = Payrolls::where('user_id', $user->id)->first();
-            $cosSk = CosSkPayrolls::where('user_id', $user->id)->first();
-            if(!$plantilla && !$cosSk){
+            $cosReg = CosRegPayrolls::where('user_id', $user->id)->first();
+            if(!$plantilla && !$cosReg){
                 $payrollData = [
                     'user_id' => $this->userId,
                     'sg_step' => $this->sg,
@@ -762,12 +762,12 @@ class PayrollTable extends Component
                         'step' => 'required|numeric',
                         'rate_per_month' => 'required|numeric',
                     ]);
-                    CosRegPayrolls::create($payrollData);
+                    CosSkPayrolls::create($payrollData);
                     $message = "COS Payroll added successfully!";
                     $icon = "success";
                 }
             }else{
-                $message = "This employee already has a Plantilla/COS SK payroll!";
+                $message = "This employee already has a Plantilla/COS Regular payroll!";
                 $icon = "error";
             }
       
@@ -978,7 +978,7 @@ class PayrollTable extends Component
         $filters = [
             'search' => $this->search2,
         ];
-        $fileName = 'COS Reg Payroll List.xlsx';
+        $fileName = 'COS SK Payroll List.xlsx';
         return Excel::download(new CosPayrollListExport($filters), $fileName);
     }
 
@@ -1044,7 +1044,7 @@ class PayrollTable extends Component
                 'notedBy' => $notedBy,
             ];
 
-            $fileName = 'COS Reg Individual Payroll.xlsx';
+            $fileName = 'COS SK Individual Payroll.xlsx';
             return Excel::download(new IndivCosPayrollExport($filters), $fileName);
         }catch(Exception $e){
             throw $e;
@@ -1055,7 +1055,7 @@ class PayrollTable extends Component
         try {
             $user = User::where('id', $this->deleteId)->first();
             if ($user) {
-                $user->cosRegPayrolls()->delete();
+                $user->cosSkPayrolls()->delete();
                 $message = "COS payroll deleted successfully!";
 
                 $this->resetVariables();

@@ -83,7 +83,7 @@ x-cloak>
         <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
 
             <div class="pb-4 mb-3 pt-4 sm:pt-0">
-                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'cos'">COS Regular Payroll</h1>
+                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'cos'">COS SK Payroll</h1>
                 <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'signatories'">Manage Payroll & Payslip Signatories</h1>
                 <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white" x-show="selectedTab === 'export'">
                     Payroll for the month of {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('F') : '' }} {{ $startDate ? \Carbon\Carbon::parse($startDate)->format('Y') : '' }}

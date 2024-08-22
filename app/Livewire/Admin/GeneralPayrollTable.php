@@ -6,6 +6,7 @@ use App\Exports\GeneralPayrollExport;
 use App\Exports\IndivPlantillaPayrollExport;
 use App\Exports\PayrollListExport;
 use App\Models\CosRegPayrolls;
+use App\Models\CosSkPayrolls;
 use App\Models\GeneralPayroll;
 use App\Models\OfficeDivisions;
 use App\Models\Payrolls;
@@ -475,7 +476,7 @@ class GeneralPayrollTable extends Component
             $admin = Auth::user();
             $notedBy = User::join('signatories', 'signatories.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
-                ->where('signatories.signatory_type', 'cos_payslip')
+                ->where('signatories.signatory_type', 'plantilla_payslip')
                 ->where('signatories.signatory', 'Noted By')
                 ->select('users.name', 'positions.position', 'signatories.*')
                 ->first();
@@ -487,20 +488,25 @@ class GeneralPayrollTable extends Component
 
             $payroll = User::where('users.id', $id)
                 ->join('payrolls', 'payrolls.user_id', 'users.id')
+                ->join('user_data', 'user_data.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
+                ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*', 'user_data.sex', 'user_data.civil_status')
                 ->first();
 
+            if(!$this->endMonth){
+                $this->endMonth = $this->startMonth;
+            }
+    
             $filters = [
                 'payroll' => $payroll,
-                'startDate' => $this->startDate,
-                'endDate' => $this->endDate,
+                'startMonth' => $this->startMonth,
+                'endMonth' => $this->endMonth,
                 'preparedBy' => $preparedBy,
                 'notedBy' => $notedBy,
             ];
 
-            $fileName = 'Plantilla Reg Individual Payroll.xlsx';
+            $fileName = 'Plantilla Individual Payroll.xlsx';
             return Excel::download(new IndivPlantillaPayrollExport($filters), $fileName);
         }catch(Exception $e){
             throw $e;
@@ -869,8 +875,9 @@ class GeneralPayrollTable extends Component
             $sg_step = implode('-', [$this->sg, $this->step]);
             $message = null;
             $icon = null;
-            $cos = CosRegPayrolls::where('user_id', $user->id)->first();
-            if(!$cos){
+            $cosReg = CosRegPayrolls::where('user_id', $user->id)->first();
+            $cosSk = CosSkPayrolls::where('user_id', $user->id)->first();
+            if(!$cosReg && !$cosSk){
                 $payrollData = [
                     'user_id' => $this->userId,
                     'sg_step' => $sg_step,
@@ -938,7 +945,7 @@ class GeneralPayrollTable extends Component
                     $icon = "success";
                 }
             }else{
-                $message = "This employee already has a COS payroll!";
+                $message = "This employee already has a COS Regular/SK payroll!";
                 $icon = "error";
             }
     

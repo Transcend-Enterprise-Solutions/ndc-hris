@@ -1,6 +1,6 @@
 <div class="w-full flex justify-center"
 x-data="{ 
-    selectedTab: 'export',
+    selectedTab: 'plantilla',
      selectedSubTab: 'payroll',
 }" 
 x-cloak>

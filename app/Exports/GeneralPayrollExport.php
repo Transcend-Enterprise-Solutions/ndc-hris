@@ -3,7 +3,6 @@
 namespace App\Exports;
 
 use App\Models\Payrolls;
-use App\Models\GeneralPayroll;
 use App\Models\User;
 use Exception;
 use Maatwebsite\Excel\Concerns\Exportable;

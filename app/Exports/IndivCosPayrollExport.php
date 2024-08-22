@@ -68,7 +68,7 @@ class IndivCosPayrollExport implements WithEvents, WithDrawings
         if($payroll['sex'] == "Male"){
             $prefix = "Mr.";
         }else if($payroll['sex'] == "Female"){
-            if($payroll->civil_status == "Single" || $payroll['civil_status'] == "Widowed" || $payroll['civil_status'] == "Separated"){
+            if($payroll['civil_status'] == "Single" || $payroll['civil_status'] == "Widowed" || $payroll['civil_status'] == "Separated"){
                 $prefix = "Ms.";
             }else{
                 $prefix = "Mrs.";

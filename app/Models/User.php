@@ -183,14 +183,20 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class, 'user_id');
     }
 
-    public function cosPayrolls()
-    {
+    public function cosRegPayrolls(){
         return $this->hasOne(CosRegPayrolls::class);
     }
 
-    public function employeesLeaves()
-    {
-        return $this->hasOne(EmployeesLeaves::class);
+    public function cosSkPayrolls(){
+        return $this->hasOne(CosSkPayrolls::class);
+    }
+
+    public function cosRegSemiPayrolls(){
+        return $this->hasMany(CosRegSemiMonthlyPayrolls::class);
+    }
+
+    public function cosSkSemiPayrolls(){
+        return $this->hasMany(CosSkSemiMonthlyPayrolls::class);
     }
 
     /**
