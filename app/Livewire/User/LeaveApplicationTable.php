@@ -376,10 +376,12 @@ class LeaveApplicationTable extends Component
                 $daysWithPay = $leaveApplication->approved_days;
             } elseif ($leaveApplication->remarks === 'Without Pay') {
                 $daysWithoutPay = $leaveApplication->approved_days;
+            } else {
+                $otherRemarks = $leaveApplication->remarks;
             }
-        } elseif ($leaveApplication->status === 'Other') {
-            $otherRemarks = $leaveApplication->remarks;
         }
+
+        $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
 
         $pdf = PDF::loadView('pdf.leave-application', [
             'leaveApplication' => $leaveApplication,
@@ -390,7 +392,8 @@ class LeaveApplicationTable extends Component
             'getDetailValue' => $getDetailValue,
             'daysWithPay' => $daysWithPay,
             'daysWithoutPay' => $daysWithoutPay,
-            'otherRemarks' => $otherRemarks
+            'otherRemarks' => $otherRemarks,
+            'leaveCredits' => $leaveCredits,
         ]);
 
         return response()->streamDownload(function() use ($pdf) {

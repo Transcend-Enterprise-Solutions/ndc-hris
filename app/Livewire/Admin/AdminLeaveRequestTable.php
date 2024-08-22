@@ -89,7 +89,7 @@ class AdminLeaveRequestTable extends Component
     
         if ($this->selectedApplication) {
             if ($this->status === 'Other') {
-                $this->selectedApplication->status = "Other";
+                $this->selectedApplication->status = "Approved";
                 $this->selectedApplication->remarks = $this->otherReason;
                 $this->selectedApplication->approved_days = 0;
             } else {

@@ -581,6 +581,7 @@
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                 </td>
             </tr>
+
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -599,24 +600,29 @@
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Total Earned</p>
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Claimable Credits
+                    </p>
                 </td>
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
+                        {{ $leaveCredits->vl_claimable_credits }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
+                        {{ $leaveCredits->sl_claimable_credits }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -635,25 +641,29 @@
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Less this
-                        application</p>
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Claimed Credits
+                    </p>
                 </td>
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
+                        {{ $leaveCredits->vl_claimed_credits }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
+                        {{ $leaveCredits->sl_claimed_credits }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -672,24 +682,28 @@
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Balance</p>
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Total Credits</p>
                 </td>
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
+                        {{ $leaveCredits->total_credits }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
+                        {{ $leaveCredits->total_credits }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+
             <tr style="height:22pt">
                 <td style="width:256pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     colspan="5" rowspan="2">
