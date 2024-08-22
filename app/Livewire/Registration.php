@@ -25,6 +25,8 @@ class Registration extends Component
     public $selectedOfficeDivision;
     public $date_hired;
     public $appointment;
+    public $plantilla_item;
+    public $data_of_assumption;
 
     #Step 1
     public $first_name;
@@ -85,6 +87,10 @@ class Registration extends Component
             'surname' => 'required|min:2',
             'name_extension' => 'nullable',
             'sex' => 'required',
+            'otherSex' => [
+                'required_if:sex,Others',
+                'nullable',
+            ],
             'date_of_birth' => 'required|date|before:today',
             'place_of_birth' => 'required',
             'citizenship' => 'required',
@@ -92,9 +98,6 @@ class Registration extends Component
             'height' => 'required|numeric',
             'weight' => 'required|numeric',
             'blood_type' => 'required|max:3',
-            'blood_type' => 'required|max:3',
-
-
         ]);
 
         $this->step++;
@@ -141,6 +144,14 @@ class Registration extends Component
             'selectedOfficeDivision' => 'required|exists:office_divisions,id',
             'date_hired' => 'required|date',
             'appointment' => 'required',
+            'plantilla_item' => [
+                'required_if:appointment,plantilla',
+                'nullable',
+            ],
+            'data_of_assumption' => [
+                'required_if:appointment,pa',
+                'nullable',
+            ],
 
         ]);
 
@@ -176,18 +187,15 @@ class Registration extends Component
         //     'leave_for_women' => Carbon::now()->addMonths(2)->diffInDays(Carbon::now()), // 2 months to days
         //     'emergency_leave' => 5,
         // ]);
-
-        if ($this->sex === 'Others') {
-            $this->sex = $this->otherSex;
-        }
-
+        $appointmentValue = $this->getAppointmentValue();
+        $sexValue = $this->getSexValue();
         $user->userData()->create([
             'user_id' => $user->id,
             'first_name' => $this->first_name,
             'middle_name' => $this->middle_name,
             'surname' => $this->surname,
             'name_extension' => $this->name_extension,
-            'sex' => $this->sex,
+            'sex' => $sexValue,
             'email' => $this->email,
             'date_of_birth' => $this->date_of_birth,
             'place_of_birth' => $this->place_of_birth,
@@ -216,7 +224,7 @@ class Registration extends Component
             'mobile_number' => $this->mobile_number,
             'pwd' => $this->pwd,
             'date_hired' => $this->date_hired,
-            'appointment' => $this->appointment,
+            'appointment' => $appointmentValue,
 
         ]);
 
@@ -307,5 +315,35 @@ class Registration extends Component
         $containsNumber = preg_match('/\d/', $password);
         $containsSpecialChar = preg_match('/[^A-Za-z0-9]/', $password); // Changed regex to include special characters
         return $containsUppercase && $containsNumber && $containsSpecialChar;
+    }
+
+    public function updatedAppointment($value)
+    {
+        if ($value !== 'plantilla') {
+            $this->plantilla_item = '';
+        }
+        if ($value !== 'pa') {
+            $this->data_of_assumption = '';
+        }
+    }
+    public function getSexValue()
+    {
+        if ($this->sex === 'Other' && $this->otherSex) {
+            return $this->sex . ',' . $this->otherSex;
+        }
+        return $this->sex;
+    }
+
+    public function getAppointmentValue()
+    {
+        if ($this->appointment === 'plantilla' && $this->plantilla_item) {
+            return $this->appointment . ',' . $this->plantilla_item;
+        }
+
+        if ($this->appointment === 'pa' && $this->data_of_assumption) {
+            return $this->appointment . ',' . $this->data_of_assumption;
+        }
+
+        return $this->appointment;
     }
 }

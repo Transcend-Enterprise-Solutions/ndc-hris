@@ -68,16 +68,18 @@
                                         <option value="">Select Gender</option>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
-                                        <option value="Others">Others:</option>
+                                        <option value="Others">Others</option>
                                     </select>
 
-                                    <input x-show="showOthers" wire:model="otherSex" type="text" id="others"
+                                    <input x-show="showOthers" wire:model="otherSex" type="text" id="others" placeholder="Please specify"
                                         class="mt-2 w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
 
                                     @error('sex')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
+
+
 
                                 <div class="w-full">
                                     <label for="date_of_birth" class=" text-sm text-gray-700">Birth Date <span
@@ -89,6 +91,9 @@
                                     @enderror
                                 </div>
                             </div>
+                            @error('otherSex')
+                                <span class="text-red-500 text-sm">This field is required</span>
+                            @enderror
 
                             <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                                 <div class="w-full">
@@ -527,21 +532,47 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="mt-4 gap-2 lg:columns-1 sm:columns-1">
+                            <div x-data="{ appointment: @entangle('appointment') }" class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                                 <div class="w-full">
                                     <label for="office_division" class="text-sm text-gray-700">Nature of Appointment <span class="text-red-600">*</span></label>
-                                    <select id="office_division" wire:model="appointment"
+                                    <select id="office_division" x-model="appointment"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <option value="">Please Choose one</option>
                                         <option value="plantilla">Plantilla</option>
                                         <option value="cos">Contract of Service</option>
-                                        <option value="cossk">COS SK</option>
+                                        <option value="ct">Co-Terminus</option>
+                                        <option value="pa">Presidential appointee</option>
                                     </select>
-                                    @error('appointment')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+
+                                </div>
+
+                                <!-- Plantilla Item Number Field -->
+                                <div x-show="appointment === 'plantilla'" class="w-full mt-4">
+                                    <label for="plantilla_item" class="text-sm text-gray-700">Plantilla Item Number <span class="text-red-600">*</span></label>
+                                    <input id="plantilla_item" wire:model="plantilla_item"
+                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
+                                        type="text" placeholder="Enter Plantilla Item Number">
+                                    @error('plantilla_item')
+                                        <span class="text-red-500 text-sm">This field is required</span>
+                                    @enderror
+                                </div>
+                                <!-- Data of Assumption Field -->
+                                <div x-show="appointment === 'pa'" class="w-full mt-4">
+                                    <label for="data_of_assumption" class="text-sm text-gray-700">Data of Assumption <span class="text-red-600">*</span></label>
+                                    <input id="data_of_assumption" wire:model="data_of_assumption"
+                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
+                                        type="text" placeholder="Enter Data of Assumption">
+                                    @error('data_of_assumption')
+                                        <span class="text-red-500 text-sm">This field is required</span>
                                     @enderror
                                 </div>
                             </div>
+                            @error('appointment')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+
+
+
 
                             <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
 
