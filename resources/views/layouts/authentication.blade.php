@@ -16,7 +16,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
     <!-- Scripts -->
-    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
     <script defer src="build/assets/app-B9GXRaBV.js"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -34,8 +33,7 @@
         .right-side-login {
             height: 100%;
             width: 100%;
-            overflow-x: hidden;
-            overflow-y: hidden;
+            overflow: hidden;
             position: absolute;
             top: 0;
             right: 0;
@@ -65,6 +63,29 @@
 
         .main-container {
             overflow-x: hidden;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .animate-slide-in-right {
+            transform: translateX(100%);
+            animation: slideInRight 0.5s ease-out forwards;
+        }
+
+        .animate-slide-in-right-delay {
+            transform: translateX(100%);
+            animation: slideInRight 0.5s ease-out 0.15s forwards;
+        }
+
+        .right-side-content {
+            transform: translateX(100%);
         }
     </style>
 </head>
@@ -99,31 +120,13 @@
             </div>
 
             <!-- Image -->
-            <div
-                x-data
-                x-init="$el.style.transform = 'translateX(100%)'; $el.style.opacity = 0;
-                        setTimeout(() => {
-                            $el.style.transition = 'transform 0.7s ease, opacity 0.7s ease';
-                            $el.style.transform = 'translateX(0)';
-                            $el.style.opacity = 1;
-                        }, 100);"
-                class="hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2 overflow-hidden" aria-hidden="true">
-
-                <div class="right-side-login">
+            <div class="hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2 overflow-hidden right-side-content" aria-hidden="true">
+                <div class="right-side-login animate-slide-in-right">
                     <div></div>
                     <img src="/images/vector.png" alt="login bg" style="height: 101%;">
                 </div>
 
-                <div
-                    x-data
-                    x-init="$el.style.transform = 'translateX(100%)'; $el.style.opacity = 0;
-                            setTimeout(() => {
-                                $el.style.transition = 'transform 0.7s ease, opacity 0.7s ease';
-                                $el.style.transform = 'translateX(0)';
-                                $el.style.opacity = 1;
-                            }, 300);"
-                    class="flex items-center justify-center w-full h-full login-logo">
-
+                <div class="flex items-center justify-center w-full h-full login-logo animate-slide-in-right-delay">
                     <img class="w-1/2 h-1/2 object-contain" src="{{ asset('images/hris-logo.png') }}" width="760"
                         height="1024" alt="Authentication image" />
                 </div>
@@ -134,6 +137,13 @@
     </main>
 
     @livewireScripts
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                document.querySelector('.right-side-content').classList.add('animate-slide-in-right');
+            }, 50);
+        });
+    </script>
 </body>
 
 </html>

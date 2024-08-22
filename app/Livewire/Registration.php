@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\PhilippineProvinces;
 use App\Models\PhilippineCities;
 use App\Models\PhilippineBarangays;
+use App\Models\Positions;
+use App\Models\OfficeDivisions;
 use App\Models\PhilippineRegions;
 use App\Models\EmployeesLeaves;
 use Carbon\Carbon;
@@ -16,6 +18,15 @@ class Registration extends Component
     public $user_role = 'emp';
     public $active_status = 1;
     public $emp_code;
+    public $pwd=0;
+    public $positions;
+    public $officeDivisions;
+    public $selectedPosition;
+    public $selectedOfficeDivision;
+    public $date_hired;
+    public $appointment;
+    public $plantilla_item;
+    public $data_of_assumption;
 
     #Step 1
     public $first_name;
@@ -76,6 +87,10 @@ class Registration extends Component
             'surname' => 'required|min:2',
             'name_extension' => 'nullable',
             'sex' => 'required',
+            'otherSex' => [
+                'required_if:sex,Others',
+                'nullable',
+            ],
             'date_of_birth' => 'required|date|before:today',
             'place_of_birth' => 'required',
             'citizenship' => 'required',
@@ -125,6 +140,19 @@ class Registration extends Component
             'password' => 'required|min:8',
             'c_password' => 'required|same:password',
             'emp_code' => 'required|unique:users,emp_code',
+            'selectedPosition' => 'required|exists:positions,id',
+            'selectedOfficeDivision' => 'required|exists:office_divisions,id',
+            'date_hired' => 'required|date',
+            'appointment' => 'required',
+            'plantilla_item' => [
+                'required_if:appointment,plantilla',
+                'nullable',
+            ],
+            'data_of_assumption' => [
+                'required_if:appointment,pa',
+                'nullable',
+            ],
+
         ]);
 
         if (!$this->isPasswordComplex($this->password)) {
@@ -143,6 +171,9 @@ class Registration extends Component
             'user_role' => 'emp',
             'active_status' => $this->active_status,
             'emp_code' => $this->emp_code,
+            'position_id' => $this->selectedPosition,
+            'office_division_id' => $this->selectedOfficeDivision,
+
         ]);
 
         // $employeesLeaves = EmployeesLeaves::create([
@@ -156,18 +187,15 @@ class Registration extends Component
         //     'leave_for_women' => Carbon::now()->addMonths(2)->diffInDays(Carbon::now()), // 2 months to days
         //     'emergency_leave' => 5,
         // ]);
-
-        if ($this->sex === 'Others') {
-            $this->sex = $this->otherSex;
-        }
-
+        $appointmentValue = $this->getAppointmentValue();
+        $sexValue = $this->getSexValue();
         $user->userData()->create([
             'user_id' => $user->id,
             'first_name' => $this->first_name,
             'middle_name' => $this->middle_name,
             'surname' => $this->surname,
             'name_extension' => $this->name_extension,
-            'sex' => $this->sex,
+            'sex' => $sexValue,
             'email' => $this->email,
             'date_of_birth' => $this->date_of_birth,
             'place_of_birth' => $this->place_of_birth,
@@ -194,6 +222,10 @@ class Registration extends Component
             'r_house_street' => $this->r_house_street,
             'tel_number' => $this->tel_number,
             'mobile_number' => $this->mobile_number,
+            'pwd' => $this->pwd,
+            'date_hired' => $this->date_hired,
+            'appointment' => $appointmentValue,
+
         ]);
 
         session()->flash('message', 'Registration successful!');
@@ -202,6 +234,8 @@ class Registration extends Component
 
     public function mount(){
         $this->getProvicesAndCities();
+        $this->positions = Positions::all();
+        $this->officeDivisions = OfficeDivisions::all();
     }
 
     public function render()
@@ -281,5 +315,35 @@ class Registration extends Component
         $containsNumber = preg_match('/\d/', $password);
         $containsSpecialChar = preg_match('/[^A-Za-z0-9]/', $password); // Changed regex to include special characters
         return $containsUppercase && $containsNumber && $containsSpecialChar;
+    }
+
+    public function updatedAppointment($value)
+    {
+        if ($value !== 'plantilla') {
+            $this->plantilla_item = '';
+        }
+        if ($value !== 'pa') {
+            $this->data_of_assumption = '';
+        }
+    }
+    public function getSexValue()
+    {
+        if ($this->sex === 'Other' && $this->otherSex) {
+            return $this->sex . ',' . $this->otherSex;
+        }
+        return $this->sex;
+    }
+
+    public function getAppointmentValue()
+    {
+        if ($this->appointment === 'plantilla' && $this->plantilla_item) {
+            return $this->appointment . ',' . $this->plantilla_item;
+        }
+
+        if ($this->appointment === 'pa' && $this->data_of_assumption) {
+            return $this->appointment . ',' . $this->data_of_assumption;
+        }
+
+        return $this->appointment;
     }
 }

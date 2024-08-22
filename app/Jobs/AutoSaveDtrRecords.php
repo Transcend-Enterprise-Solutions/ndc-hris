@@ -46,9 +46,8 @@ class AutoSaveDtrRecords implements ShouldQueue
 
                 // Get approved leaves for the current date
                 $approvedLeaves = LeaveApplication::where('user_id', $user->id)
-                    ->where('status', 'approved')
-                    ->whereDate('start_date', '<=', $currentDate)
-                    ->whereDate('end_date', '>=', $currentDate)
+                    ->where('status', 'Approved')
+                    ->whereRaw("FIND_IN_SET(?, approved_dates) > 0", [$currentDate])
                     ->get();
 
                 echo "Total transactions found for user {$user->emp_code}: " . $transactions->count() . "\n";
@@ -132,9 +131,7 @@ class AutoSaveDtrRecords implements ShouldQueue
         }
 
         // Check if the date is within an approved leave period
-        $isOnLeave = $approvedLeaves->contains(function ($leave) use ($carbonDate) {
-            return $carbonDate->between(Carbon::parse($leave->start_date), Carbon::parse($leave->end_date));
-        });
+        $isOnLeave = $approvedLeaves->isNotEmpty();
 
         if ($isOnLeave) {
             return [

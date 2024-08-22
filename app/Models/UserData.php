@@ -50,6 +50,12 @@ class UserData extends Model
         'residential_selectedBarangay',
         'r_house_street',
         'residential_selectedZipcode',
+        'pwd',
+        'date_hired',
+        'appointment',
+    ];
+    protected $attributes = [
+        'pwd' => 0,
     ];
 
     public function user()
