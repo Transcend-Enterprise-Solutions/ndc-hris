@@ -86,39 +86,41 @@ class AutoSaveDtrRecords implements ShouldQueue
         $carbonDate = Carbon::parse($date);
         $dayOfWeek = $carbonDate->format('l');
 
+        // Fetch the schedule from DTRSchedule table
         $schedule = DTRSchedule::where('emp_code', $empCode)
             ->whereDate('start_date', '<=', $date)
             ->whereDate('end_date', '>=', $date)
             ->first();
 
-        $location = 'Onsite';
+        // Initialize default values
         $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString('07:00:00');
         $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString('18:30:00');
+        $lateThreshold = $carbonDate->copy()->setTimeFromTimeString('09:30:00');
 
+        // Set values for Work From Home (WFH) days
         if ($schedule) {
             $wfhDays = array_map('ucfirst', array_map('trim', explode(',', $schedule->wfh_days)));
-
             if (in_array($dayOfWeek, $wfhDays)) {
-                $location = 'WFH';
                 $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString('08:00:00');
                 $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString('17:00:00');
+                $lateThreshold = $defaultStartTime; // Set threshold to start time for WFH
             } else {
                 $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString($schedule->default_start_time);
                 $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString($schedule->default_end_time);
             }
         }
 
-        if ($dayOfWeek === 'Monday' && $location !== 'WFH') {
-            $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString('09:00:00');
-            $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString('18:00:00');
+        // Adjust late threshold for Monday
+        if ($dayOfWeek === 'Monday') {
+            $lateThreshold = $carbonDate->copy()->setTimeFromTimeString('09:00:00');
         }
 
-        // Check if the date is a holiday
+        // Check for holiday or leave
         $holiday = Holiday::whereDate('holiday_date', $date)->first();
         if ($holiday) {
             return [
                 'day_of_week' => $dayOfWeek,
-                'location' => $location,
+                'location' => 'Onsite', // Assuming Onsite for holidays
                 'morning_in' => null,
                 'morning_out' => null,
                 'afternoon_in' => null,
@@ -130,13 +132,11 @@ class AutoSaveDtrRecords implements ShouldQueue
             ];
         }
 
-        // Check if the date is within an approved leave period
         $isOnLeave = $approvedLeaves->isNotEmpty();
-
         if ($isOnLeave) {
             return [
                 'day_of_week' => $dayOfWeek,
-                'location' => $location,
+                'location' => 'Onsite', // Assuming Onsite for leaves
                 'morning_in' => null,
                 'morning_out' => null,
                 'afternoon_in' => null,
@@ -148,82 +148,111 @@ class AutoSaveDtrRecords implements ShouldQueue
             ];
         }
 
-        $latenessThreshold = $dayOfWeek === 'Monday' ? '09:00:00' : '09:30:00';
-        $latenessThreshold = ($location === 'WFH') ? '08:00:00' : $latenessThreshold;
-        $latenessThresholdTime = $carbonDate->copy()->setTimeFromTimeString($latenessThreshold);
+        // Determine location
+        $location = 'Onsite'; // Default value, adjust as necessary based on your application
 
-        $sortedTransactions = $transactions->sortBy('punch_time');
-
+        // Initialize variables for punches
         $morningIn = null;
         $morningOut = null;
         $afternoonIn = null;
         $afternoonOut = null;
 
-        foreach ($sortedTransactions as $transaction) {
+        $morningTransactions = $transactions->filter(function ($transaction) {
             $time = Carbon::parse($transaction->punch_time);
+            return $time->hour < 13 || ($time->hour == 13 && $time->minute == 0);
+        });
 
-            if (!$morningIn) {
-                $morningIn = $time;
-            } elseif (!$morningOut && $time->hour <= 13) {
-                $morningOut = $time;
-            } elseif (!$afternoonIn) {
-                $afternoonIn = $time;
-            } elseif (!$afternoonOut) {
-                $afternoonOut = $time;
-            }
+        $afternoonTransactions = $transactions->filter(function ($transaction) {
+            $time = Carbon::parse($transaction->punch_time);
+            return $time->hour >= 12;
+        });
+
+        $morningIns = $morningTransactions->where('punch_state', 0);
+        $morningOuts = $morningTransactions->where('punch_state', 1);
+
+        if ($morningIns->isNotEmpty()) {
+            $morningIn = Carbon::parse($morningIns->first()->punch_time);
+            $morningIn = $morningIn->lt($defaultStartTime) ? $defaultStartTime : $morningIn;
+        }
+        if ($morningOuts->isNotEmpty()) {
+            $morningOut = Carbon::parse($morningOuts->last()->punch_time);
         }
 
-        // Correct any misalignments
-        if ($afternoonIn && $afternoonOut && $afternoonIn->gt($afternoonOut)) {
-            // Swap afternoon in and out if they're in the wrong order
-            $temp = $afternoonIn;
-            $afternoonIn = $afternoonOut;
-            $afternoonOut = $temp;
+        $afternoonIns = $afternoonTransactions->where('punch_state', 0);
+        $afternoonOuts = $afternoonTransactions->where('punch_state', 1);
+
+        if ($afternoonIns->isNotEmpty()) {
+            $afternoonIn = Carbon::parse($afternoonIns->first()->punch_time);
+        }
+        if ($afternoonOuts->isNotEmpty()) {
+            $afternoonOut = Carbon::parse($afternoonOuts->last()->punch_time);
         }
 
-        $late = 0;
-        if ($morningIn && $morningIn->gt($latenessThresholdTime)) {
-            $late = $morningIn->diffInMinutes($latenessThresholdTime);
-        }
-
-        $overtime = 0;
-        if ($afternoonOut && $afternoonOut->gt($defaultEndTime)) {
-            $overtime = $afternoonOut->diffInMinutes($defaultEndTime);
-        }
+        $lunchBreakStart = $carbonDate->copy()->setTimeFromTimeString('12:00:00');
+        $lunchBreakEnd = $carbonDate->copy()->setTimeFromTimeString('13:00:00');
 
         $totalMinutesRendered = 0;
+        $expectedEndTime = $defaultEndTime;
+
+        // Calculate total minutes rendered
         if ($morningIn && $morningOut) {
-            $morningStart = max($defaultStartTime, $morningIn);
-            $morningEnd = min($defaultEndTime, $morningOut);
-            $totalMinutesRendered += max(0, $morningStart->diffInMinutes($morningEnd));
+            $morningEnd = min($lunchBreakStart, $morningOut);
+            $totalMinutesRendered += max(0, $morningIn->diffInMinutes($morningEnd));
         }
+
         if ($afternoonIn && $afternoonOut) {
-            $afternoonStart = max($defaultStartTime, $afternoonIn);
+            $afternoonStart = max($lunchBreakEnd, $afternoonIn);
             $afternoonEnd = min($defaultEndTime, $afternoonOut);
             $totalMinutesRendered += max(0, $afternoonStart->diffInMinutes($afternoonEnd));
         }
 
-        $requiredMinutes = 8 * 60; // 8 hours in minutes
-        $undertime = max(0, $requiredMinutes - $totalMinutesRendered);
+        $totalHoursRendered = Carbon::createFromTime(0, 0, 0)->addMinutes($totalMinutesRendered)->format('H:i');
 
-        $late = max($late, $undertime);
-        $totalMinutesRendered = min($totalMinutesRendered, $requiredMinutes);
+        // Calculate lateness
+        $late = Carbon::createFromTime(0, 0, 0);
+        if ($morningIn && $morningIn->gt($lateThreshold)) {
+            $late = $late->addMinutes($morningIn->diffInMinutes($lateThreshold));
+        }
 
-        $formatTime = function($minutes) {
-            $hours = floor($minutes / 60);
-            $remainingMinutes = $minutes % 60;
-            return sprintf('%02d:%02d', $hours, $remainingMinutes);
-        };
+        // Calculate expected end time and undertime
+        if ($morningIn) {
+            $expectedEndTime = $morningIn->copy()->addHours(9); // 9 hours work day
+            if ($expectedEndTime->lt($defaultEndTime)) {
+                $expectedEndTime = $defaultEndTime;
+            }
+        }
 
+        $undertime = Carbon::createFromTime(0, 0, 0);
+        if ($afternoonOut && $afternoonOut->lt($expectedEndTime)) {
+            $undertime = $undertime->addMinutes($expectedEndTime->diffInMinutes($afternoonOut));
+        }
+
+        // Calculate overtime if applicable
+        $overtime = Carbon::createFromTime(0, 0, 0);
+        if ($afternoonOut && $afternoonOut->gt($defaultEndTime)) {
+            $overtime = $overtime->addMinutes($afternoonOut->diffInMinutes($defaultEndTime));
+        }
+
+        // Convert to time format
+        $lateFormatted = $late->format('H:i');
+        $undertimeFormatted = $undertime->format('H:i');
+        $overtimeFormatted = $overtime->format('H:i');
+
+        // Initialize remarks
         $remarks = '';
-        if (in_array($dayOfWeek, ['Saturday', 'Sunday'])) {
-            $remarks = $dayOfWeek;
-        } elseif ($transactions->isEmpty()) {
+
+        // Add specific remarks for Saturday and Sunday
+        if ($dayOfWeek === 'Saturday') {
+            $remarks = 'Saturday';
+        } elseif ($dayOfWeek === 'Sunday') {
+            $remarks = 'Sunday';
+        }
+
+        // Adjust remarks based on presence or lateness
+        if (!$morningIn && !$afternoonIn) {
             $remarks = 'Absent';
-        } elseif ($late > 0) {
+        } elseif ($lateFormatted !== '00:00') {
             $remarks = 'Late';
-        } else {
-            $remarks = 'Present';
         }
 
         return [
@@ -233,10 +262,11 @@ class AutoSaveDtrRecords implements ShouldQueue
             'morning_out' => $morningOut ? $morningOut->format('H:i:s') : null,
             'afternoon_in' => $afternoonIn ? $afternoonIn->format('H:i:s') : null,
             'afternoon_out' => $afternoonOut ? $afternoonOut->format('H:i:s') : null,
-            'late' => $formatTime($late),
-            'overtime' => $formatTime($overtime),
-            'total_hours_rendered' => $formatTime($totalMinutesRendered),
+            'late' => $lateFormatted,
+            'overtime' => $overtimeFormatted,
+            'total_hours_rendered' => $totalHoursRendered,
             'remarks' => $remarks,
         ];
     }
+
 }
