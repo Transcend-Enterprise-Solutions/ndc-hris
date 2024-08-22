@@ -79,8 +79,6 @@ class AutoSaveDtrRecords implements ShouldQueue
             Log::error($e->getTraceAsString());
         }
     }
-
-
     private function calculateTimeRecords($transactions, $empCode, $date, $approvedLeaves)
     {
         $carbonDate = Carbon::parse($date);
@@ -103,7 +101,7 @@ class AutoSaveDtrRecords implements ShouldQueue
             if (in_array($dayOfWeek, $wfhDays)) {
                 $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString('08:00:00');
                 $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString('17:00:00');
-                $lateThreshold = $defaultStartTime; // Set threshold to start time for WFH
+                $lateThreshold = $defaultStartTime;
             } else {
                 $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString($schedule->default_start_time);
                 $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString($schedule->default_end_time);
@@ -208,24 +206,34 @@ class AutoSaveDtrRecords implements ShouldQueue
 
         $totalHoursRendered = Carbon::createFromTime(0, 0, 0)->addMinutes($totalMinutesRendered)->format('H:i');
 
-        // Calculate lateness
-        $late = Carbon::createFromTime(0, 0, 0);
-        if ($morningIn && $morningIn->gt($lateThreshold)) {
-            $late = $late->addMinutes($morningIn->diffInMinutes($lateThreshold));
-        }
-
-        // Calculate expected end time and undertime
+        // Calculate expected time out based on first time in
         if ($morningIn) {
-            $expectedEndTime = $morningIn->copy()->addHours(9); // 9 hours work day
-            if ($expectedEndTime->lt($defaultEndTime)) {
+            $expectedEndTime = $morningIn->copy()->addHours(9);
+            if ($expectedEndTime->gt($defaultEndTime)) {
                 $expectedEndTime = $defaultEndTime;
             }
         }
 
+        // Calculate lateness
+        $late = Carbon::createFromTime(0, 0, 0);
+        if ($morningIn) {
+            if ($morningIn->gt($lateThreshold)) {
+                // Set expected time out to default end time if time in is greater than late threshold
+                $expectedEndTime = $defaultEndTime;
+            }
+            if ($morningIn->gt($lateThreshold)) {
+                $late = $late->addMinutes($morningIn->diffInMinutes($lateThreshold));
+            }
+        }
+
+        // Calculate undertime
         $undertime = Carbon::createFromTime(0, 0, 0);
         if ($afternoonOut && $afternoonOut->lt($expectedEndTime)) {
             $undertime = $undertime->addMinutes($expectedEndTime->diffInMinutes($afternoonOut));
         }
+
+        // Add undertime to lateness
+        $late->addMinutes($undertime->diffInMinutes($carbonDate->copy()->setTimeFromTimeString('00:00:00')));
 
         // Calculate overtime if applicable
         $overtime = Carbon::createFromTime(0, 0, 0);
