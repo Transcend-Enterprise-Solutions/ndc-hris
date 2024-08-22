@@ -94,11 +94,13 @@ class AutoSaveDtrRecords implements ShouldQueue
         $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString('07:00:00');
         $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString('18:30:00');
         $lateThreshold = $carbonDate->copy()->setTimeFromTimeString('09:30:00');
+        $location = 'Onsite';
 
         // Set values for Work From Home (WFH) days
         if ($schedule) {
             $wfhDays = array_map('ucfirst', array_map('trim', explode(',', $schedule->wfh_days)));
             if (in_array($dayOfWeek, $wfhDays)) {
+                $location = 'WFH';
                 $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString('08:00:00');
                 $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString('17:00:00');
                 $lateThreshold = $defaultStartTime;
@@ -118,7 +120,7 @@ class AutoSaveDtrRecords implements ShouldQueue
         if ($holiday) {
             return [
                 'day_of_week' => $dayOfWeek,
-                'location' => 'Onsite', // Assuming Onsite for holidays
+                'location' => $location, // Assuming Onsite for holidays
                 'morning_in' => null,
                 'morning_out' => null,
                 'afternoon_in' => null,
@@ -135,7 +137,7 @@ class AutoSaveDtrRecords implements ShouldQueue
         if ($isOnLeave) {
             return [
                 'day_of_week' => $dayOfWeek,
-                'location' => 'Onsite', // Assuming Onsite for leaves
+                'location' => $location, // Assuming Onsite for leaves
                 'morning_in' => null,
                 'morning_out' => null,
                 'afternoon_in' => null,
@@ -149,7 +151,7 @@ class AutoSaveDtrRecords implements ShouldQueue
         }
 
         // Determine location
-        $location = 'Onsite'; // Default value, adjust as necessary based on your application
+         // Default value, adjust as necessary based on your application
 
         // Initialize variables for actual punches and calculated times
         $actualMorningIn = null;
