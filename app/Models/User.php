@@ -153,10 +153,6 @@ class User extends Authenticatable
         return $this->hasMany(DTRSchedule::class, 'emp_code', 'emp_code');
     }
 
-    public function employeesPayroll()
-    {
-        return $this->hasMany(EmployeesPayroll::class);
-    }
     public function generalPayroll()
     {
         return $this->hasMany(GeneralPayroll::class);
@@ -189,7 +185,7 @@ class User extends Authenticatable
 
     public function cosPayrolls()
     {
-        return $this->hasOne(CosPayrolls::class);
+        return $this->hasOne(CosRegPayrolls::class);
     }
 
     public function employeesLeaves()

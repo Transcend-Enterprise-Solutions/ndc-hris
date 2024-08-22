@@ -1,6 +1,6 @@
 <div class="w-full flex justify-center"
 x-data="{ 
-    selectedTab: 'plantilla',
+    selectedTab: 'export',
      selectedSubTab: 'payroll',
 }" 
 x-cloak>
@@ -774,13 +774,26 @@ x-cloak>
                                                             <i class="fas fa-eye ml-3"></i>
                                                         </button>
                                                     </div>
-                                                    <div class="relative">
+                                                    <div class="relative z-10">
                                                         <button wire:click="exportPayslip({{ $payroll->user_id }})" 
                                                             class="peer inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 
-                                                            text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
+                                                            text-sm font-medium tracking-wide text-gray-800 dark:text-white  hover:text-gray-300 focus:outline-none"
                                                             title="Export Payslip">
                                                             <i class="fas fa-file-export ml-4"></i>
                                                             <div wire:loading wire:target="exportPayslip({{ $payroll->user_id }})" style="margin-left: 5px">
+                                                                <div class="spinner-border small text-primary" role="status">
+                                                                </div>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                    <div class="relative">
+                                                        <button wire:click="exportIndivPayroll({{ $payroll->user_id }})" 
+                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 
+                                                            text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
+                                                            title="Export Payroll">
+                                                            <img class="flex dark:hidden ml-3 mt-4" src="/images/icons8-xls-export-dark.png" width="18" alt="">
+                                                            <img class="hidden dark:block ml-3 mt-4" src="/images/icons8-xls-export-light.png" width="18" alt="">
+                                                            <div wire:loading wire:target="exportIndivPayroll({{ $payroll->user_id }})" style="margin-left: 5px">
                                                                 <div class="spinner-border small text-primary" role="status">
                                                                 </div>
                                                             </div>

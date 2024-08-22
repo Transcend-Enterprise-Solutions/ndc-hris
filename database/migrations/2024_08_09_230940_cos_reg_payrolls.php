@@ -8,13 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('cos_payrolls')) {
-            Schema::create('cos_payrolls', function (Blueprint $table) {
+        if (!Schema::hasTable('cos_reg_payrolls')) {
+            Schema::create('cos_reg_payrolls', function (Blueprint $table) {
                 $table->id('id');
                 $table->unsignedBigInteger('user_id');
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
                 $table->string('sg_step')->nullable();
                 $table->double('rate_per_month')->nullable();        
+                $table->double('additional_premiums')->nullable();
                 $table->timestamps();
             });
         }
@@ -25,8 +26,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (Schema::hasTable('cos_payrolls')) {
-            Schema::dropIfExists('cos_payrolls');
+        if (Schema::hasTable('cos_reg_payrolls')) {
+            Schema::dropIfExists('cos_reg_payrolls');
         }
     }
 };

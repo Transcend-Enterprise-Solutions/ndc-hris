@@ -3,13 +3,11 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Admin;
-use App\Models\CosPayrolls;
+use App\Models\CosRegPayrolls;
 use App\Models\OfficeDivisions;
 use App\Models\Payrolls;
-use App\Models\PayrollSignatories;
 use App\Models\Positions;
 use App\Models\SalaryGrade;
-use App\Models\Signatories;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -61,7 +59,7 @@ class RoleManagementTable extends Component
     public function render(){
         $admins = Admin::join('users', 'users.id', 'admin.user_id')
                 ->leftJoin('payrolls', 'payrolls.user_id', 'admin.payroll_id')
-                ->leftJoin('cos_payrolls', 'cos_payrolls.user_id', 'admin.payroll_id')
+                ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'admin.payroll_id')
                 ->where('users.user_role', '!=', 'emp')
                 ->when($this->search, function ($query) {
                     return $query->search(trim($this->search));
@@ -69,10 +67,10 @@ class RoleManagementTable extends Component
                 ->select(
                     'admin.*',
                     'users.user_role',
-                    DB::raw('COALESCE(payrolls.name, cos_payrolls.name) as name'),
-                    DB::raw('COALESCE(payrolls.employee_number, cos_payrolls.employee_number) as employee_number'),
-                    DB::raw('COALESCE(payrolls.office_division, cos_payrolls.office_division) as office_division'),
-                    DB::raw('COALESCE(payrolls.position, cos_payrolls.position) as position'),
+                    DB::raw('COALESCE(payrolls.name, cos_reg_payrolls.name) as name'),
+                    DB::raw('COALESCE(payrolls.employee_number, cos_reg_payrolls.employee_number) as employee_number'),
+                    DB::raw('COALESCE(payrolls.office_division, cos_reg_payrolls.office_division) as office_division'),
+                    DB::raw('COALESCE(payrolls.position, cos_reg_payrolls.position) as position'),
                     DB::raw('CASE WHEN payrolls.user_id IS NOT NULL THEN "Plantilla" ELSE "COS" END as employee_type')
                 )
                 ->paginate(5);
@@ -206,7 +204,7 @@ class RoleManagementTable extends Component
 
                     $payrollId = null;
                     $payrolls = Payrolls::where('user_id', $user->id)->first();
-                    $cosPayrolls = CosPayrolls::where('user_id', $user->id)->first();
+                    $cosPayrolls = CosRegPayrolls::where('user_id', $user->id)->first();
 
                     if($payrolls){
                         $payrollId = $payrolls->user_id;

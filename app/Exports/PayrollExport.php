@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -12,6 +13,8 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use Maatwebsite\Excel\Concerns\WithDrawings;
 
 class PayrollExport implements FromCollection, WithEvents
 {
@@ -22,8 +25,7 @@ class PayrollExport implements FromCollection, WithEvents
     protected $payrollPeriod;
 
     public function __construct($payrolls, $filters){
-        // Convert to a collection if it's not already one
-        $this->payrolls = $payrolls instanceof Collection ? $payrolls : collect($payrolls);
+        $this->payrolls = $payrolls;
         $this->filters = $filters;
         $this->setDates();
     }
@@ -64,7 +66,7 @@ class PayrollExport implements FromCollection, WithEvents
             ];
 
             foreach ($numericColumns as $column) {
-                $carry[$column] = ($carry[$column] ?? 0) + $item->$column;
+                $carry[$column] = ($carry[$column] ?? 0) + $item[$column];
             }
 
             return $carry;
@@ -74,26 +76,26 @@ class PayrollExport implements FromCollection, WithEvents
             $this->rowNumber++;
             return [
                 $this->rowNumber,
-                'name' => $payroll->name,
-                'position' => $payroll->position,
-                'employee_number' => $payroll->employee_number,
-                'salary_grade' => $payroll->salary_grade,
-                'daily_salary_rate' => $formatCurrency($payroll->daily_salary_rate),
-                'no_of_days_covered' => $zeroCheck($payroll->no_of_days_covered),
-                'gross_salary' => $formatCurrency($payroll->gross_salary),
-                'absences_days' => $zeroCheck($payroll->absences_days),
-                'absences_amount' => $formatCurrency($payroll->absences_amount),
-                'late_undertime_hours' => $zeroCheck($payroll->late_undertime_hours),
-                'late_undertime_hours_amount' => $formatCurrency($payroll->late_undertime_hours_amount),
-                'late_undertime_mins' => $zeroCheck($payroll->late_undertime_mins),
-                'late_undertime_mins_amount' => $formatCurrency($payroll->late_undertime_mins_amount),
+                'name' => $payroll['name'],
+                'position' => $payroll['position'],
+                'employee_number' => $payroll['employee_number'],
+                'salary_grade' => $payroll['salary_grade'],
+                'daily_salary_rate' => $formatCurrency($payroll['daily_salary_rate']),
+                'no_of_days_covered' => $zeroCheck($payroll['no_of_days_covered']),
+                'gross_salary' => $formatCurrency($payroll['gross_salary']),
+                'absences_days' => $zeroCheck($payroll['absences_days']),
+                'absences_amount' => $formatCurrency($payroll['absences_amount']),
+                'late_undertime_hours' => $zeroCheck($payroll['late_undertime_hours']),
+                'late_undertime_hours_amount' => $formatCurrency($payroll['late_undertime_hours_amount']),
+                'late_undertime_mins' => $zeroCheck($payroll['late_undertime_mins']),
+                'late_undertime_mins_amount' => $formatCurrency($payroll['late_undertime_mins_amount']),
                 'vacant' => '',
-                'gross_salary_less' => $formatCurrency($payroll->gross_salary_less),
-                'withholding_tax' => $formatCurrency($payroll->withholding_tax),
-                'nycempc' => $formatCurrency($payroll->nycempc),
+                'gross_salary_less' => $formatCurrency($payroll['gross_salary_less']),
+                'withholding_tax' => $formatCurrency($payroll['withholding_tax']),
+                'nycempc' => $formatCurrency($payroll['nycempc']),
                 'vacant2' => '',
-                'total_deductions' => $formatCurrency($payroll->total_deductions),
-                'net_amount_due' => $payroll->net_amount_due == 0 ? '₱ 0.00' : $formatCurrency($payroll->net_amount_due),
+                'total_deductions' => $formatCurrency($payroll['total_deductions']),
+                'net_amount_due' => $payroll['net_amount_due'] == 0 ? '₱ 0.00' : $formatCurrency($payroll['net_amount_due']),
             ];
         });
 
@@ -362,23 +364,39 @@ class PayrollExport implements FromCollection, WithEvents
             if($value == 0 || $value == null){
                 return "-";
             }
-            return '₱ ' . number_format((float)$value, 2, '.', ',');
+            return 'PHP ' . number_format((float)$value, 2, '.', ',');
         };
         $formattedAmount = number_format($totalNetAmount, 2, '.', '');
-
-        $signatoryA = $this->filters['signatories']->where('signatory', 'A')->first();
-        $aName = $signatoryA ? $signatoryA->name : 'XXXXXXXXXX';
-        $aPosition = $signatoryA ? $signatoryA->position : 'XXXXXXXXXX';
-        $signatoryB = $this->filters['signatories']->where('signatory', 'B')->first();
-        $bName = $signatoryB ? $signatoryB->name : 'XXXXXXXXXX';
-        $bPosition = $signatoryB ? $signatoryB->position : 'XXXXXXXXXX';
-        $signatoryC = $this->filters['signatories']->where('signatory', 'C')->first();
-        $cName = $signatoryC ? $signatoryC->name : 'XXXXXXXXXX';
-        $cPosition = $signatoryC ? $signatoryC->position : 'XXXXXXXXXX';
-        $signatoryD = $this->filters['signatories']->where('signatory', 'D')->first();
-        $dName = $signatoryD ? $signatoryD->name : 'XXXXXXXXXX';
-        $dPosition = $signatoryD ? $signatoryD->position : 'XXXXXXXXXX';
         $date = now()->format("m/d/y");
+
+        $imageOptions = [
+            'height' => 50,
+            'width' => 100
+        ];
+        $worksheet = $sheet->getDelegate();
+        $signatories = $this->filters['signatories']->get()->groupBy('signatory');
+        $getSignatoryInfo = function($key) use ($signatories) {
+            $signatory = $signatories->get($key, collect())->first();
+            return [
+                'name' => $signatory['name'] ?? 'XXXXXXXXXX',
+                'position' => $signatory['position'] ?? 'XXXXXXXXXX',
+                'signature' => $signatory['signature'] ?? null
+            ];
+        };
+        
+        $signatoryA = $getSignatoryInfo('A');
+        $signatoryB = $getSignatoryInfo('B');
+        $signatoryC = $getSignatoryInfo('C');
+        $signatoryD = $getSignatoryInfo('D');
+        
+        $aName = $signatoryA['name'];
+        $aPosition = $signatoryA['position'];
+        $bName = $signatoryB['name'];
+        $bPosition = $signatoryB['position'];
+        $cName = $signatoryC['name'];
+        $cPosition = $signatoryC['position'];
+        $dName = $signatoryD['name'];
+        $dPosition = $signatoryD['position'];
 
         // Add footer content
         $sheet->setCellValue("A{$startRow}", "A.");
@@ -398,7 +416,37 @@ class PayrollExport implements FromCollection, WithEvents
         $sheet->setCellValue("J{$startRow}", $formatCurrency($totalNetAmount));
         $sheet->getStyle("J{$startRow}")->getFont()->setBold(true);
 
-        $startRow += 2;
+         // Signature A
+         $startRow++;
+         $sheet->mergeCells("B{$startRow}:E{$startRow}");
+         $signatureA = $this->getTemporarySignaturePath($signatoryA);
+         if ($signatureA) {
+             $drawingA = new Drawing();
+             $drawingA->setName('Signature A');
+             $drawingA->setDescription('Signature A');
+             $drawingA->setPath($signatureA);
+             $drawingA->setHeight($imageOptions['height']);
+             $drawingA->setWidth($imageOptions['width']);
+             $drawingA->setCoordinates("C{$startRow}");
+             $drawingA->setWorksheet($worksheet);
+         }
+ 
+         // Signature C
+         $sheet->mergeCells("K{$startRow}:P{$startRow}");
+         $signatureC = $this->getTemporarySignaturePath($signatoryC);
+         if ($signatureC) {
+             $drawingC = new Drawing();
+             $drawingC->setName('Signature C');
+             $drawingC->setDescription('Signature C');
+             $drawingC->setPath($signatureC);
+             $drawingC->setHeight($imageOptions['height']);
+             $drawingC->setWidth($imageOptions['width']);
+             $drawingC->setCoordinates("M{$startRow}");
+             $drawingC->setWorksheet($worksheet);
+         }
+         $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] - 2);
+
+        $startRow ++;
         $sheet->mergeCells("A{$startRow}:E{$startRow}");
         $sheet->setCellValue("A{$startRow}", $aName);
         $sheet->mergeCells("F{$startRow}:G{$startRow}");
@@ -448,7 +496,37 @@ class PayrollExport implements FromCollection, WithEvents
         $sheet->mergeCells("J{$startRow}:U{$startRow}");
         $sheet->setCellValue("J{$startRow}", "opposite on his/her name.");
 
-        $startRow += 2;
+        $startRow++;
+        // Signature B
+        $sheet->mergeCells("B{$startRow}:E{$startRow}");
+        $signatureB = $this->getTemporarySignaturePath($signatoryB);
+        if ($signatureB) {
+            $drawingB = new Drawing();
+            $drawingB->setName('Signature A');
+            $drawingB->setDescription('Signature A');
+            $drawingB->setPath($signatureB);
+            $drawingB->setHeight($imageOptions['height']);
+            $drawingB->setWidth($imageOptions['width']);
+            $drawingB->setCoordinates("C{$startRow}");
+            $drawingB->setWorksheet($worksheet);
+        }
+
+        // Signature D
+        $sheet->mergeCells("K{$startRow}:P{$startRow}");
+        $signatureD = $this->getTemporarySignaturePath($signatoryD);
+        if ($signatureD) {
+            $drawingD = new Drawing();
+            $drawingD->setName('Signature D');
+            $drawingD->setDescription('Signature D');
+            $drawingD->setPath($signatureD);
+            $drawingD->setHeight($imageOptions['height']);
+            $drawingD->setWidth($imageOptions['width']);
+            $drawingD->setCoordinates("M{$startRow}");
+            $drawingD->setWorksheet($worksheet);
+        }
+        $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] / 2);
+
+        $startRow ++;
         $sheet->mergeCells("A{$startRow}:E{$startRow}");
         $sheet->setCellValue("A{$startRow}", $bName);
         $sheet->mergeCells("J{$startRow}:Q{$startRow}");
@@ -582,4 +660,20 @@ class PayrollExport implements FromCollection, WithEvents
         return $string;
     }
 
+   
+    private function getTemporarySignaturePath($signatory){
+        if ($signatory && isset($signatory['signature'])) {
+            $path = str_replace('public/', '', $signatory['signature']);
+            $originalPath = Storage::disk('public')->get($path);
+            $filename = str_replace('public/signatures/', '', $signatory['signature']);
+            $tempPath = public_path('temp/' . $filename);
+            if (!file_exists(dirname($tempPath))) {
+                mkdir(dirname($tempPath), 0755, true);
+            }
+            file_put_contents($tempPath, $originalPath);
+           
+            return $tempPath;
+        }
+        return null;
+    }
 }

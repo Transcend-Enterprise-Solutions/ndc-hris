@@ -64,6 +64,19 @@ x-cloak>
             animation: spinner-border .75s linear infinite;
             color: rgb(0, 255, 42);
         }
+
+        .spinner-border-2 {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            vertical-align: text-bottom;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            -webkit-animation: spinner-border .75s linear infinite;
+            animation: spinner-border .75s linear infinite;
+            color: rgb(255, 255, 255);
+        }
     </style>
 
     <div class="flex justify-center w-full">
@@ -787,7 +800,7 @@ x-cloak>
             <form wire:submit.prevent='saveCosPayroll'>
                 <div class="grid grid-cols-2 gap-4">
                     
-                    <div class="col-span-2">
+                    <div class="col-span-full sm:col-span-1">
                         <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
                         <select id="userId" wire:model.live='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
                             {{ $addCosPayroll ? '' : 'disabled' }}>
@@ -801,7 +814,7 @@ x-cloak>
                         @enderror
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-full sm:col-span-1">
                         <label for="employee_number" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Number</label>
                         <input type="text" id="employee_number" wire:model='employee_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('employee_number') 
@@ -809,7 +822,7 @@ x-cloak>
                         @enderror
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-full sm:col-span-1">
                         <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
                         <input type="text" id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('office_division') 
@@ -817,7 +830,7 @@ x-cloak>
                         @enderror
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-full sm:col-span-1">
                         <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
                         <input type="text" id="position" wire:model='position' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('position') 
@@ -825,7 +838,7 @@ x-cloak>
                         @enderror
                     </div>
 
-                    <div class="col-span-1">
+                    <div class="col-span-full sm:col-span-1">
                         <label for="sg" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Salary Grade</label>
                         <select id="sg" wire:model.live='sg' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             <option value="">Select Salary Grade</option>
@@ -838,7 +851,7 @@ x-cloak>
                         @enderror
                     </div>
 
-                    <div class="col-span-1">
+                    {{-- <div class="col-span-full sm:col-span-1">
                         <label for="step" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Step</label>
                         <select id="step" wire:model.live='step' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             <option value="">Select Step</option>
@@ -854,11 +867,11 @@ x-cloak>
                         @error('step') 
                             <span class="text-red-500 text-sm">The step is required!</span> 
                         @enderror
-                    </div>
+                    </div> --}}
 
-                    <div class="col-span-1">
+                    <div class="col-span-full sm:col-span-1">
                         <label for="rate_per_month" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Rate per Month</label>
-                        <input type="number" step="0.01" id="rate_per_month" wire:model='rate_per_month' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                        <input type="number" step="0.01" id="rate_per_month" wire:model.live='rate_per_month' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('rate_per_month') 
                             <span class="text-red-500 text-sm">The rate per month is required!</span> 
                         @enderror
@@ -1114,14 +1127,13 @@ x-cloak>
                         <p class="text-slate-800 text-sm dark:text-gray-200">&nbsp{{ currency_format($net_amount_due) }}</p>
                     </div>
 
-                    {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-2">
-                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" wire:click="exportPayslip({{ $userId }})">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" wire:click="exportIndivPayroll({{ $userId }})">
                             <div wire:loading wire:target="" class="spinner-border small text-primary" role="status">
                             </div>
                             Export
-                            <div wire:loading wire:target="exportPayslip({{ $userId }})" style="margin-left: 5px">
-                                <div class="spinner-border small text-primary" role="status">
+                            <div wire:loading wire:target="exportIndivPayroll({{ $userId }})" style="margin-left: 5px">
+                                <div class="spinner-border-2 small text-primary" role="status">
                                 </div>
                             </div>
                         </button>

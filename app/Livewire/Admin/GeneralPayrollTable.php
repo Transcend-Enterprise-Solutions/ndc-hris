@@ -3,10 +3,9 @@
 namespace App\Livewire\Admin;
 
 use App\Exports\GeneralPayrollExport;
+use App\Exports\IndivPlantillaPayrollExport;
 use App\Exports\PayrollListExport;
-use App\Models\Admin;
-use App\Models\CosPayrolls;
-use App\Models\EmployeesPayroll;
+use App\Models\CosRegPayrolls;
 use App\Models\GeneralPayroll;
 use App\Models\OfficeDivisions;
 use App\Models\Payrolls;
@@ -471,6 +470,130 @@ class GeneralPayrollTable extends Component
         return Excel::download(new GeneralPayrollExport($filters), $fileName);
     }
 
+    public function exportIndivPayroll($id){
+        try{
+            $admin = Auth::user();
+            $notedBy = User::join('signatories', 'signatories.user_id', 'users.id')
+                ->join('positions', 'positions.id', 'users.position_id')
+                ->where('signatories.signatory_type', 'cos_payslip')
+                ->where('signatories.signatory', 'Noted By')
+                ->select('users.name', 'positions.position', 'signatories.*')
+                ->first();
+            $preparedBy = User::where('users.id', $admin->id)
+                ->join('positions', 'positions.id', 'users.position_id')
+                ->join('signatories', 'signatories.user_id', 'users.id')
+                ->select('users.name', 'positions.position', 'signatories.*')
+                ->first();
+
+            $payroll = User::where('users.id', $id)
+                ->join('payrolls', 'payrolls.user_id', 'users.id')
+                ->join('positions', 'positions.id', 'users.position_id')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
+                ->first();
+
+            $filters = [
+                'payroll' => $payroll,
+                'startDate' => $this->startDate,
+                'endDate' => $this->endDate,
+                'preparedBy' => $preparedBy,
+                'notedBy' => $notedBy,
+            ];
+
+            $fileName = 'Plantilla Reg Individual Payroll.xlsx';
+            return Excel::download(new IndivPlantillaPayrollExport($filters), $fileName);
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+
+    public function exportPayslip($userId){
+        try {
+            $user = User::where('id', $userId)->first();
+            if ($user) {
+                $admin = Auth::user();
+                $signatories = User::join('signatories', 'signatories.user_id', 'users.id')
+                        ->join('positions', 'positions.id', 'users.position_id')
+                        ->where('signatories.signatory_type', 'plantilla_payslip')
+                        ->where('signatories.signatory', 'Noted By')
+                        ->select('users.name', 'positions.*', 'signatories.*')
+                        ->first();
+                    
+                $payslip = User::where('users.id', $userId)
+                    ->join('payrolls', 'payrolls.user_id', 'users.id')
+                    ->join('positions', 'positions.id', 'users.position_id')
+                    ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                    ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
+                    ->get()
+                    ->map(function ($p) {
+                        $net_amount_received = $p->gross_amount - $p->total_deduction;
+                        $half_amount = $net_amount_received / 2;
+
+                        $amount_due_second_half = floor($half_amount);
+                        $amount_due_first_half = $net_amount_received - $amount_due_second_half;
+
+                        $p->net_amount_received = $net_amount_received;
+                        $p->amount_due_first_half = $amount_due_first_half;
+                        $p->amount_due_second_half = $amount_due_second_half;
+
+                        return $p;
+                    });
+
+                $payslip = $payslip->first(); 
+
+                $dates = [
+                    'startDateFirstHalf' => $this->startDateFirstHalf,
+                    'endDateFirstHalf' => $this->endDateFirstHalf,
+                    'startDateSecondHalf' => $this->startDateSecondHalf,
+                    'endDateSecondHalf' => $this->endDateSecondHalf,
+                ];
+
+                $payslipFor = \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('F') . " " .
+                              \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('d') .  "-" .
+                              \Carbon\Carbon::parse($dates['endDateSecondHalf'])->format('d') . " " .
+                              \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('Y');
+                
+                $preparedBy = User::where('users.id', $admin->id)
+                    ->join('positions', 'positions.id', 'users.position_id')
+                    ->join('signatories', 'signatories.user_id', 'users.id')
+                    ->first();
+        
+        
+                // Generate temporary paths for signatures
+                $preparedBySignaturePath = $this->getTemporarySignaturePath($preparedBy);
+                $signatoriesSignaturePath = $this->getTemporarySignaturePath($signatories);
+
+                if ($payslip) {
+                    $pdf = Pdf::loadView('pdf.monthly-payslip', [
+                        'preparedBy' => $preparedBy,
+                        'payslip' => $payslip,
+                        'dates' => $dates,
+                        'signatories' => $signatories,
+                        'preparedBySignaturePath' => $preparedBySignaturePath,
+                        'signatoriesSignaturePath' => $signatoriesSignaturePath,
+                    ]);
+                    $pdf->setPaper([0, 0, 396, 612], 'portrait');
+                    return response()->streamDownload(function () use ($pdf) {
+                        echo $pdf->stream();
+                    }, $payslip['name'] . ' ' . $payslipFor . ' Payslip.pdf');
+                } else {
+                    throw new Exception('Payslip not found for the user.');
+                }
+            }
+    
+            $this->dispatch('swal', [
+                'title' => 'Payslip exported!',
+                'icon' => 'success'
+            ]);
+        } catch (Exception $e) {
+            $this->dispatch('swal', [
+                'title' => 'Unable to export payslip: ' . $e->getMessage(),
+                'icon' => 'error'
+            ]);
+            throw $e;
+        }
+    }
+
     public function viewPayroll($userId){
         $this->payroll = true;
         $this->userId = $userId;
@@ -672,93 +795,6 @@ class GeneralPayrollTable extends Component
         }
     }
 
-    public function exportPayslip($userId){
-        try {
-            $user = User::where('id', $userId)->first();
-            if ($user) {
-                $admin = Auth::user();
-                $signatories = User::join('signatories', 'signatories.user_id', 'users.id')
-                        ->join('positions', 'positions.id', 'users.position_id')
-                        ->where('signatories.signatory_type', 'plantilla_payslip')
-                        ->where('signatories.signatory', 'Noted By')
-                        ->select('users.name', 'positions.*', 'signatories.*')
-                        ->first();
-                    
-                $payslip = User::where('users.id', $userId)
-                    ->join('payrolls', 'payrolls.user_id', 'users.id')
-                    ->join('positions', 'positions.id', 'users.position_id')
-                    ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                    ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
-                    ->get()
-                    ->map(function ($p) {
-                        $net_amount_received = $p->gross_amount - $p->total_deduction;
-                        $half_amount = $net_amount_received / 2;
-
-                        $amount_due_second_half = floor($half_amount);
-                        $amount_due_first_half = $net_amount_received - $amount_due_second_half;
-
-                        $p->net_amount_received = $net_amount_received;
-                        $p->amount_due_first_half = $amount_due_first_half;
-                        $p->amount_due_second_half = $amount_due_second_half;
-
-                        return $p;
-                    });
-
-                $payslip = $payslip->first(); 
-
-                $dates = [
-                    'startDateFirstHalf' => $this->startDateFirstHalf,
-                    'endDateFirstHalf' => $this->endDateFirstHalf,
-                    'startDateSecondHalf' => $this->startDateSecondHalf,
-                    'endDateSecondHalf' => $this->endDateSecondHalf,
-                ];
-
-                $payslipFor = \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('F') . " " .
-                              \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('d') .  "-" .
-                              \Carbon\Carbon::parse($dates['endDateSecondHalf'])->format('d') . " " .
-                              \Carbon\Carbon::parse($dates['startDateFirstHalf'])->format('Y');
-                
-                $preparedBy = User::where('users.id', $admin->id)
-                    ->join('positions', 'positions.id', 'users.position_id')
-                    ->join('signatories', 'signatories.user_id', 'users.id')
-                    ->first();
-        
-        
-                // Generate temporary paths for signatures
-                $preparedBySignaturePath = $this->getTemporarySignaturePath($preparedBy);
-                $signatoriesSignaturePath = $this->getTemporarySignaturePath($signatories);
-
-                if ($payslip) {
-                    $pdf = Pdf::loadView('pdf.monthly-payslip', [
-                        'preparedBy' => $preparedBy,
-                        'payslip' => $payslip,
-                        'dates' => $dates,
-                        'signatories' => $signatories,
-                        'preparedBySignaturePath' => $preparedBySignaturePath,
-                        'signatoriesSignaturePath' => $signatoriesSignaturePath,
-                    ]);
-                    $pdf->setPaper([0, 0, 396, 612], 'portrait');
-                    return response()->streamDownload(function () use ($pdf) {
-                        echo $pdf->stream();
-                    }, $payslip['name'] . ' ' . $payslipFor . ' Payslip.pdf');
-                } else {
-                    throw new Exception('Payslip not found for the user.');
-                }
-            }
-    
-            $this->dispatch('swal', [
-                'title' => 'Payslip exported!',
-                'icon' => 'success'
-            ]);
-        } catch (Exception $e) {
-            $this->dispatch('swal', [
-                'title' => 'Unable to export payslip: ' . $e->getMessage(),
-                'icon' => 'error'
-            ]);
-            throw $e;
-        }
-    }
-
     private function getTemporarySignaturePath($signatory){
         if ($signatory->signature) {
             $path = str_replace('public/', '', $signatory->signature);
@@ -833,7 +869,7 @@ class GeneralPayrollTable extends Component
             $sg_step = implode('-', [$this->sg, $this->step]);
             $message = null;
             $icon = null;
-            $cos = CosPayrolls::where('user_id', $user->id)->first();
+            $cos = CosRegPayrolls::where('user_id', $user->id)->first();
             if(!$cos){
                 $payrollData = [
                     'user_id' => $this->userId,

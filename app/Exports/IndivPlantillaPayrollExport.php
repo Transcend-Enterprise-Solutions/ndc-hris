@@ -3,7 +3,6 @@
 namespace App\Exports;
 
 use App\Models\Payrolls;
-use App\Models\GeneralPayroll;
 use App\Models\User;
 use Exception;
 use Maatwebsite\Excel\Concerns\Exportable;
@@ -18,7 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Maatwebsite\Excel\Concerns\WithDrawings;
 
-class GeneralPayrollExport implements WithEvents, WithDrawings
+class IndivPlantillaPayrollExport implements WithEvents, WithDrawings
 {
     use Exportable;
 
@@ -27,6 +26,7 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
     protected $totalPayroll;
     protected $months;
     protected $currentRow = 1;
+    protected $payroll;
 
     public function drawings(){
         return [];
@@ -34,6 +34,7 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
 
     public function __construct($filters){
         $this->filters = $filters;
+        $this->payroll = $filters['payroll'];
         $this->months = $this->getMonthsRange();
     }
 
@@ -80,279 +81,66 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
 
     private function formatAllMonths($sheet){
         foreach ($this->months as $month) {
-            $data = $this->getPayrollData($month);
-            $this->Header($month, $sheet);
+            $payroll = $this->getPayrollData($month);
+            $this->Header($payroll, $month, $sheet);
             $this->TableHeader($month, $sheet);
-            $this->DataRows($data, $sheet);
+            $this->DataRows($payroll, $sheet);
             $this->Footer($sheet);
         }
     }
 
-    private function Header($month, $sheet){
-        $carbonDate = Carbon::parse($month);
-        $payrollMonth = $carbonDate->format('F');
-        $startDateFirstHalf = $carbonDate->copy()->startOfMonth()->toDateString();
-        $endDateSecondHalf = $carbonDate->copy()->endOfMonth()->toDateString();
-
-        $payrollDays = Carbon::parse($startDateFirstHalf)->format('d') . '-' .Carbon::parse($endDateSecondHalf)->format('d');
-
+    private function Header($payroll, $month, $sheet){
+        $carbonStartDate = Carbon::parse($this->filters['startDate']);
+        $carbonEndDate = Carbon::parse($this->filters['endDate']);
+    
+        $payrollYear = $carbonStartDate->format('Y');
+        $payrollMonth = $carbonStartDate->format('F');
+        $startDate = $carbonStartDate->format('d');
+        $endDate = $carbonEndDate->format('d');
+    
+        $payrollDays = $startDate . "-" . $endDate;
+    
+        $prefix = "";
+        if($payroll['sex'] == "Male"){
+            $prefix = "Mr.";
+        }else if($payroll['sex'] == "Female"){
+            if($payroll->civil_status == "Single" || $payroll['civil_status'] == "Widowed" || $payroll['civil_status'] == "Separated"){
+                $prefix = "Ms.";
+            }else{
+                $prefix = "Mrs.";
+            }
+        }
+    
+        $this->currentRow += 4;
         $headerRowStart = $this->currentRow;
-        $sheet->mergeCells("A{$this->currentRow}:AF{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", "");
-
-        $this->currentRow ++;
-        $sheet->mergeCells("A{$this->currentRow}:J{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", "Payroll No.: _____________________");
-        $sheet->mergeCells("AC{$this->currentRow}:AD{$this->currentRow}");
-        $sheet->setCellValue("AC{$this->currentRow}", "PAYROLL WORKSHEET");
-        $sheet->setCellValue("AE{$this->currentRow}", "MONTH");
-        $sheet->setCellValue("AF{$this->currentRow}", "DAYS");
-        $workSheetRow = $this->currentRow;
-
-        
-        $this->currentRow ++;
-        $sheet->mergeCells("A{$this->currentRow}:J{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", "Sheet _________of __________Sheets");
-        $sheet->mergeCells("AC{$this->currentRow}:AD{$this->currentRow}");
-        $sheet->setCellValue("AC{$this->currentRow}", $payrollMonth);
-        $sheet->setCellValue("AE{$this->currentRow}", $payrollMonth);
-        $sheet->setCellValue("AF{$this->currentRow}", $payrollDays);
-        $workSheetDataRow = $this->currentRow;
-        
-        $this->currentRow ++;
-        $sheet->mergeCells("A{$this->currentRow}:AF{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", "GENERAL PAYROLL");
-        $sheet->getStyle("A{$this->currentRow}:AF{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        $sheet->getStyle("A{$this->currentRow}")->getFont()->setBold(true);
-
-        $this->currentRow ++;
-        $sheet->mergeCells("A{$this->currentRow}:AF{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", "NATIONAL YOUTH COMMISSION");
-        $sheet->getStyle("A{$this->currentRow}:AF{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        $sheet->getStyle("A{$this->currentRow}")->getFont()->setBold(true);
-        
-        $this->currentRow ++;
-        $sheet->mergeCells("A{$this->currentRow}:AF{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", "FOR THE MONTH OF " . strtoupper($payrollMonth));
-        $sheet->getStyle("A{$this->currentRow}:AF{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        $sheet->getStyle("A{$this->currentRow}")->getFont()->setBold(true);
-
-        $this->currentRow ++;
-        $sheet->mergeCells("A{$this->currentRow}:AF{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", "");
-        
-        $this->currentRow ++;
-        $sheet->mergeCells("A{$this->currentRow}:B{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", "Entity Name : ");
-        $sheet->mergeCells("C{$this->currentRow}:j{$this->currentRow}");
-        $sheet->setCellValue("C{$this->currentRow}", " NATIONAL YOUTH COMMISSION ");
-        $sheet->getStyle("C{$this->currentRow}:J{$this->currentRow}")->applyFromArray([
-            'font' => [
-                'underline' => true,
-            ],
+        $sheet->mergeCells("A{$this->currentRow}:F{$this->currentRow}");
+        $sheet->setCellValue("A{$this->currentRow}", "Computation FIRST SALARY OF " . $prefix . " " . $payroll['name']);
+        $sheet->getStyle("A{$this->currentRow}:F{$this->currentRow}")->getBorders()->getAllBorders()->applyFromArray([
+            'bottom' => ['borderStyle' => Border::BORDER_NONE],
         ]);
-        
+    
         $this->currentRow ++;
-        $sheet->mergeCells("A{$this->currentRow}:B{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", "Fund Cluster : ");
-        $sheet->mergeCells("C{$this->currentRow}:E{$this->currentRow}");
-        $sheet->setCellValue("C{$this->currentRow}", " 01101101 ");
-        $sheet->getStyle("C{$this->currentRow}:E{$this->currentRow}")->applyFromArray([
-            'font' => [
-                'underline' => true,
-            ],
+        $sheet->mergeCells("A{$this->currentRow}:F{$this->currentRow}");
+        $sheet->setCellValue("A{$this->currentRow}", "as " . $payroll['position'] . " under MOA ");
+        $sheet->getStyle("A{$this->currentRow}:F{$this->currentRow}")->getBorders()->getAllBorders()->applyFromArray([
+            'bottom' => ['borderStyle' => Border::BORDER_NONE],
         ]);
-        
+    
         $this->currentRow ++;
-        $sheet->mergeCells("A{$this->currentRow}:AF{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", "WE ACKNOWLEDGED RECEIPT OF THE SUM SHOWN OPPOSITE OUR NAMES AS FULL COMPENSATION FOR OUR SERVICE RENDERED FOR THE PERIOD STATED:");
-
-        $this->currentRow ++;
-        $sheet->mergeCells("A{$this->currentRow}:AF{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", "");
-        
+        $sheet->mergeCells("A{$this->currentRow}:F{$this->currentRow}");
+        $sheet->setCellValue("A{$this->currentRow}", "for the period of " . $payrollMonth . " " . $payrollDays . ", " . $payrollYear);
+    
         $headerRowEnd = $this->currentRow;
-        
-        $sheet->getStyle("A:AF")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
-        $sheet->getStyle("A{$headerRowStart}:AF{$headerRowEnd}")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_NONE);
-         
-        $this->currentRow ++;
-        $sheet->getStyle("A{$this->currentRow}:AF{$this->currentRow}")->getFont()->setBold(false);
-
-        // Adjust row heights
-        for ($i = 1; $i <= 8; $i++) {
+        $sheet->getStyle("A:F")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle("A{$headerRowStart}:F{$headerRowEnd}")->getBorders()->getAllBorders()->applyFromArray([
+            'allBorders' => ['borderStyle' => Border::BORDER_NONE],
+        ]);
+        $sheet->getStyle("A{$headerRowStart}:F{$headerRowEnd}")->getFont()->setBold(true);
+        $sheet->getStyle("A{$headerRowStart}:F{$headerRowEnd}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    
+        for ($i = 5; $i <= 7; $i++) {
             $sheet->getRowDimension($i)->setRowHeight(20);
         }
-
-        $sheet->getStyle("A{$headerRowStart}:AF{$headerRowEnd}")->applyFromArray([
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_NONE,
-                ],
-            ],
-            'fill' => [
-                'fillType' => Fill::FILL_NONE,
-            ],
-            'font' => [
-                'bold' => true,
-            ],
-        ]);
-
-        $sheet->getStyle("AC{$workSheetRow}:AF{$workSheetRow}")->applyFromArray([
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
-                    'color' => ['argb' => 'FF000000'],
-                ],
-            ],
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_CENTER,
-            ],
-        ]);
-
-        $sheet->getStyle("AC{$workSheetDataRow}:AF{$workSheetDataRow}")->applyFromArray([
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
-                    'color' => ['argb' => 'FF000000'],
-                ],
-            ],
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_CENTER,
-            ],
-        ]);
-
-        $sheet->setShowGridlines(false);
-
-        // Push down the headings
-        $sheet->insertNewRowBefore($this->currentRow, 1);
-    }
-
-    private function TableHeader($month, $sheet){
-        $carbonDate = Carbon::parse($month);
-        $startDateFirstHalf = $carbonDate->copy()->startOfMonth()->toDateString();
-        $endDateFirstHalf = $carbonDate->copy()->day(15)->toDateString();
-        $startDateSecondHalf = $carbonDate->copy()->day(16)->toDateString();
-        $endDateSecondHalf = $carbonDate->copy()->endOfMonth()->toDateString();
-
-        $firstHalf = $startDateFirstHalf && $endDateFirstHalf
-        ? Carbon::parse($startDateFirstHalf)->format('F d') . '-' . Carbon::parse($endDateFirstHalf)->format('d, Y')
-        : 'Date range not set';
-
-        $secondHalf = $startDateSecondHalf && $endDateSecondHalf
-            ? Carbon::parse($startDateSecondHalf)->format('F d') . '-' . Carbon::parse($endDateSecondHalf)->format('d, Y')
-            : 'Date range not set';
-
-        $firstRowOfTable = $this->currentRow;
-     
-        $sheet->getStyle('A:AF')->getAlignment()->setWrapText(true);
-        $sheet->getStyle("A{$this->currentRow}:AF{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
-        $sheet->getStyle("A{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("B{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("D{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("E{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("H{$this->currentRow}")->getAlignment()->setTextRotation(90);
-        $sheet->getStyle("W{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("X{$this->currentRow}")->getAlignment()->setTextRotation(90);
-        $sheet->getStyle("AC{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("AD{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-   
-        // Table header height
-        $this->currentRow ++;
-        $headerRow = $this->currentRow;
-  
-        // Set vertical text rotation for a specific cell or range
-        $sheet->getStyle("M{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("N{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("O{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("P{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("Q{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("R{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("S{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("T{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("U{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("V{$this->currentRow}")->getAlignment()->setTextRotation(90);  
-        $sheet->getStyle("Y{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("Z{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("AA{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-        $sheet->getStyle("AB{$this->currentRow}")->getAlignment()->setTextRotation(90); 
-
-        // Merge cells top row and bottom row of the table header
-        $sheet->mergeCells("A{$firstRowOfTable}:A{$this->currentRow}");
-        $sheet->setCellValue("A{$firstRowOfTable}", "SERIAL NO.");
-        $sheet->mergeCells("B{$firstRowOfTable}:B{$this->currentRow}");
-        $sheet->setCellValue("B{$firstRowOfTable}", "EMPLOYEE NO.");
-        $sheet->mergeCells("C{$firstRowOfTable}:C{$this->currentRow}");
-        $sheet->setCellValue("C{$firstRowOfTable}", "NAME");
-        $sheet->mergeCells("D{$firstRowOfTable}:D{$this->currentRow}");
-        $sheet->setCellValue("D{$firstRowOfTable}", "POSITION");
-        $sheet->mergeCells("E{$firstRowOfTable}:E{$this->currentRow}");
-        $sheet->setCellValue("E{$firstRowOfTable}", "SG/STEP");
-        $sheet->mergeCells("F{$firstRowOfTable}:F{$this->currentRow}");
-        $sheet->setCellValue("F{$firstRowOfTable}", "Rate Per Month (per NBC 591) dtd. January 2023");
-        $sheet->mergeCells("G{$firstRowOfTable}:G{$this->currentRow}");
-        $sheet->setCellValue("G{$firstRowOfTable}", "Personal Economic Relief Allowance");
-        $sheet->mergeCells("H{$firstRowOfTable}:H{$this->currentRow}");
-        $sheet->setCellValue("H{$firstRowOfTable}", "GROSS AMT.");
-        $sheet->mergeCells("I{$firstRowOfTable}:I{$this->currentRow}");
-        $sheet->setCellValue("I{$firstRowOfTable}", "ADDITIONAL GSIS PREMIUM");
-        $sheet->mergeCells("J{$firstRowOfTable}:J{$this->currentRow}");
-        $sheet->setCellValue("J{$firstRowOfTable}", "LBP SALARY LOAN");
-        $sheet->mergeCells("K{$firstRowOfTable}:K{$this->currentRow}");
-        $sheet->setCellValue("K{$firstRowOfTable}", "NYCEA DEDUCTIONS");
-        $sheet->mergeCells("L{$firstRowOfTable}:M{$firstRowOfTable}");
-        $sheet->setCellValue("L{$firstRowOfTable}", "NYC COOP");
-        $sheet->mergeCells("N{$firstRowOfTable}:V{$firstRowOfTable}");
-        $sheet->setCellValue("N{$firstRowOfTable}", "GSIS");
-        $sheet->mergeCells("W{$firstRowOfTable}:W{$this->currentRow}");
-        $sheet->setCellValue("W{$firstRowOfTable}", "PAG-IBIG MPL");
-        $sheet->mergeCells("X{$firstRowOfTable}:X{$this->currentRow}");
-        $sheet->setCellValue("X{$firstRowOfTable}", "OTHER DEDUCTIONS PHILHEALTH DIFFERENTIAL");
-        $sheet->mergeCells("Y{$firstRowOfTable}:AB{$firstRowOfTable}");
-        $sheet->setCellValue("Y{$firstRowOfTable}", "MANDATORY DEDUCTION");
-        $sheet->mergeCells("AC{$firstRowOfTable}:AC{$this->currentRow}");
-        $sheet->setCellValue("AC{$firstRowOfTable}", "TOTAL DEDUCTION");
-        $sheet->mergeCells("AD{$firstRowOfTable}:AD{$this->currentRow}");
-        $sheet->setCellValue("AD{$firstRowOfTable}", "NET AMOUNT RECEIVED");
-        $sheet->mergeCells("AE{$firstRowOfTable}:AE{$this->currentRow}");
-        $sheet->setCellValue("AE{$firstRowOfTable}", "AMOUNT DUE " . $firstHalf );
-        $sheet->mergeCells("AF{$firstRowOfTable}:AF{$this->currentRow}");
-        $sheet->setCellValue("AF{$firstRowOfTable}", "AMOUNT DUE " . $secondHalf );
-        $sheet->setCellValue("L{$this->currentRow}", "S.C/MEMBERSHIP");
-        $sheet->setCellValue("M{$this->currentRow}", "TOTAL LOANS");
-        $sheet->setCellValue("N{$this->currentRow}", "SALARY LOAN");
-        $sheet->setCellValue("O{$this->currentRow}", "POLICY LOAN");
-        $sheet->setCellValue("P{$this->currentRow}", "EAL");
-        $sheet->setCellValue("Q{$this->currentRow}", "EMERGENCY LOAN");
-        $sheet->setCellValue("R{$this->currentRow}", "MPL");
-        $sheet->setCellValue("S{$this->currentRow}", "HOUSING LOAN");
-        $sheet->setCellValue("T{$this->currentRow}", "OULI PREM");
-        $sheet->setCellValue("U{$this->currentRow}", "GFAL");
-        $sheet->setCellValue("V{$this->currentRow}", "CPL");
-        $sheet->setCellValue("Y{$this->currentRow}", "LIFE & RETIREMENT INSURANCE PREMIUMS");
-        $sheet->setCellValue("Z{$this->currentRow}", "PAG-IBIG CONTRIBUTION");
-        $sheet->setCellValue("AA{$this->currentRow}", "W/HOLDING TAX");
-        $sheet->setCellValue("AB{$this->currentRow}", "PHILHEALTH");
-
-        $this->currentRow = $sheet->getHighestRow();
-
-        // Apply borders to the data table
-        $sheet->getStyle("A{$firstRowOfTable}:AF{$this->currentRow}")->applyFromArray([
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
-                    'color' => ['argb' => 'FF000000'],
-                ],
-            ],
-        ]);
-        $sheet->getRowDimension($headerRow)->setRowHeight(70); 
-        $sheet->getStyle("A{$firstRowOfTable}:B" . $this->currentRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        $sheet->getStyle("C{$firstRowOfTable}:C" . $this->currentRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
-        $sheet->getStyle("D{$firstRowOfTable}:AF" . $this->currentRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        $sheet->getStyle("A{$firstRowOfTable}:AF{$this->currentRow}")->getFont()->setBold(true);
     }
 
     private function getPayrollData($month){
@@ -366,21 +154,7 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
         $carbonDate = Carbon::parse($month);
         $startDateFirstHalf = $carbonDate->copy()->startOfMonth()->toDateString();
         $endDateSecondHalf = $carbonDate->copy()->endOfMonth()->toDateString();
-    
-        $query = User::join('payrolls', 'payrolls.user_id', 'users.id')
-            ->join('positions', 'positions.id', 'users.position_id')
-            ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-            ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*');
 
-        if (!empty($this->filters['search'])) {
-            $query->where(function ($q) {
-                $q->where('users.name', 'LIKE', '%' . $this->filters['search'] . '%')
-                ->orWhere('users.emp_code', 'LIKE', '%' . $this->filters['search'] . '%')
-                ->orWhere('payrolls.sg_step', 'LIKE', '%' . $this->filters['search'] . '%')
-                ->orWhere('positions.position', 'LIKE', '%' . $this->filters['search'] . '%')
-                ->orWhere('office_divisions.office_division', 'LIKE', '%' . $this->filters['search'] . '%');
-            });
-        }
 
         $data = $query->get()->map(function ($payroll) {
             $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
