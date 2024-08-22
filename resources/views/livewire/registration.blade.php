@@ -68,6 +68,7 @@
                                         <option value="">Select Gender</option>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
+                                        <option value="No">Prefer not to say</option>
                                         <option value="Others">Others</option>
                                     </select>
 
@@ -167,7 +168,7 @@
                                 <div class="w-full flex items-center">
                                     <input type="checkbox" id="pwd" wire:model.live="pwd"
                                         class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                    <label for="pwd" class="ml-2 text-sm text-gray-700">Are you a person with disability (PWD) ?</label>
+                                    <label for="pwd" class="ml-2 text-sm text-gray-700">Please check for person with disability (PWD) </label>
                                 </div>
                             </div>
 
