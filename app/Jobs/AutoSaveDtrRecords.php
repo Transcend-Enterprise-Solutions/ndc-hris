@@ -123,6 +123,7 @@ class AutoSaveDtrRecords implements ShouldQueue
                 'morning_out' => null,
                 'afternoon_in' => null,
                 'afternoon_out' => null,
+                'calculated_morning_in' => null,
                 'late' => '00:00',
                 'overtime' => '00:00',
                 'total_hours_rendered' => '08:00',
@@ -139,6 +140,7 @@ class AutoSaveDtrRecords implements ShouldQueue
                 'morning_out' => null,
                 'afternoon_in' => null,
                 'afternoon_out' => null,
+                'calculated_morning_in' => null,
                 'late' => '00:00',
                 'overtime' => '00:00',
                 'total_hours_rendered' => '00:00',
@@ -149,7 +151,11 @@ class AutoSaveDtrRecords implements ShouldQueue
         // Determine location
         $location = 'Onsite'; // Default value, adjust as necessary based on your application
 
-        // Initialize variables for punches
+        // Initialize variables for actual punches and calculated times
+        $actualMorningIn = null;
+        $actualMorningOut = null;
+        $actualAfternoonIn = null;
+        $actualAfternoonOut = null;
         $morningIn = null;
         $morningOut = null;
         $afternoonIn = null;
@@ -169,21 +175,24 @@ class AutoSaveDtrRecords implements ShouldQueue
         $morningOuts = $morningTransactions->where('punch_state', 1);
 
         if ($morningIns->isNotEmpty()) {
-            $morningIn = Carbon::parse($morningIns->first()->punch_time);
-            $morningIn = $morningIn->lt($defaultStartTime) ? $defaultStartTime : $morningIn;
+            $actualMorningIn = Carbon::parse($morningIns->first()->punch_time);
+            $morningIn = $actualMorningIn->lt($defaultStartTime) ? $defaultStartTime : $actualMorningIn;
         }
         if ($morningOuts->isNotEmpty()) {
-            $morningOut = Carbon::parse($morningOuts->last()->punch_time);
+            $actualMorningOut = Carbon::parse($morningOuts->last()->punch_time);
+            $morningOut = $actualMorningOut;
         }
 
         $afternoonIns = $afternoonTransactions->where('punch_state', 0);
         $afternoonOuts = $afternoonTransactions->where('punch_state', 1);
 
         if ($afternoonIns->isNotEmpty()) {
-            $afternoonIn = Carbon::parse($afternoonIns->first()->punch_time);
+            $actualAfternoonIn = Carbon::parse($afternoonIns->first()->punch_time);
+            $afternoonIn = $actualAfternoonIn;
         }
         if ($afternoonOuts->isNotEmpty()) {
-            $afternoonOut = Carbon::parse($afternoonOuts->last()->punch_time);
+            $actualAfternoonOut = Carbon::parse($afternoonOuts->last()->punch_time);
+            $afternoonOut = $actualAfternoonOut;
         }
 
         $lunchBreakStart = $carbonDate->copy()->setTimeFromTimeString('12:00:00');
@@ -257,7 +266,7 @@ class AutoSaveDtrRecords implements ShouldQueue
         }
 
         // Adjust remarks based on presence or lateness
-        if (!$morningIn && !$afternoonIn) {
+        if (!$actualMorningIn && !$actualAfternoonIn) {
             $remarks = 'Absent';
         } elseif ($lateFormatted !== '00:00') {
             $remarks = 'Late';
@@ -266,15 +275,15 @@ class AutoSaveDtrRecords implements ShouldQueue
         return [
             'day_of_week' => $dayOfWeek,
             'location' => $location,
-            'morning_in' => $morningIn ? $morningIn->format('H:i:s') : null,
-            'morning_out' => $morningOut ? $morningOut->format('H:i:s') : null,
-            'afternoon_in' => $afternoonIn ? $afternoonIn->format('H:i:s') : null,
-            'afternoon_out' => $afternoonOut ? $afternoonOut->format('H:i:s') : null,
+            'morning_in' => $actualMorningIn ? $actualMorningIn->format('H:i:s') : null,
+            'morning_out' => $actualMorningOut ? $actualMorningOut->format('H:i:s') : null,
+            'afternoon_in' => $actualAfternoonIn ? $actualAfternoonIn->format('H:i:s') : null,
+            'afternoon_out' => $actualAfternoonOut ? $actualAfternoonOut->format('H:i:s') : null,
+            'calculated_morning_in' => $morningIn ? $morningIn->format('H:i:s') : null,
             'late' => $lateFormatted,
             'overtime' => $overtimeFormatted,
             'total_hours_rendered' => $totalHoursRendered,
             'remarks' => $remarks,
         ];
     }
-
 }
