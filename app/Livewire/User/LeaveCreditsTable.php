@@ -13,7 +13,9 @@ class LeaveCreditsTable extends Component
         $leaveCredits = LeaveCredits::where('user_id', Auth::id())->first();
 
         return view('livewire.user.leave-credits-table', [
-            'total_credits' => $leaveCredits->total_credits ?? 0,
+            'vl_total_credits' => $leaveCredits->vl_total_credits ?? 0,
+            'sl_total_credits' => $leaveCredits->sl_total_credits ?? 0,
+            'spl_total_credits' => $leaveCredits->spl_total_credits ?? 0,
             'vl_claimable_credits' => $leaveCredits->vl_claimable_credits ?? 0,
             'vl_claimed_credits' => $leaveCredits->vl_claimed_credits ?? 0,
             'sl_claimable_credits' => $leaveCredits->sl_claimable_credits ?? 0,
