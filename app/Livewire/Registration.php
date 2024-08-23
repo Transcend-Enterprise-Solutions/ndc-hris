@@ -56,12 +56,16 @@ class Registration extends Component
     public $permanent_selectedProvince;
     public $permanent_selectedCity;
     public $permanent_selectedBarangay;
-    public $p_house_street;
+    public $p_house;
+    public $p_street;
+    public $p_subdivision;
     public $residential_selectedRegion;
     public $residential_selectedProvince;
     public $residential_selectedCity;
     public $residential_selectedBarangay;
-    public $r_house_street;
+    public $r_house;
+    public $r_street;
+    public $r_subdivision;
     public $permanent_selectedZipcode;
     public $residential_selectedZipcode;
     public $regions;
@@ -129,12 +133,10 @@ class Registration extends Component
             'permanent_selectedProvince' => 'required',
             'permanent_selectedCity' => 'required',
             'permanent_selectedBarangay' => 'required',
-            'p_house_street' => 'required',
             'residential_selectedZipcode' => 'required',
             'residential_selectedProvince' => 'required',
             'residential_selectedCity' => 'required',
             'residential_selectedBarangay' => 'required',
-            'r_house_street' => 'required',
             'mobile_number' => ['required', 'regex:/^\+639\d{9}$|^\d{11}$/'],
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
@@ -154,6 +156,16 @@ class Registration extends Component
             ],
 
         ]);
+
+        if($this->p_house == null && $this->p_street == null && $this->p_subdivision == null){
+            $this->addError('p_subdivision', 'Please add either House/Block/Lot No. or Street or Subdivision/Village.');
+            return;
+        }
+
+        if($this->r_house == null && $this->r_street == null && $this->r_subdivision == null){
+            $this->addError('r_subdivision', 'Please add either House/Block/Lot No. or Street or Subdivision/Village.');
+            return;
+        }
 
         if (!$this->isPasswordComplex($this->password)) {
             $this->addError('password', 'The password must contain at least one uppercase letter, one number, and one special character.');
@@ -187,6 +199,17 @@ class Registration extends Component
         //     'leave_for_women' => Carbon::now()->addMonths(2)->diffInDays(Carbon::now()), // 2 months to days
         //     'emergency_leave' => 5,
         // ]);
+
+        $p_h = $this->p_house ? $this->p_house : "N/A";
+        $p_st = $this->p_street? $this->p_street : "N/A";
+        $p_s = $this->p_subdivision ? $this->p_subdivision : "N/A";
+        $p_house_street = $p_h . ',' . $p_st . ',' . $p_s;
+
+        $r_h = $this->r_house ? $this->r_house : "N/A";
+        $r_st = $this->r_street? $this->r_street : "N/A";
+        $r_s = $this->r_subdivision ? $this->r_subdivision : "N/A";
+        $r_house_street = $r_h . ',' . $r_st . ',' . $r_s;
+
         $appointmentValue = $this->getAppointmentValue();
         $sexValue = $this->getSexValue();
         $user->userData()->create([
@@ -214,12 +237,12 @@ class Registration extends Component
             'permanent_selectedProvince' => $this->permanent_selectedProvince,
             'permanent_selectedCity' => $this->permanent_selectedCity,
             'permanent_selectedBarangay' => $this->permanent_selectedBarangay,
-            'p_house_street' => $this->p_house_street,
+            'p_house_street' => $p_house_street,
             'residential_selectedZipcode' => $this->residential_selectedZipcode,
             'residential_selectedProvince' => $this->residential_selectedProvince,
             'residential_selectedCity' => $this->residential_selectedCity,
             'residential_selectedBarangay' => $this->residential_selectedBarangay,
-            'r_house_street' => $this->r_house_street,
+            'r_house_street' => $r_house_street,
             'tel_number' => $this->tel_number,
             'mobile_number' => $this->mobile_number,
             'pwd' => $this->pwd,
@@ -270,7 +293,7 @@ class Registration extends Component
 
         return view('livewire.registration',[
             'pprovinces' => $this->pprovinces,
-            'rprovinces' => $this->rprovinces,
+            'rprovinces' => $this->pprovinces,
             'pcities' => $this->pcities,
             'rcities' => $this->rcities,
             'pbarangays' => $this->pbarangays,
@@ -293,13 +316,17 @@ class Registration extends Component
             $this->residential_selectedProvince = $this->permanent_selectedProvince;
             $this->residential_selectedCity = $this->permanent_selectedCity;
             $this->residential_selectedBarangay = $this->permanent_selectedBarangay;
-            $this->r_house_street = $this->p_house_street;
+            $this->r_house = $this->p_house;
+            $this->r_street = $this->p_street;
+            $this->r_subdivision = $this->p_subdivision;
         } else {
             $this->residential_selectedZipcode = null;
             $this->residential_selectedProvince = null;
             $this->residential_selectedCity = null;
             $this->residential_selectedBarangay = null;
-            $this->r_house_street = null;
+            $this->r_house = null;
+            $this->r_street = null;
+            $this->r_subdivision = null;
         }
     }
 

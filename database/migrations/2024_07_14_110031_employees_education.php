@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('level')->nullable();
             $table->string('name_of_school')->nullable();
             $table->string('basic_educ_degree_course')->nullable();
-            $table->integer('from')->nullable();
-            $table->integer('to')->nullable();
+            $table->date('from')->nullable();
+            $table->date('to')->nullable();
             $table->string('highest_level_unit_earned')->nullable();
             $table->string('year_graduated')->nullable();
             $table->string('award')->nullable();

@@ -244,19 +244,6 @@ class PersonalDataSheetTable extends Component
         $this->rbarangays = collect();
     }
 
-    // public function exportPDS(){
-    //     try{
-    //         $pds = $this->pds;
-    //         $pdf = Pdf::loadView('pdf.pds', ['pds' => $pds]);
-    //         $pdf->setPaper('A4', 'portrait');
-    //         return response()->streamDownload(function () use ($pdf) {
-    //             echo $pdf->stream();
-    //         }, $pds['userData']->first_name . ' ' . $pds['userData']->surname . ' PDS.pdf');
-    //     }catch(Exception $e){
-    //         throw $e;
-    //     }
-    // }
-
     public function exportPDS(){
         try {
             $exporter = new PDSExport($this->pds);
@@ -985,8 +972,8 @@ class PersonalDataSheetTable extends Component
                     $this->validate([
                         'newEducation.*.level_code' => 'required|string|max:255',
                         'newEducation.*.name_of_school' => 'required|string',
-                        'newEducation.*.from' => 'required|numeric',
-                        'newEducation.*.to' => 'required|numeric',
+                        'newEducation.*.from' => 'required|date',
+                        'newEducation.*.to' => 'required|date',
                         'newEducation.*.year_graduated' => 'required|numeric',
                     ]);
                     foreach ($this->education as $educ) {
@@ -1016,8 +1003,8 @@ class PersonalDataSheetTable extends Component
                     $this->validate([
                         'newEducation.*.level_code' => 'required|string|max:255',
                         'newEducation.*.name_of_school' => 'required|string',
-                        'newEducation.*.from' => 'required|numeric',
-                        'newEducation.*.to' => 'required|numeric',
+                        'newEducation.*.from' => 'required|date',
+                        'newEducation.*.to' => 'required|date',
                         'newEducation.*.year_graduated' => 'required|numeric',
                     ]);
                     foreach ($this->newEducation as $educ) {
@@ -1195,6 +1182,7 @@ class PersonalDataSheetTable extends Component
                                 'position' => $exp['position'],
                                 'department' => $exp['department'],
                                 'monthly_salary' => $exp['monthly_salary'],
+                                'sg_step' => $exp['sg_step'],
                                 'status_of_appointment' => $exp['status_of_appointment'],
                                 'gov_service' => $exp['gov_service'],
                             ]);
@@ -1224,6 +1212,7 @@ class PersonalDataSheetTable extends Component
                             'position' => $exp['position'],
                             'department' => $exp['department'],
                             'monthly_salary' => $exp['monthly_salary'],
+                            'sp_step' => $exp['sp_step'],
                             'status_of_appointment' => $exp['status_of_appointment'],
                             'gov_service' => $exp['gov_service'],
                         ]);
@@ -1723,6 +1712,7 @@ class PersonalDataSheetTable extends Component
     public function saveReferences(){
         try {
             $user = Auth::user();
+            $charRefs = CharReferences::where("user_id", $user->id)->get();
             if ($user) {
 
                 if($this->addReferences != true){
@@ -1757,6 +1747,18 @@ class PersonalDataSheetTable extends Component
                         'icon' => 'success'
                     ]);
                 }else{
+                    if(count($charRefs) >= 3){
+                        $this->editReferences = null;
+                        $this->addReferences = null;
+                        $this->myReferences = [];
+                        $this->myNewReferences = [];
+                        $this->dispatch('swal', [
+                            'title' => "Character references are only up to 3 persons.",
+                            'icon' => 'error'
+                        ]);
+                        return;
+                    }
+
                     $this->validate([
                         'myNewReferences.*.firstname' => 'required|string|max:255',
                         'myNewReferences.*.middle_initial' => 'required|string|max:255',

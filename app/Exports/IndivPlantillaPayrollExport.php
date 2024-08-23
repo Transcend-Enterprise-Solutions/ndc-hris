@@ -9,8 +9,8 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Maatwebsite\Excel\Concerns\WithDrawings;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 class IndivPlantillaPayrollExport implements WithEvents, WithDrawings
 {
@@ -415,7 +415,7 @@ class IndivPlantillaPayrollExport implements WithEvents, WithDrawings
         //     $drawingA->setPath($signatureA);
         //     $drawingA->setHeight($imageOptions['height']);
         //     $drawingA->setWidth($imageOptions['width']);
-        //     $drawingA->setCoordinates("C{$this->currentRow}");
+        //     $drawingA->setCoordinates("A{$this->currentRow}");
         //     $drawingA->setOffsetX(100);
         //     $drawingA->setWorksheet($worksheet);
         // }
@@ -431,7 +431,7 @@ class IndivPlantillaPayrollExport implements WithEvents, WithDrawings
         //     $drawingB->setPath($signatureB);
         //     $drawingB->setHeight($imageOptions['height']);
         //     $drawingB->setWidth($imageOptions['width']);
-        //     $drawingB->setCoordinates("C{$this->currentRow}");
+        //     $drawingB->setCoordinates("D{$this->currentRow}");
         //     $drawingB->setOffsetX(100);
         //     $drawingB->setWorksheet($worksheet);
         // }

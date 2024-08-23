@@ -18,6 +18,7 @@ class WorkExperience extends Model
         'position',
         'department',
         'monthly_salary',
+        'sg_step',
         'status_of_appointment',
         'gov_service',
     ];

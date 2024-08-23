@@ -368,12 +368,34 @@
                                     </div>
 
                                     <div class="w-full mt-2">
-                                        <label for="p_house_street" class="block text-sm text-gray-700">House Number |
-                                            Street | Subdivision <span class="text-red-600">*</span></label>
-                                        <input type="text" id="p_house_street" wire:model.live="p_house_street"
+                                        <label for="p_house" class="block text-sm text-gray-700">House/Block/Lot No. <span class="text-red-600">*</span></label>
+                                        <input type="text" id="p_house"
+                                            wire:model.live="p_house"
                                             class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                            name="p_house_street" required>
-                                        @error('p_house_street')
+                                            name="p_house" required>
+                                        @error('p_house')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="w-full mt-2">
+                                        <label for="p_street" class="block text-sm text-gray-700">Street <span class="text-red-600">*</span></label>
+                                        <input type="text" id="p_street"
+                                            wire:model.live="p_street"
+                                            class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
+                                            name="p_street" required>
+                                        @error('p_street')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="w-full mt-2">
+                                        <label for="p_subdivision" class="block text-sm text-gray-700">Subdivision/Village <span class="text-red-600">*</span></label>
+                                        <input type="text" id="p_subdivision"
+                                            wire:model.live="p_subdivision"
+                                            class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
+                                            name="p_subdivision" required>
+                                        @error('p_subdivision')
                                             <span class="text-red-500 text-sm">{{ $message }}</span>
                                         @enderror
                                     </div>
@@ -422,8 +444,7 @@
                                                     @endforeach
                                                 @else
                                                     <option class="text-base text-gray-700 capitalize block mb-1.5"
-                                                        value="">Select
-                                                        a region</option>
+                                                        value="">Select province</option>
                                                 @endif
                                             </select>
                                             @error('residential_selectedProvince')
@@ -438,11 +459,11 @@
                                                 class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                                                 wire:model.live="residential_selectedCity" id="residential_city"
                                                 name="residential_selectedCity" required>
-                                                @if ($pcities)
+                                                @if ($rcities)
                                                     <option class="text-base text-gray-700 capitalize block mb-1.5"
                                                         value="">Select
                                                         City</option>
-                                                    @foreach ($pcities as $city)
+                                                    @foreach ($rcities as $city)
                                                         <option class="text-base text-gray-700 capitalize block mb-1.5"
                                                             value="{{ $city->city_municipality_description }}">
                                                             {{ $city->city_municipality_description }}</option>
@@ -467,11 +488,11 @@
                                                 wire:model.live="residential_selectedBarangay"
                                                 id="residential_barangay" name="residential_selectedBarangay"
                                                 required>
-                                                @if ($pbarangays)
+                                                @if ($rbarangays)
                                                     <option class="text-base text-gray-700 capitalize block mb-1.5"
                                                         value="">Select
                                                         Barangay</option>
-                                                    @foreach ($pbarangays as $barangay)
+                                                    @foreach ($rbarangays as $barangay)
                                                         <option class="text-base text-gray-700 capitalize block mb-1.5"
                                                             value="{{ $barangay->barangay_description }}">
                                                             {{ $barangay->barangay_description }}</option>
@@ -488,14 +509,34 @@
                                         </div>
 
                                         <div class="w-full mt-2">
-                                            <label for="r_house_street" class="block text-sm text-gray-700">House
-                                                Number |
-                                                Street | Subdivision <span class="text-red-600">*</span></label>
-                                            <input type="text" id="r_house_street"
-                                                wire:model.live="r_house_street"
+                                            <label for="r_house" class="block text-sm text-gray-700">House/Block/Lot No. <span class="text-red-600">*</span></label>
+                                            <input type="text" id="r_house"
+                                                wire:model.live="r_house"
                                                 class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                                name="r_house_street" required>
-                                            @error('r_house_street')
+                                                name="r_house" required>
+                                            @error('r_house')
+                                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="w-full mt-2">
+                                            <label for="r_street" class="block text-sm text-gray-700">Street <span class="text-red-600">*</span></label>
+                                            <input type="text" id="r_street"
+                                                wire:model.live="r_street"
+                                                class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
+                                                name="r_street" required>
+                                            @error('r_street')
+                                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="w-full mt-2">
+                                            <label for="r_subdivision" class="block text-sm text-gray-700">Subdivision/Village <span class="text-red-600">*</span></label>
+                                            <input type="text" id="r_subdivision"
+                                                wire:model.live="r_subdivision"
+                                                class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
+                                                name="r_subdivision" required>
+                                            @error('r_subdivision')
                                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                                             @enderror
                                         </div>

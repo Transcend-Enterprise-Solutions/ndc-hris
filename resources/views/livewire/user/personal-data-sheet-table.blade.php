@@ -1,4 +1,55 @@
-<div class="w-full">
+<div class="w-full"
+x-data="{ 
+    selectedTab: 'C4',
+}" 
+x-cloak
+>
+
+    <style>
+        @media (max-width: 1024px){
+            .custom-d{
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px){
+            .m-scrollable{
+                width: 100%;
+                overflow-x: scroll;
+            }
+        }
+
+        @media (min-width:1024px){
+            .custom-p{
+                padding-bottom: 14px !important;
+            }
+        }
+
+        @-webkit-keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner-border {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            vertical-align: text-bottom;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            -webkit-animation: spinner-border .75s linear infinite;
+            animation: spinner-border .75s linear infinite;
+            color: white;
+        }
+    </style>
 
     {{-- Main Display --}}
     <div class="flex justify-center w-full">
@@ -7,825 +58,1156 @@
             <div class="pt-4 pb-4">
                 <h1 class="text-3xl font-bold text-center text-slate-800 dark:text-white">PERSONAL DATA SHEET</h1>
             </div>
-            <div class="bg-gray-400 dark:bg-slate-700 p-2 text-white flex justify-center rounded-b-lg">
-                <button class="btn bg-emerald-400 dark:bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap" wire:click='exportPDS' wire:loading.attr='disabled'>
-                    <div wire:loading wire:target="exportPDS" style="margin-right: 5px">
+
+            <!-- Export to Excel -->
+            <div class="w-full flex flex-col sm:flex-row sm:justify-end sm:space-x-4 relative inline-block text-left mb-6 sm:mb-0">
+                <button wire:click="exportPDS"
+                    class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                    justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
+                    text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                    rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
+                    type="button"  title="Export PDS">
+                    <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
+                    <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
+                    <div wire:loading wire:target="exportPDS" style="margin-left: 5px">
                         <div class="spinner-border small text-primary" role="status">
                         </div>
                     </div>
-                    <i class="bi bi-file-earmark-arrow-down"></i>&nbsp&nbspExport
                 </button>
             </div>
 
-            <style>
-                @media (max-width: 1024px){
-                    .custom-d{
-                        display: block;
-                    }
-                }
-
-                @media (max-width: 768px){
-                    .m-scrollable{
-                        width: 100%;
-                        overflow-x: scroll;
-                    }
-                }
-
-                @media (min-width:1024px){
-                    .custom-p{
-                        padding-bottom: 14px !important;
-                    }
-                }
-
-                @-webkit-keyframes spinner-border {
-                    to {
-                        transform: rotate(360deg);
-                    }
-                }
-
-                @keyframes spinner-border {
-                    to {
-                        transform: rotate(360deg);
-                    }
-                }
-
-                .spinner-border {
-                    display: inline-block;
-                    width: 1rem;
-                    height: 1rem;
-                    vertical-align: text-bottom;
-                    border: 2px solid currentColor;
-                    border-right-color: transparent;
-                    border-radius: 50%;
-                    -webkit-animation: spinner-border .75s linear infinite;
-                    animation: spinner-border .75s linear infinite;
-                    color: white;
-                }
-            </style>
-
             <div class="overflow-hidden text-sm pb-3">
-
-                {{-- Employee's Data --}}
-                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold rounded-t-lg">I. PERSONAL INFORMATION
-                    <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 cursor-pointer" wire:click="toggleEditPersonalInfo"></i>
-                </div>
-                <div>
-
-                    <div class="custom-d flex w-full">
-
-                        <div class="w-full sm:w-2/4 block">
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->surname }}</p>
-                            </div>
-
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->first_name }}</p>
-                            </div>
-                        </div>
-
-                        <div class="w-full sm:w-2/4 block">
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 dark:bg-slate-700 bg-gray-50">Middlename</p>
-                                <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->middle_name }}</p>
-                            </div>
-
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
-                                <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->name_extension }}</p>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="custom-d flex w-full">
-
-                        <div class="w-full sm:w-2/4 block">
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($userData->date_of_birth)->format('F d, Y') }}
-                                </p>
-                            </div>
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Place of Birth</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->place_of_birth }}</p>
-                            </div>
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Sex at Birth</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->sex }}</p>
-                            </div>
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Civil Status</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->civil_status }}</p>
-                            </div>
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Citizenship</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->citizenship }}</p>
-                            </div>
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Height</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->height }}m</p>
-                            </div>
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Weight</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->weight }}kg</p>
-                            </div>
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Bloodtype</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->blood_type }}</p>
-                            </div>
-                        </div>
-
-                        <div class="w-full sm:w-2/4 block">
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">Permanent Address</p>
-                                <p class="custom-p w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200">
-                                    {{ $userData->p_house_street }} <br>
-                                    {{ $userData->permanent_selectedBarangay }} {{ $userData->permanent_selectedCity }} <br>
-                                    {{ $userData->permanent_selectedProvince }}, Philippines <br>
-                                    {{ $userData->permanent_selectedZipcode }}
-                                </p>
-                            </div>
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">Residential Address</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200">
-                                    {{ $userData->r_house_street }} <br>
-                                    {{ $userData->residential_selectedBarangay }} {{ $userData->residential_selectedCity }} <br>
-                                    {{ $userData->residential_selectedProvince }}, Philippines <br>
-                                    {{ $userData->residential_selectedZipcode }}
-                                </p>
-                            </div>
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Tel No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->tel_number }}</p>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="custom-d flex w-full">
-
-                        <div class="w-full sm:w-2/4 block">
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Mobile No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->mobile_number }}</p>
-                            </div>
-                        </div>
-
-                        <div class="w-full sm:w-2/4 block">
-                             <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Email</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->email }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="custom-d flex w-full">
-
-                        <div class="w-full sm:w-2/4 block">
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">GSIS ID No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->gsis }}</p>
-                            </div>
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Pag-Ibig ID No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->pagibig }}</p>
-                            </div>
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">PhilHealth ID No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->philhealth }}</p>
-                            </div>
-                        </div>
-
-                        <div class="w-full sm:w-2/4 block">
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">SSS No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->sss }}</p>
-                            </div>
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">TIN No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->tin }}</p>
-                            </div>
-                            <div class="flex w-full sm:w-auto">
-                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Agency Employee No.</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->agency_employee_no }}</p>
-                            </div>
-                        </div>
-
-                    </div>
-
+                <div class="flex gap-2 overflow-x-auto -mb-2" class="relative">
+                    <button @click="selectedTab = 'C1'" 
+                            :class="{ 'font-bold text-gray-100 dark:text-gray-700 bg-gray-400 dark:bg-slate-300 rounded-t-lg': selectedTab === 'C1', 'text-slate-500 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'C1' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
+                        C1
+                    </button>
+                    <button @click="selectedTab = 'C2'" 
+                            :class="{ 'font-bold text-gray-100 dark:text-gray-700 bg-gray-400 dark:bg-slate-300 rounded-t-lg': selectedTab === 'C2', 'text-slate-500 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'C2' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
+                        C2
+                    </button>
+                    <button @click="selectedTab = 'C3'" 
+                            :class="{ 'font-bold text-gray-100 dark:text-gray-700 bg-gray-400 dark:bg-slate-300 rounded-t-lg': selectedTab === 'C3', 'text-slate-500 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'C3' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm">
+                        C3
+                    </button>
+                    <button @click="selectedTab = 'C4'" 
+                            :class="{ 'font-bold text-gray-100 dark:text-gray-700 bg-gray-400 dark:bg-slate-300 rounded-t-lg': selectedTab === 'C4', 'text-slate-500 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'C4' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm">
+                        C4 
+                    </button>
                 </div>
 
-                {{-- Family Background --}}
-                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">II. FAMILY BACKGROUND
-                </div>
-                <div>
-                    {{-- Spouse --}}
-                    <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
-                        <p class="p-1 w-full font-bold dark:text-gray-200">Spouse</p>
-                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? '' : 'hidden' }}" wire:click="toggleEditSpouse"></i>
-                        <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? '' : 'hidden' }}" wire:click="toggleDelete('spouse', '')"></i>
-                        <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? 'hidden' : '' }}" wire:click="toggleAddSpouse"></i>
+                <div x-show="selectedTab === 'C1'" class="relative z-10">
+                    {{-- Employee's Data --}}
+                    <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold rounded-t-lg">I. PERSONAL INFORMATION
+                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 cursor-pointer" wire:click="toggleEditPersonalInfo"></i>
                     </div>
+                    <div>
 
-                    @if($userSpouse)
                         <div class="custom-d flex w-full">
+
                             <div class="w-full sm:w-2/4 block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->surname }}</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->surname }}</p>
                                 </div>
 
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->first_name }}</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->first_name }}</p>
                                 </div>
                             </div>
 
                             <div class="w-full sm:w-2/4 block">
                                 <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->middle_name }}</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 dark:bg-slate-700 bg-gray-50">Middlename</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->middle_name }}</p>
                                 </div>
 
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->name_extension }}</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->name_extension }}</p>
                                 </div>
                             </div>
+
                         </div>
 
                         <div class="custom-d flex w-full">
+
                             <div class="w-full sm:w-2/4 block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($userSpouse->birth_date)->format('F d, Y') }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($userData->date_of_birth)->format('F d, Y') }}
+                                    </p>
                                 </div>
-
                                 <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Occupation</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->occupation }}</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Place of Birth</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->place_of_birth }}</p>
+                                </div>
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Sex at Birth</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->sex }}</p>
+                                </div>
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Civil Status</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->civil_status }}</p>
+                                </div>
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Citizenship</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->citizenship }}</p>
+                                </div>
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Height</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->height }}m</p>
+                                </div>
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Weight</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->weight }}kg</p>
+                                </div>
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Bloodtype</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->blood_type }}</p>
                                 </div>
                             </div>
 
                             <div class="w-full sm:w-2/4 block">
                                 <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Employer</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->employer }}</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">Permanent Address</p>
+                                    <p class="custom-p w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200">
+                                        {{ $userData->p_house_street }} <br>
+                                        {{ $userData->permanent_selectedBarangay }} {{ $userData->permanent_selectedCity }} <br>
+                                        {{ $userData->permanent_selectedProvince }}, Philippines <br>
+                                        {{ $userData->permanent_selectedZipcode }}
+                                    </p>
                                 </div>
-
                                 <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Tel. No.</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->tel_number }}</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">Residential Address</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200">
+                                        {{ $userData->r_house_street }} <br>
+                                        {{ $userData->residential_selectedBarangay }} {{ $userData->residential_selectedCity }} <br>
+                                        {{ $userData->residential_selectedProvince }}, Philippines <br>
+                                        {{ $userData->residential_selectedZipcode }}
+                                    </p>
+                                </div>
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Tel No.</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->tel_number }}</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="custom-d flex w-full">
+
+                            <div class="w-full sm:w-2/4 block">
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Mobile No.</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->mobile_number }}</p>
+                                </div>
+                            </div>
+
+                            <div class="w-full sm:w-2/4 block">
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Email</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->email }}</p>
                                 </div>
                             </div>
                         </div>
 
                         <div class="custom-d flex w-full">
-                            <div class="w-full sm:w-4/4 block">
+
+                            <div class="w-full sm:w-2/4 block">
                                 <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 sm:w-1/5 bg-gray-50 dark:bg-slate-700">Business Address</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->business_address }}</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">GSIS ID No.</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->gsis }}</p>
+                                </div>
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Pag-Ibig ID No.</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->pagibig }}</p>
+                                </div>
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">PhilHealth ID No.</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->philhealth }}</p>
                                 </div>
                             </div>
-                        </div>
-                    @endif
 
-                    {{-- Father --}}
-                    <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
-                        <p class="p-1 w-full font-bold dark:text-gray-200">Father</p>
-                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? '' : 'hidden' }}" wire:click="toggleEditFather"></i>
-                        <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? '' : 'hidden' }}" wire:click="toggleDelete('father', '')"></i>
-                        <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? 'hidden' : '' }}" wire:click="toggleAddFather"></i>
+                            <div class="w-full sm:w-2/4 block">
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">SSS No.</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->sss }}</p>
+                                </div>
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">TIN No.</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->tin }}</p>
+                                </div>
+                                <div class="flex w-full sm:w-auto">
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Agency Employee No.</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->agency_employee_no }}</p>
+                                </div>
+                            </div>
+
+                        </div>
+
                     </div>
 
-                    @if($userFather)
-                        <div class="custom-d flex w-full">
+                    {{-- Family Background --}}
+                    <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">II. FAMILY BACKGROUND
+                    </div>
+                    <div>
+                        {{-- Spouse --}}
+                        <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
+                            <p class="p-1 w-full font-bold dark:text-gray-200">Spouse</p>
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? '' : 'hidden' }}" wire:click="toggleEditSpouse"></i>
+                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? '' : 'hidden' }}" wire:click="toggleDelete('spouse', '')"></i>
+                            <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userSpouse ? 'hidden' : '' }}" wire:click="toggleAddSpouse"></i>
+                        </div>
 
+                        @if($userSpouse)
+                            <div class="custom-d flex w-full">
                                 <div class="w-full sm:w-2/4 block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->surname }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->surname }}</p>
                                     </div>
 
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->first_name }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->first_name }}</p>
                                     </div>
                                 </div>
 
                                 <div class="w-full sm:w-2/4 block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->middle_name }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->middle_name }}</p>
                                     </div>
 
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->name_extension }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->name_extension }}</p>
                                     </div>
                                 </div>
+                            </div>
 
-                        </div>
-                    @endif
-
-                    {{-- Mother's Maiden Name --}}
-                    <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
-                        <p class="p-1 w-full font-bold dark:text-gray-200">Mother's Maiden Name</p>
-                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? '' : 'hidden' }}" wire:click="toggleEditMother"></i>
-                        <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? '' : 'hidden' }}" wire:click="toggleDelete('mother', '')"></i>
-                        <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? 'hidden' : '' }}" wire:click="toggleAddMother"></i>
-                    </div>
-
-                    @if($userMother)
-                        <div class="custom-d flex w-full">
-
+                            <div class="custom-d flex w-full">
                                 <div class="w-full sm:w-2/4 block">
                                     <div class="flex w-full sm:w-auto">
-                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->surname }}</p>
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($userSpouse->birth_date)->format('F d, Y') }}</p>
                                     </div>
 
                                     <div class="flex w-full sm:w-auto">
-                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->first_name }}</p>
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Occupation</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->occupation }}</p>
                                     </div>
                                 </div>
 
                                 <div class="w-full sm:w-2/4 block">
                                     <div class="flex w-full sm:w-auto">
-                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->middle_name }}</p>
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Employer</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->employer }}</p>
                                     </div>
 
                                     <div class="flex w-full sm:w-auto">
-                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->name_extension }}</p>
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Tel. No.</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->tel_number }}</p>
                                     </div>
                                 </div>
+                            </div>
 
-                        </div>
-                    @endif
-
-                    {{-- Children --}}
-                    <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
-                        <p class="p-1 w-full font-bold dark:text-gray-200">Children</p>
-                        @if ($userChildren && $userChildren->isNotEmpty())
-                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2 mr-2 cursor-pointer" wire:click="toggleEditChildren"></i>
+                            <div class="custom-d flex w-full">
+                                <div class="w-full sm:w-4/4 block">
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 sm:w-1/5 bg-gray-50 dark:bg-slate-700">Business Address</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->business_address }}</p>
+                                    </div>
+                                </div>
+                            </div>
                         @endif
-                        <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddChildren"></i>
+
+                        {{-- Father --}}
+                        <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
+                            <p class="p-1 w-full font-bold dark:text-gray-200">Father</p>
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? '' : 'hidden' }}" wire:click="toggleEditFather"></i>
+                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? '' : 'hidden' }}" wire:click="toggleDelete('father', '')"></i>
+                            <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userFather ? 'hidden' : '' }}" wire:click="toggleAddFather"></i>
+                        </div>
+
+                        @if($userFather)
+                            <div class="custom-d flex w-full">
+
+                                    <div class="w-full sm:w-2/4 block">
+                                        <div class="flex w-full sm:w-auto">
+                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->surname }}</p>
+                                        </div>
+
+                                        <div class="flex w-full sm:w-auto">
+                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->first_name }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="w-full sm:w-2/4 block">
+                                        <div class="flex w-full sm:w-auto">
+                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->middle_name }}</p>
+                                        </div>
+
+                                        <div class="flex w-full sm:w-auto">
+                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->name_extension }}</p>
+                                        </div>
+                                    </div>
+
+                            </div>
+                        @endif
+
+                        {{-- Mother's Maiden Name --}}
+                        <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
+                            <p class="p-1 w-full font-bold dark:text-gray-200">Mother's Maiden Name</p>
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? '' : 'hidden' }}" wire:click="toggleEditMother"></i>
+                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? '' : 'hidden' }}" wire:click="toggleDelete('mother', '')"></i>
+                            <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer {{ $userMother ? 'hidden' : '' }}" wire:click="toggleAddMother"></i>
+                        </div>
+
+                        @if($userMother)
+                            <div class="custom-d flex w-full">
+
+                                    <div class="w-full sm:w-2/4 block">
+                                        <div class="flex w-full sm:w-auto">
+                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->surname }}</p>
+                                        </div>
+
+                                        <div class="flex w-full sm:w-auto">
+                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->first_name }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="w-full sm:w-2/4 block">
+                                        <div class="flex w-full sm:w-auto">
+                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->middle_name }}</p>
+                                        </div>
+
+                                        <div class="flex w-full sm:w-auto">
+                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->name_extension }}</p>
+                                        </div>
+                                    </div>
+
+                            </div>
+                        @endif
+
+                        {{-- Children --}}
+                        <div class="flex w-full sm:w-auto bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600">
+                            <p class="p-1 w-full font-bold dark:text-gray-200">Children</p>
+                            @if ($userChildren && $userChildren->isNotEmpty())
+                                <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right mt-2 mr-2 cursor-pointer" wire:click="toggleEditChildren"></i>
+                            @endif
+                            <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddChildren"></i>
+                        </div>
+
+                        @if($userChildren)
+                            @foreach ($userChildren as $child)
+                                <div class="custom-d flex w-full">
+
+                                    <div class="w-full sm:w-2/4 block">
+                                        <div class="flex w-full sm:w-auto">
+                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Fullname</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $child->childs_name }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="w-full sm:w-2/4 block">
+                                        <div class="flex w-full sm:w-auto">
+                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($child->childs_birth_date)->format('F d, Y') }}
+                                                <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('child', {{ $child->id }})"></i>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            @endforeach
+                        @endif
+
                     </div>
 
-                    @if($userChildren)
-                        @foreach ($userChildren as $child)
+                    {{-- Educational Background --}}
+                    <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $educBackground && $educBackground->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">III. EDUCATIONAL BACKGROUND
+                        <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddEducBackground"></i>
+                        @if ($educBackground && $educBackground->isNotEmpty())
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEducBackground"></i>
+                        @endif
+                    </div>
+                    <div>
+                        @foreach ($educBackground as $educ)
+                            <div class="flex w-full sm:w-auto">
+                                <p class="border border-gray-200 dark:border-slate-600 p-1 w-1/7 bg-gray-200 font-bold dark:bg-slate-700 dark:text-gray-200">Level</p>
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 font-bold uppercase dark:text-gray-200">{{ $educ->level }}
+                                    <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('educ', {{ $educ->id }})"></i>
+                                </p>
+                            </div>
                             <div class="custom-d flex w-full">
 
                                 <div class="w-full sm:w-2/4 block">
                                     <div class="flex w-full sm:w-auto">
-                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Fullname</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $child->childs_name }}</p>
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name of School</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->name_of_school }}</p>
+                                    </div>
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Period of Attendance</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
+                                            From: {{ $educ->from }} <br>
+                                            To: {{ $educ->to }}
+                                        </p>
+                                    </div>
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Scholarship/Academic Honors Received</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->award }}</p>
                                     </div>
                                 </div>
 
                                 <div class="w-full sm:w-2/4 block">
                                     <div class="flex w-full sm:w-auto">
-                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($child->childs_birth_date)->format('F d, Y') }}
-                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('child', {{ $child->id }})"></i>
-                                        </p>
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Basic Education/<br>Degree/Course</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->basic_educ_degree_course }}</p>
+                                    </div>
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Highest Level/<br>Units Earned</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->highest_level_unit_earned }}</p>
+                                    </div>
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Year Graduated</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->year_graduated }}</p>
                                     </div>
                                 </div>
 
                             </div>
                         @endforeach
-                    @endif
-
+                    </div>
                 </div>
 
-                {{-- Educational Background --}}
-                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $educBackground && $educBackground->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">III. EDUCATIONAL BACKGROUND
-                    <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddEducBackground"></i>
-                    @if ($educBackground && $educBackground->isNotEmpty())
-                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEducBackground"></i>
-                    @endif
-                </div>
-                <div>
-                    @foreach ($educBackground as $educ)
-                        <div class="flex w-full sm:w-auto">
-                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-1/7 bg-gray-200 font-bold dark:bg-slate-700 dark:text-gray-200">Level</p>
-                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 font-bold uppercase dark:text-gray-200">{{ $educ->level }}
-                                <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('educ', {{ $educ->id }})"></i>
-                            </p>
+                <div x-show="selectedTab === 'C2'" class="relative z-10">
+                    {{-- Civil Service Eligibility --}}
+                    <div class="rounded-t-lg bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $eligibility && $eligibility->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">IV. CIVIL SERVICE ELIGIBILITY
+                        <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddEligibility"></i>
+                        @if ($eligibility && $eligibility->isNotEmpty())
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEligibility"></i>
+                        @endif
+                    </div>
+
+                    @if ($eligibility && $eligibility->isNotEmpty())
+                        <div class="m-scrollable">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="bg-gray-100 dark:bg-slate-700">
+                                        <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Eligibility</th>
+                                        <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Rating</th>
+                                        <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Date of Examination/Confernment</th>
+                                        <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Place of Examination/Confernment</th>
+                                        <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">License Number</th>
+                                        <th width="20%" class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Date of Validity</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="">
+                                    @foreach($eligibility as $elig)
+                                        <tr class="dark:text-gray-200">
+                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->eligibility }}</td>
+                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->rating }}%</td>
+                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($elig->date)->format('F d, Y') }}</td>
+                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->place_of_exam }}</td>
+                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->license }}</td>
+                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($elig->date_of_validity)->format('F d, Y') }}
+                                                <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('elig', {{ $elig->id }})"></i>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="custom-d flex w-full">
+                    @endif
 
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name of School</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->name_of_school }}</p>
-                                </div>
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Period of Attendance</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                        From: {{ $educ->from }} <br>
-                                        To: {{ $educ->to }}
+                    {{-- Work Experience --}}
+                    <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $workExperience && $workExperience->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">V. WORK EXPERIENCE
+                        <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddWorkExp"></i>
+                        @if ($workExperience && $workExperience->isNotEmpty())
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditWorkExp"></i>
+                        @endif
+                    </div>
+
+                    @if ($workExperience && $workExperience->isNotEmpty())
+                        <div class="m-scrollable">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="bg-gray-100 dark:bg-slate-700">
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase w-1/5"  width="20%">
+                                            <div class="block w-full">
+                                                <div class=" flex justify-center w-full">
+                                                    INCLUSIVE DATES
+                                                </div>
+                                                <div class="flex w-full">
+                                                    <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
+                                                        From
+                                                    </div>
+                                                    <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
+                                                        To
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Position Title</th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Department/Agency/Office/Company</th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Monthly Salary</th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">SALARY/JOB/PAY GRADE & STEP</th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Status of Appointment</th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">GOV'T SERVICE</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="">
+                                    @foreach($workExperience as $exp)
+                                        <tr class="text-neutral-800 dark:text-neutral-200">
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
+                                                <div class="flex w-full">
+                                                    <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
+                                                        {{ $exp->start_date }}
+                                                    </div>
+                                                    <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
+                                                        {{ $exp->end_date }}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->position }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->department }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ '₱ ' . number_format($exp->monthly_salary, 2) }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->sg_step }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->status_of_appointment }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->gov_service ? 'Yes' : 'No' }}
+                                                <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('exp', {{ $exp->id }})"></i>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+
+                <div x-show="selectedTab === 'C3'" class="relative z-10">
+                    {{-- Voluntary Work --}}
+                    <div class="rounded-t-lg bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $voluntaryWorks && $voluntaryWorks->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">VI. VOLUNTARY WORK
+                        <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddVoluntaryWorks"></i>
+                        @if ($voluntaryWorks && $voluntaryWorks->isNotEmpty())
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditVoluntaryWorks"></i>
+                        @endif
+                    </div>
+
+                    @if ($voluntaryWorks && $voluntaryWorks->isNotEmpty())
+                        <div class="m-scrollable">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="bg-gray-100 dark:bg-slate-700">
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Name of Organization</th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Address of Organization</th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase w-1/5">
+                                            <div class="block w-full">
+                                                <div class=" flex justify-center w-full">
+                                                    INCLUSIVE DATES
+                                                </div>
+                                                <div class="flex w-full">
+                                                    <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
+                                                        From
+                                                    </div>
+                                                    <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
+                                                        To
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Number of Hours</th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Position/Nature of Work</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="">
+                                    @foreach($voluntaryWorks as $voluntary)
+                                        <tr>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $voluntary->org_name }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $voluntary->org_address }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
+                                                <div class="flex w-full">
+                                                    <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
+                                                        {{ $voluntary->start_date }}
+                                                    </div>
+                                                    <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
+                                                        {{ $voluntary->end_date }}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">{{ $voluntary->no_of_hours }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">{{ $voluntary->position_nature }}
+                                                <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('voluntary', {{ $voluntary->id }})"></i>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+
+                    {{-- Learning and Development --}}
+                    <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $lds && $lds->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">VII. LEARNING AND DEVELOPMENT
+                        <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddLearnAndDev"></i>
+                        @if ($lds && $lds->isNotEmpty())
+                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditLearnAndDev"></i>
+                        @endif
+                    </div>
+
+                    @if ($lds && $lds->isNotEmpty())
+                        <div class="m-scrollable">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="bg-gray-100 dark:bg-slate-700">
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase"  width="20%">Title of Training</th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase w-1/5">
+                                            <div class="block w-full">
+                                                <div class=" flex justify-center w-full">
+                                                    INCLUSIVE DATES
+                                                </div>
+                                                <div class="flex w-full">
+                                                    <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
+                                                        From
+                                                    </div>
+                                                    <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
+                                                        To
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase">Number of Hours</th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase">Type of LD</th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase"  width="20%">Conducted/Sponsored By</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="">
+                                    @foreach($lds as $ld)
+                                        <tr class="text-neutral-800 dark:text-neutral-200">
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->title }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
+                                                <div class="flex w-full">
+                                                    <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
+                                                        {{ $ld->start_date }}
+                                                    </div>
+                                                    <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
+                                                        {{ $ld->end_date }}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->no_of_hours }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->type_of_ld }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->conducted_by }}
+                                                <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('ld', {{ $ld->id }})"></i>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+
+                    {{-- Other Information --}}
+                    <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">VIII. OTHER INFORMATION</div>
+
+                    <div class="m-scrollable">
+
+                        {{-- SKILLS --}}
+                        <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
+                            <p class="p-1 w-full font-bold">SKILLS</p>
+                            @if ($skills && $skills->isNotEmpty())
+                                <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditSkills"></i>
+                            @endif
+                            <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddSkills"></i>
+                        </div>
+
+                        <div class="custom-d flex w-full border-r-2 border-l-2 border-gray-200 dark:border-slate-600">
+                            <div class="flex w-full sm:w-auto dark:text-gray-200">
+                                @foreach ($skills as $skill)
+                                    <p class="p-1"> • {{ $skill->skill }} </p>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        {{-- Hobbies --}}
+                        <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
+                            <p class="p-1 w-full font-bold">HOBBIES</p>
+                            @if ($hobbies && $hobbies->isNotEmpty())
+                                <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditHobbies"></i>
+                            @endif
+                            <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddHobbies"></i>
+                        </div>
+
+                        <div class="custom-d flex w-full border-r-2 border-l-2 border-gray-200 dark:border-slate-600">
+                            <div class="flex w-full sm:w-auto dark:text-gray-200">
+                                @foreach ($hobbies as $hobby)
+                                    <p class="p-1"> • {{ $hobby->hobby }} </p>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        {{-- NON-ACADEMIC DISTINCTIONS / RECOGNITION --}}
+                        <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
+                            <p class="p-1 w-full font-bold">NON-ACADEMIC DISTINCTIONS / RECOGNITION</p>
+                            @if ($non_acads_distinctions && $non_acads_distinctions->isNotEmpty())
+                                <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditNonAcads"></i>
+                            @endif
+                            <i  title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddNonAcads"></i>
+                        </div>
+
+                        @if ($non_acads_distinctions && $non_acads_distinctions->isNotEmpty())
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="bg-gray-100 dark:bg-slate-700">
+                                        <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase" width="20%">Award</th>
+                                        <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Association/ Organization Name</th>
+                                        <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Date Received</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="">
+                                    @foreach($non_acads_distinctions as $non_acads_distinction)
+                                        <tr class="dark:text-gray-200">
+                                            <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $non_acads_distinction->award }}</td>
+                                            <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $non_acads_distinction->ass_org_name }}</td>
+                                            <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($non_acads_distinction->date_received)->format('F d, Y') }}
+                                                <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('nonacad', {{ $non_acads_distinction->id }})"></i>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @endif
+
+                        {{-- MEMBERSHIP IN ASSOCIATION/ORGANIZATION --}}
+                        <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
+                            <p class="p-1 w-full font-bold">MEMBERSHIP IN ASSOCIATION/ORGANIZATION</p>
+                            @if ($assOrgMemberships && $assOrgMemberships->isNotEmpty())
+                                <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditMemberships"></i>
+                            @endif
+                            <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddMemberships"  title="Add"></i>
+                        </div>
+
+                        @if ($assOrgMemberships && $assOrgMemberships->isNotEmpty())
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="bg-gray-100 dark:bg-slate-700">
+                                        <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Association/Organization Name</th>
+                                        <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Position</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="">
+                                    @foreach($assOrgMemberships as $assOrgMembership)
+                                        <tr class="dark:text-gray-200">
+                                            <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $assOrgMembership->ass_org_name }}</td>
+                                            <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $assOrgMembership->position }}
+                                                <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('membership', {{ $assOrgMembership->id }})"></i>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @endif
+                    </div>
+                </div>
+
+                <div x-show="selectedTab === 'C4'" class="relative z-10">
+                    <div class="m-scrollable">
+                        <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold rounded-t-lg"></div>
+
+                        {{-- 34 --}}
+                        <div class="flex flex-col w-full border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p>34.</p>
+                                    <p class="ml-2 mb-4">
+                                        Are you related by consanguinity or affinity to the appointing or recommending authority, or to the <br>
+                                        chief of bureau or office or to the person who has immediate supervision over you in the Office, <br>
+                                        Bureau or Department where you will be apppointed, 
                                     </p>
                                 </div>
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Scholarship/Academic Honors Received</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->award }}</p>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end items-start px-4 bg-white dark:bg-slate-700">
                                 </div>
                             </div>
-
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Basic Education/<br>Degree/Course</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->basic_educ_degree_course }}</p>
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p class="ml-6">
+                                        a. within the third degree?
+                                    </p>
                                 </div>
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Highest Level/<br>Units Earned</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->highest_level_unit_earned }}</p>
-                                </div>
-                                <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Year Graduated</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->year_graduated }}</p>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <input id="yes" type="checkbox">
+                                        <label for="yes" class="ml-2">Yes</label>
+                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <label for="yes" class="ml-2">No</label>
+                                    </div>
                                 </div>
                             </div>
-
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p class="ml-6">
+                                        b. within the fourth degree (for Local Government Unit - Career Employees)?
+                                    </p>
+                                </div>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <input id="yes" type="checkbox">
+                                        <label for="yes" class="ml-2">Yes</label>
+                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <label for="yes" class="ml-2">No</label>
+                                    </div>
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
+                                        <p>If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
+    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    @endforeach
-                </div>
 
-                {{-- Civil Service Eligibility --}}
-                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $eligibility && $eligibility->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">IV. CIVIL SERVICE ELIGIBILITY
-                    <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddEligibility"></i>
-                    @if ($eligibility && $eligibility->isNotEmpty())
-                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditEligibility"></i>
-                    @endif
-                </div>
-
-                @if ($eligibility && $eligibility->isNotEmpty())
-                    <div class="m-scrollable">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gray-100 dark:bg-slate-700">
-                                    <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Eligibility</th>
-                                    <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Rating</th>
-                                    <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Date of Examination/Confernment</th>
-                                    <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Place of Examination/Confernment</th>
-                                    <th class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">License Number</th>
-                                    <th width="20%" class="p-1 font-medium text-left uppercase border-2 border-gray-200 dark:border-slate-600">Date of Validity</th>
-                                </tr>
-                            </thead>
-                            <tbody class="">
-                                @foreach($eligibility as $elig)
-                                    <tr class="dark:text-gray-200">
-                                        <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->eligibility }}</td>
-                                        <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->rating }}%</td>
-                                        <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($elig->date)->format('F d, Y') }}</td>
-                                        <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->place_of_exam }}</td>
-                                        <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->license }}</td>
-                                        <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($elig->date_of_validity)->format('F d, Y') }}
-                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('elig', {{ $elig->id }})"></i>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-
-                {{-- Work Experience --}}
-                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $workExperience && $workExperience->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">V. WORK EXPERIENCE
-                    <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddWorkExp"></i>
-                    @if ($workExperience && $workExperience->isNotEmpty())
-                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditWorkExp"></i>
-                    @endif
-                </div>
-
-                @if ($workExperience && $workExperience->isNotEmpty())
-                    <div class="m-scrollable">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gray-100 dark:bg-slate-700">
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase w-1/5"  width="20%">
-                                        <div class="block w-full">
-                                            <div class=" flex justify-center w-full">
-                                                INCLUSIVE DATES
-                                            </div>
-                                            <div class="flex w-full">
-                                                <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
-                                                    From
-                                                </div>
-                                                <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
-                                                    To
-                                                </div>
+                        {{-- 35 --}}
+                        <div class="flex flex-col w-full border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p>35.</p>
+                                    <p class="ml-2">
+                                        a. Have you ever been found guilty of any administrative offense?
+                                    </p>
+                                </div>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <input id="yes" type="checkbox">
+                                        <label for="yes" class="ml-2">Yes</label>
+                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <label for="yes" class="ml-2">No</label>
+                                    </div>
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
+                                        <p>If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
+    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p class="ml-6">
+                                        b. Have you been criminally charged before any court?
+                                    </p>
+                                </div>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <input id="yes" type="checkbox">
+                                        <label for="yes" class="ml-2">Yes</label>
+                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <label for="yes" class="ml-2">No</label>
+                                    </div>
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
+                                        <p>If YES, give details:</p>
+                                        <div class="flex w-full  mt-2">
+                                            <p class="w-2/5 text-right">Date Filed:</p>
+                                            <div class="w-3/5 border-b border-black dark:border-white mt-4 mb-2">
+        
                                             </div>
                                         </div>
-                                    </th>
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Position Title</th>
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Department/Agency/Office/Company</th>
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Monthly Salary</th>
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Status of Appointment</th>
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">GOV'T SERVICE</th>
-                                </tr>
-                            </thead>
-                            <tbody class="">
-                                @foreach($workExperience as $exp)
-                                    <tr class="text-neutral-800 dark:text-neutral-200">
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
-                                            <div class="flex w-full">
-                                                <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
-                                                    {{ $exp->start_date }}
-                                                </div>
-                                                <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
-                                                    {{ $exp->end_date }}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->position }}</td>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->department }}</td>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ '₱ ' . number_format($exp->monthly_salary, 2) }}</td>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->status_of_appointment }}</td>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->gov_service ? 'Yes' : 'No' }}
-                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('exp', {{ $exp->id }})"></i>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-
-                {{-- Voluntary Work --}}
-                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $voluntaryWorks && $voluntaryWorks->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">VI. VOLUNTARY WORK
-                    <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddVoluntaryWorks"></i>
-                    @if ($voluntaryWorks && $voluntaryWorks->isNotEmpty())
-                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditVoluntaryWorks"></i>
-                    @endif
-                </div>
-
-                @if ($voluntaryWorks && $voluntaryWorks->isNotEmpty())
-                    <div class="m-scrollable">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gray-100 dark:bg-slate-700">
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Name of Organization</th>
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Address of Organization</th>
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase w-1/5">
-                                        <div class="block w-full">
-                                            <div class=" flex justify-center w-full">
-                                                INCLUSIVE DATES
-                                            </div>
-                                            <div class="flex w-full">
-                                                <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
-                                                    From
-                                                </div>
-                                                <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
-                                                    To
-                                                </div>
+                                        <div class="flex w-full">
+                                            <p class="w-2/5 text-right">Status of Case/s:</p>
+                                            <div class="w-3/5 border-b border-black dark:border-white mt-4 mb-2">
+        
                                             </div>
                                         </div>
-                                    </th>
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Number of Hours</th>
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Position/Nature of Work</th>
-                                </tr>
-                            </thead>
-                            <tbody class="">
-                                @foreach($voluntaryWorks as $voluntary)
-                                    <tr>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $voluntary->org_name }}</td>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $voluntary->org_address }}</td>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
-                                            <div class="flex w-full">
-                                                <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
-                                                    {{ $voluntary->start_date }}
-                                                </div>
-                                                <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
-                                                    {{ $voluntary->end_date }}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">{{ $voluntary->no_of_hours }}</td>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">{{ $voluntary->position_nature }}
-                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('voluntary', {{ $voluntary->id }})"></i>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                {{-- Learning and Development --}}
-                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold {{ $lds && $lds->isNotEmpty() ? '' : 'border-b-2 border-gray-200 dark:border-slate-600' }}">VII. LEARNING AND DEVELOPMENT
-                    <i title="Add" class="fas fa-plus text-green-300 dark:text-green-600 hover:text-green-700 float-right pt-1 cursor-pointer" wire:click="toggleAddLearnAndDev"></i>
-                    @if ($lds && $lds->isNotEmpty())
-                        <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer" wire:click="toggleEditLearnAndDev"></i>
-                    @endif
-                </div>
-
-                @if ($lds && $lds->isNotEmpty())
-                    <div class="m-scrollable">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gray-100 dark:bg-slate-700">
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase"  width="20%">Title of Training</th>
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase w-1/5">
-                                        <div class="block w-full">
-                                            <div class=" flex justify-center w-full">
-                                                INCLUSIVE DATES
-                                            </div>
-                                            <div class="flex w-full">
-                                                <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
-                                                    From
-                                                </div>
-                                                <div class="flex justify-center border border-gray-200 dark:border-slate-600 p-1 w-2/4">
-                                                    To
-                                                </div>
-                                            </div>
+                        {{-- 36 --}}
+                        <div class="flex flex-col w-full border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p>36.</p>
+                                    <p class="ml-2">
+                                        Have you ever been convicted of any crime or violation of any law, decree, 
+                                        ordinance or regulation by any court or tribunal?
+                                    </p>
+                                </div>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <input id="yes" type="checkbox">
+                                        <label for="yes" class="ml-2">Yes</label>
+                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <label for="yes" class="ml-2">No</label>
+                                    </div>
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
+                                        <p>If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
+    
                                         </div>
-                                    </th>
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase">Number of Hours</th>
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase">Type of LD</th>
-                                    <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase"  width="20%">Conducted/Sponsored By</th>
-                                </tr>
-                            </thead>
-                            <tbody class="">
-                                @foreach($lds as $ld)
-                                    <tr class="text-neutral-800 dark:text-neutral-200">
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->title }}</td>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
-                                            <div class="flex w-full">
-                                                <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
-                                                    {{ $ld->start_date }}
-                                                </div>
-                                                <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
-                                                    {{ $ld->end_date }}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->no_of_hours }}</td>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->type_of_ld }}</td>
-                                        <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->conducted_by }}
-                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('ld', {{ $ld->id }})"></i>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-
-                {{-- Other Information --}}
-                <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">VIII. OTHER INFORMATION</div>
-
-                <div class="m-scrollable">
-
-                    {{-- SKILLS --}}
-                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
-                        <p class="p-1 w-full font-bold">SKILLS</p>
-                        @if ($skills && $skills->isNotEmpty())
-                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditSkills"></i>
-                        @endif
-                        <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddSkills"></i>
-                    </div>
-
-                    <div class="custom-d flex w-full border-r-2 border-l-2 border-gray-200 dark:border-slate-600">
-                        <div class="flex w-full sm:w-auto dark:text-gray-200">
-                            @foreach ($skills as $skill)
-                                <p class="p-1"> • {{ $skill->skill }} </p>
-                            @endforeach
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    {{-- Hobbies --}}
-                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
-                        <p class="p-1 w-full font-bold">HOBBIES</p>
-                        @if ($hobbies && $hobbies->isNotEmpty())
-                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditHobbies"></i>
-                        @endif
-                        <i title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddHobbies"></i>
-                    </div>
-
-                    <div class="custom-d flex w-full border-r-2 border-l-2 border-gray-200 dark:border-slate-600">
-                        <div class="flex w-full sm:w-auto dark:text-gray-200">
-                            @foreach ($hobbies as $hobby)
-                                <p class="p-1"> • {{ $hobby->hobby }} </p>
-                            @endforeach
+                        {{-- 37 --}}
+                        <div class="flex flex-col w-full border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p>37.</p>
+                                    <p class="ml-2">
+                                        Have you ever been separated from the service in any of the following modes: resignation, retirement, dropped from the rolls, dismissal, 
+                                        termination, end of term, finished contract or phased out (abolition) in the public or private sector?
+                                    </p>
+                                </div>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <input id="yes" type="checkbox">
+                                        <label for="yes" class="ml-2">Yes</label>
+                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <label for="yes" class="ml-2">No</label>
+                                    </div>
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
+                                        <p>If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
+    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    {{-- NON-ACADEMIC DISTINCTIONS / RECOGNITION --}}
-                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
-                        <p class="p-1 w-full font-bold">NON-ACADEMIC DISTINCTIONS / RECOGNITION</p>
-                        @if ($non_acads_distinctions && $non_acads_distinctions->isNotEmpty())
-                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditNonAcads"></i>
-                        @endif
-                        <i  title="Add" class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddNonAcads"></i>
-                    </div>
+                        {{-- 38 --}}
+                        <div class="flex flex-col w-full border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p>38.</p>
+                                    <p class="ml-2">
+                                        a. Have you ever been a candidate in a national or local election held within the last year (except Barangay election)?
+                                    </p>
+                                </div>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <input id="yes" type="checkbox">
+                                        <label for="yes" class="ml-2">Yes</label>
+                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <label for="yes" class="ml-2">No</label>
+                                    </div>
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
+                                        <p>If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
+    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p class="ml-6">
+                                        b. Have you resigned from the government service during the three (3)-month period before 
+                                        the last election to promote/actively campaign for a national or local candidate?
+                                    </p>
+                                </div>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <input id="yes" type="checkbox">
+                                        <label for="yes" class="ml-2">Yes</label>
+                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <label for="yes" class="ml-2">No</label>
+                                    </div>
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
+                                        <p>If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
+    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+          
+                        {{-- 39 --}}
+                        <div class="flex flex-col w-full border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p>39.</p>
+                                    <p class="ml-2">
+                                        Have you acquired the status of an immigrant or permanent resident of another country?
+                                    </p>
+                                </div>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <input id="yes" type="checkbox">
+                                        <label for="yes" class="ml-2">Yes</label>
+                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <label for="yes" class="ml-2">No</label>
+                                    </div>
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
+                                        <p>If YES, give details (country):</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
+    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                    @if ($non_acads_distinctions && $non_acads_distinctions->isNotEmpty())
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gray-100 dark:bg-slate-700">
-                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase" width="20%">Award</th>
-                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Association/ Organization Name</th>
-                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Date Received</th>
-                                </tr>
-                            </thead>
-                            <tbody class="">
-                                @foreach($non_acads_distinctions as $non_acads_distinction)
-                                    <tr class="dark:text-gray-200">
-                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $non_acads_distinction->award }}</td>
-                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $non_acads_distinction->ass_org_name }}</td>
-                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($non_acads_distinction->date_received)->format('F d, Y') }}
-                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('nonacad', {{ $non_acads_distinction->id }})"></i>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @endif
+                        {{-- 40 --}}
+                        <div class="flex flex-col w-full border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p>40.</p>
+                                    <p class="ml-2 mb-4">
+                                        Pursuant to: (a) Indigenous People's Act (RA 8371); (b) Magna Carta for Disabled Persons (RA 7277); and (c) 
+                                        Solo Parents Welfare Act of 2000 (RA 8972), please answer the following items:
+                                    </p>
+                                </div>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end items-start px-4 bg-white dark:bg-slate-700">
+                                </div>
+                            </div>
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p class="ml-6">
+                                        a. Are you a member of any indigenous group?
+                                    </p>
+                                </div>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <input id="yes" type="checkbox">
+                                        <label for="yes" class="ml-2">Yes</label>
+                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <label for="yes" class="ml-2">No</label>
+                                    </div>
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
+                                        <p>If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
+    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p class="ml-6">
+                                        b. Are you a person with disability?
+                                    </p>
+                                </div>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <input id="yes" type="checkbox">
+                                        <label for="yes" class="ml-2">Yes</label>
+                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <label for="yes" class="ml-2">No</label>
+                                    </div>
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
+                                        <p>If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
+    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/6 flex items-start p-2 text-gray-800 dark:text-gray-100 bg-slate-100 dark:bg-slate-900 text-xs">
+                                    <p class="ml-6">
+                                        c. Are you a solo parent?
+                                    </p>
+                                </div>
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <input id="yes" type="checkbox">
+                                        <label for="yes" class="ml-2">Yes</label>
+                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <label for="yes" class="ml-2">No</label>
+                                    </div>
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
+                                        <p>If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
+    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {{-- Character References --}}
+                        <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
+                            <p class="p-1 w-full font-bold">CHARACTER REFERENCES</p>
+                            @if ($references && $references->isNotEmpty())
+                                <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditReferences"></i>
+                            @endif
+                            <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddReferences" title="Add"></i>
+                        </div>
 
-                    {{-- MEMBERSHIP IN ASSOCIATION/ORGANIZATION --}}
-                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
-                        <p class="p-1 w-full font-bold">MEMBERSHIP IN ASSOCIATION/ORGANIZATION</p>
-                        @if ($assOrgMemberships && $assOrgMemberships->isNotEmpty())
-                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditMemberships"></i>
-                        @endif
-                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddMemberships"  title="Add"></i>
-                    </div>
-
-                    @if ($assOrgMemberships && $assOrgMemberships->isNotEmpty())
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gray-100 dark:bg-slate-700">
-                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Association/Organization Name</th>
-                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Position</th>
-                                </tr>
-                            </thead>
-                            <tbody class="">
-                                @foreach($assOrgMemberships as $assOrgMembership)
-                                    <tr class="dark:text-gray-200">
-                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $assOrgMembership->ass_org_name }}</td>
-                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $assOrgMembership->position }}
-                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('membership', {{ $assOrgMembership->id }})"></i>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @endif
-
-                    {{-- Character References --}}
-                    <div class="flex w-full sm:w-auto border-2 border-gray-200 dark:border-slate-600 bg-gray-100 dark:bg-slate-700">
-                        <p class="p-1 w-full font-bold">CHARACTER REFERENCES</p>
                         @if ($references && $references->isNotEmpty())
-                            <i title="Edit" class="fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-2 pr-1.5 cursor-pointer" wire:click="toggleEditReferences"></i>
-                        @endif
-                        <i class="fas fa-plus text-green-500 hover:text-green-700 float-right mt-2  mr-2 cursor-pointer" wire:click="toggleAddReferences" title="Add"></i>
-                    </div>
-
-                    @if ($references && $references->isNotEmpty())
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gray-100 dark:bg-slate-700">
-                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Fullname</th>
-                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Address</th>
-                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Tel Number</th>
-                                    <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Mobile Number</th>
-                                </tr>
-                            </thead>
-                            <tbody class="">
-                                @foreach($references as $reference)
-                                    <tr class="dark:text-gray-200">
-                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->firstname }} {{ $reference->middle_initial ? $reference->middle_initial . '.' : '' }} {{ $reference->surname }}</td>
-                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->address }}</td>
-                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->tel_number }}</td>
-                                        <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->mobile_number }}
-                                            <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('refs', {{ $reference->id }})"></i>
-                                        </td>
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="bg-gray-100 dark:bg-slate-700">
+                                        <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Fullname</th>
+                                        <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Address</th>
+                                        <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase">Tel Number</th>
+                                        <th class="p-1 border-r-2 border-l-2 border-gray-200 dark:border-slate-600 font-medium text-left uppercase"  width="20%">Mobile Number</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @endif
+                                </thead>
+                                <tbody class="">
+                                    @foreach($references as $reference)
+                                        <tr class="dark:text-gray-200">
+                                            <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->firstname }} {{ $reference->middle_initial ? $reference->middle_initial . '.' : '' }} {{ $reference->surname }}</td>
+                                            <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->address }}</td>
+                                            <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->tel_number }}</td>
+                                            <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $reference->mobile_number }}
+                                                <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('refs', {{ $reference->id }})"></i>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @endif
 
+                        {{-- ID's and Photo --}}
+                        <div class="flex flex-col w-full border-2 border-gray-200 dark:border-slate-600">
+                            <div class="w-full block sm:flex">
+                                <div class="w-full sm:w-4/5 border-2 border-gray-200 dark:border-slate-600">
+                                    <div class="w-full border-b-2 border-gray-200 dark:border-slate-600 p-2 bg-gray-100 dark:bg-slate-700">
+                                        <p class="w-full">Government Issued ID (i.e.Passport, GSIS, SSS, PRC, Driver's License, etc.) </p>
+                                        <p class="w-full text-right">PLEASE INDICATE ID Number</p>
+                                    </div>
+                                    <div class="flex w-full border-b-2 border-gray-200 dark:border-slate-600 px-2 py-3">
+                                        <p class="w-2/5">Government Issued ID:</p>
+                                        <p class="w-3/5 text-gray-800 dark:text-gray-100"></p>
+                                    </div>
+                                    <div class="flex w-full border-b-2 border-gray-200 dark:border-slate-600 px-2 py-3">
+                                        <p class="w-2/5">ID/License/Passport No.:</p>
+                                        <p class="w-3/5 text-gray-800 dark:text-gray-100"></p>
+                                    </div>
+                                    <div class="flex w-full px-2 py-3">
+                                        <p class="w-2/5">Date/Place of Issuance:</p>
+                                        <p class="w-3/5 text-gray-800 dark:text-gray-100"></p>
+                                    </div>
+                                </div>
+                                <div class="w-full flex flex-col justify-end p-2 items-start px-4 bg-gray-100 dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600">
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
                 {{-- Footer --}}
                 <div class="bg-gray-400 dark:bg-slate-700 p-2 text-white flex justify-center rounded-b-lg">
-                    <button class="btn bg-emerald-400 dark:bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap" wire:click='exportPDS' wire:loading.attr='disabled'>
-                        <div wire:loading wire:target="exportPDS" style="margin-right: 5px">
-                            <div class="spinner-border small text-primary" role="status">
-                            </div>
-                        </div>
-                        <i class="bi bi-file-earmark-arrow-down"></i>&nbsp&nbspExport
-                    </button>
                 </div>
-
             </div>
 
         </div>
@@ -1564,7 +1946,7 @@
 
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="from_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">From</label>
-                                    <input type="number" id="from_{{ $index }}" wire:model="education.{{ $index }}.from" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    <input type="date" id="from_{{ $index }}" wire:model="education.{{ $index }}.from" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                     @error('education.' . $index . '.from')
                                         <span class="text-red-500 text-sm">The start period of attendance is required!</span>
                                     @enderror
@@ -1572,7 +1954,7 @@
 
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">To</label>
-                                    <input type="number" id="to_{{ $index }}" wire:model="education.{{ $index }}.to" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    <input type="date" id="to_{{ $index }}" wire:model="education.{{ $index }}.to" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                     @error('education.' . $index . '.to')
                                         <span class="text-red-500 text-sm">The end period of attendance is required!</span>
                                     @enderror
@@ -1639,7 +2021,7 @@
 
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="from_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">From</label>
-                                    <input type="number" id="from_{{ $index }}" wire:model="newEducation.{{ $index }}.from" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    <input type="date" id="from_{{ $index }}" wire:model="newEducation.{{ $index }}.from" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                     @error('newEducation.' . $index . '.from')
                                         <span class="text-red-500 text-sm">The start period of attendance is required!</span>
                                     @enderror
@@ -1647,7 +2029,7 @@
 
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">To</label>
-                                    <input type="number" id="to_{{ $index }}" wire:model="newEducation.{{ $index }}.to" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    <input type="date" id="to_{{ $index }}" wire:model="newEducation.{{ $index }}.to" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                     @error('newEducation.' . $index . '.to')
                                         <span class="text-red-500 text-sm">The end period of attendance is required!</span>
                                     @enderror
@@ -1865,10 +2247,27 @@
                         @foreach ($workExperiences as $index => $exp)
                             <div class="grid grid-cols-2 gap-4 mb-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
 
-                                <div class="col-span-2 sm:col-span-2">
+                                <div class="col-span-2 sm:col-span-1">
                                     <label for="comp_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Department/Agency/Office/Company</label>
                                     <input type="text" id="comp_{{ $index }}" wire:model="workExperiences.{{ $index }}.department" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                     @error('workExperiences.' . $index . '.department')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="gov_service_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Gov't Service</label>
+                                    <div class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" id="gov_service_yes_{{ $index }}" wire:model="workExperiences.{{ $index }}.gov_service" value="1" class="form-radio text-green-600">
+                                            <span class="ml-2">Yes</span>
+                                        </label>
+                                        <label class="inline-flex items-center ml-6">
+                                            <input type="radio" id="gov_service_no_{{ $index }}" wire:model="workExperiences.{{ $index }}.gov_service" value="0" class="form-radio text-green-600">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                    </div>
+                                    @error('workExperiences.' . $index . '.gov_service')
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
                                 </div>
@@ -1908,20 +2307,8 @@
                                 </div>
 
                                 <div class="col-span-2 sm:col-span-1">
-                                    <label for="gov_service_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Gov't Service</label>
-                                    <div class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                                        <label class="inline-flex items-center">
-                                            <input type="radio" id="gov_service_yes_{{ $index }}" wire:model="workExperiences.{{ $index }}.gov_service" value="1" class="form-radio text-green-600">
-                                            <span class="ml-2">Yes</span>
-                                        </label>
-                                        <label class="inline-flex items-center ml-6">
-                                            <input type="radio" id="gov_service_no_{{ $index }}" wire:model="workExperiences.{{ $index }}.gov_service" value="0" class="form-radio text-green-600">
-                                            <span class="ml-2">No</span>
-                                        </label>
-                                    </div>
-                                    @error('workExperiences.' . $index . '.gov_service')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
-                                    @enderror
+                                    <label for="sg_step_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Salary/Job/Pay Grade & Step (if applicable)</label>
+                                    <input type="number" id="sg_step_{{ $index }}" wire:model="workExperiences.{{ $index }}.sg_step" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700" placeholder="Format (00-0) / Increment">
                                 </div>
 
                             </div>
@@ -1930,12 +2317,31 @@
                         @foreach ($newWorkExperiences as $index => $exp)
                             <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
 
-                                <div class="col-span-2 sm:col-span-2">
+                                <div class="col-span-2 sm:col-span-1">
                                     <label for="comp_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Department/Agency/Office/Company
-                                        <i class="fas fa-times cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewWorkExp({{ $index }})"></i>
+                                        <i class="fas fa-times flex sm:hidden cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewWorkExp({{ $index }})"></i>
                                     </label>
                                     <input type="text" id="comp_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.department" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                     @error('newWorkExperiences.' . $index . '.department')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+                                
+                                <div class="col-span-2 sm:col-span-1">
+                                    <label for="gov_service_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Gov't Service
+                                        <i class="fas fa-times hidden sm:flex cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewWorkExp({{ $index }})"></i>
+                                    </label>
+                                    <div class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" id="gov_service_yes_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.gov_service" value="1" class="form-radio text-green-600">
+                                            <span class="ml-2">Yes</span>
+                                        </label>
+                                        <label class="inline-flex items-center ml-6">
+                                            <input type="radio" id="gov_service_no_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.gov_service" value="0" class="form-radio text-green-600">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                    </div>
+                                    @error('newWorkExperiences.' . $index . '.gov_service')
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
                                 </div>
@@ -1975,20 +2381,8 @@
                                 </div>
 
                                 <div class="col-span-2 sm:col-span-1">
-                                    <label for="gov_service_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Gov't Service</label>
-                                    <div class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                                        <label class="inline-flex items-center">
-                                            <input type="radio" id="gov_service_yes_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.gov_service" value="1" class="form-radio text-green-600">
-                                            <span class="ml-2">Yes</span>
-                                        </label>
-                                        <label class="inline-flex items-center ml-6">
-                                            <input type="radio" id="gov_service_no_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.gov_service" value="0" class="form-radio text-green-600">
-                                            <span class="ml-2">No</span>
-                                        </label>
-                                    </div>
-                                    @error('newWorkExperiences.' . $index . '.gov_service')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
-                                    @enderror
+                                    <label for="sg_step_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Salary/Job/Pay Grade & Step (if applicable)</label>
+                                    <input type="number" id="sg_step_{{ $index }}" wire:model="workExperiences.{{ $index }}.sg_step" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700" placeholder="Format (00-0) / Increment">
                                 </div>
 
                             </div>
@@ -2104,8 +2498,8 @@
                                 </div>
 
                                 <div class="col-span-2 sm:col-span-1">
-                                    <label for="comp_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Place of Organization
-                                        <i class="fas fa-times hidden sm:flex cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewVoluntaryWork({{ $index }})"></i>
+                                    <label for="name_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name of Organization
+                                        <i class="fas fa-times flex sm:hidden cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewVoluntaryWork({{ $index }})"></i>
                                     </label>
                                     <input type="text" id="comp_{{ $index }}" wire:model="newVoluntaryWorks.{{ $index }}.org_address" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                     @error('newVoluntaryWorks.' . $index . '.org_address')
