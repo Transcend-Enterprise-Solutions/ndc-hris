@@ -233,8 +233,20 @@ class AutoSaveDtrRecords implements ShouldQueue
 
         // Calculate undertime
         $undertime = Carbon::createFromTime(0, 0, 0);
-        if ($afternoonOut && $afternoonOut->lt($expectedEndTime)) {
-            $undertime = $undertime->addMinutes($expectedEndTime->diffInMinutes($afternoonOut));
+        $lunchTime = $carbonDate->copy()->setTimeFromTimeString('12:00:00');
+
+        if ($afternoonOut) {
+            if ($afternoonOut->lt($expectedEndTime)) {
+                $undertime = $undertime->addMinutes($expectedEndTime->diffInMinutes($afternoonOut));
+            }
+        } else {
+            // If there's no afternoon out, add 4 hours of undertime
+            $undertime = $undertime->addHours(4);
+
+            // Check if morning out is before 12:00
+            if ($morningOut && $morningOut->lt($lunchTime)) {
+                $undertime = $undertime->addMinutes($lunchTime->diffInMinutes($morningOut));
+            }
         }
 
         // Add undertime to lateness

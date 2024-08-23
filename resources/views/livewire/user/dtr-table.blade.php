@@ -139,8 +139,12 @@
                                     @elseif($dtr->remarks == 'Leave') bg-blue-400 text-blue-800
                                     @else bg-gray-200 text-gray-800
                                     @endif"
-                                    @click="$dispatch('open-modal', {dtrId: {{ $dtr->id }}, remarks: '{{ $dtr->remarks }}'})" >
-                                    {{ $dtr->remarks }}
+                                    @click="$dispatch('open-modal', {dtrId: {{ $dtr->id }}, remarks: '{{ $dtr->remarks }}'})">
+                                    @if($dtr->remarks == 'Late')
+                                        Late/Undertime
+                                    @else
+                                        {{ $dtr->remarks }}
+                                    @endif
                                 </button>
                             </td>
 
