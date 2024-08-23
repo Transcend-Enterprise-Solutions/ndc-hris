@@ -651,12 +651,12 @@
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->vl_claimed_credits }}</p>
+                        {{ number_format($leaveCredits->vl_claimed_credits ?? 0, 3) }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->sl_claimed_credits }}</p>
+                        {{ number_format($leaveCredits->sl_claimed_credits ?? 0, 3) }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -691,12 +691,12 @@
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->total_credits }}</p>
+                        {{ $leaveCredits->vl_total_credits }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->total_credits }}</p>
+                        {{ $leaveCredits->sl_total_credits }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">

@@ -193,17 +193,6 @@ class LeaveApplicationTable extends Component
         $leaveDetailsString = implode(', ', $leaveDetails);
         $filePathsString = implode(',', $filePaths);
 
-        // if ($this->start_date && $this->end_date) {
-        //     $datesInRange = $this->list_of_dates;
-        //     if (in_array($this->start_date, $datesInRange) && in_array($this->end_date, $datesInRange)) {
-        //         $datesString = $this->start_date . ' - ' . $this->end_date;
-        //     } else {
-        //         $datesString = $this->start_date . ' - ' . $this->end_date . ',' . implode(',', $datesInRange);
-        //     }
-        // } else {
-        //     $datesString = implode(',', $this->list_of_dates);
-        // }
-        // Only include dates that are actually provided
         $datesString = '';
 
         if ($this->start_date && $this->end_date) {
@@ -231,16 +220,22 @@ class LeaveApplicationTable extends Component
         $leaveCredits = LeaveCredits::where('user_id', $userId)->first();
         if ($leaveCredits) {
             if (!$leaveCredits->credits_transferred) {
-                $leaveCredits->total_credits = $leaveCreditsEarned;
+                // Set total credits based on the new columns
+                $leaveCredits->vl_total_credits = $leaveCredits->vl_claimable_credits + $leaveCredits->vl_claimed_credits;
+                $leaveCredits->sl_total_credits = $leaveCredits->sl_claimable_credits + $leaveCredits->sl_claimed_credits;
+                $leaveCredits->spl_total_credits = $leaveCredits->spl_claimable_credits + $leaveCredits->spl_claimed_credits;
+                
                 $leaveCredits->save();
-
+        
                 $leaveCredits->credits_transferred = true;
                 $leaveCredits->save();
             }
         } else {
             LeaveCredits::create([
                 'user_id' => $userId,
-                'total_credits' => $leaveCreditsEarned,
+                'vl_total_credits' => $leaveCreditsEarned,
+                'sl_total_credits' => $leaveCreditsEarned,
+                'spl_total_credits' => $leaveCreditsEarned,
                 'vl_claimable_credits' => $leaveCreditsEarned,
                 'sl_claimable_credits' => $leaveCreditsEarned,
                 'spl_claimable_credits' => $leaveCreditsEarned,
