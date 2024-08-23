@@ -14,10 +14,10 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
-        <script defer src="build/assets/app-B9GXRaBV.js"></script>
+        <script defer src="build/assets/app-BXAyOSJJ.js"></script>
 
         <!-- Styles -->
-        <link rel="stylesheet" href="build/assets/app-BJKUccW0.css">
+        <link rel="stylesheet" href="build/assets/app-DBRHwxN1.css">
 
          @livewireStyles
 
