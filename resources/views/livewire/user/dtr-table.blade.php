@@ -131,25 +131,33 @@
                             <td class="px-4 py-2 text-center">{{ $dtr->overtime }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->total_hours_rendered }}</td>
                             <td class="px-4 py-2 text-center">
-                                <button title="Edit" class="px-4 py-1 text-sm font-semibold rounded-full cursor-pointer
-                                    @if($dtr->remarks == 'Present') bg-green-400 text-green-800
-                                    @elseif($dtr->remarks == 'Holiday') bg-blue-400 text-blue-800
-                                    @elseif($dtr->remarks == 'Absent') bg-red-400 text-red-800
-                                    @elseif($dtr->remarks == 'Late') bg-yellow-400 text-yellow-800
-                                    @elseif($dtr->remarks == 'Leave') bg-blue-400 text-blue-800
-                                    @else bg-gray-200 text-gray-800
-                                    @endif"
-                                    @click="$dispatch('open-modal', {dtrId: {{ $dtr->id }}, remarks: '{{ $dtr->remarks }}'})">
-                                    @if($dtr->remarks == 'Late')
-                                        Late/Undertime
-                                    @else
-                                        {{ $dtr->remarks }}
-                                    @endif
-                                </button>
+                                @php
+                                // Determine background and text color based on remarks
+                                $bgColor = 'bg-gray-200';
+                                $textColor = 'text-gray-800';
+                                if ($dtr->remarks == 'Present') {
+                                    $bgColor = 'bg-green-400';
+                                    $textColor = 'text-green-800';
+                                } elseif ($dtr->remarks == 'Holiday' || $dtr->remarks == 'Leave') {
+                                    $bgColor = 'bg-blue-400';
+                                    $textColor = 'text-blue-800';
+                                } elseif ($dtr->remarks == 'Absent') {
+                                    $bgColor = 'bg-red-400';
+                                    $textColor = 'text-red-800';
+                                } elseif ($dtr->remarks == 'Late') {
+                                    $bgColor = 'bg-yellow-400';
+                                    $textColor = 'text-yellow-800';
+                                }
+                            @endphp
+                            <button title="Edit" class="px-4 py-1 text-sm font-semibold rounded-full cursor-pointer {{ $bgColor }} {{ $textColor }}"
+                                @click="$dispatch('open-modal', {dtrId: {{ $dtr->id }}, remarks: '{{ $dtr->remarks }}'})">
+                                @if($dtr->remarks == 'Late')
+                                    Late/Undertime
+                                @else
+                                    {{ $dtr->remarks }}
+                                @endif
+                            </button>
                             </td>
-
-
-
                         </tr>
                     @empty
                         <tr class="whitespace-nowrap">
