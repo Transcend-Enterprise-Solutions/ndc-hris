@@ -83,19 +83,16 @@ class AutoSaveDtrRecords implements ShouldQueue
     {
         $carbonDate = Carbon::parse($date);
         $dayOfWeek = $carbonDate->format('l');
-
         // Fetch the schedule from DTRSchedule table
         $schedule = DTRSchedule::where('emp_code', $empCode)
             ->whereDate('start_date', '<=', $date)
             ->whereDate('end_date', '>=', $date)
             ->first();
-
         // Initialize default values
         $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString('07:00:00');
         $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString('18:30:00');
         $lateThreshold = $carbonDate->copy()->setTimeFromTimeString('09:30:00');
         $location = 'Onsite';
-
         // Set values for Work From Home (WFH) days
         if ($schedule) {
             $wfhDays = array_map('ucfirst', array_map('trim', explode(',', $schedule->wfh_days)));
@@ -114,7 +111,6 @@ class AutoSaveDtrRecords implements ShouldQueue
         if ($dayOfWeek === 'Monday') {
             $lateThreshold = $carbonDate->copy()->setTimeFromTimeString('09:00:00');
         }
-
         // Check for holiday or leave
         $holiday = Holiday::whereDate('holiday_date', $date)->first();
         if ($holiday) {
@@ -149,10 +145,8 @@ class AutoSaveDtrRecords implements ShouldQueue
                 'remarks' => 'Leave',
             ];
         }
-
         // Determine location
-         // Default value, adjust as necessary based on your application
-
+        // Default value, adjust as necessary based on your application
         // Initialize variables for actual punches and calculated times
         $actualMorningIn = null;
         $actualMorningOut = null;
