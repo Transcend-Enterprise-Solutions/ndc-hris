@@ -221,6 +221,7 @@ class AutoSaveDtrRecords implements ShouldQueue
 
         // Calculate lateness
         $late = Carbon::createFromTime(0, 0, 0);
+        $lunchEnd = $carbonDate->copy()->setTimeFromTimeString('13:00:00');
         if ($morningIn) {
             if ($morningIn->gt($lateThreshold)) {
                 // Set expected time out to default end time if time in is greater than late threshold
@@ -229,8 +230,12 @@ class AutoSaveDtrRecords implements ShouldQueue
             if ($morningIn->gt($lateThreshold)) {
                 $late = $late->addMinutes($morningIn->diffInMinutes($lateThreshold));
             }
+        } else{
+            $late = $late->addHours(4);
+            if ($afternoonIn && $afternoonIn->gt($lunchEnd)){
+                $late = $late->addMinutes($lunchEnd->diffInMinutes($afternoonIn));
+            }
         }
-
         // Calculate undertime
         $undertime = Carbon::createFromTime(0, 0, 0);
         $lunchTime = $carbonDate->copy()->setTimeFromTimeString('12:00:00');
