@@ -132,7 +132,7 @@ class LeaveApplicationTable extends Component
 
     public function submitLeaveApplication()
     {
-        $this->validate([
+        $rules = [
             'office_or_department' => 'required',
             'position' => 'required',
             'salary' => 'required',
@@ -140,14 +140,25 @@ class LeaveApplicationTable extends Component
             'details_of_leave' => 'required',
             'number_of_days' => 'required',
             'commutation' => 'required',
-        ]);
-
-        if (empty($this->new_date)) {
-            $rules['start_date'] = 'required|date';
-            $rules['end_date'] = 'required|date|after_or_equal:start_date';
-        } else {
-            $rules['new_date'] = 'required|date';
+        ];
+    
+        // Check if list_of_dates is present in the form
+        if ($this->list_of_dates !== null) {
+            $rules['list_of_dates'] = 'required|min:1';
         }
+    
+        // Check if start_date and end_date are present in the form
+        // if ($this->start_date !== null || $this->end_date !== null) {
+        //     $rules['start_date'] = 'required|date';
+        //     $rules['end_date'] = 'required|date|after_or_equal:start_date';
+        // }
+    
+        // If new_date is present, add its validation
+        // if ($this->new_date !== null) {
+        //     $rules['new_date'] = 'required|date';
+        // }
+    
+        $this->validate($rules);
 
         if (in_array('Others', $this->type_of_leave)) {
             $this->type_of_leave = array_filter($this->type_of_leave, function ($leave) {
