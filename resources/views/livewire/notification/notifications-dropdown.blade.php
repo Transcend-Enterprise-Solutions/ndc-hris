@@ -23,7 +23,7 @@
 
     <!-- Dropdown menu -->
     <div
-        class="origin-top-right absolute z-10 mt-2 w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 py-1.5 rounded-2xl shadow-lg overflow-hidden"
+        class="fixed top-15 right-4 z-50 w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 py-1.5 rounded-2xl shadow-lg overflow-hidden max-h-[calc(100vh-5rem)] overflow-y-auto"
         @click.outside="open = false"
         @keydown.escape.window="open = false"
         x-show="open"
@@ -34,8 +34,6 @@
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         x-cloak
-        :class="{ 'right-0': align === 'right', 'left-0': align === 'left' }"
-        style="top: 100%; {{ $align === 'right' ? 'right: 0;' : 'left: 0;' }}"
     >
         <!-- Dropdown header -->
         <div class="flex items-center justify-between text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase pt-1.5 pb-2 px-4">
@@ -109,10 +107,6 @@
                                     <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
                                         {{ $group['latest']->created_at->diffForHumans() }}
                                     </span>
-                                    {{-- <!-- Display the name and human-readable document type -->
-                                    <span class="block text-xs text-slate-600 dark:text-slate-300">
-                                        {{ $group['latest']->docRequest->user->name }} requested {{ $this->getDocumentTypeLabel($group['latest']->docRequest->document_type) }}
-                                    </span> --}}
                                 </a>
                                 <div x-data="{ open: false }" class="relative inline-block">
                                     <!-- Three dots icon button -->
