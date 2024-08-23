@@ -63,7 +63,7 @@
                                                     <td class="px-4 py-2 text-center">
                                                         {{ $leaveApplication->number_of_days }}</td>
                                                     <td class="px-4 py-2 text-center">
-                                                        {{ $leaveApplication->list_of_dates }}
+                                                        {{ $leaveApplication->list_of_dates }}</td>
                                                     <td class="px-4 py-2 text-center">
                                                         @if ($leaveApplication->file_name)
                                                             @php

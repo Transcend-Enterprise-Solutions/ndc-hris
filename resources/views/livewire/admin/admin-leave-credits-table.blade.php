@@ -114,7 +114,7 @@
         </div>
     </div>
 
-    <x-modal id="inputCredits" maxWidth="lg" wire:model="inputCredits" centered>
+    <x-modal id="inputCredits" maxWidth="lg" wire:model="inputCredits">
         <div class="p-6">
             <!-- Modal Header -->
             <div class="flex items-center justify-between pb-4">
@@ -144,48 +144,101 @@
                     @enderror
                 </div>
 
-                <!-- Leave Type Selection -->
-                <div>
-                    <label for="leaveType" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Leave
-                        Type</label>
-                    <select id="leaveType" wire:model="leaveType"
-                        class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">Select</option>
-                        <option value="vacation">Vacation Leave Credits</option>
-                        <option value="sick">Sick Leave Credits</option>
-                        <option value="spl">Special Privilege Leave Credits</option>
-                    </select>
-                    @error('leaveType')
-                        <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-                    @enderror
-                </div>
+                <!-- Vacation Leave Part -->
+                <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
+                    <legend class="text-gray-700 dark:text-slate-100">Vacation Leave</legend>
+                    <div class="flex space-x-4">
+                        <!-- Claimable Credits -->
+                        <div class="w-1/2">
+                            <label for="vlClaimableCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimable
+                                Credits</label>
+                            <input id="vlClaimableCredits" type="number" wire:model="vlClaimableCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter claimable credits">
+                            @error('vlClaimableCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
 
-                <!-- Credits Inputs -->
-                <div class="flex space-x-4">
-                    <!-- Claimable Credits -->
-                    <div class="w-1/2">
-                        <label for="claimableCredits"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimable Credits</label>
-                        <input id="claimableCredits" type="number" wire:model="claimableCredits"
-                            class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Enter claimable credits">
-                        @error('claimableCredits')
-                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-                        @enderror
+                        <!-- Claimed Credits -->
+                        <div class="w-1/2">
+                            <label for="vlClaimedCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimed
+                                Credits</label>
+                            <input id="vlClaimedCredits" type="number" wire:model="vlClaimedCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter claimed credits">
+                            @error('vlClaimedCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
                     </div>
+                </fieldset>
 
-                    <!-- Claimed Credits -->
-                    <div class="w-1/2">
-                        <label for="claimedCredits"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimed Credits</label>
-                        <input id="claimedCredits" type="number" wire:model="claimedCredits"
-                            class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Enter claimed credits">
-                        @error('claimedCredits')
-                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-                        @enderror
+                <!-- Sick Leave Part -->
+                <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
+                    <legend class="text-gray-700 dark:text-slate-100">Sick Leave</legend>
+                    <div class="flex space-x-4">
+                        <!-- Claimable Credits -->
+                        <div class="w-1/2">
+                            <label for="slClaimableCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimable
+                                Credits</label>
+                            <input id="slClaimableCredits" type="number" wire:model="slClaimableCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter claimable credits">
+                            @error('slClaimableCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
+
+                        <!-- Claimed Credits -->
+                        <div class="w-1/2">
+                            <label for="slClaimedCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimed
+                                Credits</label>
+                            <input id="slClaimedCredits" type="number" wire:model="slClaimedCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter claimed credits">
+                            @error('slClaimedCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
                     </div>
-                </div>
+                </fieldset>
+
+                <!-- Special Privilege Leave Part -->
+                <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
+                    <legend class="text-gray-700 dark:text-slate-100">Special Privilege Leave</legend>
+                    <div class="flex space-x-4">
+                        <!-- Claimable Credits -->
+                        <div class="w-1/2">
+                            <label for="splClaimableCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimable
+                                Credits</label>
+                            <input id="splClaimableCredits" type="number" wire:model="splClaimableCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter claimable credits">
+                            @error('splClaimableCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
+
+                        <!-- Claimed Credits -->
+                        <div class="w-1/2">
+                            <label for="splClaimedCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimed
+                                Credits</label>
+                            <input id="splClaimedCredits" type="number" wire:model="splClaimedCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter claimed credits">
+                            @error('splClaimedCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
+                    </div>
+                </fieldset>
 
                 <!-- Action Buttons -->
                 <div class="mt-6 flex justify-end space-x-4">

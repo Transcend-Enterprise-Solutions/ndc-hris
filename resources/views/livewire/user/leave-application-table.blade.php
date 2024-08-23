@@ -154,8 +154,12 @@
 
                             <label for="salary"
                                 class="block text-sm font-medium text-gray-700 dark:text-slate-100">Salary</label>
-                            <input type="number" id="salary" wire:model="salary" disabled
-                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <div class="mt-1 relative flex items-center">
+                                <span style="font-family: 'Arial', sans-serif; font-weight: bold;"
+                                    class="absolute left-3">&#8369;</span>
+                                <input type="number" id="salary" wire:model="salary" disabled
+                                    class="p-2 pl-8 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            </div>
                             @error('salary')
                                 <span class="text-red-500 text-sm">This field is required!</span>
                             @enderror
