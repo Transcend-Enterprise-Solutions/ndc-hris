@@ -17,6 +17,7 @@
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.5",
         "maatwebsite/excel": "^3.1",
+        "mpdf/mpdf": "^8.2",
         "owen-it/laravel-auditing": "^13.6",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",

@@ -3,6 +3,16 @@
 <head>
     <title>Personal Data Sheet</title>
     <style>
+         @page {
+            margin: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
         .table .border-top{
             border-top: 1px solid gray;
         }
@@ -65,25 +75,62 @@
         .page-break {
             page-break-before: always;
         }
+
+        .arial-black{
+            font-family: "Arial Black", Arial, sans-serif;
+        }
+
+        .arial-narrow{
+            font-family: "Arial Narrow", Arial, sans-serif;
+        }
+
+        .h-bg{
+            background: rgb(151, 151, 151);
+        }
+
+        .l-bg{
+            background: darkgray;
+        }
+
+        p{
+            font-size: 10px;
+        }
+
+        span{
+            font-size: 9px;
+        }
+
+        .i{
+            font-style: italic;
+        }
+
+        .b{
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
             {{-- Header --}}
-            <table style="width: 100%;">
-                <thead>
-                    <tr>
-                        <th width="25%">
-                            <center><img src="images/nyc-logo.png" width="80"></center>
-                        </th>
-                        <th width="50%">
-                            <center><h2>PERSONAL DATA SHEET</h2></center>
-                        </th>
-                        <th width="25%">
-                            <center><img src="images/hris-logo.png" width="80"></center>
-                        </th>
-                    </tr>
-                </thead>
-            </table>
+            <div style="width: 100%; margin: 5px">
+                <p class="i b">
+                    CS Form No. 212 <br>
+                    <span>Revised 2017</span>
+                </p>
+                <center><h1 class="arial-black b" style="font-size: 30px; margin-top: -30px">PERSONAL DATA SHEET</h1></center>
+                <p class="i b">WARNING: Any misrepresentation made in the Personal Data Sheet and the Work Experience Sheet shall 
+                    cause the filing of administrative/criminal case/s <br>against the person concerned. <br>
+                    READ THE ATTACHED GUIDE TO FILLING OUT THE PERSONAL DATA SHEET (PDS) BEFORE ACCOMPLISHING THE PDS FORM.
+                </p>
+                <p class="arial-narrow" style="width: 100%; font-size: 9px; margin-top: -8px">
+                    Print legibly. Tick appropriate boxes <span style="padding: 1px 5px; border: solid 1px black; color: white">|</span> ) and use separate sheet if necessary. 
+                    Indicate N/A if not applicable. DO NOT ABBREVIATE. 
+
+                    <span class="h-bg" style="padding: 2px 3px; border: solid 1px black; margin-left: 5px">1. CS ID No</span>
+                    <span style="padding: 2px 3px; width: 300px; text-align:end; border: solid 1px black; margin-left: -3px">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Don not fill up. For CSC use only)
+                    </span>
+                </p>
+            </div>
 
             <div class="spacer"></div>
 

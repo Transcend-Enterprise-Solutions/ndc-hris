@@ -7,6 +7,15 @@
             <div class="pt-4 pb-4">
                 <h1 class="text-3xl font-bold text-center text-slate-800 dark:text-white">PERSONAL DATA SHEET</h1>
             </div>
+            <div class="bg-gray-400 dark:bg-slate-700 p-2 text-white flex justify-center rounded-b-lg">
+                <button class="btn bg-emerald-400 dark:bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap" wire:click='exportPDS' wire:loading.attr='disabled'>
+                    <div wire:loading wire:target="exportPDS" style="margin-right: 5px">
+                        <div class="spinner-border small text-primary" role="status">
+                        </div>
+                    </div>
+                    <i class="bi bi-file-earmark-arrow-down"></i>&nbsp&nbspExport
+                </button>
+            </div>
 
             <style>
                 @media (max-width: 1024px){

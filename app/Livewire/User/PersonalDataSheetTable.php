@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Exports\PDSExport;
 use App\Models\AssOrgMemberships;
 use App\Models\CharReferences;
 use App\Models\Eligibility;
@@ -243,15 +244,28 @@ class PersonalDataSheetTable extends Component
         $this->rbarangays = collect();
     }
 
+    // public function exportPDS(){
+    //     try{
+    //         $pds = $this->pds;
+    //         $pdf = Pdf::loadView('pdf.pds', ['pds' => $pds]);
+    //         $pdf->setPaper('A4', 'portrait');
+    //         return response()->streamDownload(function () use ($pdf) {
+    //             echo $pdf->stream();
+    //         }, $pds['userData']->first_name . ' ' . $pds['userData']->surname . ' PDS.pdf');
+    //     }catch(Exception $e){
+    //         throw $e;
+    //     }
+    // }
+
     public function exportPDS(){
-        try{
-            $pds = $this->pds;
-            $pdf = Pdf::loadView('pdf.pds', ['pds' => $pds]);
-            $pdf->setPaper('A4', 'portrait');
-            return response()->streamDownload(function () use ($pdf) {
-                echo $pdf->stream();
-            }, $pds['userData']->first_name . ' ' . $pds['userData']->surname . ' PDS.pdf');
-        }catch(Exception $e){
+        try {
+            $exporter = new PDSExport($this->pds);
+            $result = $exporter->export();
+
+            return response()->streamDownload(function () use ($result) {
+                echo $result['content'];
+            }, $result['filename']);
+        } catch (Exception $e) {
             throw $e;
         }
     }
