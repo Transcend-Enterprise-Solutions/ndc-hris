@@ -199,6 +199,18 @@ class User extends Authenticatable
         return $this->hasMany(CosSkSemiMonthlyPayrolls::class);
     }
 
+    public function pdsC4Answers(){
+        return $this->hasOne(PdsC4Answers::class);
+    }
+
+    public function pdsGovIssuedId(){
+        return $this->hasOne(PdsGovIssuedId::class);
+    }
+
+    public function pdsPhoto(){
+        return $this->hasOne(PdsPhoto::class);
+    }
+
     /**
      * The attributes that should be cast.
      *

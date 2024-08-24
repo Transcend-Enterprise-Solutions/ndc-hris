@@ -14,20 +14,28 @@ use App\Models\EmployeesSpouse;
 use App\Models\Hobbies;
 use App\Models\LearningAndDevelopment;
 use App\Models\NonAcadDistinctions;
+use App\Models\PdsC4Answers;
+use App\Models\PdsGovIssuedId;
+use App\Models\PdsPhoto;
 use App\Models\PhilippineBarangays;
 use App\Models\PhilippineCities;
 use App\Models\PhilippineProvinces;
 use App\Models\Skills;
-use App\Models\User;
 use App\Models\VoluntaryWorks;
 use App\Models\WorkExperience;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Livewire\WithFileUploads;
+use Illuminate\Http\UploadedFile;
 
 class PersonalDataSheetTable extends Component
 {
+    use WithFileUploads;
+
     public $pds;
     public $popup_message = '';
     public $pprovinces;
@@ -163,11 +171,58 @@ class PersonalDataSheetTable extends Component
     public $myReferences = [];
     public $myNewReferences = [];
 
+    // C4 Section
+    public $qKey;
+    public $editAnswer = [
+        'q34a' => false,
+        'q34b' => false,
+        'q35a' => false,
+        'q35b' => false,
+        'q36a' => false,
+        'q37a' => false,
+        'q38a' => false,
+        'q38b' => false,
+        'q39a' => false,
+        'q40a' => false,
+        'q40b' => false,
+        'q40c' => false,
+    ];
+    
+    public $q34aAnswer;
+    public $q34bAnswer;
+    public $q34bDetails;
+    public $q35aAnswer;
+    public $q35aDetails;
+    public $q35bAnswer;
+    public $q35bDate_filed;
+    public $q35bStatus;
+    public $q36aAnswer;
+    public $q36aDetails;
+    public $q37aAnswer;
+    public $q37aDetails;
+    public $q38aAnswer;
+    public $q38aDetails;
+    public $q38bAnswer;
+    public $q38bDetails;
+    public $q39aAnswer;
+    public $q39aDetails;
+    public $q40aAnswer;
+    public $q40aDetails;
+    public $q40bAnswer;
+    public $q40bDetails;
+    public $q40cAnswer;
+    public $q40cDetails;
 
-    public function render(){
-        $userId = Auth::user()->id;
-        $user = User::where('id', $userId)->first();
+    public $editGovId;
+    public $govId;
+    public $idNumber;
+    public $dateIssued;
 
+    public $pdsPhoto;
+    public $myPhoto;
+
+    public function mount(){
+        $user = Auth::user();
         $this->pds = [
             'userData' => $user->userData,
             'userSpouse' => $user->employeesSpouse,
@@ -185,6 +240,21 @@ class PersonalDataSheetTable extends Component
             'assOrgMemberships' => $user->assOrgMembership,
             'references' => $user->charReferences,
         ];
+        $this->getC4Answers();
+        $pdsGovId = PdsGovIssuedId::where('user_id', $user->id)->first();
+        if($pdsGovId){
+            $this->govId = $pdsGovId->gov_id;
+            $this->idNumber = $pdsGovId->id_number;
+            $this->dateIssued = Carbon::parse($pdsGovId->date_of_issuance)->format('m-d-Y');
+        }
+
+        $pdsPhoto = PdsPhoto::where('user_id', $user->id)->first();
+        if($pdsPhoto){
+            $this->myPhoto = $pdsPhoto->photo;
+        }
+    }
+
+    public function render(){
 
         if($this->personalInfo === true){
             $this->getProvincesAndCities();
@@ -217,22 +287,26 @@ class PersonalDataSheetTable extends Component
             }    
         }
 
+        if($this->pdsPhoto) {
+            $this->savePhoto();
+        }
+
         return view('livewire.user.personal-data-sheet-table', [
-            'userData' => $user->userData,
-            'userSpouse' => $user->employeesSpouse,
-            'userMother' => $user->employeesMother,
-            'userFather' => $user->employeesFather,
-            'userChildren' => $user->employeesChildren,
-            'educBackground' => $user->employeesEducation,
-            'eligibility' => $user->eligibility,
-            'workExperience' => $user->workExperience,
-            'voluntaryWorks' => $user->voluntaryWorks,
-            'lds' => $user->learningAndDevelopment,
-            'skills' => $user->skills,
-            'hobbies' => $user->hobbies,
-            'non_acads_distinctions' => $user->nonAcadDistinctions,
-            'assOrgMemberships' => $user->assOrgMembership,
-            'references' => $user->charReferences,
+            'userData' => $this->pds['userData'],
+            'userSpouse' => $this->pds['userSpouse'],
+            'userMother' => $this->pds['userMother'],
+            'userFather' => $this->pds['userFather'],
+            'userChildren' => $this->pds['userChildren'],
+            'educBackground' => $this->pds['educBackground'],
+            'eligibility' => $this->pds['eligibility'],
+            'workExperience' => $this->pds['workExperience'],
+            'voluntaryWorks' => $this->pds['voluntaryWorks'],
+            'lds' => $this->pds['lds'],
+            'skills' => $this->pds['skills'],
+            'hobbies' => $this->pds['hobbies'],
+            'non_acads_distinctions' => $this->pds['non_acads_distinctions'],
+            'assOrgMemberships' => $this->pds['assOrgMemberships'],
+            'references' => $this->pds['references'],
         ]);
     }
 
@@ -243,6 +317,48 @@ class PersonalDataSheetTable extends Component
         $this->pbarangays = collect();
         $this->rbarangays = collect();
     }
+
+    public function getC4Answers(){
+        try {
+            $questions = [
+                'q34a' => ['num' => 34, 'letter' => 'a', 'fields' => ['answer']],
+                'q34b' => ['num' => 34, 'letter' => 'b', 'fields' => ['answer', 'details']],
+                'q35a' => ['num' => 35, 'letter' => 'a', 'fields' => ['answer', 'details']],
+                'q35b' => ['num' => 35, 'letter' => 'b', 'fields' => ['answer', 'date_filed', 'status']],
+                'q36a' => ['num' => 36, 'letter' => 'a', 'fields' => ['answer', 'details']],
+                'q37a' => ['num' => 37, 'letter' => 'a', 'fields' => ['answer', 'details']],
+                'q38a' => ['num' => 38, 'letter' => 'a', 'fields' => ['answer', 'details']],
+                'q38b' => ['num' => 38, 'letter' => 'b', 'fields' => ['answer', 'details']],
+                'q39a' => ['num' => 39, 'letter' => 'a', 'fields' => ['answer', 'details']],
+                'q40a' => ['num' => 40, 'letter' => 'a', 'fields' => ['answer', 'details']],
+                'q40b' => ['num' => 40, 'letter' => 'b', 'fields' => ['answer', 'details']],
+                'q40c' => ['num' => 40, 'letter' => 'c', 'fields' => ['answer', 'details']],
+            ];
+    
+            foreach ($questions as $key => $question) {
+                $answer = $this->getAnswer($question['num'], $question['letter']);
+                
+                foreach ($question['fields'] as $field) {
+                    $fieldKey = $key . ucfirst($field);
+                    if($answer && $field == "date_filed"){
+                        $this->{$fieldKey} = $answer ? Carbon::parse($answer->{$field})->format('m-d-Y') : null;
+                    }else{
+                        $this->{$fieldKey} = $answer ? $answer->{$field} : null;
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+    
+    public function getAnswer($qNum, $qLetter){
+        $user = Auth::user();
+        return PdsC4Answers::where('user_id', $user->id)
+            ->where('question_number', $qNum)
+            ->where('question_letter', $qLetter)
+            ->first();
+    }    
 
     public function exportPDS(){
         try {
@@ -592,54 +708,6 @@ class PersonalDataSheetTable extends Component
     }
 
     // Add ---------------------------------------------------------------------------- //
-
-    public function toggleDelete($data , $id){
-        $this->thisData = $data;
-        $this->thisDataId = $id;
-        switch($data){
-            case "spouse":
-                $this->deleteMessage = "spouse's info";
-                break;
-            case "father":
-                $this->deleteMessage = "father's info";
-                break;
-            case "mother":
-                $this->deleteMessage = "mother's info";
-                break;
-            case "child":
-                $this->deleteMessage = "child's info";
-                break;
-            case "educ":
-                $this->deleteMessage = "educational background";
-                break;
-            case "elig":
-                $this->deleteMessage = "civil service eligibility";
-                break;
-            case "exp":
-                $this->deleteMessage = "work experience";
-                break;
-            case "voluntary":
-                $this->deleteMessage = "voluntary work";
-                break;
-            case "ld":
-                $this->deleteMessage = "training";
-                break;
-            case "nonacad":
-                $this->deleteMessage = "non-academic distinction/recognition";
-                break;
-            case "membership":
-                $this->deleteMessage = "membership in association/organization";
-                break;
-            case "refs":
-                $this->deleteMessage = "character reference";
-                break;
-            default:
-                break;
-        }
-        $this->delete = true;
-    }
-
-    // -------------------------------------------------------------------------------------------------- //
 
     public function savePersonalInfo(){
         try{
@@ -1799,7 +1867,225 @@ class PersonalDataSheetTable extends Component
         }
     }
 
+    // C4 Edit Section  --------------------------------------------------------------------------------- //
+
+    public function editC4Question($questionKey){
+        $this->qKey = $questionKey;
+        $this->editAnswer[$questionKey] = true;
+    }
+    
+    public function cancelEditC4Question($questionKey){
+        $this->editAnswer[$questionKey] = false;
+        $this->qKey = null;
+    }
+
+    public function saveC4Question($qNum, $qLetter, $qAnswerVar = null, $qDetailsVar = null){
+        try{
+            $user = Auth::user();
+            if($user){
+                $qAnswer = $this->{$qAnswerVar};
+                $qDetails = $qDetailsVar ? $this->{$qDetailsVar} : null;
+
+                $dateFiled = null;
+                $status = null;
+
+                if($qNum == 35 && $qLetter == "b"){
+                    $dateFiled = $this->q35bDate_filed;
+                    $status = $this->q35bStatus;
+                }
+
+                if(!$qAnswer){
+                    $this->{$qDetailsVar} = null;
+                    $qDetails = null;
+                }
+
+                $message = "";
+                $pdsC4Answers = PdsC4Answers::where('user_id', $user->id)
+                            ->where('question_number', $qNum)
+                            ->where('question_letter', $qLetter)
+                            ->first();
+                if($pdsC4Answers){
+                    $pdsC4Answers->update([
+                        'answer' => $qAnswer,
+                        'details' => $qDetails,
+                        'date_filed' => $dateFiled,
+                        'status' => $status,
+                    ]);
+                    $message = "Answer updated successfully!";
+                }else{
+                    PdsC4Answers::create([
+                        'user_id' => $user->id,
+                        'question_number' => $qNum,
+                        'question_letter' => $qLetter,
+                        'answer' => $qAnswer,
+                        'details' => $qDetails,
+                        'date_filed' => $dateFiled,
+                        'status' => $status,
+                    ]);
+                    $message = "Answer added successfully!";
+                }
+                $this->dispatch('swal', [
+                    'title' => $message,
+                    'icon' => 'success'
+                ]);
+                $this->editAnswer[$this->qKey] = false;
+                $this->qKey = null;
+            }
+        }catch(Exception $e){
+            $this->dispatch('swal', [
+                'title' => "Update was unsuccessfull!",
+                'icon' => 'error'
+            ]);
+            throw $e;
+        }
+    }
+
+    public function toggleEditGovId(){
+        if($this->editGovId){
+            $this->editGovId = null;
+            // $this->govId = null;
+            // $this->idNumber = null;
+            // $this->dateIssued = null;
+        }else{
+            $this->editGovId = true;
+        }
+    }
+
+    public function saveGovId(){
+        try{
+            $user = Auth::user();
+            if($user){
+                $message = "";
+                $govId = PdsGovIssuedId::where('user_id', $user->id)->first();
+                $this->validate([
+                    'govId' => 'required',
+                    'idNumber' => 'required',
+                    'dateIssued' => 'required',
+                ]);
+                if($govId){
+                    $govId->update([
+                        'gov_id' => $this->govId,
+                        'id_number' => $this->idNumber,
+                        'date_of_issuance' => $this->dateIssued,
+                    ]);
+                    $message = "Government Issued ID updated successfully!";
+                }else{
+                    PdsGovIssuedId::create([
+                        'user_id' => $user->id,
+                        'gov_id' => $this->govId,
+                        'id_number' => $this->idNumber,
+                        'date_of_issuance' => $this->dateIssued,
+                    ]);
+                    $message = "Government Issued ID added successfully!";
+                }
+                $this->dispatch('swal', [
+                    'title' => $message,
+                    'icon' => 'success'
+                ]);
+            }
+        }catch(Exception $e){
+            $this->dispatch('swal', [
+                'title' => "Update was unsuccessfull!",
+                'icon' => 'error'
+            ]);
+            throw $e;
+        }
+    }
+
+    public function savePhoto(){
+        try {
+            $message = "";
+            $user = Auth::user();            
+            if ($user && $this->pdsPhoto instanceof UploadedFile){
+                $originalFilename = $this->pdsPhoto->getClientOriginalName();
+                $uniqueFilename = time() . '_' . $originalFilename;
+                $photo = PdsPhoto::where('user_id', $user->id)->first();
+                $pathToDelete = "";
+                if($photo){
+                    $pathToDelete = str_replace('public/', '', $photo->photo);
+                }
+                if (Storage::disk('public')->exists($pathToDelete)) {
+                    Storage::disk('public')->delete($pathToDelete);
+                }
+                $filePath = $this->pdsPhoto->storeAs('pds-photos', $uniqueFilename, 'public');
+                if($photo){
+                    $photo->update([
+                        'photo' => 'public/' . $filePath,
+                    ]);
+                    $message = "Signature updated successfully!";
+                }else{
+                    PdsPhoto::create([
+                        'user_id' => $user->id,
+                        'photo' => 'public/' . $filePath,
+                    ]);
+                    $message = "Signature added successfully!";
+                }
+
+            }
+            $this->resetVariables();
+            $this->dispatch('swal', [
+                'title' => $message,
+                'icon' => "success",
+            ]);
+        } catch (Exception $e) {
+            $this->dispatch('swal', [
+                'title' => "Update was unsuccessfull!",
+                'icon' => 'error'
+            ]);
+           throw $e;
+        }
+    }
+
     // End of Edit and Add Section ---------------------------------------------------------------------- //
+
+    public function toggleDelete($data , $id = null){
+        $this->thisData = $data;
+        $this->thisDataId = $id;
+        switch($data){
+            case "spouse":
+                $this->deleteMessage = "spouse's info";
+                break;
+            case "father":
+                $this->deleteMessage = "father's info";
+                break;
+            case "mother":
+                $this->deleteMessage = "mother's info";
+                break;
+            case "child":
+                $this->deleteMessage = "child's info";
+                break;
+            case "educ":
+                $this->deleteMessage = "educational background";
+                break;
+            case "elig":
+                $this->deleteMessage = "civil service eligibility";
+                break;
+            case "exp":
+                $this->deleteMessage = "work experience";
+                break;
+            case "voluntary":
+                $this->deleteMessage = "voluntary work";
+                break;
+            case "ld":
+                $this->deleteMessage = "training";
+                break;
+            case "nonacad":
+                $this->deleteMessage = "non-academic distinction/recognition";
+                break;
+            case "membership":
+                $this->deleteMessage = "membership in association/organization";
+                break;
+            case "refs":
+                $this->deleteMessage = "character reference";
+                break;
+            case "photo":
+                $this->deleteMessage = "photo";
+                break;
+            default:
+                break;
+        }
+        $this->delete = true;
+    }
 
     public function deleteData(){
         try{
@@ -1881,6 +2167,10 @@ class PersonalDataSheetTable extends Component
                         if ($refs) {
                             $refs->delete();
                         }
+                        break;
+                    case "photo":
+                        $message = "Photo";
+                        $user->pdsPhoto->delete();
                         break;
                     default:
                         break;

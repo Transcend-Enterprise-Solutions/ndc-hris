@@ -148,7 +148,7 @@ x-cloak
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->place_of_birth }}</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
-                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Sex at Birth</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Sex</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->sex }}</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
@@ -838,7 +838,7 @@ x-cloak
                                         Bureau or Department where you will be apppointed, 
                                     </p>
                                 </div>
-                                <div class="w-full sm:w-2/6 flex flex-col justify-end items-start px-4 bg-white dark:bg-slate-700">
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end items-start px-4 bg-white dark:bg-slate-700 relative">
                                 </div>
                             </div>
                             <div class="w-full block sm:flex">
@@ -847,13 +847,25 @@ x-cloak
                                         a. within the third degree?
                                     </p>
                                 </div>
-                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                <div class="w-full sm:w-2/6 flex flex-col justify-center p-2 items-start px-4 bg-white dark:bg-slate-700 relative">
                                     <div class="flex items-center">
-                                        <input id="yes" type="checkbox">
+                                        <input id="yes" type="radio" value="1" wire:model='q34aAnswer' name="answer34a" style="pointer-events: {{ $editAnswer['q34a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">Yes</label>
-                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <input id="yes"  class="ml-10" value="0" type="radio" wire:model='q34aAnswer' name="answer34a" style="pointer-events: {{ $editAnswer['q34a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">No</label>
                                     </div>
+                                    <i title="{{ $editAnswer['q34a'] ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editAnswer['q34a'] ? 'right-8' : 'right-2' }} cursor-pointer text-sm
+                                        {{ $editAnswer['q34a'] ? 'bi-check2-square text-green-500 hover:text-green-700' : 'fas fa-edit text-blue-500 hover:text-blue-700' }}"
+                                        @if($editAnswer['q34a'])
+                                            wire:click="saveC4Question('34', 'a', 'q34aAnswer')"
+                                        @else
+                                            wire:click="editC4Question('q34a')"
+                                        @endif
+                                        >
+                                    </i>
+                                    <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
+                                        {{ $editAnswer['q34a'] ? '' : 'hidden' }}"
+                                        wire:click="cancelEditC4Question('q34a')" style="top: 10px;"></i>
                                 </div>
                             </div>
                             <div class="w-full block sm:flex">
@@ -862,19 +874,36 @@ x-cloak
                                         b. within the fourth degree (for Local Government Unit - Career Employees)?
                                     </p>
                                 </div>
-                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700 relative">
                                     <div class="flex items-center">
-                                        <input id="yes" type="checkbox">
+                                        <input id="yes" type="radio" value="1" wire:model.live='q34bAnswer' name="answer34b" style="pointer-events: {{ $editAnswer['q34b'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">Yes</label>
-                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <input id="yes"  class="ml-10" value="0" type="radio" wire:model.live='q34bAnswer' name="answer34b" style="pointer-events: {{ $editAnswer['q34b'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">No</label>
                                     </div>
-                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
-                                        <p>If YES, give details:</p>
-                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
-    
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs mt-2">
+                                        <p class="text-gray-400">If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-2 mb-2">
+                                            @if($editAnswer['q34b'] && $q34bAnswer)
+                                                <input type="text" value="{{ $q34bDetails }}" wire:model='q34bDetails' 
+                                                class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
+                                            @elseif($q34bDetails)
+                                                {{ $q34bDetails }}
+                                            @endif
                                         </div>
                                     </div>
+                                    <i title="{{ $editAnswer['q34b'] ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editAnswer['q34b'] ? 'right-8' : 'right-2' }} cursor-pointer text-sm
+                                        {{ $editAnswer['q34b'] ? 'bi-check2-square text-green-500 hover:text-green-700' : 'fas fa-edit text-blue-500 hover:text-blue-700' }}"
+                                        @if($editAnswer['q34b'])
+                                            wire:click="saveC4Question('34', 'b', 'q34bAnswer', 'q34bDetails')"
+                                        @else
+                                            wire:click="editC4Question('q34b')"
+                                        @endif
+                                        >
+                                    </i>
+                                    <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
+                                        {{ $editAnswer['q34b'] ? '' : 'hidden' }}"
+                                        wire:click="cancelEditC4Question('q34b')" style="top: 10px;"></i>
                                 </div>
                             </div>
                         </div>
@@ -888,19 +917,36 @@ x-cloak
                                         a. Have you ever been found guilty of any administrative offense?
                                     </p>
                                 </div>
-                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700 relative">
                                     <div class="flex items-center">
-                                        <input id="yes" type="checkbox">
+                                        <input id="yes" type="radio" value="1" wire:model.live='q35aAnswer' name="answer35a" style="pointer-events: {{ $editAnswer['q35a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">Yes</label>
-                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <input id="yes"  class="ml-10" value="0" type="radio" wire:model.live='q35aAnswer' name="answer35a" style="pointer-events: {{ $editAnswer['q35a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">No</label>
                                     </div>
-                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
-                                        <p>If YES, give details:</p>
-                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
-    
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs mt-2">
+                                        <p class="text-gray-400">If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-2 mb-2">
+                                            @if($editAnswer['q35a'] && $q35aAnswer)
+                                                <input type="text" value="{{ $q35aDetails }}" wire:model='q35aDetails' 
+                                                class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
+                                            @elseif($q35aDetails)
+                                                {{ $q35aDetails }}
+                                            @endif
                                         </div>
                                     </div>
+                                    <i title="{{ $editAnswer['q35a'] ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editAnswer['q35a'] ? 'right-8' : 'right-2' }} cursor-pointer text-sm
+                                        {{ $editAnswer['q35a'] ? 'bi-check2-square text-green-500 hover:text-green-700' : 'fas fa-edit text-blue-500 hover:text-blue-700' }}"
+                                        @if($editAnswer['q35a'])
+                                            wire:click="saveC4Question('35', 'a', 'q35aAnswer', 'q35aDetails')"
+                                        @else
+                                            wire:click="editC4Question('q35a')"
+                                        @endif
+                                        >
+                                    </i>
+                                    <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
+                                        {{ $editAnswer['q35a'] ? '' : 'hidden' }}"
+                                        wire:click="cancelEditC4Question('q35a')" style="top: 10px;"></i>
                                 </div>
                             </div>
                             <div class="w-full block sm:flex">
@@ -909,28 +955,50 @@ x-cloak
                                         b. Have you been criminally charged before any court?
                                     </p>
                                 </div>
-                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700 relative">
                                     <div class="flex items-center">
-                                        <input id="yes" type="checkbox">
+                                        <input id="yes" type="radio" value="1" wire:model.live='q35bAnswer' name="answer35b" style="pointer-events: {{ $editAnswer['q35b'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">Yes</label>
-                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <input id="yes"  class="ml-10" value="0" type="radio" wire:model.live='q35bAnswer' name="answer35b" style="pointer-events: {{ $editAnswer['q35b'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">No</label>
                                     </div>
-                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
-                                        <p>If YES, give details:</p>
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs mt-2">
+                                        <p class="text-gray-400">If YES, give details:</p>
                                         <div class="flex w-full  mt-2">
-                                            <p class="w-2/5 text-right">Date Filed:</p>
-                                            <div class="w-3/5 border-b border-black dark:border-white mt-4 mb-2">
-        
+                                            <p class="w-2/5 text-right text-gray-400">Date Filed:</p>
+                                            <div class="w-3/5 border-b border-black dark:border-white ml-2 mb-2">
+                                                @if($editAnswer['q35b'] && $q35bAnswer)
+                                                    <input type="date" value="{{ $q35bDate_filed }}" wire:model='q35bDate_filed' 
+                                                    class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
+                                                @elseif($q35bDate_filed)
+                                                    {{ $q35bDate_filed }}
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="flex w-full">
-                                            <p class="w-2/5 text-right">Status of Case/s:</p>
-                                            <div class="w-3/5 border-b border-black dark:border-white mt-4 mb-2">
-        
+                                            <p class="w-2/5 text-right text-gray-400">Status of Case/s:</p>
+                                            <div class="w-3/5 border-b border-black dark:border-white ml-2 mb-2">
+                                                @if($editAnswer['q35b'] && $q35bAnswer)
+                                                    <input type="text" value="{{ $q35bStatus }}" wire:model='q35bStatus' 
+                                                    class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
+                                                @elseif($q35bStatus)
+                                                    {{ $q35bStatus }}
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
+                                    <i title="{{ $editAnswer['q35b'] ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editAnswer['q35b'] ? 'right-8' : 'right-2' }} cursor-pointer text-sm
+                                        {{ $editAnswer['q35b'] ? 'bi-check2-square text-green-500 hover:text-green-700' : 'fas fa-edit text-blue-500 hover:text-blue-700' }}"
+                                        @if($editAnswer['q35b'])
+                                            wire:click="saveC4Question('35', 'b', 'q35bAnswer')"
+                                        @else
+                                            wire:click="editC4Question('q35b')"
+                                        @endif
+                                        >
+                                    </i>
+                                    <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
+                                        {{ $editAnswer['q35b'] ? '' : 'hidden' }}"
+                                        wire:click="cancelEditC4Question('q35b')" style="top: 10px;"></i>
                                 </div>
                             </div>
                         </div>
@@ -945,19 +1013,36 @@ x-cloak
                                         ordinance or regulation by any court or tribunal?
                                     </p>
                                 </div>
-                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700 relative">
                                     <div class="flex items-center">
-                                        <input id="yes" type="checkbox">
+                                        <input id="yes" type="radio" value="1" wire:model.live='q36aAnswer' name="answer36a" style="pointer-events: {{ $editAnswer['q36a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">Yes</label>
-                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <input id="yes"  class="ml-10" value="0" type="radio" wire:model.live='q36aAnswer' name="answer36a" style="pointer-events: {{ $editAnswer['q36a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">No</label>
                                     </div>
-                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
-                                        <p>If YES, give details:</p>
-                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
-    
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs mt-2">
+                                        <p class="text-gray-400">If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-2 mb-2">
+                                            @if($editAnswer['q36a'] && $q36aAnswer)
+                                                <input type="text" value="{{ $q36aDetails }}" wire:model='q36aDetails' 
+                                                class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
+                                            @elseif($q36aDetails)
+                                                {{ $q36aDetails }}
+                                            @endif
                                         </div>
                                     </div>
+                                    <i title="{{ $editAnswer['q36a'] ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editAnswer['q36a'] ? 'right-8' : 'right-2' }} cursor-pointer text-sm
+                                        {{ $editAnswer['q36a'] ? 'bi-check2-square text-green-500 hover:text-green-700' : 'fas fa-edit text-blue-500 hover:text-blue-700' }}"
+                                        @if($editAnswer['q36a'])
+                                            wire:click="saveC4Question('36', 'a', 'q36aAnswer', 'q36aDetails')"
+                                        @else
+                                            wire:click="editC4Question('q36a')"
+                                        @endif
+                                        >
+                                    </i>
+                                    <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
+                                        {{ $editAnswer['q36a'] ? '' : 'hidden' }}"
+                                        wire:click="cancelEditC4Question('q36a')" style="top: 10px;"></i>
                                 </div>
                             </div>
                         </div>
@@ -972,19 +1057,36 @@ x-cloak
                                         termination, end of term, finished contract or phased out (abolition) in the public or private sector?
                                     </p>
                                 </div>
-                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700 relative">
                                     <div class="flex items-center">
-                                        <input id="yes" type="checkbox">
+                                        <input id="yes" type="radio" value="1" wire:model.live='q37aAnswer' name="answer37a" style="pointer-events: {{ $editAnswer['q37a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">Yes</label>
-                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <input id="yes"  class="ml-10" value="0" type="radio" wire:model.live='q37aAnswer' name="answer37a" style="pointer-events: {{ $editAnswer['q37a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">No</label>
                                     </div>
-                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
-                                        <p>If YES, give details:</p>
-                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
-    
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs mt-2">
+                                        <p class="text-gray-400">If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-2 mb-2">
+                                            @if($editAnswer['q37a'] && $q37aAnswer)
+                                                <input type="text" value="{{ $q37aDetails }}" wire:model='q37aDetails' 
+                                                class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
+                                            @elseif($q37aDetails)
+                                                {{ $q37aDetails }}
+                                            @endif
                                         </div>
                                     </div>
+                                    <i title="{{ $editAnswer['q37a'] ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editAnswer['q37a'] ? 'right-8' : 'right-2' }} cursor-pointer text-sm
+                                        {{ $editAnswer['q37a'] ? 'bi-check2-square text-green-500 hover:text-green-700' : 'fas fa-edit text-blue-500 hover:text-blue-700' }}"
+                                        @if($editAnswer['q37a'])
+                                            wire:click="saveC4Question('37', 'a', 'q37aAnswer', 'q37aDetails')"
+                                        @else
+                                            wire:click="editC4Question('q37a')"
+                                        @endif
+                                        >
+                                    </i>
+                                    <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
+                                        {{ $editAnswer['q37a'] ? '' : 'hidden' }}"
+                                        wire:click="cancelEditC4Question('q37a')" style="top: 10px;"></i>
                                 </div>
                             </div>
                         </div>
@@ -998,19 +1100,36 @@ x-cloak
                                         a. Have you ever been a candidate in a national or local election held within the last year (except Barangay election)?
                                     </p>
                                 </div>
-                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700 relative">
                                     <div class="flex items-center">
-                                        <input id="yes" type="checkbox">
+                                        <input id="yes" type="radio" value="1" wire:model.live='q38aAnswer' name="answer38a" style="pointer-events: {{ $editAnswer['q38a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">Yes</label>
-                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <input id="yes"  class="ml-10" value="0" type="radio" wire:model.live='q38aAnswer' name="answer38a" style="pointer-events: {{ $editAnswer['q38a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">No</label>
                                     </div>
-                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
-                                        <p>If YES, give details:</p>
-                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
-    
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs mt-2">
+                                        <p class="text-gray-400">If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-2 mb-2">
+                                            @if($editAnswer['q38a'] && $q38aAnswer)
+                                                <input type="text" value="{{ $q38aDetails }}" wire:model='q38aDetails' 
+                                                class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
+                                            @elseif($q38aDetails)
+                                                {{ $q38aDetails }}
+                                            @endif
                                         </div>
                                     </div>
+                                    <i title="{{ $editAnswer['q38a'] ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editAnswer['q38a'] ? 'right-8' : 'right-2' }} cursor-pointer text-sm
+                                        {{ $editAnswer['q38a'] ? 'bi-check2-square text-green-500 hover:text-green-700' : 'fas fa-edit text-blue-500 hover:text-blue-700' }}"
+                                        @if($editAnswer['q38a'])
+                                            wire:click="saveC4Question('38', 'a', 'q38aAnswer', 'q38aDetails')"
+                                        @else
+                                            wire:click="editC4Question('q38a')"
+                                        @endif
+                                        >
+                                    </i>
+                                    <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
+                                        {{ $editAnswer['q38a'] ? '' : 'hidden' }}"
+                                        wire:click="cancelEditC4Question('q38a')" style="top: 10px;"></i>
                                 </div>
                             </div>
                             <div class="w-full block sm:flex">
@@ -1020,19 +1139,36 @@ x-cloak
                                         the last election to promote/actively campaign for a national or local candidate?
                                     </p>
                                 </div>
-                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700 relative">
                                     <div class="flex items-center">
-                                        <input id="yes" type="checkbox">
+                                        <input id="yes" type="radio" value="1" wire:model.live='q38bAnswer' name="answer38b" style="pointer-events: {{ $editAnswer['q38b'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">Yes</label>
-                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <input id="yes"  class="ml-10" value="0" type="radio" wire:model.live='q38bAnswer' name="answer38b" style="pointer-events: {{ $editAnswer['q38b'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">No</label>
                                     </div>
-                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
-                                        <p>If YES, give details:</p>
-                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
-    
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs mt-2">
+                                        <p class="text-gray-400">If YES, give details:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-2 mb-2">
+                                            @if($editAnswer['q38b'] && $q38bAnswer)
+                                                <input type="text" value="{{ $q38bDetails }}" wire:model='q38bDetails' 
+                                                class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
+                                            @elseif($q38bDetails)
+                                                {{ $q38bDetails }}
+                                            @endif
                                         </div>
                                     </div>
+                                    <i title="{{ $editAnswer['q38b'] ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editAnswer['q38b'] ? 'right-8' : 'right-2' }} cursor-pointer text-sm
+                                        {{ $editAnswer['q38b'] ? 'bi-check2-square text-green-500 hover:text-green-700' : 'fas fa-edit text-blue-500 hover:text-blue-700' }}"
+                                        @if($editAnswer['q38b'])
+                                            wire:click="saveC4Question('38', 'b', 'q38bAnswer', 'q38bDetails')"
+                                        @else
+                                            wire:click="editC4Question('q38b')"
+                                        @endif
+                                        >
+                                    </i>
+                                    <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
+                                        {{ $editAnswer['q38b'] ? '' : 'hidden' }}"
+                                        wire:click="cancelEditC4Question('q38b')" style="top: 10px;"></i>
                                 </div>
                             </div>
                         </div>
@@ -1046,19 +1182,36 @@ x-cloak
                                         Have you acquired the status of an immigrant or permanent resident of another country?
                                     </p>
                                 </div>
-                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700 relative">
                                     <div class="flex items-center">
-                                        <input id="yes" type="checkbox">
+                                        <input id="yes" type="radio" value="1" wire:model.live='q39aAnswer' name="answer39a" style="pointer-events: {{ $editAnswer['q39a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">Yes</label>
-                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <input id="yes"  class="ml-10" value="0" type="radio" wire:model.live='q39aAnswer' name="answer39a" style="pointer-events: {{ $editAnswer['q39a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">No</label>
                                     </div>
-                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
-                                        <p>If YES, give details (country):</p>
-                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
-    
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs mt-2">
+                                        <p class="text-gray-400">If YES, give details (country):</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-2 mb-2">
+                                            @if($editAnswer['q39a'] && $q39aAnswer)
+                                                <input type="text" value="{{ $q39aDetails }}" wire:model='q39aDetails' 
+                                                class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
+                                            @elseif($q39aDetails)
+                                                {{ $q39aDetails }}
+                                            @endif
                                         </div>
                                     </div>
+                                    <i title="{{ $editAnswer['q39a'] ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editAnswer['q39a'] ? 'right-8' : 'right-2' }} cursor-pointer text-sm
+                                        {{ $editAnswer['q39a'] ? 'bi-check2-square text-green-500 hover:text-green-700' : 'fas fa-edit text-blue-500 hover:text-blue-700' }}"
+                                        @if($editAnswer['q39a'])
+                                            wire:click="saveC4Question('39', 'a', 'q39aAnswer', 'q39aDetails')"
+                                        @else
+                                            wire:click="editC4Question('q39a')"
+                                        @endif
+                                        >
+                                    </i>
+                                    <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
+                                        {{ $editAnswer['q39a'] ? '' : 'hidden' }}"
+                                        wire:click="cancelEditC4Question('q39a')" style="top: 10px;"></i>
                                 </div>
                             </div>
                         </div>
@@ -1082,19 +1235,36 @@ x-cloak
                                         a. Are you a member of any indigenous group?
                                     </p>
                                 </div>
-                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700 relative">
                                     <div class="flex items-center">
-                                        <input id="yes" type="checkbox">
+                                        <input id="yes" type="radio" value="1" wire:model.live='q40aAnswer' name="answer40a" style="pointer-events: {{ $editAnswer['q40a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">Yes</label>
-                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <input id="yes"  class="ml-10" value="0" type="radio" wire:model.live='q40aAnswer' name="answer40a" style="pointer-events: {{ $editAnswer['q40a'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">No</label>
                                     </div>
-                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
-                                        <p>If YES, give details:</p>
-                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
-    
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs mt-2">
+                                        <p class="text-gray-400">If YES, please specify:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-2 mb-2">
+                                            @if($editAnswer['q40a'] && $q40aAnswer)
+                                                <input type="text" value="{{ $q40aDetails }}" wire:model='q40aDetails' 
+                                                class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
+                                            @elseif($q40aDetails)
+                                                {{ $q40aDetails }}
+                                            @endif
                                         </div>
                                     </div>
+                                    <i title="{{ $editAnswer['q40a'] ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editAnswer['q40a'] ? 'right-8' : 'right-2' }} cursor-pointer text-sm
+                                        {{ $editAnswer['q40a'] ? 'bi-check2-square text-green-500 hover:text-green-700' : 'fas fa-edit text-blue-500 hover:text-blue-700' }}"
+                                        @if($editAnswer['q40a'])
+                                            wire:click="saveC4Question('40', 'a', 'q40aAnswer', 'q40aDetails')"
+                                        @else
+                                            wire:click="editC4Question('q40a')"
+                                        @endif
+                                        >
+                                    </i>
+                                    <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
+                                        {{ $editAnswer['q40a'] ? '' : 'hidden' }}"
+                                        wire:click="cancelEditC4Question('q40a')" style="top: 10px;"></i>
                                 </div>
                             </div>
                             <div class="w-full block sm:flex">
@@ -1103,19 +1273,36 @@ x-cloak
                                         b. Are you a person with disability?
                                     </p>
                                 </div>
-                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700 relative">
                                     <div class="flex items-center">
-                                        <input id="yes" type="checkbox">
+                                        <input id="yes" type="radio" value="1" wire:model.live='q40bAnswer' name="answer40b" style="pointer-events: {{ $editAnswer['q40b'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">Yes</label>
-                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <input id="yes"  class="ml-10" value="0" type="radio" wire:model.live='q40bAnswer' name="answer40b" style="pointer-events: {{ $editAnswer['q40b'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">No</label>
                                     </div>
-                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
-                                        <p>If YES, give details:</p>
-                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
-    
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs mt-2">
+                                        <p class="text-gray-400">If YES, please specify ID No:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-2 mb-2">
+                                            @if($editAnswer['q40b'] && $q40bAnswer)
+                                                <input type="text" value="{{ $q40bDetails }}" wire:model='q40bDetails' 
+                                                class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
+                                            @elseif($q40bDetails)
+                                                {{ $q40bDetails }}
+                                            @endif
                                         </div>
                                     </div>
+                                    <i title="{{ $editAnswer['q40b'] ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editAnswer['q40b'] ? 'right-8' : 'right-2' }} cursor-pointer text-sm
+                                        {{ $editAnswer['q40b'] ? 'bi-check2-square text-green-500 hover:text-green-700' : 'fas fa-edit text-blue-500 hover:text-blue-700' }}"
+                                        @if($editAnswer['q40b'])
+                                            wire:click="saveC4Question('40', 'b', 'q40bAnswer', 'q40bDetails')"
+                                        @else
+                                            wire:click="editC4Question('q40b')"
+                                        @endif
+                                        >
+                                    </i>
+                                    <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
+                                        {{ $editAnswer['q40b'] ? '' : 'hidden' }}"
+                                        wire:click="cancelEditC4Question('q40b')" style="top: 10px;"></i>
                                 </div>
                             </div>
                             <div class="w-full block sm:flex">
@@ -1124,19 +1311,36 @@ x-cloak
                                         c. Are you a solo parent?
                                     </p>
                                 </div>
-                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700">
+                                <div class="w-full sm:w-2/6 flex flex-col justify-end p-2 items-start px-4 bg-white dark:bg-slate-700 relative">
                                     <div class="flex items-center">
-                                        <input id="yes" type="checkbox">
+                                        <input id="yes" type="radio" value="1" wire:model.live='q40cAnswer' name="answer40c" style="pointer-events: {{ $editAnswer['q40c'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">Yes</label>
-                                        <input id="yes" type="checkbox" class="ml-10">
+                                        <input id="yes"  class="ml-10" value="0" type="radio" wire:model.live='q40cAnswer' name="answer40c" style="pointer-events: {{ $editAnswer['q40c'] ? 'all' : 'none' }}">
                                         <label for="yes" class="ml-2">No</label>
                                     </div>
-                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs">
-                                        <p>If YES, give details:</p>
-                                        <div class="w-full border-b border-black dark:border-white mt-4 mb-2">
-    
+                                    <div class="w-full block items-center text-gray-800 dark:text-gray-100 text-xs mt-2">
+                                        <p class="text-gray-400">If YES, please specify ID No:</p>
+                                        <div class="w-full border-b border-black dark:border-white mt-2 mb-2">
+                                            @if($editAnswer['q40c'] && $q40cAnswer)
+                                                <input type="text" value="{{ $q40cDetails }}" wire:model='q40cDetails' 
+                                                class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
+                                            @elseif($q40cDetails)
+                                                {{ $q40cDetails }}
+                                            @endif
                                         </div>
                                     </div>
+                                    <i title="{{ $editAnswer['q40c'] ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editAnswer['q40c'] ? 'right-8' : 'right-2' }} cursor-pointer text-sm
+                                        {{ $editAnswer['q40c'] ? 'bi-check2-square text-green-500 hover:text-green-700' : 'fas fa-edit text-blue-500 hover:text-blue-700' }}"
+                                        @if($editAnswer['q40c'])
+                                            wire:click="saveC4Question('40', 'c', 'q40cAnswer', 'q40cDetails')"
+                                        @else
+                                            wire:click="editC4Question('q40c')"
+                                        @endif
+                                        >
+                                    </i>
+                                    <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
+                                        {{ $editAnswer['q40c'] ? '' : 'hidden' }}"
+                                        wire:click="cancelEditC4Question('q40c')" style="top: 10px;"></i>
                                 </div>
                             </div>
                         </div>
@@ -1178,26 +1382,95 @@ x-cloak
                         {{-- ID's and Photo --}}
                         <div class="flex flex-col w-full border-2 border-gray-200 dark:border-slate-600">
                             <div class="w-full block sm:flex">
-                                <div class="w-full sm:w-4/5 border-2 border-gray-200 dark:border-slate-600">
+                                <div class="w-full sm:w-4/5 bg-gray-100 dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600 flex flex-col justify-end relative">
                                     <div class="w-full border-b-2 border-gray-200 dark:border-slate-600 p-2 bg-gray-100 dark:bg-slate-700">
                                         <p class="w-full">Government Issued ID (i.e.Passport, GSIS, SSS, PRC, Driver's License, etc.) </p>
                                         <p class="w-full text-right">PLEASE INDICATE ID Number</p>
                                     </div>
-                                    <div class="flex w-full border-b-2 border-gray-200 dark:border-slate-600 px-2 py-3">
-                                        <p class="w-2/5">Government Issued ID:</p>
-                                        <p class="w-3/5 text-gray-800 dark:text-gray-100"></p>
+                                    <div class="flex w-full border-b-2 border-gray-200 dark:border-slate-600 px-2 bg-gray-50 dark:bg-gray-800 items-center" style="height: 50px">
+                                        <p class="w-2/3">Government Issued ID:</p>
+                                        @if($editGovId)
+                                            <input type="text" value="{{ $govId }}" wire:model='govId' 
+                                            class="w-1/3 text-sm bg-gray-100 text-gray-800 w-full" autofocus style="height: 35px">
+                                        @elseif($govId)
+                                            <p class="w-2/3 text-gray-800 dark:text-gray-100">{{ $govId }}</p>
+                                        @endif
                                     </div>
-                                    <div class="flex w-full border-b-2 border-gray-200 dark:border-slate-600 px-2 py-3">
-                                        <p class="w-2/5">ID/License/Passport No.:</p>
-                                        <p class="w-3/5 text-gray-800 dark:text-gray-100"></p>
+                                    <div class="flex w-full border-b-2 border-gray-200 dark:border-slate-600 px-2 bg-gray-50 dark:bg-gray-800 items-center" style="height: 50px">
+                                        <p class="w-2/3">ID/License/Passport No.:</p>
+                                        @if($editGovId)
+                                        <input type="text" value="{{ $idNumber }}" wire:model='idNumber' 
+                                            class="w-1/3 text-sm bg-gray-100 text-gray-800 w-full" autofocus style="height: 35px">
+                                        @elseif($idNumber)
+                                            <p class="w-2/3 text-gray-800 dark:text-gray-100">{{ $idNumber }}</p>
+                                        @endif
                                     </div>
-                                    <div class="flex w-full px-2 py-3">
-                                        <p class="w-2/5">Date/Place of Issuance:</p>
-                                        <p class="w-3/5 text-gray-800 dark:text-gray-100"></p>
+                                    <div class="flex w-full px-2 bg-gray-50 dark:bg-gray-800 items-center" style="height: 50px">
+                                        <p class="w-2/3">Date/Place of Issuance:</p>
+                                        @if($editGovId)
+                                            <input type="date" wire:model='dateIssued' 
+                                            class="w-1/3 text-sm bg-gray-100 text-gray-800 w-full" autofocus style="height: 35px">
+                                        @elseif($dateIssued)
+                                            <p class="w-2/3 text-gray-800 dark:text-gray-100">{{ $dateIssued }}</p>
+                                        @endif
                                     </div>
+                                    <i title="{{ $editGovId ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editGovId ? 'right-8' : 'right-2' }} cursor-pointer text-sm
+                                        {{ $editGovId ? 'bi-check2-square text-green-500 hover:text-green-700' : 'fas fa-edit text-blue-500 hover:text-blue-700' }}"
+                                        @if($editGovId)
+                                            wire:click="saveGovId"
+                                        @else
+                                            wire:click="toggleEditGovId"
+                                        @endif
+                                        >
+                                    </i>
+                                    <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
+                                        {{ $editGovId ? '' : 'hidden' }}"
+                                        wire:click="toggleEditGovId" style="top: 10px;"></i>
                                 </div>
-                                <div class="w-full flex flex-col justify-end p-2 items-start px-4 bg-gray-100 dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600">
-                                    
+                                <div class="w-full flex gap-6 justify-center items-center p-2 items-start px-4 bg-gray-100 dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600 relative">
+                                    <div class="flex flex-col justify-center items-center text-gray-500 dark:text-gray-400 text-black" 
+                                        style="width: 200px; height: 250px;">
+                                        <p class="text-center">
+                                            ID picture taken within <br>
+                                            the last  6 months <br>
+                                            4.5 cm. X 3.5 cm <br>
+                                            (passport size)
+                                        </p>
+                                        <p class="mt-4 text-center">
+                                            Computer generated <br>
+                                            or photocopied picture <br>
+                                            is not acceptable
+                                        </p>
+                                    </div>
+                                    <div class="flex flex-col justify-center items-center border border-gray-800 bg-white text-black" 
+                                        style="width: 200px; height: 250px;">
+                                        @if($myPhoto)
+                                            <img src="{{ route('pds-photo.file', basename($myPhoto)) }}"
+                                                alt="PDS Photo"
+                                                class="w-full h-full object-cover">
+                                        @else
+                                            <i class="bi bi-image-fill text-black float-right pt-1 mr-2 cursor-pointer text-2xl" 
+                                                onclick="document.getElementById('photo').click()"
+                                                title="Add Photo"></i>
+                                        @endif
+                                    </div>
+                                    <i class="absolute top-2 right-8 fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer text-md" 
+                                        onclick="document.getElementById('photo').click()"
+                                        title="Edit Photo"></i>
+
+                                    <i title="Delete Photo" class="absolute top-2 right-2 fas fa-trash text-red-500 hover:text-red-700 float-right mt-1 mr-1 cursor-pointer" 
+                                        wire:click="toggleDelete('photo')"></i>
+
+
+                                    <input type="file" id="photo" 
+                                        wire:model="pdsPhoto" 
+                                        style="display: none;" 
+                                        accept="image/*">
+                                        
+                                    <div wire:loading wire:target="pdsPhoto" style="margin-left: 5px">
+                                        <div class="spinner-border small text-primary" role="status">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -3222,5 +3495,4 @@ x-cloak
 
         </div>
     </x-modal>
-
 </div>
