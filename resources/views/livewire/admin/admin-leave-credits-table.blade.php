@@ -2,7 +2,7 @@
     <!-- Table -->
     <div class="w-full flex justify-center">
         <div class="flex justify-center w-full">
-            <div class="w-full bg-white rounded-2xl p-3 sm:p-8 shadow dark:bg-gray-800 overflow-x-auto">
+            <div class="w-full bg-white rounded-2xl p-3 sm:p-8 shadow dark:bg-gray-800">
                 <div class="pb-4 pt-4 sm:pt-1">
                     <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Leave Credits</h1>
                 </div>
@@ -13,15 +13,15 @@
                             class="block text-sm font-medium text-gray-700 dark:text-slate-400">Search</label>
                     </div>
 
-                    <div class="flex items-center space-x-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
                         <!-- Search input -->
-                        <div>
+                        <div class="w-full sm:w-auto">
                             <input type="search" id="search" wire:model.live="search"
                                 placeholder="Enter employee name"
-                                class="py-2 px-3 mt-1 block w-80 shadow-sm text-sm font-medium border-gray-400 dark:border-gray-600 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
+                                class="py-2 px-3 mt-1 block w-full sm:w-80 shadow-sm text-sm font-medium border-gray-400 dark:border-gray-600 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
                         </div>
                         <!-- Button aligned with input field -->
-                        <div>
+                        <div class="mt-2 sm:mt-0">
                             <button wire:click="openInputCredits"
                                 class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white">
                                 <span
@@ -31,6 +31,7 @@
                             </button>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="overflow-x-auto">
@@ -130,8 +131,9 @@
             <form class="space-y-6" wire:submit.prevent="saveCredits">
                 <!-- Employee Selection -->
                 <div>
-                    <label for="employee"
-                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Employee</label>
+                    <label for="employee" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Employee
+                    </label>
                     <select id="employee" wire:model="employee"
                         class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Select an employee</option>
@@ -147,9 +149,9 @@
                 <!-- Vacation Leave Part -->
                 <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
                     <legend class="text-gray-700 dark:text-slate-100">Vacation Leave</legend>
-                    <div class="flex space-x-4">
+                    <div class="flex flex-col md:flex-row md:space-x-4">
                         <!-- Claimable Credits -->
-                        <div class="w-1/2">
+                        <div class="w-full md:w-1/2">
                             <label for="vlClaimableCredits"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimable
                                 Credits</label>
@@ -162,7 +164,7 @@
                         </div>
 
                         <!-- Claimed Credits -->
-                        <div class="w-1/2">
+                        <div class="w-full md:w-1/2 mt-4 md:mt-0">
                             <label for="vlClaimedCredits"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimed
                                 Credits</label>
@@ -179,9 +181,9 @@
                 <!-- Sick Leave Part -->
                 <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
                     <legend class="text-gray-700 dark:text-slate-100">Sick Leave</legend>
-                    <div class="flex space-x-4">
+                    <div class="flex flex-col md:flex-row md:space-x-4">
                         <!-- Claimable Credits -->
-                        <div class="w-1/2">
+                        <div class="w-full md:w-1/2">
                             <label for="slClaimableCredits"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimable
                                 Credits</label>
@@ -194,7 +196,7 @@
                         </div>
 
                         <!-- Claimed Credits -->
-                        <div class="w-1/2">
+                        <div class="w-full md:w-1/2 mt-4 md:mt-0">
                             <label for="slClaimedCredits"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimed
                                 Credits</label>
@@ -211,9 +213,9 @@
                 <!-- Special Privilege Leave Part -->
                 <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
                     <legend class="text-gray-700 dark:text-slate-100">Special Privilege Leave</legend>
-                    <div class="flex space-x-4">
+                    <div class="flex flex-col md:flex-row md:space-x-4">
                         <!-- Claimable Credits -->
-                        <div class="w-1/2">
+                        <div class="w-full md:w-1/2">
                             <label for="splClaimableCredits"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimable
                                 Credits</label>
@@ -226,7 +228,7 @@
                         </div>
 
                         <!-- Claimed Credits -->
-                        <div class="w-1/2">
+                        <div class="w-full md:w-1/2 mt-4 md:mt-0">
                             <label for="splClaimedCredits"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimed
                                 Credits</label>
@@ -255,8 +257,8 @@
                     </button>
                 </div>
             </form>
-
         </div>
     </x-modal>
+
 
 </div>

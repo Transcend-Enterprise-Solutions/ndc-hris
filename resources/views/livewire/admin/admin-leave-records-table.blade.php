@@ -7,15 +7,16 @@
 
             <div class="p-4">
 
-                <div class="-mx-5">
+                <div class="">
                     <!-- Search input -->
-                    <div class="relative inline-block text-left mb-4">
+                    <div class="relative inline-block text-left mb-4 w-full">
                         <label for="search"
                             class="block text-sm font-medium text-gray-700 dark:text-slate-400">Search</label>
                         <input type="search" id="search" wire:model.live="search" placeholder="Enter employee name"
-                            class="py-2 px-3 block w-80 shadow-sm text-sm font-medium border-gray-400
-                                        wire:text-neutral-800 dark:text-neutral-200 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
+                            class="py-2 px-3 block w-full sm:w-80 shadow-sm text-sm font-medium border-gray-400
+                                   dark:text-neutral-200 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
                     </div>
+
 
                     <!-- Tabs -->
                     <div class="mb-2">
