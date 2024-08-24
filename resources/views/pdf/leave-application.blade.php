@@ -284,8 +284,11 @@
                         </div>
                         <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
                             <span class="s5">Abroad (Specify):</span>
-                            <u>{{ $getDetailValue('Abroad') ?: str_repeat('_', 18) }}</u>
                         </div>
+                        <u
+                            style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">
+                            {{ $getDetailValue('Abroad') ?: str_repeat('_', 18) }}
+                        </u>
                     </div>
 
                     <div style="display: block; width: 100%;">
@@ -301,8 +304,11 @@
                         </div>
                         <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
                             <span class="s5">In Hospital (Special Illness):</span>
-                            <u>{{ $getDetailValue('In Hospital') ?: str_repeat('_', 14) }}</u>
                         </div>
+                        <u
+                            style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">
+                            {{ $getDetailValue('In Hospital') ?: str_repeat('_', 14) }}
+                        </u>
                     </div>
 
                     <div style="display: block; width: 100%; margin-left: 5px;">
@@ -311,8 +317,11 @@
                         </div>
                         <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
                             <span class="s5">Out Patient (Special Illness):</span>
-                            <u>{{ $getDetailValue('Out Patient') ?: str_repeat('_', 13) }}</u>
                         </div>
+                        <u
+                            style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">
+                            {{ $getDetailValue('Out Patient') ?: str_repeat('_', 13) }}
+                        </u>
                     </div>
 
                     <div style="display: block; width: 100%;">
@@ -329,8 +338,11 @@
                         </div>
                         <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
                             <span class="s5">(Special Illness):</span>
-                            <u>{{ $getDetailValue('Women Special Illness') ?: str_repeat('_', 20) }}</u>
                         </div>
+                        <u
+                            style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">
+                            {{ $getDetailValue('Women Special Illness') ?: str_repeat('_', 20) }}
+                        </u>
                     </div>
 
                     <div style="display: block; width: 100%;">

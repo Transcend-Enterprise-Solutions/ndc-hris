@@ -77,15 +77,50 @@
                                                 <td class="px-4 py-2 text-center">
                                                     {{ $leaveApplication->date_of_filing }}
                                                 </td>
-                                                <td class="px-4 py-2 text-center">{{ $leaveApplication->type_of_leave }}
+                                                <td class="px-4 py-2 text-center">
+                                                    @php
+                                                        $typeOfLeave = $leaveApplication->type_of_leave;
+                                                        $truncatedTypeOfLeave = \Illuminate\Support\Str::limit(
+                                                            $typeOfLeave,
+                                                            10,
+                                                            '...',
+                                                        );
+                                                    @endphp
+                                                    <span
+                                                        @if (strlen($typeOfLeave) > 10) title="{{ $typeOfLeave }}" @endif>
+                                                        {{ $truncatedTypeOfLeave }}
+                                                    </span>
                                                 </td>
                                                 <td class="px-4 py-2 text-center">
-                                                    {{ $leaveApplication->details_of_leave }}
+                                                    @php
+                                                        $detailsOfLeave = $leaveApplication->details_of_leave;
+                                                        $truncatedDetailsOfLeave = \Illuminate\Support\Str::limit(
+                                                            $detailsOfLeave,
+                                                            10,
+                                                            '...',
+                                                        );
+                                                    @endphp
+                                                    <span
+                                                        @if (strlen($detailsOfLeave) > 10) title="{{ $detailsOfLeave }}" @endif>
+                                                        {{ $truncatedDetailsOfLeave }}
+                                                    </span>
                                                 </td>
                                                 <td class="px-4 py-2 text-center">
                                                     {{ $leaveApplication->number_of_days }}
                                                 </td>
-                                                <td class="px-4 py-2 text-center">{{ $leaveApplication->list_of_dates }}
+                                                <td class="px-4 py-2 text-center">
+                                                    @php
+                                                        $listOfDates = $leaveApplication->list_of_dates;
+                                                        $truncatedListOfDates = \Illuminate\Support\Str::limit(
+                                                            $listOfDates,
+                                                            10,
+                                                            '...',
+                                                        );
+                                                    @endphp
+                                                    <span
+                                                        @if (strlen($listOfDates) > 10) title="{{ $listOfDates }}" @endif>
+                                                        {{ $truncatedListOfDates }}
+                                                    </span>
                                                 </td>
                                                 {{-- <td class="px-4 py-2 text-center">{{ $leaveApplication->end_date }}</td> --}}
                                                 <td class="px-4 py-2 text-center">

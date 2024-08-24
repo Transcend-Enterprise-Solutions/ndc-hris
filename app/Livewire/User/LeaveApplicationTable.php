@@ -13,6 +13,10 @@ use App\Models\VacationLeaveDetails;
 use App\Models\SickLeaveDetails;
 use App\Models\LeaveCredits;
 use App\Models\Payrolls;
+use App\Models\CosRegPayrolls;
+use App\Models\CosSkPayrolls;
+use App\Models\OfficeDivisions;
+use App\Models\Positions;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
@@ -92,20 +96,32 @@ class LeaveApplicationTable extends Component
     {
         $user = Auth::user();
         $userData = UserData::where('user_id', $user->id)->first();
-
+    
         if ($userData) {
             $this->name = $user->name;
             $this->date_of_filing = now()->toDateString();
         }
-
+    
+        $officeDivision = OfficeDivisions::find($user->office_division_id);
+        $position = Positions::find($user->position_id);
+    
+        $this->office_or_department = $officeDivision ? $officeDivision->office_division : 'N/A';
+        $this->position = $position ? $position->position : 'N/A';
+    
         $payroll = Payrolls::where('user_id', $user->id)->first();
-
-
-            $this->office_or_department = $payroll->office_division ?? 'N/A';
-            $this->position = $payroll->position ?? 'N/A';
-            $this->salary = $payroll->rate_per_month ?? 0;
-
+        if ($payroll) {
+            $this->salary = $payroll->rate_per_month;
+        } else {
+            $cosRegPayroll = CosRegPayrolls::where('user_id', $user->id)->first();
+            if ($cosRegPayroll) {
+                $this->salary = $cosRegPayroll->rate_per_month;
+            } else {
+                $cosSkPayroll = CosSkPayrolls::where('user_id', $user->id)->first();
+                $this->salary = $cosSkPayroll ? $cosSkPayroll->rate_per_month : 0;
+            }
+        }
     }
+    
 
     public function resetOtherFields($field)
     {
@@ -310,7 +326,6 @@ class LeaveApplicationTable extends Component
     {
         unset($this->list_of_dates[$index]);
 
-        // Re-index the array to avoid issues with non-sequential keys
         $this->list_of_dates = array_values($this->list_of_dates);
     }
 
@@ -352,22 +367,53 @@ class LeaveApplicationTable extends Component
             }
         }
 
-        $detailsOfLeave = $leaveApplication->details_of_leave ? explode(',', $leaveApplication->details_of_leave) : [];
+        // $detailsOfLeave = $leaveApplication->details_of_leave ? explode(',', $leaveApplication->details_of_leave) : [];
+        // $isDetailPresent = function($detail) use ($detailsOfLeave) {
+        //     foreach ($detailsOfLeave as $item) {
+        //         if (Str::startsWith($item, $detail)) {
+        //             return true;
+        //         }
+        //     }
+        //     return false;
+        // };
+
+        // $detailsOfLeave = $leaveApplication->details_of_leave ? array_map('trim', explode(',', $leaveApplication->details_of_leave)) : [];
+        // $isDetailPresent = function($detail) use ($detailsOfLeave) {
+        //     return in_array($detail, array_map('trim', $detailsOfLeave));
+        // };
+
+        // $getDetailValue = function($detail) use ($detailsOfLeave) {
+        //     foreach ($detailsOfLeave as $item) {
+        //         if (Str::startsWith($item, $detail)) {
+        //             $parts = explode('=', $item, 2);
+        //             return count($parts) > 1 ? trim($parts[1]) : '';
+        //         }
+        //     }
+        //     return '';
+        // };
+
+        $detailsOfLeave = $leaveApplication->details_of_leave ? array_map('trim', explode(',', $leaveApplication->details_of_leave)) : [];
 
         $isDetailPresent = function($detail) use ($detailsOfLeave) {
             foreach ($detailsOfLeave as $item) {
-                if (Str::startsWith($item, $detail)) {
+                $parts = explode('=', $item, 2);
+                $key = trim($parts[0]);
+                if ($key === $detail) {
                     return true;
                 }
             }
             return false;
         };
-
+        
         $getDetailValue = function($detail) use ($detailsOfLeave) {
             foreach ($detailsOfLeave as $item) {
-                if (Str::startsWith($item, $detail)) {
-                    $parts = explode('=', $item, 2);
-                    return count($parts) > 1 ? trim($parts[1]) : '';
+                $parts = explode('=', $item, 2);
+                if (count($parts) === 2) {
+                    $key = trim($parts[0]);
+                    $value = trim($parts[1]);
+                    if ($key === $detail) {
+                        return $value;
+                    }
                 }
             }
             return '';
