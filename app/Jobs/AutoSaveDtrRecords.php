@@ -133,7 +133,7 @@ class AutoSaveDtrRecords implements ShouldQueue
         if ($isOnLeave) {
             return [
                 'day_of_week' => $dayOfWeek,
-                'location' => $location, // Assuming Onsite for leaves
+                'location' => $location,
                 'morning_in' => null,
                 'morning_out' => null,
                 'afternoon_in' => null,
@@ -146,7 +146,7 @@ class AutoSaveDtrRecords implements ShouldQueue
             ];
         }
         // Determine location
-        // Default value, adjust as necessary based on your application
+        // Default value
         // Initialize variables for actual punches and calculated times
         $actualMorningIn = null;
         $actualMorningOut = null;
