@@ -62,6 +62,8 @@ Route::middleware(['auth', 'checkrole:sa,hr,sv'])->group(function () {
         return view('livewire.admin.admin-leave-records'); })->name('/leave-management/admin-leave-records');
     Route::get('/leave-management/admin-leave-credits', function () {
         return view('livewire.admin.admin-leave-credits'); })->name('/leave-management/admin-leave-credits');
+    Route::get('/leave-management/admin-leave-monetization', function () {
+        return view('livewire.admin.admin-leave-monetization'); })->name('/leave-management/admin-leave-monetization');
 });
 
 /* Super Admin, HR, and Payroll account role */
@@ -105,8 +107,8 @@ Route::middleware(['auth', 'checkrole:emp'])->group(function () {
         return view('livewire.user.leave-application'); })->name('/filing-and-approval/leave-application');
     Route::get('/filing-and-approval/leave-credits', function () {
         return view('livewire.user.leave-credits'); })->name('/filing-and-approval/leave-credits');
-    Route::get('/filing-and-approval/leave-monetization', function () {
-        return view('livewire.user.leave-monetization'); })->name('/filing-and-approval/leave-monetization');
+    // Route::get('/filing-and-approval/leave-monetization', function () {
+    //     return view('livewire.user.leave-monetization'); })->name('/filing-and-approval/leave-monetization');
 });
 
 

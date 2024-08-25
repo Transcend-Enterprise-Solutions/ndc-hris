@@ -211,6 +211,11 @@ class User extends Authenticatable
         return $this->hasOne(PdsPhoto::class);
     }
 
+    public function monetizationRequest()
+    {
+        return $this->hasMany(MonetizationRequest::class);
+    }
+
     /**
      * The attributes that should be cast.
      *

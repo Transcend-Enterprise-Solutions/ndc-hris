@@ -3,7 +3,7 @@
 
         <div>
 
-            @livewire('admin.admin-leave-credits-table')
+            @livewire('admin.admin-leave-monetization-table')
 
         </div>
 

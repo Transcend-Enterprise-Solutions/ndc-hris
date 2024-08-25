@@ -2,7 +2,7 @@
     <!-- Table -->
     <div class="w-full flex justify-center">
         <div class="flex justify-center w-full">
-            <div class="w-full bg-white rounded-2xl p-3 sm:p-8 shadow dark:bg-gray-800 overflow-x-auto">
+            <div class="w-full bg-white rounded-2xl p-3 sm:p-8 shadow dark:bg-gray-800">
                 <div class="pb-4 pt-4 sm:pt-1">
                     <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Leave Credits</h1>
                 </div>
@@ -13,15 +13,15 @@
                             class="block text-sm font-medium text-gray-700 dark:text-slate-400">Search</label>
                     </div>
 
-                    <div class="flex items-center space-x-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
                         <!-- Search input -->
-                        <div>
+                        <div class="w-full sm:w-auto">
                             <input type="search" id="search" wire:model.live="search"
                                 placeholder="Enter employee name"
-                                class="py-2 px-3 mt-1 block w-80 shadow-sm text-sm font-medium border-gray-400 dark:border-gray-600 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
+                                class="py-2 px-3 mt-1 block w-full sm:w-80 shadow-sm text-sm font-medium border-gray-400 dark:border-gray-600 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
                         </div>
                         <!-- Button aligned with input field -->
-                        <div>
+                        <div class="mt-2 sm:mt-0">
                             <button wire:click="openInputCredits"
                                 class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white">
                                 <span
@@ -31,23 +31,24 @@
                             </button>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                         <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700">
                             <button @click="selectedTab = 'vl'"
-                                :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'vl', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'vl' }"
+                                :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'vl', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'vl' }"
                                 class="h-min px-4 py-2 text-sm mb-4">
                                 Vacation Leave
                             </button>
                             <button @click="selectedTab = 'sl'"
-                                :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'sl', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'sl' }"
+                                :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'sl', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'sl' }"
                                 class="h-min px-4 py-2 text-sm mb-4">
                                 Sick Leave
                             </button>
                             <button @click="selectedTab = 'spl'"
-                                :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'spl', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'spl' }"
+                                :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'spl', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'spl' }"
                                 class="h-min px-4 py-2 text-sm mb-4">
                                 Special Privilege Leave
                             </button>
@@ -114,7 +115,7 @@
         </div>
     </div>
 
-    <x-modal id="inputCredits" maxWidth="lg" wire:model="inputCredits" centered>
+    <x-modal id="inputCredits" maxWidth="lg" wire:model="inputCredits">
         <div class="p-6">
             <!-- Modal Header -->
             <div class="flex items-center justify-between pb-4">
@@ -130,8 +131,9 @@
             <form class="space-y-6" wire:submit.prevent="saveCredits">
                 <!-- Employee Selection -->
                 <div>
-                    <label for="employee"
-                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Employee</label>
+                    <label for="employee" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Employee
+                    </label>
                     <select id="employee" wire:model="employee"
                         class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Select an employee</option>
@@ -144,48 +146,101 @@
                     @enderror
                 </div>
 
-                <!-- Leave Type Selection -->
-                <div>
-                    <label for="leaveType" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Leave
-                        Type</label>
-                    <select id="leaveType" wire:model="leaveType"
-                        class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">Select</option>
-                        <option value="vacation">Vacation Leave Credits</option>
-                        <option value="sick">Sick Leave Credits</option>
-                        <option value="spl">Special Privilege Leave Credits</option>
-                    </select>
-                    @error('leaveType')
-                        <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-                    @enderror
-                </div>
+                <!-- Vacation Leave Part -->
+                <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
+                    <legend class="text-gray-700 dark:text-slate-100">Vacation Leave</legend>
+                    <div class="flex flex-col md:flex-row md:space-x-4">
+                        <!-- Claimable Credits -->
+                        <div class="w-full md:w-1/2">
+                            <label for="vlClaimableCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimable
+                                Credits</label>
+                            <input id="vlClaimableCredits" type="number" wire:model="vlClaimableCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter claimable credits">
+                            @error('vlClaimableCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
 
-                <!-- Credits Inputs -->
-                <div class="flex space-x-4">
-                    <!-- Claimable Credits -->
-                    <div class="w-1/2">
-                        <label for="claimableCredits"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimable Credits</label>
-                        <input id="claimableCredits" type="number" wire:model="claimableCredits"
-                            class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Enter claimable credits">
-                        @error('claimableCredits')
-                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-                        @enderror
+                        <!-- Claimed Credits -->
+                        <div class="w-full md:w-1/2 mt-4 md:mt-0">
+                            <label for="vlClaimedCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimed
+                                Credits</label>
+                            <input id="vlClaimedCredits" type="number" wire:model="vlClaimedCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter claimed credits">
+                            @error('vlClaimedCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
                     </div>
+                </fieldset>
 
-                    <!-- Claimed Credits -->
-                    <div class="w-1/2">
-                        <label for="claimedCredits"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimed Credits</label>
-                        <input id="claimedCredits" type="number" wire:model="claimedCredits"
-                            class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Enter claimed credits">
-                        @error('claimedCredits')
-                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-                        @enderror
+                <!-- Sick Leave Part -->
+                <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
+                    <legend class="text-gray-700 dark:text-slate-100">Sick Leave</legend>
+                    <div class="flex flex-col md:flex-row md:space-x-4">
+                        <!-- Claimable Credits -->
+                        <div class="w-full md:w-1/2">
+                            <label for="slClaimableCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimable
+                                Credits</label>
+                            <input id="slClaimableCredits" type="number" wire:model="slClaimableCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter claimable credits">
+                            @error('slClaimableCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
+
+                        <!-- Claimed Credits -->
+                        <div class="w-full md:w-1/2 mt-4 md:mt-0">
+                            <label for="slClaimedCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimed
+                                Credits</label>
+                            <input id="slClaimedCredits" type="number" wire:model="slClaimedCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter claimed credits">
+                            @error('slClaimedCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
                     </div>
-                </div>
+                </fieldset>
+
+                <!-- Special Privilege Leave Part -->
+                <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
+                    <legend class="text-gray-700 dark:text-slate-100">Special Privilege Leave</legend>
+                    <div class="flex flex-col md:flex-row md:space-x-4">
+                        <!-- Claimable Credits -->
+                        <div class="w-full md:w-1/2">
+                            <label for="splClaimableCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimable
+                                Credits</label>
+                            <input id="splClaimableCredits" type="number" wire:model="splClaimableCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter claimable credits">
+                            @error('splClaimableCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
+
+                        <!-- Claimed Credits -->
+                        <div class="w-full md:w-1/2 mt-4 md:mt-0">
+                            <label for="splClaimedCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimed
+                                Credits</label>
+                            <input id="splClaimedCredits" type="number" wire:model="splClaimedCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter claimed credits">
+                            @error('splClaimedCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
+                    </div>
+                </fieldset>
 
                 <!-- Action Buttons -->
                 <div class="mt-6 flex justify-end space-x-4">
@@ -202,8 +257,8 @@
                     </button>
                 </div>
             </form>
-
         </div>
     </x-modal>
+
 
 </div>

@@ -27,7 +27,7 @@ class AdminLeaveRecordsTable extends Component
 
     public function render()
     {
-        $leaveApplications = \App\Models\LeaveApplication::query()
+        $leaveApplications = LeaveApplication::query()
             ->whereHas('user', function ($query) {
                 $query->where('name', 'like', '%' . $this->search . '%');
             })

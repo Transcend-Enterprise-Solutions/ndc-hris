@@ -54,18 +54,64 @@
                                                     <td class="px-4 py-2 text-center">
                                                         {{ $leaveApplication->date_of_filing }}</td>
                                                     <td class="px-4 py-2 text-center">
-                                                        {{ $leaveApplication->type_of_leave }}</td>
+                                                        @php
+                                                            $typeOfLeave = $leaveApplication->type_of_leave;
+                                                            $truncatedTypeOfLeave = \Illuminate\Support\Str::limit(
+                                                                $typeOfLeave,
+                                                                10,
+                                                                '...',
+                                                            );
+                                                        @endphp
+                                                        <span
+                                                            @if (strlen($typeOfLeave) > 10) title="{{ $typeOfLeave }}" @endif>
+                                                            {{ $truncatedTypeOfLeave }}
+                                                        </span>
+                                                    </td>
                                                     <td class="px-4 py-2 text-center">
-                                                        {{ $leaveApplication->details_of_leave }}</td>
+                                                        @php
+                                                            $detailsOfLeave = $leaveApplication->details_of_leave;
+                                                            $truncatedDetailsOfLeave = \Illuminate\Support\Str::limit(
+                                                                $detailsOfLeave,
+                                                                10,
+                                                                '...',
+                                                            );
+                                                        @endphp
+                                                        <span
+                                                            @if (strlen($detailsOfLeave) > 10) title="{{ $detailsOfLeave }}" @endif>
+                                                            {{ $truncatedDetailsOfLeave }}
+                                                        </span>
+                                                    </td>
                                                     <td class="px-4 py-2 text-center">
                                                         {{ $leaveApplication->number_of_days }}</td>
                                                     <td class="px-4 py-2 text-center">
-                                                        {{ \Illuminate\Support\Str::limit($leaveApplication->list_of_dates, 10, '...') }}
+                                                        @php
+                                                            $listOfDates = $leaveApplication->list_of_dates;
+                                                            $truncatedListOfDates = \Illuminate\Support\Str::limit(
+                                                                $listOfDates,
+                                                                10,
+                                                                '...',
+                                                            );
+                                                        @endphp
+                                                        <span
+                                                            @if (strlen($listOfDates) > 10) title="{{ $listOfDates }}" @endif>
+                                                            {{ $truncatedListOfDates }}
+                                                        </span>
                                                     </td>
                                                     <td class="px-4 py-2 text-center">
                                                         {{ $leaveApplication->approved_days ?? 'N/A' }}</td>
                                                     <td class="px-4 py-2 text-center">
-                                                        {{ \Illuminate\Support\Str::limit($leaveApplication->approved_dates, 10, '...') ?? 'N/A' }}
+                                                        @php
+                                                            $approvedDates = $leaveApplication->approved_dates;
+                                                            $truncatedApprovedDates = \Illuminate\Support\Str::limit(
+                                                                $approvedDates,
+                                                                10,
+                                                                '...',
+                                                            );
+                                                        @endphp
+                                                        <span
+                                                            @if (strlen($approvedDates) > 10) title="{{ $approvedDates }}" @endif>
+                                                            {{ $truncatedApprovedDates ?? 'N/A' }}
+                                                        </span>
                                                     </td>
                                                     <td class="px-4 py-2 text-center">
                                                         <span
@@ -154,8 +200,12 @@
 
                             <label for="salary"
                                 class="block text-sm font-medium text-gray-700 dark:text-slate-100">Salary</label>
-                            <input type="number" id="salary" wire:model="salary" disabled
-                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <div class="mt-1 relative flex items-center">
+                                <span style="font-family: 'Arial', sans-serif; font-weight: bold;"
+                                    class="absolute left-3">&#8369;</span>
+                                <input type="number" id="salary" wire:model="salary" disabled
+                                    class="p-2 pl-8 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            </div>
                             @error('salary')
                                 <span class="text-red-500 text-sm">This field is required!</span>
                             @enderror
@@ -174,6 +224,9 @@
                 {{-- A. --}}
                 <fieldset class="border border-gray-300 p-4 rounded-lg overflow-y-auto w-full h-96 mb-4 md:mb-0">
                     <legend class="text-gray-700 dark:text-slate-100">A. Type of Leave to be availed of</legend>
+                    @error('type_of_leave')
+                        <span class="text-red-500 text-sm">Please choose one!</span>
+                    @enderror
                     <div class="gap-2 columns-1">
                         <input type="checkbox" value="Vacation Leave" wire:model.live="type_of_leave">
                         <label class="text-md text-gray-700 dark:text-slate-100">Vacation Leave</label>
@@ -237,18 +290,21 @@
 
                         @if (in_array('Others', $type_of_leave))
                             <input type="text" id="other_leave" wire:model="other_leave"
+                                placeholder="Please specify"
                                 class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                         @endif
                     </div>
 
-                    @error('type_of_leave')
-                        <span class="text-red-500 text-sm">Please choose one!</span>
-                    @enderror
                 </fieldset>
 
                 {{-- B. --}}
                 <fieldset class="border border-gray-300 p-4 rounded-lg w-full h-96 mb-4 md:mb-0 overflow-y-auto">
                     <legend class="text-gray-700 dark:text-slate-100">B. Details of Leave</legend>
+
+                    @error('details_of_leave')
+                        <span class="text-red-500 text-sm">Please choose one!</span>
+                    @enderror
+
                     <div
                         class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto">
                         <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
@@ -281,6 +337,7 @@
                                         Philippines</label>
                                     @if (in_array('Within the Philippines', $details_of_leave))
                                         <input type="text" id="within_the_ph" wire:model="philippines"
+                                            placeholder="Please specify"
                                             class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                     @endif
                                 </div>
@@ -290,6 +347,7 @@
                                     <label class="text-md text-gray-700 dark:text-slate-100">Abroad (Specify)</label>
                                     @if (in_array('Abroad', $details_of_leave))
                                         <input type="text" id="abroad_value" wire:model="abroad"
+                                            placeholder="Please specify"
                                             class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                     @endif
                                 </div>
@@ -311,6 +369,7 @@
                                         Illness)</label>
                                     @if (in_array('In Hospital', $details_of_leave))
                                         <input type="text" id="in_hospital" wire:model="inHospital"
+                                            placeholder="Please specify"
                                             class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                     @endif
                                 </div>
@@ -321,6 +380,7 @@
                                         Illness)</label>
                                     @if (in_array('Out Patient', $details_of_leave))
                                         <input type="text" id="out_patient" wire:model="outPatient"
+                                            placeholder="Please specify"
                                             class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                     @endif
                                 </div>
@@ -340,6 +400,7 @@
                                 <label class="text-md text-gray-700 dark:text-slate-100">(Special Illness)</label>
                                 @if (in_array('Women Special Illness', $details_of_leave))
                                     <input type="text" id="women_leave" wire:model="specialIllnessForWomen"
+                                        placeholder="Please specify"
                                         class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                 @endif
                             </div>
@@ -366,10 +427,6 @@
                             </div>
                         </div>
                     @endif
-
-                    @error('details_of_leave')
-                        <span class="text-red-500 text-sm">Please choose one!</span>
-                    @enderror
                 </fieldset>
 
                 {{-- C. --}}
@@ -384,6 +441,33 @@
                                 <span class="text-red-500 text-sm">This field is required!</span>
                             @enderror
                         </div>
+
+                        {{-- @if (in_array('Study Leave', $type_of_leave) || in_array('Maternity Leave', $type_of_leave) || in_array('Rehabilitation Privilege', $type_of_leave) || in_array('Special Leave Benefits for Women', $type_of_leave)) --}}
+                        <fieldset
+                            class="border border-red-400 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0 mt-2">
+                            <div class="gap-2 columns-1">
+                                <h6
+                                    class="mt-2 mb-2 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
+                                    In case of Study Leave, Maternity Leave, Special Leave Benefits for Women, and
+                                    Rehabilitation
+                                    Leave:</h6>
+
+                                <div class="gap-2 columns-1 mt-2">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-slate-100">Start
+                                        date</label>
+                                    <input type="date" id="start_date" wire:model="start_date"
+                                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                </div>
+
+                                <div class="gap-2 columns-1 mt-2">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-slate-100 mt-2">End
+                                        date</label>
+                                    <input type="date" id="end_date" wire:model="end_date"
+                                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                </div>
+                            </div>
+                        </fieldset>
+                        {{-- @endif --}}
 
                         @if (in_array('Vacation Leave', $type_of_leave) ||
                                 in_array('Sick Leave', $type_of_leave) ||
@@ -404,6 +488,9 @@
                                             class="bi bi-plus-square dark:text-slate-50 text-slate-900 hover:text-slate-400"
                                             wire:click="addDate" style="font-size: 2rem;"></i></button>
                                 </div>
+                                @error('list_of_dates')
+                                    <span class="text-red-500 text-sm">Please add at least one date to the list.</span>
+                                @enderror
                             </div>
                         @endif
 
@@ -421,37 +508,9 @@
                             </ul>
 
                             @error('new_date')
-                                <span class="text-red-500 text-sm">Please set a valid date!</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
-
-                        @if (in_array('Study Leave', $type_of_leave) ||
-                                in_array('Maternity Leave', $type_of_leave) ||
-                                in_array('Rehabilitation Privilege', $type_of_leave) ||
-                                in_array('Special Leave Benefits for Women', $type_of_leave))
-                            <div class="gap-2 columns-1 mt-2">
-                                <h6
-                                    class="mt-2 mb-2 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
-                                    In case of Study Leave, Maternity Leave, Special Leave Benefits for Women, and
-                                    Rehabilitation
-                                    Leave:</h6>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-100">Start
-                                    date</label>
-                                <input type="date" id="start_date" wire:model="start_date"
-                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
-                                @error('start_date')
-                                    <span class="text-red-500 text-sm">Please set a start date!</span>
-                                @enderror
-
-                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-100 mt-2">End
-                                    date</label>
-                                <input type="date" id="end_date" wire:model="end_date"
-                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
-                                @error('end_date')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        @endif
 
                     </div>
                 </fieldset>
