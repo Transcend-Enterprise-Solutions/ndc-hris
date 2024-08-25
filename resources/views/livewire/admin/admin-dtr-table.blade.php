@@ -55,17 +55,18 @@
                          x-transition:leave="transition ease-in duration-200"
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-4"
-                         class="bg-white dark:bg-gray-800 rounded-lg p-6 w-1/3 shadow-xl">
+                         class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 w-11/12 sm:w-1/2 lg:w-1/3 mx-4">
                         <h2 class="text-lg font-semibold mb-4 text-left text-gray-900 dark:text-gray-100">Enter Signatory Name</h2>
                         <input type="text" x-model="signatoryName" placeholder="Signatory Name"
                             class="w-full mb-4 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-700 dark:text-gray-300 dark:border-slate-600">
-                        <div class="flex justify-end mt-5">
-                            <button @click="showModal = false" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 dark:bg-gray-600 dark:text-gray-200">Cancel</button>
+                        <div class="flex flex-col sm:flex-row justify-end mt-5">
+                            <button @click="showModal = false" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mb-2 sm:mb-0 sm:mr-2 dark:bg-gray-600 dark:text-gray-200">Cancel</button>
                             <button @click="showModal = false; $wire.exportToPdf(signatoryName)" class="bg-blue-500 text-white px-4 py-2 rounded-md">Generate PDF</button>
                         </div>
                     </div>
                 </div>
             </div>
+
 
         </div>
 
@@ -157,7 +158,7 @@
                                     @break
                                     @case('late')
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-amber-500 bg-white text-xs font-medium text-amber-500 dark:border-amber-500 dark:bg-slate-900 dark:text-amber-500">
-                                            <span class="px-2 py-1 bg-amber-500/10 dark:bg-amber-500/10">Late</span>
+                                            <span class="px-2 py-1 bg-amber-500/10 dark:bg-amber-500/10">Late/Undertime</span>
                                         </span>
                                         @break
                                     @default

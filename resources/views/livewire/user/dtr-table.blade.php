@@ -54,7 +54,7 @@
                          x-transition:leave="transition ease-in duration-200"
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-4"
-                         class="bg-white dark:bg-gray-800 rounded-lg p-6 w-1/3 shadow-xl">
+                         class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 w-11/12 sm:w-3/4 lg:w-1/3 mx-4">
                         <h2 class="text-lg font-semibold mb-4 text-left text-gray-900 dark:text-gray-100">Enter Signatory Details</h2>
                         <input type="text" x-model="signatoryName" placeholder="Signatory Name"
                             class="w-full mb-4 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-700 dark:text-gray-300 dark:border-slate-600">
@@ -69,15 +69,15 @@
                                 hover:file:bg-blue-200
                                 dark:hover:file:bg-gray-700
                                 dark:file:bg-gray-600 dark:file:text-gray-200">
-                                <svg wire:loading wire:target='eSignature' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-6 fill-slate-700 motion-safe:animate-spin dark:fill-slate-300">
-                                    <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
-                                    <path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" />
-                                </svg>
+                            <svg wire:loading wire:target='eSignature' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-6 fill-slate-700 motion-safe:animate-spin dark:fill-slate-300">
+                                <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+                                <path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" />
+                            </svg>
 
                             @error('eSignature') <span class="text-red-500">{{ $message }}</span> @enderror
                         </div>
-                        <div class="flex justify-end mt-5">
-                            <button @click="showModal = false" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 dark:bg-gray-600 dark:text-gray-200">Cancel</button>
+                        <div class="flex flex-col sm:flex-row justify-end mt-5">
+                            <button @click="showModal = false" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mb-2 sm:mb-0 sm:mr-2 dark:bg-gray-600 dark:text-gray-200">Cancel</button>
                             <button @click="showModal = false; $wire.exportToPdf(signatoryName)" class="bg-blue-500 text-white px-4 py-2 rounded-md" wire:loading.attr="disabled">Generate PDF</button>
                         </div>
                     </div>
@@ -131,21 +131,33 @@
                             <td class="px-4 py-2 text-center">{{ $dtr->overtime }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->total_hours_rendered }}</td>
                             <td class="px-4 py-2 text-center">
-                                <button title="Edit" class="px-4 py-1 text-sm font-semibold rounded-full cursor-pointer
-                                    @if($dtr->remarks == 'Present') bg-green-400 text-green-800
-                                    @elseif($dtr->remarks == 'Holiday') bg-blue-400 text-blue-800
-                                    @elseif($dtr->remarks == 'Absent') bg-red-400 text-red-800
-                                    @elseif($dtr->remarks == 'Late') bg-yellow-400 text-yellow-800
-                                    @elseif($dtr->remarks == 'Leave') bg-blue-400 text-blue-800
-                                    @else bg-gray-200 text-gray-800
-                                    @endif"
-                                    @click="$dispatch('open-modal', {dtrId: {{ $dtr->id }}, remarks: '{{ $dtr->remarks }}'})" >
+                                @php
+                                // Determine background and text color based on remarks
+                                $bgColor = 'bg-gray-200';
+                                $textColor = 'text-gray-800';
+                                if ($dtr->remarks == 'Present') {
+                                    $bgColor = 'bg-green-400';
+                                    $textColor = 'text-green-800';
+                                } elseif ($dtr->remarks == 'Holiday' || $dtr->remarks == 'Leave') {
+                                    $bgColor = 'bg-blue-400';
+                                    $textColor = 'text-blue-800';
+                                } elseif ($dtr->remarks == 'Absent') {
+                                    $bgColor = 'bg-red-400';
+                                    $textColor = 'text-red-800';
+                                } elseif ($dtr->remarks == 'Late') {
+                                    $bgColor = 'bg-yellow-400';
+                                    $textColor = 'text-yellow-800';
+                                }
+                            @endphp
+                            <button title="Edit" class="px-4 py-1 text-sm font-semibold rounded-full cursor-pointer {{ $bgColor }} {{ $textColor }}"
+                                @click="$dispatch('open-modal', {dtrId: {{ $dtr->id }}, remarks: '{{ $dtr->remarks }}'})">
+                                @if($dtr->remarks == 'Late')
+                                    Late/Undertime
+                                @else
                                     {{ $dtr->remarks }}
-                                </button>
+                                @endif
+                            </button>
                             </td>
-
-
-
                         </tr>
                     @empty
                         <tr class="whitespace-nowrap">

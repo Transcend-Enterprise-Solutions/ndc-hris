@@ -10,8 +10,7 @@
                 <div class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mr-2">
                     Total Requests
                 </div>
-
-                <div class="text-2xl sm:text-3xl font-bold text-gray-900 ">
+                <div class="text-2xl sm:text-3xl font-bold text-gray-900">
                     {{ $totalRequests }}
                 </div>
             </div>
@@ -56,8 +55,12 @@
                 <div class="text-xs sm:text-xs font-medium text-blue-800 dark:text-blue-300">
                     Avg. Completion Time
                 </div>
-                <div class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">
-                    {{ gmdate('H:i', $averageCompletionTime) }}
+                <div class="text-m sm:text-lg font-bold text-blue-600 dark:text-blue-400">
+                    @if ($averageCompletionTimeDays > 0)
+                        {{ $averageCompletionTimeDays }}D
+                    @endif
+                    {{ str_pad($averageCompletionTimeHours, 2, '0', STR_PAD_LEFT) }}H
+                    {{ str_pad($averageCompletionTimeMinutes, 2, '0', STR_PAD_LEFT) }}M
                 </div>
             </div>
             <div class="flex-shrink-0 text-blue-400 dark:text-blue-500">

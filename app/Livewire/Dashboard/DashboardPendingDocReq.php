@@ -12,7 +12,9 @@ class DashboardPendingDocReq extends Component
     public $completedRequests;
     public $requestsByType;
     public $requestsOverTime;
-    public $averageCompletionTime;
+    public $averageCompletionTimeDays;
+    public $averageCompletionTimeHours;
+    public $averageCompletionTimeMinutes;
 
     public function mount()
     {
@@ -25,15 +27,30 @@ class DashboardPendingDocReq extends Component
             ->pluck('count', 'document_type')
             ->toArray();
 
-        $this->requestsOverTime = DocRequest::selectRaw('DATE(date_requested) as date, COUNT(*) as count')
+        $this->requestsOverTime = DocRequest::selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->groupBy('date')
             ->orderBy('date')
             ->pluck('count', 'date')
             ->toArray();
 
-        $this->averageCompletionTime = DocRequest::whereNotNull('date_completed')
-            ->selectRaw('AVG(TIMESTAMPDIFF(SECOND, date_requested, date_completed)) as avg_time')
+        // Use created_at and updated_at for completion time calculation
+        $averageSeconds = DocRequest::whereNotNull('updated_at')
+            ->selectRaw('AVG(TIMESTAMPDIFF(SECOND, created_at, updated_at)) as avg_time')
             ->value('avg_time');
+
+        if ($averageSeconds !== null) {
+            $this->averageCompletionTimeDays = floor($averageSeconds / 86400); // Days
+            $averageSeconds %= 86400;
+
+            $this->averageCompletionTimeHours = floor($averageSeconds / 3600); // Hours
+            $averageSeconds %= 3600;
+
+            $this->averageCompletionTimeMinutes = floor($averageSeconds / 60); // Minutes
+        } else {
+            $this->averageCompletionTimeDays = 0;
+            $this->averageCompletionTimeHours = 0;
+            $this->averageCompletionTimeMinutes = 0;
+        }
     }
 
     public function render()

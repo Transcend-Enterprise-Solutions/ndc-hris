@@ -83,19 +83,16 @@ class AutoSaveDtrRecords implements ShouldQueue
     {
         $carbonDate = Carbon::parse($date);
         $dayOfWeek = $carbonDate->format('l');
-
         // Fetch the schedule from DTRSchedule table
         $schedule = DTRSchedule::where('emp_code', $empCode)
             ->whereDate('start_date', '<=', $date)
             ->whereDate('end_date', '>=', $date)
             ->first();
-
         // Initialize default values
         $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString('07:00:00');
         $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString('18:30:00');
         $lateThreshold = $carbonDate->copy()->setTimeFromTimeString('09:30:00');
         $location = 'Onsite';
-
         // Set values for Work From Home (WFH) days
         if ($schedule) {
             $wfhDays = array_map('ucfirst', array_map('trim', explode(',', $schedule->wfh_days)));
@@ -114,7 +111,6 @@ class AutoSaveDtrRecords implements ShouldQueue
         if ($dayOfWeek === 'Monday') {
             $lateThreshold = $carbonDate->copy()->setTimeFromTimeString('09:00:00');
         }
-
         // Check for holiday or leave
         $holiday = Holiday::whereDate('holiday_date', $date)->first();
         if ($holiday) {
@@ -137,7 +133,7 @@ class AutoSaveDtrRecords implements ShouldQueue
         if ($isOnLeave) {
             return [
                 'day_of_week' => $dayOfWeek,
-                'location' => $location, // Assuming Onsite for leaves
+                'location' => $location,
                 'morning_in' => null,
                 'morning_out' => null,
                 'afternoon_in' => null,
@@ -149,10 +145,8 @@ class AutoSaveDtrRecords implements ShouldQueue
                 'remarks' => 'Leave',
             ];
         }
-
         // Determine location
-         // Default value, adjust as necessary based on your application
-
+        // Default value
         // Initialize variables for actual punches and calculated times
         $actualMorningIn = null;
         $actualMorningOut = null;
@@ -227,6 +221,7 @@ class AutoSaveDtrRecords implements ShouldQueue
 
         // Calculate lateness
         $late = Carbon::createFromTime(0, 0, 0);
+        $lunchEnd = $carbonDate->copy()->setTimeFromTimeString('13:00:00');
         if ($morningIn) {
             if ($morningIn->gt($lateThreshold)) {
                 // Set expected time out to default end time if time in is greater than late threshold
@@ -235,12 +230,28 @@ class AutoSaveDtrRecords implements ShouldQueue
             if ($morningIn->gt($lateThreshold)) {
                 $late = $late->addMinutes($morningIn->diffInMinutes($lateThreshold));
             }
+        } else{
+            $late = $late->addHours(4);
+            if ($afternoonIn && $afternoonIn->gt($lunchEnd)){
+                $late = $late->addMinutes($lunchEnd->diffInMinutes($afternoonIn));
+            }
         }
-
         // Calculate undertime
         $undertime = Carbon::createFromTime(0, 0, 0);
-        if ($afternoonOut && $afternoonOut->lt($expectedEndTime)) {
-            $undertime = $undertime->addMinutes($expectedEndTime->diffInMinutes($afternoonOut));
+        $lunchTime = $carbonDate->copy()->setTimeFromTimeString('12:00:00');
+
+        if ($afternoonOut) {
+            if ($afternoonOut->lt($expectedEndTime)) {
+                $undertime = $undertime->addMinutes($expectedEndTime->diffInMinutes($afternoonOut));
+            }
+        } else {
+            // If there's no afternoon out, add 4 hours of undertime
+            $undertime = $undertime->addHours(4);
+
+            // Check if morning out is before 12:00
+            if ($morningOut && $morningOut->lt($lunchTime)) {
+                $undertime = $undertime->addMinutes($lunchTime->diffInMinutes($morningOut));
+            }
         }
 
         // Add undertime to lateness

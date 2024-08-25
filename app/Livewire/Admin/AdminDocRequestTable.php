@@ -170,9 +170,13 @@ class AdminDocRequestTable extends Component
     public function downloadDocument($id)
     {
         $request = DocRequest::findOrFail($id);
-
         if ($request->file_path && Storage::disk('public')->exists($request->file_path)) {
-            return Storage::disk('public')->download($request->file_path, $request->filename);
+            $fileContent = Storage::disk('public')->get($request->file_path);
+            $fileName = $request->filename;
+
+            return response()->streamDownload(function () use ($fileContent) {
+                echo $fileContent;
+            }, $fileName);
         } else {
             $this->dispatch('swal', [
                 'title' => 'File not found!',
@@ -180,6 +184,7 @@ class AdminDocRequestTable extends Component
             ]);
         }
     }
+
 
 
     public function render()
