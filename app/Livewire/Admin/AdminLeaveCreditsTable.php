@@ -134,13 +134,9 @@ class AdminLeaveCreditsTable extends Component
         $this->closeInputCredits();
     }
 
-    public function mount()
-    {
-        $this->processedEmployees = [];
-    }
-
     public function render()
     {
+        $this->processedEmployees = [];
         // Fetch employees who don't have credits inputted yet
         $this->employees = User::where('user_role', 'emp')
             ->whereDoesntHave('leaveCredits', function ($query) {

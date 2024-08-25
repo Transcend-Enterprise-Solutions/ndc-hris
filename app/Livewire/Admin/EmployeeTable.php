@@ -42,16 +42,16 @@ class EmployeeTable extends Component
         'sss' => false,
         'tin' => false,
         'agency_employee_no' => false,
-        'permanent_selectedZipcode' => false,
         'permanent_selectedProvince' => false,
         'permanent_selectedCity' => false,
         'permanent_selectedBarangay' => false,
         'p_house_street' => false,
-        'residential_selectedZipcode' => false,
+        'permanent_selectedZipcode' => false,
         'residential_selectedProvince' => false,
         'residential_selectedCity' => false,
         'residential_selectedBarangay' => false,
         'r_house_street' => false,
+        'residential_selectedZipcode' => false,
         // 'tel_number' => false,
         // 'mobile_number' => false,
         // 'email' => false,
@@ -331,15 +331,37 @@ class EmployeeTable extends Component
         $this->personalDataSheetOpen = false;
     }
 
-    public function exportUsers(){
-        $filters = [
+    // public function exportUsers(){
+    //     $filters = [
+    //         'sex' => $this->sex,
+    //         'civil_status' => $this->civil_status,
+    //         'selectedProvince' => $this->selectedProvince,
+    //         'selectedCity' => $this->selectedCity,
+    //         'selectedBarangay' => $this->selectedBarangay,
+    //     ];
+    //     return Excel::download(new EmployeesExport($filters), 'EmployeesList.xlsx');
+    // }
+    public function exportUsers()
+    {
+        $filterConditions = [
             'sex' => $this->sex,
             'civil_status' => $this->civil_status,
             'selectedProvince' => $this->selectedProvince,
             'selectedCity' => $this->selectedCity,
             'selectedBarangay' => $this->selectedBarangay,
         ];
-        return Excel::download(new EmployeesExport($filters), 'EmployeesList.xlsx');
+    
+        $selectedColumns = array_keys(array_filter($this->filters));
+        
+        // Include 'name' if any name-related fields are selected
+        $nameFields = ['surname', 'first_name', 'middle_name', 'name_extension'];
+        if (count(array_intersect($nameFields, $selectedColumns)) > 0) {
+            $selectedColumns[] = 'name';
+        }
+    
+        $selectedColumns = array_unique($selectedColumns);
+    
+        return Excel::download(new EmployeesExport($filterConditions, $selectedColumns), 'EmployeesList.xlsx');
     }
 
     public function checkFilter(){

@@ -23,13 +23,13 @@
                         <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700"
                             role="tablist">
                             <button @click="$wire.setActiveTab('pending')"
-                                :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': activeTab === 'pending', 'text-slate-700 font-medium dark:text-white': activeTab !== 'pending' }"
+                                :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': activeTab === 'pending', 'text-slate-700 font-bold dark:text-white': activeTab !== 'pending' }"
                                 class="h-min px-4 py-2 text-sm" role="tab">Pending</button>
                             <button @click="$wire.setActiveTab('approved')"
-                                :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': activeTab === 'approved', 'text-slate-700 font-medium dark:text-white': activeTab !== 'approved' }"
+                                :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': activeTab === 'approved', 'text-slate-700 font-bold dark:text-white': activeTab !== 'approved' }"
                                 class="h-min px-4 py-2 text-sm" role="tab">Approved</button>
                             <button @click="$wire.setActiveTab('disapproved')"
-                                :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': activeTab === 'disapproved', 'text-slate-700 font-medium dark:text-white': activeTab !== 'disapproved' }"
+                                :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': activeTab === 'disapproved', 'text-slate-700 font-bold dark:text-white': activeTab !== 'disapproved' }"
                                 class="h-min px-4 py-2 text-sm" role="tab">Disapproved</button>
                         </div>
                     </div>

@@ -12,141 +12,128 @@ class EmployeesExport implements FromCollection, WithHeadings
     use Exportable;
 
     protected $filters;
+    protected $selectedColumns;
 
-    public function __construct($filters)
+    public function __construct($filters, $selectedColumns)
     {
         $this->filters = $filters;
+        $this->selectedColumns = $selectedColumns;
     }
 
     public function collection()
     {
         $query = User::join('user_data', 'users.id', '=', 'user_data.user_id')
-            ->select(
-                'users.id',
-                'user_data.surname', 
-                'user_data.first_name', 
-                'user_data.middle_name', 
-                'user_data.name_extension', 
-                'user_data.date_of_birth', 
-                'user_data.place_of_birth', 
-                'user_data.sex', 
-                'user_data.citizenship', 
-                'user_data.civil_status', 
-                'user_data.height', 
-                'user_data.weight', 
-                'user_data.blood_type', 
-                'user_data.gsis', 
-                'user_data.pagibig', 
-                'user_data.philhealth', 
-                'user_data.sss', 
-                'user_data.tin', 
-                'user_data.agency_employee_no', 
-                'user_data.tel_number', 
-                'user_data.mobile_number', 
-                'user_data.permanent_selectedProvince', 
-                'user_data.permanent_selectedCity', 
-                'user_data.permanent_selectedBarangay', 
-                'user_data.p_house_street', 
-                'user_data.permanent_selectedZipcode',
-                'user_data.residential_selectedProvince', 
-                'user_data.residential_selectedCity', 
-                'user_data.residential_selectedBarangay', 
-                'user_data.r_house_street', 
-                'user_data.residential_selectedZipcode',
-            );
+            ->select('users.id');
 
+        $nameFields = ['surname', 'first_name', 'middle_name', 'name_extension'];
+        $nameFieldsSelected = false;
+
+        foreach ($this->selectedColumns as $column) {
+            if (in_array($column, $nameFields)) {
+                $query->addSelect("user_data.$column");
+                $nameFieldsSelected = true;
+            } elseif ($column !== 'name') {  // Skip 'name' as we'll handle it separately
+                $query->addSelect("user_data.$column");
+            }
+        }
+
+        // If no specific name fields are selected, but 'name' is, select all name fields
+        if (!$nameFieldsSelected && in_array('name', $this->selectedColumns)) {
+            foreach ($nameFields as $field) {
+                $query->addSelect("user_data.$field");
+            }
+        }
+
+        // Apply filters
         if ($this->filters['sex']) {
             $query->where('user_data.sex', $this->filters['sex']);
         }
-
         if ($this->filters['civil_status']) {
             $query->where('user_data.civil_status', $this->filters['civil_status']);
         }
-
         if ($this->filters['selectedProvince']) {
             $query->where('user_data.permanent_selectedProvince', $this->filters['selectedProvince']);
         }
-
         if ($this->filters['selectedCity']) {
             $query->where('user_data.permanent_selectedCity', $this->filters['selectedCity']);
         }
-
         if ($this->filters['selectedBarangay']) {
             $query->where('user_data.permanent_selectedBarangay', $this->filters['selectedBarangay']);
         }
 
         return $query->get()
-            ->map(function ($user) {
-                return [
-                    'ID' => $user->id,
-                    'Surname' => $user->surname,
-                    'First Name' => $user->first_name,
-                    'Middle Name' => $user->middle_name,
-                    'Name Extension' => $user->name_extension,
-                    'Birth Date' => $user->date_of_birth,
-                    'Birth Place' => $user->place_of_birth,
-                    'Sex' => $user->sex,
-                    'Citizenship' => $user->citizenship,
-                    'Civil Status' => $user->civil_status,
-                    'Height' => $user->height,
-                    'Weight' => $user->weight,
-                    'Blood Type' => $user->blood_type,
-                    'GSIS ID No.' => $user->gsis,
-                    'PAGIBIG ID No.' => $user->pagibig,
-                    'PhilHealth ID No.' => $user->philhealth,
-                    'SSS No.' => $user->sss,
-                    'TIN No.' => $user->tin,
-                    'Agency Employee No.' => $user->agency_employee_no,
-                    'Telephone No.' => $user->tel_number,
-                    'Mobile No.' => $user->mobile_number,
-                    'Permanent Address (Province)' => $user->permanent_selectedProvince,
-                    'Permanent Address (City)' => $user->permanent_selectedCity,
-                    'Permanent Address (Barangay)' => $user->permanent_selectedBarangay,
-                    'Permanent Address (Street)' => $user->p_house_street,
-                    'Permanent Address (Zip Code)' => $user->permanent_selectedZipcode,
-                    'Residential Address (Province)' => $user->residential_selectedProvince,
-                    'Residential Address (City)' => $user->residential_selectedCity,
-                    'Residential Address (Barangay)' => $user->residential_selectedBarangay,
-                    'Residential Address (Street)' => $user->r_house_street,
-                    'Residential Address (Zip Code)' => $user->residential_selectedZipcode,
-                ];
+            ->map(function ($user) use ($nameFields, $nameFieldsSelected) {
+                $userData = ['ID' => $user->id];
+                
+                if (in_array('name', $this->selectedColumns) || $nameFieldsSelected) {
+                    $fullName = trim(implode(' ', [
+                        $user->surname ?? '',
+                        $user->first_name ?? '',
+                        $user->middle_name ?? '',
+                        $user->name_extension ?? ''
+                    ]));
+                    $userData['Name'] = $fullName;
+                }
+
+                foreach ($this->selectedColumns as $column) {
+                    if ($column !== 'name' && $column !== 'id') {
+                        $userData[$this->getColumnHeader($column)] = $user->$column;
+                    }
+                }
+                return $userData;
             });
     }
 
     public function headings(): array
     {
-        return [
-            'ID',
-            'Surname',
-            'First Name',
-            'Middle Name',
-            'Name Extension',
-            'Birth Date',
-            'Birth Place',
-            'Sex',
-            'Citizenship',
-            'Civil Status',
-            'Height',
-            'Weight',
-            'Blood Type',
-            'GSIS ID No.',
-            'PAGIBIG ID No.',
-            'PhilHealth ID No.',
-            'SSS No.',
-            'TIN No.',
-            'Agency Employee No.',
-            'Telephone No.',
-            'Mobile No.',
-            'Permanent Address (Province)',
-            'Permanent Address (City)',
-            'Permanent Address (Barangay)',
-            'Permanent Address (Street)',
-            'Permanent Address (Zip Code)',
-            'Residential Address (Province)',
-            'Residential Address (City)',
-            'Residential Address (Barangay)',
-            'Residential Address (Street)',
-            'Residential Address (Zip Code)'
+        $headers = ['ID'];
+        if (in_array('name', $this->selectedColumns) || 
+            array_intersect(['surname', 'first_name', 'middle_name', 'name_extension'], $this->selectedColumns)) {
+            $headers[] = 'Name';
+        }
+        foreach ($this->selectedColumns as $column) {
+            if ($column !== 'name' && $column !== 'id') {
+                $headers[] = $this->getColumnHeader($column);
+            }
+        }
+        return $headers;
+    }
+
+    private function getColumnHeader($column)
+    {
+        $headers = [
+            'surname' => 'Surname',
+            'first_name' => 'First Name',
+            'middle_name' => 'Middle Name',
+            'name_extension' => 'Name Extension',
+            'date_of_birth' => 'Birth Date',
+            'place_of_birth' => 'Birth Place',
+            'sex' => 'Sex',
+            'citizenship' => 'Citizenship',
+            'civil_status' => 'Civil Status',
+            'height' => 'Height',
+            'weight' => 'Weight',
+            'blood_type' => 'Blood Type',
+            'gsis' => 'GSIS ID No.',
+            'pagibig' => 'PAGIBIG ID No.',
+            'philhealth' => 'PhilHealth ID No.',
+            'sss' => 'SSS No.',
+            'tin' => 'TIN No.',
+            'agency_employee_no' => 'Agency Employee No.',
+            'tel_number' => 'Telephone No.',
+            'mobile_number' => 'Mobile No.',
+            'permanent_selectedProvince' => 'Permanent Address (Province)',
+            'permanent_selectedCity' => 'Permanent Address (City)',
+            'permanent_selectedBarangay' => 'Permanent Address (Barangay)',
+            'p_house_street' => 'Permanent Address (Street)',
+            'permanent_selectedZipcode' => 'Permanent Address (Zip Code)',
+            'residential_selectedProvince' => 'Residential Address (Province)',
+            'residential_selectedCity' => 'Residential Address (City)',
+            'residential_selectedBarangay' => 'Residential Address (Barangay)',
+            'r_house_street' => 'Residential Address (Street)',
+            'residential_selectedZipcode' => 'Residential Address (Zip Code)',
         ];
+
+        return $headers[$column] ?? $column;
     }
 }

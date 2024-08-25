@@ -1,8 +1,8 @@
-<div class="w-full">
+<div x-data="{ selectedTab: 'pending' }" class="w-full">
     <div class="w-full flex justify-center">
         <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
-            <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Leave Monetization
-            </h1>
+            <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Leave Monetization</h1>
+
             <div>
                 <button wire:click="openRequestForm"
                     class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white mb-2">
@@ -12,6 +12,27 @@
                     </span>
                 </button>
             </div>
+
+            <!-- Tab Buttons -->
+            <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700 mb-4">
+                <button @click="selectedTab = 'pending'"
+                    :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'pending', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'pending' }"
+                    class="h-min px-4 py-2 text-sm">
+                    Pending
+                </button>
+                <button @click="selectedTab = 'approved'"
+                    :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'approved', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'approved' }"
+                    class="h-min px-4 py-2 text-sm">
+                    Approved
+                </button>
+                <button @click="selectedTab = 'disapproved'"
+                    :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'disapproved', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'disapproved' }"
+                    class="h-min px-4 py-2 text-sm">
+                    Disapproved
+                </button>
+            </div>
+
+            <!-- Table -->
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                     <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
@@ -25,35 +46,41 @@
                     </thead>
                     <tbody>
                         @foreach ($requests as $request)
-                            <tr class="whitespace-nowrap">
-                                <td class="px-4 py-2 text-center">{{ $request->vl_credits_requested }}</td>
-                                <td class="px-4 py-2 text-center">{{ $request->sl_credits_requested }}</td>
-                                <td class="px-4 py-2 text-center">
-                                    <span style="font-family: 'Arial', sans-serif; font-weight: bold;">&#8369;</span>
-                                    {{ number_format($request->vl_monetize_credits, 2) }}
-                                </td>
-                                <td class="px-4 py-2 text-center">
-                                    <span style="font-family: 'Arial', sans-serif; font-weight: bold;">&#8369;</span>
-                                    {{ number_format($request->sl_monetize_credits, 2) }}
-                                </td>
-                                <td class="px-4 py-2 text-center">
-                                    <span
-                                        class="inline-block px-3 py-1 text-sm font-semibold
-                                    {{ $request->status === 'Approved'
-                                        ? 'text-green-800 bg-green-200'
-                                        : ($request->status === 'Disapproved'
-                                            ? 'text-red-800 bg-red-200'
-                                            : ($request->status === 'Pending'
-                                                ? 'text-yellow-800 bg-yellow-200'
-                                                : '')) }} rounded-lg">
-                                        {{ $request->status }}
-                                    </span>
-                                </td>
-                            </tr>
+                            <template x-if="selectedTab === '{{ strtolower($request->status) }}'">
+                                <tr class="whitespace-nowrap">
+                                    <td class="px-4 py-2 text-center">{{ $request->vl_credits_requested }}</td>
+                                    <td class="px-4 py-2 text-center">{{ $request->sl_credits_requested }}</td>
+                                    <td class="px-4 py-2 text-center">
+                                        <span
+                                            style="font-family: 'Arial', sans-serif; font-weight: bold;">&#8369;</span>
+                                        {{ number_format($request->vl_monetize_credits, 2) }}
+                                    </td>
+                                    <td class="px-4 py-2 text-center">
+                                        <span
+                                            style="font-family: 'Arial', sans-serif; font-weight: bold;">&#8369;</span>
+                                        {{ number_format($request->sl_monetize_credits, 2) }}
+                                    </td>
+                                    <td class="px-4 py-2 text-center">
+                                        <span
+                                            class="inline-block px-3 py-1 text-sm font-semibold
+                                        {{ $request->status === 'Approved'
+                                            ? 'text-green-800 bg-green-200'
+                                            : ($request->status === 'Disapproved'
+                                                ? 'text-red-800 bg-red-200'
+                                                : ($request->status === 'Pending'
+                                                    ? 'text-yellow-800 bg-yellow-200'
+                                                    : '')) }} rounded-lg">
+                                            {{ $request->status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </template>
                         @endforeach
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination -->
             <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
                 {{ $requests->links() }}
             </div>
