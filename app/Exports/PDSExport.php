@@ -3,13 +3,10 @@
 namespace App\Exports;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
-use Maatwebsite\Excel\Concerns\WithDrawings;
 
-class PDSExport implements WithDrawings
+class PDSExport
 {
 
     protected $pds;
@@ -24,31 +21,6 @@ class PDSExport implements WithDrawings
             foreach (['C1', 'C2', 'C3', 'C4'] as $sheetName) {
                 $sheet = $spreadsheet->getSheetByName($sheetName);
                 $this->populateSheet($sheet, $sheetName);
-            }
-
-            $sheet = $spreadsheet->getSheetByName('C4');
-            $photoPath = $this->getTemporaryPhotoPath($this->pds['pds_photo']->photo);
-            if ($photoPath && file_exists($photoPath) && is_readable($photoPath)) {
-                $imageType = mime_content_type($photoPath);
-                if (strpos($imageType, 'jpeg') !== false) {
-                    $image = imagecreatefromjpeg($photoPath);
-                } elseif (strpos($imageType, 'png') !== false) {
-                    $image = imagecreatefrompng($photoPath);
-                } else {
-                    $sheet->setCellValue('L54', "Unsupported image type: " . $imageType);
-                    return;
-                }
-            
-                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing();
-                $drawing->setName('Photo');
-                $drawing->setDescription('Photo');
-                $drawing->setImageResource($image);
-                $drawing->setRenderingFunction(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::RENDERING_JPEG);
-                $drawing->setMimeType(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::MIMETYPE_JPEG);
-                $drawing->setHeight(250);
-                $drawing->setWidth(200);
-                $drawing->setCoordinates('K51');
-                $drawing->setWorksheet($sheet);
             }
             
             $writer = new Xlsx($spreadsheet);
@@ -81,6 +53,8 @@ class PDSExport implements WithDrawings
             }
             return '₱ ' . number_format((float)$value, 2, '.', ',');
         };
+
+        $dateNow = now()->format('m/d/Y');
 
         switch ($sheetName) {
             case 'C1':
@@ -206,6 +180,8 @@ class PDSExport implements WithDrawings
                     $sheet->setCellValue("N{$row}", $educ->award);
                 }
 
+                $sheet->setCellValue('L60', $dateNow);
+
                 break;
             case 'C2':
                 $eligRow = 5;
@@ -231,6 +207,9 @@ class PDSExport implements WithDrawings
                     $sheet->setCellValue("M{$workExpRow}", $exp->gov_service ? 'Y' : 'N');
                     $workExpRow++;
                 }
+
+                $sheet->setCellValue('K47', $dateNow);
+
                 break;
             case 'C3':
                 $volWorkRow = 6;
@@ -285,6 +264,8 @@ class PDSExport implements WithDrawings
                     $sheet->setCellValue("I{$orgMemRow}", $membership->ass_org_name . " - " . $membership->position);
                     $orgMemRow++;
                 }
+
+                $sheet->setCellValue('I50', $dateNow);
 
                 break;
             case 'C4':
@@ -405,43 +386,11 @@ class PDSExport implements WithDrawings
                 $sheet->setCellValue("D61", $this->pds['pds_gov_id']->gov_id);
                 $sheet->setCellValue("D62", $this->pds['pds_gov_id']->id_number);
                 $sheet->setCellValue("D64", Carbon::parse($this->pds['pds_gov_id']->date_of_issuance)->format('m/d/Y'));
+
+                $sheet->setCellValue('F64', $dateNow);
+
                 break;
         }
-    }
-
-    private function getTemporaryPhotoPath($photoPath){
-        if ($photoPath){
-            $path = str_replace('public/', '', $photoPath);
-            $originalPath = Storage::disk('public')->get($path);
-            $filename = str_replace('public/pds-photos/', '', $photoPath);
-            $tempPath = public_path('temp/' . $filename);
-            if (!file_exists(dirname($tempPath))) {
-                mkdir(dirname($tempPath), 0755, true);
-            }
-            file_put_contents($tempPath, $originalPath);
-            return realpath($tempPath);
-        }
-        return null;
-    }
-
-    public function drawings(){
-        $spreadsheet = IOFactory::load(storage_path('app/templates/pds_template.xlsx'));
-        $sheet = $spreadsheet->getSheetByName('C4');
-        $photoPath = $this->getTemporaryPhotoPath($this->pds['pds_photo']->photo);
-        if ($photoPath && file_exists($photoPath) && is_readable($photoPath)) {
-            $drawing = new Drawing();
-            $drawing->setName('Photo');
-            $drawing->setDescription('Photo');
-            $drawing->setPath($photoPath)
-                    ->setHeight(250) 
-                    ->setWidth(200)
-                    ->setCoordinates('K51')
-                    ->setOffsetX(10)
-                    ->setOffsetY(10)
-                    ->setWorksheet($sheet);
-            return $drawing;
-        }
-        return null;
     }
 
 }

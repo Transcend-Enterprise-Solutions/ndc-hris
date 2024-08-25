@@ -1,6 +1,6 @@
 <div class="w-full"
 x-data="{ 
-    selectedTab: 'C4',
+    selectedTab: 'C1',
 }" 
 x-cloak
 >
@@ -1382,7 +1382,7 @@ x-cloak
                         {{-- ID's and Photo --}}
                         <div class="flex flex-col w-full border-2 border-gray-200 dark:border-slate-600">
                             <div class="w-full block sm:flex">
-                                <div class="w-full sm:w-4/5 bg-gray-100 dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600 flex flex-col justify-end relative">
+                                <div class="w-full bg-gray-100 dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600 flex flex-col justify-end relative">
                                     <div class="w-full border-b-2 border-gray-200 dark:border-slate-600 p-2 bg-gray-100 dark:bg-slate-700">
                                         <p class="w-full">Government Issued ID (i.e.Passport, GSIS, SSS, PRC, Driver's License, etc.) </p>
                                         <p class="w-full text-right">PLEASE INDICATE ID Number</p>
@@ -1393,7 +1393,7 @@ x-cloak
                                             <input type="text" value="{{ $govId }}" wire:model='govId' 
                                             class="w-1/3 text-sm bg-gray-100 text-gray-800 w-full" autofocus style="height: 35px">
                                         @elseif($govId)
-                                            <p class="w-2/3 text-gray-800 dark:text-gray-100">{{ $govId }}</p>
+                                            <p class="w-2/3 text-gray-800 dark:text-gray-100 text-right">{{ $govId }}</p>
                                         @endif
                                     </div>
                                     <div class="flex w-full border-b-2 border-gray-200 dark:border-slate-600 px-2 bg-gray-50 dark:bg-gray-800 items-center" style="height: 50px">
@@ -1402,7 +1402,7 @@ x-cloak
                                         <input type="text" value="{{ $idNumber }}" wire:model='idNumber' 
                                             class="w-1/3 text-sm bg-gray-100 text-gray-800 w-full" autofocus style="height: 35px">
                                         @elseif($idNumber)
-                                            <p class="w-2/3 text-gray-800 dark:text-gray-100">{{ $idNumber }}</p>
+                                            <p class="w-2/3 text-gray-800 dark:text-gray-100 text-right">{{ $idNumber }}</p>
                                         @endif
                                     </div>
                                     <div class="flex w-full px-2 bg-gray-50 dark:bg-gray-800 items-center" style="height: 50px">
@@ -1411,7 +1411,7 @@ x-cloak
                                             <input type="date" wire:model='dateIssued' 
                                             class="w-1/3 text-sm bg-gray-100 text-gray-800 w-full" autofocus style="height: 35px">
                                         @elseif($dateIssued)
-                                            <p class="w-2/3 text-gray-800 dark:text-gray-100">{{ $dateIssued }}</p>
+                                            <p class="w-2/3 text-gray-800 dark:text-gray-100 text-right">{{ $dateIssued }}</p>
                                         @endif
                                     </div>
                                     <i title="{{ $editGovId ? 'Save' : 'Edit' }}" class="absolute top-2 mr-2 float-right {{ $editGovId ? 'right-8' : 'right-2' }} cursor-pointer text-sm
@@ -1426,51 +1426,6 @@ x-cloak
                                     <i title="Cancel" class="absolute mr-2 right-2 float-right cursor-pointer bi-x-square text-red-500 hover:text-red-700 text-xs
                                         {{ $editGovId ? '' : 'hidden' }}"
                                         wire:click="toggleEditGovId" style="top: 10px;"></i>
-                                </div>
-                                <div class="w-full flex-col sm:flex-row flex gap-6 justify-center items-center p-2 items-start px-4 bg-gray-100 dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600 relative">
-                                    <div class="flex flex-col justify-center items-center text-gray-500 dark:text-gray-400 text-black" 
-                                        style="width: 200px; height: 250px;">
-                                        <p class="text-center">
-                                            ID picture taken within <br>
-                                            the last  6 months <br>
-                                            4.5 cm. X 3.5 cm <br>
-                                            (passport size)
-                                        </p>
-                                        <p class="mt-4 text-center">
-                                            Computer generated <br>
-                                            or photocopied picture <br>
-                                            is not acceptable
-                                        </p>
-                                    </div>
-                                    <div class="flex flex-col justify-center items-center border border-gray-800 bg-white text-black" 
-                                        style="width: 200px; height: 250px;">
-                                        @if($myPhoto)
-                                            <img src="{{ route('pds-photo.file', basename($myPhoto)) }}"
-                                                alt="PDS Photo"
-                                                class="w-full h-full object-cover">
-                                        @else
-                                            <i class="bi bi-image-fill text-black float-right pt-1 mr-2 cursor-pointer text-2xl" 
-                                                onclick="document.getElementById('photo').click()"
-                                                title="Add Photo"></i>
-                                        @endif
-                                    </div>
-                                    <i class="absolute top-2 right-8 fas fa-edit text-blue-500 hover:text-blue-700 float-right pt-1 mr-2 cursor-pointer text-md" 
-                                        onclick="document.getElementById('photo').click()"
-                                        title="Edit Photo"></i>
-
-                                    <i title="Delete Photo" class="absolute top-2 right-2 fas fa-trash text-red-500 hover:text-red-700 float-right mt-1 mr-1 cursor-pointer" 
-                                        wire:click="toggleDelete('photo')"></i>
-
-
-                                    <input type="file" id="photo" 
-                                        wire:model="pdsPhoto" 
-                                        style="display: none;" 
-                                        accept="image/*">
-                                        
-                                    <div wire:loading wire:target="pdsPhoto" style="margin-left: 5px">
-                                        <div class="spinner-border small text-primary" role="status">
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>

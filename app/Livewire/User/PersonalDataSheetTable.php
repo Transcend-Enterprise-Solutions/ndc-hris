@@ -218,9 +218,6 @@ class PersonalDataSheetTable extends Component
     public $idNumber;
     public $dateIssued;
 
-    public $pdsPhoto;
-    public $myPhoto;
-
     public function mount(){
         $user = Auth::user();
         $this->pds = [
@@ -241,7 +238,6 @@ class PersonalDataSheetTable extends Component
             'references' => $user->charReferences,
             'pds_c4_answers' => $user->pdsC4Answers,
             'pds_gov_id' => $user->pdsGovIssuedId,
-            'pds_photo' => $user->pdsPhoto,
         ];
         $this->getC4Answers();
         $pdsGovId = PdsGovIssuedId::where('user_id', $user->id)->first();
@@ -249,11 +245,6 @@ class PersonalDataSheetTable extends Component
             $this->govId = $pdsGovId->gov_id;
             $this->idNumber = $pdsGovId->id_number;
             $this->dateIssued = Carbon::parse($pdsGovId->date_of_issuance)->format('m-d-Y');
-        }
-
-        $pdsPhoto = PdsPhoto::where('user_id', $user->id)->first();
-        if($pdsPhoto){
-            $this->myPhoto = $pdsPhoto->photo;
         }
     }
 
@@ -288,10 +279,6 @@ class PersonalDataSheetTable extends Component
                 $cityCode = $cityCode->getAttributes();
                 $this->rbarangays = PhilippineBarangays::where('city_municipality_code', $cityCode['city_municipality_code'])->get();
             }    
-        }
-
-        if($this->pdsPhoto) {
-            $this->savePhoto();
         }
 
         return view('livewire.user.personal-data-sheet-table', [

@@ -2,17 +2,21 @@
 
 namespace App\Livewire\Admin;
 
+use App\Exports\PDSExport;
+use App\Models\PdsC4Answers;
 use Livewire\Component;
 use App\Models\User;
-use App\Models\UserData;
 use Livewire\WithPagination;
-use App\Models\EmployeesChildren;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\EmployeesExport;
+use App\Models\PdsGovIssuedId;
 use App\Models\PhilippineProvinces;
 use App\Models\PhilippineCities;
 use App\Models\PhilippineBarangays;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeTable extends Component
 {
@@ -101,8 +105,37 @@ class EmployeeTable extends Component
         'exportUsers'
     ];
 
-    public function toggleDropdown()
-    {
+    public $q34aAnswer;
+    public $q34bAnswer;
+    public $q34bDetails;
+    public $q35aAnswer;
+    public $q35aDetails;
+    public $q35bAnswer;
+    public $q35bDate_filed;
+    public $q35bStatus;
+    public $q36aAnswer;
+    public $q36aDetails;
+    public $q37aAnswer;
+    public $q37aDetails;
+    public $q38aAnswer;
+    public $q38aDetails;
+    public $q38bAnswer;
+    public $q38bDetails;
+    public $q39aAnswer;
+    public $q39aDetails;
+    public $q40aAnswer;
+    public $q40aDetails;
+    public $q40bAnswer;
+    public $q40bDetails;
+    public $q40cAnswer;
+    public $q40cDetails;
+
+    public $editGovId;
+    public $govId;
+    public $idNumber;
+    public $dateIssued;
+
+    public function toggleDropdown(){
         $this->dropdownForCategoryOpen = !$this->dropdownForCategoryOpen;
         $this->dropdownForSexOpen = false;
         $this->dropdownForCivilStatusOpen = false;
@@ -111,8 +144,7 @@ class EmployeeTable extends Component
         $this->dropdownForBarangayOpen = false;
     }
 
-    public function toggleDropdownFilter()
-    {
+    public function toggleDropdownFilter(){
         $this->dropdownForFilter = !$this->dropdownForFilter;
     }
 
@@ -310,6 +342,13 @@ class EmployeeTable extends Component
         $this->non_acads_distinctions = $this->selectedUser->nonAcadDistinctions;
         $this->assOrgMemberships = $this->selectedUser->assOrgMembership;
         $this->references = $this->selectedUser->charReferences;
+        $this->getC4Answers();
+        $pdsGovId = PdsGovIssuedId::where('user_id', $this->selectedUser->id)->first();
+        if($pdsGovId){
+            $this->govId = $pdsGovId->gov_id;
+            $this->idNumber = $pdsGovId->id_number;
+            $this->dateIssued = Carbon::parse($pdsGovId->date_of_issuance)->format('m-d-Y');
+        }
 
         $this->personalDataSheetOpen = true;
     }
@@ -341,8 +380,8 @@ class EmployeeTable extends Component
     //     ];
     //     return Excel::download(new EmployeesExport($filters), 'EmployeesList.xlsx');
     // }
-    public function exportUsers()
-    {
+
+    public function exportUsers(){
         $filterConditions = [
             'sex' => $this->sex,
             'civil_status' => $this->civil_status,
@@ -397,16 +436,9 @@ class EmployeeTable extends Component
         $this->barangays = collect();
     }
 
-    public function exportPDS()
-    {
+    public function exportPDS(){
         try {
-            $user = $this->selectedUser; // Fetch the selected user data
-
-            // If no user is selected, throw an exception
-            if (!$user) {
-                throw new \Exception('No user selected.');
-            }
-
+            $user = User::find($this->selectedUser->id);
             $pds = [
                 'userData' => $user->userData,
                 'userSpouse' => $user->employeesSpouse,
@@ -423,17 +455,60 @@ class EmployeeTable extends Component
                 'non_acads_distinctions' => $user->nonAcadDistinctions,
                 'assOrgMemberships' => $user->assOrgMembership,
                 'references' => $user->charReferences,
+                'pds_c4_answers' => $user->pdsC4Answers,
+                'pds_gov_id' => $user->pdsGovIssuedId,
+                'pds_photo' => $user->pdsPhoto,
             ];
 
-            $pdf = Pdf::loadView('pdf.pds', ['pds' => $pds]);
-            $pdf->setPaper('A4', 'portrait');
-            
-            return response()->streamDownload(function () use ($pdf) {
-                echo $pdf->stream();
-            }, $user->userData->first_name . ' ' . $user->userData->surname . ' PDS.pdf');
-        } catch (\Exception $e) {
+            $exporter = new PDSExport($pds);
+            $result = $exporter->export();
+
+            return response()->streamDownload(function () use ($result) {
+                echo $result['content'];
+            }, $result['filename']);
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
+    public function getC4Answers(){
+        try {
+            $questions = [
+                'q34a' => ['num' => 34, 'letter' => 'a', 'fields' => ['answer']],
+                'q34b' => ['num' => 34, 'letter' => 'b', 'fields' => ['answer', 'details']],
+                'q35a' => ['num' => 35, 'letter' => 'a', 'fields' => ['answer', 'details']],
+                'q35b' => ['num' => 35, 'letter' => 'b', 'fields' => ['answer', 'date_filed', 'status']],
+                'q36a' => ['num' => 36, 'letter' => 'a', 'fields' => ['answer', 'details']],
+                'q37a' => ['num' => 37, 'letter' => 'a', 'fields' => ['answer', 'details']],
+                'q38a' => ['num' => 38, 'letter' => 'a', 'fields' => ['answer', 'details']],
+                'q38b' => ['num' => 38, 'letter' => 'b', 'fields' => ['answer', 'details']],
+                'q39a' => ['num' => 39, 'letter' => 'a', 'fields' => ['answer', 'details']],
+                'q40a' => ['num' => 40, 'letter' => 'a', 'fields' => ['answer', 'details']],
+                'q40b' => ['num' => 40, 'letter' => 'b', 'fields' => ['answer', 'details']],
+                'q40c' => ['num' => 40, 'letter' => 'c', 'fields' => ['answer', 'details']],
+            ];
+    
+            foreach ($questions as $key => $question) {
+                $answer = $this->getAnswer($question['num'], $question['letter']);
+                
+                foreach ($question['fields'] as $field) {
+                    $fieldKey = $key . ucfirst($field);
+                    if($answer && $field == "date_filed"){
+                        $this->{$fieldKey} = $answer ? Carbon::parse($answer->{$field})->format('m-d-Y') : null;
+                    }else{
+                        $this->{$fieldKey} = $answer ? $answer->{$field} : null;
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function getAnswer($qNum, $qLetter){
+        return PdsC4Answers::where('user_id', $this->selectedUser->id)
+            ->where('question_number', $qNum)
+            ->where('question_letter', $qLetter)
+            ->first();
+    }    
 }
