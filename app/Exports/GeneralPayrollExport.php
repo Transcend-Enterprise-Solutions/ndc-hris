@@ -629,20 +629,20 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
         }
 
         // Signature C
-        $sheet->mergeCells("K{$startRow}:O{$startRow}");
-        $signatureC = $this->getTemporarySignaturePath($signatoryC);
-        if ($signatureC) {
-            $drawingC = new Drawing();
-            $drawingC->setName('Signature C');
-            $drawingC->setDescription('Signature C');
-            $drawingC->setPath($signatureC);
-            $drawingC->setHeight($imageOptions['height']);
-            $drawingC->setWidth($imageOptions['width']);
-            $drawingC->setCoordinates("M{$startRow}");
-            $drawingC->setOffsetX(50);
-            $drawingC->setWorksheet($worksheet);
-        }
-        $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] - 2);
+        // $sheet->mergeCells("K{$startRow}:O{$startRow}");
+        // $signatureC = $this->getTemporarySignaturePath($signatoryC);
+        // if ($signatureC) {
+        //     $drawingC = new Drawing();
+        //     $drawingC->setName('Signature C');
+        //     $drawingC->setDescription('Signature C');
+        //     $drawingC->setPath($signatureC);
+        //     $drawingC->setHeight($imageOptions['height']);
+        //     $drawingC->setWidth($imageOptions['width']);
+        //     $drawingC->setCoordinates("M{$startRow}");
+        //     $drawingC->setOffsetX(50);
+        //     $drawingC->setWorksheet($worksheet);
+        // }
+        // $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] - 2);
 
         $startRow ++;
         $sheet->mergeCells("A{$startRow}:E{$startRow}");
@@ -718,7 +718,8 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
             $drawingD->setWorksheet($worksheet);
         }
         $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] / 2);
-
+        $sheet->mergeCells("J{$startRow}:Q{$startRow}");
+        $sheet->setCellValue("J{$startRow}", "");
         $sheet->mergeCells("AD{$startRow}:AF{$startRow}");
         $sheet->setCellValue("AD{$startRow}", "ORS/BURS No.:______________________");
         $sheet->getStyle("AD{$startRow}")->getFont()->setBold(true);

@@ -1427,7 +1427,7 @@ x-cloak
                                         {{ $editGovId ? '' : 'hidden' }}"
                                         wire:click="toggleEditGovId" style="top: 10px;"></i>
                                 </div>
-                                <div class="w-full flex gap-6 justify-center items-center p-2 items-start px-4 bg-gray-100 dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600 relative">
+                                <div class="w-full flex-col sm:flex-row flex gap-6 justify-center items-center p-2 items-start px-4 bg-gray-100 dark:bg-slate-700 border-2 border-gray-200 dark:border-slate-600 relative">
                                     <div class="flex flex-col justify-center items-center text-gray-500 dark:text-gray-400 text-black" 
                                         style="width: 200px; height: 250px;">
                                         <p class="text-center">

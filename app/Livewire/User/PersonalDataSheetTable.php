@@ -239,6 +239,9 @@ class PersonalDataSheetTable extends Component
             'non_acads_distinctions' => $user->nonAcadDistinctions,
             'assOrgMemberships' => $user->assOrgMembership,
             'references' => $user->charReferences,
+            'pds_c4_answers' => $user->pdsC4Answers,
+            'pds_gov_id' => $user->pdsGovIssuedId,
+            'pds_photo' => $user->pdsPhoto,
         ];
         $this->getC4Answers();
         $pdsGovId = PdsGovIssuedId::where('user_id', $user->id)->first();

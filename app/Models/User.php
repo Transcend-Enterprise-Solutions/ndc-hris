@@ -200,7 +200,7 @@ class User extends Authenticatable
     }
 
     public function pdsC4Answers(){
-        return $this->hasOne(PdsC4Answers::class);
+        return $this->hasMany(PdsC4Answers::class);
     }
 
     public function pdsGovIssuedId(){

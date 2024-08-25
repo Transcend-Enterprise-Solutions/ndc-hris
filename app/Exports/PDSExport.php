@@ -3,13 +3,13 @@
 namespace App\Exports;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use Maatwebsite\Excel\Concerns\WithDrawings;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use Intervention\Image\ImageManagerStatic;
 
-class PDSExport implements WithDrawings
+class PDSExport
 {
     protected $pds;
 
@@ -276,28 +276,154 @@ class PDSExport implements WithDrawings
                     $sheet->setCellValue("G{$refsRow}", $number);
                     $refsRow++;
                 }
+
+                foreach($this->pds['pds_c4_answers'] as $ans){
+                    switch($ans->question_number){
+                        case 34:
+                            if($ans->question_letter == "a"){
+                                $aYes = $ans->answer ? '☑ YES' : '☐ YES';
+                                $aNo = !$ans->answer ? '☑ NO' : '☐ NO';
+                                $sheet->setCellValue("G6", $aYes);
+                                $sheet->setCellValue("J6", $aNo);
+                            }
+                            else{
+                                $bYes = $ans->answer ? '☑ YES' : '☐ YES';
+                                $bNo = !$ans->answer ? '☑ NO' : '☐ NO';
+                                $sheet->setCellValue("G8", $bYes);
+                                $sheet->setCellValue("J8", $bNo);
+                                $sheet->setCellValue("H11", $ans->details);
+                            }
+                            break;
+                        case 35:
+                            if($ans->question_letter == "a"){
+                                $aYes = $ans->answer ? '☑ YES' : '☐ YES';
+                                $aNo = !$ans->answer ? '☑ NO' : '☐ NO';
+                                $sheet->setCellValue("G13", $aYes);
+                                $sheet->setCellValue("J13", $aNo);
+                                $sheet->setCellValue("H15", $ans->details);
+                            }
+                            else{
+                                $bYes = $ans->answer ? '☑ YES' : '☐ YES';
+                                $bNo = !$ans->answer ? '☑ NO' : '☐ NO';
+                                $sheet->setCellValue("G18", $bYes);
+                                $sheet->setCellValue("J18", $bNo);
+                                $sheet->setCellValue("K20", Carbon::parse($ans->date_filed)->format('m/d/Y'));
+                                $sheet->setCellValue("K21", $ans->status);
+                            }
+                            break;
+                        case 36:
+                            if($ans->question_letter == "a"){
+                                $aYes = $ans->answer ? '☑ YES' : '☐ YES';
+                                $aNo = !$ans->answer ? '☑ NO' : '☐ NO';
+                                $sheet->setCellValue("G23", $aYes);
+                                $sheet->setCellValue("J23", $aNo);
+                                $sheet->setCellValue("H25", $ans->details);
+                            }
+                            break;
+                        case 37:
+                            if($ans->question_letter == "a"){
+                                $aYes = $ans->answer ? '☑ YES' : '☐ YES';
+                                $aNo = !$ans->answer ? '☑ NO' : '☐ NO';
+                                $sheet->setCellValue("G27", $aYes);
+                                $sheet->setCellValue("J27", $aNo);
+                                $sheet->setCellValue("H29", $ans->details);
+                            }
+                            break;
+                        case 38:
+                            if($ans->question_letter == "a"){
+                                $aYes = $ans->answer ? '☑ YES' : '☐ YES';
+                                $aNo = !$ans->answer ? '☑ NO' : '☐ NO';
+                                $sheet->setCellValue("G31", $aYes);
+                                $sheet->setCellValue("J31", $aNo);
+                                $sheet->setCellValue("K32", $ans->details);
+                            }else{
+                                $aYes = $ans->answer ? '☑ YES' : '☐ YES';
+                                $aNo = !$ans->answer ? '☑ NO' : '☐ NO';
+                                $sheet->setCellValue("G34", $aYes);
+                                $sheet->setCellValue("J34", $aNo);
+                                $sheet->setCellValue("K35", $ans->details);
+                            }
+                            break;
+                        case 39:
+                            if($ans->question_letter == "a"){
+                                $aYes = $ans->answer ? '☑ YES' : '☐ YES';
+                                $aNo = !$ans->answer ? '☑ NO' : '☐ NO';
+                                $sheet->setCellValue("G37", $aYes);
+                                $sheet->setCellValue("J37", $aNo);
+                                $sheet->setCellValue("H39", $ans->details);
+                            }
+                            break;
+                        case 40:
+                            if($ans->question_letter == "a"){
+                                $aYes = $ans->answer ? '☑ YES' : '☐ YES';
+                                $aNo = !$ans->answer ? '☑ NO' : '☐ NO';
+                                $sheet->setCellValue("G43", $aYes);
+                                $sheet->setCellValue("J43", $aNo);
+                                $sheet->setCellValue("L44", $ans->details);
+                            }elseif($ans->question_letter == "b"){
+                                $aYes = $ans->answer ? '☑ YES' : '☐ YES';
+                                $aNo = !$ans->answer ? '☑ NO' : '☐ NO';
+                                $sheet->setCellValue("G45", $aYes);
+                                $sheet->setCellValue("J45", $aNo);
+                                $sheet->setCellValue("L46", $ans->details);
+                            }else{
+                                $aYes = $ans->answer ? '☑ YES' : '☐ YES';
+                                $aNo = !$ans->answer ? '☑ NO' : '☐ NO';
+                                $sheet->setCellValue("G47", $aYes);
+                                $sheet->setCellValue("J47", $aNo);
+                                $sheet->setCellValue("L48", $ans->details);
+                            }
+                            break;
+                    }
+                }
+
+                $sheet->setCellValue("D61", $this->pds['pds_gov_id']->gov_id);
+                $sheet->setCellValue("D62", $this->pds['pds_gov_id']->id_number);
+                $sheet->setCellValue("D64", Carbon::parse($this->pds['pds_gov_id']->date_of_issuance)->format('m/d/Y'));
+
+                $photoPath = $this->getTemporaryPhotoPath($this->pds['pds_photo']->photo);
+                if ($photoPath && file_exists($photoPath) && is_readable($photoPath)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Photo');
+                    $drawing->setDescription('Photo');
+                    $drawing->setPath($photoPath)
+                            ->setHeight(250)
+                            ->setWidth(200)
+                            ->setCoordinates('K51')
+                            ->setOffsetX(10)
+                            ->setOffsetY(10)
+                            ->setWorksheet($sheet);
+                }
+
+                $image = ImageManagerStatic::make($photoPath);
+                $image->resize(200, 250);
+                $tempPath = tempnam(sys_get_temp_dir(), 'excel_img_');
+                $image->save($tempPath);
+
+                $drawing = new Drawing();
+                $drawing->setName('Photo');
+                $drawing->setDescription('Photo');
+                $drawing->setPath($tempPath);
+                $drawing->setCoordinates("K51");
+                $drawing->setWorksheet($sheet);
+
                 break;
         }
     }
 
-    private function setCheckbox($sheet, $cellAddress, $value){
-        $checkedImagePath = public_path('images/checked.png');
-        $uncheckedImagePath = public_path('images/unchecked.png');
-        $imagePath = (strtolower($value) === 'male') ? $checkedImagePath : $uncheckedImagePath;
-        $drawing = new Drawing();
-        $drawing->setName('Checkbox');
-        $drawing->setDescription('Checkbox');
-        $drawing->setPath($imagePath);
-        $drawing->setCoordinates($cellAddress);
-        $drawing->setOffsetX(5);
-        $drawing->setOffsetY(5);
-        $drawing->setWidth(100);
-        $drawing->setHeight(100);
-        $drawing->setWorksheet($sheet);
-    }
-
-    public function drawings(){
-        return [];
+    private function getTemporaryPhotoPath($photoPath){
+        if ($photoPath){
+            $path = str_replace('public/', '', $photoPath);
+            $originalPath = Storage::disk('public')->get($path);
+            $filename = str_replace('public/pds-photos/', '', $photoPath);
+            $tempPath = public_path('temp/' . $filename);
+            if (!file_exists(dirname($tempPath))) {
+                mkdir(dirname($tempPath), 0755, true);
+            }
+            file_put_contents($tempPath, $originalPath);
+            return realpath($tempPath);
+        }
+        return null;
     }
 
 }
