@@ -7,23 +7,48 @@ use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
-use Intervention\Image\ImageManagerStatic;
+use Maatwebsite\Excel\Concerns\WithDrawings;
 
-class PDSExport
+class PDSExport implements WithDrawings
 {
+
     protected $pds;
 
     public function __construct($pds){
         $this->pds = $pds;
     }
 
-    public function export()
-    {
+    public function export(){
         try {
             $spreadsheet = IOFactory::load(storage_path('app/templates/pds_template.xlsx'));
             foreach (['C1', 'C2', 'C3', 'C4'] as $sheetName) {
                 $sheet = $spreadsheet->getSheetByName($sheetName);
                 $this->populateSheet($sheet, $sheetName);
+            }
+
+            $sheet = $spreadsheet->getSheetByName('C4');
+            $photoPath = $this->getTemporaryPhotoPath($this->pds['pds_photo']->photo);
+            if ($photoPath && file_exists($photoPath) && is_readable($photoPath)) {
+                $imageType = mime_content_type($photoPath);
+                if (strpos($imageType, 'jpeg') !== false) {
+                    $image = imagecreatefromjpeg($photoPath);
+                } elseif (strpos($imageType, 'png') !== false) {
+                    $image = imagecreatefrompng($photoPath);
+                } else {
+                    $sheet->setCellValue('L54', "Unsupported image type: " . $imageType);
+                    return;
+                }
+            
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing();
+                $drawing->setName('Photo');
+                $drawing->setDescription('Photo');
+                $drawing->setImageResource($image);
+                $drawing->setRenderingFunction(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::RENDERING_JPEG);
+                $drawing->setMimeType(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::MIMETYPE_JPEG);
+                $drawing->setHeight(250);
+                $drawing->setWidth(200);
+                $drawing->setCoordinates('K51');
+                $drawing->setWorksheet($sheet);
             }
             
             $writer = new Xlsx($spreadsheet);
@@ -380,33 +405,6 @@ class PDSExport
                 $sheet->setCellValue("D61", $this->pds['pds_gov_id']->gov_id);
                 $sheet->setCellValue("D62", $this->pds['pds_gov_id']->id_number);
                 $sheet->setCellValue("D64", Carbon::parse($this->pds['pds_gov_id']->date_of_issuance)->format('m/d/Y'));
-
-                $photoPath = $this->getTemporaryPhotoPath($this->pds['pds_photo']->photo);
-                if ($photoPath && file_exists($photoPath) && is_readable($photoPath)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Photo');
-                    $drawing->setDescription('Photo');
-                    $drawing->setPath($photoPath)
-                            ->setHeight(250)
-                            ->setWidth(200)
-                            ->setCoordinates('K51')
-                            ->setOffsetX(10)
-                            ->setOffsetY(10)
-                            ->setWorksheet($sheet);
-                }
-
-                $image = ImageManagerStatic::make($photoPath);
-                $image->resize(200, 250);
-                $tempPath = tempnam(sys_get_temp_dir(), 'excel_img_');
-                $image->save($tempPath);
-
-                $drawing = new Drawing();
-                $drawing->setName('Photo');
-                $drawing->setDescription('Photo');
-                $drawing->setPath($tempPath);
-                $drawing->setCoordinates("K51");
-                $drawing->setWorksheet($sheet);
-
                 break;
         }
     }
@@ -422,6 +420,26 @@ class PDSExport
             }
             file_put_contents($tempPath, $originalPath);
             return realpath($tempPath);
+        }
+        return null;
+    }
+
+    public function drawings(){
+        $spreadsheet = IOFactory::load(storage_path('app/templates/pds_template.xlsx'));
+        $sheet = $spreadsheet->getSheetByName('C4');
+        $photoPath = $this->getTemporaryPhotoPath($this->pds['pds_photo']->photo);
+        if ($photoPath && file_exists($photoPath) && is_readable($photoPath)) {
+            $drawing = new Drawing();
+            $drawing->setName('Photo');
+            $drawing->setDescription('Photo');
+            $drawing->setPath($photoPath)
+                    ->setHeight(250) 
+                    ->setWidth(200)
+                    ->setCoordinates('K51')
+                    ->setOffsetX(10)
+                    ->setOffsetY(10)
+                    ->setWorksheet($sheet);
+            return $drawing;
         }
         return null;
     }
