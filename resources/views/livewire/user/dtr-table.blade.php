@@ -144,7 +144,7 @@
                                 } elseif ($dtr->remarks == 'Absent') {
                                     $bgColor = 'bg-red-400';
                                     $textColor = 'text-red-800';
-                                } elseif ($dtr->remarks == 'Late') {
+                                } elseif ($dtr->remarks == 'Late/Undertime') {
                                     $bgColor = 'bg-yellow-400';
                                     $textColor = 'text-yellow-800';
                                 }

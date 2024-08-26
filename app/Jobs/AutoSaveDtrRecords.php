@@ -107,8 +107,8 @@ class AutoSaveDtrRecords implements ShouldQueue
             }
         }
 
-        // Adjust late threshold for Monday
-        if ($dayOfWeek === 'Monday') {
+        // Adjust late threshold for Monday and not WFH
+        if ($dayOfWeek === 'Monday' &&  $location !== 'WFH' ) {
             $lateThreshold = $carbonDate->copy()->setTimeFromTimeString('09:00:00');
         }
         // Check for holiday or leave
@@ -247,11 +247,10 @@ class AutoSaveDtrRecords implements ShouldQueue
         } else {
             // If there's no afternoon out, add 4 hours of undertime
             $undertime = $undertime->addHours(4);
-
-            // Check if morning out is before 12:00
-            if ($morningOut && $morningOut->lt($lunchTime)) {
-                $undertime = $undertime->addMinutes($lunchTime->diffInMinutes($morningOut));
-            }
+        }
+        // Check if morning out is before 12:00
+        if ($morningOut && $morningOut->lt($lunchTime)) {
+            $undertime = $undertime->addMinutes($lunchTime->diffInMinutes($morningOut));
         }
 
         // Add undertime to lateness
@@ -282,7 +281,7 @@ class AutoSaveDtrRecords implements ShouldQueue
         if (!$actualMorningIn && !$actualAfternoonIn) {
             $remarks = 'Absent';
         } elseif ($lateFormatted !== '00:00') {
-            $remarks = 'Late';
+            $remarks = 'Late/Undertime';
         }
 
         return [

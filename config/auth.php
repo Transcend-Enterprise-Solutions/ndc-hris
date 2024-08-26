@@ -111,5 +111,6 @@ return [
     */
 
     'password_timeout' => 10800,
+    'remember_for' => 5 * 365 * 24 * 60 * 60, // 5 years in seconds
 
 ];
