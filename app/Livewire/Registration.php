@@ -105,6 +105,7 @@ class Registration extends Component
         ]);
 
         $this->step++;
+
     }
 
     public function toStep3()
@@ -209,9 +210,9 @@ class Registration extends Component
         $r_st = $this->r_street? $this->r_street : "N/A";
         $r_s = $this->r_subdivision ? $this->r_subdivision : "N/A";
         $r_house_street = $r_h . ',' . $r_st . ',' . $r_s;
-
-        $appointmentValue = $this->getAppointmentValue();
         $sexValue = $this->getSexValue();
+        $appointmentValue = $this->getAppointmentValue();
+
         $user->userData()->create([
             'user_id' => $user->id,
             'first_name' => $this->first_name,
@@ -355,7 +356,7 @@ class Registration extends Component
     }
     public function getSexValue()
     {
-        if ($this->sex === 'Other' && $this->otherSex) {
+        if ($this->sex === 'Others' && $this->otherSex) {
             return $this->sex . ',' . $this->otherSex;
         }
         return $this->sex;
