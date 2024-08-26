@@ -12,6 +12,16 @@ x-cloak>
 
             <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
 
+                
+                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'org'">
+                    <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                    <input type="text" id="search" wire:model.live="search2"
+                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                            dark:hover:bg-slate-600 dark:border-slate-600
+                            dark:text-gray-300 dark:bg-gray-800"
+                        placeholder="Enter employee name or ID">
+                </div>
+
                 <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'role'">
                     <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
                     <input type="text" id="search" wire:model.live="search"
@@ -21,9 +31,9 @@ x-cloak>
                         placeholder="Enter employee name or ID">
                 </div>
 
-                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'org'">
-                    <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
-                    <input type="text" id="search" wire:model.live="search2"
+                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'pos'">
+                    <label for="search3" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                    <input type="text" id="search3" wire:model.live="search3"
                         class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800"
@@ -57,6 +67,22 @@ x-cloak>
 
                 </div>
                 
+                <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4" x-show="selectedTab === 'pos'">      
+
+                        <!-- Export to Excel -->
+                        {{-- <div class="relative inline-block text-left">
+                            <button wire:click="exportExcel"
+                                class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                                justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
+                                text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                                rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
+                                type="button"  aria-describedby="excelExport">
+                                <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
+                                <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
+                            </button>
+                            <div id="excelExport" class="absolute -top-5 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap rounded bg-gray-600 px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:text-black" role="tooltip">Export Roles</div>
+                        </div> --}} 
+                </div>
             </div>
 
             <!-- Table -->
@@ -72,6 +98,11 @@ x-cloak>
                                 :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'role', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'role' }" 
                                 class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
                             Admin Role
+                        </button>
+                        <button @click="selectedTab = 'pos'" 
+                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'pos', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'pos' }" 
+                                class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
+                            Employee Position
                         </button>
                         <button @click="selectedTab = 'settings'" 
                                 :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'settings', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'settings' }" 
@@ -172,6 +203,76 @@ x-cloak>
                                         </div>
                                         <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
                                             {{ $admins->links() }}
+                                        </div>
+                                    </div>
+                                    <div x-show="selectedTab === 'pos'">
+                                        <div class="overflow-x-auto">
+                                            <table class="w-full min-w-full">
+                                                <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                                    <tr class="whitespace-nowrap">
+                                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">
+                                                            Name
+                                                        </th>
+                                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
+                                                            Employee Number
+                                                        </th>
+                                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
+                                                            Office/Division
+                                                        </th>
+                                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
+                                                            Position
+                                                        </th>
+                                                        <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                            Action
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                                    @foreach ($empPos as $pos)
+                                                        @if($pos->position != "Super Admin")
+                                                            <tr class="text-neutral-800 dark:text-neutral-200">
+                                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                                    {{ $pos->name }}
+                                                                </td>
+                                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                                    {{ $pos->emp_code }}
+                                                                </td>
+                                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                                    {{ $pos->office_division }}
+                                                                </td>
+                                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                                    {{ $pos->position }}
+                                                                </td>
+                                                                <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                                    <div class="relative">
+                                                                        @if($pos->position != "Super pos")
+                                                                            <button wire:click="toggleEditPosition({{ $pos->id }})" 
+                                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                                focus:outline-none" title="Edit">
+                                                                                <i class="fas fa-pencil-alt"></i>
+                                                                            </button>
+                                                                            <button wire:click="toggleDelete({{ $pos->id }}, 'role')" 
+                                                                                class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                                dark:hover:text-red-900" title="Delete">
+                                                                                <i class="fas fa-trash"></i>
+                                                                            </button>
+                                                                        @endif
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        @endif
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                            @if ($empPos->isEmpty())
+                                                <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                                    No records!
+                                                </div> 
+                                            @endif
+                                        </div>
+                                        <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                            {{ $empPos->links() }}
                                         </div>
                                     </div>
                                     <div x-show="selectedTab === 'settings'">
@@ -557,6 +658,74 @@ x-cloak>
                             Save
                         </button>
                         <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                            Cancel
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </x-modal>
+    
+    {{-- Add and Edit Position Modal --}}
+    <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="editPosition" centered>
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $addPosition ? 'Add' : 'Edit' }} Employee's Office/Division and Position
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {{-- Form fields --}}
+            <form wire:submit.prevent='savePosition'>
+                <div class="grid grid-cols-2 gap-4">
+                    
+                    <div class="col-span-full">
+                        <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
+                        <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
+                            @foreach ($employees as $employee)
+                                <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('userId') 
+                            <span class="text-red-500 text-sm">Please select an employee!</span> 
+                        @enderror
+                    </div>
+                    
+                    <div class="col-span-full sm:col-span-1">
+                        <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
+                        <select id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="{{ $office_division }}">{{ $office_division ? $office_division : 'Select an employee' }}</option>
+                            @foreach ($office_divisions as $office)
+                                <option value="{{ $office->id }}">{{ $office->office_division }}</option>
+                            @endforeach
+                        </select>
+                        @error('office_division') 
+                            <span class="text-red-500 text-sm">Please select office/division!</span> 
+                        @enderror
+                    </div>
+                    
+                    <div class="col-span-full sm:col-span-1">
+                        <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
+                        <select id="position" wire:model='position' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="{{ $position }}">{{ $position ? $position : 'Select position' }}</option>
+                            @foreach ($positions as $pos)
+                                <option value="{{ $pos->id }}">{{ $pos->position }}</option>
+                            @endforeach
+                        </select>
+                        @error('position') 
+                            <span class="text-red-500 text-sm">Please select position!</span> 
+                        @enderror
+                    </div>
+
+
+                    <div class="mt-4 flex justify-end col-span-2">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveRole" class="spinner-border small text-primary" role="status">
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
                             Cancel
                         </p>
                     </div>

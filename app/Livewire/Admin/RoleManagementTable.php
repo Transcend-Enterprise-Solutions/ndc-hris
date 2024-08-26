@@ -3,11 +3,14 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Admin;
+use App\Models\CosPayrolls;
 use App\Models\CosRegPayrolls;
 use App\Models\OfficeDivisions;
 use App\Models\Payrolls;
+use App\Models\PayrollSignatories;
 use App\Models\Positions;
 use App\Models\SalaryGrade;
+use App\Models\Signatories;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +23,8 @@ class RoleManagementTable extends Component
     public $addRole;
     public $editRole;
     public $employees;
+    public $positions;
+    public $office_divisions;
     public $userId;
     public $name;
     public $employee_number;
@@ -50,9 +55,13 @@ class RoleManagementTable extends Component
         'step1' => '', 'step2' => '', 'step3' => '', 'step4' => '',
         'step5' => '', 'step6' => '', 'step7' => '', 'step8' => '',
     ];
+    public $addPosition;
+    public $editPosition;
 
     public function mount(){
         $this->employees = User::where('user_role', '=', 'emp')->get();
+        $this->positions = Positions::all();
+        $this->office_divisions = OfficeDivisions::all();
         $this->salaryGrades = SalaryGrade::orderBy('salary_grade')->get();
     }
 
@@ -78,10 +87,20 @@ class RoleManagementTable extends Component
         $officeDivisions = OfficeDivisions::all();
         $positions = Positions::all();
 
+        $empPos = User::where('user_role', 'emp')
+                ->join('positions', 'positions.id', 'users.position_id')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->select('users.*', 'positions.position', 'office_divisions.office_division')
+                ->when($this->search3, function ($query) {
+                    return $query->search3(trim($this->search3));
+                })
+                ->paginate(5);
+
         return view('livewire.admin.role-management-table',[
             'admins' => $admins,
             'officeDivisions' => $officeDivisions,
             'positions' => $positions,
+            'empPos' => $empPos,
         ]);
     }
 
@@ -182,6 +201,29 @@ class RoleManagementTable extends Component
     public function toggleAddRole(){
         $this->editRole = true;
         $this->addRole = true;
+    }
+
+    public function toggleEditPosition($userId){
+        $this->editPosition = true;
+        $this->userId = $userId;
+        try {
+            $empPos = User::where('users.id', $userId)
+                    ->join('positions', 'positions.id', 'users.position_id')
+                    ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                    ->select('users.*', 'positions.position', 'office_divisions.office_division')
+                    ->when($this->search3, function ($query) {
+                        return $query->search(trim($this->search3));
+                    })
+                    ->first();
+            if ($empPos) {
+                $this->userId = $empPos->id;
+                $this->name = $empPos->name;
+                $this->position = $empPos->position;
+                $this->office_division = $empPos->office_division;
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     public function saveRole(){

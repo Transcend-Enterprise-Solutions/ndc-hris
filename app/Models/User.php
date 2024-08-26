@@ -235,4 +235,14 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function scopeSearch3($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('positions.position', 'like', $term)
+                ->orWhere('users.emp_code', 'like', $term)
+                ->orWhere('users.name', 'like', $term)
+                ->orWhere('office_divisions.office_division', 'like', $term);
+        });
+    }
 }
