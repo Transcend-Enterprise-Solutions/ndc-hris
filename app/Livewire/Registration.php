@@ -257,7 +257,7 @@ class Registration extends Component
 
     public function mount(){
         $this->getProvicesAndCities();
-        $this->positions = Positions::all();
+        $this->positions = Positions::where('position', '!=', 'Super Admin')->get();
         $this->officeDivisions = OfficeDivisions::all();
     }
 

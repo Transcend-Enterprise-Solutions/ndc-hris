@@ -4,11 +4,63 @@
     </x-slot>
 
     <x-slot name="description">
-        {{ __('Update your email address.') }}
+        {{ __('Update your profile.') }}
         {{-- {{ __('Update your account\'s profile information and email address.') }} --}}
     </x-slot>
 
     <x-slot name="form">
+
+        <!-- Profile Photo -->
+        @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
+            <div x-data="{photoName: null, photoPreview: null}" class="col-span-6 sm:col-span-4">
+                <!-- Profile Photo File Input -->
+                <input type="file" id="photo" class="hidden"
+                            wire:model.live="photo"
+                            x-ref="photo"
+                            x-on:change="
+                                    photoName = $refs.photo.files[0].name;
+                                    const reader = new FileReader();
+                                    reader.onload = (e) => {
+                                        photoPreview = e.target.result;
+                                    };
+                                    reader.readAsDataURL($refs.photo.files[0]);
+                            " />
+
+                <x-label for="photo" value="{{ __('Photo') }}" />
+
+                <!-- Current Profile Photo -->
+                @if ($this->user->profile_photo_path)
+                    <div class="mt-2" x-show="! photoPreview">
+                        <img src="{{ route('profile-photo.file', ['filename' => basename($this->user->profile_photo_path)]) }}" 
+                            alt="{{ $this->user->name }}" 
+                            class="rounded-md h-72 w-72 object-cover">
+                    </div>      
+                @else
+                    <div class="mt-2" x-show="! photoPreview">
+                        <img src="{{ $this->user->profile_photo_url }}" alt="{{ $this->user->name }}" class="rounded-md h-40 w-40 object-cover">
+                    </div>
+                @endif
+
+                <!-- New Profile Photo Preview -->
+                <div class="mt-2" x-show="photoPreview" style="display: none;">
+                    <span class="block rounded-md h-72 w-72 bg-cover bg-no-repeat bg-center"
+                            x-bind:style="'background-image: url(\'' + photoPreview + '\');'">
+                    </span>
+                </div>
+
+                <x-secondary-button class="mt-2 me-1" type="button" x-on:click.prevent="$refs.photo.click()">
+                    {{ __('Select A New Photo') }}
+                </x-secondary-button>
+
+                @if ($this->user->profile_photo_path)
+                    <x-secondary-button type="button" class="mt-2" wire:click="deleteProfilePhoto">
+                        {{ __('Remove Photo') }}
+                    </x-secondary-button>
+                @endif
+
+                <x-input-error for="photo" class="mt-2" />
+            </div>
+        @endif
 
         <!-- Email -->
         <div class="col-span-6 sm:col-span-4">

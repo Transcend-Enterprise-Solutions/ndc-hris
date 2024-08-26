@@ -39,8 +39,9 @@ class HeadCount extends Component
 
         $departmentCounts = User::where('user_role', 'emp')
             ->join('payrolls', 'payrolls.user_id', 'users.id')
-            ->selectRaw('payrolls.department, count(*) as count')
-            ->groupBy('department')
+            ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+            ->selectRaw('office_divisions.office_division, count(*) as count')
+            ->groupBy('office_division')
             ->get();
 
         $dailyAttendance = $this->date ? EmployeesDtr::where('date', $this->date)

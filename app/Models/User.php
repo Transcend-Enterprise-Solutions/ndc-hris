@@ -32,6 +32,7 @@ class User extends Authenticatable
         'emp_code',
         'position_id',
         'office_division_id',
+        'profile_photo_path',
     ];
 
     /**
@@ -236,7 +237,7 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-    public function scopeSearch3($query, $term){
+    public function scopeSearch($query, $term){
         $term = "%$term%";
         $query->where(function ($query) use ($term) {
             $query->where('positions.position', 'like', $term)

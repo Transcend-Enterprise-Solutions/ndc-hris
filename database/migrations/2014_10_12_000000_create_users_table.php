@@ -22,6 +22,7 @@ return new class extends Migration
                 $table->string('emp_code')->unique()->nullable();
                 $table->unsignedBigInteger('position_id')->nullable();
                 $table->unsignedBigInteger('office_division_id')->nullable();
+                $table->string('profile_photo_path')->nullable();
                 $table->rememberToken();
                 $table->timestamps();
             });

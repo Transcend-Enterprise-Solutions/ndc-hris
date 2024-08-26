@@ -109,7 +109,7 @@ x-cloak
 
                         <div class="custom-d flex w-full">
 
-                            <div class="w-full sm:w-2/4 block">
+                            <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
                                     <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->surname }}</p>
@@ -121,7 +121,7 @@ x-cloak
                                 </div>
                             </div>
 
-                            <div class="w-full sm:w-2/4 block">
+                            <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 dark:bg-slate-700 bg-gray-50">Middlename</p>
                                     <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->middle_name }}</p>
@@ -137,7 +137,7 @@ x-cloak
 
                         <div class="custom-d flex w-full">
 
-                            <div class="w-full sm:w-2/4 block">
+                            <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($userData->date_of_birth)->format('F d, Y') }}
@@ -173,19 +173,19 @@ x-cloak
                                 </div>
                             </div>
 
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
+                            <div class="w-full lg:w-2/4 md:w-full block">
+                                <div class="flex w-full sm:w-auto" style="height: 112px">
                                     <p class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">Permanent Address</p>
-                                    <p class="custom-p w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200">
+                                    <p class="custom-p w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200 text-xs" style="overflow: hidden;">
                                         {{ $userData->p_house_street }} <br>
                                         {{ $userData->permanent_selectedBarangay }} {{ $userData->permanent_selectedCity }} <br>
                                         {{ $userData->permanent_selectedProvince }}, Philippines <br>
                                         {{ $userData->permanent_selectedZipcode }}
                                     </p>
                                 </div>
-                                <div class="flex w-full sm:w-auto">
+                                <div class="flex w-full sm:w-auto" style="height: 112px">
                                     <p class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">Residential Address</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200">
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200 text-xs" style="overflow: hidden;">
                                         {{ $userData->r_house_street }} <br>
                                         {{ $userData->residential_selectedBarangay }} {{ $userData->residential_selectedCity }} <br>
                                         {{ $userData->residential_selectedProvince }}, Philippines <br>
@@ -197,19 +197,20 @@ x-cloak
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->tel_number }}</p>
                                 </div>
                             </div>
+                            
 
                         </div>
 
                         <div class="custom-d flex w-full">
 
-                            <div class="w-full sm:w-2/4 block">
+                            <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Mobile No.</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->mobile_number }}</p>
                                 </div>
                             </div>
 
-                            <div class="w-full sm:w-2/4 block">
+                            <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Email</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->email }}</p>
@@ -219,7 +220,7 @@ x-cloak
 
                         <div class="custom-d flex w-full">
 
-                            <div class="w-full sm:w-2/4 block">
+                            <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">GSIS ID No.</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->gsis }}</p>
@@ -234,7 +235,7 @@ x-cloak
                                 </div>
                             </div>
 
-                            <div class="w-full sm:w-2/4 block">
+                            <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">SSS No.</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->sss }}</p>
@@ -267,7 +268,7 @@ x-cloak
 
                         @if($userSpouse)
                             <div class="custom-d flex w-full">
-                                <div class="w-full sm:w-2/4 block">
+                                <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->surname }}</p>
@@ -279,7 +280,7 @@ x-cloak
                                     </div>
                                 </div>
 
-                                <div class="w-full sm:w-2/4 block">
+                                <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->middle_name }}</p>
@@ -293,7 +294,7 @@ x-cloak
                             </div>
 
                             <div class="custom-d flex w-full">
-                                <div class="w-full sm:w-2/4 block">
+                                <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($userSpouse->birth_date)->format('F d, Y') }}</p>
@@ -305,7 +306,7 @@ x-cloak
                                     </div>
                                 </div>
 
-                                <div class="w-full sm:w-2/4 block">
+                                <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Employer</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->employer }}</p>
@@ -339,7 +340,7 @@ x-cloak
                         @if($userFather)
                             <div class="custom-d flex w-full">
 
-                                    <div class="w-full sm:w-2/4 block">
+                                    <div class="w-full lg:w-2/4 md:w-full block">
                                         <div class="flex w-full sm:w-auto">
                                             <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
                                             <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->surname }}</p>
@@ -351,7 +352,7 @@ x-cloak
                                         </div>
                                     </div>
 
-                                    <div class="w-full sm:w-2/4 block">
+                                    <div class="w-full lg:w-2/4 md:w-full block">
                                         <div class="flex w-full sm:w-auto">
                                             <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
                                             <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->middle_name }}</p>
@@ -377,30 +378,29 @@ x-cloak
                         @if($userMother)
                             <div class="custom-d flex w-full">
 
-                                    <div class="w-full sm:w-2/4 block">
-                                        <div class="flex w-full sm:w-auto">
-                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->surname }}</p>
-                                        </div>
-
-                                        <div class="flex w-full sm:w-auto">
-                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->first_name }}</p>
-                                        </div>
+                                <div class="w-full lg:w-2/4 md:w-full block">
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->surname }}</p>
                                     </div>
+                                </div>
 
-                                    <div class="w-full sm:w-2/4 block">
-                                        <div class="flex w-full sm:w-auto">
-                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
-                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->middle_name }}</p>
-                                        </div>
-
-                                        <div class="flex w-full sm:w-auto">
-                                            <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
-                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->name_extension }}</p>
-                                        </div>
+                                <div class="w-full lg:w-2/4 md:w-full block">
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->first_name }}</p>
                                     </div>
+                                </div>
 
+                            </div>
+
+                            <div class="custom-d flex w-full">
+                                <div class="w-full sm:w-4/4 block">
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 md:w-3/6 lg:w-1/5 bg-gray-50 dark:bg-slate-700">Middlename</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->middle_name }}</p>
+                                    </div>
+                                </div>
                             </div>
                         @endif
 
@@ -417,14 +417,14 @@ x-cloak
                             @foreach ($userChildren as $child)
                                 <div class="custom-d flex w-full">
 
-                                    <div class="w-full sm:w-2/4 block">
+                                    <div class="w-full lg:w-2/4 md:w-full block">
                                         <div class="flex w-full sm:w-auto">
                                             <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Fullname</p>
                                             <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $child->childs_name }}</p>
                                         </div>
                                     </div>
 
-                                    <div class="w-full sm:w-2/4 block">
+                                    <div class="w-full lg:w-2/4 md:w-full block">
                                         <div class="flex w-full sm:w-auto">
                                             <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
                                             <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($child->childs_birth_date)->format('F d, Y') }}
@@ -456,7 +456,7 @@ x-cloak
                             </div>
                             <div class="custom-d flex w-full">
 
-                                <div class="w-full sm:w-2/4 block">
+                                <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name of School</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->name_of_school }}</p>
@@ -474,7 +474,7 @@ x-cloak
                                     </div>
                                 </div>
 
-                                <div class="w-full sm:w-2/4 block">
+                                <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Basic Education/<br>Degree/Course</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->basic_educ_degree_course }}</p>
@@ -2030,14 +2030,6 @@ x-cloak
                         @enderror
                     </div>
 
-                    <div class="col-span-2 sm:col-span-1">
-                        <label for="mother_name_extension" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name Extension</label>
-                        <input type="text" id="mother_name_extension" wire:model='mother_name_extension' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('mother_name_extension')
-                            <span class="text-red-500 text-sm">The name extension is required!</span>
-                        @enderror
-                    </div>
-
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-2 sm:col-span-2">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -2536,7 +2528,7 @@ x-cloak
 
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="sg_step_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Salary/Job/Pay Grade & Step (if applicable)</label>
-                                    <input type="number" id="sg_step_{{ $index }}" wire:model="workExperiences.{{ $index }}.sg_step" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700" placeholder="Format (00-0) / Increment">
+                                    <input type="text" id="sg_step_{{ $index }}" wire:model="workExperiences.{{ $index }}.sg_step" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700" placeholder="Format (00-0) / Increment">
                                 </div>
 
                             </div>
@@ -2610,7 +2602,7 @@ x-cloak
 
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="sg_step_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Salary/Job/Pay Grade & Step (if applicable)</label>
-                                    <input type="number" id="sg_step_{{ $index }}" wire:model="workExperiences.{{ $index }}.sg_step" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700" placeholder="Format (00-0) / Increment">
+                                    <input type="text" id="sg_step_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.sg_step" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700" placeholder="Format (00-0) / Increment">
                                 </div>
 
                             </div>

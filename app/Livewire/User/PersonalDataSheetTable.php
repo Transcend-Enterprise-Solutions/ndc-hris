@@ -1270,7 +1270,7 @@ class PersonalDataSheetTable extends Component
                             'position' => $exp['position'],
                             'department' => $exp['department'],
                             'monthly_salary' => $exp['monthly_salary'],
-                            'sp_step' => $exp['sp_step'],
+                            'sg_step' => $exp['sg_step'],
                             'status_of_appointment' => $exp['status_of_appointment'],
                             'gov_service' => $exp['gov_service'],
                         ]);
@@ -1879,6 +1879,14 @@ class PersonalDataSheetTable extends Component
                 $dateFiled = null;
                 $status = null;
 
+                if($qAnswer == 1 && $qDetails == null){
+                    $this->dispatch('swal', [
+                        'title' => "Please add details!",
+                        'icon' => 'error'
+                    ]);
+                    return;
+                }
+
                 if($qNum == 35 && $qLetter == "b"){
                     $dateFiled = $this->q35bDate_filed;
                     $status = $this->q35bStatus;
@@ -1913,6 +1921,12 @@ class PersonalDataSheetTable extends Component
                         'status' => $status,
                     ]);
                     $message = "Answer added successfully!";
+                }
+
+                if($qNum == 40 && $qLetter == "b"){
+                    $user->userData->update([
+                        'pwd' => $qAnswer,
+                    ]);
                 }
                 $this->dispatch('swal', [
                     'title' => $message,
