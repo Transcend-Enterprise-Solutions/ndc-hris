@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('fetch:biotime-transactions')->everyMinute();
         $schedule->job(new AutoSaveDtrRecords())->everyMinute();
         $schedule->command('calculate:monthly-leave-credits')->monthlyOn(1, '00:00');
+        $schedule->command('leave-credits:reset')->yearlyOn(1, 1, '00:00');
     }
 
     /**

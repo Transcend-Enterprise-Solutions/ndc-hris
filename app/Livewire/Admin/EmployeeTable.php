@@ -36,7 +36,7 @@ class EmployeeTable extends Component
         'place_of_birth' => true,
         'sex' => true,
         'citizenship' => true,
-        'civil_status' => true,
+        'civil_status' => false,
         'height' => false,
         'weight' => false,
         'blood_type' => false,
@@ -63,12 +63,19 @@ class EmployeeTable extends Component
 
     public $sex;
     public $civil_status;
-    public $selectedProvince;
-    public $selectedCity;
-    public $selectedBarangay;
+    public $selectedCivilStatuses = [];
+    // public $selectedProvince;
+    // public $selectedCity;
+    // public $selectedBarangay;
+    public $selectedProvinces = [];
+    public $selectedCities = [];
+    public $selectedBarangays = [];
     public $provinces;
     public $cities;
     public $barangays;
+    public $selectAllProvinces = false;
+    public $selectAllCities = false;
+    public $selectAllBarangays = false;
 
     public $selectedUser = null;
     public $dropdownForCategoryOpen = false;
@@ -198,6 +205,33 @@ class EmployeeTable extends Component
         $this->dropdownForProvinceOpen = false;
     }
 
+    public function updatedSelectAllProvinces($value)
+    {
+        if ($value) {
+            $this->selectedProvinces = $this->provinces->pluck('province_description')->toArray();
+        } else {
+            $this->selectedProvinces = [];
+        }
+    }
+
+    public function updatedSelectAllCities($value)
+    {
+        if ($value) {
+            $this->selectedCities = $this->cities->pluck('city_municipality_description')->toArray();
+        } else {
+            $this->selectedCities = [];
+        }
+    }
+
+    public function updatedSelectAllBarangays($value)
+    {
+        if ($value) {
+            $this->selectedBarangays = $this->barangays->pluck('barangay_description')->toArray();
+        } else {
+            $this->selectedBarangays = [];
+        }
+    }
+
     public function updatedFilters()
     {
         $this->resetPage();
@@ -293,19 +327,24 @@ class EmployeeTable extends Component
                     $query->where('user_data.sex', $this->sex);
                 }
             })
+            // ->where(function ($query) {
+            //     if ($this->civil_status) {
+            //         $query->where('user_data.civil_status', $this->civil_status);
+            //     }
+            // })
             ->where(function ($query) {
-                if ($this->civil_status) {
-                    $query->where('user_data.civil_status', $this->civil_status);
+                if (!empty($this->selectedCivilStatuses)) {
+                    $query->whereIn('user_data.civil_status', $this->selectedCivilStatuses);
                 }
             })
-            ->when($this->selectedProvince, function ($query) {
-                return $query->where('user_data.permanent_selectedProvince', $this->selectedProvince);
+            ->when(!empty($this->selectedProvinces), function ($query) {
+                return $query->whereIn('user_data.permanent_selectedProvince', $this->selectedProvinces);
             })
-            ->when($this->selectedCity, function ($query) {
-                return $query->where('user_data.permanent_selectedCity', $this->selectedCity);
+            ->when(!empty($this->selectedCities), function ($query) {
+                return $query->whereIn('user_data.permanent_selectedCity', $this->selectedCities);
             })
-            ->when($this->selectedBarangay, function ($query) {
-                return $query->where('user_data.permanent_selectedBarangay', $this->selectedBarangay);
+            ->when(!empty($this->selectedBarangays), function ($query) {
+                return $query->whereIn('user_data.permanent_selectedBarangay', $this->selectedBarangays);
             })
             ->paginate(5);
 
@@ -381,13 +420,35 @@ class EmployeeTable extends Component
     //     return Excel::download(new EmployeesExport($filters), 'EmployeesList.xlsx');
     // }
 
-    public function exportUsers(){
+    // public function exportUsers(){
+    //     $filterConditions = [
+    //         'sex' => $this->sex,
+    //         'civil_status' => $this->civil_status,
+    //         'selectedProvince' => $this->selectedProvince,
+    //         'selectedCity' => $this->selectedCity,
+    //         'selectedBarangay' => $this->selectedBarangay,
+    //     ];
+    
+    //     $selectedColumns = array_keys(array_filter($this->filters));
+        
+    //     // Include 'name' if any name-related fields are selected
+    //     $nameFields = ['surname', 'first_name', 'middle_name', 'name_extension'];
+    //     if (count(array_intersect($nameFields, $selectedColumns)) > 0) {
+    //         $selectedColumns[] = 'name';
+    //     }
+    
+    //     $selectedColumns = array_unique($selectedColumns);
+    
+    //     return Excel::download(new EmployeesExport($filterConditions, $selectedColumns), 'EmployeesList.xlsx');
+    // }
+    public function exportUsers()
+    {
         $filterConditions = [
-            'sex' => $this->sex,
-            'civil_status' => $this->civil_status,
-            'selectedProvince' => $this->selectedProvince,
-            'selectedCity' => $this->selectedCity,
-            'selectedBarangay' => $this->selectedBarangay,
+            'sex' => $this->sex ?? null,
+            'civil_status' => $this->selectedCivilStatuses ?? [],
+            'selectedProvince' => $this->selectedProvinces ?? [],
+            'selectedCity' => $this->selectedCities ?? [],
+            'selectedBarangay' => $this->selectedBarangays ?? [],
         ];
     
         $selectedColumns = array_keys(array_filter($this->filters));
@@ -402,29 +463,27 @@ class EmployeeTable extends Component
     
         return Excel::download(new EmployeesExport($filterConditions, $selectedColumns), 'EmployeesList.xlsx');
     }
-
-    public function checkFilter(){
-        if ($this->selectedProvince != null) {
-            $provinceCode = PhilippineProvinces::where('province_description', $this->selectedProvince)
-                            ->select('province_code')->first();
-            $provinceCode = $provinceCode->getAttributes();
-            $this->cities = PhilippineCities::where('province_code', $provinceCode['province_code'])->get();
-        }
-        if ($this->selectedCity != null) {
-            $cityCode = PhilippineCities::where('city_municipality_description', $this->selectedCity)
-                            ->select('city_municipality_code')->first();
-            $cityCode = $cityCode->getAttributes();
-            $this->barangays = PhilippineBarangays::where('city_municipality_code', $cityCode['city_municipality_code'])->get();
-        }
-
-        if ($this->selectedProvince === '') {
+    
+    public function checkFilter()
+    {
+        if (!empty($this->selectedProvinces)) {
+            $provinceCodes = PhilippineProvinces::whereIn('province_description', $this->selectedProvinces)
+                ->pluck('province_code');
+            $this->cities = PhilippineCities::whereIn('province_code', $provinceCodes)->get();
+        } else {
             $this->cities = collect();
             $this->barangays = collect();
         }
-        if ($this->selectedCity === '') {
+    
+        if (!empty($this->selectedCities)) {
+            $cityCodes = PhilippineCities::whereIn('city_municipality_description', $this->selectedCities)
+                ->pluck('city_municipality_code');
+            $this->barangays = PhilippineBarangays::whereIn('city_municipality_code', $cityCodes)->get();
+        } else {
             $this->barangays = collect();
         }
     }
+      
 
     public function mount(){
         $this->getProvicesAndCities();

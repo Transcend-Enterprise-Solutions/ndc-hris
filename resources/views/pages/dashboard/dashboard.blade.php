@@ -35,10 +35,10 @@
         <div class="grid grid-cols-12 gap-6">
 
             <!-- Total Employees -->
-            <x-dashboard.dashboard-card-01/>
+            <x-dashboard.dashboard-card-01 />
 
             <!-- Employee Status -->
-            <x-dashboard.dashboard-card-02/>
+            <x-dashboard.dashboard-card-02 />
 
             <!-- Pending Documents -->
             <x-dashboard.dashboard-card-03 />
@@ -50,28 +50,28 @@
             <x-dashboard.dashboard-card-05 />
 
             <!-- Doughnut chart (Top Countries) -->
-            {{-- <x-dashboard.dashboard-card-06 />
+            {{-- <x-dashboard.dashboard-card-06 /> --}}
 
             <!-- Table (Top Channels) -->
-            <x-dashboard.dashboard-card-07 />
+            {{-- <x-dashboard.dashboard-card-07 /> --}}
 
             <!-- Line chart (Sales Over Time)  -->
-            <x-dashboard.dashboard-card-08 />
+            {{-- <x-dashboard.dashboard-card-08 /> --}}
 
             <!-- Stacked bar chart (Sales VS Refunds) -->
-            <x-dashboard.dashboard-card-09 />
+            {{-- <x-dashboard.dashboard-card-09 /> --}}
 
             <!-- Card (Customers)  -->
-            <x-dashboard.dashboard-card-10 />
+            {{-- <x-dashboard.dashboard-card-10 /> --}}
 
             <!-- Card (Reasons for Refunds)   -->
-            <x-dashboard.dashboard-card-11 />
+            {{-- <x-dashboard.dashboard-card-11 /> --}}
 
             <!-- Card (Recent Activity) -->
-            <x-dashboard.dashboard-card-12 />
+            {{-- <x-dashboard.dashboard-card-12 /> --}}
 
             <!-- Card (Income/Expenses) -->
-            <x-dashboard.dashboard-card-13 /> --}}
+            {{-- <x-dashboard.dashboard-card-13 /> --}}
 
         </div>
 

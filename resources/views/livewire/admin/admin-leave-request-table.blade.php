@@ -56,47 +56,14 @@
                                                     <td class="px-4 py-2 text-center">
                                                         {{ $leaveApplication->date_of_filing }}</td>
                                                     <td class="px-4 py-2 text-center">
-                                                        @php
-                                                            $typeOfLeave = $leaveApplication->type_of_leave;
-                                                            $truncatedTypeOfLeave = \Illuminate\Support\Str::limit(
-                                                                $typeOfLeave,
-                                                                10,
-                                                                '...',
-                                                            );
-                                                        @endphp
-                                                        <span
-                                                            @if (strlen($typeOfLeave) > 10) title="{{ $typeOfLeave }}" @endif>
-                                                            {{ $truncatedTypeOfLeave }}
-                                                        </span>
+                                                        {{ $leaveApplication->type_of_leave }}
                                                     </td>
                                                     <td class="px-4 py-2 text-center">
-                                                        @php
-                                                            $detailsOfLeave = $leaveApplication->details_of_leave;
-                                                            $truncatedDetailsOfLeave = \Illuminate\Support\Str::limit(
-                                                                $detailsOfLeave,
-                                                                10,
-                                                                '...',
-                                                            );
-                                                        @endphp
-                                                        <span
-                                                            @if (strlen($detailsOfLeave) > 10) title="{{ $detailsOfLeave }}" @endif>
-                                                            {{ $truncatedDetailsOfLeave }}
-                                                        </span>
+                                                        {{ $leaveApplication->details_of_leave }}</td>
                                                     <td class="px-4 py-2 text-center">
                                                         {{ $leaveApplication->number_of_days }}</td>
                                                     <td class="px-4 py-2 text-center">
-                                                        @php
-                                                            $listOfDates = $leaveApplication->list_of_dates;
-                                                            $truncatedListOfDates = \Illuminate\Support\Str::limit(
-                                                                $listOfDates,
-                                                                10,
-                                                                '...',
-                                                            );
-                                                        @endphp
-                                                        <span
-                                                            @if (strlen($listOfDates) > 10) title="{{ $listOfDates }}" @endif>
-                                                            {{ $truncatedListOfDates }}
-                                                        </span>
+                                                        {{ $leaveApplication->list_of_dates }}</td>
                                                     <td class="px-4 py-2 text-center">
                                                         @if ($leaveApplication->file_name)
                                                             @php
@@ -119,19 +86,7 @@
                                                             No file
                                                         @endif
                                                     </td>
-                                                    <td class="px-4 py-2 text-center">
-                                                        @php
-                                                            $remarks = $leaveApplication->remarks;
-                                                            $truncatedRemarks = \Illuminate\Support\Str::limit(
-                                                                $remarks,
-                                                                15,
-                                                                '...',
-                                                            );
-                                                        @endphp
-                                                        <span
-                                                            @if (strlen($remarks) > 15) title="{{ $remarks }}" @endif>
-                                                            {{ $truncatedRemarks }}
-                                                        </span>
+                                                    <td class="px-4 py-2 text-center">{{ $leaveApplication->remarks }}
                                                     </td>
                                                     <td class="px-4 py-2 text-center">
                                                         {{ $leaveApplication->approved_days }}

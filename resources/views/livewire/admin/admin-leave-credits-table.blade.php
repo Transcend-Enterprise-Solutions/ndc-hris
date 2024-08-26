@@ -57,7 +57,6 @@
                         <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                             <tr class="whitespace-nowrap">
                                 <th scope="col" class="px-4 py-2 text-center">Name</th>
-                                <th scope="col" class="px-4 py-2 text-center">Total Credits</th>
                                 <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th>
                                 <th scope="col" class="px-4 py-2 text-center">Claimed Credits</th>
                             </tr>
@@ -66,18 +65,6 @@
                             @foreach ($leaveCredits as $leaveCredit)
                                 <tr class="whitespace-nowrap">
                                     <td class="px-4 py-2 text-center">{{ $leaveCredit->user->name }}</td>
-
-                                    <td class="px-4 py-2 text-center">
-                                        <template x-if="selectedTab === 'vl'">
-                                            <span>{{ number_format($leaveCredit->vl_total_credits ?? 0, 3) }}</span>
-                                        </template>
-                                        <template x-if="selectedTab === 'sl'">
-                                            <span>{{ number_format($leaveCredit->sl_total_credits ?? 0, 3) }}</span>
-                                        </template>
-                                        <template x-if="selectedTab === 'spl'">
-                                            <span>{{ number_format($leaveCredit->spl_total_credits ?? 0, 3) }}</span>
-                                        </template>
-                                    </td>
 
                                     <!-- Conditional Columns Based on Selected Tab -->
                                     <td class="px-4 py-2 text-center">

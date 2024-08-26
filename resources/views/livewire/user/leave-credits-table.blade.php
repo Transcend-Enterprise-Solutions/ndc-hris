@@ -23,7 +23,6 @@
             <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                 <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                     <tr class="whitespace-nowrap">
-                        <th scope="col" class="px-4 py-2 text-center">Total Credits</th>
                         <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th>
                         <th scope="col" class="px-4 py-2 text-center">Claimed Credits</th>
                     </tr>
@@ -31,21 +30,18 @@
                 <tbody>
                     <!-- Vacation Leave Credits -->
                     <tr x-show="selectedTab === 'vl'" class="whitespace-nowrap">
-                        <td class="px-4 py-2 text-center">{{ $vl_total_credits }}</td>
                         <td class="px-4 py-2 text-center">{{ $vl_claimable_credits }}</td>
                         <td class="px-4 py-2 text-center">{{ $vl_claimed_credits }}</td>
                     </tr>
 
                     <!-- Sick Leave Credits -->
                     <tr x-show="selectedTab === 'sl'" class="whitespace-nowrap">
-                        <td class="px-4 py-2 text-center">{{ $sl_total_credits }}</td>
                         <td class="px-4 py-2 text-center">{{ $sl_claimable_credits }}</td>
                         <td class="px-4 py-2 text-center">{{ $sl_claimed_credits }}</td>
                     </tr>
 
                     <!-- Special Privilege Leave Credits -->
                     <tr x-show="selectedTab === 'spl'" class="whitespace-nowrap">
-                        <td class="px-4 py-2 text-center">{{ $spl_total_credits }}</td>
                         <td class="px-4 py-2 text-center">{{ $spl_claimable_credits }}</td>
                         <td class="px-4 py-2 text-center">{{ $spl_claimed_credits }}</td>
                     </tr>

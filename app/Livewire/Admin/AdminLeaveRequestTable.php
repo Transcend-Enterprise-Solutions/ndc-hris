@@ -61,59 +61,108 @@ class AdminLeaveRequestTable extends Component
         $this->resetVariables();
     }
 
+    // public function updateStatus()
+    // {
+    //     if ($this->status === 'With Pay') {
+    //         $this->validate([
+    //             'status' => 'required',
+    //             'days' => 'required|numeric|min:1',
+    //         ]);
+    
+    //         // Validate leave balance only for specified leave types
+    //         if (in_array($this->selectedApplication->type_of_leave, ['Vacation Leave', 'Sick Leave', 'Special Privilege Leave'])) {
+    //             if (!$this->validateLeaveBalance($this->days)) {
+    //                 return;
+    //             }
+    //         }
+    //     } elseif ($this->status === 'Other') {
+    //         $this->validate([
+    //             'status' => 'required',
+    //             'otherReason' => 'required|string',
+    //         ]);
+    //     } else {
+    //         $this->validate([
+    //             'status' => 'required',
+    //             'days' => 'required|numeric|min:1',
+    //         ]);
+    //     }
+    
+    //     if ($this->selectedApplication) {
+    //         if ($this->status === 'Other') {
+    //             $this->selectedApplication->status = "Approved";
+    //             $this->selectedApplication->remarks = $this->otherReason;
+    //             $this->selectedApplication->approved_days = 0;
+    //         } else {
+    //             $this->selectedApplication->status = 'Approved';
+    //             $this->selectedApplication->approved_days = $this->days;
+    //             $this->selectedApplication->remarks = $this->status === 'With Pay' ? 'With Pay' : 'Without Pay';
+    
+    //             $allApprovedDates = [];
+    
+    //             foreach ($this->selectedDates as $date) {
+    //                 if (strpos($date, ' - ') !== false) {
+    //                     // Split the range into start and end dates
+    //                     $range = explode(' - ', $date);
+    //                     $allApprovedDates = array_merge($allApprovedDates, $range);
+    //                 } else {
+    //                     $allApprovedDates[] = $date;
+    //                 }
+    //             }
+    
+    //             $this->selectedApplication->approved_dates = implode(',', $allApprovedDates);
+    
+    //             if (in_array($this->selectedApplication->type_of_leave, ['Vacation Leave', 'Sick Leave', 'Special Privilege Leave'])) {
+    //                 $this->updateLeaveDetails($this->days, $this->status);
+    //             }
+    //         }
+    
+    //         $this->selectedApplication->save();
+    
+    //         $this->dispatch('swal', [
+    //             'title' => "Leave application {$this->status} successfully!",
+    //             'icon' => 'success'
+    //         ]);
+    
+    //         $this->closeApproveModal();
+    //     }
+    // }
     public function updateStatus()
     {
-        if ($this->status === 'With Pay') {
-            $this->validate([
-                'status' => 'required',
-                'days' => 'required|numeric|min:1',
-            ]);
-    
-            // Validate leave balance only for specified leave types
-            if (in_array($this->selectedApplication->type_of_leave, ['Vacation Leave', 'Sick Leave', 'Special Privilege Leave'])) {
-                if (!$this->validateLeaveBalance($this->days)) {
-                    return;
-                }
-            }
-        } elseif ($this->status === 'Other') {
-            $this->validate([
-                'status' => 'required',
-                'otherReason' => 'required|string',
-            ]);
-        } else {
-            $this->validate([
-                'status' => 'required',
-                'days' => 'required|numeric|min:1',
-            ]);
-        }
+        $this->validate([
+            'status' => 'required',
+            'days' => 'required|numeric|min:1',
+        ]);
     
         if ($this->selectedApplication) {
             if ($this->status === 'Other') {
+                $this->validate(['otherReason' => 'required|string']);
                 $this->selectedApplication->status = "Approved";
                 $this->selectedApplication->remarks = $this->otherReason;
                 $this->selectedApplication->approved_days = 0;
             } else {
                 $this->selectedApplication->status = 'Approved';
                 $this->selectedApplication->approved_days = $this->days;
-                $this->selectedApplication->remarks = $this->status === 'With Pay' ? 'With Pay' : 'Without Pay';
+                $this->selectedApplication->remarks = $this->status;
+    
+                if ($this->status === 'With Pay') {
+                    $this->updateLeaveDetails($this->days, $this->status);
+                    
+                    if ($this->getErrorBag()->has('days')) {
+                        // There was an error in updateLeaveDetails, so we return without saving
+                        return;
+                    }
+                }
     
                 $allApprovedDates = [];
-    
                 foreach ($this->selectedDates as $date) {
                     if (strpos($date, ' - ') !== false) {
-                        // Split the range into start and end dates
                         $range = explode(' - ', $date);
                         $allApprovedDates = array_merge($allApprovedDates, $range);
                     } else {
                         $allApprovedDates[] = $date;
                     }
                 }
-    
                 $this->selectedApplication->approved_dates = implode(',', $allApprovedDates);
-    
-                if (in_array($this->selectedApplication->type_of_leave, ['Vacation Leave', 'Sick Leave', 'Special Privilege Leave'])) {
-                    $this->updateLeaveDetails($this->days, $this->status);
-                }
             }
     
             $this->selectedApplication->save();
@@ -124,6 +173,79 @@ class AdminLeaveRequestTable extends Component
             ]);
     
             $this->closeApproveModal();
+        }
+    }
+    
+    protected function updateLeaveDetails($days, $status)
+    {
+        $user_id = $this->selectedApplication->user_id;
+        $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
+    
+        if (!$leaveCredits) {
+            $this->addError('days', "Leave credits not found for this user.");
+            return;
+        }
+    
+        $leaveTypes = explode(',', $this->selectedApplication->type_of_leave);
+    
+        foreach ($leaveTypes as $leaveType) {
+            switch ($leaveType) {
+                case 'Special Privilege Leave':
+                    if ($leaveCredits->spl_claimable_credits < $days) {
+                        $this->addError('days', "Insufficient special privilege leave credits. Available: {$leaveCredits->spl_claimable_credits}");
+                        return;
+                    }
+                    $leaveCredits->spl_claimable_credits -= $days;
+                    $leaveCredits->spl_claimed_credits += $days;
+                    break;
+                case 'Vacation Leave':
+                    if ($leaveCredits->vl_claimable_credits < $days) {
+                        $this->addError('days', "Insufficient vacation leave credits. Available: {$leaveCredits->vl_claimable_credits}");
+                        return;
+                    }
+                    $leaveCredits->vl_claimable_credits -= $days;
+                    $leaveCredits->vl_claimed_credits += $days;
+                    $detailsClass = VacationLeaveDetails::class;
+                    break;
+                case 'Sick Leave':
+                    if ($leaveCredits->sl_claimable_credits < $days) {
+                        $this->addError('days', "Insufficient sick leave credits. Available: {$leaveCredits->sl_claimable_credits}");
+                        return;
+                    }
+                    $leaveCredits->sl_claimable_credits -= $days;
+                    $leaveCredits->sl_claimed_credits += $days;
+                    $detailsClass = SickLeaveDetails::class;
+                    break;
+                default:
+                    continue 2; // Skip to next iteration if not a recognized leave type
+            }
+    
+            // Update leave details if applicable
+            if (isset($detailsClass)) {
+                $details = $detailsClass::where('application_id', $this->selectedApplication->id)->first();
+                if ($details) {
+                    $details->less_this_application = $status === 'Pending' ? 1 : 0;
+                    $details->status = $status === 'Pending' ? 'Pending' : 'Approved';
+                    $details->save();
+                }
+            }
+    
+            break; // Exit the loop as we've processed the leave
+        }
+    
+        $leaveCredits->save();
+    
+        $month = date('m', strtotime($this->selectedApplication->start_date));
+        $year = date('Y', strtotime($this->selectedApplication->start_date));
+    
+        $leaveCreditsCalculation = LeaveCreditsCalculation::where('user_id', $user_id)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->first();
+    
+        if ($leaveCreditsCalculation) {
+            $leaveCreditsCalculation->leave_credits_earned -= $days;
+            $leaveCreditsCalculation->save();
         }
     }
 
@@ -193,82 +315,82 @@ class AdminLeaveRequestTable extends Component
     }
 
 
-    protected function updateLeaveDetails($days, $status)
-    {
-        $user_id = $this->selectedApplication->user_id;
-        $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
+    // protected function updateLeaveDetails($days, $status)
+    // {
+    //     $user_id = $this->selectedApplication->user_id;
+    //     $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
 
-        if (!$leaveCredits) {
-            return;
-        }
+    //     if (!$leaveCredits) {
+    //         return;
+    //     }
 
-        $remainingDays = $days;
+    //     $remainingDays = $days;
 
-        if ($leaveCredits->spl_claimable_credits >= $remainingDays) {
-            $leaveCredits->spl_claimable_credits -= $remainingDays;
-            $leaveCredits->spl_claimed_credits += $remainingDays;
-            $remainingDays = 0;
-        } else {
-            $remainingDays -= $leaveCredits->spl_claimable_credits;
-            $leaveCredits->spl_claimed_credits += $leaveCredits->spl_claimable_credits;
-            $leaveCredits->spl_claimable_credits = 0;
-        }
+    //     if ($leaveCredits->spl_claimable_credits >= $remainingDays) {
+    //         $leaveCredits->spl_claimable_credits -= $remainingDays;
+    //         $leaveCredits->spl_claimed_credits += $remainingDays;
+    //         $remainingDays = 0;
+    //     } else {
+    //         $remainingDays -= $leaveCredits->spl_claimable_credits;
+    //         $leaveCredits->spl_claimed_credits += $leaveCredits->spl_claimable_credits;
+    //         $leaveCredits->spl_claimable_credits = 0;
+    //     }
 
-        if ($remainingDays > 0) {
-            if (in_array('Vacation Leave', explode(',', $this->selectedApplication->type_of_leave))) {
-                if ($leaveCredits->vl_claimable_credits >= $remainingDays) {
-                    $leaveCredits->vl_claimable_credits -= $remainingDays;
-                    $leaveCredits->vl_claimed_credits += $remainingDays;
-                    $remainingDays = 0;
-                } else {
-                    $this->addError('days', "Insufficient vacation leave credits. Available: {$leaveCredits->vl_claimable_credits}");
-                    return;
-                }
-            } elseif (in_array('Sick Leave', explode(',', $this->selectedApplication->type_of_leave))) {
-                if ($leaveCredits->sl_claimable_credits >= $remainingDays) {
-                    $leaveCredits->sl_claimable_credits -= $remainingDays;
-                    $leaveCredits->sl_claimed_credits += $remainingDays;
-                    $remainingDays = 0;
-                } else {
-                    $this->addError('days', "Insufficient sick leave credits. Available: {$leaveCredits->sl_claimable_credits}");
-                    return;
-                }
-            }
-        }
+    //     if ($remainingDays > 0) {
+    //         if (in_array('Vacation Leave', explode(',', $this->selectedApplication->type_of_leave))) {
+    //             if ($leaveCredits->vl_claimable_credits >= $remainingDays) {
+    //                 $leaveCredits->vl_claimable_credits -= $remainingDays;
+    //                 $leaveCredits->vl_claimed_credits += $remainingDays;
+    //                 $remainingDays = 0;
+    //             } else {
+    //                 $this->addError('days', "Insufficient vacation leave credits. Available: {$leaveCredits->vl_claimable_credits}");
+    //                 return;
+    //             }
+    //         } elseif (in_array('Sick Leave', explode(',', $this->selectedApplication->type_of_leave))) {
+    //             if ($leaveCredits->sl_claimable_credits >= $remainingDays) {
+    //                 $leaveCredits->sl_claimable_credits -= $remainingDays;
+    //                 $leaveCredits->sl_claimed_credits += $remainingDays;
+    //                 $remainingDays = 0;
+    //             } else {
+    //                 $this->addError('days', "Insufficient sick leave credits. Available: {$leaveCredits->sl_claimable_credits}");
+    //                 return;
+    //             }
+    //         }
+    //     }
 
-        $leaveCredits->save();
+    //     $leaveCredits->save();
 
-        $month = date('m', strtotime($this->selectedApplication->start_date));
-        $year = date('Y', strtotime($this->selectedApplication->start_date));
+    //     $month = date('m', strtotime($this->selectedApplication->start_date));
+    //     $year = date('Y', strtotime($this->selectedApplication->start_date));
 
-        $leaveCreditsCalculation = LeaveCreditsCalculation::where('user_id', $user_id)
-            ->where('month', $month)
-            ->where('year', $year)
-            ->first();
+    //     $leaveCreditsCalculation = LeaveCreditsCalculation::where('user_id', $user_id)
+    //         ->where('month', $month)
+    //         ->where('year', $year)
+    //         ->first();
 
-        if ($leaveCreditsCalculation) {
-            $leaveCreditsCalculation->leave_credits_earned -= $days;
-            $leaveCreditsCalculation->save();
-        }
+    //     if ($leaveCreditsCalculation) {
+    //         $leaveCreditsCalculation->leave_credits_earned -= $days;
+    //         $leaveCreditsCalculation->save();
+    //     }
 
-        if (in_array('Vacation Leave', explode(',', $this->selectedApplication->type_of_leave))) {
-            $vacationLeaveDetails = VacationLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
-            if ($vacationLeaveDetails) {
-                $vacationLeaveDetails->less_this_application = $status === 'Pending' ? 1 : 0;
-                $vacationLeaveDetails->status = $status === 'Pending' ? 'Pending' : 'Approved';
-                $vacationLeaveDetails->save();
-            }
-        }
+    //     if (in_array('Vacation Leave', explode(',', $this->selectedApplication->type_of_leave))) {
+    //         $vacationLeaveDetails = VacationLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
+    //         if ($vacationLeaveDetails) {
+    //             $vacationLeaveDetails->less_this_application = $status === 'Pending' ? 1 : 0;
+    //             $vacationLeaveDetails->status = $status === 'Pending' ? 'Pending' : 'Approved';
+    //             $vacationLeaveDetails->save();
+    //         }
+    //     }
 
-        if (in_array('Sick Leave', explode(',', $this->selectedApplication->type_of_leave))) {
-            $sickLeaveDetails = SickLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
-            if ($sickLeaveDetails) {
-                $sickLeaveDetails->less_this_application = $status === 'Pending' ? 1 : 0;
-                $sickLeaveDetails->status = $status === 'Pending' ? 'Pending' : 'Approved';
-                $sickLeaveDetails->save();
-            }
-        }
-    }
+    //     if (in_array('Sick Leave', explode(',', $this->selectedApplication->type_of_leave))) {
+    //         $sickLeaveDetails = SickLeaveDetails::where('application_id', $this->selectedApplication->id)->first();
+    //         if ($sickLeaveDetails) {
+    //             $sickLeaveDetails->less_this_application = $status === 'Pending' ? 1 : 0;
+    //             $sickLeaveDetails->status = $status === 'Pending' ? 'Pending' : 'Approved';
+    //             $sickLeaveDetails->save();
+    //         }
+    //     }
+    // }
 
 }
 
