@@ -27,31 +27,35 @@ class EmployeesExport implements FromCollection, WithHeadings
         $this->selectedColumns = $selectedColumns;
     }
     
-
     public function collection()
     {
         $query = User::join('user_data', 'users.id', '=', 'user_data.user_id')
             ->select('users.id');
-    
+        
         $nameFields = ['surname', 'first_name', 'middle_name', 'name_extension'];
         $nameFieldsSelected = false;
-    
+
         foreach ($this->selectedColumns as $column) {
             if (in_array($column, $nameFields)) {
                 $query->addSelect("user_data.$column");
                 $nameFieldsSelected = true;
             } elseif ($column !== 'name') {  // Skip 'name' as we'll handle it separately
-                $query->addSelect("user_data.$column");
+                // Check if the column is from the `users` table
+                if ($column === 'active_status') {
+                    $query->addSelect("users.$column");
+                } else {
+                    $query->addSelect("user_data.$column");
+                }
             }
         }
-    
+
         // If no specific name fields are selected, but 'name' is, select all name fields
         if (!$nameFieldsSelected && in_array('name', $this->selectedColumns)) {
             foreach ($nameFields as $field) {
                 $query->addSelect("user_data.$field");
             }
         }
-    
+
         // Apply filters
         if (!empty($this->filters['sex'])) {
             $query->where('user_data.sex', $this->filters['sex']);
@@ -68,7 +72,7 @@ class EmployeesExport implements FromCollection, WithHeadings
         if (!empty($this->filters['selectedBarangay'])) {
             $query->whereIn('user_data.permanent_selectedBarangay', $this->filters['selectedBarangay']);
         }
-    
+
         return $query->get()
             ->map(function ($user) use ($nameFields, $nameFieldsSelected) {
                 $userData = ['ID' => $user->id];
@@ -82,16 +86,26 @@ class EmployeesExport implements FromCollection, WithHeadings
                     ]));
                     $userData['Name'] = $fullName;
                 }
-    
+
                 foreach ($this->selectedColumns as $column) {
                     if ($column !== 'name' && $column !== 'id') {
-                        $userData[$this->getColumnHeader($column)] = $user->$column;
+                        if ($column === 'active_status') {
+                            // Map active_status to its equivalent text
+                            $statusMapping = [
+                                0 => 'Inactive',
+                                1 => 'Active',
+                                2 => 'Retired',
+                                3 => 'Resigned'
+                            ];
+                            $userData[$this->getColumnHeader($column)] = $statusMapping[$user->active_status] ?? 'Unknown';
+                        } else {
+                            $userData[$this->getColumnHeader($column)] = $user->$column;
+                        }
                     }
                 }
                 return $userData;
             });
     }
-    
 
     public function headings(): array
     {
@@ -141,6 +155,10 @@ class EmployeesExport implements FromCollection, WithHeadings
             'residential_selectedBarangay' => 'Residential Address (Barangay)',
             'r_house_street' => 'Residential Address (Street)',
             'residential_selectedZipcode' => 'Residential Address (Zip Code)',
+            'active_status' => 'Active Status',
+            'appointment' => 'Nature of Appointment',
+            'date_hired' => 'Years in Current Position',
+            'years_in_gov_service' => 'Years in Government Service',
         ];
 
         return $headers[$column] ?? $column;

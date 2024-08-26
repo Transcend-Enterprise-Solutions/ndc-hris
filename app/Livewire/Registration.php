@@ -357,7 +357,7 @@ class Registration extends Component
     public function getSexValue()
     {
         if ($this->sex === 'Others' && $this->otherSex) {
-            return $this->sex . ',' . $this->otherSex;
+            return $this->otherSex;
         }
         return $this->sex;
     }

@@ -2086,6 +2086,27 @@
                                             class="ml-2 text-gray-900 dark:text-gray-300">Residential Address
                                             (Zip Code)</label>
                                     </li>
+                                    <!-- Add new filter for active_status -->
+                                    <li class="flex items-center">
+                                        <input id="active_status" type="checkbox"
+                                            wire:model.live="filters.active_status" class="h-4 w-4">
+                                        <label for="active_status"
+                                            class="ml-2 text-gray-900 dark:text-gray-300">Active Status</label>
+                                    </li>
+                                    <!-- Add new filter for appointment -->
+                                    <li class="flex items-center">
+                                        <input id="appointment" type="checkbox"
+                                            wire:model.live="filters.appointment" class="h-4 w-4">
+                                        <label for="appointment"
+                                            class="ml-2 text-gray-900 dark:text-gray-300">Appointment</label>
+                                    </li>
+                                    <!-- Add new filter for date_hired -->
+                                    <li class="flex items-center">
+                                        <input id="date_hired" type="checkbox"
+                                            wire:model.live="filters.date_hired" class="h-4 w-4">
+                                        <label for="date_hired" class="ml-2 text-gray-900 dark:text-gray-300">Date
+                                            Hired</label>
+                                    </li>
                                 </ul>
                             </div>
                             {{-- @endif --}}
@@ -2254,6 +2275,21 @@
                                                         class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                         Residential Address (Zip Code)</th>
                                                 @endif
+                                                @if ($filters['active_status'])
+                                                    <th scope="col"
+                                                        class="px-5 py-3 text-sm font-medium uppercase text-center">
+                                                        Active Status</th>
+                                                @endif
+                                                @if ($filters['appointment'])
+                                                    <th scope="col"
+                                                        class="px-5 py-3 text-sm font-medium uppercase text-center">
+                                                        Nature of Appointment</th>
+                                                @endif
+                                                @if ($filters['date_hired'])
+                                                    <th scope="col"
+                                                        class="px-5 py-3 text-sm font-medium uppercase text-center">
+                                                        Year in Current Position</th>
+                                                @endif
                                                 <th
                                                     class="px-5 py-3 text-gray-100 text-sm font-medium text-right sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
                                                     Action</th>
@@ -2363,6 +2399,18 @@
                                                     @if ($filters['residential_selectedZipcode'])
                                                         <td class="px-4 py-2 text-center">
                                                             {{ $user->residential_selectedZipcode }}</td>
+                                                    @endif
+                                                    @if ($filters['active_status'])
+                                                        <td class="px-4 py-2 text-center">
+                                                            {{ $user->active_status_label }}</td>
+                                                    @endif
+                                                    @if ($filters['appointment'])
+                                                        <td class="px-4 py-2 text-center">
+                                                            {{ $user->appointment }}</td>
+                                                    @endif
+                                                    @if ($filters['date_hired'])
+                                                        <td class="px-4 py-2 text-center">
+                                                            {{ $user->date_hired }}</td>
                                                     @endif
                                                     <td
                                                         class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">

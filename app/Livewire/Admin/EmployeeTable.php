@@ -56,6 +56,9 @@ class EmployeeTable extends Component
         'residential_selectedBarangay' => false,
         'r_house_street' => false,
         'residential_selectedZipcode' => false,
+        'active_status' => true,
+        'appointment' => true,
+        'date_hired' => true,
         // 'tel_number' => false,
         // 'mobile_number' => false,
         // 'email' => false,
@@ -318,6 +321,15 @@ class EmployeeTable extends Component
             ->when($this->filters['residential_selectedZipcode'], function ($query) {
             $query->addSelect('user_data.residential_selectedZipcode');
             })
+            ->when($this->filters['active_status'], function ($query) {
+            $query->addSelect('users.active_status');
+            })
+            ->when($this->filters['appointment'], function ($query) {
+            $query->addSelect('user_data.appointment');
+            })
+            ->when($this->filters['date_hired'], function ($query) {
+            $query->addSelect('user_data.date_hired');
+            })
             // ->where('users.user_role', 'emp')
             ->when($this->search, function ($query) {
                 $query->where('users.name', 'like', '%' . $this->search . '%');
@@ -347,6 +359,17 @@ class EmployeeTable extends Component
                 return $query->whereIn('user_data.permanent_selectedBarangay', $this->selectedBarangays);
             })
             ->paginate(5);
+
+            $query->getCollection()->transform(function ($user) {
+                $statusMapping = [
+                    0 => 'Inactive',
+                    1 => 'Active',
+                    2 => 'Retired',
+                    3 => 'Resigned'
+                ];
+                $user->active_status_label = $statusMapping[$user->active_status] ?? 'Unknown';
+                return $user;
+            });
 
             if($this->dropdownForCategoryOpen){
                 $this->dropdownForFilter = null;
