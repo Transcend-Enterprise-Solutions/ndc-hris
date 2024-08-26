@@ -174,7 +174,7 @@ class WfhAttendanceTable extends Component
                     } elseif (!$transactions->contains('Morning Out')) {
                         $this->morningOutDisabled = false;
                     }
-                } elseif ($currentHour >= 12 && $currentHour < 18) { // Afternoon: 12 PM to 6 PM
+                } elseif ($currentHour >= 12) { // Afternoon: 12 PM to 6 PM
                     if (!$transactions->contains('Afternoon In')) {
                         $this->afternoonInDisabled = false;
                     } elseif (!$transactions->contains('Afternoon Out')) {

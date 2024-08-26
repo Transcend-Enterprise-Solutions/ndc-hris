@@ -398,7 +398,7 @@
                             <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
                                 <ul class="pl-9 mt-1 transition-all duration-300 overflow-hidden"
                                     :class="open ? '!block' : 'hidden'">
-                                    <li class="mb-1 last:mb-0">
+                                    {{-- <li class="mb-1 last:mb-0">
                                         <a class="block text-black dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if (Route::is('/daily-time-record/wfh-attendance')) {{ '!text-blue-500' }} @endif"
                                             href="{{ route('/daily-time-record/wfh-attendance') }}" wire:navigate>
                                             <span class="text-sm font-medium transition-opacity duration-300"
@@ -406,7 +406,7 @@
                                                 WFH Attendance
                                             </span>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                     <li class="mb-1 last:mb-0">
                                         <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/daily-time-record/dtr')) {{ '!text-blue-500' }} @endif"
                                             href="{{ route('/daily-time-record/dtr') }}"wire:navigate>

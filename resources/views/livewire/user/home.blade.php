@@ -3,8 +3,13 @@
 
         <div>
 
-            {{-- @livewire('user.dtr-table') --}}
-            Home
+            @livewire('user.wfh-attendance-table')
+
+        </div>
+
+        <div>
+
+            @livewire('dashboard.dashboard-leave-credits')
 
         </div>
 

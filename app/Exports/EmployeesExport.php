@@ -14,20 +14,28 @@ class EmployeesExport implements FromCollection, WithHeadings
     protected $filters;
     protected $selectedColumns;
 
-    public function __construct($filters, $selectedColumns)
+    public function __construct($filters = [], $selectedColumns = [])
     {
-        $this->filters = $filters;
+        $this->filters = array_merge([
+            'sex' => null,
+            'civil_status' => [],
+            'selectedProvince' => [],
+            'selectedCity' => [],
+            'selectedBarangay' => [],
+        ], $filters);
+    
         $this->selectedColumns = $selectedColumns;
     }
+    
 
     public function collection()
     {
         $query = User::join('user_data', 'users.id', '=', 'user_data.user_id')
             ->select('users.id');
-
+    
         $nameFields = ['surname', 'first_name', 'middle_name', 'name_extension'];
         $nameFieldsSelected = false;
-
+    
         foreach ($this->selectedColumns as $column) {
             if (in_array($column, $nameFields)) {
                 $query->addSelect("user_data.$column");
@@ -36,31 +44,31 @@ class EmployeesExport implements FromCollection, WithHeadings
                 $query->addSelect("user_data.$column");
             }
         }
-
+    
         // If no specific name fields are selected, but 'name' is, select all name fields
         if (!$nameFieldsSelected && in_array('name', $this->selectedColumns)) {
             foreach ($nameFields as $field) {
                 $query->addSelect("user_data.$field");
             }
         }
-
+    
         // Apply filters
-        if ($this->filters['sex']) {
+        if (!empty($this->filters['sex'])) {
             $query->where('user_data.sex', $this->filters['sex']);
         }
-        if ($this->filters['civil_status']) {
-            $query->where('user_data.civil_status', $this->filters['civil_status']);
+        if (!empty($this->filters['civil_status'])) {
+            $query->whereIn('user_data.civil_status', $this->filters['civil_status']);
         }
-        if ($this->filters['selectedProvince']) {
-            $query->where('user_data.permanent_selectedProvince', $this->filters['selectedProvince']);
+        if (!empty($this->filters['selectedProvince'])) {
+            $query->whereIn('user_data.permanent_selectedProvince', $this->filters['selectedProvince']);
         }
-        if ($this->filters['selectedCity']) {
-            $query->where('user_data.permanent_selectedCity', $this->filters['selectedCity']);
+        if (!empty($this->filters['selectedCity'])) {
+            $query->whereIn('user_data.permanent_selectedCity', $this->filters['selectedCity']);
         }
-        if ($this->filters['selectedBarangay']) {
-            $query->where('user_data.permanent_selectedBarangay', $this->filters['selectedBarangay']);
+        if (!empty($this->filters['selectedBarangay'])) {
+            $query->whereIn('user_data.permanent_selectedBarangay', $this->filters['selectedBarangay']);
         }
-
+    
         return $query->get()
             ->map(function ($user) use ($nameFields, $nameFieldsSelected) {
                 $userData = ['ID' => $user->id];
@@ -74,7 +82,7 @@ class EmployeesExport implements FromCollection, WithHeadings
                     ]));
                     $userData['Name'] = $fullName;
                 }
-
+    
                 foreach ($this->selectedColumns as $column) {
                     if ($column !== 'name' && $column !== 'id') {
                         $userData[$this->getColumnHeader($column)] = $user->$column;
@@ -83,6 +91,7 @@ class EmployeesExport implements FromCollection, WithHeadings
                 return $userData;
             });
     }
+    
 
     public function headings(): array
     {
