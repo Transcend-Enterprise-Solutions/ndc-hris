@@ -107,8 +107,8 @@ class AutoSaveDtrRecords implements ShouldQueue
             }
         }
 
-        // Adjust late threshold for Monday
-        if ($dayOfWeek === 'Monday') {
+        // Adjust late threshold for Monday and not WFH
+        if ($dayOfWeek === 'Monday' &&  $location !== 'WFH' ) {
             $lateThreshold = $carbonDate->copy()->setTimeFromTimeString('09:00:00');
         }
         // Check for holiday or leave
@@ -282,7 +282,7 @@ class AutoSaveDtrRecords implements ShouldQueue
         if (!$actualMorningIn && !$actualAfternoonIn) {
             $remarks = 'Absent';
         } elseif ($lateFormatted !== '00:00') {
-            $remarks = 'Late';
+            $remarks = 'Late/Undertime';
         }
 
         return [
