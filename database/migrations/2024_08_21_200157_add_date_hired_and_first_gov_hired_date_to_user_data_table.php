@@ -27,7 +27,7 @@ class AddDateHiredAndFirstGovHiredDateToUserDataTable extends Migration
     public function down()
     {
         Schema::table('user_data', function (Blueprint $table) {
-            $table->dropColumn(['date_hired', 'first_gov_hired_date']);
+            $table->dropColumn(['date_hired', 'appointment']);
         });
     }
 }
