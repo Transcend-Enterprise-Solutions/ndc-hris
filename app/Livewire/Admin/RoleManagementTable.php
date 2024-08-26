@@ -96,6 +96,8 @@ class RoleManagementTable extends Component
                 })
                 ->paginate(5);
 
+        $organization = null;
+
         return view('livewire.admin.role-management-table',[
             'admins' => $admins,
             'officeDivisions' => $officeDivisions,

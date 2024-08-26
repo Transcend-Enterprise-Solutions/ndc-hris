@@ -280,7 +280,8 @@ x-cloak>
                                             <table class="w-full min-w-full">
                                                 <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl" style="height: 20px">
                                                     <tr class="whitespace-nowrap">
-                                                        <td></td>
+                                                        <td>
+                                                        </td>
                                                     </tr>
                                                 </thead>
                                             </table>
