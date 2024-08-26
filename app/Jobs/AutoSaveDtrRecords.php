@@ -247,11 +247,10 @@ class AutoSaveDtrRecords implements ShouldQueue
         } else {
             // If there's no afternoon out, add 4 hours of undertime
             $undertime = $undertime->addHours(4);
-
-            // Check if morning out is before 12:00
-            if ($morningOut && $morningOut->lt($lunchTime)) {
-                $undertime = $undertime->addMinutes($lunchTime->diffInMinutes($morningOut));
-            }
+        }
+        // Check if morning out is before 12:00
+        if ($morningOut && $morningOut->lt($lunchTime)) {
+            $undertime = $undertime->addMinutes($lunchTime->diffInMinutes($morningOut));
         }
 
         // Add undertime to lateness
