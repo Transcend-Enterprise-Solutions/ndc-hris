@@ -136,7 +136,7 @@ x-cloak>
                     </div>
 
                     <!-- Save Payroll -->
-                    @if($hasPayroll == false)
+                    {{-- @if($hasPayroll == false)
                         <div class="w-full sm:w-auto">
                             <button wire:click="recordPayroll"
                                 class="mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
@@ -151,7 +151,7 @@ x-cloak>
                                 Save Payroll
                             </button>
                         </div>
-                    @endif
+                    @endif --}}
 
                     <!-- Export to Excel -->
                     <div class="w-full sm:w-auto relative">
@@ -161,9 +161,9 @@ x-cloak>
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button" title="Export Payroll">
-                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
-                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
-                            <div wire:loading wire:target="exportPayroll" style="margin-left: 5px">
+                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="" wire:target="exportPayroll" wire:loading.remove>
+                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="" wire:target="exportPayroll" wire:loading.remove>
+                            <div wire:loading wire:target="exportPayroll">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
                             </div>
@@ -191,9 +191,9 @@ x-cloak>
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button"  title="Export Payroll">
-                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
-                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
-                            <div wire:loading wire:target="exportCosExcel" style="margin-left: 5px">
+                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="" wire:target="exportCosExcel" wire:loading.remove>
+                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="" wire:target="exportCosExcel" wire:loading.remove>
+                            <div wire:loading wire:target="exportCosExcel">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
                             </div>
@@ -418,11 +418,11 @@ x-cloak>
                                                         </div>
                                                         <button wire:click="exportIndivPayroll({{ $payroll['user_id'] }})" class="inline-flex items-center justify-center 
                                                             px-4 py-2 -m-5 -mr-3 text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none" title="Export Payroll">
-                                                            <div wire:loading wire:target="exportIndivPayroll({{ $payroll['user_id'] }})" style="margin-right: 5px">
-                                                                <div class="spinner-border small text-primary" role="status">
+                                                            <div wire:loading wire:target="exportIndivPayroll({{ $payroll['user_id'] }})">
+                                                                <div class="ml-2 spinner-border small text-primary" role="status">
                                                                 </div>
                                                             </div>
-                                                            <i class="fas fa-file-export ml-3"></i>
+                                                            <i class="fas fa-file-export ml-3" wire:loading.remove wire:target="exportIndivPayroll({{ $payroll['user_id'] }})"></i>
                                                         </button>
                                                     </td>
                                                 </tr>

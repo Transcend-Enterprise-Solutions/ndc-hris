@@ -283,16 +283,16 @@ class IndivCosPayrollExport implements WithEvents, WithDrawings
 
         $this->currentRow += 3;
         $sheet->mergeCells("A{$this->currentRow}:C{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", $this->filters['preparedBy']->name);
+        $sheet->setCellValue("A{$this->currentRow}", $this->filters['preparedBy']->name ?? 'XXXXXXXXXX');
         $sheet->mergeCells("D{$this->currentRow}:F{$this->currentRow}");
-        $sheet->setCellValue("D{$this->currentRow}", $this->filters['notedBy']->name);
+        $sheet->setCellValue("D{$this->currentRow}", $this->filters['notedBy']->name ?? 'XXXXXXXXXX');
         $sheet->getStyle("A{$this->currentRow}:F{$this->currentRow}")->getFont()->setBold(true);
 
         $this->currentRow++;
         $sheet->mergeCells("A{$this->currentRow}:C{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", $this->filters['preparedBy']->position);
+        $sheet->setCellValue("A{$this->currentRow}", $this->filters['preparedBy']->position) ?? 'Position';
         $sheet->mergeCells("D{$this->currentRow}:F{$this->currentRow}");
-        $sheet->setCellValue("D{$this->currentRow}", $this->filters['notedBy']->position);
+        $sheet->setCellValue("D{$this->currentRow}", $this->filters['notedBy']->position ?? 'Position');
 
         $this->currentRow = $this->currentRow + 5;
     }

@@ -110,7 +110,7 @@ class GeneralPayrollTable extends Component
     public $sg;
     public $step;
     public $rate_per_month;
-    public $personal_economic_relief_allowance;
+    public $personal_economic_relief_allowance = 0;
     public $gross_amount;
     public $additional_gsis_premium;
     public $lbp_salary_loan;
@@ -563,11 +563,19 @@ class GeneralPayrollTable extends Component
                     ->join('positions', 'positions.id', 'users.position_id')
                     ->join('signatories', 'signatories.user_id', 'users.id')
                     ->first();
+
+                if(!$signatories){
+                    $this->dispatch('swal', [
+                        'title' => 'Please set the payslip signatory for "Noted By"',
+                        'icon' => 'error'
+                    ]);
+                    return;
+                }
         
         
                 // Generate temporary paths for signatures
-                $preparedBySignaturePath = $this->getTemporarySignaturePath($preparedBy);
-                $signatoriesSignaturePath = $this->getTemporarySignaturePath($signatories);
+                $preparedBySignaturePath = $preparedBy ? $this->getTemporarySignaturePath($preparedBy) : null;
+                $signatoriesSignaturePath = $signatories ? $this->getTemporarySignaturePath($signatories) : null;
 
                 if ($payslip) {
                     $pdf = Pdf::loadView('pdf.monthly-payslip', [

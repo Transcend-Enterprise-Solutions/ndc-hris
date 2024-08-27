@@ -2,7 +2,7 @@
 
     <div class="px-5 pt-5">
         <header class="flex justify-between items-start mb-2">
-            <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100">   ee Reports</h2>
+            <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Employee Reports</h2>
         </header>
     </div>
 
@@ -73,29 +73,50 @@
                 </div>
             </div>
 
-            <!-- Department Distribution Card -->
+            <!-- Office/Division Distribution Card -->
             <div class="col-span-full sm:col-span-6 bg-purple-100 dark:bg-purple-800 p-4 rounded-lg shadow">
-                <h3 class="text-sm font-semibold text-purple-800 dark:text-gray-100">Department Distribution</h3>
+                <div class="text-sm font-semibold text-purple-800 dark:text-gray-100 mb-4">Department Distribution
+                    <hr class="border-t border-purple-200 dark:border-purple-600">
+                    <label for="allColActive" class="text-xs text-gray-900 dark:text-gray-300">Select Status: </label>
+                    <ul class="flex space-x-4 text-xs mt-2">
+                        <li class="flex flex-col sm:flex-row items-center justify-center">
+                            <input id="allColActive" type="checkbox" wire:model.live="status.active" class="h-4 w-4">
+                            <label for="allColActive" class="sm:ml-2 text-gray-900 dark:text-gray-300">Active</label>
+                        </li>
+                        <li class="flex flex-col sm:flex-row items-center justify-center">
+                            <input id="allColInactive" type="checkbox" wire:model.live="status.inactive" class="h-4 w-4">
+                            <label for="allColInactive" class="sm:ml-2 text-gray-900 dark:text-gray-300">Inactive</label>
+                        </li>
+                        <li class="flex flex-col sm:flex-row items-center justify-center">
+                            <input id="allColResigned" type="checkbox" wire:model.live="status.resigned" class="h-4 w-4">
+                            <label for="allColResigned" class="sm:ml-2 text-gray-900 dark:text-gray-300">Resigned</label>
+                        </li>
+                        <li class="flex flex-col sm:flex-row items-center justify-center">
+                            <input id="allColRetired" type="checkbox" wire:model.live="status.retired" class="h-4 w-4">
+                            <label for="allColRetired" class="sm:ml-2 text-gray-900 dark:text-gray-300">Retired</label>
+                        </li>
+                    </ul>                    
+                </div>
                 <ul class="mt-2">
-                    @foreach($departmentCounts as $dept)
+                    @foreach($officeDivisionCounts as $officeDiv)
                         <li class="text-sm text-purple-600 dark:text-purple-300">
                             <div class="flex bg-purple-50 dark:bg-purple-900 px-4 py-2 rounded-sm justify-between mb-2">
                                 <div>
-                                    <p class="text-sm text-purple-800 dark:text-purple-200">
-                                        {{ $dept->department }}: {{ $dept->count }}
+                                    <p class="text-xs text-purple-800 dark:text-purple-200">
+                                        {{ $officeDiv->office_division }}: <span class="ml-2 text-sm font-bold">{{ $officeDiv->count }}</span>
                                     </p>
                                 </div>
 
                                 <!-- Export to Excel -->
                                 <div class="w-1/5 sm:w-auto flex justify-center items-center h-full">
-                                    <button wire:loading.remove wire:target="exportTotalEmployeeInDepartment('{{ $dept->department }}')" wire:click="exportTotalEmployeeInDepartment('{{ $dept->department }}')"
+                                    <button wire:loading.remove wire:target="exportTotalEmployeeInOfficeDivision('{{ $officeDiv->office_division }}')" wire:click="exportTotalEmployeeInOfficeDivision('{{ $officeDiv->office_division }}')"
                                         class="inline-flex items-center focus:outline-none"
                                         type="button" title="Export to Excel">
                                         <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
                                         <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                                     </button>
                                     <div style="margin-right: 5px">
-                                        <svg wire:loading wire:target="exportTotalEmployeeInDepartment('{{ $dept->department }}')" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-green-600 motion-safe:animate-spin dark:fill-green-600">
+                                        <svg wire:loading wire:target="exportTotalEmployeeInOfficeDivision('{{ $officeDiv->office_division }}')" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-green-600 motion-safe:animate-spin dark:fill-green-600">
                                             <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
                                             <path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" />
                                         </svg>
@@ -147,7 +168,7 @@
             <div class="col-span-full sm:col-span-6 bg-green-100 dark:bg-green-800 p-4 rounded-lg shadow block">
                 <div class="block sm:flex justify-between items-center">
                     <div class="flex justify-left items-center">
-                        <h3 class="text-sm font-semibold text-green-800 ">
+                        <h3 class="text-sm font-semibold text-green-800 dark:text-gray-100">
                             @if($month)
                                 Employee Document Requests for {{ $docRequestMonth ? \Carbon\Carbon::parse($docRequestMonth)->format('F Y') : '' }}
                             @else
@@ -165,8 +186,8 @@
                             <button wire:loading.remove wire:target="exportDocRequests" wire:click="exportDocRequests"
                                 class="inline-flex items-center focus:outline-none"
                                 type="button" title="Export to Excel" wire:loading.remove>
-                                <img class="flex dark:hidden" src="/images/export-excel.png" alt="">
-                                <img class="hidden dark:block" src="/images/export-excel.png" alt="">
+                                <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
+                                <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                             </button>
                             <div style="margin-right: 5px">
                                 <svg wire:loading wire:target="exportDocRequests" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-5 fill-green-600 motion-safe:animate-spin dark:fill-green-600">

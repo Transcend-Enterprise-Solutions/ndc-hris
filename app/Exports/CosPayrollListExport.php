@@ -32,8 +32,15 @@ class CosPayrollListExport implements FromCollection, WithEvents
             return '₱ ' . number_format((float)$value, 2, '.', ',');
         };
 
+        $table = '';
+        if($this->filters['type'] == 'sk'){
+            $table = 'cos_sk_payrolls';
+        }else{
+            $table = 'cos_reg_payrolls';
+        }
+
         $query = User::query()
-                ->join('cos_payrolls', 'cos_payrolls.user_id', 'users.id')
+                ->join($table, $table . '.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id');
 

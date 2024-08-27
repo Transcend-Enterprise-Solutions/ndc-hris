@@ -39,8 +39,9 @@ class AttendanceExport implements FromCollection, WithEvents
                 $sheet->getColumnDimension('B')->setWidth(30);
                 $sheet->getColumnDimension('C')->setWidth(15);
                 $sheet->getColumnDimension('D')->setWidth(15);
-                $sheet->getColumnDimension('E')->setWidth(30);
-                for ($col = 'F'; $col <= 'O'; $col++) {
+                $sheet->getColumnDimension('E')->setWidth(20);
+                $sheet->getColumnDimension('F')->setWidth(30);
+                for ($col = 'G'; $col <= 'O'; $col++) {
                     $sheet->getColumnDimension($col)->setWidth(15);
                 }
 
@@ -54,7 +55,7 @@ class AttendanceExport implements FromCollection, WithEvents
                 $sheet->setCellValue('B4', 'NAME');
                 $sheet->setCellValue('C4', 'EMPLOYEE NO.');
                 $sheet->setCellValue('D4', 'POSITION');
-                $sheet->setCellValue('E4', 'DEPARTMENT');
+                $sheet->setCellValue('E4', 'APPOINTMENT');
                 $sheet->setCellValue('F4', 'OFFICE/DIVISION');
                 $sheet->setCellValue('G4', 'MORNING IN');
                 $sheet->setCellValue('H4', 'MORNING OUT');
@@ -120,13 +121,25 @@ class AttendanceExport implements FromCollection, WithEvents
 
     public function collection(){
         $query = User::join('employees_dtr', 'employees_dtr.user_id', 'users.id')
-                ->join('payrolls', 'payrolls.user_id', 'users.id')
+                ->join('user_data', 'user_data.user_id', 'users.id')
+                ->join('positions', 'positions.id', 'users.position_id')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                 ->where('users.user_role', 'emp')
                 ->where(function ($query) {
                     $query->where('employees_dtr.remarks', 'Present')
-                            ->orWhere('employees_dtr.remarks', 'Late');
+                            ->orWhere('employees_dtr.remarks', 'Late/Undertime');
                 })
-                ->select('users.email', 'employees_dtr.*', 'payrolls.*');
+                ->where('users.active_status', '!=', 4)
+                ->select(
+                    'employees_dtr.*',
+                    'users.name', 
+                    'users.email', 
+                    'users.emp_code', 
+                    'users.active_status', 
+                    'positions.position', 
+                    'office_divisions.office_division', 
+                    'user_data.appointment', 
+                );
 
         if ($this->filters && isset($this->filters['date'])) {
             try {
@@ -139,12 +152,28 @@ class AttendanceExport implements FromCollection, WithEvents
         return $query->get()
             ->map(function ($user) {
                 $this->rowNumber++;
+                $appointment = null;
+                if($user->appointment != "cos" && $user->appointment != "ct"){
+                    $appointment = explode(',', $user->appointment);
+                    if($appointment[0] == 'pa'){
+                        $appointment = 'Presidential Appointee';
+                    }else{
+                        $appointment = 'Plantilla';
+                    }
+                }else{
+                    if($user->appointment == "ct"){
+                        $appointment = 'Co-Terminus';
+                    }else{
+                        $appointment = 'COS';
+                    }
+                }
+
                 return [
                     $this->rowNumber,
                     'NAME' => $user->name,
-                    'EMPLOYEE ID' => $user->employee_number,
+                    'EMPLOYEE ID' => $user->emp_code,
                     'POSITION' => $user->position,
-                    'DEPARTMENT' => $user->department,
+                    'APPOINTMENT' => $appointment,
                     'OFFICE/DIVISION' => $user->office_division,
                     'MORNING IN' => $user->morning_in,
                     'MORNING OUT' => $user->morning_out,

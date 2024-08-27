@@ -140,11 +140,6 @@ x-cloak>
                                         class="h-4 w-4">
                                     <label for="allCol" class="ml-2 text-gray-900 dark:text-gray-300">Retired</label>
                                 </li>
-                                <li class="flex items-center">
-                                    <input id="allCol" type="checkbox" wire:model.live="status.promoted"
-                                        class="h-4 w-4">
-                                    <label for="allCol" class="ml-2 text-gray-900 dark:text-gray-300">Promoted</label>
-                                </li>
                             </ul>
                         </div>
                     </div>
@@ -319,14 +314,12 @@ x-cloak>
                                                                                         {{ $user->active_status == 0 ? 'Status: Inactive' : '' }} 
                                                                                         {{ $user->active_status == 1 ? 'Status: Active' : '' }} 
                                                                                         {{ $user->active_status == 2 ? 'Status: Resigned' : '' }} 
-                                                                                        {{ $user->active_status == 3 ? 'Status: Retired' : '' }} 
-                                                                                        {{ $user->active_status == 4 ? 'Status: Promoted' : '' }}"
+                                                                                        {{ $user->active_status == 3 ? 'Status: Retired' : '' }}"
                                                                                         class="inline-block px-3 py-1 text-xs font-semibold 
                                                                                         {{ $user->active_status == 0 ? 'text-red-400' : '' }} 
                                                                                         {{ $user->active_status == 1 ? 'text-green-400' : '' }} 
                                                                                         {{ $user->active_status == 2 ? 'text-yellow-400' : '' }} 
-                                                                                        {{ $user->active_status == 3 ? 'text-purple-400' : '' }} 
-                                                                                        {{ $user->active_status == 4 ? 'text-cyan-400' : '' }}">
+                                                                                        {{ $user->active_status == 3 ? 'text-purple-400' : '' }}">
                                                                                         ⦿
                                                                                     </span>
                                                                                 </td>
@@ -475,16 +468,30 @@ x-cloak>
                                                                     {{ $pos->position }}
                                                                 </td>
                                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap uppercase">
-                                                                    {{ $pos->appointment }}
+                                                                    @if($pos->appointment != "cos" && $pos->appointment != "ct")
+                                                                        @php
+                                                                            $appointment = explode(',', $pos->appointment);
+                                                                        @endphp
+                                                                        @if($appointment[0] == 'pa')
+                                                                            Presidential Appointee
+                                                                        @else
+                                                                            Plantilla
+                                                                        @endif
+                                                                    @else
+                                                                        @if($pos->appointment == "ct")
+                                                                            Co-Terminus
+                                                                        @else
+                                                                            {{ $pos->appointment }}
+                                                                        @endif
+                                                                    @endif
                                                                 </td>
                                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                                     <span
                                                                         class="inline-block px-3 py-1 text-sm font-semibold 
                                                                         {{ $pos->active_status == 0 ? 'text-red-800 bg-red-200' : '' }} 
                                                                         {{ $pos->active_status == 1 ? 'text-green-800 bg-green-200' : '' }} 
-                                                                        {{ $pos->active_status == 2 ? 'text-yello-800 bg-yello-200' : '' }} 
+                                                                        {{ $pos->active_status == 2 ? 'text-yellow-800 bg-yellow-200' : '' }} 
                                                                         {{ $pos->active_status == 3 ? 'text-purple-800 bg-purple-200' : '' }} 
-                                                                        {{ $pos->active_status == 4 ? 'text-cyan-800 bg-cyan-200' : '' }} 
                                                                          rounded-full">
                                                                         @if($pos->active_status == 0)
                                                                             Inactive
@@ -494,26 +501,22 @@ x-cloak>
                                                                             Resigned
                                                                         @elseif($pos->active_status == 3)
                                                                             Retired
-                                                                        @elseif($pos->active_status == 4)
-                                                                            Promoted
                                                                         @endif
                                                                     </span>
                                                                 </td>
                                                                 <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                                     <div class="relative">
-                                                                        @if($pos->position != "Super pos")
-                                                                            <button wire:click="toggleEditPosition({{ $pos->id }})" 
-                                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                                                focus:outline-none" title="Edit">
-                                                                                <i class="fas fa-pencil-alt"></i>
-                                                                            </button>
-                                                                            <button wire:click="toggleDelete({{ $pos->id }}, 'role')" 
-                                                                                class=" text-red-600 hover:text-red-900 dark:text-red-600 
-                                                                                dark:hover:text-red-900" title="Delete">
-                                                                                <i class="fas fa-trash"></i>
-                                                                            </button>
-                                                                        @endif
+                                                                        <button wire:click="toggleEditPosition({{ $pos->id }})" 
+                                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                            focus:outline-none" title="Edit">
+                                                                            <i class="fas fa-pencil-alt"></i>
+                                                                        </button>
+                                                                        <button wire:click="toggleDelete({{ $pos->id }}, 'role')" 
+                                                                            class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                            dark:hover:text-red-900" title="Delete">
+                                                                            <i class="fas fa-trash"></i>
+                                                                        </button>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -712,7 +715,7 @@ x-cloak>
     </div>
 
     {{-- Add and Edit Role Modal --}}
-    <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="editRole" centered>
+    <x-modal id="roleModal" maxWidth="2xl" wire:model="editRole" centered>
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
                 {{ $addRole ? 'Add' : 'Edit' }} Admin Role
@@ -810,10 +813,10 @@ x-cloak>
     </x-modal>
 
     {{-- Add and Edit Office/Division or Position Modal --}}
-    <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="settings" centered>
+    <x-modal id="posModal" maxWidth="2xl" wire:model="settings" centered>
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold uppercase">
-                {{ $add ? 'Add' : 'Edit' }} {{ $data }}
+                {{ $add ? 'Add' : 'Edit' }} {{ $data }} dd
                 <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
                     <i class="fas fa-times"></i>
                 </button>
@@ -928,8 +931,8 @@ x-cloak>
         </div>
     </x-modal>
     
-    {{-- Add and Edit Position Modal --}}
-    <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="editPosition" centered>
+    {{-- Add and Edit Employee Pos Modal --}}
+    <x-modal id="empModal" maxWidth="2xl" wire:model="editPosition" centered>
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
                 {{ $addPosition ? 'Add' : 'Edit' }} Employee's Office/Division and Position

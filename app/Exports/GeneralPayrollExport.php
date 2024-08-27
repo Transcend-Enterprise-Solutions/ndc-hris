@@ -383,15 +383,17 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
 
         $data = $query->get()->map(function ($payroll) {
             $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
-            $half_amount = $net_amount_received / 2;
             
-            $amount_due_second_half = floor($half_amount);
+            // Round down the second half to the nearest tenth
+            $amount_due_second_half = floor($net_amount_received / 2 / 10) * 10;
+            
+            // Calculate the first half as the remainder
             $amount_due_first_half = $net_amount_received - $amount_due_second_half;
-
+        
             $payroll->net_amount_received = $net_amount_received;
             $payroll->amount_due_first_half = $amount_due_first_half;
             $payroll->amount_due_second_half = $amount_due_second_half;
-
+        
             return $payroll;
         });
 
@@ -629,20 +631,19 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
         }
 
         // Signature C
-        // $sheet->mergeCells("K{$startRow}:O{$startRow}");
-        // $signatureC = $this->getTemporarySignaturePath($signatoryC);
-        // if ($signatureC) {
-        //     $drawingC = new Drawing();
-        //     $drawingC->setName('Signature C');
-        //     $drawingC->setDescription('Signature C');
-        //     $drawingC->setPath($signatureC);
-        //     $drawingC->setHeight($imageOptions['height']);
-        //     $drawingC->setWidth($imageOptions['width']);
-        //     $drawingC->setCoordinates("M{$startRow}");
-        //     $drawingC->setOffsetX(50);
-        //     $drawingC->setWorksheet($worksheet);
-        // }
-        // $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] - 2);
+        $signatureC = $this->getTemporarySignaturePath($signatoryC);
+        if ($signatureC) {
+            $drawingC = new Drawing();
+            $drawingC->setName('Signature C');
+            $drawingC->setDescription('Signature C');
+            $drawingC->setPath($signatureC);
+            $drawingC->setHeight($imageOptions['height']);
+            $drawingC->setWidth($imageOptions['width']);
+            $drawingC->setCoordinates("M{$startRow}");
+            $drawingC->setOffsetX(50);
+            $drawingC->setWorksheet($worksheet);
+        }
+        $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] - 2);
 
         $startRow ++;
         $sheet->mergeCells("A{$startRow}:E{$startRow}");
@@ -704,7 +705,6 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
         }
 
         // Signature D
-        $sheet->mergeCells("K{$startRow}:O{$startRow}");
         $signatureD = $this->getTemporarySignaturePath($signatoryD);
         if ($signatureD) {
             $drawingD = new Drawing();
@@ -718,6 +718,7 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
             $drawingD->setWorksheet($worksheet);
         }
         $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] / 2);
+
         $sheet->mergeCells("J{$startRow}:Q{$startRow}");
         $sheet->setCellValue("J{$startRow}", "");
         $sheet->mergeCells("AD{$startRow}:AF{$startRow}");

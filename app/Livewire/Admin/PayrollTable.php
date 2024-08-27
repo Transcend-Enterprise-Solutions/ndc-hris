@@ -371,7 +371,7 @@ class PayrollTable extends Component
                         continue;
                     }
 
-                    $dailySalaryRate = $payrollRecord->rate_per_month / $totalWorkingDaysInMonth;
+                    $dailySalaryRate = $payrollRecord->rate_per_month / 22;
 
                     // Get the count of absences and its amount
                     $absentDays = $dtrData['total_absent'];
@@ -498,9 +498,9 @@ class PayrollTable extends Component
                 }
 
                 if($this->savePayroll){
-                    $this->dispatch('notify', [
-                        'message' => 'Payroll Saved!',
-                        'type' => 'success'
+                    $this->dispatch('swal', [
+                        'title' => 'Payroll Saved!',
+                        'icon' => 'success'
                     ]);
                     $this->savePayroll = null;
                     return;
@@ -517,9 +517,9 @@ class PayrollTable extends Component
                 return $payrolls;
             }
         } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => 'Fetching or Saving data was unsuccessful!',
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => 'Fetching or Saving data was unsuccessful!',
+                'icon' => 'error'
             ]);
             return new LengthAwarePaginator([], 0, 1);
         }
@@ -648,12 +648,20 @@ class PayrollTable extends Component
                                        . $startDate->format('Y') . '.xlsx';
                 
                 $payrolls = $this->getPayroll();
+
+                if ($payrolls->isEmpty() || !$payrolls){
+                    $this->dispatch('swal', [
+                        'title' => 'No exportable record/s!',
+                        'icon' => 'error'
+                    ]);
+                    return;
+                }
                 
                 return Excel::download(new PayrollExport($payrolls, $filters), $filename);
             } else {
-                $this->dispatch('notify', [
-                    'message' => 'Select start and end date!',
-                    'type' => 'info'
+                $this->dispatch('swal', [
+                    'title' => 'Select start and end date!',
+                    'icon' => 'info'
                 ]);
             }
         } catch (Exception $e) {
@@ -686,14 +694,14 @@ class PayrollTable extends Component
                 }
             }
     
-            $this->dispatch('notify', [
-                'message' => 'Payslip exported!',
-                'type' => 'success'
+            $this->dispatch('swal', [
+                'title' => 'Payslip exported!',
+                'icon' => 'success'
             ]);
         } catch (Exception $e) {
-            $this->dispatch('notify', [
-                'message' => 'Unable to export payslip: ' . $e->getMessage(),
-                'type' => 'error'
+            $this->dispatch('swal', [
+                'title' => 'Unable to export payslip: ' . $e->getMessage(),
+                'icon' => 'error'
             ]);
         }
     }
@@ -977,6 +985,7 @@ class PayrollTable extends Component
     public function exportCosExcel(){
         $filters = [
             'search' => $this->search2,
+            'type' => 'reg',
         ];
         $fileName = 'COS Reg Payroll List.xlsx';
         return Excel::download(new CosPayrollListExport($filters), $fileName);

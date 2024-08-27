@@ -94,7 +94,8 @@ class PayrollListExport implements FromCollection, WithEvents
                 $sheet->getColumnDimension('B')->setWidth(30);
                 $sheet->getColumnDimension('C')->setWidth(15);
                 $sheet->getColumnDimension('D')->setWidth(30);
-                for ($col = 'E'; $col <= 'Z'; $col++) {
+                $sheet->getColumnDimension('E')->setWidth(30);
+                for ($col = 'F'; $col <= 'Z'; $col++) {
                     $sheet->getColumnDimension($col)->setWidth(15);
                 }
                 $sheet->getColumnDimension('AA')->setWidth(20);

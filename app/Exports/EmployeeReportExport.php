@@ -13,6 +13,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Carbon\Exceptions\InvalidFormatException;
+use DateTime;
 
 class EmployeeReportExport implements FromCollection, WithEvents
 {
@@ -40,11 +41,12 @@ class EmployeeReportExport implements FromCollection, WithEvents
                 $sheet->getColumnDimension('C')->setWidth(30);
                 $sheet->getColumnDimension('D')->setWidth(15);
                 $sheet->getColumnDimension('E')->setWidth(30);
-                $sheet->getColumnDimension('F')->setWidth(15);
+                $sheet->getColumnDimension('F')->setWidth(20);
                 $sheet->getColumnDimension('G')->setWidth(20);
                 $sheet->getColumnDimension('H')->setWidth(10);
                 $sheet->getColumnDimension('I')->setWidth(20);
                 $sheet->getColumnDimension('J')->setWidth(20);
+                $sheet->getColumnDimension('K')->setWidth(15);
 
 
                 // Set row height for row 4
@@ -57,22 +59,23 @@ class EmployeeReportExport implements FromCollection, WithEvents
                 $sheet->setCellValue('C4', 'EMAIL');
                 $sheet->setCellValue('D4', 'EMPLOYEE NO.');
                 $sheet->setCellValue('E4', 'POSITION');
-                $sheet->setCellValue('F4', 'DEPARTMENT');
+                $sheet->setCellValue('F4', 'APPOINTMENT');
                 $sheet->setCellValue('G4', 'OFFICE/DIVISION');
                 $sheet->setCellValue('H4', 'SG/STEP');
                 $sheet->setCellValue('I4', 'RATE PER MONTH');
                 $sheet->setCellValue('J4', 'DATE EMPLOYED');
+                $sheet->setCellValue('K4', 'STATUS');
 
                 // Apply word wrap
-                $sheet->getStyle('A:J')->getAlignment()->setWrapText(true);
+                $sheet->getStyle('A:K')->getAlignment()->setWrapText(true);
 
                 // Column Header
-                $sheet->getStyle('A1:J3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle('A4:J4')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
+                $sheet->getStyle('A1:K3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('A4:K4')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
 
                 // Rows
                 $sheet->getStyle('A4:B' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
-                $sheet->getStyle('C4:J' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('C4:K' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             },
         ];
     }
@@ -81,23 +84,34 @@ class EmployeeReportExport implements FromCollection, WithEvents
         $sheet = $event->sheet;
 
         // Add custom header
-        $sheet->mergeCells('A1:J1');
+        $sheet->mergeCells('A1:K1');
         $sheet->setCellValue('A1', "");
 
-        $sheet->mergeCells('A2:J2');
+        $sheet->mergeCells('A2:K2');
         $sheet->setCellValue('A2', "NATIONAL YOUTH COMMISSION");
-        $sheet->mergeCells('A3:J3');
-        $sheet->setCellValue('A3', "Employee List");
+        $sheet->mergeCells('A3:K3');
+
+        $month = '';
+        if (isset($this->filters['month']) && $this->filters['month']) {
+            $dateTime = DateTime::createFromFormat('Y-m', $this->filters['month']);
+            if ($dateTime !== false) {
+                $month = " for the month of " . $dateTime->format('F Y');
+            } else {
+                // Handle invalid date format
+                $month = 'Invalid Date';
+            }
+        }
+        $sheet->setCellValue('A3', " Employee List" . $month);
 
         // Apply some basic styling
-        $sheet->getStyle('A1:J3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        $sheet->getStyle('A1:J3')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('A1:K3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A1:K3')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         $sheet->getStyle('A1:A3')->getFont()->setBold(true);
-        $sheet->getStyle('A1:J3')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_NONE);
-        $sheet->getStyle('A4:J4')->getFont()->setBold(true);
+        $sheet->getStyle('A1:K3')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_NONE);
+        $sheet->getStyle('A4:K4')->getFont()->setBold(true);
         $sheet->getStyle('2:2')->getFont()->setSize(16);
 
-        $sheet->getStyle('A4:J4')->applyFromArray([
+        $sheet->getStyle('A4:K4')->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
@@ -124,43 +138,73 @@ class EmployeeReportExport implements FromCollection, WithEvents
             return '₱ ' . number_format((float)$value, 2, '.', ',');
         };
 
-        $query = User::join('payrolls', 'payrolls.user_id', 'users.id')
-                ->where('users.user_role', 'emp')
-                ->select('users.name', 'users.email', 'payrolls.*', 'users.created_at as date_employed');
-
-        if ($this->filters && isset($this->filters['month'])) {
-            try {
-                $monthDate = Carbon::createFromFormat('Y-m', $this->filters['month']);
-                $startDate = $monthDate->copy()->startOfMonth()->toDateString();
-                $endDate = $monthDate->copy()->endOfMonth()->toDateString();
-                $query->whereBetween('users.created_at', [$startDate, $endDate]);
-            } catch (InvalidFormatException $e) {
-                throw $e;
-            }
-        }
-
-        if ($this->filters && isset($this->filters['department'])) {
-            try {
-                $query->where('payrolls.department', $this->filters['department']);
-            } catch (InvalidFormatException $e) {
-                throw $e;
-            }
-        }
-
-        return $query->get()
+        return $this->filters['employees']->get()
             ->map(function ($user) use ($formatDate, $formatCurrency) {
                 $this->rowNumber++;
+                $sg_step = null;
+                if($user->plantilla_sg_step){
+                    $sg_step = $user->plantilla_sg_step;
+                }else if($user->cos_reg_sg_step){
+                    $sg_step = $user->cos_reg_sg_step;
+                }else if($user->cos_sk_sg_step){
+                    $sg_step = $user->cos_sk_sg_step;
+                }else{
+                    $sg_step = "-";
+                }
+
+                $rate = null;
+                if($user->plantilla_rate){
+                    $rate = $user->plantilla_rate;
+                }else if($user->cos_reg_rate){
+                    $rate = $user->cos_reg_rate;
+                }else if($user->cos_sk_rate){
+                    $rate = $user->cos_sk_rate;
+                }
+
+                $appointment = null;
+                if($user->appointment != "cos" && $user->appointment != "ct"){
+                    $appointment = explode(',', $user->appointment);
+                    if($appointment[0] == 'pa'){
+                        $appointment = 'Presidential Appointee';
+                    }else{
+                        $appointment = 'Plantilla';
+                    }
+                }else{
+                    if($user->appointment == "ct"){
+                        $appointment = 'Co-Terminus';
+                    }else{
+                        $appointment = 'COS';
+                    }
+                }
+
+                $status = null;
+                switch($user->active_status){
+                    case 0:
+                        $status = 'Inactive';
+                        break;
+                    case 1:
+                        $status = 'Active';
+                        break;
+                    case 2:
+                        $status = 'Resigned';
+                        break;
+                    case 3:
+                        $status = 'Retired';
+                        break;
+                }
+
                 return [
                     $this->rowNumber,
                     'Name' => $user->name,
                     'Email' => $user->email,
-                    'Employee ID' => $user->employee_number,
+                    'Employee ID' => $user->emp_code,
                     'Position' => $user->position,
-                    'Department' => $user->department,
+                    'Appointment' => $appointment,
                     'Office/Division' => $user->office_division,
-                    'SG/STEP' => $user->sg_step,
-                    'Rate Per Month' => $formatCurrency($user->rate_per_month),
-                    'Date Employed' => $formatDate($user->date_employed),
+                    'SG/STEP' => $sg_step,
+                    'Rate Per Month' => $formatCurrency($rate),
+                    'Date Employed' => $formatDate($user->date_hired),
+                    'Status' => $status,
                 ];
             });
     }

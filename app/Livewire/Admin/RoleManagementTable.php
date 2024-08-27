@@ -64,7 +64,6 @@ class RoleManagementTable extends Component
         'inactive' => true,
         'resigned' => true,
         'retired' => true,
-        'promoted' => true,
     ];
 
     public function mount(){
@@ -77,6 +76,7 @@ class RoleManagementTable extends Component
                 ->leftJoin('office_divisions', 'office_divisions.id', 'users.office_division_id')
                 ->where('users.user_role', '!=', 'emp')
                 ->where('positions.position', '!=', 'Super Admin')
+                ->where('users.active_status', '!=', 4)
                 ->when($this->search, function ($query) {
                     return $query->search(trim($this->search));
                 })
@@ -96,7 +96,9 @@ class RoleManagementTable extends Component
                 ->join('user_data', 'user_data.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->where('users.active_status', '!=', 4)
                 ->select(
+                    'users.id', 
                     'users.name', 
                     'users.emp_code', 
                     'users.active_status', 
@@ -112,6 +114,7 @@ class RoleManagementTable extends Component
                 ->join('user_data', 'user_data.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->where('users.active_status', '!=', 4)
                 ->select(
                     'users.name', 
                     'users.emp_code', 
@@ -177,6 +180,7 @@ class RoleManagementTable extends Component
                 ->leftJoin('payrolls', 'payrolls.user_id', 'users.id')
                 ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
                 ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
+                ->where('users.active_status', '!=', 4)
                 ->select(
                     'users.name', 
                     'users.email', 
@@ -210,9 +214,6 @@ class RoleManagementTable extends Component
                         }
                         if ($this->status['retired']) {
                             $subQuery->orWhere('active_status', 3);
-                        }
-                        if ($this->status['promoted']) {
-                            $subQuery->orWhere('active_status', 4);
                         }
                     });
                 });

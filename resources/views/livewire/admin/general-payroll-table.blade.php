@@ -143,9 +143,9 @@ x-cloak>
                                     <label for="allCol" class="ml-2 text-gray-900 dark:text-gray-300">Select All</label>
                                 </li>
                                 <li class="flex items-center">
-                                    <input id="employee_number" type="checkbox" wire:model.live="payrollColumns.employee_number"
+                                    <input id="emp_code" type="checkbox" wire:model.live="payrollColumns.emp_code"
                                         class="h-4 w-4">
-                                    <label for="employee_number" class="ml-2 text-gray-900 dark:text-gray-300">Employee Number</label>
+                                    <label for="emp_code" class="ml-2 text-gray-900 dark:text-gray-300">Employee Number</label>
                                 </li>
                                 <li class="flex items-center">
                                     <input id="office_division" type="checkbox" wire:model.live="payrollColumns.office_division"
@@ -301,9 +301,9 @@ x-cloak>
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button"  title="Export Payroll">
-                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
-                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
-                            <div wire:loading wire:target="exportPlantillaExcel" style="margin-left: 5px">
+                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="" wire:target="exportPlantillaExcel" wire:loading.remove>
+                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="" wire:target="exportPlantillaExcel" wire:loading.remove>
+                            <div wire:loading wire:target="exportPlantillaExcel">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
                             </div>
@@ -312,13 +312,6 @@ x-cloak>
                 </div>
 
                 <div class="w-full sm:w-3/4 md:w-full flex flex-col sm:flex-row sm:justify-end sm:space-x-4 md:mt-8 md:items-end" x-show="selectedTab === 'export'">
-
-                    <div class="w-full sm:w-auto relative mr-0 sm:mr-4 mt-4 sm:mt-0"  style="width: 50px;">
-                        <div class="relative sm:absolute sm:bottom-0 sm:left-0 flex gap-2 items-center pb-4 sm:pb-0">
-                            <input id="range" type="checkbox" wire:model.live='monthRange'>
-                            <label for="range" class="text-sm">Range?</label>
-                        </div>
-                    </div>
 
                     <!-- Select Start Date -->
                     <div class="w-full sm:w-auto relative">
@@ -331,7 +324,7 @@ x-cloak>
                     </div>
 
                     <!-- Select End Date -->
-                    <div class="w-full sm:w-auto relative {{ $monthRange ? '' : 'hidden' }} mt-4 sm:mt-0">
+                    <div class="w-full sm:w-auto relative mt-4 sm:mt-0">
                         <label for="endMonth" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Select End Month</label>
                         <input type="month" id="endMonth" wire:model.live='endMonth' value="{{ $endMonth }}"
                         class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
@@ -526,7 +519,7 @@ x-cloak>
                     </div> --}}
 
                     <!-- Save Payroll -->
-                    @if($hasPayroll == false)
+                    {{-- @if($hasPayroll == false)
                         <div class="w-full sm:w-auto">
                             <button wire:click="recordPayroll"
                                 class="mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
@@ -541,7 +534,7 @@ x-cloak>
                                 Save Payroll
                             </button>
                         </div>
-                    @endif
+                    @endif --}}
 
                     <!-- Export to Excel -->
                     <div class="w-full sm:w-auto relative">
@@ -551,9 +544,9 @@ x-cloak>
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button" title="Export Payroll">
-                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
-                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
-                            <div wire:loading wire:target="exportExcel" style="margin-left: 5px">
+                            <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="" wire:target="exportExcel" wire:loading.remove>
+                            <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="" wire:target="exportExcel" wire:loading.remove>
+                            <div wire:loading wire:target="exportExcel">
                                 <div class="spinner-border small text-primary" role="status">
                                 </div>
                             </div>
@@ -595,6 +588,8 @@ x-cloak>
                                                     <th scope="col" class="px-5 py-3 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium text-left uppercase">
                                                         @if($column == 'emp_code')
                                                             EMPLOYEE NUMBER
+                                                        @elseif($column == 'personal_economic_relief_allowance')
+                                                            PERA
                                                         @else
                                                             {{ ucwords(str_replace('_', ' ', $column)) }}
                                                         @endif
@@ -779,9 +774,9 @@ x-cloak>
                                                             class="peer inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 
                                                             text-sm font-medium tracking-wide text-gray-800 dark:text-white  hover:text-gray-300 focus:outline-none"
                                                             title="Export Payslip">
-                                                            <i class="fas fa-file-export ml-4"></i>
-                                                            <div wire:loading wire:target="exportPayslip({{ $payroll->user_id }})" style="margin-left: 5px">
-                                                                <div class="spinner-border small text-primary" role="status">
+                                                            <i class="fas fa-file-export ml-4" wire:target="exportPayslip({{ $payroll->user_id }})"  wire:loading.remove></i>
+                                                            <div wire:loading wire:target="exportPayslip({{ $payroll->user_id }})">
+                                                                <div class="ml-3 spinner-border small text-primary" role="status">
                                                                 </div>
                                                             </div>
                                                         </button>
@@ -791,10 +786,10 @@ x-cloak>
                                                             class="peer inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 
                                                             text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
                                                             title="Export Payroll">
-                                                            <img class="flex dark:hidden ml-3 mt-4" src="/images/icons8-xls-export-dark.png" width="18" alt="">
-                                                            <img class="hidden dark:block ml-3 mt-4" src="/images/icons8-xls-export-light.png" width="18" alt="">
-                                                            <div wire:loading wire:target="exportIndivPayroll({{ $payroll->user_id }})" style="margin-left: 5px">
-                                                                <div class="spinner-border small text-primary" role="status">
+                                                            <img class="flex dark:hidden ml-3 mt-4" src="/images/icons8-xls-export-dark.png" width="18" alt="" wire:target="exportIndivPayroll({{ $payroll->user_id }})"  wire:loading.remove>
+                                                            <img class="hidden dark:block ml-3 mt-4" src="/images/icons8-xls-export-light.png" width="18" alt="" wire:target="exportIndivPayroll({{ $payroll->user_id }})" wire:loading.remove>
+                                                            <div wire:loading wire:target="exportIndivPayroll({{ $payroll->user_id }})">
+                                                                <div class="mt-4 ml-3 spinner-border small text-primary" role="status">
                                                                 </div>
                                                             </div>
                                                         </button>

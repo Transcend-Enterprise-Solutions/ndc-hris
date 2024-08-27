@@ -45,6 +45,7 @@ class PerOfficeDivisionExport implements FromCollection, WithEvents
                 $sheet->getColumnDimension('H')->setWidth(10);
                 $sheet->getColumnDimension('I')->setWidth(20);
                 $sheet->getColumnDimension('J')->setWidth(20);
+                $sheet->getColumnDimension('K')->setWidth(15);
 
 
                 // Set row height for row 4
@@ -62,17 +63,18 @@ class PerOfficeDivisionExport implements FromCollection, WithEvents
                 $sheet->setCellValue('H4', 'SG/STEP');
                 $sheet->setCellValue('I4', 'RATE PER MONTH');
                 $sheet->setCellValue('J4', 'DATE EMPLOYED');
+                $sheet->setCellValue('K4', 'STATUS');
 
                 // Apply word wrap
-                $sheet->getStyle('A:J')->getAlignment()->setWrapText(true);
+                $sheet->getStyle('A:K')->getAlignment()->setWrapText(true);
 
                 // Column Header
-                $sheet->getStyle('A1:J3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle('A4:J4')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
+                $sheet->getStyle('A1:K3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('A4:K4')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
 
                 // Rows
                 $sheet->getStyle('A4:B' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
-                $sheet->getStyle('C4:J' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('C4:K' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             },
         ];
     }
@@ -81,25 +83,25 @@ class PerOfficeDivisionExport implements FromCollection, WithEvents
         $sheet = $event->sheet;
 
         // Add custom header
-        $sheet->mergeCells('A1:J1');
+        $sheet->mergeCells('A1:K1');
         $sheet->setCellValue('A1', "");
 
-        $sheet->mergeCells('A2:J2');
+        $sheet->mergeCells('A2:K2');
         $sheet->setCellValue('A2', "NATIONAL YOUTH COMMISSION");
-        $sheet->mergeCells('A3:J3');
+        $sheet->mergeCells('A3:K3');
 
         $statuses = $this->filters['statuses'][0] === 'All' ? 'All' : implode(' | ', $this->filters['statuses']);
         $sheet->setCellValue('A3', $this->filters['office_division'] . " - Employee List (" . $statuses . ")");
 
         // Apply some basic styling
-        $sheet->getStyle('A1:J3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        $sheet->getStyle('A1:J3')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('A1:K3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A1:K3')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         $sheet->getStyle('A1:A3')->getFont()->setBold(true);
-        $sheet->getStyle('A1:J3')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_NONE);
-        $sheet->getStyle('A4:J4')->getFont()->setBold(true);
+        $sheet->getStyle('A1:K3')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_NONE);
+        $sheet->getStyle('A4:K4')->getFont()->setBold(true);
         $sheet->getStyle('2:2')->getFont()->setSize(16);
 
-        $sheet->getStyle('A4:J4')->applyFromArray([
+        $sheet->getStyle('A4:K4')->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
@@ -165,6 +167,22 @@ class PerOfficeDivisionExport implements FromCollection, WithEvents
                     }
                 }
 
+                $status = null;
+                switch($user->active_status){
+                    case 0:
+                        $status = 'Inactive';
+                        break;
+                    case 1:
+                        $status = 'Active';
+                        break;
+                    case 2:
+                        $status = 'Resigned';
+                        break;
+                    case 3:
+                        $status = 'Retired';
+                        break;
+                }
+
                 return [
                     $this->rowNumber,
                     'Name' => $user->name,
@@ -176,6 +194,7 @@ class PerOfficeDivisionExport implements FromCollection, WithEvents
                     'SG/STEP' => $sg_step,
                     'Rate Per Month' => $formatCurrency($rate),
                     'Date Employed' => $formatDate($user->date_hired),
+                    'Status' => $status,
                 ];
             });
     }

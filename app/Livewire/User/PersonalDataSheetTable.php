@@ -1867,6 +1867,30 @@ class PersonalDataSheetTable extends Component
     public function cancelEditC4Question($questionKey){
         $this->editAnswer[$questionKey] = false;
         $this->qKey = null;
+        $this->q34aAnswer = null;
+        $this->q34bAnswer = null;
+        $this->q34bDetails = null;
+        $this->q35aAnswer = null;
+        $this->q35aDetails = null;
+        $this->q35bAnswer = null;
+        $this->q35bDate_filed = null;
+        $this->q35bStatus = null;
+        $this->q36aAnswer = null;
+        $this->q36aDetails = null;
+        $this->q37aAnswer = null;
+        $this->q37aDetails = null;
+        $this->q38aAnswer = null;
+        $this->q38aDetails = null;
+        $this->q38bAnswer = null;
+        $this->q38bDetails = null;
+        $this->q39aAnswer = null;
+        $this->q39aDetails = null;
+        $this->q40aAnswer = null;
+        $this->q40aDetails = null;
+        $this->q40bAnswer = null;
+        $this->q40bDetails = null;
+        $this->q40cAnswer = null;
+        $this->q40cDetails = null;
     }
 
     public function saveC4Question($qNum, $qLetter, $qAnswerVar = null, $qDetailsVar = null){
@@ -1878,6 +1902,22 @@ class PersonalDataSheetTable extends Component
 
                 $dateFiled = null;
                 $status = null;
+
+                if($qAnswer == null){
+                    $this->dispatch('swal', [
+                        'title' => "Select an answer!",
+                        'icon' => 'error'
+                    ]);
+                    return;
+                }
+
+                if($qNum == 35 && $qLetter == 'b' && $qAnswer == 1 && $this->q35bDate_filed == null && $this->q35bStatus == null){
+                    $this->dispatch('swal', [
+                        'title' => "Please add date filed and status of case/s!",
+                        'icon' => 'error'
+                    ]);
+                    return;
+                }
 
                 if($qAnswer == 1 && $qDetails == null){
                     $this->dispatch('swal', [
@@ -1923,11 +1963,6 @@ class PersonalDataSheetTable extends Component
                     $message = "Answer added successfully!";
                 }
 
-                if($qNum == 40 && $qLetter == "b"){
-                    $user->userData->update([
-                        'pwd' => $qAnswer,
-                    ]);
-                }
                 $this->dispatch('swal', [
                     'title' => $message,
                     'icon' => 'success'
