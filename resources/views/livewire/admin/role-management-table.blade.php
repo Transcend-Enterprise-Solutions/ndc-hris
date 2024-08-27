@@ -208,7 +208,7 @@ x-cloak>
                         <button @click="selectedTab = 'pos'" 
                                 :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'pos', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'pos' }" 
                                 class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
-                            Employee Position
+                            Employee Settings
                         </button>
                         <button @click="selectedTab = 'settings'" 
                                 :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'settings', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'settings' }" 
@@ -935,7 +935,7 @@ x-cloak>
     <x-modal id="empModal" maxWidth="2xl" wire:model="editPosition" centered>
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                {{ $addPosition ? 'Add' : 'Edit' }} Employee's Office/Division and Position
+                Employee Settings
                 <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
                     <i class="fas fa-times"></i>
                 </button>
@@ -959,8 +959,8 @@ x-cloak>
                     
                     <div class="col-span-full sm:col-span-1">
                         <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
-                        <select id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                            <option class="text-gray-300" value="{{ $office_division }}">{{ $office_division ? $office_division : 'Select office/division' }}</option>
+                        <select id="office_division" wire:model='officeDivisionId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option class="text-gray-300" value="{{ $officeDivisionId }}">{{ $office_division ? $office_division : 'Select office/division' }}</option>
                             @foreach($officeDivisions as $office)
                                 <option value="{{ $office->id }}">{{ $office->office_division }}</option>
                             @endforeach
@@ -972,8 +972,8 @@ x-cloak>
                     
                     <div class="col-span-full sm:col-span-1">
                         <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
-                        <select id="position" wire:model='position' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                            <option value="{{ $position }}">{{ $position ? $position : 'Select position' }}</option>
+                        <select id="position" wire:model='positionId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="{{ $positionId }}">{{ $position ? $position : 'Select position' }}</option>
                             @foreach ($positions as $pos)
                                 <option value="{{ $pos->id }}">{{ $pos->position }}</option>
                             @endforeach
@@ -983,10 +983,31 @@ x-cloak>
                         @enderror
                     </div>
 
+                    <div class="text-sm font-semibold text-purple-800 dark:text-gray-100 mb-4">
+                        <label for="allColActive" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Select Status: </label>
+                        <ul class="flex space-x-4 text-sm mt-2">
+                            <li class="flex flex-col sm:flex-row items-center justify-center">
+                                <input id="allColActive" type="radio" name="status" value="1" wire:model.live="activeStatus" class="h-4 w-4">
+                                <label for="allColActive" class="sm:ml-2 text-gray-900 dark:text-gray-300">Active</label>
+                            </li>
+                            <li class="flex flex-col sm:flex-row items-center justify-center">
+                                <input id="allColInactive" type="radio" name="status" value="0" wire:model.live="activeStatus" class="h-4 w-4">
+                                <label for="allColInactive" class="sm:ml-2 text-gray-900 dark:text-gray-300">Inactive</label>
+                            </li>
+                            <li class="flex flex-col sm:flex-row items-center justify-center">
+                                <input id="allColResigned" type="radio" name="status" value="2" wire:model.live="activeStatus" class="h-4 w-4">
+                                <label for="allColResigned" class="sm:ml-2 text-gray-900 dark:text-gray-300">Resigned</label>
+                            </li>
+                            <li class="flex flex-col sm:flex-row items-center justify-center">
+                                <input id="allColRetired" type="radio" name="status" value="3" wire:model.live="activeStatus" class="h-4 w-4">
+                                <label for="allColRetired" class="sm:ml-2 text-gray-900 dark:text-gray-300">Retired</label>
+                            </li>
+                        </ul>                    
+                    </div>
 
                     <div class="mt-4 flex justify-end col-span-2">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            <div wire:loading wire:target="saveRole" class="spinner-border small text-primary" role="status">
+                            <div wire:loading wire:target="savePosition" class="spinner-border small text-primary" role="status">
                             </div>
                             Save
                         </button>

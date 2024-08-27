@@ -58,6 +58,9 @@ class RoleManagementTable extends Component
     public $editPosition;
     public $dropdownForStatus;
     public $allStat = true;
+    public $activeStatus;
+    public $positionId;
+    public $officeDivisionId;
 
     public $status = [
         'active' => true,
@@ -343,7 +346,7 @@ class RoleManagementTable extends Component
         $this->editPosition = true;
         $this->userId = $userId;
         try {
-            $empPos = User::where('users.id', $userId)
+            $empPos = User::where('users.id', $this->userId)
                     ->join('positions', 'positions.id', 'users.position_id')
                     ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                     ->select('users.*', 'positions.position', 'office_divisions.office_division')
@@ -356,6 +359,9 @@ class RoleManagementTable extends Component
                 $this->name = $empPos->name;
                 $this->position = $empPos->position;
                 $this->office_division = $empPos->office_division;
+                $this->positionId = $empPos->position_id;
+                $this->officeDivisionId = $empPos->office_division_id;
+                $this->activeStatus = $empPos->active_status;
             }
         } catch (Exception $e) {
             throw $e;
@@ -455,6 +461,26 @@ class RoleManagementTable extends Component
                 'title' => "Account role update was unsuccessful!",
                 'icon' => 'error'
             ]);
+            throw $e;
+        }
+    }
+
+    public function savePosition(){
+        try {
+            $empPos = User::where('users.id', $this->userId)->first();
+            if ($empPos) {
+                $empPos->update([
+                    'position_id' => $this->positionId,
+                    'office_division_id' => $this->officeDivisionId,
+                    'active_status' => $this->activeStatus,
+                ]);
+                $this->dispatch('swal', [
+                    'title' => 'Employee settings updated successfully!',
+                    'icon' => 'success'
+                ]);
+                $this->resetVariables();
+            }
+        } catch (Exception $e) {
             throw $e;
         }
     }
@@ -608,6 +634,8 @@ class RoleManagementTable extends Component
             'step1' => '', 'step2' => '', 'step3' => '', 'step4' => '',
             'step5' => '', 'step6' => '', 'step7' => '', 'step8' => '',
         ];
+        $this->activeStatus = null;
+        $this->editPosition = null;
     }
 
     private function isPasswordComplex($password){
