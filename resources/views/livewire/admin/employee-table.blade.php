@@ -2107,6 +2107,11 @@
                                         <label for="date_hired" class="ml-2 text-gray-900 dark:text-gray-300">Date
                                             Hired</label>
                                     </li>
+                                    <!-- Add new filter for years_in_gov_service -->
+                                    <li class="flex items-center">
+                                        <input id="years_in_gov_service" type="checkbox" wire:model.live="filters.years_in_gov_service" class="h-4 w-4">
+                                        <label for="years_in_gov_service" class="ml-2 text-gray-900 dark:text-gray-300">Years in Gov Service</label>
+                                    </li>
                                 </ul>
                             </div>
                             {{-- @endif --}}
@@ -2290,6 +2295,9 @@
                                                         class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                         Year in Current Position</th>
                                                 @endif
+                                                @if ($filters['years_in_gov_service'])
+                                                    <th scope="col" class="px-5 py-3 text-sm font-medium uppercase text-center">Years in Gov Service</th>
+                                                @endif
                                                 <th
                                                     class="px-5 py-3 text-gray-100 text-sm font-medium text-right sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
                                                     Action</th>
@@ -2411,6 +2419,9 @@
                                                     @if ($filters['date_hired'])
                                                         <td class="px-4 py-2 text-center">
                                                             {{ $user->date_hired }}</td>
+                                                    @endif
+                                                    @if ($filters['years_in_gov_service'])
+                                                        <td class="px-4 py-2 text-center">{{ $user->years_in_gov_service }}</td>
                                                     @endif
                                                     <td
                                                         class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
