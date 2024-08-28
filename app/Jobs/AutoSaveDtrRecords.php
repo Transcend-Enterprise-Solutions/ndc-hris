@@ -26,11 +26,12 @@ class AutoSaveDtrRecords implements ShouldQueue
         Log::info("AutoSaveDtrRecords job started");
 
         try {
-            // Get the current date
-            $currentDate = Carbon::now()->toDateString();
+            // Get the current month's start and end dates
+            $startDate = Carbon::now()->startOfMonth();
+            $endDate = Carbon::now()->endOfMonth();
 
-            echo "Processing date: {$currentDate}\n";
-            Log::info("Processing date: {$currentDate}");
+            echo "Processing month: {$startDate->format('F Y')}\n";
+            Log::info("Processing month: {$startDate->format('F Y')}");
 
             $users = User::where('user_role', 'emp')->get();
 
@@ -38,36 +39,43 @@ class AutoSaveDtrRecords implements ShouldQueue
                 echo "Processing user: {$user->emp_code}\n";
                 Log::info("Processing user: {$user->emp_code}");
 
-                // Get the transactions for the current date
-                $transactions = Transaction::where('emp_code', $user->emp_code)
-                    ->whereDate('punch_time', $currentDate)
-                    ->orderBy('punch_time')
-                    ->get();
+                // Create a period for the entire month
+                $datePeriod = CarbonPeriod::create($startDate, $endDate);
 
-                // Get approved leaves for the current date
-                $approvedLeaves = LeaveApplication::where('user_id', $user->id)
-                    ->where('status', 'Approved')
-                    ->whereRaw("FIND_IN_SET(?, approved_dates) > 0", [$currentDate])
-                    ->get();
+                foreach ($datePeriod as $date) {
+                    $currentDate = $date->toDateString();
 
-                echo "Total transactions found for user {$user->emp_code}: " . $transactions->count() . "\n";
-                Log::info("Total transactions found for user {$user->emp_code}: " . $transactions->count());
+                    // Get the transactions for the current date
+                    $transactions = Transaction::where('emp_code', $user->emp_code)
+                        ->whereDate('punch_time', $currentDate)
+                        ->orderBy('punch_time')
+                        ->get();
 
-                // Process the transactions for the current date
-                $calculatedData = $this->calculateTimeRecords($transactions, $user->emp_code, $currentDate, $approvedLeaves);
-                echo "Calculated data for user {$user->emp_code} on {$currentDate}: " . json_encode($calculatedData) . "\n";
-                Log::info("Calculated data for user {$user->emp_code} on {$currentDate}: " . json_encode($calculatedData));
+                    // Get approved leaves for the current date
+                    $approvedLeaves = LeaveApplication::where('user_id', $user->id)
+                        ->where('status', 'Approved')
+                        ->whereRaw("FIND_IN_SET(?, approved_dates) > 0", [$currentDate])
+                        ->get();
 
-                try {
-                    $record = EmployeesDtr::updateOrCreate(
-                        ['user_id' => $user->id, 'date' => $currentDate],
-                        array_merge(['emp_code' => $user->emp_code], $calculatedData)
-                    );
-                    echo "DTR record saved/updated for user {$user->emp_code} on {$currentDate}. Record ID: " . $record->id . "\n";
-                    Log::info("DTR record saved/updated for user {$user->emp_code} on {$currentDate}. Record ID: " . $record->id);
-                } catch (\Exception $e) {
-                    echo "Error saving DTR record for user {$user->emp_code} on {$currentDate}: " . $e->getMessage() . "\n";
-                    Log::error("Error saving DTR record for user {$user->emp_code} on {$currentDate}: " . $e->getMessage());
+                    echo "Total transactions found for user {$user->emp_code} on {$currentDate}: " . $transactions->count() . "\n";
+                    Log::info("Total transactions found for user {$user->emp_code} on {$currentDate}: " . $transactions->count());
+
+                    // Process the transactions for the current date
+                    $calculatedData = $this->calculateTimeRecords($transactions, $user->emp_code, $currentDate, $approvedLeaves);
+                    echo "Calculated data for user {$user->emp_code} on {$currentDate}: " . json_encode($calculatedData) . "\n";
+                    Log::info("Calculated data for user {$user->emp_code} on {$currentDate}: " . json_encode($calculatedData));
+
+                    try {
+                        $record = EmployeesDtr::updateOrCreate(
+                            ['user_id' => $user->id, 'date' => $currentDate],
+                            array_merge(['emp_code' => $user->emp_code], $calculatedData)
+                        );
+                        echo "DTR record saved/updated for user {$user->emp_code} on {$currentDate}. Record ID: " . $record->id . "\n";
+                        Log::info("DTR record saved/updated for user {$user->emp_code} on {$currentDate}. Record ID: " . $record->id);
+                    } catch (\Exception $e) {
+                        echo "Error saving DTR record for user {$user->emp_code} on {$currentDate}: " . $e->getMessage() . "\n";
+                        Log::error("Error saving DTR record for user {$user->emp_code} on {$currentDate}: " . $e->getMessage());
+                    }
                 }
             }
 
@@ -111,40 +119,7 @@ class AutoSaveDtrRecords implements ShouldQueue
         if ($dayOfWeek === 'Monday' &&  $location !== 'WFH' ) {
             $lateThreshold = $carbonDate->copy()->setTimeFromTimeString('09:00:00');
         }
-        // Check for holiday or leave
-        $holiday = Holiday::whereDate('holiday_date', $date)->first();
-        if ($holiday) {
-            return [
-                'day_of_week' => $dayOfWeek,
-                'location' => $location, // Assuming Onsite for holidays
-                'morning_in' => null,
-                'morning_out' => null,
-                'afternoon_in' => null,
-                'afternoon_out' => null,
-                'calculated_morning_in' => null,
-                'late' => '00:00',
-                'overtime' => '00:00',
-                'total_hours_rendered' => '08:00',
-                'remarks' => 'Holiday',
-            ];
-        }
 
-        $isOnLeave = $approvedLeaves->isNotEmpty();
-        if ($isOnLeave) {
-            return [
-                'day_of_week' => $dayOfWeek,
-                'location' => $location,
-                'morning_in' => null,
-                'morning_out' => null,
-                'afternoon_in' => null,
-                'afternoon_out' => null,
-                'calculated_morning_in' => null,
-                'late' => '00:00',
-                'overtime' => '00:00',
-                'total_hours_rendered' => '00:00',
-                'remarks' => 'Leave',
-            ];
-        }
         // Determine location
         // Default value
         // Initialize variables for actual punches and calculated times
@@ -277,11 +252,21 @@ class AutoSaveDtrRecords implements ShouldQueue
             $remarks = 'Sunday';
         }
 
+
         // Adjust remarks based on presence or lateness
         if (!$actualMorningIn && !$actualAfternoonIn) {
             $remarks = 'Absent';
         } elseif ($lateFormatted !== '00:00') {
             $remarks = 'Late/Undertime';
+        }
+        // Check for holiday or leave
+        $holiday = Holiday::whereDate('holiday_date', $date)->first();
+        if ($holiday) {
+            $remarks = 'Holiday';
+        }
+        $isOnLeave = $approvedLeaves->isNotEmpty();
+        if ($isOnLeave) {
+            $remarks = 'Leave';
         }
 
         return [

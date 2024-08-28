@@ -168,30 +168,29 @@
             </table>
         </div>
         <!-- Remarks Modal -->
-    <div x-data="{ show: false, dtrId: null, remarks: '' }"
-        @open-modal.window="show = true; dtrId = $event.detail.dtrId; remarks = $event.detail.remarks"
-        x-show="show"
-        class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center"
-        x-cloak>
-        <div @click.away="show = false"
+        <div x-data="{ show: false, dtrId: null, remarks: '' }"
+                @open-modal.window="show = true; dtrId = $event.detail.dtrId; remarks = $event.detail.remarks"
                 x-show="show"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 translate-y-4"
-                x-transition:enter-end="opacity-100 translate-y-0"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 translate-y-0"
-                x-transition:leave-end="opacity-0 translate-y-4"
-                class="bg-white dark:bg-gray-800 rounded-lg p-6 w-1/3 shadow-xl">
-            <h2 class="text-lg font-semibold mb-4 text-left text-gray-900 dark:text-gray-100">Update Remarks</h2>
-            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-700 dark:text-gray-300 dark:border-slate-600"
-                        x-model="remarks"></textarea>
-            <div class="flex justify-end mt-5">
-                <button @click="show = false" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 dark:bg-gray-600 dark:text-gray-200">Cancel</button>
-                <button @click="show = false; $wire.updateRemarks(dtrId, remarks)" class="bg-blue-500 text-white px-4 py-2 rounded-md">Save</button>
+                class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center"
+                x-cloak>
+            <div @click.away="show = false"
+                    x-show="show"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-4"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 translate-y-4"
+                    class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md sm:w-1/2 md:w-1/3 shadow-xl">
+                <h2 class="text-lg font-semibold mb-4 text-left text-gray-900 dark:text-gray-100">Update Remarks</h2>
+                <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-700 dark:text-gray-300 dark:border-slate-600"
+                            x-model="remarks"></textarea>
+                <div class="flex justify-end mt-5">
+                    <button @click="show = false" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 dark:bg-gray-600 dark:text-gray-200">Cancel</button>
+                    <button @click="show = false; $wire.updateRemarks(dtrId, remarks)" class="bg-blue-500 text-white px-4 py-2 rounded-md">Save</button>
+                </div>
             </div>
         </div>
-    </div>
-
         <!-- Pagination -->
         <div class="mt-4">
             {{ $dtrs->links() }}
