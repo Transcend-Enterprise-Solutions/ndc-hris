@@ -5,6 +5,7 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\AutoSaveDtrRecords;
+use App\Jobs\AutoSaveDtrRecordsMonthly;
 
 class Kernel extends ConsoleKernel
 {
@@ -16,6 +17,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         // $schedule->command('fetch:biotime-transactions')->everyMinute();
         $schedule->job(new AutoSaveDtrRecords())->everyMinute();
+        $schedule->job(new AutoSaveDtrRecordsMonthly())->dailyAt('23:00');
         $schedule->command('calculate:monthly-leave-credits')->monthlyOn(1, '00:00');
         $schedule->command('leave-credits:reset')->yearlyOn(1, 1, '00:00');
     }
