@@ -35,23 +35,34 @@
                                     <tr>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Employee Name</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Upload Date</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Version</th>
                                         <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200">
-                                    @foreach ($documents as $document)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium text-gray-900 dark:text-gray-300">{{ $document->user->name }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500 dark:text-gray-200">{{ $document->created_at->format('Y-m-d H:i:s') }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500 dark:text-gray-200">
-                                                <a href="{{ Storage::url($document->file_path) }}" download class="text-blue-500 hover:text-blue-700" title="Download">
-                                                    <i class="fas fa-download"></i>
-                                                </a>
-                                                <button wire:click="confirmDelete({{ $document->id }})" class="text-red-500 hover:text-red-700" title="Delete" :disabled="$wire.isDeleting">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                    @php
+                                        $documentGroups = $documents->groupBy(function($document) {
+                                            return $document->user_id . '-' . $document->type;
+                                        });
+                                    @endphp
+                                    @foreach ($documentGroups as $group)
+                                        @foreach ($group->sortBy('created_at') as $index => $document)
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium text-gray-900 dark:text-gray-300">{{ $document->user->name }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500 dark:text-gray-200">{{ $document->created_at->format('Y-m-d H:i:s') }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500 dark:text-gray-200">
+                                                    v{{ $index + 1 }}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500 dark:text-gray-200">
+                                                    <a href="{{ Storage::url($document->file_path) }}" download class="text-blue-500 hover:text-blue-700" title="Download">
+                                                        <i class="fas fa-download"></i>
+                                                    </a>
+                                                    <button wire:click="confirmDelete({{ $document->id }})" class="text-red-500 hover:text-red-700" title="Delete" :disabled="$wire.isDeleting">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     @endforeach
                                 </tbody>
                             </table>
@@ -115,9 +126,18 @@
     </div>
 </div>
 
-
-    <!-- Notification -->
-    <div x-show="showNotification" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-90" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-90" class="fixed bottom-5 right-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4" :class="{ 'bg-green-100 border-green-400': notificationType === 'success', 'bg-red-100 border-red-400': notificationType === 'error' }">
-        <p x-text="notificationMessage" :class="{ 'text-green-700': notificationType === 'success', 'text-red-700': notificationType === 'error' }"></p>
+<!-- Notification -->
+<div x-show="showNotification" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-90" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-90" class="fixed bottom-4 right-4 max-w-sm bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700 rounded-lg shadow-md z-50 p-4">
+    <div :class="{'bg-red-100 text-red-700': notificationType === 'error', 'bg-green-100 text-green-700': notificationType === 'success'}" class="flex items-start space-x-2">
+        <svg x-show="notificationType === 'success'" class="w-6 h-6 text-green-500 dark:text-green-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M16.707 6.707a1 1 0 01-1.414 0L9 1.414 4.707 5.707a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0l8 8a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+            <path fill-rule="evenodd" d="M9 3a1 1 0 011-1h8a1 1 0 110 2h-8a1 1 0 01-1-1zM4 12a1 1 0 00-2 0v8a1 1 0 102 0v-8z" clip-rule="evenodd"></path>
+        </svg>
+        <svg x-show="notificationType === 'error'" class="w-6 h-6 text-red-500 dark:text-red-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M8.257 3.099c.362-.728 1.363-.728 1.724 0l5.5 11a1 1 0 01-.895 1.451h-11a1 1 0 01-.895-1.451l5.5-11zM11 14a1 1 0 100 2 1 1 0 000-2zm0 4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"></path>
+        </svg>
+        <div>
+            <p class="font-bold" x-text="notificationMessage"></p>
+        </div>
     </div>
 </div>
