@@ -6,6 +6,7 @@ use Livewire\WithFileUploads;
 use App\Models\EmployeeDocument;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Collection;
 
 class MyDocumentsTable extends Component
 {
@@ -43,47 +44,24 @@ class MyDocumentsTable extends Component
 
     public function uploadDocument()
     {
-        if ($this->droppedFile) {
-            $this->file = $this->droppedFile;
-        }
-        $this->validate([
-            'file' => 'required',
-            'documentType' => 'required|string|max:255',
-        ]);
-
-        if ($this->documentAlreadyUploaded()) {
-            $this->error = 'Document type "' . $this->documentType . '" has already been uploaded.';
-            $this->isUploading = false;
-            return;
-        }
+        $this->validate();
 
         $this->isUploading = true;
 
         try {
-            if ($this->file instanceof \Illuminate\Http\UploadedFile) {
-                $fileName = $this->file->getClientOriginalName();
-                $filePath = $this->file->storeAs('public/upload/employee_document', $fileName);
-                $mimeType = $this->file->getMimeType();
-                $fileSize = $this->file->getSize();
-            } else {
-                $fileData = base64_decode(preg_replace('#^data:.*?;base64,#', '', $this->file));
-                $fileName = 'NYC' . time() . '.pdf';
-                $filePath = 'public/upload/employee_document/' . $fileName;
-                Storage::put($filePath, $fileData);
-                $mimeType = 'application/pdf';
-                $fileSize = strlen($fileData);
-            }
+            $fileName = $this->file->getClientOriginalName();
+            $filePath = $this->file->storeAs('public/upload/employee_document', $fileName);
 
             EmployeeDocument::create([
                 'user_id' => Auth::id(),
                 'document_type' => $this->documentType,
                 'file_name' => $fileName,
                 'file_path' => $filePath,
-                'mime_type' => $mimeType,
-                'file_size' => $fileSize,
+                'mime_type' => $this->file->getMimeType(),
+                'file_size' => $this->file->getSize(),
             ]);
 
-            $this->reset(['file', 'droppedFile', 'documentType']);
+            $this->reset(['file', 'documentType']);
             $this->fileSelected = false;
             $this->dispatch('swal', ['title' => 'Document uploaded successfully!', 'icon' => 'success']);
             $this->dispatch('documentUploaded');
@@ -143,7 +121,7 @@ class MyDocumentsTable extends Component
 
     public function availableDocumentTypes()
     {
-        $allDocumentTypes = [
+        return [
             '201_Documents' => '201 Documents',
             'SALN' => 'Statement of Assets, Liabilities and Net Worth (SALN)',
             'IPCR' => 'Individual Performance Commitment Review (IPCR)',
@@ -154,20 +132,33 @@ class MyDocumentsTable extends Component
             'Service Record' => 'Service Record',
             'Notarized PDS' => 'Notarized PDS',
         ];
-        $uploadedDocumentTypes = EmployeeDocument::where('user_id', Auth::id())
-            ->pluck('document_type')
-            ->toArray();
+    }
 
-        return array_diff_key($allDocumentTypes);
+    public function getVersionedDocuments(): Collection
+    {
+        $documents = EmployeeDocument::where('user_id', Auth::id())
+            ->orderBy('document_type')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return $documents->groupBy('document_type')
+            ->map(function ($group) {
+                $count = $group->count();
+                return $group->map(function ($doc, $index) use ($count) {
+                    $doc->version = 'v' . ($count - $index);
+                    return $doc;
+                });
+            })
+            ->flatten();
     }
 
     public function render()
     {
-        $documents = EmployeeDocument::where('user_id', Auth::id())->get();
+        $versionedDocuments = $this->getVersionedDocuments();
         $availableDocumentTypes = $this->availableDocumentTypes();
 
         return view('livewire.user.my-documents-table', [
-            'documents' => $documents,
+            'documents' => $versionedDocuments,
             'availableDocumentTypes' => $availableDocumentTypes,
             'isUploading' => $this->isUploading,
             'isDeleting' => $this->isDeleting,
