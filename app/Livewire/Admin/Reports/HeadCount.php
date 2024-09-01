@@ -25,6 +25,8 @@ class HeadCount extends Component
     public function mount()
     {
         $this->ratingsMonth = Carbon::now()->format('Y-m');
+        $this->docRequestMonth = Carbon::now()->format('Y-m');
+        $this->month = Carbon::now()->format('Y-m');
     }
 
 
