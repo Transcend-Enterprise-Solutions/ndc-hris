@@ -2,7 +2,7 @@
 
     <div class="px-5 pt-5">
         <header class="flex justify-between items-start mb-2">
-            <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100">   ee Reports</h2>
+            <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Employee Reports</h2>
         </header>
     </div>
 
