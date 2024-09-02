@@ -252,7 +252,6 @@ class Registration extends Component
             'pwd' => $this->pwd,
             'date_hired' => $this->date_hired,
             'appointment' => $appointmentValue,
-
         ]);
 
         session()->flash('message', 'Registration successful!');

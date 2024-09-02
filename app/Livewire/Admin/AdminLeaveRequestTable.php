@@ -10,6 +10,7 @@ use App\Models\LeaveApplication;
 use App\Models\VacationLeaveDetails;
 use App\Models\SickLeaveDetails;
 use App\Models\LeaveApprovals;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class AdminLeaveRequestTable extends Component
@@ -50,7 +51,11 @@ class AdminLeaveRequestTable extends Component
 
         // Check if the logged-in user is one of the endorsers
         if (Auth::id() == $this->selectedApplication->endorser1_id || Auth::id() == $this->selectedApplication->endorser2_id) {
-            $this->showEndorserApprove = true;
+            if (Auth::id() == $this->selectedApplication->endorser1_id) {
+                $this->showEndorserApprove = true;
+            } else {
+                $this->showApproveModal = true;
+            }
         } else {
             $this->showApproveModal = true;
         }
@@ -63,9 +68,12 @@ class AdminLeaveRequestTable extends Component
         $this->selectedApplication = LeaveApplication::find($applicationId);
         $this->reset(['disapproveReason']);
         
-        // Check if the logged-in user is one of the endorsers
         if (Auth::id() == $this->selectedApplication->endorser1_id || Auth::id() == $this->selectedApplication->endorser2_id) {
-            $this->showEndorserDisapprove = true;
+            if (Auth::id() == $this->selectedApplication->endorser1_id) {
+                $this->showEndorserDisapprove = true;
+            } else {
+                $this->showDisapproveModal = true;
+            }
         } else {
             $this->showDisapproveModal = true;
         }
@@ -88,9 +96,55 @@ class AdminLeaveRequestTable extends Component
     public function endorserApproveLeave()
     {
         $application = LeaveApplication::find($this->selectedApplication->id);
-        // Implement the logic to approve the leave application
-        $application->status = 'Approved by Endorser';
-        $application->save();
+        
+        if (Auth::id() == $application->endorser1_id) {
+            $application->status = 'Approved by Supervisor';
+            $application->stage = 2;
+            $application->save();
+
+            LeaveApprovals::updateOrCreate(
+                ['application_id' => $application->id],
+                ['second_approver' => Auth::id(), 'stage' => 2]
+            );
+            // Move to endorser2 if endorser1 has approved
+            if ($application->endorser2_id) {
+
+                $this->dispatch('swal', [
+                    'title' => "Leave application approved by Supervisor. Wait for the final approval!",
+                    'icon' => 'success'
+                ]);
+            }
+            // else {
+            //     // No endorser2, so HR completes the approval
+            //     $application->status = 'Approved'; // Final approval status
+            //     $application->stage = 3;
+            //     $application->save();
+
+            //     LeaveApprovals::updateOrCreate(
+            //         ['application_id' => $application->id],
+            //         ['third_approver' => Auth::id(), 'stage' => 3]
+            //     );
+
+            //     $this->dispatch('swal', [
+            //         'title' => "Leave application approved by Endorser1 and finalized.",
+            //         'icon' => 'success'
+            //     ]);
+            // }
+        } elseif (Auth::id() == $application->endorser2_id) {
+            $application->status = 'Approved';
+            $application->stage = 3;
+            $application->save();
+
+            LeaveApprovals::updateOrCreate(
+                ['application_id' => $application->id],
+                ['third_approver' => Auth::id(), 'stage' => 3]
+            );
+
+            $this->dispatch('swal', [
+                'title' => "Leave application approved by successfully!",
+                'icon' => 'success'
+            ]);
+        }
 
         $this->closeEndorserApproveModal();
     }
@@ -98,10 +152,26 @@ class AdminLeaveRequestTable extends Component
     public function endorserDisapproveLeave()
     {
         $application = LeaveApplication::find($this->selectedApplication->id);
-        // Implement the logic to disapprove the leave application
-        $application->status = 'Disapproved by Endorser';
+        
+        // Check if the logged-in user is endorser1 and update the status accordingly
+        if (Auth::id() == $application->endorser1_id) {
+            $application->status = 'Disapproved by Endorser1';
+            $application->stage = 4; // Stage for disapproved
+        } elseif (Auth::id() == $application->endorser2_id) {
+            $application->status = 'Disapproved by Endorser2';
+            $application->stage = 4; // Stage for disapproved
+        }
+
         $application->disapprove_reason = $this->disapproveReason;
         $application->save();
+
+        LeaveApprovals::where('application_id', $application->id)
+            ->update(['stage' => 4]);
+
+        $this->dispatch('swal', [
+            'title' => "Leave application disapproved.",
+            'icon' => 'success'
+        ]);
 
         $this->closeEndorserDisapproveModal();
     }
@@ -145,10 +215,22 @@ class AdminLeaveRequestTable extends Component
                 $this->selectedApplication->status = "Approved by HR";
                 $this->selectedApplication->remarks = $this->otherReason;
                 $this->selectedApplication->approved_days = 0;
+                $this->selectedApplication->stage = 1;
+
+                LeaveApprovals::updateOrCreate(
+                    ['application_id' => $this->selectedApplication->id],
+                    ['first_approver' => Auth::id(), 'stage' => 1]
+                );
             } else {
                 $this->selectedApplication->status = 'Approved by HR';
                 $this->selectedApplication->approved_days = $this->days;
                 $this->selectedApplication->remarks = $this->status;
+                $this->selectedApplication->stage = 1;
+
+                LeaveApprovals::updateOrCreate(
+                    ['application_id' => $this->selectedApplication->id],
+                    ['first_approver' => Auth::id(), 'stage' => 1]
+                );
     
                 if ($this->status === 'With Pay') {
                     $this->updateLeaveDetails($this->days, $this->status);
@@ -175,9 +257,13 @@ class AdminLeaveRequestTable extends Component
             $this->selectedApplication->endorser2_id = $this->endorser2;
             $this->selectedApplication->save();
 
-            // Update leave_approvals stage
-            LeaveApprovals::where('application_id', $this->selectedApplication->id)
-                ->update(['stage' => 1]);
+            LeaveApprovals::updateOrCreate(
+                ['application_id' => $this->selectedApplication->id],
+                [
+                    'first_approver' => Auth::id(),
+                    'stage' => 1
+                ]
+            );
     
             $this->dispatch('swal', [
                 'title' => "Leave application {$this->status} successfully!",
@@ -258,8 +344,10 @@ class AdminLeaveRequestTable extends Component
     
     public function fetchNonEmployeeUsers()
     {
-        // Fetch users where user_role is not 'emp'
-        $this->nonEmployeeUsers = \App\Models\User::where('user_role', '!=', 'emp')->get();
+        $this->nonEmployeeUsers = User::where('user_role', '!=', 'emp')
+                                      ->where('user_role', '!=', 'hr')
+                                      ->where('user_role', '!=', 'sa')
+                                      ->get();
     }
 
     public function disapproveLeave()
@@ -286,20 +374,46 @@ class AdminLeaveRequestTable extends Component
     public function render()
     {
         $this->fetchNonEmployeeUsers();
+        
+        $loggedInUserId = auth()->id();
+        $userRole = auth()->user()->user_role;
+        
         $leaveApplications = LeaveApplication::orderBy('created_at', 'desc')
-            ->select('id', 'name', 'date_of_filing', 'type_of_leave', 'details_of_leave', 'number_of_days', 'list_of_dates', 'approved_dates', 'file_name', 'file_path', 'status', 'remarks', 'approved_days')
-            ->paginate(10);
-
+            ->select('id', 'name', 'date_of_filing', 'type_of_leave', 'details_of_leave', 'number_of_days', 'list_of_dates', 'approved_dates', 'file_name', 'file_path', 'status', 'remarks', 'approved_days', 'endorser1_id', 'endorser2_id', 'stage')
+            ->paginate(10)
+            ->through(function ($leaveApplication) use ($loggedInUserId, $userRole) {
+                $leaveApplication->isApprovedByHR = $leaveApplication->status === 'Approved by HR';
+                $leaveApplication->isPending = $leaveApplication->status === 'Pending';
+                $leaveApplication->isHR = $userRole === 'hr';
+                $leaveApplication->isEndorser1 = $loggedInUserId === $leaveApplication->endorser1_id;
+                $leaveApplication->isEndorser2 = $loggedInUserId === $leaveApplication->endorser2_id;
+                $leaveApplication->isEndorser = $leaveApplication->isEndorser1 || $leaveApplication->isEndorser2;
+    
+                // Actions visibility logic
+                if ($leaveApplication->stage == 0) {
+                    $leaveApplication->actionsVisible = $leaveApplication->isHR;
+                } elseif ($leaveApplication->stage == 1) {
+                    $leaveApplication->actionsVisible = $leaveApplication->isEndorser1;
+                    $leaveApplication->isEndorser1Approved = $leaveApplication->isEndorser1 && $leaveApplication->status === 'Approved by Endorser 1';
+                    $leaveApplication->isEndorser2Approved = $leaveApplication->isEndorser2 && $leaveApplication->status === 'Approved by Endorser 2';
+                } elseif ($leaveApplication->stage == 2) {
+                    $leaveApplication->actionsVisible = $leaveApplication->isEndorser2;
+                    $leaveApplication->isEndorser2Approved = $leaveApplication->isEndorser2 && $leaveApplication->status === 'Approved by Endorser 2';
+                }
+    
+                return $leaveApplication;
+            });
+        
         $vacationLeaveDetails = VacationLeaveDetails::orderBy('created_at', 'desc')->paginate(10);
-
         $sickLeaveDetails = SickLeaveDetails::orderBy('created_at', 'desc')->paginate(10);
-
+        
         return view('livewire.admin.admin-leave-request-table', [
             'leaveApplications' => $leaveApplications,
             'vacationLeaveDetails' => $vacationLeaveDetails,
             'sickLeaveDetails' => $sickLeaveDetails,
         ]);
     }
+    
 
     public function resetVariables()
     {

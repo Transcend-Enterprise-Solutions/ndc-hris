@@ -160,8 +160,25 @@ class LeaveApplicationTable extends Component
         ];
     
         // Check if list_of_dates is present in the form
-        if ($this->list_of_dates !== null) {
-            $rules['list_of_dates'] = 'required|min:1';
+        // if ($this->list_of_dates !== null) {
+        //     $rules['list_of_dates'] = 'required|min:1';
+        // }
+        // Define the leave types that require list_of_dates
+        $leaveTypesRequiringDates = [
+            'Vacation Leave',
+            'Sick Leave',
+            'Paternity Leave',
+            'Special Privilege Leave',
+            'Mandatory/Forced Leave',
+            'Solo Parent Leave',
+            '10-Day VAWC Leave',
+            'Special Emergency (Calamity) Leave',
+            'Adoption Leave',
+        ];
+
+        // Check if the current type_of_leave requires list_of_dates validation
+        if (!empty(array_intersect($this->type_of_leave, $leaveTypesRequiringDates))) {
+            $rules['list_of_dates'] = 'required|array|min:1';
         }
     
         // Check if start_date and end_date are present in the form
@@ -441,6 +458,15 @@ class LeaveApplicationTable extends Component
             }
         }
 
+        // Fetch the first approver from leave_approvals
+        $leaveApproval = LeaveApprovals::where('application_id', $leaveApplicationId)->first();
+        $firstApprover = $leaveApproval ? $leaveApproval->first_approver : null;
+        $firstApproverName = $firstApprover ? User::find($firstApprover)->name : 'N/A';
+        $secondApprover = $leaveApproval ? $leaveApproval->second_approver : null;
+        $secondApproverName = $secondApprover ? User::find($secondApprover)->name : 'N/A';
+        $thirdApprover = $leaveApproval ? $leaveApproval->third_approver : null;
+        $thirdApproverName = $thirdApprover ? User::find($thirdApprover)->name : 'N/A';
+
         $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
 
         $pdf = PDF::loadView('pdf.leave-application', [
@@ -454,6 +480,9 @@ class LeaveApplicationTable extends Component
             'daysWithoutPay' => $daysWithoutPay,
             'otherRemarks' => $otherRemarks,
             'leaveCredits' => $leaveCredits,
+            'firstApproverName' => $firstApproverName,
+            'secondApproverName' => $secondApproverName,
+            'thirdApproverName' => $thirdApproverName,
         ]);
 
         return response()->streamDownload(function() use ($pdf) {

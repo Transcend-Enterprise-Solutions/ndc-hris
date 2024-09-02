@@ -16,6 +16,10 @@ return new class extends Migration {
                 $table->id('id');
                 $table->unsignedBigInteger('user_id');
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+                $table->unsignedBigInteger('endorser1_id')->nullable();
+                $table->foreign('endorser1_id')->references('id')->on('users')->onDelete('cascade');
+                $table->unsignedBigInteger('endorser2_id')->nullable();
+                $table->foreign('endorser2_id')->references('id')->on('users')->onDelete('cascade');
                 $table->string('name');
                 $table->string('office_or_department');
                 $table->date('date_of_filing')->default(DB::raw('CURRENT_DATE'));
@@ -32,6 +36,7 @@ return new class extends Migration {
                 $table->string('approved_dates')->nullable();
                 $table->integer('approved_days')->nullable();
                 $table->string('remarks')->nullable();
+                $table->integer('stage')->nullable();
                 $table->timestamps();
             });
         }

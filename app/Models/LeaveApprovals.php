@@ -14,6 +14,9 @@ class LeaveApprovals extends Model
     protected $fillable = [
         'user_id',
         'application_id',
+        'first_approver',
+        'second_approver',
+        'third_approver',
         'stage',
     ];
 

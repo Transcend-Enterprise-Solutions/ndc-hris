@@ -16,8 +16,19 @@ return new class extends Migration
                 $table->id('id');
                 $table->unsignedBigInteger('user_id');
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
                 $table->unsignedBigInteger('application_id');
                 $table->foreign('application_id')->references('id')->on('leave_application')->onDelete('cascade');
+
+                // $table->unsignedBigInteger('first_approver')->nullable();
+                // $table->foreign('first_approver')->references('id')->on('users')->onDelete('cascade');
+
+                // $table->unsignedBigInteger('second_approver')->nullable();
+                // $table->foreign('second_approver')->references('id')->on('users')->onDelete('cascade');
+
+                // $table->unsignedBigInteger('third_approver')->nullable();
+                // $table->foreign('third_approver')->references('id')->on('users')->onDelete('cascade');
+
                 $table->integer('stage')->nullable();
                 $table->timestamps();
             });
