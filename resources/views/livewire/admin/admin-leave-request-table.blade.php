@@ -106,19 +106,62 @@
                                                     </td>
                                                     <td
                                                         class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                        <button
-                                                            @click="$wire.openApproveModal({{ $leaveApplication->id }})"
-                                                            class="text-blue-500 {{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                            :disabled="{{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'true' : 'false' }}">
-                                                            <i class="bi bi-check-lg" title="Approve"></i>
-                                                        </button>
-                                                        <button
-                                                            @click="$wire.openDisapproveModal({{ $leaveApplication->id }})"
-                                                            class="text-red-500 {{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                            :disabled="{{ $leaveApplication->status && $leaveApplication->status !== 'Pending' ? 'true' : 'false' }}">
-                                                            <i class="bi bi-x" title="Disapprove"></i>
-                                                        </button>
+                                                        @php
+                                                            $userRole = auth()->user()->user_role; // User's role
+$isApprovedByHR =
+    $leaveApplication->status === 'Approved by HR';
+$isPending = $leaveApplication->status === 'Pending';
+$isHR = $userRole === 'hr';
+$isSV = $userRole === 'sv';
+                                                        @endphp
+
+                                                        @if ($isHR)
+                                                            <!-- HR buttons (enabled until status is Approved by HR) -->
+                                                            <button
+                                                                @click="$wire.openApproveModal({{ $leaveApplication->id }})"
+                                                                class="text-blue-500 {{ $isPending ? '' : 'opacity-50 cursor-not-allowed' }}"
+                                                                :disabled="{{ $isPending ? 'false' : 'true' }}">
+                                                                <i class="bi bi-check-lg" title="Approve"></i>
+                                                            </button>
+                                                            <button
+                                                                @click="$wire.openDisapproveModal({{ $leaveApplication->id }})"
+                                                                class="text-red-500 {{ $isPending ? '' : 'opacity-50 cursor-not-allowed' }}"
+                                                                :disabled="{{ $isPending ? 'false' : 'true' }}">
+                                                                <i class="bi bi-x" title="Disapprove"></i>
+                                                            </button>
+                                                        @elseif ($isSV)
+                                                            @if ($isApprovedByHR)
+                                                                <!-- SV buttons (enabled if status is Approved by HR) -->
+                                                                <button
+                                                                    @click="$wire.openEndorserApproveModal({{ $leaveApplication->id }})"
+                                                                    class="text-blue-500 {{ $isApprovedByHR ? '' : 'opacity-50 cursor-not-allowed' }}"
+                                                                    :disabled="{{ $isApprovedByHR ? 'false' : 'true' }}">
+                                                                    <i class="bi bi-check-lg" title="Approve"></i>
+                                                                </button>
+                                                                <button
+                                                                    @click="$wire.openEndorserDisapproveModal({{ $leaveApplication->id }})"
+                                                                    class="text-red-500 {{ $isApprovedByHR ? '' : 'opacity-50 cursor-not-allowed' }}"
+                                                                    :disabled="{{ $isApprovedByHR ? 'false' : 'true' }}">
+                                                                    <i class="bi bi-x" title="Disapprove"></i>
+                                                                </button>
+                                                            @else
+                                                                <!-- SV buttons (disabled if status is Pending) -->
+                                                                <button
+                                                                    class="text-blue-500 opacity-50 cursor-not-allowed"
+                                                                    disabled>
+                                                                    <i class="bi bi-check-lg" title="Approve"></i>
+                                                                </button>
+                                                                <button
+                                                                    class="text-red-500 opacity-50 cursor-not-allowed"
+                                                                    disabled>
+                                                                    <i class="bi bi-x" title="Disapprove"></i>
+                                                                </button>
+                                                            @endif
+                                                        @endif
                                                     </td>
+
+
+
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -167,7 +210,8 @@
 
                 @if ($status === 'With Pay' || $status === 'Without Pay')
                     <div class="mb-4">
-                        <label for="days" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number
+                        <label for="days"
+                            class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number
                             of Days</label>
                         <input type="number" wire:model="days" id="days"
                             class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700"
@@ -178,7 +222,8 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="list_of_dates" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
+                        <label for="list_of_dates"
+                            class="block text-sm font-medium text-gray-700 dark:text-slate-400">
                             Approved Dates
                         </label>
                         <ul class="list-disc">
@@ -191,8 +236,40 @@
                             @endforeach
                         </ul>
                     </div>
-
                 @endif
+
+                {{-- New Section for Endorsers --}}
+                <div class="mb-4">
+                    <label for="endorser1" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
+                        Select First Endorser
+                    </label>
+                    <select wire:model="endorser1" id="endorser1"
+                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <option value="">Select Endorser</option>
+                        @foreach ($nonEmployeeUsers as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('endorser1')
+                        <span class="text-red-500">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="endorser2" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
+                        Select Second Endorser
+                    </label>
+                    <select wire:model="endorser2" id="endorser2"
+                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <option value="">Select Endorser</option>
+                        @foreach ($nonEmployeeUsers as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('endorser2')
+                        <span class="text-red-500">{{ $message }}</span>
+                    @enderror
+                </div>
 
                 <div class="flex justify-end">
                     <button type="button" @click="$wire.closeApproveModal()"
@@ -224,4 +301,66 @@
             </form>
         </div>
     </x-modal>
+
+    <!-- Endorser Approve Modal -->
+    <x-modal maxWidth="lg" wire:model="showEndorserApprove" centered>
+        <div class="p-6">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
+                    Are you sure you want to approve this request?
+                </h3>
+                <button wire:click="closeEndorserApproveModal"
+                    class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form class="space-y-6" wire:submit.prevent="endorserApproveLeave">
+                <!-- Action Buttons -->
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="submit"
+                        class="px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
+                        Yes
+                    </button>
+                    <button type="button" wire:click="closeEndorserApproveModal"
+                        class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-offset-gray-800">
+                        No
+                    </button>
+                </div>
+            </form>
+        </div>
+    </x-modal>
+
+    <!-- Endorser Disapprove Modal -->
+    <x-modal maxWidth="lg" wire:model="showEndorserDisapprove" centered>
+        <div class="p-6">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
+                    Are you sure you want to disapprove this request?
+                </h3>
+                <button wire:click="closeEndorserDisapproveModal"
+                    class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form class="space-y-6" wire:submit.prevent="endorserDisapproveLeave">
+                <!-- Action Buttons -->
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="submit"
+                        class="px-4 py-2 rounded-md bg-red-500 hover:bg-red-600 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-offset-gray-800">
+                        Yes
+                    </button>
+                    <button type="button" wire:click="closeEndorserDisapproveModal"
+                        class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-offset-gray-800">
+                        No
+                    </button>
+                </div>
+            </form>
+        </div>
+    </x-modal>
+
+
 </div>

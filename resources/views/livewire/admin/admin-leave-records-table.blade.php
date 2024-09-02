@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            <div class="flex flex-col">
+            <div class="flex flex-col sm:p-4">
                 <!-- Table -->
                 <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block w-full py-2 align-middle">
@@ -66,6 +66,11 @@
                                         <th class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
                                             Status
                                         </th>
+                                        @if ($activeTab === 'approved')
+                                            <th class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                Action
+                                            </th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <!-- Table body -->
@@ -134,6 +139,15 @@
                                                     {{ $leaveApplication->status }}
                                                 </span>
                                             </td>
+                                            @if ($activeTab === 'approved')
+                                                <td class="px-4 py-2 text-center">
+                                                    <button type="button"
+                                                        class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                                        wire:click.prevent="exportExcel({{ $leaveApplication->id }})">
+                                                        <i class="bi bi-file-earmark-arrow-down"></i>
+                                                    </button>
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>

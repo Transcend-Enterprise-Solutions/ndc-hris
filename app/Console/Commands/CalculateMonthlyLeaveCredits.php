@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\User;
 use App\Models\EmployeesDtr;
 use App\Models\LeaveCreditsCalculation;
+use App\Models\LeaveCredits; // Assuming this is the model for tracking leave balances
 use Carbon\Carbon;
 
 class CalculateMonthlyLeaveCredits extends Command
@@ -20,6 +21,9 @@ class CalculateMonthlyLeaveCredits extends Command
 
         foreach ($users as $user) {
             for ($month = 1; $month <= 12; $month++) {
+                // Retrieve the user's current VL balance
+                $currentVlBalance = LeaveCredits::where('user_id', $user->id)->value('vl_claimable_credits');
+
                 // Calculate total late minutes
                 $totalLateMinutes = EmployeesDtr::where('user_id', $user->id)
                     ->whereMonth('date', $month)
@@ -30,6 +34,12 @@ class CalculateMonthlyLeaveCredits extends Command
                         [$hours, $minutes] = explode(':', $dtr->late);
                         return $hours * 60 + $minutes;
                     });
+
+                // Determine if we should deduct late/undertime from the credits earned
+                if ($currentVlBalance > 0) {
+                    // VL is not zero, so we do not deduct late/undertime
+                    $totalLateMinutes = 0;
+                }
 
                 // Convert total late minutes to HH:MM format
                 $totalLateTime = $this->convertMinutesToHoursAndMinutes($totalLateMinutes);

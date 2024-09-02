@@ -6,6 +6,7 @@ use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Illuminate\Support\Facades\DB;
 
 class EmployeesExport implements FromCollection, WithHeadings
 {
@@ -29,33 +30,46 @@ class EmployeesExport implements FromCollection, WithHeadings
     
     public function collection()
     {
-        $query = User::join('user_data', 'users.id', '=', 'user_data.user_id')
-            ->select('users.id');
-        
+        $query = User::join('user_data', 'users.id', '=', 'user_data.user_id');
+    
+        $columnsToSelect = ['users.id'];
+        $columnsToGroupBy = ['users.id'];
+    
         $nameFields = ['surname', 'first_name', 'middle_name', 'name_extension'];
         $nameFieldsSelected = false;
-
+    
         foreach ($this->selectedColumns as $column) {
-            if (in_array($column, $nameFields)) {
-                $query->addSelect("user_data.$column");
-                $nameFieldsSelected = true;
-            } elseif ($column !== 'name') {  // Skip 'name' as we'll handle it separately
-                // Check if the column is from the `users` table
-                if ($column === 'active_status') {
-                    $query->addSelect("users.$column");
-                } else {
-                    $query->addSelect("user_data.$column");
+            if ($column !== 'years_in_gov_service') {
+                if (in_array($column, $nameFields)) {
+                    $columnsToSelect[] = "user_data.$column";
+                    $columnsToGroupBy[] = "user_data.$column";
+                    $nameFieldsSelected = true;
+                } elseif ($column !== 'name') {
+                    if ($column === 'active_status') {
+                        $columnsToSelect[] = "users.$column";
+                        $columnsToGroupBy[] = "users.$column";
+                    } else {
+                        $columnsToSelect[] = "user_data.$column";
+                        $columnsToGroupBy[] = "user_data.$column";
+                    }
                 }
             }
         }
-
-        // If no specific name fields are selected, but 'name' is, select all name fields
+    
         if (!$nameFieldsSelected && in_array('name', $this->selectedColumns)) {
             foreach ($nameFields as $field) {
-                $query->addSelect("user_data.$field");
+                $columnsToSelect[] = "user_data.$field";
+                $columnsToGroupBy[] = "user_data.$field";
             }
         }
-
+    
+        $query->select($columnsToSelect);
+    
+        if (in_array('years_in_gov_service', $this->selectedColumns)) {
+            $query->leftJoin('work_experience', 'users.id', '=', 'work_experience.user_id')
+                ->addSelect(DB::raw('FLOOR(DATEDIFF(IFNULL(MAX(work_experience.end_date), NOW()), MIN(work_experience.start_date)) / 365) as years_in_gov_service'));
+        }
+    
         // Apply filters
         if (!empty($this->filters['sex'])) {
             $query->where('user_data.sex', $this->filters['sex']);
@@ -72,7 +86,9 @@ class EmployeesExport implements FromCollection, WithHeadings
         if (!empty($this->filters['selectedBarangay'])) {
             $query->whereIn('user_data.permanent_selectedBarangay', $this->filters['selectedBarangay']);
         }
-
+    
+        $query->groupBy($columnsToGroupBy);
+    
         return $query->get()
             ->map(function ($user) use ($nameFields, $nameFieldsSelected) {
                 $userData = ['ID' => $user->id];
@@ -86,11 +102,10 @@ class EmployeesExport implements FromCollection, WithHeadings
                     ]));
                     $userData['Name'] = $fullName;
                 }
-
+    
                 foreach ($this->selectedColumns as $column) {
                     if ($column !== 'name' && $column !== 'id') {
                         if ($column === 'active_status') {
-                            // Map active_status to its equivalent text
                             $statusMapping = [
                                 0 => 'Inactive',
                                 1 => 'Active',
@@ -98,6 +113,8 @@ class EmployeesExport implements FromCollection, WithHeadings
                                 3 => 'Resigned'
                             ];
                             $userData[$this->getColumnHeader($column)] = $statusMapping[$user->active_status] ?? 'Unknown';
+                        } elseif ($column === 'years_in_gov_service') {
+                            $userData[$this->getColumnHeader($column)] = $user->years_in_gov_service ?? 'N/A';
                         } else {
                             $userData[$this->getColumnHeader($column)] = $user->$column;
                         }

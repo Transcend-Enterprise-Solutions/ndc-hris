@@ -12,6 +12,7 @@ use App\Models\LeaveApplication;
 use App\Models\VacationLeaveDetails;
 use App\Models\SickLeaveDetails;
 use App\Models\LeaveCredits;
+use App\Models\LeaveApprovals;
 use App\Models\Payrolls;
 use App\Models\CosRegPayrolls;
 use App\Models\CosSkPayrolls;
@@ -285,6 +286,13 @@ class LeaveApplicationTable extends Component
             'file_path' => implode(',', $filePaths),
             'file_name' => implode(',', $fileNames),
             'list_of_dates' => $datesString,
+        ]);
+
+        // Insert into leave_approvals
+        LeaveApprovals::create([
+            'user_id' => $userId,
+            'application_id' => $leaveApplication->id,
+            'stage' => 0
         ]);
 
         if ($this->type_of_leave === 'Vacation Leave') {

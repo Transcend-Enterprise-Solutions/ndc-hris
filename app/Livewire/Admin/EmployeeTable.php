@@ -17,6 +17,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeTable extends Component
 {
@@ -59,6 +60,7 @@ class EmployeeTable extends Component
         'active_status' => true,
         'appointment' => true,
         'date_hired' => true,
+        'years_in_gov_service' => true,
         // 'tel_number' => false,
         // 'mobile_number' => false,
         // 'email' => false,
@@ -357,6 +359,10 @@ class EmployeeTable extends Component
             })
             ->when(!empty($this->selectedBarangays), function ($query) {
                 return $query->whereIn('user_data.permanent_selectedBarangay', $this->selectedBarangays);
+            })
+            ->when($this->filters['years_in_gov_service'], function ($query) {
+                $query->addSelect(DB::raw('FLOOR(DATEDIFF(IFNULL(work_experience.end_date, NOW()), work_experience.start_date) / 365) as years_in_gov_service'))
+                    ->leftJoin('work_experience', 'users.id', '=', 'work_experience.user_id');
             })
             ->paginate(5);
 

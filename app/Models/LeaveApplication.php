@@ -13,6 +13,8 @@ class LeaveApplication extends Model
 
     protected $fillable = [
         'user_id',
+        'endorser1_id',
+        'endorser2_id',
         'name',
         'office_or_department',
         'date_of_filing',
@@ -54,5 +56,10 @@ class LeaveApplication extends Model
     public function employeesDtr()
     {
         return $this->belongsTo(EmployeesDtr::class);
+    }
+
+    public function leaveApprovals()
+    {
+        return $this->hasMany(LeaveApprovals::class, 'application_id');
     }
 }
