@@ -657,38 +657,58 @@
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
 
-
-
-
+                            {{-- division unit position --}}
                             <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
 
                                 <div class="w-full">
                                     <label for="office_division" class="text-sm text-gray-700">Office Division <span class="text-red-600">*</span></label>
-                                    <select id="office_division" wire:model="selectedOfficeDivision"
+                                    <select id="office_division" wire:model.live="selectedOfficeDivision"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                        <option value="" selected >Select an office division</option>
+                                        <option value="" selected>Select an office division</option>
                                         @foreach($officeDivisions as $officeDivision)
                                             <option value="{{ $officeDivision->id }}">{{ $officeDivision->office_division }}</option>
                                         @endforeach
                                     </select>
-                                    @error('selectedOfficeDivision')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                                    @enderror
+
                                 </div>
+                                @error('selectedOfficeDivision')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                                <div class="w-full">
+                                    <label for="unit" class="text-sm text-gray-700">Unit</label>
+                                    <select id="unit" wire:model.live="selectedUnit"
+                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <option value="" selected>Select a unit</option>
+                                        @foreach($units as $unit)
+                                            <option value="{{ $unit->id }}">{{ $unit->unit }}</option>
+                                        @endforeach
+                                    </select>
+
+                                </div>
+                                @error('selectedUnit')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+
+                            </div>
+                            <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                                 <div class="w-full">
                                     <label for="position" class="text-sm text-gray-700">Position <span class="text-red-600">*</span></label>
-                                    <select id="position" wire:model="selectedPosition"
+                                    <select id="position" wire:model.live="selectedPosition"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <option value="" selected>Select a position</option>
                                         @foreach($positions as $position)
-                                            <option value="{{ $position->id }}">{{ $position->position }}</option>
+                                            @if($position->position !== 'Super Admin')
+                                                <option value="{{ $position->id }}">{{ $position->position }}</option>
+                                            @endif
                                         @endforeach
                                     </select>
-                                    @error('selectedPosition')
+
+                                </div>
+
+                            </div>
+                            @error('selectedPosition')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
-                                </div>
-                            </div>
                             <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                                 <div class="w-full">
                                     <label for="date_hired" class="text-sm text-gray-700">Date of assumption <span class="text-red-600">*</span></label>

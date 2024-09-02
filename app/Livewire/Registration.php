@@ -10,6 +10,7 @@ use App\Models\PhilippineCities;
 use App\Models\PhilippineBarangays;
 use App\Models\Positions;
 use App\Models\OfficeDivisions;
+use App\Models\OfficeDivisionUnits;
 use App\Models\PhilippineRegions;
 use App\Models\EmployeesLeaves;
 use Carbon\Carbon;
@@ -20,10 +21,12 @@ class Registration extends Component
     public $active_status = 1;
     public $emp_code;
     public $pwd=0;
-    public $positions;
+    public $positions = [];
+    public $units = [];
     public $officeDivisions;
-    public $selectedPosition;
-    public $selectedOfficeDivision;
+    public $selectedPosition= null;
+    public $selectedOfficeDivision= null;
+    public $selectedUnit = null;
     public $date_hired;
     public $appointment;
     public $itemNumber;
@@ -156,9 +159,10 @@ class Registration extends Component
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
             'c_password' => 'required|same:password',
-            'emp_code' => 'required|unique:users,emp_code',
+            'emp_code' => 'required|unique:users,emp_code|numeric|min:0',
             'selectedPosition' => 'required|exists:positions,id',
             'selectedOfficeDivision' => 'required|exists:office_divisions,id',
+            'selectedUnit' => 'required|exists:office_division_unit,id',
             'date_hired' => 'required|date',
             'appointment' => 'required',
         ]);
@@ -190,6 +194,7 @@ class Registration extends Component
             'emp_code' => $this->emp_code,
             'position_id' => $this->selectedPosition,
             'office_division_id' => $this->selectedOfficeDivision,
+            'unit_id' => $this->selectedUnit,
 
         ]);
 
@@ -252,10 +257,34 @@ class Registration extends Component
 
     public function mount(){
         $this->getProvicesAndCities();
-        $this->positions = Positions::where('position', '!=', 'Super Admin')->get();
         $this->officeDivisions = OfficeDivisions::all();
+        $this->positions = collect();
         $this->countries = Countries::all();
     }
+    public function updatedSelectedOfficeDivision($officeDivisionId)
+    {
+
+        $this->units = OfficeDivisionUnits::where('office_division_id', $officeDivisionId)->get();
+
+        $this->selectedUnit = null;
+        $this->fetchPositions();
+    }
+
+    public function updatedSelectedUnit($unitId)
+    {
+        $this->fetchPositions();
+    }
+    private function fetchPositions()
+    {
+        if ($this->selectedUnit) {
+            $this->positions = Positions::where('unit_id', $this->selectedUnit)->get();
+        } else {
+            $this->positions = Positions::where('office_division_id', $this->selectedOfficeDivision)
+                ->whereNull('unit_id')
+                ->get();
+        }
+    }
+
 
     public function render()
     {

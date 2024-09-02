@@ -32,6 +32,7 @@ class User extends Authenticatable
         'emp_code',
         'position_id',
         'office_division_id',
+        'unit_id',
         'profile_photo_path',
     ];
 
