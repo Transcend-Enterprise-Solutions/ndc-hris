@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -38,4 +37,12 @@ class Rating extends Model
     {
         return $this->belongsTo(DocRequest::class);
     }
+
+    /**
+     * Get the document type for the rating.
+     */
+    // public function getDocumentTypeAttribute()
+    // {
+    //     return $this->docRequest ? $this->docRequest->document_type : 'Unknown';
+    // }
 }

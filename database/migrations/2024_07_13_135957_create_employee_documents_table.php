@@ -32,7 +32,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Unique constraint to prevent duplicate document types per user
-            $table->unique(['user_id', 'document_type']);
+            // $table->unique(['user_id', 'document_type']);
         });
     }
 

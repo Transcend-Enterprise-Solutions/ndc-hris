@@ -118,6 +118,7 @@
                                 <thead>
                                     <tr>
                                         <th class="py-2 px-4 border-b whitespace-nowrap">Document Type</th>
+                                        <th class="py-2 px-4 border-b whitespace-nowrap">Version</th>
                                         <th class="py-2 px-4 border-b whitespace-nowrap">Uploaded At</th>
                                         <th class="py-2 px-4 border-b whitespace-nowrap">Actions</th>
                                     </tr>
@@ -125,15 +126,13 @@
                                 <tbody>
                                     @foreach ($documents as $document)
                                         <tr>
-                                            <td class="py-2 px-4 border-b text-center align-middle whitespace-nowrap">{{ $document->document_type }}</td>
+                                            <td class="py-2 px-4 border-b text-center align-middle whitespace-nowrap">{{ $availableDocumentTypes[$document->document_type] ?? $document->document_type }}</td>
+                                            <td class="py-2 px-4 border-b text-center align-middle whitespace-nowrap">{{ $document->version }}</td>
                                             <td class="py-2 px-4 border-b text-center align-middle whitespace-nowrap">{{ $document->created_at->setTimezone('Asia/Manila')->format('M d, Y H:i') }}</td>
                                             <td class="py-2 px-4 border-b flex justify-center space-x-2 whitespace-nowrap">
                                                 <button wire:click="downloadDocument({{ $document->id }})" class="text-blue-500 hover:text-blue-700" title="Download">
                                                     <i class="fas fa-download"></i>
                                                 </button>
-                                                {{-- <button wire:click="confirmDelete({{ $document->id }})" class="text-red-500 hover:text-red-700" title="Delete">
-                                                    <i class="fas fa-trash"></i>
-                                                </button> --}}
                                             </td>
                                         </tr>
                                     @endforeach

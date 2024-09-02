@@ -16,21 +16,22 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Log;
 
-class AutoSaveDtrRecords implements ShouldQueue
+class AutoSaveDtrRecordsMonthly implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function handle()
     {
-        echo "AutoSaveDtrRecords job started\n";
-        Log::info("AutoSaveDtrRecords job started");
+        echo "AutoSaveDtrRecordsMonthly job started\n";
+        Log::info("AutoSaveDtrRecordsMonthly job started");
 
         try {
-            // Get the current date
-            $currentDate = Carbon::now()->toDateString();
+            // Get the current month's start and end dates
+            $startDate = Carbon::now()->startOfMonth();
+            $endDate = Carbon::now()->endOfMonth();
 
-            echo "Processing date: {$currentDate}\n";
-            Log::info("Processing date: {$currentDate}");
+            echo "Processing month: {$startDate->format('F Y')}\n";
+            Log::info("Processing month: {$startDate->format('F Y')}");
 
             $users = User::where('user_role', 'emp')->get();
 
@@ -38,48 +39,54 @@ class AutoSaveDtrRecords implements ShouldQueue
                 echo "Processing user: {$user->emp_code}\n";
                 Log::info("Processing user: {$user->emp_code}");
 
-                // Get the transactions for the current date
-                $transactions = Transaction::where('emp_code', $user->emp_code)
-                    ->whereDate('punch_time', $currentDate)
-                    ->orderBy('punch_time')
-                    ->get();
+                // Create a period for the entire month
+                $datePeriod = CarbonPeriod::create($startDate, $endDate);
 
-                // Get approved leaves for the current date
-                $approvedLeaves = LeaveApplication::where('user_id', $user->id)
-                    ->where('status', 'Approved')
-                    ->whereRaw("FIND_IN_SET(?, approved_dates) > 0", [$currentDate])
-                    ->get();
+                foreach ($datePeriod as $date) {
+                    $currentDate = $date->toDateString();
 
-                echo "Total transactions found for user {$user->emp_code}: " . $transactions->count() . "\n";
-                Log::info("Total transactions found for user {$user->emp_code}: " . $transactions->count());
+                    // Get the transactions for the current date
+                    $transactions = Transaction::where('emp_code', $user->emp_code)
+                        ->whereDate('punch_time', $currentDate)
+                        ->orderBy('punch_time')
+                        ->get();
 
-                // Process the transactions for the current date
-                $calculatedData = $this->calculateTimeRecords($transactions, $user->emp_code, $currentDate, $approvedLeaves);
-                echo "Calculated data for user {$user->emp_code} on {$currentDate}: " . json_encode($calculatedData) . "\n";
-                Log::info("Calculated data for user {$user->emp_code} on {$currentDate}: " . json_encode($calculatedData));
+                    // Get approved leaves for the current date
+                    $approvedLeaves = LeaveApplication::where('user_id', $user->id)
+                        ->where('status', 'Approved')
+                        ->whereRaw("FIND_IN_SET(?, approved_dates) > 0", [$currentDate])
+                        ->get();
 
-                try {
-                    $record = EmployeesDtr::updateOrCreate(
-                        ['user_id' => $user->id, 'date' => $currentDate],
-                        array_merge(['emp_code' => $user->emp_code], $calculatedData)
-                    );
-                    echo "DTR record saved/updated for user {$user->emp_code} on {$currentDate}. Record ID: " . $record->id . "\n";
-                    Log::info("DTR record saved/updated for user {$user->emp_code} on {$currentDate}. Record ID: " . $record->id);
-                } catch (\Exception $e) {
-                    echo "Error saving DTR record for user {$user->emp_code} on {$currentDate}: " . $e->getMessage() . "\n";
-                    Log::error("Error saving DTR record for user {$user->emp_code} on {$currentDate}: " . $e->getMessage());
+                    echo "Total transactions found for user {$user->emp_code} on {$currentDate}: " . $transactions->count() . "\n";
+                    Log::info("Total transactions found for user {$user->emp_code} on {$currentDate}: " . $transactions->count());
+
+                    // Process the transactions for the current date
+                    $calculatedData = $this->calculateTimeRecords($transactions, $user->emp_code, $currentDate, $approvedLeaves);
+                    echo "Calculated data for user {$user->emp_code} on {$currentDate}: " . json_encode($calculatedData) . "\n";
+                    Log::info("Calculated data for user {$user->emp_code} on {$currentDate}: " . json_encode($calculatedData));
+
+                    try {
+                        $record = EmployeesDtr::updateOrCreate(
+                            ['user_id' => $user->id, 'date' => $currentDate],
+                            array_merge(['emp_code' => $user->emp_code], $calculatedData)
+                        );
+                        echo "DTR record saved/updated for user {$user->emp_code} on {$currentDate}. Record ID: " . $record->id . "\n";
+                        Log::info("DTR record saved/updated for user {$user->emp_code} on {$currentDate}. Record ID: " . $record->id);
+                    } catch (\Exception $e) {
+                        echo "Error saving DTR record for user {$user->emp_code} on {$currentDate}: " . $e->getMessage() . "\n";
+                        Log::error("Error saving DTR record for user {$user->emp_code} on {$currentDate}: " . $e->getMessage());
+                    }
                 }
             }
 
-            echo "AutoSaveDtrRecords job completed successfully\n";
-            Log::info("AutoSaveDtrRecords job completed successfully");
+            echo "AutoSaveDtrRecordsMonthly job completed successfully\n";
+            Log::info("AutoSaveDtrRecordsMonthly job completed successfully");
         } catch (\Exception $e) {
-            echo "AutoSaveDtrRecords job failed: " . $e->getMessage() . "\n";
-            Log::error("AutoSaveDtrRecords job failed: " . $e->getMessage());
+            echo "AutoSaveDtrRecordsMonthly job failed: " . $e->getMessage() . "\n";
+            Log::error("AutoSaveDtrRecordsMonthly job failed: " . $e->getMessage());
             Log::error($e->getTraceAsString());
         }
     }
-
     private function calculateTimeRecords($transactions, $empCode, $date, $approvedLeaves)
     {
         $carbonDate = Carbon::parse($date);
