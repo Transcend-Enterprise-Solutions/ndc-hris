@@ -7,6 +7,7 @@ use App\Models\Admin;
 use App\Models\CosRegPayrolls;
 use App\Models\CosSkPayrolls;
 use App\Models\OfficeDivisions;
+use App\Models\OfficeDivisionUnits;
 use App\Models\Payrolls;
 use App\Models\Positions;
 use App\Models\SalaryGrade;
@@ -16,12 +17,15 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
 
+use function PHPUnit\Framework\isEmpty;
+
 class RoleManagementTable extends Component
 {
     use WithPagination;
     public $addRole;
     public $editRole;
     public $employees;
+    public $positionsByUnit;
     public $positions;
     public $officeDivisions;
     public $userId;
@@ -44,6 +48,7 @@ class RoleManagementTable extends Component
     public $settingsId;
     public $settings_data;
     public $settingsData = [['value' => '']];
+    public $units = [['value' => '']];
     public $salaryGrades;
     public $editingId = null;
     public $isEditing = false;
@@ -72,6 +77,7 @@ class RoleManagementTable extends Component
     public function mount(){
         $this->employees = User::where('user_role', '=', 'emp')->get();
         $this->salaryGrades = SalaryGrade::orderBy('salary_grade')->get();
+        $this->positions = Positions::where('position', '!=', 'Super Admin')->get();
     }
 
     public function render(){
@@ -91,9 +97,6 @@ class RoleManagementTable extends Component
                     'office_divisions.office_division'
                 )
                 ->paginate(5);
-
-        $this->positions = Positions::where('position', '!=', 'Super Admin')->get();
-        $this->officeDivisions = OfficeDivisions::all();
 
         $empPos = User::where('user_role', 'emp')
                 ->join('user_data', 'user_data.user_id', 'users.id')
@@ -149,6 +152,15 @@ class RoleManagementTable extends Component
                 })
                 ->get()
                 ->groupBy('office_division');
+
+        $this->officeDivisions = OfficeDivisions::with(['officeDivisionUnits', 'positions' => function($query) {
+            $query->where('position', '!=', 'Super Admin')->whereNull('unit_id');
+        }])->get();
+        
+        $this->positionsByUnit = OfficeDivisionUnits::with(['positions' => function($query) {
+            $query->where('position', '!=', 'Super Admin')->whereNotNull('unit_id');
+        }])->get();
+                
 
         return view('livewire.admin.role-management-table',[
             'organizations' => $organizations,
@@ -249,6 +261,7 @@ class RoleManagementTable extends Component
         $this->settings = true;
         $this->add = true;
         $this->settingsData = [['value' => '']];
+        $this->units = [['value' => '']];
     }
 
     public function addNewSetting()
@@ -256,10 +269,21 @@ class RoleManagementTable extends Component
         $this->settingsData[] = ['value' => ''];
     }
 
+    public function addNewUnit()
+    {
+        $this->units[] = ['value' => ''];
+    }
+
     public function removeSetting($index)
     {
         unset($this->settingsData[$index]);
         $this->settingsData = array_values($this->settingsData);
+    }
+
+    public function removeUnit($index)
+    {
+        unset($this->units[$index]);
+        $this->units = array_values($this->units);
     }
 
     public function toggleDeleteSettings($id, $data){ 
@@ -275,6 +299,14 @@ class RoleManagementTable extends Component
         if($data == "office/division"){
             $officeDivisions = OfficeDivisions::where('id', $this->settingsId)->first();
             $this->settings_data = $officeDivisions->office_division;
+
+            if ($officeDivisions->officeDivisionUnits->isNotEmpty()) {
+                $this->units = $officeDivisions->officeDivisionUnits->map(function($unit) {
+                    return ['value' => $unit->unit];
+                })->toArray();
+            } else {
+                $this->units = [['value' => '']];
+            }
         }else if($data == "position"){
             $positions = Positions::where('id', $this->settingsId)->first();
             $this->settings_data = $positions->position;
@@ -282,22 +314,69 @@ class RoleManagementTable extends Component
     }
 
     public function saveSettings(){
-        $this->validate([
-            'settingsData.*.value' => 'required|string|max:255',
-        ]);
+        if($this->add){
+            $this->validate([
+                'settingsData.*.value' => 'required|string|max:255',
+            ]);
+        }else{
+            $this->validate([
+                'settings_data' => 'required|string|max:255',
+            ]);
+        }
         try {
             $message = null;
             foreach ($this->settingsData as $setting) {
-                if ($this->data == "office/division") {
-                    OfficeDivisions::create([
-                        'office_division' => $setting['value'],
-                    ]);
-                    $message = "Office/Division(s) added successfully!";
-                } else if ($this->data == "position") {
-                    Positions::create([
-                        'position' => $setting['value'],
-                    ]);
-                    $message = "Position(s) added successfully!";
+                if($this->add){
+                    if ($this->data == "office/division") {
+                        $this->validate([
+                            'units.*.value' => 'required|string|max:255',
+                        ]);
+                        $officeDiv = OfficeDivisions::create([
+                            'office_division' => $setting['value'],
+                        ]);
+                        foreach($this->units as $unit){
+                            OfficeDivisionUnits::create([
+                                'office_division_id' => $officeDiv->id,
+                                'unit' => $unit['value'],
+                            ]);
+                        }
+                        $message = "Office/Division added successfully!";
+                    } else if ($this->data == "position") {
+                        Positions::create([
+                            'position' => $setting['value'],
+                        ]);
+                        $message = "Position/s added successfully!";
+                    }
+                }else{
+                    if ($this->data == "office/division") {
+                        $this->validate([
+                            'units.*.value' => 'required|string|max:255',
+                        ]);
+                        $officeDivisions = OfficeDivisions::where('id', $this->settingsId)->first();
+                        $officeDivisions->update([
+                            'office_division' => $this->settings_data,
+                        ]);
+
+                        foreach($this->units as $index => $unit) {
+                            if (isset($officeDivisions->officeDivisionUnits[$index])) {
+                                $officeDivisions->officeDivisionUnits[$index]->update([
+                                    'unit' => $unit['value'],
+                                ]);
+                            } else {
+                                OfficeDivisionUnits::create([
+                                    'office_division_id' => $officeDivisions->id,
+                                    'unit' => $unit['value'],
+                                ]);
+                            }
+                        }
+                        $message = "Office/Division updated successfully!";
+                    } else if ($this->data == "position") {
+                        $positions = Positions::where('id', $this->settingsId)->first();
+                        $positions->update([
+                            'position' => $this->settings_data,
+                        ]);
+                        $message = "Position/s updated successfully!";
+                    }
                 }
             }
             $this->resetVariables();
@@ -626,6 +705,7 @@ class RoleManagementTable extends Component
         $this->add = null;
         $this->settings_data = null;
         $this->settingsData = [['value' => '']];
+        $this->units = [['value' => '']];
         $this->data = null;
         $this->showSGModal = null;
         $this->editingId = null;

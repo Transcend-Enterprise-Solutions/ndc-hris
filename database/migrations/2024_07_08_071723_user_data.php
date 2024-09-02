@@ -25,7 +25,9 @@ return new class extends Migration
                 $table->string('place_of_birth');
                 $table->string('sex');
                 $table->string('citizenship');
-                $table->string('civil_status');
+                $table->string('citizenship');
+                $table->string('dual_citizenship_type');
+                $table->string('dual_citizenship_country');
                 $table->integer('height');
                 $table->integer('weight');
                 $table->string('blood_type', 5)->nullable();

@@ -130,6 +130,12 @@ class PersonalDataSheetTable extends Component
     public $mother_name_extension;
     public $children = [];
     public $newChildren = [];
+    public $p_house_number;
+    public $p_street;
+    public $p_subdivision;
+    public $r_house_number;
+    public $r_street;
+    public $r_subdivision;
 
     // Educational Background
     public $education = [];
@@ -436,6 +442,14 @@ class PersonalDataSheetTable extends Component
             $this->r_province = $this->pds['userData']->residential_selectedProvince;
             $this->r_city = $this->pds['userData']->residential_selectedCity;
             $this->r_barangay = $this->pds['userData']->residential_selectedBarangay;
+            $p_address_line1 = explode(",", $this->p_house_street);
+            $r_address_line1 = explode(",", $this->r_house_street);
+            $this->p_house_number = $p_address_line1[0];
+            $this->p_street = $p_address_line1[1];
+            $this->p_subdivision = $p_address_line1[2];
+            $this->r_house_number = $r_address_line1[0];
+            $this->r_street = $r_address_line1[1];
+            $this->r_subdivision = $r_address_line1[2];
             
         }catch(Exception $e){
             throw $e;
@@ -704,13 +718,16 @@ class PersonalDataSheetTable extends Component
             $user = Auth::user();
             if($user){
 
+                $this->p_house_street = ($this->p_house_number ?: 'N/A') . ',' . ($this->p_street ?: 'N/A') . ',' . ($this->p_subdivision ?: 'N/A');
+                $this->r_house_street = ($this->r_house_number ?: 'N/A') . ',' . ($this->r_street ?: 'N/A') . ',' . ($this->r_subdivision ?: 'N/A');
+
                 $this->validate([
                     'surname' => 'required|string|max:255',
                     'first_name' => 'required|string|max:255',
                     'middle_name' => 'nullable|string|max:255',
                     'name_extension' => 'nullable|string|max:10',
                     'date_of_birth' => 'required|date',
-                    'place_of_birth' => 'required|string|max:255',
+                    'rlace_of_birth' => 'required|string|max:255',
                     'sex' => 'required|in:Male,Female',
                     'civil_status' => 'required|in:Single,Married,Divorced,Widowed',
                     'citizenship' => 'required|string|max:255',
@@ -718,14 +735,13 @@ class PersonalDataSheetTable extends Component
                     'weight' => 'required|numeric|min:0|max:500',
                     'blood_type' => 'required|string|in:A,B,AB,O',
                     'mobile_number' => 'required|string|max:15',
-                    'tel_number' => 'required|string|max:15',
                     'gsis' => 'required|string|max:50',
                     'sss' => 'required|string|max:50',
                     'pagibig' => 'required|string|max:50',
                     'philhealth' => 'required|string|max:50',
                     'tin' => 'required|string|max:50',
                     'agency_employee_no' => 'required|string|max:50',
-                    'email' => 'required|email|max:255',
+                    'email' => 'email|max:255',
                     'p_house_street' => 'required|string|max:255',
                     'p_barangay' => 'required|string|max:255',
                     'p_city' => 'required|string|max:255',

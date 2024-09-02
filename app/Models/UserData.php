@@ -26,6 +26,8 @@ class UserData extends Model
         'place_of_birth',
         'civil_status',
         'citizenship',
+        'dual_citizenship_type',
+        'dual_citizenship_country',
         'age',
         'tel_number',
         'mobile_number',

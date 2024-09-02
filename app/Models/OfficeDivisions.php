@@ -15,4 +15,12 @@ class OfficeDivisions extends Model
         'office_division',
     ];
 
+    public function officeDivisionUnits(){
+        return $this->hasMany(OfficeDivisionUnits::class, 'office_division_id');
+    }
+
+    public function positions(){
+        return $this->hasMany(Positions::class, 'office_division_id')->whereNull('unit_id');
+    }
+
 }

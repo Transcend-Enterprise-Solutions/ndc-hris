@@ -117,16 +117,67 @@
                                 </div>
                             </div>
 
-                            <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
+                            <div class="mt-4 gap-2 lg:columns-1 sm:columns-1">
+                                 <!-- Citizenship Radio Buttons -->
                                 <div class="w-full">
-                                    <label for="citizenship" class=" text-sm text-gray-700">Citizenship <span
-                                            class="text-red-600">*</span></label>
-                                    <input type="text" id="citizenship" wire:model.live="citizenship"
-                                        class=" w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                    <label class="text-sm text-gray-700">Citizenship <span class="text-red-600">*</span></label>
+                                    <div class="mt-2">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="citizenship" value="Filipino" wire:model.live="citizenship"
+                                                class="text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                                            <span class="ml-2">Filipino</span>
+                                        </label>
+                                        <label class="inline-flex items-center ml-6">
+                                            <input type="radio" name="citizenship" value="Dual Citizenship" wire:model.live="citizenship"
+                                                class="text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                                            <span class="ml-2">Dual Citizenship</span>
+                                        </label>
+                                    </div>
                                     @error('citizenship')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
+
+                                <!-- Dual Citizenship Additional Fields -->
+                                @if ($citizenship === 'Dual Citizenship')
+                                    <!-- Dual Citizenship Type Radio Buttons -->
+                                    <div class="w-full mt-4">
+                                        <label class="text-sm text-gray-700">Dual Citizenship Type <span class="text-red-600">*</span></label>
+                                        <div class="mt-2">
+                                            <label class="inline-flex items-center">
+                                                <input type="radio" name="dual_citizenship_type" value="By Birth" wire:model="dual_citizenship_type"
+                                                    class="text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                                                <span class="ml-2">By Birth</span>
+                                            </label>
+                                            <label class="inline-flex items-center ml-6">
+                                                <input type="radio" name="dual_citizenship_type" value="By Naturalization" wire:model="dual_citizenship_type"
+                                                    class="text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                                                <span class="ml-2">By Naturalization</span>
+                                            </label>
+                                        </div>
+                                        @error('dual_citizenship_type')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Country Select Field -->
+                                    <div class="w-full mt-4">
+                                        <label class="text-sm text-gray-700">Country <span class="text-red-600">*</span></label>
+                                        <select wire:model="dual_citizenship_country"
+                                            class="w-full h-12 px-4 py-2 text-black border rounded-lg bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                            <option value="">Select Country</option>
+                                            @foreach ($countries as $country)  
+                                                <option value="{{ $country->name }}">{{ $country->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('dual_citizenship_country')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="mt-4 gap-2 lg:columns-1 sm:columns-1">
                                 <div class="w-full">
                                     <label for="civil_status" class=" text-sm text-gray-700">Civil Status <span
                                             class="text-red-600">*</span></label>
@@ -164,13 +215,6 @@
                                     @enderror
                                 </div>
                             </div>
-                            {{-- <div class="mt-4 gap-2 lg:columns-1 sm:columns-1">
-                                <div class="w-full flex items-center">
-                                    <input type="checkbox" id="pwd" wire:model.live="pwd"
-                                        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                    <label for="pwd" class="ml-2 text-sm text-gray-700">Please check for person with disability (PWD) </label>
-                                </div>
-                            </div> --}}
 
                             <div class="mt-12 columns-1">
                                 <div class="w-full relative">
@@ -728,539 +772,6 @@
                             </div>
                         </div>
                     @endif
-
-                    <!-- Step 4 -->
-                    {{-- @if ($step === 4)
-                    <div>
-                        <h2 class="mb-4 text-lg font-medium text-gray-500">
-                            Step 4 out of 5: <span class="font-bold text-black">Family Information</span>
-                        </h2>
-
-                        <div class="mt-4 gap-2 columns-1">
-                            <input type="checkbox" wire:model.live="have_spouse">
-                            <label class="text-sm text-gray-700">Do you have a spouse? </label>
-                        </div>
-
-                        @if ($have_spouse)
-                        <div class="mt-4 gap-2 columns-1">
-                            <div class="w-full">
-                                <label for="spouse_name" class=" text-sm text-gray-700">Spouse Name</label>
-                                <input type="text" id="spouse_name" wire:model.live="spouse_name"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                            </div>
-                        </div>
-
-                        <div class="mt-4 gap-2 columns-2">
-                            <div class="w-full">
-                                <label for="spouse_birth_date" class=" text-sm text-gray-700">Spouse Birth Date</label>
-                                <input type="date" id="spouse_birth_date" wire:model.live="spouse_birth_date"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Select date">
-                            </div>
-                            <div class="w-full">
-                                <label for="spouse_occupation" class=" text-sm text-gray-700">Spouse Occupation</label>
-                                <input type="text" id="spouse_occupation" wire:model.live="spouse_occupation"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                            </div>
-                        </div>
-
-                        <div class="mt-4 gap-2 columns-1">
-                            <div class="w-full">
-                                <label for="spouse_employer" class=" text-sm text-gray-700">Spouse Employer</label>
-                                <input type="text" id="spouse_employer" wire:model.live="spouse_employer"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                            </div>
-                        </div>
-                        @endif
-
-                        <div class="mt-4 gap-2 columns-1">
-                            <input type="checkbox" wire:model.live="have_child">
-                            <label class="text-sm text-gray-700">Do you have a child? </label>
-                        </div>
-
-                        @if ($have_child)
-                        <fieldset
-                            class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full mb-4 mt-4 relative">
-                            <legend class="text-black">List of Child</legend>
-                            <button type="button" class="absolute top-0 right-0 text-black pr-4" wire:click="addChild">
-                                <i class="bi bi-plus-square"></i>
-                            </button>
-                            <div class="mt-4 grid grid-cols-2 gap-4">
-                                @foreach ($children as $index => $child)
-                                <div>
-                                    <label for="childrens_name_{{ $index }}" class="text-sm text-gray-700">Children's
-                                        Name</label>
-                                    <input type="text" id="childrens_name_{{ $index }}"
-                                        wire:model="children.{{ $index }}.name"
-                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                </div>
-                                <div>
-                                    <label for="childrens_birth_date_{{ $index }}"
-                                        class="text-sm text-gray-700">Children's Birth Date</label>
-                                    <input type="date" id="childrens_birth_date_{{ $index }}"
-                                        wire:model="children.{{ $index }}.birth_date"
-                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                </div>
-                                @endforeach
-                            </div>
-                        </fieldset>
-                        @endif
-
-
-                        <div class="mt-4 gap-2 columns-1">
-                            <div class="w-full">
-                                <label for="fathers_name" class=" text-sm text-gray-700">Fathers Name <span
-                                        class="text-red-600">*</span></label>
-                                <input type="text" id="fathers_name" wire:model.live="fathers_name"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                @error('fathers_name') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="mt-4 gap-2 columns-1">
-                            <div class="w-full">
-                                <label for="mothers_maiden_name" class=" text-sm text-gray-700">Mothers Maiden
-                                    Name <span class="text-red-600">*</span></label>
-                                <input type="text" id="mothers_maiden_name" wire:model.live="mothers_maiden_name"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                @error('mothers_maiden_name') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="flex gap-2 mt-12 columns-2">
-                            <div class="w-full relative">
-                                <button
-                                    class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
-                                    wire:click="prevStep" wire:loading.attr="disabled" wire:target="prevStep">
-                                    <span wire:loading.remove wire:target="prevStep">Previous</span>
-                                    <span wire:loading wire:target="prevStep">Loading...</span>
-                                </button>
-                            </div>
-                            <div class="w-full relative">
-                                <button
-                                    class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
-                                    wire:click="toStep5" wire:loading.attr="disabled" wire:target="toStep5">
-                                    <span wire:loading.remove wire:target="toStep5">Next</span>
-                                    <span wire:loading wire:target="toStep5">Loading...</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    @endif --}}
-
-
-                    <!-- Step 5 -->
-                    {{-- @if ($step === 4)
-                    <div>
-                        <h2 class="mb-4 text-lg font-medium text-gray-500">
-                            Step 4 out of 4: <span class="font-bold text-black">Educational Background</span>
-                        </h2>
-
-                        <div class="mt-12 gap-2 columns-1">
-                            <div class="w-full">
-                                <label for="educ_background" class=" text-sm text-gray-700">Highest Educational
-                                    Attainment <span class="text-red-600">*</span></label>
-                                <select id="educ_background" wire:model.live="educ_background"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                    <option value="">Select Option</option>
-                                    <option value="Primary">Primary</option>
-                                    <option value="Intermediate">Intermediate</option>
-                                    <option value="Vocational">Vocational</option>
-                                    <option value="College">College</option>
-                                    <option value="Graduate Studies">Graduate Studies</option>
-                                </select>
-                                @error('educ_background') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="mt-4 gap-2 columns-1">
-                            <div class="w-full">
-                                <label for="name_of_school" class=" text-sm text-gray-700">Name of School <span
-                                        class="text-red-600">*</span></label>
-                                <input type="text" id="name_of_school" wire:model.live="name_of_school"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                @error('name_of_school') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="mt-4 gap-2 columns-2">
-                            <div class="w-full">
-                                <label for="degree" class=" text-sm text-gray-700">Degree <span
-                                        class="text-red-600">*</span></label>
-                                <input type="text" id="degree" wire:model.live="degree"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                @error('degree') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="w-full">
-                                <label for="year_graduated" class=" text-sm text-gray-700">Year Graduated <span
-                                        class="text-red-600">*</span></label>
-                                <input type="number" id="year_graduated" wire:model.live="year_graduated"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                @error('year_graduated') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="mt-4 gap-2 columns-2">
-                            <div class="w-full">
-                                <label for="period_start_date" class=" text-sm text-gray-700">Period of Attendance
-                                    (Start) <span class="text-red-600">*</span></label>
-                                <input type="date" id="period_start_date" wire:model.live="period_start_date"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                @error('period_start_date') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="w-full">
-                                <label for="period_end_date" class=" text-sm text-gray-700">Period of
-                                    Attendance (End) <span class="text-red-600">*</span></label>
-                                <input type="date" id="period_end_date" wire:model.live="period_end_date"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                @error('period_end_date') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="mt-4 gap-2 columns-2">
-                            <div class="relative w-full" x-data="{ show: false }">
-                                <label for="password" class="text-sm text-gray-700">Password <span
-                                        class="text-red-600">*</span></label>
-                                <input :type="show ? 'text' : 'password'" id="password" wire:model.live="password"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                <div class="absolute top-1/2 right-0 pr-3 flex items-center text-sm leading-5">
-                                    <i :class="show ? 'bi bi-eye-slash' : 'bi bi-eye'" @click="show = !show"
-                                        class="cursor-pointer"></i>
-                                </div>
-                                @error('password') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                            </div>
-                            <div class="relative w-full" x-data="{ show: false }">
-                                <label for="c_password" class="text-sm text-gray-700">Confirm Password <span
-                                        class="text-red-600">*</span></label>
-                                <input :type="show ? 'text' : 'password'" id="c_password" wire:model.live="c_password"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                <div class="absolute top-1/2 right-0 pr-3 flex items-center text-sm leading-5">
-                                    <i :class="show ? 'bi bi-eye-slash' : 'bi bi-eye'" @click="show = !show"
-                                        class="cursor-pointer"></i>
-                                </div>
-                                @error('c_password') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-
-                        <div class="flex gap-2 mt-12 columns-2">
-                            <div class="w-full relative">
-                                <button
-                                    class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
-                                    wire:click="prevStep" wire:loading.attr="disabled" wire:target="prevStep">
-                                    <span wire:loading.remove wire:target="prevStep">Previous</span>
-                                    <span wire:loading wire:target="prevStep">Loading...</span>
-                                </button>
-                            </div>
-                            <div class="w-full relative">
-                                <button
-                                    class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
-                                    wire:click="submit" wire:loading.attr="disabled" wire:target="submit">
-                                    <span wire:loading.remove wire:target="submit">Submit</span>
-                                    <span wire:loading wire:target="submit">Submitting...</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    @endif --}}
-
-                    {{--
-                    <!-- Step 6 -->
-                    @if ($step === 6)
-                    <div>
-                        <h2 class="mb-4 text-lg font-medium text-gray-500">
-                            Step 6 out of 8: <span class="font-bold text-black">Eligibility</span>
-                        </h2>
-
-                        <div class="mt-12 gap-2 columns-1">
-                            <div class="w-full">
-                                <label for="rating" class=" text-sm text-gray-700">Rating</label>
-                                <input type="text" id="rating" wire:model.live="rating"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                @error('rating') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="mt-4 gap-2 columns-2">
-                            <div class="w-full">
-                                <label for="exam_date" class=" text-sm text-gray-700">Date of Examination</label>
-                                <input type="date" id="exam_date" wire:model.live="exam_date"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Select date">
-                                @error('exam_date') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="w-full">
-                                <label for="exam_loc" class=" text-sm text-gray-700">Place of Examination</label>
-                                <input type="text" id="exam_loc" wire:model.live="exam_loc"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Select date">
-                                @error('exam_loc') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="mt-4 gap-2 columns-1">
-                            <div class="w-full">
-                                <label for="license" class=" text-sm text-gray-700">License</label>
-                                <input type="text" id="license" wire:model.live="license"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Select date">
-                                @error('license') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="flex gap-2 mt-12 columns-2">
-                            <div class="w-full">
-                                <button
-                                    class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
-                                    wire:click="prevStep">
-                                    Previous
-                                </button>
-                            </div>
-                            <div class="w-full">
-                                <button
-                                    class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
-                                    wire:click="toStep7">
-                                    Next
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-
-                    <!-- Step 7 -->
-                    @if ($step === 7)
-                    <div>
-                        <h2 class="mb-4 text-lg font-medium text-gray-500">
-                            Step 7 out of 8: <span class="font-bold text-black">Work Experience</span>
-                        </h2>
-
-                        <div class="mt-12 gap-2 columns-2">
-                            <div class="w-full">
-                                <label for="inclusive_dates" class=" text-sm text-gray-700">Inclusive Dates</label>
-                                <input type="date" id="inclusive_dates" wire:model.live="inclusive_dates"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Select date">
-                                @error('inclusive_dates') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="w-full">
-                                <label for="position_title" class=" text-sm text-gray-700">Position Title</label>
-                                <input type="text" id="position_title" wire:model.live="position_title"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Enter your position">
-                                @error('position_title') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="mt-4 gap-2 columns-2">
-                            <div class="w-full">
-                                <label for="department" class=" text-sm text-gray-700">Department</label>
-                                <input type="text" id="department" wire:model.live="department"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Enter your department">
-                                @error('department') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="w-full">
-                                <label for="monthly_salary" class=" text-sm text-gray-700">Monthly Salary</label>
-                                <input type="text" id="monthly_salary" wire:model.live="monthly_salary"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Enter your monthly salary">
-                                @error('monthly_salary') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="mt-4 gap-2 columns-2">
-                            <div class="w-full">
-                                <label for="monthly_salary" class=" text-sm text-gray-700">Status of
-                                    Appointment</label>
-                                <input type="text" id="status_appointment" wire:model.live="status_appointment"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                    placeholder="Enter your monthly salary">
-                                @error('status_appointment') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="w-full">
-                                <label for="service" class="text-sm text-gray-700">Service</label>
-                                <select id="service" wire:model.live="service"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                    <option value="">Select one</option>
-                                    <option value="Government Service">Government Service</option>
-                                    <option value="Not">Not</option>
-                                </select>
-                                @error('service') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-
-                        <div class="flex gap-2 mt-12 columns-2">
-                            <div class="w-full">
-                                <button
-                                    class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
-                                    wire:click="prevStep">
-                                    Previous
-                                </button>
-                            </div>
-                            <div class="w-full">
-                                <button
-                                    class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
-                                    wire:click="toStep8">
-                                    Next
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-
-                    <!-- Step 8 -->
-                    @if ($step === 8)
-                    <div>
-                        <h2 class="mb-4 text-lg font-medium text-gray-500">
-                            Step 8 out of 8: <span class="font-bold text-black">Other Relevant Information</span>
-                        </h2>
-
-                        <div class="mt-12 gap-2 columns-1">
-                            <div class="w-full">
-                                <label for="voluntary_works" class=" text-sm text-gray-700">Voluntary Works</label>
-                                <input type="text" id="voluntary_works" wire:model.live="voluntary_works"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                @error('voluntary_works') <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full mb-4 mt-4">
-                            <legend class="text-black">Learning and Development</legend>
-                            <div class="mt-2">
-
-                                <div class="mt-2 gap-2 columns-2">
-                                    <div class="w-full">
-                                        <label for="training_title" class=" text-sm text-gray-700">Title of
-                                            Training</label>
-                                        <input type="text" id="training_title" wire:model.live="training_title"
-                                            class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                        @error('training_title') <span class="text-red-500 text-sm">{{ $message
-                                            }}</span>
-                                        @enderror
-                                    </div>
-
-                                    <div class="w-full">
-                                        <label for="lad_inclusive_dates" class=" text-sm text-gray-700">Inclusive
-                                            Dates</label>
-                                        <input type="date" id="lad_inclusive_dates"
-                                            wire:model.live="lad_inclusive_dates"
-                                            class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                            placeholder="Select date">
-                                        @error('lad_inclusive_dates') <span class="text-red-500 text-sm">{{ $message
-                                            }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="mt-2 gap-2 columns-2">
-                                    <div class="w-full">
-                                        <label for="number_of_hours" class=" text-sm text-gray-700">Number of
-                                            hours</label>
-                                        <input type="text" id="number_of_hours" wire:model.live="number_of_hours"
-                                            class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                            placeholder="Enter number of hours">
-                                        @error('number_of_hours') <span class="text-red-500 text-sm">{{ $message
-                                            }}</span>
-                                        @enderror
-                                    </div>
-                                    <div class="w-full">
-                                        <label for="conducted_by" class=" text-sm text-gray-700">Conducted by</label>
-                                        <input type="text" id="conducted_by" wire:model.live="conducted_by"
-                                            class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                        @error('conducted_by') <span class="text-red-500 text-sm">{{ $message
-                                            }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </fieldset>
-
-                        <div class="mt-2 gap-2 columns-1">
-                            <div class="w-full">
-                                <label for="special_skills_and_hobbies" class=" text-sm text-gray-700">Special Skills
-                                    and Hobbies</label>
-                                <input type="text" id="special_skills_and_hobbies"
-                                    wire:model.live="special_skills_and_hobbies"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                @error('special_skills_and_hobbies') <span class="text-red-500 text-sm">{{ $message
-                                    }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="mt-2 gap-2 columns-1">
-                            <div class="w-full">
-                                <label for="distinctions" class=" text-sm text-gray-700">Non-academic
-                                    Distinctions</label>
-                                <input type="text" id="distinctions" wire:model.live="distinctions"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                @error('distinctions') <span class="text-red-500 text-sm">{{ $message
-                                    }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="mt-2 gap-2 columns-1">
-                            <div class="w-full">
-                                <label for="membership" class=" text-sm text-gray-700">Membership in
-                                    Associations/Organizations</label>
-                                <input type="text" id="membership" wire:model.live="membership"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                @error('membership') <span class="text-red-500 text-sm">{{ $message
-                                    }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="mt-2 gap-2 columns-1">
-                            <div class="w-full">
-                                <label for="references" class=" text-sm text-gray-700">Character References</label>
-                                <input type="text" id="references" wire:model.live="references"
-                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                @error('references') <span class="text-red-500 text-sm">{{ $message
-                                    }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="flex gap-2 mt-12 columns-2">
-                            <div class="w-full">
-                                <button
-                                    class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
-                                    wire:click="prevStep">
-                                    Previous
-                                </button>
-                            </div>
-                            <div class="w-full">
-                                <button
-                                    class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black">
-                                    Submit
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    @endif --}}
 
                 </div>
             </div>

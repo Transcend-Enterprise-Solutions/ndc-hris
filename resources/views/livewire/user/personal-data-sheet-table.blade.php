@@ -177,7 +177,7 @@ x-cloak
                                 <div class="flex w-full sm:w-auto" style="height: 112px">
                                     <p class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">Permanent Address</p>
                                     <p class="custom-p w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200 text-xs" style="overflow: hidden;">
-                                        {{ $userData->p_house_street }} <br>
+                                        {{ str_replace(',', ' ', $userData->p_house_street) }} <br>
                                         {{ $userData->permanent_selectedBarangay }} {{ $userData->permanent_selectedCity }} <br>
                                         {{ $userData->permanent_selectedProvince }}, Philippines <br>
                                         {{ $userData->permanent_selectedZipcode }}
@@ -186,7 +186,7 @@ x-cloak
                                 <div class="flex w-full sm:w-auto" style="height: 112px">
                                     <p class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">Residential Address</p>
                                     <p class="w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200 text-xs" style="overflow: hidden;">
-                                        {{ $userData->r_house_street }} <br>
+                                        {{ str_replace(',', ' ', $userData->r_house_street) }} <br>
                                         {{ $userData->residential_selectedBarangay }} {{ $userData->residential_selectedCity }} <br>
                                         {{ $userData->residential_selectedProvince }}, Philippines <br>
                                         {{ $userData->residential_selectedZipcode }}
@@ -1700,11 +1700,27 @@ x-cloak
                                 @enderror
                             </div>
 
+                            <div class="col-span-2 sm:col-span-1">
+                                <label for="p_house_number" class="block text-sm font-medium text-gray-700 dark:text-slate-400">House/Block/Lot No.</label>
+                                <input type="text" id="p_house_number" wire:model='p_house_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                @error('p_house_number')
+                                    <span class="text-red-500 text-sm">The House number is required!</span>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 sm:col-span-1">
+                                <label for="p_street" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Street</label>
+                                <input type="text" id="p_street" wire:model='p_street' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                @error('p_street')
+                                    <span class="text-red-500 text-sm">The Street is required!</span>
+                                @enderror
+                            </div>
+
                             <div class="col-span-2 sm:col-span-2">
-                                <label for="p_house_street" class="block text-sm font-medium text-gray-700 dark:text-slate-400">House | Street | Subdivision</label>
-                                <input type="text" id="p_house_street" wire:model='p_house_street' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('p_house_street')
-                                    <span class="text-red-500 text-sm">The House/Street/Subdivision is required!</span>
+                                <label for="p_subdivision" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Subdivision/Village</label>
+                                <input type="text" id="p_subdivision" wire:model='p_subdivision' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                @error('p_subdivision')
+                                    <span class="text-red-500 text-sm">The Subdivision/Village is required!</span>
                                 @enderror
                             </div>
 
@@ -1788,11 +1804,27 @@ x-cloak
                                 @enderror
                             </div>
 
+                            <div class="col-span-2 sm:col-span-1">
+                                <label for="r_house_number" class="block text-sm font-medium text-gray-700 dark:text-slate-400">House/Block/Lot No.</label>
+                                <input type="text" id="r_house_number" wire:model='r_house_number' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                @error('r_house_number')
+                                    <span class="text-red-500 text-sm">The House number is required!</span>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 sm:col-span-1">
+                                <label for="r_street" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Street</label>
+                                <input type="text" id="r_street" wire:model='r_street' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                @error('r_street')
+                                    <span class="text-red-500 text-sm">The Street is required!</span>
+                                @enderror
+                            </div>
+
                             <div class="col-span-2 sm:col-span-2">
-                                <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-400">House | Street | Subdivision</label>
-                                <input type="text" id="first_name" wire:model='r_house_street' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                @error('r_house_street')
-                                    <span class="text-red-500 text-sm">The House/Street/Subdivision is required!</span>
+                                <label for="r_subdivision" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Subdivision/Village</label>
+                                <input type="text" id="r_subdivision" wire:model='r_subdivision' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                @error('r_subdivision')
+                                    <span class="text-red-500 text-sm">The Subdivision/Village is required!</span>
                                 @enderror
                             </div>
                         </div>

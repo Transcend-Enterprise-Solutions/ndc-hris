@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Countries;
 use Livewire\Component;
 use App\Models\User;
 use App\Models\PhilippineProvinces;
@@ -27,6 +28,7 @@ class Registration extends Component
     public $appointment;
     public $plantilla_item;
     public $data_of_assumption;
+    public $countries;
 
     #Step 1
     public $first_name;
@@ -38,6 +40,8 @@ class Registration extends Component
     public $date_of_birth;
     public $place_of_birth;
     public $citizenship;
+    public $dual_citizenship_type;
+    public $dual_citizenship_country;
     public $civil_status;
     public $height;
     public $weight;
@@ -85,6 +89,16 @@ class Registration extends Component
 
     public function toStep2()
     {
+        if($this->citizenship == 'Dual Citizenship'){
+            $this->validate([
+                'dual_citizenship_type' => 'required',
+                'dual_citizenship_country' => 'required'
+            ]);
+        }else{
+            $this->dual_citizenship_type = null;
+            $this->dual_citizenship_country = null;
+        }
+
         $this->validate([
             'first_name' => 'required|min:2',
             'middle_name' => 'nullable',
@@ -175,7 +189,6 @@ class Registration extends Component
 
         $currentYear = now()->year;
         $userCount = User::whereYear('created_at', $currentYear)->count();
-        //$empCode = $currentYear . ($userCount + 1);
 
         $user = User::create([
             'name' => $this->first_name . " " . $this->middle_name . " " . $this->surname,
@@ -188,18 +201,6 @@ class Registration extends Component
             'office_division_id' => $this->selectedOfficeDivision,
 
         ]);
-
-        // $employeesLeaves = EmployeesLeaves::create([
-        //     'user_id' => $user->id,
-        //     'paternity' => 7,
-        //     'study' => Carbon::now()->addMonths(6)->diffInDays(Carbon::now()), // 6 months to days
-        //     'maternity' => 105,
-        //     'solo_parent' => 7,
-        //     'vawc' => 10,
-        //     'rehabilitation' => Carbon::now()->addMonths(6)->diffInDays(Carbon::now()), // 6 months to days
-        //     'leave_for_women' => Carbon::now()->addMonths(2)->diffInDays(Carbon::now()), // 2 months to days
-        //     'emergency_leave' => 5,
-        // ]);
 
         $p_h = $this->p_house ? $this->p_house : "N/A";
         $p_st = $this->p_street? $this->p_street : "N/A";
@@ -224,6 +225,8 @@ class Registration extends Component
             'date_of_birth' => $this->date_of_birth,
             'place_of_birth' => $this->place_of_birth,
             'citizenship' => $this->citizenship,
+            'dual_citizenship_type' => $this->dual_citizenship_type,
+            'dual_citizenship_country' => $this->dual_citizenship_country,
             'civil_status' => $this->civil_status,
             'height' => $this->height,
             'weight' => $this->weight,
@@ -260,6 +263,7 @@ class Registration extends Component
         $this->getProvicesAndCities();
         $this->positions = Positions::where('position', '!=', 'Super Admin')->get();
         $this->officeDivisions = OfficeDivisions::all();
+        $this->countries = Countries::all();
     }
 
     public function render()
