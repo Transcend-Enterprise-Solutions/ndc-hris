@@ -20,7 +20,7 @@ class OfficeDivisions extends Model
     }
 
     public function positions(){
-        return $this->hasMany(Positions::class, 'office_division_id')->whereNull('unit_id');
+        return $this->hasMany(Positions::class, 'office_division_id')->whereNull('unit_id')->where('position', '!=', 'Super Admin');
     }
 
 }

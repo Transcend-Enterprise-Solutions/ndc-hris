@@ -566,10 +566,10 @@ x-cloak>
                                                         <i class="bi bi-building mr-2 text-emerald-500 dark:text-emerald-300 mr-2"></i>
                                                         <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-300">{{ $officeDivision->office_division }}</h3>
                                                     </div>
-                                                    <div class="relative">
+                                                    <div class="relative px-2">
                                                         <button wire:click="toggleEditSettings({{ $officeDivision->id }}, 'office/division')" 
-                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                            -mr-2 text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                            class="peer inline-flex items-center justify-center py-2 lg:mr-2
+                                                            text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600 
                                                             focus:outline-none" title="Edit">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </button>
@@ -583,26 +583,21 @@ x-cloak>
                                         
                                                 <div class="w-full p-4 flex flex-col mb-6 bg-white dark:bg-gray-600">
                                                     <div class="w-full">
-                                                        <div class="flex justify-between items-center w-full">
+                                                        <div class="flex justify-left items-center w-full">
                                                             <h3 class="text-xs font-semibold text-gray-300 dark:text-gray-500">POSITIONS</h3>
-                                                            <div class="relative mr-4">
+                                                            <div class="relative">
                                                                 @if($officeDivision->positions->isNotEmpty())
-                                                                    <button wire:click="toggleEditSettings({{ $officeDivision->id }}, 'position')" 
-                                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                                        -mr-2 text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    <button wire:click="toggleEditPos({{ $officeDivision->id }}, 'position')" 
+                                                                        class="peer inline-flex items-center justify-center ml-4 mb-3 
+                                                                        text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600 
                                                                         focus:outline-none" title="Edit Positions">
-                                                                        <i class="fas fa-pencil-alt"></i>
-                                                                    </button>
-                                                                    <button wire:click="toggleDeleteSettings({{ $officeDivision->id }}, 'position')" 
-                                                                        class="text-red-600 text-xs hover:text-red-900 dark:text-red-600 
-                                                                        dark:hover:text-red-900" title="Delete">
-                                                                        <i class="fas fa-trash"></i>
+                                                                        <i class="fas fa-pencil-alt" style="font-size: 10px"></i>
                                                                     </button>
                                                                 @else
-                                                                    <button wire:click="toggleAddSettings('position')" 
-                                                                        class="text-red-600 text-xs hover:text-red-900 dark:text-red-600 
+                                                                    <button wire:click="toggleAddPos({{ $officeDivision->id }}, 'position')" 
+                                                                        class="text-red-600 text-xs hover:text-red-900 dark:text-red-600 ml-4 mb-1
                                                                         dark:hover:text-red-900" title="Add Position">
-                                                                        <i title="Add" class="fas fa-plus text-green-500"></i>
+                                                                        <i title="Add Position" class="fas fa-plus text-green-500"></i>
                                                                     </button>
                                                                 @endif
                                                             </div>
@@ -633,17 +628,20 @@ x-cloak>
                                                                         <div class="ml-6 flex justify-between items-center w-full">
                                                                             <h3 class="text-xs font-semibold text-gray-300 dark:text-gray-500">POSITIONS</h3>
                                                                             <div class="relative mr-4 mb-2">
-                                                                                <button wire:click="toggleEditSettings({{ $officeDivision->id }}, 'position')" 
-                                                                                    class="peer inline-flex items-center justify-center px-4 -m-5 
-                                                                                    -mr-2 text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                                                    focus:outline-none" title="Edit Positions">
-                                                                                    <i class="fas fa-pencil-alt" style="font-size: 10px"></i>
-                                                                                </button>
-                                                                                <button wire:click="toggleDeleteSettings({{ $officeDivision->id }}, 'position')" 
-                                                                                    class="text-red-600 text-xs hover:text-red-900 dark:text-red-600 
-                                                                                    dark:hover:text-red-900" title="Delete">
-                                                                                    <i class="fas fa-trash" style="font-size: 10px"></i>
-                                                                                </button>
+                                                                                @if($unit->positions->isNotEmpty())
+                                                                                    <button wire:click="toggleEditUnitPos({{ $officeDivision->id }}, {{ $unit->id }} ,'unit-position')" 
+                                                                                        class="peer inline-flex items-center justify-center 
+                                                                                        text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                                        focus:outline-none" title="Edit Positions">
+                                                                                        <i class="fas fa-pencil-alt" style="font-size: 10px"></i>
+                                                                                    </button>
+                                                                                @else
+                                                                                    <button wire:click="toggleAddUnitPos({{ $officeDivision->id }}, {{ $unit->id }} ,'unit-position')" 
+                                                                                        class="text-red-600 text-xs hover:text-red-900 dark:text-red-600 
+                                                                                        dark:hover:text-red-900" title="Add Position">
+                                                                                        <i title="Add Position" class="fas fa-plus text-green-500"></i>
+                                                                                    </button>
+                                                                                @endif
                                                                             </div>
                                                                         </div>
                                                                         <!-- Positions under the Unit -->
@@ -855,7 +853,7 @@ x-cloak>
     </x-modal>
 
     {{-- Add and Edit Office/Division or Position Modal --}}
-    <x-modal id="posModal" maxWidth="2xl" wire:model="settings" centered>
+    <x-modal id="posModal" maxWidth="2xl" wire:model="settings">
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold uppercase">
                 {{ $add ? 'Add' : 'Edit' }} {{ $data }}
@@ -868,20 +866,14 @@ x-cloak>
                 <div class="grid grid-cols-2 gap-4">
                     
                     @if($add)
-                        @foreach ($settingsData as $index => $setting)
-                            <div class="col-span-2 relative">
-                                <label for="settings_data_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
-                                <input type="text" id="settings_data_{{ $index }}" wire:model='settingsData.{{ $index }}.value' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                                @if (count($settingsData) > 1)
-                                    <button type="button" wire:click="removeSetting({{ $index }})" class="absolute right-2 top-8 text-red-500 hover:text-red-700">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                @endif
-                                @error('settingsData.' . $index . '.value')
-                                    <span class="text-red-500 text-sm">This field is required!</span>
-                                @enderror
-                            </div>
                             @if($data === "office/division")
+                                <div class="col-span-2 relative">
+                                    <label for="settings_data" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
+                                    <input type="text" id="settings_data" wire:model='settings_data' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                                    @error('settings_data')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
                                 @foreach ($units as $index => $setting)
                                     <div class="col-span-1 relative">
                                         <label for="unit_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">Unit</label>
@@ -901,23 +893,57 @@ x-cloak>
                                     </button>
                                 </div>
                             @endif
-                        @endforeach
-                        @if($data === "position")
-                            <div class="col-span-2">
-                                <button type="button" wire:click="addNewSetting" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Add Another {{ $data }}
-                                </button>
-                            </div>
-                        @endif
+                            @if($data === "position")
+                                @foreach ($settingsData as $index => $setting)
+                                    <div class="col-span-2 relative">
+                                        <label for="settings_data_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
+                                        <input type="text" id="settings_data_{{ $index }}" wire:model='settingsData.{{ $index }}.value' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                  
+                                        <button type="button" wire:click="removeSetting({{ $index }})" class="absolute right-2 top-8 text-red-500 hover:text-red-700">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+  
+                                        @error('settingsData.' . $index . '.value')
+                                            <span class="text-red-500 text-sm">This field is required!</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-span-2">
+                                        <button type="button" wire:click="addNewSetting" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                            Add Another {{ $data }}
+                                        </button>
+                                    </div>
+                                @endforeach
+                            @endif
+                            @if($data === "unit-position")
+                                @foreach ($settingsData as $index => $setting)
+                                    <div class="col-span-2 relative">
+                                        <label for="settings_data_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
+                                        <input type="text" id="settings_data_{{ $index }}" wire:model='settingsData.{{ $index }}.value' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                                
+                                        <button type="button" wire:click="removeSetting({{ $index }})" class="absolute right-2 top-8 text-red-500 hover:text-red-700">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                      
+                                        @error('settingsData.' . $index . '.value')
+                                            <span class="text-red-500 text-sm">This field is required!</span>
+                                        @enderror
+                                    </div>
+                                @endforeach
+                                <div class="col-span-2">
+                                    <button type="button" wire:click="addNewSetting" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        Add Another {{ $data }}
+                                    </button>
+                                </div>
+                            @endif
                     @else
-                        <div class="col-span-2 relative">
-                            <label for="settings_data" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
-                            <input type="text" id="settings_data" wire:model='settings_data' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                            @error('settings_data')
-                                <span class="text-red-500 text-sm">This field is required!</span>
-                            @enderror
-                        </div>
                         @if($data === "office/division")
+                            <div class="col-span-2 relative">
+                                <label for="settings_data" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
+                                <input type="text" id="settings_data" wire:model='settings_data' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                                @error('settings_data')
+                                    <span class="text-red-500 text-sm">This field is required!</span>
+                                @enderror
+                            </div>
                             @foreach ($units as $index => $setting)
                                 <div class="col-span-1 relative">
                                     <label for="unit_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">Unit</label>
@@ -934,6 +960,48 @@ x-cloak>
                             <div class="col-span-2">
                                 <button type="button" wire:click="addNewUnit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                     Add Another Unit
+                                </button>
+                            </div>
+                        @endif
+                        @if($data === "position")
+                            @foreach ($settingsData as $index => $setting)
+                                <div class="col-span-2 relative">
+                                    <label for="settings_data_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
+                                    <input type="text" id="settings_data_{{ $index }}" wire:model='settingsData.{{ $index }}.value' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        
+                                    <button type="button" wire:click="removeSetting({{ $index }})" class="absolute right-2 top-8 text-red-500 hover:text-red-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                   
+                                    @error('settingsData.' . $index . '.value')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+                            @endforeach
+                            <div class="col-span-2">
+                                <button type="button" wire:click="addNewSetting" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                    Add Another {{ $data }}
+                                </button>
+                            </div>
+                        @endif
+                        @if($data === "unit-position")
+                            @foreach ($settingsData as $index => $setting)
+                                <div class="col-span-2 relative">
+                                    <label for="settings_data_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
+                                    <input type="text" id="settings_data_{{ $index }}" wire:model='settingsData.{{ $index }}.value' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                           
+                                    <button type="button" wire:click="removeSetting({{ $index }})" class="absolute right-2 top-8 text-red-500 hover:text-red-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                   
+                                    @error('settingsData.' . $index . '.value')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+                            @endforeach
+                            <div class="col-span-2">
+                                <button type="button" wire:click="addNewSetting" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                    Add Another {{ $data }}
                                 </button>
                             </div>
                         @endif
