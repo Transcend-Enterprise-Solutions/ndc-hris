@@ -217,6 +217,11 @@ class User extends Authenticatable
         return $this->hasMany(MonetizationRequest::class);
     }
 
+    public function leaveApprovals()
+    {
+        return $this->hasMany(LeaveApprovals::class, 'application_id');
+    }
+
     /**
      * The attributes that should be cast.
      *

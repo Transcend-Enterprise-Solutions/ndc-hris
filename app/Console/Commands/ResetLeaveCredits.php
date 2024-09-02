@@ -30,8 +30,8 @@ class ResetLeaveCredits extends Command
     {
         // Reset SPL credits and add 3 to VL claimable credits
         LeaveCredits::query()->update([
-            'spl_claimable_credits' => \DB::raw('spl_claimable_credits + 3'),
-            'vl_claimable_credits' => \DB::raw('vl_claimable_credits + 3'),
+            'spl_claimable_credits' => 3,
+            'spl_claimed_credits' => 0,
         ]);
 
         $this->info('Leave credits have been reset successfully.');

@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\LeaveApplication;
+use App\Exports\LeaveCardExport; 
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
@@ -23,6 +24,13 @@ class AdminLeaveRecordsTable extends Component
     {
         $this->activeTab = $tab;
         $this->resetPage();
+    }
+
+    public function exportExcel($leaveApplicationId)
+    {
+        // Create an instance of the export class and call the export method
+        $export = new LeaveCardExport($leaveApplicationId);
+        return $export->export();
     }
 
     public function render()
