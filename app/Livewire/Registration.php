@@ -26,7 +26,7 @@ class Registration extends Component
     public $selectedOfficeDivision;
     public $date_hired;
     public $appointment;
-    public $plantilla_item;
+    public $itemNumber;
     public $data_of_assumption;
     public $countries;
 
@@ -161,15 +161,6 @@ class Registration extends Component
             'selectedOfficeDivision' => 'required|exists:office_divisions,id',
             'date_hired' => 'required|date',
             'appointment' => 'required',
-            'plantilla_item' => [
-                'required_if:appointment,plantilla',
-                'nullable',
-            ],
-            'data_of_assumption' => [
-                'required_if:appointment,pa',
-                'nullable',
-            ],
-
         ]);
 
         if($this->p_house == null && $this->p_street == null && $this->p_subdivision == null){
@@ -212,7 +203,6 @@ class Registration extends Component
         $r_s = $this->r_subdivision ? $this->r_subdivision : "N/A";
         $r_house_street = $r_h . ',' . $r_st . ',' . $r_s;
         $sexValue = $this->getSexValue();
-        $appointmentValue = $this->getAppointmentValue();
 
         $user->userData()->create([
             'user_id' => $user->id,
@@ -251,7 +241,8 @@ class Registration extends Component
             'mobile_number' => $this->mobile_number,
             'pwd' => $this->pwd,
             'date_hired' => $this->date_hired,
-            'appointment' => $appointmentValue,
+            'appointment' => $this->appointment,
+            'item_number' => $this->itemNumber,
 
         ]);
 
@@ -349,33 +340,11 @@ class Registration extends Component
         return $containsUppercase && $containsNumber && $containsSpecialChar;
     }
 
-    public function updatedAppointment($value)
-    {
-        if ($value !== 'plantilla') {
-            $this->plantilla_item = '';
-        }
-        if ($value !== 'pa') {
-            $this->data_of_assumption = '';
-        }
-    }
     public function getSexValue()
     {
         if ($this->sex === 'Others' && $this->otherSex) {
             return $this->otherSex;
         }
         return $this->sex;
-    }
-
-    public function getAppointmentValue()
-    {
-        if ($this->appointment === 'plantilla' && $this->plantilla_item) {
-            return $this->appointment . ',' . $this->plantilla_item;
-        }
-
-        if ($this->appointment === 'pa' && $this->data_of_assumption) {
-            return $this->appointment . ',' . $this->data_of_assumption;
-        }
-
-        return $this->appointment;
     }
 }

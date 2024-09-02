@@ -166,7 +166,7 @@
                                         <select wire:model="dual_citizenship_country"
                                             class="w-full h-12 px-4 py-2 text-black border rounded-lg bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                             <option value="">Select Country</option>
-                                            @foreach ($countries as $country)  
+                                            @foreach ($countries as $country)
                                                 <option value="{{ $country->name }}">{{ $country->name }}</option>
                                             @endforeach
                                         </select>
@@ -633,17 +633,17 @@
                                 </div>
 
                                 <!-- Plantilla Item Number Field -->
-                                <div x-show="appointment === 'plantilla'" class="w-full mt-4">
-                                    <label for="plantilla_item" class="text-sm text-gray-700">Plantilla Item Number <span class="text-red-600">*</span></label>
-                                    <input id="plantilla_item" wire:model="plantilla_item"
+                                <div class="w-full mt-4">
+                                    <label for="itemNumber" class="text-sm text-gray-700">Item Number <span class="text-red-600">*</span></label>
+                                    <input id="itemNumber" wire:model="itemNumber"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
-                                        type="text" placeholder="Enter Plantilla Item Number">
-                                    @error('plantilla_item')
+                                        type="text" placeholder="Enter Item Number">
+                                    @error('itemNumber')
                                         <span class="text-red-500 text-sm">This field is required</span>
                                     @enderror
                                 </div>
                                 <!-- Data of Assumption Field -->
-                                <div x-show="appointment === 'pa'" class="w-full mt-4">
+                                {{-- <div x-show="appointment === 'pa'" class="w-full mt-4">
                                     <label for="data_of_assumption" class="text-sm text-gray-700">Data of Assumption <span class="text-red-600">*</span></label>
                                     <input id="data_of_assumption" wire:model="data_of_assumption"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
@@ -651,7 +651,7 @@
                                     @error('data_of_assumption')
                                         <span class="text-red-500 text-sm">This field is required</span>
                                     @enderror
-                                </div>
+                                </div> --}}
                             </div>
                             @error('appointment')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -691,7 +691,7 @@
                             </div>
                             <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                                 <div class="w-full">
-                                    <label for="date_hired" class="text-sm text-gray-700">Date Hired <span class="text-red-600">*</span></label>
+                                    <label for="date_hired" class="text-sm text-gray-700">Date of assumption <span class="text-red-600">*</span></label>
                                     <input type="date" id="date_hired" wire:model.live="date_hired"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('date_hired')
