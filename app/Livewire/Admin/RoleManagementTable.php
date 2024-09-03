@@ -84,21 +84,16 @@ class RoleManagementTable extends Component
 
     public function render(){
         $admins = User::join('positions', 'positions.id', 'users.position_id')
-                ->leftJoin('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                 ->where('users.user_role', '!=', 'emp')
                 ->where('positions.position', '!=', 'Super Admin')
                 ->where('users.active_status', '!=', 4)
                 ->when($this->search, function ($query) {
                     return $query->search(trim($this->search));
                 })
-                ->select(
-                    'users.name',
-                    'users.user_role',
-                    'users.emp_code',
-                    'positions.position',
-                    'office_divisions.office_division'
-                )
+
                 ->paginate(5);
+        dd($admins);
 
         $empPos = User::where('user_role', 'emp')
                 ->join('user_data', 'user_data.user_id', 'users.id')
