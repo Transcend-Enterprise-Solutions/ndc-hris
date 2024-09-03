@@ -40,6 +40,7 @@ class RoleManagementTable extends Component
     public $search;
     public $search2;
     public $search3;
+    public $search4;
     public $deleteId;
     public $deleteMessage;
     public $add;
@@ -153,11 +154,15 @@ class RoleManagementTable extends Component
 
         $this->officeDivisions = OfficeDivisions::with(['officeDivisionUnits', 'positions' => function($query) {
             $query->where('position', '!=', 'Super Admin')->whereNull('unit_id');
-        }])->get();
+            }])
+            ->when($this->search4, function ($query) {
+                return $query->search(trim($this->search4));
+            })
+            ->get();
         
         $this->positionsByUnit = OfficeDivisionUnits::with(['positions' => function($query) {
             $query->where('position', '!=', 'Super Admin')->whereNotNull('unit_id');
-        }])->get();
+            }])->get();
                 
 
         return view('livewire.admin.role-management-table',[

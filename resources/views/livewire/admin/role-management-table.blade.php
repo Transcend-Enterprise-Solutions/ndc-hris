@@ -1,6 +1,6 @@
 <div class="w-full"
 x-data="{ 
-    selectedTab: 'settings',
+    selectedTab: 'org',
 }" 
 x-cloak>
 
@@ -95,6 +95,15 @@ x-cloak>
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800"
                         placeholder="Enter employee name or ID">
+                </div>
+
+                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'settings'">
+                    <label for="search4" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                    <input type="text" id="search4" wire:model.live="search4"
+                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                            dark:hover:bg-slate-600 dark:border-slate-600
+                            dark:text-gray-300 dark:bg-gray-800"
+                        placeholder="Enter office/division">
                 </div>
 
                 <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4" x-show="selectedTab === 'org'">
