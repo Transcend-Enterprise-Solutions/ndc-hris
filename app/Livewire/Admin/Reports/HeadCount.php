@@ -224,6 +224,7 @@ class HeadCount extends Component
                 ->join('user_data', 'user_data.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
                 ->leftJoin('payrolls', 'payrolls.user_id', 'users.id')
                 ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
                 ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
@@ -237,6 +238,7 @@ class HeadCount extends Component
                     'user_data.appointment', 
                     'user_data.date_hired', 
                     'office_divisions.office_division',
+                    'office_division_units.unit',
                     'payrolls.sg_step as plantilla_sg_step',
                     'payrolls.rate_per_month as plantilla_rate',
                     'cos_sk_payrolls.sg_step as cos_sk_sg_step',

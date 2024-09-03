@@ -252,4 +252,9 @@ class User extends Authenticatable
                 ->orWhere('office_divisions.office_division', 'like', $term);
         });
     }
+
+    public function adminAccount(){
+        return $this->hasOne(User::class, 'name', 'name')->where('user_role', '!=', 'emp');
+    }
+
 }

@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin;
 
+use App\Exports\AdminRolesExport;
 use App\Exports\PerOfficeDivisionExport;
-use App\Models\Admin;
 use App\Models\CosRegPayrolls;
 use App\Models\CosSkPayrolls;
 use App\Models\OfficeDivisions;
@@ -13,6 +13,7 @@ use App\Models\Positions;
 use App\Models\SalaryGrade;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
@@ -25,9 +26,13 @@ class RoleManagementTable extends Component
     public $addRole;
     public $editRole;
     public $employees;
+    public $roleEmployees;
     public $positionsByUnit;
     public $positions;
     public $officeDivisions;
+    public $unit;
+    public $unitName;
+    public $divsUnits;
     public $userId;
     public $name;
     public $employee_number;
@@ -78,27 +83,51 @@ class RoleManagementTable extends Component
 
     public function mount(){
         $this->employees = User::where('user_role', '=', 'emp')->get();
+
+        $this->roleEmployees = User::where('user_role', '=', 'emp')
+            ->whereDoesntHave('adminAccount')
+            ->get();
+
         $this->salaryGrades = SalaryGrade::orderBy('salary_grade')->get();
         $this->positions = Positions::where('position', '!=', 'Super Admin')->get();
     }
 
     public function render(){
+        if($this->office_division){
+            $this->divsUnits = OfficeDivisionUnits::where('office_division_id' , $this->office_division)->get();
+        }
+        if($this->officeDivisionId){
+            $this->divsUnits = OfficeDivisionUnits::where('office_division_id' , $this->officeDivisionId)->get();
+        }
+
+
         $admins = User::join('positions', 'positions.id', 'users.position_id')
-                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                ->where('users.user_role', '!=', 'emp')
                 ->where('positions.position', '!=', 'Super Admin')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
+                ->where('users.user_role', '!=', 'emp')
                 ->where('users.active_status', '!=', 4)
                 ->when($this->search, function ($query) {
                     return $query->search(trim($this->search));
                 })
-
+                ->select(
+                    'users.id',
+                    'users.name',
+                    'users.user_role',
+                    'users.emp_code',
+                    'positions.position',
+                    'office_divisions.office_division',
+                    'office_division_units.unit'
+                )
                 ->paginate(5);
-        dd($admins);
-
-        $empPos = User::where('user_role', 'emp')
+                
+            $empPos = User::where('user_role', 'emp')
                 ->join('user_data', 'user_data.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
+                ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
+                ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
                 ->where('users.active_status', '!=', 4)
                 ->select(
                     'users.id', 
@@ -106,12 +135,22 @@ class RoleManagementTable extends Component
                     'users.emp_code', 
                     'users.active_status', 
                     'positions.position', 
-                    'user_data.appointment', 
-                    'office_divisions.office_division')
+                    'user_data.appointment',
+                    'office_divisions.office_division',
+                    'office_division_units.unit',
+                    DB::raw('
+                        CASE 
+                            WHEN cos_reg_payrolls.id IS NOT NULL THEN "REG"
+                            WHEN cos_sk_payrolls.id IS NOT NULL THEN "SK"
+                            ELSE ""
+                        END as appointment_type'
+                    )
+                )
                 ->when($this->search3, function ($query) {
                     return $query->search(trim($this->search3));
                 })
                 ->paginate(5);
+            
 
         $organizations = User::where('user_role', 'emp')
                 ->join('user_data', 'user_data.user_id', 'users.id')
@@ -183,6 +222,37 @@ class RoleManagementTable extends Component
         }
     }
 
+    public function exportRoles(){
+        try{
+            $admins = User::join('positions', 'positions.id', 'users.position_id')
+                ->where('positions.position', '!=', 'Super Admin')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
+                ->where('users.user_role', '!=', 'emp')
+                ->where('users.active_status', '!=', 4)
+                ->when($this->search, function ($query) {
+                    return $query->search(trim($this->search));
+                })
+                ->select(
+                    'users.id',
+                    'users.name',
+                    'users.user_role',
+                    'users.emp_code',
+                    'positions.position',
+                    'office_divisions.office_division',
+                    'office_division_units.unit'
+                );
+
+            $filters = [
+                'admins' => $admins,
+            ];
+            return Excel::download(new AdminRolesExport($filters), 'Admin_Roles_List.xlsx');
+            
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+
     public function exportEmployees($division)
     {
         try {
@@ -190,6 +260,7 @@ class RoleManagementTable extends Component
                 ->join('user_data', 'user_data.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
                 ->leftJoin('payrolls', 'payrolls.user_id', 'users.id')
                 ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
                 ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
@@ -203,6 +274,7 @@ class RoleManagementTable extends Component
                     'user_data.appointment', 
                     'user_data.date_hired', 
                     'office_divisions.office_division',
+                    'office_division_units.unit',
                     'payrolls.sg_step as plantilla_sg_step',
                     'payrolls.rate_per_month as plantilla_rate',
                     'cos_sk_payrolls.sg_step as cos_sk_sg_step',
@@ -531,23 +603,39 @@ class RoleManagementTable extends Component
         $this->editRole = true;
         $this->userId = $userId;
         try {
-            $admin = Admin::where('admin.user_id', $userId)
-                ->join('users', 'users.id', 'admin.user_id')
-                ->join('payrolls', 'payrolls.user_id', 'admin.payroll_id')
+            $admin = User::where('users.id', $userId)
+                ->join('positions', 'positions.id', 'users.position_id')
+                ->where('positions.position', '!=', 'Super Admin')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
+                ->where('users.user_role', '!=', 'emp')
+                ->where('users.active_status', '!=', 4)
+                ->when($this->search, function ($query) {
+                    return $query->search(trim($this->search));
+                })
                 ->select(
-                    'admin.*', 
-                    'payrolls.name', 
-                    'payrolls.employee_number', 
-                    'payrolls.office_division', 
-                    'payrolls.position', 
+                    'users.id',
+                    'users.name',
+                    'users.email',
                     'users.user_role',
-                    'users.email')
+                    'users.emp_code',
+                    'users.unit_id',
+                    'positions.position',
+                    'office_divisions.office_division',
+                    'office_divisions.id as divId',
+                    'office_division_units.unit',
+                    'office_division_units.id as unitId'
+                )
                 ->first();
             if ($admin) {
+                $this->divsUnits = OfficeDivisionUnits::where('office_division_id' , $admin->divId)->get();
                 $this->name = $admin->name;
                 $this->user_role = $admin->user_role;
                 $this->admin_email = $admin->email;
                 $this->office_division = $admin->office_division;
+                $this->unitName = $admin->unit;
+                $this->unit = $admin->unitId;
+                $this->position = $admin->position;
             }
         } catch (Exception $e) {
             throw $e;
@@ -566,10 +654,8 @@ class RoleManagementTable extends Component
             $empPos = User::where('users.id', $this->userId)
                     ->join('positions', 'positions.id', 'users.position_id')
                     ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                    ->select('users.*', 'positions.position', 'office_divisions.office_division')
-                    ->when($this->search3, function ($query) {
-                        return $query->search(trim($this->search3));
-                    })
+                    ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
+                    ->select('users.*', 'positions.position', 'office_divisions.office_division', 'office_division_units.unit')
                     ->first();
             if ($empPos) {
                 $this->userId = $empPos->id;
@@ -579,6 +665,8 @@ class RoleManagementTable extends Component
                 $this->positionId = $empPos->position_id;
                 $this->officeDivisionId = $empPos->office_division_id;
                 $this->activeStatus = $empPos->active_status;
+                $this->unitName = $empPos->unit;
+                $this->unit = $empPos->unit_id;
             }
         } catch (Exception $e) {
             throw $e;
@@ -589,8 +677,7 @@ class RoleManagementTable extends Component
         try {
             $user = User::where('users.id', $this->userId)
                 ->join('positions', 'positions.id', 'users.position_id')
-                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                ->select('users.id', 'users.name', 'users.emp_code','positions.id as posId', 'office_divisions.id as officeDivId')
+                ->select('users.id', 'users.name', 'users.emp_code','positions.id as posId')
                 ->first();
             if($user){
                 if($this->addRole){
@@ -632,23 +719,14 @@ class RoleManagementTable extends Component
                         'password' => $this->password,
                         'emp_code' => $this->user_role . '-' .$user->emp_code,
                         'user_role' => $this->user_role,
+                        'active_status' => 1,
                         'position_id' => $user->posId,
-                        'office_division_id' => $user->officeDivId,
+                        'office_division_id' => $this->office_division,
+                        'unit_id' => $this->unit,
                     ]);
                 }else{
-                    $admin = Admin::where('user_id', $user->id)
-                    ->first();
-
-                    if($this->user_role == "emp"){
-                        $admin->delete();
-                        $user->delete();
-                        $this->resetVariables();
-                        $this->dispatch('swal', [
-                            'title' => "Account role updated successfully!",
-                            'icon' => 'success'
-                        ]);
-                        return;
-                    }
+                    $admin = User::where('users.id', $this->userId)
+                            ->first();
 
                     $this->validate([
                         'user_role' => 'required',
@@ -656,14 +734,11 @@ class RoleManagementTable extends Component
                         'admin_email' => 'required|email',
                     ]);
 
-                    $admin = Admin::where('user_id', $user->id)
-                            ->first();
                     $admin->update([
-                        'office_division' => $this->office_division,
-                    ]);
-                    $user->update([
                         'email' => $this->admin_email,
                         'user_role' => $this->user_role,
+                        'office_division_id' => $this->office_division,
+                        'unit_id' => $this->unit,
                     ]);
                 }
             }
@@ -689,6 +764,7 @@ class RoleManagementTable extends Component
                 $empPos->update([
                     'position_id' => $this->positionId,
                     'office_division_id' => $this->officeDivisionId,
+                    'unit_id' => $this->unit,
                     'active_status' => $this->activeStatus,
                 ]);
                 $this->dispatch('swal', [
@@ -856,6 +932,8 @@ class RoleManagementTable extends Component
         $this->editPosition = null;
         $this->officeDivisionId = null;
         $this->unitId = null;
+        $this->unit = null;
+        $this->unitName = null;
     }
 
     private function isPasswordComplex($password){

@@ -671,7 +671,7 @@ x-cloak>
                             <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
                                 {{ $payrolls->links() }}
                             </div>
-                        </div>
+                         </div>
                         <div x-show="selectedTab === 'export'">
                             <div class="overflow-x-auto">
 
@@ -808,7 +808,7 @@ x-cloak>
                             <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
                                 {{-- {{ $payrolls->links() ?? '' }} --}}
                             </div>
-                        </div>
+                         </div>
                         <div x-show="selectedTab === 'signatories'">
                             <div class="overflow-x-hidden">
                                 <div class="flex gap-2 overflow-x-auto dark:bg-gray-700 bg-gray-200 rounded-t-lg">
@@ -840,7 +840,10 @@ x-cloak>
                                                     </div>
                                                     <div class="absolute bottom-1 w-full flex">
                                                         <div class="flex flex flex-col items-center w-4/5">
-                                                            @if($plantillaPayroll['a'])
+
+                                                            {{-- E-Signature Here --}}
+
+                                                            {{-- @if($plantillaPayroll['a'])
                                                                 <img src="{{ $plantillaPayroll['a']->signature ? route('signature.file', basename($plantillaPayroll['a']->signature)) : '/images/signature.png' }}"
                                                                     alt="signature" title="{{ $plantillaPayroll['a']->signature ? 'Edit Signature' : 'Add Signature' }}"
                                                                     class="cursor-pointer {{ $plantillaPayroll['a']->signature ? '-mb-4' : '' }}" onclick="document.getElementById('plantillaPayroll_A').click()"
@@ -854,7 +857,7 @@ x-cloak>
                                                                     </div>
                                                                 </div>
                                                                 @error('signatures.' . $plantillaPayroll['a']->id) <span class="error">{{ $message }}</span> @enderror
-                                                            @endif
+                                                            @endif --}}
                                                             <p class="text-center font-bold text-sm">{{ $plantillaPayroll['a'] ? $plantillaPayroll['a']->name : 'XXXXXXXXXX' }}</p>
                                                             <p class="text-center">{{ $plantillaPayroll['a'] ? $plantillaPayroll['a']->position : 'Position' }}</p>
                                                         </div>
@@ -892,7 +895,10 @@ x-cloak>
                                                     </div>
                                                     <div class="absolute bottom-1 w-full flex">
                                                         <div class="flex flex flex-col items-center w-4/5">
-                                                            @if($plantillaPayroll['b'])
+
+                                                            {{-- E-Signature Here --}}
+
+                                                            {{-- @if($plantillaPayroll['b'])
                                                                 <img src="{{ $plantillaPayroll['b']->signature ? route('signature.file', basename($plantillaPayroll['b']->signature)) : '/images/signature.png' }}"
                                                                     alt="signature" title="{{ $plantillaPayroll['b']->signature ? 'Edit Signature' : 'Add Signature' }}"
                                                                     class="cursor-pointer {{ $plantillaPayroll['b']->signature ? '-mb-4' : '' }}" onclick="document.getElementById('plantillaPayroll_B').click()"
@@ -906,7 +912,7 @@ x-cloak>
                                                                     </div>
                                                                 </div>
                                                                 @error('signatures.' . $plantillaPayroll['b']->id) <span class="error">{{ $message }}</span> @enderror
-                                                            @endif
+                                                            @endif --}}
                                                             <p class="text-center font-bold text-sm">{{ $plantillaPayroll['b'] ? $plantillaPayroll['b']->name : 'XXXXXXXXXX' }}</p>
                                                             <p class="text-center">{{ $plantillaPayroll['b'] ? $plantillaPayroll['b']->position : 'Position' }}</p>
                                                         </div>
@@ -942,7 +948,10 @@ x-cloak>
                                                     </div>
                                                     <div class="absolute bottom-1 w-full flex">
                                                         <div class="flex flex flex-col items-center w-4/5">
-                                                            @if($plantillaPayroll['c'])
+
+                                                            {{-- E-Signature Here --}}
+
+                                                            {{-- @if($plantillaPayroll['c'])
                                                                 <img src="{{ $plantillaPayroll['c']->signature ? route('signature.file', basename($plantillaPayroll['c']->signature)) : '/images/signature.png' }}"
                                                                     alt="signature" title="{{ $plantillaPayroll['c']->signature ? 'Edit Signature' : 'Add Signature' }}"
                                                                     class="cursor-pointer {{ $plantillaPayroll['c']->signature ? '-mb-4' : '' }}" onclick="document.getElementById('plantillaPayroll_C').click()"
@@ -956,7 +965,7 @@ x-cloak>
                                                                     </div>
                                                                 </div>
                                                                 @error('signatures.' . $plantillaPayroll['c']->id) <span class="error">{{ $message }}</span> @enderror
-                                                            @endif
+                                                            @endif --}}
                                                             <p class="text-center font-bold text-sm">{{ $plantillaPayroll['c'] ? $plantillaPayroll['c']->name : 'XXXXXXXXXX' }}</p>
                                                             <p class="text-center">{{ $plantillaPayroll['c'] ? $plantillaPayroll['c']->position : 'Position' }}</p>
                                                         </div>
@@ -986,7 +995,10 @@ x-cloak>
                                                     </div>
                                                     <div class="absolute bottom-1 w-full flex">
                                                         <div class="flex flex flex-col items-center w-4/5">
-                                                            @if($plantillaPayroll['d'])
+
+                                                            {{-- E-Signature Here --}}
+
+                                                            {{-- @if($plantillaPayroll['d'])
                                                                 <img src="{{ $plantillaPayroll['d']->signature ? route('signature.file', basename($plantillaPayroll['d']->signature)) : '/images/signature.png' }}"
                                                                     alt="signature" title="{{ $plantillaPayroll['d']->signature ? 'Edit Signature' : 'Add Signature' }}"
                                                                     class="cursor-pointer {{ $plantillaPayroll['d']->signature ? '-mb-4' : '' }}" onclick="document.getElementById('plantillaPayroll_D').click()"
@@ -1000,7 +1012,7 @@ x-cloak>
                                                                     </div>
                                                                 </div>
                                                                 @error('signatures.' . $plantillaPayroll['d']->id) <span class="error">{{ $message }}</span> @enderror
-                                                            @endif
+                                                            @endif --}}
                                                             <p class="text-center font-bold text-sm">{{ $plantillaPayroll['d'] ? $plantillaPayroll['d']->name : 'XXXXXXXXXX' }}</p>
                                                             <p class="text-center">{{ $plantillaPayroll['d'] ? $plantillaPayroll['d']->position : 'Position' }}</p>
                                                         </div>
@@ -1081,7 +1093,10 @@ x-cloak>
                                             </div>
                                             <div class="flex mt-6">
                                                 <div class="w-1/4 font-bold text-sm">
-                                                    @if($preparedBySignature)
+
+                                                    {{-- E-Signature Here --}}
+
+                                                    {{-- @if($preparedBySignature)
                                                         <img src="{{ $preparedBySignature->signature ? route('signature.file', basename($preparedBySignature->signature)) : '/images/signature.png' }}"
                                                             alt="signature" title="Edit Signature"
                                                             class="cursor-pointer {{ $preparedBySignature->signature ? '-mb-4' : '' }}" 
@@ -1093,7 +1108,7 @@ x-cloak>
                                                             class="cursor-pointer" 
                                                             onclick="document.getElementById('plantillaPayslip_PreparedBy').click()"
                                                             style="height: 30px; width: auto;">
-                                                    @endif
+                                                    @endif --}}
                                                     <div wire:loading wire:target="preparedBySignature" style="margin-left: 5px">
                                                         <div class="spinner-border small text-primary" role="status">
                                                         </div>
@@ -1106,7 +1121,10 @@ x-cloak>
                                                 </div>
                                                 <div class="w-1/4"></div>
                                                 <div class="w-1/4 font-bold text-sm">
-                                                    @if($plantillaPayslipSigns['notedBy'])
+
+                                                    {{-- E-Signature Here --}}
+
+                                                    {{-- @if($plantillaPayslipSigns['notedBy'])
                                                         <img src="{{ $plantillaPayslipSigns['notedBy']->signature ? route('signature.file', basename($plantillaPayslipSigns['notedBy']->signature)) : '/images/signature.png' }}"
                                                             alt="signature" title="{{ $plantillaPayslipSigns['notedBy']->signature ? 'Edit Signature' : 'Add Signature' }}"
                                                             class="cursor-pointer {{ $plantillaPayslipSigns['notedBy']->signature ? '-mb-4' : '' }}" 
@@ -1121,7 +1139,7 @@ x-cloak>
                                                             </div>
                                                         </div>
                                                         @error('signatures.' . $plantillaPayslipSigns['notedBy']->id) <span class="error">{{ $message }}</span> @enderror
-                                                    @endif
+                                                    @endif --}}
                                                 </div>
                                                 <div class="w-1/4"></div>
                                             </div>
@@ -1144,7 +1162,7 @@ x-cloak>
 
                             <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
                             </div>
-                        </div>
+                         </div>
                     </div>
                 </div>
             </div>

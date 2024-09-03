@@ -469,7 +469,10 @@ x-cloak>
                                                         </div>
                                                         <div class="absolute bottom-1 w-full flex">
                                                             <div class="flex flex flex-col items-center w-4/5">
-                                                                @if($cosPayroll['a'])
+
+                                                                {{-- E-Signature Here --}}
+
+                                                                {{-- @if($cosPayroll['a'])
                                                                     <img src="{{ $cosPayroll['a']->signature ? route('signature.file', basename($cosPayroll['a']->signature)) : '/images/signature.png' }}"
                                                                         alt="signature" title="{{ $cosPayroll['a']->signature ? 'Edit Signature' : 'Add Signature' }}"
                                                                         class="cursor-pointer {{ $cosPayroll['a']->signature ? '-mb-4' : '' }}" onclick="document.getElementById('cosPayroll_A').click()"
@@ -483,7 +486,7 @@ x-cloak>
                                                                         </div>
                                                                     </div>
                                                                     @error('signatures.' . $cosPayroll['a']->id) <span class="error">{{ $message }}</span> @enderror
-                                                                @endif
+                                                                @endif --}}
                                                                 <p class="text-center font-bold text-sm">{{ $cosPayroll['a'] ? $cosPayroll['a']->name : 'XXXXXXXXXX' }}</p>
                                                                 <p class="text-center">{{ $cosPayroll['a'] ? $cosPayroll['a']->position : 'Position' }}</p>
                                                             </div>
@@ -521,7 +524,10 @@ x-cloak>
                                                         </div>
                                                         <div class="absolute bottom-1 w-full flex">
                                                             <div class="flex flex flex-col items-center w-4/5">
-                                                                @if($cosPayroll['b'])
+
+                                                                {{-- E-Signature Here --}}
+
+                                                                {{-- @if($cosPayroll['b'])
                                                                     <img src="{{ $cosPayroll['b']->signature ? route('signature.file', basename($cosPayroll['b']->signature)) : '/images/signature.png' }}"
                                                                         alt="signature" title="{{ $cosPayroll['b']->signature ? 'Edit Signature' : 'Add Signature' }}"
                                                                         class="cursor-pointer {{ $cosPayroll['b']->signature ? '-mb-4' : '' }}" 
@@ -536,7 +542,7 @@ x-cloak>
                                                                         </div>
                                                                     </div>
                                                                     @error('signatures.' . $cosPayroll['b']->id) <span class="error">{{ $message }}</span> @enderror
-                                                                @endif
+                                                                @endif --}}
                                                                 <p class="text-center font-bold text-sm">{{ $cosPayroll['b'] ? $cosPayroll['b']->name : 'XXXXXXXXXX' }}</p>
                                                                 <p class="text-center">{{ $cosPayroll['b'] ? $cosPayroll['b']->position : 'Position' }}</p>
                                                             </div>
@@ -572,7 +578,10 @@ x-cloak>
                                                         </div>
                                                         <div class="absolute bottom-1 w-full flex">
                                                             <div class="flex flex flex-col items-center w-4/5">
-                                                                @if($cosPayroll['c'])
+
+                                                                {{-- E-Signature Here --}}
+
+                                                                {{-- @if($cosPayroll['c'])
                                                                     <img src="{{ $cosPayroll['c']->signature ? route('signature.file', basename($cosPayroll['c']->signature)) : '/images/signature.png' }}"
                                                                         alt="signature" title="{{ $cosPayroll['c']->signature ? 'Edit Signature' : 'Add Signature' }}"
                                                                         class="cursor-pointer {{ $cosPayroll['c']->signature ? '-mb-4' : '' }}" 
@@ -587,7 +596,7 @@ x-cloak>
                                                                         </div>
                                                                     </div>
                                                                     @error('signatures.' . $cosPayroll['c']->id) <span class="error">{{ $message }}</span> @enderror
-                                                                @endif
+                                                                @endif --}}
                                                                 <p class="text-center font-bold text-sm">{{ $cosPayroll['c'] ? $cosPayroll['c']->name : 'XXXXXXXXXX' }}</p>
                                                                 <p class="text-center">{{ $cosPayroll['c'] ? $cosPayroll['c']->position : 'Position' }}</p>
                                                             </div>
@@ -620,7 +629,10 @@ x-cloak>
                                                         </div>
                                                         <div class="absolute bottom-1 w-full flex">
                                                             <div class="flex flex flex-col items-center w-4/5">
-                                                                @if($cosPayroll['d'])
+
+                                                                {{-- E-Signature Here --}}
+
+                                                                {{-- @if($cosPayroll['d'])
                                                                     <img src="{{ $cosPayroll['d']->signature ? route('signature.file', basename($cosPayroll['d']->signature)) : '/images/signature.png' }}"
                                                                         alt="signature" title="{{ $cosPayroll['d']->signature ? 'Edit Signature' : 'Add Signature' }}"
                                                                         class="cursor-pointer {{ $cosPayroll['d']->signature ? '-mb-4' : '' }}" 
@@ -635,7 +647,7 @@ x-cloak>
                                                                         </div>
                                                                     </div>
                                                                     @error('signatures.' . $cosPayroll['d']->id) <span class="error">{{ $message }}</span> @enderror
-                                                                @endif
+                                                                @endif --}}
                                                                 <p class="text-center font-bold text-sm">{{ $cosPayroll['d'] ? $cosPayroll['d']->name : 'XXXXXXXXXX' }}</p>
                                                                 <p class="text-center">{{ $cosPayroll['d'] ? $cosPayroll['d']->position : 'Position' }}</p>
                                                             </div>
@@ -716,7 +728,10 @@ x-cloak>
                                                 </div>
                                                 <div class="flex mt-6">
                                                     <div class="w-1/4 font-bold text-sm">
-                                                        @if($preparedBySignature)
+
+                                                        {{-- E-Signature Here --}}
+
+                                                        {{-- @if($preparedBySignature)
                                                             <img src="{{ $preparedBySignature->signature ? route('signature.file', basename($preparedBySignature->signature)) : '/images/signature.png' }}"
                                                                 alt="signature" title="Edit Signature"
                                                                 class="cursor-pointer {{ $preparedBySignature->signature ? '-mb-4' : '' }}" 
@@ -728,7 +743,7 @@ x-cloak>
                                                                 class="cursor-pointer" 
                                                                 onclick="document.getElementById('plantillaPayslip_PreparedBy').click()"
                                                                 style="height: 30px; width: auto;">
-                                                        @endif
+                                                        @endif --}}
                                                         <div wire:loading wire:target="preparedBySignature" style="margin-left: 5px">
                                                             <div class="spinner-border small text-primary" role="status">
                                                             </div>
@@ -741,7 +756,10 @@ x-cloak>
                                                     </div>
                                                     <div class="w-1/4"></div>
                                                     <div class="w-1/4 font-bold text-sm">
-                                                        @if($cosPayslipSigns['notedBy'])
+
+                                                        {{-- E-Signature Here --}}
+
+                                                        {{-- @if($cosPayslipSigns['notedBy'])
                                                             <img src="{{ $cosPayslipSigns['notedBy']->signature ? route('signature.file', basename($cosPayslipSigns['notedBy']->signature)) : '/images/signature.png' }}"
                                                                 alt="signature" title="{{ $cosPayslipSigns['notedBy']->signature ? 'Edit Signature' : 'Add Signature' }}"
                                                                 class="cursor-pointer {{ $cosPayslipSigns['notedBy']->signature ? '-mb-4' : '' }}" 
@@ -756,7 +774,7 @@ x-cloak>
                                                                 </div>
                                                             </div>
                                                             @error('signatures.' . $cosPayslipSigns['notedBy']->id) <span class="error">{{ $message }}</span> @enderror
-                                                        @endif
+                                                        @endif --}}
                                                     </div>
                                                     <div class="w-1/4"></div>
                                                 </div>
