@@ -66,11 +66,11 @@
                                         <th class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
                                             Status
                                         </th>
-                                        @if ($activeTab === 'approved')
+                                        {{-- @if ($activeTab === 'approved')
                                             <th class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
                                                 Action
                                             </th>
-                                        @endif
+                                        @endif --}}
                                     </tr>
                                 </thead>
                                 <!-- Table body -->
@@ -139,7 +139,7 @@
                                                     {{ $leaveApplication->status }}
                                                 </span>
                                             </td>
-                                            @if ($activeTab === 'approved')
+                                            {{-- @if ($activeTab === 'approved')
                                                 <td class="px-4 py-2 text-center">
                                                     <button type="button"
                                                         class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -147,7 +147,7 @@
                                                         <i class="bi bi-file-earmark-arrow-down"></i>
                                                     </button>
                                                 </td>
-                                            @endif
+                                            @endif --}}
                                         </tr>
                                     @endforeach
                                 </tbody>

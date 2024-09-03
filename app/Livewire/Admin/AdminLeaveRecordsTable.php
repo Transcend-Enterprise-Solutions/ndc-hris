@@ -26,12 +26,12 @@ class AdminLeaveRecordsTable extends Component
         $this->resetPage();
     }
 
-    public function exportExcel($leaveApplicationId)
-    {
-        // Create an instance of the export class and call the export method
-        $export = new LeaveCardExport($leaveApplicationId);
-        return $export->export();
-    }
+    // public function exportExcel($leaveApplicationId)
+    // {
+    //     // Create an instance of the export class and call the export method
+    //     $export = new LeaveCardExport($leaveApplicationId);
+    //     return $export->export();
+    // }
 
     public function render()
     {

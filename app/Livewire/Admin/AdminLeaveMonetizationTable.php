@@ -55,6 +55,9 @@ class AdminLeaveMonetizationTable extends Component
             if ($leaveCredits) {
                 $leaveCredits->vl_claimable_credits -= $request->vl_credits_requested;
                 $leaveCredits->sl_claimable_credits -= $request->sl_credits_requested;
+                
+                // $leaveCredits->vl_claimed_credits += $request->vl_credits_requested;
+                // $leaveCredits->sl_claimed_credits += $request->sl_credits_requested;
                 $leaveCredits->save();
 
                 $vlMonetizedValue = $this->calculateMonetizedValue($request->vl_credits_requested, $request->user_id);
@@ -69,6 +72,8 @@ class AdminLeaveMonetizationTable extends Component
                     'title' => "Request Approved Successfully!",
                     'icon' => 'success'
                 ]);
+
+                $this->showConfirmModal = false;
             }
         }
     }
@@ -101,7 +106,8 @@ class AdminLeaveMonetizationTable extends Component
 
     public function resetVariables()
     {
-
+        $this->showDisapproveModal = false;
+        $this->showConfirmModal = false;
     }
 
     public function render()
