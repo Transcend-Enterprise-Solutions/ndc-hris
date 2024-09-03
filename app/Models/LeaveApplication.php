@@ -31,6 +31,7 @@ class LeaveApplication extends Model
         'approved_dates',
         'remarks',
         'status',
+        'stage',
     ];
 
     public function user()

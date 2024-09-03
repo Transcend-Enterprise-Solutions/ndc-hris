@@ -24,7 +24,7 @@ return new class extends Migration
                 $table->date('date_of_birth')->format('F d Y');
                 $table->string('place_of_birth');
                 $table->string('sex');
-                $table->string('citizenship');
+                $table->string('civil_status');
                 $table->string('citizenship');
                 $table->string('dual_citizenship_type');
                 $table->string('dual_citizenship_country');

@@ -106,60 +106,52 @@
                                                     </td>
                                                     <td
                                                         class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                        @php
-                                                            $userRole = auth()->user()->user_role; // User's role
-$isApprovedByHR =
-    $leaveApplication->status === 'Approved by HR';
-$isPending = $leaveApplication->status === 'Pending';
-$isHR = $userRole === 'hr';
-$isSV = $userRole === 'sv';
-                                                        @endphp
-
-                                                        @if ($isHR)
+                                                        @if ($leaveApplication->isHR)
                                                             <!-- HR buttons (enabled until status is Approved by HR) -->
                                                             <button
                                                                 @click="$wire.openApproveModal({{ $leaveApplication->id }})"
-                                                                class="text-blue-500 {{ $isPending ? '' : 'opacity-50 cursor-not-allowed' }}"
-                                                                :disabled="{{ $isPending ? 'false' : 'true' }}">
+                                                                class="text-blue-500 {{ !$leaveApplication->isPending ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                                :disabled="{{ !$leaveApplication->isPending ? 'true' : 'false' }}">
                                                                 <i class="bi bi-check-lg" title="Approve"></i>
                                                             </button>
                                                             <button
                                                                 @click="$wire.openDisapproveModal({{ $leaveApplication->id }})"
-                                                                class="text-red-500 {{ $isPending ? '' : 'opacity-50 cursor-not-allowed' }}"
-                                                                :disabled="{{ $isPending ? 'false' : 'true' }}">
+                                                                class="text-red-500 {{ !$leaveApplication->isPending ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                                :disabled="{{ !$leaveApplication->isPending ? 'true' : 'false' }}">
                                                                 <i class="bi bi-x" title="Disapprove"></i>
                                                             </button>
-                                                        @elseif ($isSV)
-                                                            @if ($isApprovedByHR)
-                                                                <!-- SV buttons (enabled if status is Approved by HR) -->
+                                                        @elseif ($leaveApplication->stage == 1)
+                                                            <!-- Endorser 1 buttons -->
+                                                            @if ($leaveApplication->isEndorser1)
                                                                 <button
                                                                     @click="$wire.openEndorserApproveModal({{ $leaveApplication->id }})"
-                                                                    class="text-blue-500 {{ $isApprovedByHR ? '' : 'opacity-50 cursor-not-allowed' }}"
-                                                                    :disabled="{{ $isApprovedByHR ? 'false' : 'true' }}">
+                                                                    class="text-blue-500 {{ $leaveApplication->isEndorser1Approved ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                                    :disabled="{{ $leaveApplication->isEndorser1Approved ? 'true' : 'false' }}">
                                                                     <i class="bi bi-check-lg" title="Approve"></i>
                                                                 </button>
+                                                            @endif
+
+                                                            <!-- Endorser 2 buttons -->
+                                                            @if ($leaveApplication->isEndorser2)
                                                                 <button
-                                                                    @click="$wire.openEndorserDisapproveModal({{ $leaveApplication->id }})"
-                                                                    class="text-red-500 {{ $isApprovedByHR ? '' : 'opacity-50 cursor-not-allowed' }}"
-                                                                    :disabled="{{ $isApprovedByHR ? 'false' : 'true' }}">
-                                                                    <i class="bi bi-x" title="Disapprove"></i>
-                                                                </button>
-                                                            @else
-                                                                <!-- SV buttons (disabled if status is Pending) -->
-                                                                <button
-                                                                    class="text-blue-500 opacity-50 cursor-not-allowed"
-                                                                    disabled>
+                                                                    @click="$wire.openEndorserApproveModal({{ $leaveApplication->id }})"
+                                                                    class="text-blue-500 {{ !$leaveApplication->isEndorser1Approved || $leaveApplication->isEndorser2Approved ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                                    :disabled="{{ !$leaveApplication->isEndorser1Approved || $leaveApplication->isEndorser2Approved ? 'true' : 'false' }}">
                                                                     <i class="bi bi-check-lg" title="Approve"></i>
                                                                 </button>
+                                                            @endif
+                                                        @elseif ($leaveApplication->stage == 2)
+                                                            <!-- Endorser 2 buttons -->
+                                                            @if ($leaveApplication->isEndorser2)
                                                                 <button
-                                                                    class="text-red-500 opacity-50 cursor-not-allowed"
-                                                                    disabled>
-                                                                    <i class="bi bi-x" title="Disapprove"></i>
+                                                                    @click="$wire.openEndorserApproveModal({{ $leaveApplication->id }})"
+                                                                    class="text-blue-500 {{ $leaveApplication->isEndorser2Approved ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                                    :disabled="{{ $leaveApplication->isEndorser2Approved ? 'true' : 'false' }}">
+                                                                    <i class="bi bi-check-lg" title="Approve"></i>
                                                                 </button>
                                                             @endif
                                                         @endif
                                                     </td>
-
 
 
                                                 </tr>
@@ -210,8 +202,7 @@ $isSV = $userRole === 'sv';
 
                 @if ($status === 'With Pay' || $status === 'Without Pay')
                     <div class="mb-4">
-                        <label for="days"
-                            class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number
+                        <label for="days" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number
                             of Days</label>
                         <input type="number" wire:model="days" id="days"
                             class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700"
