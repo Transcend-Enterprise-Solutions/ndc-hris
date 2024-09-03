@@ -1,6 +1,6 @@
 <div class="w-full"
 x-data="{ 
-    selectedTab: 'settings',
+    selectedTab: 'role',
 }" 
 x-cloak>
 
@@ -97,6 +97,15 @@ x-cloak>
                         placeholder="Enter employee name or ID">
                 </div>
 
+                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'settings'">
+                    <label for="search4" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                    <input type="text" id="search4" wire:model.live="search4"
+                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                            dark:hover:bg-slate-600 dark:border-slate-600
+                            dark:text-gray-300 dark:bg-gray-800"
+                        placeholder="Enter office/division">
+                </div>
+
                 <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4" x-show="selectedTab === 'org'">
               
                     <div class="w-full sm:w-auto relative" x-data="{ open: false }" @click.outside="open = false">
@@ -158,18 +167,17 @@ x-cloak>
                     </div>
 
                     <!-- Export to Excel -->
-                    {{-- <div class="relative inline-block text-left">
-                        <button wire:click="exportExcel"
+                    <div class="relative inline-block text-left">
+                        <button wire:click="exportRoles"
                             class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                             justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
                             text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
-                            type="button"  aria-describedby="excelExport">
+                            type="button" title="Export Roles">
                             <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
                             <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
-                        </button>
-                        <div id="excelExport" class="absolute -top-5 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap rounded bg-gray-600 px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:text-black" role="tooltip">Export Roles</div>
-                    </div> --}}
+                        </button>                    
+                    </div>
 
                 </div>
                 
@@ -356,6 +364,9 @@ x-cloak>
                                                             Office/Division
                                                         </th>
                                                         <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
+                                                            Unit
+                                                        </th>
+                                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
                                                             Position
                                                         </th>
                                                         <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
@@ -390,23 +401,24 @@ x-cloak>
                                                                 {{ $admin->office_division }}
                                                             </td>
                                                             <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                                {{ $admin->unit ?: '-' }}
+                                                            </td>
+                                                            <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                                 {{ $admin->position }}
                                                             </td>
                                                             <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                                 <div class="relative">
-                                                                    @if($admin->position != "Super Admin")
-                                                                        <button wire:click="toggleEditRole({{ $admin->user_id }})" 
-                                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                                            focus:outline-none" title="Edit">
-                                                                            <i class="fas fa-pencil-alt"></i>
-                                                                        </button>
-                                                                        <button wire:click="toggleDelete({{ $admin->user_id }}, 'role')" 
-                                                                            class=" text-red-600 hover:text-red-900 dark:text-red-600 
-                                                                            dark:hover:text-red-900" title="Delete">
-                                                                            <i class="fas fa-trash"></i>
-                                                                        </button>
-                                                                    @endif
+                                                                    <button wire:click="toggleEditRole({{ $admin->id }})" 
+                                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                        -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                        focus:outline-none" title="Edit">
+                                                                        <i class="fas fa-pencil-alt"></i>
+                                                                    </button>
+                                                                    <button wire:click="toggleDelete({{ $admin->id }}, 'role')" 
+                                                                        class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                        dark:hover:text-red-900" title="Delete">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </button>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -438,6 +450,9 @@ x-cloak>
                                                             Office/Division
                                                         </th>
                                                         <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
+                                                            Unit
+                                                        </th>
+                                                        <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
                                                             Position
                                                         </th>
                                                         <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
@@ -465,24 +480,20 @@ x-cloak>
                                                                     {{ $pos->office_division }}
                                                                 </td>
                                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                                    {{ $pos->unit ?: '-' }}
+                                                                </td>
+                                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                                     {{ $pos->position }}
                                                                 </td>
                                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap uppercase">
-                                                                    @if($pos->appointment != "cos" && $pos->appointment != "ct")
-                                                                        @php
-                                                                            $appointment = explode(',', $pos->appointment);
-                                                                        @endphp
-                                                                        @if($appointment[0] == 'pa')
-                                                                            Presidential Appointee
-                                                                        @else
-                                                                            Plantilla
-                                                                        @endif
+                                                                    @if($pos->appointment == "pa")
+                                                                        Presidential Appointee
+                                                                    @elseif($pos->appointment == "ct")
+                                                                        Co-Terminus
+                                                                    @elseif($pos->appointment == 'cos')
+                                                                        {{ $pos->appointment }} {{ $pos->appointment_type ? '- ' . $pos->appointment_type : '' }}
                                                                     @else
-                                                                        @if($pos->appointment == "ct")
-                                                                            Co-Terminus
-                                                                        @else
-                                                                            {{ $pos->appointment }}
-                                                                        @endif
+                                                                        {{ $pos->appointment }}
                                                                     @endif
                                                                 </td>
                                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
@@ -767,12 +778,12 @@ x-cloak>
             <form wire:submit.prevent='saveRole'>
                 <div class="grid grid-cols-2 gap-4">
                     
-                    <div class="col-span-full sm:col-span-1">
-                        <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
+                    <div class="col-span-full sm:col-span-2">
+                        <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name <span class="text-red-500">*</span></label>
                         <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
                             {{ $addRole ? '' : 'disabled' }}>
                             <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
-                            @foreach ($employees as $employee)
+                            @foreach ($roleEmployees as $employee)
                                 <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                             @endforeach
                         </select>
@@ -782,16 +793,13 @@ x-cloak>
                     </div>
 
                     <div class="col-span-full sm:col-span-1">
-                        <label for="user_role" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Admin Role</label>
+                        <label for="user_role" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Admin Role <span class="text-red-500">*</span></label>
                         <select id="userId" wire:model='user_role' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             <option value="">Select Role</option>
                             <option value="sa">Super Admin</option>
                             <option value="hr">Human Resource</option>
                             <option value="sv">Supervisor</option>
                             <option value="pa">Payroll</option>
-                            @if(!$addRole)
-                                <option value="emp">Employee</option>
-                            @endif
                         </select>                        
                         @error('user_role') 
                             <span class="text-red-500 text-sm">The account role is required!</span> 
@@ -799,7 +807,7 @@ x-cloak>
                     </div>
 
                     <div class="col-span-full sm:col-span-1">
-                        <label for="admin_email" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Admin Email</label>
+                        <label for="admin_email" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Admin Email <span class="text-red-500">*</span></label>
                         <input type="text" id="admin_email" wire:model='admin_email' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                         @error('admin_email') 
                             <span class="text-red-500 text-sm">{{ $message }}</span> 
@@ -807,8 +815,8 @@ x-cloak>
                     </div>
 
                     <div class="col-span-full sm:col-span-1">
-                        <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
-                        <select id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division <span class="text-red-500">*</span></label>
+                        <select id="office_division" wire:model.live='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             <option class="text-gray-300" value="{{ $office_division }}">{{ $office_division ? $office_division : 'Select office/division' }}</option>
                             @foreach($officeDivisions as $office)
                                 <option value="{{ $office->id }}">{{ $office->office_division }}</option>
@@ -819,9 +827,23 @@ x-cloak>
                         @enderror
                     </div>
 
+                    <div class="col-span-full sm:col-span-1">
+                        <label for="unit" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Unit</label>
+                        <select id="unit" wire:model.live='unit' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            @if($divsUnits)
+                                <option class="text-gray-300" value="{{ $unit }}">{{ $unitName ?: 'Select Unit' }}</option>
+                                @foreach($divsUnits as $u)
+                                    <option value="{{ $u->id }}">{{ $u->unit }}</option>
+                                @endforeach
+                            @else
+                                <option class="text-gray-300" value="">Select Unit</option>
+                            @endif
+                        </select>
+                    </div>
+
                     @if($addRole)
                         <div class="col-span-full sm:col-span-1">
-                            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Password</label>
+                            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Password <span class="text-red-500">*</span></label>
                             <input type="password" id="password" wire:model='password' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             @error('password') 
                                 <span class="text-red-500 text-sm">{{ $message }}</span> 
@@ -829,7 +851,7 @@ x-cloak>
                         </div>
 
                         <div class="col-span-full sm:col-span-1">
-                            <label for="cpassword" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Confirm Password</label>
+                            <label for="cpassword" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Confirm Password <span class="text-red-500">*</span></label>
                             <input type="password" id="cpassword" wire:model='cpassword' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             @error('cpassword') 
                                 <span class="text-red-500 text-sm">{{ $message }}</span> 
@@ -1102,11 +1124,10 @@ x-cloak>
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            {{-- Form fields --}}
             <form wire:submit.prevent='savePosition'>
                 <div class="grid grid-cols-2 gap-4">
                     
-                    <div class="col-span-full">
+                    <div class="col-span-full sm:col-span-1">
                         <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
                         <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" style="pointer-events: {{ $addPosition ? 'all' : 'none' }}">
                             <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
@@ -1121,7 +1142,7 @@ x-cloak>
                     
                     <div class="col-span-full sm:col-span-1">
                         <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
-                        <select id="office_division" wire:model='officeDivisionId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <select id="office_division" wire:model.live='officeDivisionId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             <option class="text-gray-300" value="{{ $officeDivisionId }}">{{ $office_division ? $office_division : 'Select office/division' }}</option>
                             @foreach($officeDivisions as $office)
                                 <option value="{{ $office->id }}">{{ $office->office_division }}</option>
@@ -1133,9 +1154,22 @@ x-cloak>
                     </div>
                     
                     <div class="col-span-full sm:col-span-1">
+                        <label for="unit" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Unit</label>
+                        <select id="unit" wire:model.live='unit' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            @if($divsUnits)
+                                <option class="text-gray-300" value="{{ $unit }}">{{ $unitName ?: 'Select Unit' }}</option>
+                                @foreach($divsUnits as $u)
+                                    <option value="{{ $u->id }}">{{ $u->unit }}</option>
+                                @endforeach
+                            @else
+                                <option class="text-gray-300" value="">Select Unit</option>
+                            @endif
+                        </select>
+                    </div>
+                    
+                    <div class="col-span-full sm:col-span-1">
                         <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
                         <select id="position" wire:model='positionId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                            <option value="{{ $positionId }}">{{ $position ? $position : 'Select position' }}</option>
                             @foreach ($positions as $pos)
                                 <option value="{{ $pos->id }}">{{ $pos->position }}</option>
                             @endforeach

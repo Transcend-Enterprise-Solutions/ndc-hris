@@ -75,7 +75,7 @@
 
             <!-- Office/Division Distribution Card -->
             <div class="col-span-full sm:col-span-6 bg-purple-100 dark:bg-purple-800 p-4 rounded-lg shadow">
-                <div class="text-sm font-semibold text-purple-800 dark:text-gray-100 mb-4">Department Distribution
+                <div class="text-sm font-semibold text-purple-800 dark:text-gray-100 mb-4">Office/Division Distribution
                     <hr class="border-t border-purple-200 dark:border-purple-600">
                     <label for="allColActive" class="text-xs text-gray-900 dark:text-gray-300">Select Status: </label>
                     <ul class="flex space-x-4 text-xs mt-2">

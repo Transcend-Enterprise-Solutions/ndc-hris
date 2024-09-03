@@ -23,4 +23,12 @@ class OfficeDivisions extends Model
         return $this->hasMany(Positions::class, 'office_division_id')->whereNull('unit_id')->where('position', '!=', 'Super Admin');
     }
 
+    
+    public function scopeSearch($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('office_divisions.office_division', 'like', $term);
+        });
+    }
+
 }
