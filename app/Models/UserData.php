@@ -55,6 +55,7 @@ class UserData extends Model
         'pwd',
         'date_hired',
         'appointment',
+        'item_number',
     ];
     protected $attributes = [
         'pwd' => 0,

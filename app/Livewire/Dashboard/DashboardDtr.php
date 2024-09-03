@@ -55,7 +55,7 @@ class DashboardDtr extends Component
             DB::raw('SEC_TO_TIME(SUM(TIME_TO_SEC(late))) as total_late')
         )
             ->whereBetween('date', [$startDate, $endDate])
-            ->where('remarks', 'Late')
+            ->where('remarks', 'Late/Undertime')
             ->groupBy('date')
             ->get()
             ->keyBy('date');

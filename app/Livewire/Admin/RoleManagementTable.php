@@ -66,6 +66,7 @@ class RoleManagementTable extends Component
     public $activeStatus;
     public $positionId;
     public $officeDivisionId;
+    public $unitId;
 
     public $status = [
         'active' => true,
@@ -144,9 +145,6 @@ class RoleManagementTable extends Component
                         }
                         if ($this->status['retired']) {
                             $subQuery->orWhere('active_status', 3);
-                        }
-                        if ($this->status['promoted']) {
-                            $subQuery->orWhere('active_status', 4);
                         }
                     });
                 })
@@ -257,11 +255,64 @@ class RoleManagementTable extends Component
 
     public function toggleAddSettings($data)
     {
+        // $this->officeDivisionId = $divisionId;
         $this->data = $data;
         $this->settings = true;
         $this->add = true;
         $this->settingsData = [['value' => '']];
         $this->units = [['value' => '']];
+    }
+
+    public function toggleAddPos($id, $data){
+        $this->officeDivisionId = $id;
+        $this->data = $data;
+        $this->settings = true;
+        $this->add = true;
+        $this->settingsData = [['value' => '']];
+    }
+
+    public function toggleEditPos($id, $data){
+        $this->officeDivisionId = $id;
+        $positions = Positions::where('office_division_id', $id)
+                    ->where('position', '!=', 'Super Admin')
+                    ->where('unit_id', null)
+                    ->get();
+        $this->data = $data;
+        $this->settings = true;
+        if ($positions->isNotEmpty()) {
+            $this->settingsData = $positions->map(function($pos) {
+                return ['value' => $pos->position];
+            })->toArray();
+        } else {
+            $this->settingsData = [['value' => '']];
+        }
+    }
+
+    public function toggleAddUnitPos($divId, $unitId, $data){
+        $this->officeDivisionId = $divId;
+        $this->unitId = $unitId;
+        $this->data = $data;
+        $this->settings = true;
+        $this->add = true;
+        $this->settingsData = [['value' => '']];
+    }
+
+    public function toggleEditUnitPos($divId, $unitId, $data){
+        $this->officeDivisionId = $divId;
+        $this->unitId = $unitId;
+        $positions = Positions::where('office_division_id', $divId)
+                    ->where('position', '!=', 'Super Admin')
+                    ->where('unit_id', $unitId)
+                    ->get();
+        $this->data = $data;
+        $this->settings = true;
+        if ($positions->isNotEmpty()) {
+            $this->settingsData = $positions->map(function($pos) {
+                return ['value' => $pos->position];
+            })->toArray();
+        } else {
+            $this->settingsData = [['value' => '']];
+        }
     }
 
     public function addNewSetting()
@@ -314,71 +365,158 @@ class RoleManagementTable extends Component
     }
 
     public function saveSettings(){
-        if($this->add){
-            $this->validate([
-                'settingsData.*.value' => 'required|string|max:255',
-            ]);
-        }else{
-            $this->validate([
-                'settings_data' => 'required|string|max:255',
-            ]);
-        }
         try {
             $message = null;
-            foreach ($this->settingsData as $setting) {
-                if($this->add){
-                    if ($this->data == "office/division") {
-                        $this->validate([
-                            'units.*.value' => 'required|string|max:255',
-                        ]);
+            if($this->add){
+                if ($this->data == "office/division") {
+                    $this->validate([
+                        'units.*.value' => 'required|string|max:255',
+                    ]);
+
+                    foreach ($this->settingsData as $setting) {
                         $officeDiv = OfficeDivisions::create([
                             'office_division' => $setting['value'],
                         ]);
-                        foreach($this->units as $unit){
-                            OfficeDivisionUnits::create([
-                                'office_division_id' => $officeDiv->id,
-                                'unit' => $unit['value'],
-                            ]);
-                        }
-                        $message = "Office/Division added successfully!";
-                    } else if ($this->data == "position") {
+                    }
+
+                    foreach($this->units as $unit){
+                        OfficeDivisionUnits::create([
+                            'office_division_id' => $officeDiv->id,
+                            'unit' => $unit['value'],
+                        ]);
+                    }
+
+                    $message = "Office/Division added successfully!";
+                } else if ($this->data == "position") {
+                    $this->validate([
+                        'settingsData.*.value' => 'required|string|max:255',
+                    ]);
+
+                    foreach ($this->settingsData as $setting) {
                         Positions::create([
+                            'office_division_id' => $this->officeDivisionId,
                             'position' => $setting['value'],
                         ]);
-                        $message = "Position/s added successfully!";
                     }
-                }else{
-                    if ($this->data == "office/division") {
-                        $this->validate([
-                            'units.*.value' => 'required|string|max:255',
-                        ]);
-                        $officeDivisions = OfficeDivisions::where('id', $this->settingsId)->first();
-                        $officeDivisions->update([
-                            'office_division' => $this->settings_data,
-                        ]);
+                    $message = "Position/s added successfully!";
+                } else if ($this->data == "unit-position") {
+                    $this->validate([
+                        'settingsData.*.value' => 'required|string|max:255',
+                    ]);
 
-                        foreach($this->units as $index => $unit) {
-                            if (isset($officeDivisions->officeDivisionUnits[$index])) {
-                                $officeDivisions->officeDivisionUnits[$index]->update([
-                                    'unit' => $unit['value'],
-                                ]);
-                            } else {
-                                OfficeDivisionUnits::create([
-                                    'office_division_id' => $officeDivisions->id,
-                                    'unit' => $unit['value'],
-                                ]);
-                            }
-                        }
-                        $message = "Office/Division updated successfully!";
-                    } else if ($this->data == "position") {
-                        $positions = Positions::where('id', $this->settingsId)->first();
-                        $positions->update([
-                            'position' => $this->settings_data,
+                    foreach ($this->settingsData as $setting) {
+                        Positions::create([
+                            'office_division_id' => $this->officeDivisionId,
+                            'unit_id' => $this->unitId,
+                            'position' => $setting['value'],
                         ]);
-                        $message = "Position/s updated successfully!";
                     }
+                    $message = "Position/s added successfully!";
+                }
+            }else{
+                  // Update existing Office/Division or Position
+                if ($this->data == "office/division") {
+                    $this->validate([
+                        'units.*.value' => 'required|string|max:255',
+                    ]);
+                    $officeDivisions = OfficeDivisions::where('id', $this->settingsId)->first();
+                    $officeDivisions->update([
+                        'office_division' => $this->settings_data,
+                    ]);
+
+                    // Track existing units
+                    $existingUnitIds = $officeDivisions->officeDivisionUnits->pluck('id')->toArray();
+                    $updatedUnitIds = [];
+
+                    foreach ($this->units as $index => $unit) {
+                        if (isset($officeDivisions->officeDivisionUnits[$index])) {
+                            $officeDivisionUnit = $officeDivisions->officeDivisionUnits[$index];
+                            $officeDivisionUnit->update([
+                                'unit' => $unit['value'],
+                            ]);
+                            $updatedUnitIds[] = $officeDivisionUnit->id;
+                        } else {
+                            $newUnit = OfficeDivisionUnits::create([
+                                'office_division_id' => $officeDivisions->id,
+                                'unit' => $unit['value'],
+                            ]);
+                            $updatedUnitIds[] = $newUnit->id;
+                        }
+                    }
+
+                    // Detect removed units and delete them
+                    $removedUnitIds = array_diff($existingUnitIds, $updatedUnitIds);
+                    OfficeDivisionUnits::whereIn('id', $removedUnitIds)->delete();
+
+                    $message = "Office/Division updated successfully!";
+                } else if ($this->data == "position") {
+                    $this->validate([
+                        'settingsData.*.value' => 'required|string|max:255',
+                    ]);
+                    
+                    $officeDivisions = OfficeDivisions::where('id', $this->officeDivisionId)->first();
+                    
+                    // Track existing positions
+                    $existingPositionIds = $officeDivisions->positions->pluck('id')->toArray();
+                    $updatedPositionIds = [];
+
+                    foreach($this->settingsData as $index => $data) {
+                        if (isset($officeDivisions->positions[$index])) {
+                            $position = $officeDivisions->positions[$index];
+                            $position->update([
+                                'position' => $data['value'],
+                            ]);
+                            $updatedPositionIds[] = $position->id;
+                        } else {
+                            $newPosition = Positions::create([
+                                'office_division_id' => $officeDivisions->id,
+                                'position' => $data['value'],
+                            ]);
+                            $updatedPositionIds[] = $newPosition->id;
+                        }
+                    }
+
+                    // Detect removed positions and delete them
+                    $removedPositionIds = array_diff($existingPositionIds, $updatedPositionIds);
+                    Positions::whereIn('id', $removedPositionIds)->delete();
+
+                    $message = "Position/s updated successfully!";
+                } else if ($this->data == "unit-position") {
+                    $this->validate([
+                        'settingsData.*.value' => 'required|string|max:255',
+                    ]);
+                    
+                    $officeDivisionsUnits = OfficeDivisionUnits::where('id', $this->unitId)->first();
+                    
+                    // Track existing positions
+                    $existingPositionIds = $officeDivisionsUnits->positions->pluck('id')->toArray();
+                    $updatedPositionIds = [];
+
+                    foreach($this->settingsData as $index => $data) {
+                        if (isset($officeDivisionsUnits->positions[$index])) {
+                            $position = $officeDivisionsUnits->positions[$index];
+                            $position->update([
+                                'position' => $data['value'],
+                            ]);
+                            $updatedPositionIds[] = $position->id;
+                        } else {
+                            $newPosition = Positions::create([
+                                'office_division_id' => $this->officeDivisionId,
+                                'unit_id' => $officeDivisionsUnits->id,
+                                'position' => $data['value'],
+                            ]);
+                            $updatedPositionIds[] = $newPosition->id;
+                        }
+                    }
+
+                    // Detect removed positions and delete them
+                    $removedPositionIds = array_diff($existingPositionIds, $updatedPositionIds);
+                    Positions::whereIn('id', $removedPositionIds)->delete();
+
+                    $message = "Position/s updated successfully!";
                 }
             }
+
             $this->resetVariables();
             $this->dispatch('swal', [
                 'title' => $message,
@@ -716,6 +854,8 @@ class RoleManagementTable extends Component
         ];
         $this->activeStatus = null;
         $this->editPosition = null;
+        $this->officeDivisionId = null;
+        $this->unitId = null;
     }
 
     private function isPasswordComplex($password){

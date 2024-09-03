@@ -10,6 +10,7 @@ use App\Models\PhilippineCities;
 use App\Models\PhilippineBarangays;
 use App\Models\Positions;
 use App\Models\OfficeDivisions;
+use App\Models\OfficeDivisionUnits;
 use App\Models\PhilippineRegions;
 use App\Models\EmployeesLeaves;
 use Carbon\Carbon;
@@ -20,13 +21,15 @@ class Registration extends Component
     public $active_status = 1;
     public $emp_code;
     public $pwd=0;
-    public $positions;
+    public $positions = [];
+    public $units = [];
     public $officeDivisions;
-    public $selectedPosition;
-    public $selectedOfficeDivision;
+    public $selectedPosition= null;
+    public $selectedOfficeDivision= null;
+    public $selectedUnit = null;
     public $date_hired;
     public $appointment;
-    public $plantilla_item;
+    public $itemNumber;
     public $data_of_assumption;
     public $countries;
 
@@ -156,20 +159,12 @@ class Registration extends Component
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
             'c_password' => 'required|same:password',
-            'emp_code' => 'required|unique:users,emp_code',
+            'emp_code' => 'required|unique:users,emp_code|numeric|min:0',
             'selectedPosition' => 'required|exists:positions,id',
             'selectedOfficeDivision' => 'required|exists:office_divisions,id',
+            'selectedUnit' => 'required|exists:office_division_unit,id',
             'date_hired' => 'required|date',
             'appointment' => 'required',
-            'plantilla_item' => [
-                'required_if:appointment,plantilla',
-                'nullable',
-            ],
-            'data_of_assumption' => [
-                'required_if:appointment,pa',
-                'nullable',
-            ],
-
         ]);
 
         if($this->p_house == null && $this->p_street == null && $this->p_subdivision == null){
@@ -199,6 +194,7 @@ class Registration extends Component
             'emp_code' => $this->emp_code,
             'position_id' => $this->selectedPosition,
             'office_division_id' => $this->selectedOfficeDivision,
+            'unit_id' => $this->selectedUnit,
 
         ]);
 
@@ -212,7 +208,6 @@ class Registration extends Component
         $r_s = $this->r_subdivision ? $this->r_subdivision : "N/A";
         $r_house_street = $r_h . ',' . $r_st . ',' . $r_s;
         $sexValue = $this->getSexValue();
-        $appointmentValue = $this->getAppointmentValue();
 
         $user->userData()->create([
             'user_id' => $user->id,
@@ -251,7 +246,9 @@ class Registration extends Component
             'mobile_number' => $this->mobile_number,
             'pwd' => $this->pwd,
             'date_hired' => $this->date_hired,
-            'appointment' => $appointmentValue,
+            'appointment' => $this->appointment,
+            'item_number' => $this->itemNumber,
+
         ]);
 
         session()->flash('message', 'Registration successful!');
@@ -260,10 +257,34 @@ class Registration extends Component
 
     public function mount(){
         $this->getProvicesAndCities();
-        $this->positions = Positions::where('position', '!=', 'Super Admin')->get();
         $this->officeDivisions = OfficeDivisions::all();
+        $this->positions = collect();
         $this->countries = Countries::all();
     }
+    public function updatedSelectedOfficeDivision($officeDivisionId)
+    {
+
+        $this->units = OfficeDivisionUnits::where('office_division_id', $officeDivisionId)->get();
+
+        $this->selectedUnit = null;
+        $this->fetchPositions();
+    }
+
+    public function updatedSelectedUnit($unitId)
+    {
+        $this->fetchPositions();
+    }
+    private function fetchPositions()
+    {
+        if ($this->selectedUnit) {
+            $this->positions = Positions::where('unit_id', $this->selectedUnit)->get();
+        } else {
+            $this->positions = Positions::where('office_division_id', $this->selectedOfficeDivision)
+                ->whereNull('unit_id')
+                ->get();
+        }
+    }
+
 
     public function render()
     {
@@ -348,33 +369,11 @@ class Registration extends Component
         return $containsUppercase && $containsNumber && $containsSpecialChar;
     }
 
-    public function updatedAppointment($value)
-    {
-        if ($value !== 'plantilla') {
-            $this->plantilla_item = '';
-        }
-        if ($value !== 'pa') {
-            $this->data_of_assumption = '';
-        }
-    }
     public function getSexValue()
     {
         if ($this->sex === 'Others' && $this->otherSex) {
             return $this->otherSex;
         }
         return $this->sex;
-    }
-
-    public function getAppointmentValue()
-    {
-        if ($this->appointment === 'plantilla' && $this->plantilla_item) {
-            return $this->appointment . ',' . $this->plantilla_item;
-        }
-
-        if ($this->appointment === 'pa' && $this->data_of_assumption) {
-            return $this->appointment . ',' . $this->data_of_assumption;
-        }
-
-        return $this->appointment;
     }
 }
