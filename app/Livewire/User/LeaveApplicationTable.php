@@ -21,6 +21,7 @@ use App\Models\Positions;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
+use App\Exports\LeaveCardExport; 
 
 class LeaveApplicationTable extends Component
 {
@@ -49,7 +50,9 @@ class LeaveApplicationTable extends Component
     public $end_date;
     public $list_of_dates = [];
     public $new_date;
-
+    
+    public $startDate;
+    public $endDate;
 
     protected $rules = [
         'office_or_department' => 'required|string|max:255',
@@ -251,42 +254,42 @@ class LeaveApplicationTable extends Component
             $datesString .= implode(',', $this->list_of_dates);
         }
 
-        $currentMonth = now()->month;
-        $currentYear = now()->year;
+        // $currentMonth = now()->month;
+        // $currentYear = now()->year;
         $userId = Auth::id();
 
-        $leaveCreditsCalculation = \App\Models\LeaveCreditsCalculation::where('user_id', $userId)
-            ->where('month', $currentMonth)
-            ->where('year', $currentYear)
-            ->first();
+        // $leaveCreditsCalculation = \App\Models\LeaveCreditsCalculation::where('user_id', $userId)
+        //     ->where('month', $currentMonth)
+        //     ->where('year', $currentYear)
+        //     ->first();
 
-        $leaveCreditsEarned = $leaveCreditsCalculation ? $leaveCreditsCalculation->leave_credits_earned : 0;
+        // $leaveCreditsEarned = $leaveCreditsCalculation ? $leaveCreditsCalculation->leave_credits_earned : 0;
 
-        $leaveCredits = LeaveCredits::where('user_id', $userId)->first();
-        if ($leaveCredits) {
-            if (!$leaveCredits->credits_transferred) {
-                // Set total credits based on the new columns
-                $leaveCredits->vl_total_credits = $leaveCredits->vl_claimable_credits + $leaveCredits->vl_claimed_credits;
-                $leaveCredits->sl_total_credits = $leaveCredits->sl_claimable_credits + $leaveCredits->sl_claimed_credits;
-                $leaveCredits->spl_total_credits = $leaveCredits->spl_claimable_credits + $leaveCredits->spl_claimed_credits;
-
-                $leaveCredits->save();
-
-                $leaveCredits->credits_transferred = true;
-                $leaveCredits->save();
-            }
-        } else {
-            LeaveCredits::create([
-                'user_id' => $userId,
-                'vl_total_credits' => $leaveCreditsEarned,
-                'sl_total_credits' => $leaveCreditsEarned,
-                'spl_total_credits' => $leaveCreditsEarned,
-                'vl_claimable_credits' => $leaveCreditsEarned,
-                'sl_claimable_credits' => $leaveCreditsEarned,
-                'spl_claimable_credits' => $leaveCreditsEarned,
-                'credits_transferred' => true
-            ]);
-        }
+        // $leaveCredits = LeaveCredits::where('user_id', $userId)->first();
+        // if ($leaveCredits) {
+        //     if (!$leaveCredits->credits_transferred) {
+        //         // Set total credits based on the new columns
+        //         $leaveCredits->vl_total_credits = $leaveCredits->vl_claimable_credits + $leaveCredits->vl_claimed_credits;
+        //         $leaveCredits->sl_total_credits = $leaveCredits->sl_claimable_credits + $leaveCredits->sl_claimed_credits;
+        //         $leaveCredits->spl_total_credits = $leaveCredits->spl_claimable_credits + $leaveCredits->spl_claimed_credits;
+                
+        //         $leaveCredits->save();
+        
+        //         $leaveCredits->credits_transferred = true;
+        //         $leaveCredits->save();
+        //     }
+        // } else {
+        //     LeaveCredits::create([
+        //         'user_id' => $userId,
+        //         'vl_total_credits' => $leaveCreditsEarned,
+        //         'sl_total_credits' => $leaveCreditsEarned,
+        //         'spl_total_credits' => $leaveCreditsEarned,
+        //         'vl_claimable_credits' => $leaveCreditsEarned,
+        //         'sl_claimable_credits' => $leaveCreditsEarned,
+        //         'spl_claimable_credits' => $leaveCreditsEarned,
+        //         'credits_transferred' => true
+        //     ]);
+        // }
 
         $leaveApplication = LeaveApplication::create([
             'user_id' => $userId,
@@ -489,6 +492,26 @@ class LeaveApplicationTable extends Component
         return response()->streamDownload(function() use ($pdf) {
             echo $pdf->output();
         }, 'LeaveApplication' . $leaveApplicationId . '.pdf');
+    }
+
+    public function exportExcel()
+    {
+        // Fetch the latest leave application of the logged-in user
+        $leaveApplication = LeaveApplication::where('user_id', Auth::id())
+            ->latest('created_at')
+            ->first();
+
+        // Check if a leave application is found for the logged-in user
+        if (!$leaveApplication) {
+            session()->flash('error', 'No leave application found for the current user.');
+            return;
+        }
+
+        // Create an instance of the LeaveCardExport class with the leave application ID, start date, and end date
+        $export = new LeaveCardExport($leaveApplication->id, $this->startDate, $this->endDate);
+
+        // Return the export response
+        return $export->export();
     }
 
     public function render()

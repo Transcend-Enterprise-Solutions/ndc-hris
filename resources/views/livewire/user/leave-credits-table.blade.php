@@ -1,4 +1,5 @@
 <div x-data="{ selectedTab: 'vl' }" class="w-full">
+
     <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
         <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Leave Credits</h1>
 
