@@ -985,7 +985,7 @@ class PayrollTable extends Component
     public function exportCosExcel(){
         $filters = [
             'search' => $this->search2,
-            'type' => 'reg',
+            'type' => 'REGULAR',
         ];
         $fileName = 'COS Reg Payroll List.xlsx';
         return Excel::download(new CosPayrollListExport($filters), $fileName);

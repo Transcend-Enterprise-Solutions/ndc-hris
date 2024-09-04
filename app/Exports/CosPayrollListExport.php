@@ -2,10 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\CosPayrolls;
-use App\Models\Payrolls;
 use App\Models\User;
-use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -42,7 +39,8 @@ class CosPayrollListExport implements FromCollection, WithEvents
         $query = User::query()
                 ->join($table, $table . '.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
-                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id');
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id');
 
         if (!empty($this->filters['search'])) {
             $query->where(function ($q) {
@@ -61,6 +59,7 @@ class CosPayrollListExport implements FromCollection, WithEvents
                 'employee_number' => $payroll->emp_code,
                 'position' => $payroll->position,
                 'office_division' => $payroll->office_division,
+                'unit' => $payroll->unit ?: '-',
                 'sg_step' => $payroll->sg_step,
                 'rate_per_month' => $formatCurrency($payroll->rate_per_month),
             ];
@@ -83,7 +82,8 @@ class CosPayrollListExport implements FromCollection, WithEvents
                 $sheet->getColumnDimension('C')->setWidth(15);
                 $sheet->getColumnDimension('D')->setWidth(30);
                 $sheet->getColumnDimension('E')->setWidth(30);
-                for ($col = 'F'; $col <= 'G'; $col++) {
+                $sheet->getColumnDimension('F')->setWidth(30);
+                for ($col = 'G'; $col <= 'H'; $col++) {
                     $sheet->getColumnDimension($col)->setWidth(15);
                 }
 
@@ -98,19 +98,20 @@ class CosPayrollListExport implements FromCollection, WithEvents
                 $sheet->setCellValue('C4', 'EMPLOYEE NO.');
                 $sheet->setCellValue('D4', 'POSITION');
                 $sheet->setCellValue('E4', 'OFFICE/ DIVISION');
-                $sheet->setCellValue('F4', 'SG/STEP');
-                $sheet->setCellValue('G4', 'RATE PER MONTH');
+                $sheet->setCellValue('F4', 'UNIT');
+                $sheet->setCellValue('G4', 'SG/STEP');
+                $sheet->setCellValue('H4', 'RATE PER MONTH');
 
                 // Apply word wrap
-                $sheet->getStyle('A4:G4')->getAlignment()->setWrapText(true);
+                $sheet->getStyle('A4:H4')->getAlignment()->setWrapText(true);
 
                 // Column Header
-                $sheet->getStyle('A1:G3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle('A4:G4')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
+                $sheet->getStyle('A1:H3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('A4:H4')->getAlignment()->setHorizontal(Alignment::VERTICAL_CENTER);
 
                 // Rows
                 $sheet->getStyle('A4:B' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
-                $sheet->getStyle('C4:G' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('C4:H' . $highestRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             },
         ];
     }
@@ -119,23 +120,23 @@ class CosPayrollListExport implements FromCollection, WithEvents
         $sheet = $event->sheet;
 
         // Add custom header
-        $sheet->mergeCells('A1:G1');
+        $sheet->mergeCells('A1:H1');
         $sheet->setCellValue('A1', "");
 
-        $sheet->mergeCells('A2:G2');
+        $sheet->mergeCells('A2:H2');
         $sheet->setCellValue('A2', "NATIONAL YOUTH COMMISSION");
-        $sheet->mergeCells('A3:G3');
-        $sheet->setCellValue('A3', "COS Payroll List");
+        $sheet->mergeCells('A3:H3');
+        $sheet->setCellValue('A3', "COS " . $this->filters['type'] .  " Payroll List");
 
         // Apply some basic styling
-        $sheet->getStyle('A1:G3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-        $sheet->getStyle('A1:G3')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getStyle('A1:H3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A1:H3')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         $sheet->getStyle('A1:A3')->getFont()->setBold(true);
-        $sheet->getStyle('A1:G3')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_NONE);
-        $sheet->getStyle('A4:G4')->getFont()->setBold(true);
+        $sheet->getStyle('A1:H3')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_NONE);
+        $sheet->getStyle('A4:H4')->getFont()->setBold(true);
         $sheet->getStyle('2:2')->getFont()->setSize(16);
 
-        $sheet->getStyle('A4:G4')->applyFromArray([
+        $sheet->getStyle('A4:H4')->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,

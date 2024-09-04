@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Payrolls;
+use App\Models\PayrollsLeaveCreditsDeduction;
 use App\Models\User;
 use Exception;
 use Maatwebsite\Excel\Concerns\Exportable;
@@ -381,7 +382,7 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
             });
         }
 
-        $data = $query->get()->map(function ($payroll) {
+        $data = $query->get()->map(function ($payroll) use ($month){
 
             // For Tenths ------------------------------------------------------------- //
             // $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
@@ -392,8 +393,14 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
             // $payroll->amount_due_first_half = $amount_due_first_half;
             // $payroll->amount_due_second_half = $amount_due_second_half;
 
-            $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
-            $half_amount = $net_amount_received / 2;
+            // Check if the user has a salary deduction
+            $deduction = PayrollsLeaveCreditsDeduction::where('user_id', $payroll->user_id)
+                ->whereMonth('month', Carbon::parse($month)->month)
+                ->whereYear('month', Carbon::parse($month)->year)
+                ->first();
+
+            $salaryDeduction = $deduction ? $deduction->salary_deduction_amount : 0;
+            $net_amount_received = $payroll->gross_amount - $payroll->total_deduction - $salaryDeduction;
             $half_amount = $net_amount_received / 2;
         
             $amount_due_second_half = floor($half_amount);

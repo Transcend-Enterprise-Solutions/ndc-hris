@@ -37,6 +37,7 @@ class Payrolls extends Model
         'pagibig_contribution',
         'w_holding_tax',
         'philhealth',
+        'other_deductions',
         'total_deduction',
     ];
 

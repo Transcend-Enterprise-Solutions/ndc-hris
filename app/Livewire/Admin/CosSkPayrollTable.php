@@ -985,7 +985,7 @@ class CosSkPayrollTable  extends Component
     public function exportCosExcel(){
         $filters = [
             'search' => $this->search2,
-            'type' => 'sk',
+            'type' => 'SK',
         ];
         $fileName = 'COS SK Payroll List.xlsx';
         return Excel::download(new CosPayrollListExport($filters), $fileName);
