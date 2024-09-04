@@ -97,18 +97,18 @@ class LeaveApplicationTable extends Component
     {
         $user = Auth::user();
         $userData = UserData::where('user_id', $user->id)->first();
-    
+
         if ($userData) {
             $this->name = $user->name;
             $this->date_of_filing = now()->toDateString();
         }
-    
+
         $officeDivision = OfficeDivisions::find($user->office_division_id);
         $position = Positions::find($user->position_id);
-    
+
         $this->office_or_department = $officeDivision ? $officeDivision->office_division : 'N/A';
         $this->position = $position ? $position->position : 'N/A';
-    
+
         $payroll = Payrolls::where('user_id', $user->id)->first();
         if ($payroll) {
             $this->salary = $payroll->rate_per_month;
@@ -122,7 +122,7 @@ class LeaveApplicationTable extends Component
             }
         }
     }
-    
+
 
     public function resetOtherFields($field)
     {
@@ -158,7 +158,7 @@ class LeaveApplicationTable extends Component
             'number_of_days' => 'required',
             'commutation' => 'required',
         ];
-    
+
         // Check if list_of_dates is present in the form
         // if ($this->list_of_dates !== null) {
         //     $rules['list_of_dates'] = 'required|min:1';
@@ -180,18 +180,18 @@ class LeaveApplicationTable extends Component
         if (!empty(array_intersect($this->type_of_leave, $leaveTypesRequiringDates))) {
             $rules['list_of_dates'] = 'required|array|min:1';
         }
-    
+
         // Check if start_date and end_date are present in the form
         // if ($this->start_date !== null || $this->end_date !== null) {
         //     $rules['start_date'] = 'required|date';
         //     $rules['end_date'] = 'required|date|after_or_equal:start_date';
         // }
-    
+
         // If new_date is present, add its validation
         // if ($this->new_date !== null) {
         //     $rules['new_date'] = 'required|date';
         // }
-    
+
         $this->validate($rules);
 
         if (in_array('Others', $this->type_of_leave)) {
@@ -269,9 +269,9 @@ class LeaveApplicationTable extends Component
                 $leaveCredits->vl_total_credits = $leaveCredits->vl_claimable_credits + $leaveCredits->vl_claimed_credits;
                 $leaveCredits->sl_total_credits = $leaveCredits->sl_claimable_credits + $leaveCredits->sl_claimed_credits;
                 $leaveCredits->spl_total_credits = $leaveCredits->spl_claimable_credits + $leaveCredits->spl_claimed_credits;
-                
+
                 $leaveCredits->save();
-        
+
                 $leaveCredits->credits_transferred = true;
                 $leaveCredits->save();
             }
@@ -334,6 +334,7 @@ class LeaveApplicationTable extends Component
             'title' => "Leave application sent successfully!",
             'icon' => 'success'
         ]);
+
 
         $this->resetForm();
         $this->closeLeaveForm();
@@ -429,7 +430,7 @@ class LeaveApplicationTable extends Component
             }
             return false;
         };
-        
+
         $getDetailValue = function($detail) use ($detailsOfLeave) {
             foreach ($detailsOfLeave as $item) {
                 $parts = explode('=', $item, 2);

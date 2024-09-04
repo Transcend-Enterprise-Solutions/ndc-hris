@@ -13,6 +13,7 @@ class Notification extends Model
         'user_id',
         'doc_request_id',
         'type',
+        'notif',
         'read',
     ];
 
@@ -31,4 +32,5 @@ class Notification extends Model
     {
         return $this->belongsTo(DocRequest::class);
     }
+
 }
