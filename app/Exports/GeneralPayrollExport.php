@@ -382,14 +382,23 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
         }
 
         $data = $query->get()->map(function ($payroll) {
-            $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
-            
-            // Round down the second half to the nearest tenth
-            $amount_due_second_half = floor($net_amount_received / 2 / 10) * 10;
-            
-            // Calculate the first half as the remainder
-            $amount_due_first_half = $net_amount_received - $amount_due_second_half;
+
+            // For Tenths ------------------------------------------------------------- //
+            // $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
+            // $amount_due_second_half = floor($net_amount_received / 2 / 10) * 10;
+            // $amount_due_first_half = $net_amount_received - $amount_due_second_half;
         
+            // $payroll->net_amount_received = $net_amount_received;
+            // $payroll->amount_due_first_half = $amount_due_first_half;
+            // $payroll->amount_due_second_half = $amount_due_second_half;
+
+            $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
+            $half_amount = $net_amount_received / 2;
+            $half_amount = $net_amount_received / 2;
+        
+            $amount_due_second_half = floor($half_amount);
+            $amount_due_first_half = $net_amount_received - $amount_due_second_half;
+
             $payroll->net_amount_received = $net_amount_received;
             $payroll->amount_due_first_half = $amount_due_first_half;
             $payroll->amount_due_second_half = $amount_due_second_half;
@@ -420,7 +429,7 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
             $this->rowNumber++;
             return [
                 0 => $this->rowNumber,
-                1 => $payroll->employee_number,
+                1 => $payroll->emp_code,
                 2 => $payroll->name,
                 3 => $payroll->position,
                 4 => $payroll->sg_step,

@@ -7,9 +7,12 @@ use App\Exports\IndivPlantillaPayrollExport;
 use App\Exports\PayrollListExport;
 use App\Models\CosRegPayrolls;
 use App\Models\CosSkPayrolls;
+use App\Models\EmployeesDtr;
 use App\Models\GeneralPayroll;
+use App\Models\LeaveCredits;
 use App\Models\OfficeDivisions;
 use App\Models\Payrolls;
+use App\Models\PayrollsLeaveCreditsDeduction;
 use App\Models\Positions;
 use App\Models\SalaryGrade;
 use App\Models\Signatories;
@@ -144,7 +147,7 @@ class GeneralPayrollTable extends Component
     public $employeePayslip;
     public $startMonth;
     public $endMonth;
-    public $monthRange = false;
+    public $monthRange = true;
     public $addPayroll;
     public $editPayroll;
     public $deleteId;
@@ -164,6 +167,22 @@ class GeneralPayrollTable extends Component
     public $preparedBySign;
 
     public $generalPayrolls;
+
+    protected $credits_per_minute = [
+        0 => 0.000, 1 => 0.002, 2 => 0.004, 3 => 0.006, 4 => 0.008, 5 => 0.010,
+        6 => 0.012, 7 => 0.015, 8 => 0.017, 9 => 0.019, 10 => 0.021, 11 => 0.023,
+        12 => 0.025, 13 => 0.027, 14 => 0.029, 15 => 0.031, 16 => 0.033, 17 => 0.035,
+        18 => 0.037, 19 => 0.040, 20 => 0.042, 21 => 0.044, 22 => 0.046, 23 => 0.048,
+        24 => 0.050, 25 => 0.052, 26 => 0.054, 27 => 0.056, 28 => 0.058, 29 => 0.060,
+        30 => 0.062, 31 => 0.065, 32 => 0.067, 33 => 0.069, 34 => 0.071, 35 => 0.073,
+        36 => 0.075, 37 => 0.077, 38 => 0.079, 39 => 0.081, 40 => 0.083, 41 => 0.085,
+        42 => 0.087, 43 => 0.090, 44 => 0.092, 45 => 0.094, 46 => 0.096, 47 => 0.098,
+        48 => 0.100, 49 => 0.102, 50 => 0.104, 51 => 0.106, 52 => 0.108, 53 => 0.110,
+        54 => 0.112, 55 => 0.115, 56 => 0.117, 57 => 0.119, 58 => 0.121, 59 => 0.123,
+        60 => 0.125
+    ];
+    
+    
 
     public function mount(){
         $this->employees = User::where('user_role', '=', 'emp')->get();
@@ -191,6 +210,30 @@ class GeneralPayrollTable extends Component
             $this->position = $pos->position;
             $this->office_division = $officeDiv->office_division;
         }
+
+        $this->total_deduction = 
+                ($this->additional_gsis_premium ?: 0) +
+                ($this->lbp_salary_loan ?: 0 )+
+                ($this->nycea_deductions ?: 0) +
+                ($this->sc_membership ?: 0) +
+                ($this->total_loans ?: 0) +
+                ($this->salary_loan ?: 0) +
+                ($this->policy_loan ?: 0) +
+                ($this->eal ?: 0) +
+                ($this->emergency_loan ?: 0) +
+                ($this->mpl ?: 0) +
+                ($this->housing_loan ?: 0) +
+                ($this->ouli_prem ?: 0) +
+                ($this->gfal ?: 0) +
+                ($this->cpl ?: 0) +
+                ($this->pagibig_mpl ?: 0) +
+                ($this->other_deduction_philheath_diff ?: 0) +
+                ($this->life_retirement_insurance_premiums ?: 0) +
+                ($this->pagibig_contribution ?: 0) +
+                ($this->w_holding_tax ?: 0) +
+                ($this->philhealth ?: 0);
+        
+        $this->total_deduction = number_format((float)$this->total_deduction, 2, '.', '');
 
 
         if($this->rate_per_month && $this->personal_economic_relief_allowance){
@@ -254,62 +297,6 @@ class GeneralPayrollTable extends Component
         ]);
     }
 
-    public function GeneralPayrolls(){
-        $payrolls = collect();
-    
-        if ($this->startMonth) {
-            $carbonDate = Carbon::createFromFormat('Y-m', $this->startMonth);
-            $this->startDateFirstHalf = $carbonDate->startOfMonth()->toDateString();
-            $this->endDateFirstHalf = $carbonDate->copy()->day(15)->toDateString();
-            $this->startDateSecondHalf = $carbonDate->copy()->day(16)->toDateString();
-            $this->endDateSecondHalf = $carbonDate->endOfMonth()->toDateString();
-
-            $payrolls = User::when($this->search, function ($query) {
-                    return $query->search(trim($this->search));
-                })
-                ->join('payrolls', 'payrolls.user_id', 'users.id')
-                ->join('positions', 'positions.id', 'users.position_id')
-                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
-                ->get()
-                ->map(function ($payroll) {
-                    $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
-                    $half_amount = $net_amount_received / 2;
-                    $half_amount = $net_amount_received / 2;
-                
-                    $amount_due_second_half = floor($half_amount);
-                    $amount_due_first_half = $net_amount_received - $amount_due_second_half;
-
-                    $payroll->net_amount_received = $net_amount_received;
-                    $payroll->amount_due_first_half = $amount_due_first_half;
-                    $payroll->amount_due_second_half = $amount_due_second_half;
-
-                    return $payroll;
-                });
-           
-            // if($this->endMonth){
-            //     $carbonEndMonth = Carbon::createFromFormat('Y-m', $this->endMonth);
-            //     $endDateEndMonth = $carbonEndMonth->endOfMonth()->toDateString();
-            //     $generalPayrollQuery->orWhereBetween('date', [$this->startDateFirstHalf, $endDateEndMonth]);
-            // }
-
-            // if($generalPayrollQuery->exists()){
-            //     $payrolls = $generalPayrollQuery->paginate(10);
-            //     $this->hasPayroll = true;
-            // }else{
-            //     $payrolls = $this->getGenPayroll()->paginate(10);
-            //     $this->employeePayslip = $this->getGenPayroll()->get();
-            //     $this->hasPayroll = false;
-            // }
-        }
-
-        if($this->monthRange == false){
-            $this->endMonth = null;
-        }
-
-        $this->generalPayrolls = $payrolls;
-    }
-
     public function getRate(){
         if ($this->sg && $this->step) {
             $salaryGrades = SalaryGrade::where('salary_grade', $this->sg);
@@ -370,41 +357,197 @@ class GeneralPayrollTable extends Component
         }
     }
 
-    public function getGenPayroll(){
-        try{
-            $payrollAggregates = DB::table('employees_payroll')
-            ->select('user_id')
-            ->selectRaw("SUM(CASE 
-                            WHEN start_date >= ? AND end_date <= ? 
-                            THEN net_amount_due 
-                            ELSE 0 
-                        END) as net_amount_due_first_half", [$this->startDateFirstHalf, $this->endDateFirstHalf])
-            ->selectRaw("SUM(CASE 
-                            WHEN start_date >= ? AND end_date <= ? 
-                            THEN net_amount_due 
-                            ELSE 0 
-                        END) as net_amount_due_second_half", [$this->startDateSecondHalf, $this->endDateSecondHalf])
-            ->selectRaw("SUM(net_amount_due) as total_amount_due")
-            ->where('start_date', $this->startDateFirstHalf)
-            ->orWhere('end_date', $this->endDateSecondHalf)
-            ->groupBy('user_id');
+    public function GeneralPayrolls()
+    {
+        $payrolls = collect();
+        
+        if ($this->startMonth) {
+            $carbonDate = Carbon::createFromFormat('Y-m', $this->startMonth);
+            $this->startDateFirstHalf = $carbonDate->startOfMonth()->toDateString();
+            $this->endDateFirstHalf = $carbonDate->copy()->day(15)->toDateString();
+            $this->startDateSecondHalf = $carbonDate->copy()->day(16)->toDateString();
+            $this->endDateSecondHalf = $carbonDate->endOfMonth()->toDateString();
+    
+            $payrolls = User::when($this->search, function ($query) {
+                    return $query->search(trim($this->search));
+                })
+                ->join('payrolls', 'payrolls.user_id', 'users.id')
+                ->join('positions', 'positions.id', 'users.position_id')
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
+                ->get()
+                ->map(function ($payroll) {
+                    $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
+                    $half_amount = $net_amount_received / 2;
+                    
+                    $amount_due_second_half = floor($half_amount);
+                    $amount_due_first_half = $net_amount_received - $amount_due_second_half;
+    
+                    $payroll->net_amount_received = $net_amount_received;
+                    $payroll->amount_due_first_half = $amount_due_first_half;
+                    $payroll->amount_due_second_half = $amount_due_second_half;
+    
+                    return $payroll;
+                });
+    
+            // Get DTR data including credits
+            $payrollDTR = $this->getDTRForPayroll($this->startDateFirstHalf, $this->endDateSecondHalf);
+    
+            // Integrate DTR credits into payroll data
+            $payrolls = $payrolls->map(function ($payroll) use ($payrollDTR) {
+                $userId = $payroll->user_id;
+    
+                if (isset($payrollDTR[$userId])) {
+                    $payroll->total_absent_days = $payrollDTR[$userId]['total_absent'];
+                    $payroll->total_late_minutes = $payrollDTR[$userId]['total_late'];
+                    $payroll->total_credits_deducted = $payrollDTR[$userId]['total_credits'];
+                } else {
+                    $payroll->total_absent_days = 0;
+                    $payroll->total_late_minutes = 0;
+                    $payroll->total_credits_deducted = 0.00;
+                }
+    
+                return $payroll;
+            });
+        }
+    
+        $this->generalPayrolls = $payrolls;
+    }
+    
 
-            // Join the aggregate results with the general_payroll table
-            $payrolls = Payrolls::when($this->search, function ($query) {
-                                return $query->search(trim($this->search));
-                            })
-                            ->joinSub($payrollAggregates, 'payroll_aggregates', function ($join) {
-                                $join->on('payrolls.user_id', '=', 'payroll_aggregates.user_id');
-                            })
-                            ->select('payrolls.*', 
-                                    'payroll_aggregates.net_amount_due_first_half', 
-                                    'payroll_aggregates.net_amount_due_second_half', 
-                                    'payroll_aggregates.total_amount_due');
-            return $payrolls;
-        }catch(Exception $e){
+    public function getDTRForPayroll($startDate, $endDate, $employeeId = null)
+    {
+        try {
+            $query = EmployeesDtr::whereBetween('date', [$startDate, $endDate]);
+            if ($employeeId) {
+                $query->where('user_id', $employeeId);
+            }
+            $dtrRecords = $query->orderBy('date')->get();
+            $payrollDTR = [];
+    
+            foreach ($dtrRecords as $record) {
+                $employeeId = $record->user_id;
+                $date = $record->date;
+    
+                if (!isset($payrollDTR[$employeeId])) {
+                    $payrollDTR[$employeeId] = [
+                        'total_days' => 0,
+                        'total_hours' => 0,
+                        'total_late' => 0,
+                        'total_absent' => 0,
+                        'total_overtime' => 0,
+                        'total_credits' => 0,
+                        'daily_records' => []
+                    ];
+                }
+    
+                $payrollDTR[$employeeId]['total_days']++;
+    
+                // Convert time strings to integer minutes
+                $totalHours = $this->timeToMinutes($record->total_hours_rendered);
+                $late = $this->timeToMinutes($record->late);
+                $overtime = $this->timeToMinutes($record->overtime);
+    
+                $payrollDTR[$employeeId]['total_hours'] += $totalHours;
+    
+                if ($record->remarks == "Late/Undertime") {
+                    $payrollDTR[$employeeId]['total_late'] += $late;
+                
+                    // Separate hours and minutes
+                    $hours = floor($late / 60); // Get the number of hours
+                    $minutes = $late % 60; // Get the remaining minutes
+                
+                    // Calculate credits based on hours and minutes
+                    $hourCredits = $hours * 0.125;
+                    $minuteCredits = isset($this->credits_per_minute[$minutes]) ? $this->credits_per_minute[$minutes] : 0;
+                
+                    // Sum the credits from hours and minutes
+                    $totalCredits = $hourCredits + $minuteCredits;
+                
+                    // Add to the total credits for the employee
+                    $payrollDTR[$employeeId]['total_credits'] += $totalCredits;
+                }
+                
+                if($record->remarks == "Absent"){
+                    $payrollDTR[$employeeId]['total_absent']++;
+                    $payrollDTR[$employeeId]['total_credits'] += 1.00; // 1 day absent
+                }
+    
+                $payrollDTR[$employeeId]['total_overtime'] += $overtime;
+    
+                $payrollDTR[$employeeId]['daily_records'][$date] = [
+                    'day_of_week' => $record->day_of_week,
+                    'location' => $record->location,
+                    'morning_in' => $record->morning_in,
+                    'morning_out' => $record->morning_out,
+                    'afternoon_in' => $record->afternoon_in,
+                    'afternoon_out' => $record->afternoon_out,
+                    'late' => $late,
+                    'overtime' => $overtime,
+                    'total_hours' => $totalHours,
+                    'remarks' => $record->remarks,
+                ];
+            }
+
+            // Deduct credits from leave_credits table
+            foreach ($payrollDTR as $employeeId => $data) {
+
+                // Check if the deduction has already been applied
+                $deduction = PayrollsLeaveCreditsDeduction::where('user_id', $employeeId)
+                    ->whereMonth('month', Carbon::parse($startDate)->month)
+                    ->whereYear('month', Carbon::parse($startDate)->year)
+                    ->first();
+
+                if ($deduction && $deduction->status == 1) {
+                    continue;
+                }
+
+                $totalCredits = $data['total_credits'];
+                $leaveCredits = LeaveCredits::where('user_id', $employeeId)->first();
+
+                if ($leaveCredits) {
+                    $leaveCredits->vl_claimable_credits -= $totalCredits;
+
+                    // Check if credits become negative then deduct the adsents and late/undertime to the salary
+                    if ($leaveCredits->vl_claimable_credits < 0) {
+                        $negativeCredits = abs($leaveCredits->vl_claimable_credits);
+
+                        $payroll = User::find($employeeId)->payrolls; 
+                        $dailyRate = $payroll->rate_per_month / 22;
+                        $hourlyRate = $dailyRate / 8;
+                        $minutesRate = $hourlyRate / 60;
+
+                        $deductionAmount = $negativeCredits * $minutesRate;
+
+                        $leaveCredits->vl_claimable_credits = 0;
+                    }
+
+                    $leaveCredits->save();
+
+                    // Mark the vl credits deduction as applied
+                    PayrollsLeaveCreditsDeduction::create([
+                        'user_id' => $employeeId,
+                        'month' => $startDate,
+                        'credits_deducted' => $totalCredits,
+                        'status' => 1,
+                    ]);
+                }
+            }
+    
+            return $payrollDTR;
+        } catch (Exception $e) {
             throw $e;
         }
     }
+
+    private function timeToMinutes($timeString){
+        if (empty($timeString)) {
+            return 0;
+        }
+        list($hours, $minutes) = explode(':', $timeString);
+        return (int)$hours * 60 + (int)$minutes;
+    }
+    
 
     public function toggleAllColumn() {
         if ($this->allCol) {
@@ -1194,6 +1337,4 @@ class GeneralPayrollTable extends Component
         $fileName = 'Plantilla Payroll List.xlsx';
         return Excel::download(new PayrollListExport($filters), $fileName);
     }
-
-
 }

@@ -99,7 +99,7 @@ x-cloak>
                         placeholder="Enter employee name or ID">
                 </div>
 
-                 {{-- Search General Input --}}
+                 {{-- Search General Payroll Input --}}
                 <div class="w-full lg:w-1/4 sm:mr-4 md:w-full" x-show="selectedTab === 'export'">
                     <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
                     <input type="text" id="search" wire:model.live="search"
@@ -759,7 +759,7 @@ x-cloak>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['total_deduction'] ? '' : 'hidden' }}">{{ currency_format($payroll->total_deduction) }}</td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->net_amount_received) }}</td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->amount_due_first_half) }}</td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->amount_due_second_half) }}</td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->amount_due_second_half) }} | {{ $payroll->total_credits_deducted }}</td>
                                                 <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                     <div class="relative">
                                                         <button wire:click="viewPayroll({{ $payroll->user_id }})" 
@@ -1458,7 +1458,7 @@ x-cloak>
 
                     <div class="col-span-1">
                         <label for="rate_per_month" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Rate per Month</label>
-                        <input type="number" step="0.01" id="rate_per_month" wire:model='rate_per_month' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                        <input type="number" step="0.01" id="rate_per_month" wire:model.live='rate_per_month' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('rate_per_month') 
                             <span class="text-red-500 text-sm">The rate per month is required!</span> 
                         @enderror
@@ -1471,7 +1471,7 @@ x-cloak>
 
                     <div class="col-span-1">
                         <label for="gross_amount" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Gross Amount</label>
-                        <input type="number" step="0.01" id="gross_amount" wire:model='gross_amount' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                        <input type="number" step="0.01" id="gross_amount" wire:model.live='gross_amount' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('gross_amount') 
                             <span class="text-red-500 text-sm">The gross amount is required!</span> 
                         @enderror
@@ -1479,93 +1479,93 @@ x-cloak>
 
                     <div class="col-span-1">
                         <label for="additional_gsis_premium" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Additional GSIS Premium</label>
-                        <input type="number" step="0.01" id="additional_gsis_premium" wire:model='additional_gsis_premium' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="additional_gsis_premium" wire:model.live='additional_gsis_premium' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
 
                     <div class="col-span-1">
                         <label for="lbp_salary_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">LBP Salary Loan</label>
-                        <input type="number" step="0.01" id="lbp_salary_loan" wire:model='lbp_salary_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="lbp_salary_loan" wire:model.live='lbp_salary_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
 
                     <div class="col-span-1">
                         <label for="nycea_deductions" class="block text-sm font-medium text-gray-700 dark:text-slate-400">NYCEA Deductions</label>
-                        <input type="number" step="0.01" id="nycea_deductions" wire:model='nycea_deductions' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="nycea_deductions" wire:model.live='nycea_deductions' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
     
                     <div class="col-span-1">
                         <label for="sc_membership" class="block text-sm font-medium text-gray-700 dark:text-slate-400">SC Membership</label>
-                        <input type="number" step="0.01" id="sc_membership" wire:model='sc_membership' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="sc_membership" wire:model.live='sc_membership' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
     
                     <div class="col-span-1">
                         <label for="total_loans" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Total Loans</label>
-                        <input type="number" step="0.01" id="total_loans" wire:model='total_loans' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="total_loans" wire:model.live='total_loans' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
     
                     <div class="col-span-1">
                         <label for="salary_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Salary Loan</label>
-                        <input type="number" step="0.01" id="salary_loan" wire:model='salary_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="salary_loan" wire:model.live='salary_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
     
                     <div class="col-span-1">
                         <label for="policy_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Policy Loan</label>
-                        <input type="number" step="0.01" id="policy_loan" wire:model='policy_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="policy_loan" wire:model.live='policy_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
     
                     <div class="col-span-1">
                         <label for="eal" class="block text-sm font-medium text-gray-700 dark:text-slate-400">EAL</label>
-                        <input type="number" step="0.01" id="eal" wire:model='eal' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="eal" wire:model.live='eal' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
     
                     <div class="col-span-1">
                         <label for="emergency_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Emergency Loan</label>
-                        <input type="number" step="0.01" id="emergency_loan" wire:model='emergency_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="emergency_loan" wire:model.live='emergency_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
     
                     <div class="col-span-1">
                         <label for="mpl" class="block text-sm font-medium text-gray-700 dark:text-slate-400">MPL</label>
-                        <input type="number" step="0.01" id="mpl" wire:model='mpl' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="mpl" wire:model.live='mpl' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
     
                     <div class="col-span-1">
                         <label for="housing_loan" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Housing Loan</label>
-                        <input type="number" step="0.01" id="housing_loan" wire:model='housing_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="housing_loan" wire:model.live='housing_loan' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
     
                     <div class="col-span-1">
                         <label for="ouli_prem" class="block text-sm font-medium text-gray-700 dark:text-slate-400">OULI Premium</label>
-                        <input type="number" step="0.01" id="ouli_prem" wire:model='ouli_prem' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="ouli_prem" wire:model.live='ouli_prem' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
     
                     <div class="col-span-1">
                         <label for="gfal" class="block text-sm font-medium text-gray-700 dark:text-slate-400">GFAL</label>
-                        <input type="number" step="0.01" id="gfal" wire:model='gfal' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="gfal" wire:model.live='gfal' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
     
                     <div class="col-span-1">
                         <label for="cpl" class="block text-sm font-medium text-gray-700 dark:text-slate-400">CPL</label>
-                        <input type="number" step="0.01" id="cpl" wire:model='cpl' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="cpl" wire:model.live='cpl' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
 
                     <div class="col-span-1">
                         <label for="pagibig_mpl" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Pag-Ibig MPL</label>
-                        <input type="number" step="0.01" id="pagibig_mpl" wire:model='pagibig_mpl' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="pagibig_mpl" wire:model.live='pagibig_mpl' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
 
                     <div class="col-span-1">
                         <label for="other_deduction_philheath_diff" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Other Deduction Philheath Differential</label>
-                        <input type="number" step="0.01" id="other_deduction_philheath_diff" wire:model='other_deduction_philheath_diff' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="other_deduction_philheath_diff" wire:model.live='other_deduction_philheath_diff' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
 
                     
                     <div class="col-span-1">
                         <label for="life_retirement_insurance_premiums" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Life Retirement Insurance Premiums</label>
-                        <input type="number" step="0.01" id="life_retirement_insurance_premiums" wire:model='life_retirement_insurance_premiums' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="life_retirement_insurance_premiums" wire:model.live='life_retirement_insurance_premiums' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
                     
                     <div class="col-span-1">
                         <label for="pagibig_contribution" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Pag-Ibig Contribution</label>
-                        <input type="number" step="0.01" id="pagibig_contribution" wire:model='pagibig_contribution' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="pagibig_contribution" wire:model.live='pagibig_contribution' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                         @error('pagibig_contribution') 
                             <span class="text-red-500 text-sm">The Pag-Ibig contribution is required!</span> 
                         @enderror
@@ -1573,7 +1573,7 @@ x-cloak>
                     
                     <div class="col-span-1">
                         <label for="w_holding_tax" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Withholding Tax</label>
-                        <input type="number" step="0.01" id="w_holding_tax" wire:model='w_holding_tax' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="w_holding_tax" wire:model.live='w_holding_tax' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                         @error('w_holding_tax') 
                             <span class="text-red-500 text-sm">The withholding tax is required!</span> 
                         @enderror
@@ -1581,7 +1581,7 @@ x-cloak>
 
                     <div class="col-span-1">
                         <label for="philhealth" class="block text-sm font-medium text-gray-700 dark:text-slate-400">PhilHealth</label>
-                        <input type="number" step="0.01" id="philhealth" wire:model='philhealth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="philhealth" wire:model.live='philhealth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                         @error('philhealth') 
                             <span class="text-red-500 text-sm">The philhealth is required!</span> 
                         @enderror
@@ -1589,7 +1589,7 @@ x-cloak>
 
                     <div class="col-span-1">
                         <label for="total_deduction" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Total Deduction</label>
-                        <input type="number" step="0.01" id="total_deduction" wire:model='total_deduction' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        <input type="number" step="0.01" id="total_deduction" wire:model='total_deduction' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('total_deduction') 
                             <span class="text-red-500 text-sm">The total deduction is required!</span> 
                         @enderror
