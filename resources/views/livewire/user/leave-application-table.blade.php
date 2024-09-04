@@ -87,33 +87,41 @@
                     <div class="flex flex-col md:flex-row gap-4">
                         <!-- Start Date -->
                         <div class="flex flex-col mb-4 md:mb-0">
-                            <label class="text-sm font-medium text-black dark:text-white">Start Date:</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Start
+                                Date:</label>
                             <input type="month" wire:model.live="startDate"
-                                class="border rounded p-2 dark:bg-gray-700 dark:text-white">
+                                class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                            dark:hover:bg-slate-600 dark:border-slate-600
+                            dark:text-gray-300 dark:bg-gray-800">
                         </div>
 
                         <!-- End Date -->
-                        <div class="flex flex-col mb-4 md:mb-0">
-                            <label class="text-sm font-medium text-black dark:text-white">End Date:</label>
-                            <input type="month" wire:model.live="endDate"
-                                class="border rounded p-2 dark:bg-gray-700 dark:text-white">
+                        <div class="flex mb-4 md:mb-0">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">End
+                                    Date:</label>
+                                <input type="month" wire:model.live="endDate"
+                                    class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                            dark:hover:bg-slate-600 dark:border-slate-600
+                            dark:text-gray-300 dark:bg-gray-800">
+                            </div>
+                            <div class="flex items-end">
+                                <button wire:click="exportExcel"
+                                    class="flex justify-center items-center px-2 transition-opacity duration-300 {{ $isDisabled ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer' }}"
+                                    type="button" title="Export Leave Card" {{ $isDisabled ? 'disabled' : '' }}>
+                                    <img class="flex dark:hidden" src="/images/export-excel.png" width="40"
+                                        alt="" wire:target="exportExcel" wire:loading.remove>
+                                    <img class="hidden dark:block" src="/images/export-excel-dark.png" width="40"
+                                        alt="" wire:target="exportExcel" wire:loading.remove>
+                                    <div wire:loading wire:target="exportExcel">
+                                        <div class="spinner-border small text-primary" role="status"></div>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Export Button -->
-                        <div class="flex flex-col">
-                            <label class="text-sm font-medium text-black dark:text-white">Export Leave Card</label>
-                            <button wire:click="exportExcel"
-                                class="border rounded p-2 dark:bg-gray-700 border-slate-500 dark:text-white flex justify-center items-center transition-opacity duration-300 {{ $isDisabled ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer' }}"
-                                type="button" title="Export Leave Card" {{ $isDisabled ? 'disabled' : '' }}>
-                                <img class="flex dark:hidden" src="/images/export-excel.png" width="22"
-                                    alt="" wire:target="exportExcel" wire:loading.remove>
-                                <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22"
-                                    alt="" wire:target="exportExcel" wire:loading.remove>
-                                <div wire:loading wire:target="exportExcel">
-                                    <div class="spinner-border small text-primary" role="status"></div>
-                                </div>
-                            </button>
-                        </div>
+
                     </div>
                 </div>
 

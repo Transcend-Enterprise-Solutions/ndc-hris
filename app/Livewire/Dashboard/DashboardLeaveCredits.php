@@ -11,6 +11,7 @@ class DashboardLeaveCredits extends Component
     public $vlClaimableCredits;
     public $slClaimableCredits;
     public $splClaimableCredits;
+    public $ctoCredits;
 
     public function render()
     {
@@ -21,11 +22,13 @@ class DashboardLeaveCredits extends Component
         $this->vlClaimableCredits = $leaveCredits->vl_claimable_credits ?? 0;
         $this->slClaimableCredits = $leaveCredits->sl_claimable_credits ?? 0;
         $this->splClaimableCredits = $leaveCredits->spl_claimable_credits ?? 0;
+        $this->ctoCredits = $leaveCredits->cto_claimable_credits ?? 0;
 
         return view('livewire.dashboard.dashboard-leave-credits', [
             'vlClaimableCredits' => $this->vlClaimableCredits,
             'slClaimableCredits' => $this->slClaimableCredits,
             'splClaimableCredits' => $this->splClaimableCredits,
+            'ctoCredits' => $this->ctoCredits,
         ]);
     }
 }
