@@ -95,12 +95,12 @@ class PDSExport
                 $sheet->setCellValue('D22', $this->pds['userData']->height ?? 'N/A');
                 $sheet->setCellValue('D24', $this->pds['userData']->weight ?? 'N/A');
                 $sheet->setCellValue('D25', $this->pds['userData']->blood_type ?? 'N/A');
-                $sheet->setCellValue('D27', $this->pds['userData']->gsis ?? 'N/A');
-                $sheet->setCellValue('D29', $this->pds['userData']->pagibig ?? 'N/A');
-                $sheet->setCellValue('D31', $this->pds['userData']->philhealth ?? 'N/A');
-                $sheet->setCellValue('D32', $this->pds['userData']->sss ?? 'N/A');
-                $sheet->setCellValue('D33', $this->pds['userData']->tin ?? 'N/A');
-                $sheet->setCellValue('D34', $this->pds['userData']->agency_employee_no ?? 'N/A');
+                $sheet->setCellValue('D27', $this->pds['userData']->gsis ?? '');
+                $sheet->setCellValue('D29', $this->pds['userData']->pagibig ?? '');
+                $sheet->setCellValue('D31', $this->pds['userData']->philhealth ?? '');
+                $sheet->setCellValue('D32', $this->pds['userData']->sss ?? '');
+                $sheet->setCellValue('D33', $this->pds['userData']->tin ?? '');
+                $sheet->setCellValue('D34', $this->pds['userData']->agency_employee_no ?? '');
 
                 $filipinoSymbol = strtolower($this->pds['userData']->citizenship) === 'filipino' ? '☑ Filipino' : '☐ Filipino';
                 $dualCitiSymbol = strtolower($this->pds['userData']->citizenship) === 'dual citizenship' ? '☑ Dual Citizenship' : '☐ Dual Citizenship';

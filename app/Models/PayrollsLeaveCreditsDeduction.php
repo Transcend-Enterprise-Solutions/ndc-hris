@@ -15,6 +15,8 @@ class PayrollsLeaveCreditsDeduction extends Model
         'user_id',
         'month',
         'credits_deducted',
+        'salary_deduction_credits',
+        'salary_deduction_amount',
         'status',
     ];
 

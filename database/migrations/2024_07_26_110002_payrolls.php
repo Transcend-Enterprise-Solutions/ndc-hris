@@ -37,6 +37,7 @@ return new class extends Migration
                 $table->double('pagibig_contribution')->nullable();
                 $table->double('w_holding_tax')->nullable();
                 $table->double('philhealth')->nullable();
+                $table->double('other_deductions')->nullable();
                 $table->double('total_deduction')->nullable();             
                 $table->timestamps();
             });

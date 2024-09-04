@@ -759,7 +759,7 @@ x-cloak>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $columns['total_deduction'] ? '' : 'hidden' }}">{{ currency_format($payroll->total_deduction) }}</td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->net_amount_received) }}</td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->amount_due_first_half) }}</td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->amount_due_second_half) }} | {{ $payroll->total_credits_deducted }}</td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">{{ currency_format($payroll->amount_due_second_half) }}</td>
                                                 <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                     <div class="relative">
                                                         <button wire:click="viewPayroll({{ $payroll->user_id }})" 
@@ -1585,6 +1585,11 @@ x-cloak>
                         @error('philhealth') 
                             <span class="text-red-500 text-sm">The philhealth is required!</span> 
                         @enderror
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="other_deductions" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Other Deductions</label>
+                        <input type="number" step="0.01" id="other_deductions" wire:model.live='other_deductions' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
 
                     <div class="col-span-1">

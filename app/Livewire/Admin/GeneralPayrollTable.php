@@ -135,6 +135,7 @@ class GeneralPayrollTable extends Component
     public $pagibig_contribution;
     public $w_holding_tax;
     public $philhealth;
+    public $other_deductions;
     public $total_deduction;
     public $net_amount_received;
     public $amount_due_first_half;
@@ -181,7 +182,21 @@ class GeneralPayrollTable extends Component
         54 => 0.112, 55 => 0.115, 56 => 0.117, 57 => 0.119, 58 => 0.121, 59 => 0.123,
         60 => 0.125
     ];
-    
+
+    protected $credits_per_minute_reversed = [
+        "0.000" => 0, "0.002" => 1, "0.004" => 2, "0.006" => 3, "0.008" => 4, "0.010" => 5,
+        "0.012" => 6, "0.015" => 7, "0.017" => 8, "0.019" => 9, "0.021" => 10, "0.023" => 11,
+        "0.025" => 12, "0.027" => 13, "0.029" => 14, "0.031" => 15, "0.033" => 16, "0.035" => 17,
+        "0.037" => 18, "0.040" => 19, "0.042" => 20, "0.044" => 21, "0.046" => 22, "0.048" => 23,
+        "0.050" => 24, "0.052" => 25, "0.054" => 26, "0.056" => 27, "0.058" => 28, "0.060" => 29,
+        "0.062" => 30, "0.065" => 31, "0.067" => 32, "0.069" => 33, "0.071" => 34, "0.073" => 35,
+        "0.075" => 36, "0.077" => 37, "0.079" => 38, "0.081" => 39, "0.083" => 40, "0.085" => 41,
+        "0.087" => 42, "0.090" => 43, "0.092" => 44, "0.094" => 45, "0.096" => 46, "0.098" => 47,
+        "0.100" => 48, "0.102" => 49, "0.104" => 50, "0.106" => 51, "0.108" => 52, "0.110" => 53,
+        "0.112" => 54, "0.115" => 55, "0.117" => 56, "0.119" => 57, "0.121" => 58, "0.123" => 59,
+        "0.125" => 60
+    ];
+    public $absentLateUndertimeDeductionAmount = 0;
     
 
     public function mount(){
@@ -231,6 +246,7 @@ class GeneralPayrollTable extends Component
                 ($this->life_retirement_insurance_premiums ?: 0) +
                 ($this->pagibig_contribution ?: 0) +
                 ($this->w_holding_tax ?: 0) +
+                ($this->other_deductions ?: 0) + 
                 ($this->philhealth ?: 0);
         
         $this->total_deduction = number_format((float)$this->total_deduction, 2, '.', '');
@@ -401,10 +417,12 @@ class GeneralPayrollTable extends Component
                     $payroll->total_absent_days = $payrollDTR[$userId]['total_absent'];
                     $payroll->total_late_minutes = $payrollDTR[$userId]['total_late'];
                     $payroll->total_credits_deducted = $payrollDTR[$userId]['total_credits'];
+                    $payroll->absent_late_undertime_deduction = $payrollDTR[$userId]['absent_late_undertime_deduction'];
                 } else {
                     $payroll->total_absent_days = 0;
                     $payroll->total_late_minutes = 0;
                     $payroll->total_credits_deducted = 0.00;
+                    $payroll->absent_late_undertime_deduction = 0;
                 }
     
                 return $payroll;
@@ -489,7 +507,7 @@ class GeneralPayrollTable extends Component
                 ];
             }
 
-            // Deduct credits from leave_credits table
+            // Deduct credits from vl credits
             foreach ($payrollDTR as $employeeId => $data) {
 
                 // Check if the deduction has already been applied
@@ -499,11 +517,15 @@ class GeneralPayrollTable extends Component
                     ->first();
 
                 if ($deduction && $deduction->status == 1) {
+                    $payrollDTR[$employeeId]['absent_late_undertime_deduction'] = number_format((float) $deduction->salary_deduction_amount, 2, '.', '');
                     continue;
                 }
 
                 $totalCredits = $data['total_credits'];
                 $leaveCredits = LeaveCredits::where('user_id', $employeeId)->first();
+
+                $creditsDeduction = $totalCredits;
+                $negativeCredits = 0;
 
                 if ($leaveCredits) {
                     $leaveCredits->vl_claimable_credits -= $totalCredits;
@@ -511,13 +533,37 @@ class GeneralPayrollTable extends Component
                     // Check if credits become negative then deduct the adsents and late/undertime to the salary
                     if ($leaveCredits->vl_claimable_credits < 0) {
                         $negativeCredits = abs($leaveCredits->vl_claimable_credits);
+                        $creditsDeduction = $totalCredits - $negativeCredits;
+
+                        $creditsInDays = 0;
+                        $creditsInHours = 0;
+                        $creditsInMinutes = 0;
+
+                        if($negativeCredits >= 1){
+                            $creditsInDays = floor($negativeCredits);
+                            $negativeCredits -= $creditsInDays;
+                        }
+
+                        if($negativeCredits >= 0.125){
+                            $creditsInHours = floor($negativeCredits / 0.125);
+                            $negativeCredits -= $creditsInHours * 0.125;
+                        }
+                        
+                        if ($negativeCredits < 0.125) {
+                            foreach ($this->credits_per_minute_reversed as $credit => $minutes) {
+                                if (abs((float) $credit - $negativeCredits) < 0.001 || (float) $credit > $negativeCredits) {
+                                    $creditsInMinutes = $minutes;
+                                    break;
+                                }
+                            }
+                        }
 
                         $payroll = User::find($employeeId)->payrolls; 
                         $dailyRate = $payroll->rate_per_month / 22;
                         $hourlyRate = $dailyRate / 8;
                         $minutesRate = $hourlyRate / 60;
 
-                        $deductionAmount = $negativeCredits * $minutesRate;
+                        $this->absentLateUndertimeDeductionAmount = ($creditsInDays * $dailyRate) + ($creditsInHours * $hourlyRate) + ($creditsInMinutes * $minutesRate);
 
                         $leaveCredits->vl_claimable_credits = 0;
                     }
@@ -528,10 +574,14 @@ class GeneralPayrollTable extends Component
                     PayrollsLeaveCreditsDeduction::create([
                         'user_id' => $employeeId,
                         'month' => $startDate,
-                        'credits_deducted' => $totalCredits,
+                        'credits_deducted' => $creditsDeduction,
+                        'salary_deduction_credits' => $negativeCredits,
+                        'salary_deduction_amount' => $this->absentLateUndertimeDeductionAmount,
                         'status' => 1,
                     ]);
                 }
+
+                $payrollDTR[$employeeId]['absent_late_undertime_deduction'] = number_format((float) $this->absentLateUndertimeDeductionAmount, 2, '.', '');
             }
     
             return $payrollDTR;
@@ -548,7 +598,6 @@ class GeneralPayrollTable extends Component
         return (int)$hours * 60 + (int)$minutes;
     }
     
-
     public function toggleAllColumn() {
         if ($this->allCol) {
             foreach (array_keys($this->columns) as $col) {
@@ -674,16 +723,40 @@ class GeneralPayrollTable extends Component
                     ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                     ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
                     ->get()
-                    ->map(function ($p) {
+                    ->map(function ($p) use ($userId) {
                         $net_amount_received = $p->gross_amount - $p->total_deduction;
-                        $half_amount = $net_amount_received / 2;
 
+                        $deduction = PayrollsLeaveCreditsDeduction::where('user_id', $userId)
+                            ->whereMonth('month', Carbon::parse($this->startDateFirstHalf)->month)
+                            ->whereYear('month', Carbon::parse($this->endDateSecondHalf)->year)
+                            ->first();
+
+                        if ($deduction) {
+                            $net_amount_received -= $deduction->salary_deduction_amount;
+                        }
+
+                        $half_amount = $net_amount_received / 2;
+        
                         $amount_due_second_half = floor($half_amount);
                         $amount_due_first_half = $net_amount_received - $amount_due_second_half;
 
+                        $p->absent_late_undertime_deduction = $deduction->salary_deduction_amount;
                         $p->net_amount_received = $net_amount_received;
                         $p->amount_due_first_half = $amount_due_first_half;
                         $p->amount_due_second_half = $amount_due_second_half;
+                        $p->others = 0;
+                        $p->pbb_withholding_tax = 0;
+                        $p->hdmf_contribution = 0;
+                        $p->computer = 0;
+                        $p->nycempc_share_capital_membership = 0;
+                        $p->nycempc_loan = 0;
+                        $p->nycempc_educ_loan = 0;
+                        $p->nycempc_personal_loan = 0;
+                        $p->nycempc_business_loan = 0;
+                        $p->nycempc_dues = 0;
+                        $p->coa_dis_allowance = 0;
+                        $p->landbank_mobile_saver = 0;
+                        $p->other_deduction_phil_adjustment = 0;
 
                         return $p;
                     });
@@ -869,6 +942,7 @@ class GeneralPayrollTable extends Component
         $this->preparedBySign = null;
         $this->deleteMessage = null;
         $this->deleteId = null;
+        $this->other_deductions = null;
         
     }
 
@@ -1005,6 +1079,7 @@ class GeneralPayrollTable extends Component
                 $this->pagibig_contribution = $payroll->pagibig_contribution;
                 $this->w_holding_tax = $payroll->w_holding_tax;
                 $this->philhealth = $payroll->philhealth;
+                $this->other_deductions = $payroll->other_deductions;
                 $this->total_deduction = $payroll->total_deduction;
             } else {
                 $this->resetVariables();
@@ -1055,6 +1130,7 @@ class GeneralPayrollTable extends Component
                     'pagibig_contribution' => $this->pagibig_contribution,
                     'w_holding_tax' => $this->w_holding_tax,
                     'philhealth' => $this->philhealth,
+                    'other_deductions' => $this->other_deductions,
                     'total_deduction' => $this->total_deduction,
                 ];
         

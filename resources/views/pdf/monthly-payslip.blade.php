@@ -20,6 +20,10 @@
             white-space: nowrap;
         }
         .currency { font-family: DejaVu Sans; sans-serif; text-align: right !important; }
+
+        .hidden{
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -32,7 +36,7 @@
             return '₱ ' . number_format((float)$value, 2, '.', ',');
         };
 
-        $gross_earnings = $payslip->rate_per_month - $payslip->late_absences;
+        $gross_earnings = $payslip->rate_per_month - $payslip->absent_late_undertime_deduction;
         $total_earnings = $gross_earnings + $payslip->personal_economic_relief_allowance;
     @endphp
 
@@ -97,7 +101,7 @@
                 <tr>
                     <td class="dots">Less: Late & Absences...........................................................................................................
                     </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip->late_absences) }}</td>
+                    <td class="currency" width="30%">{{ $formatCurrency($payslip->absent_late_undertime_deduction) }}</td>
                 </tr>
                 {{-- <tr>
                     <td class="dots">Leave Without Pay..................................................................................................................
@@ -114,10 +118,10 @@
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->personal_economic_relief_allowance) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->others ?: 'hidden' }}">
                     <td class="dots">OTHERS.................................................................................................................................
                     </td>
-                    <td class="currency" width="30%">{{ $formatCurrency(0) }}</td>
+                    <td class="currency" width="30%">{{ $formatCurrency($payslip->others) }}</td>
                 </tr>
                 <tr>
                     <td class="dots" style="text-align: right !important; padding-right: 20px; font-weight:bold;">Total Earnings</td>
@@ -130,35 +134,35 @@
 
         <table>
             <tbody>
-                <tr>
+                <tr class="{{ $payslip->additional_gsis_premium ?: 'hidden' }}">
                     <td class="dots">GSIS Premium.........................................................................................................................
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->additional_gsis_premium) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->w_holding_tax ?: 'hidden' }}">
                     <td class="dots">BIR Witholding Tax..................................................................................................................
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->w_holding_tax) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->pbb_withholding_tax ?: 'hidden' }}">
                     <td class="dots">PBB Witholding Tax.................................................................................................................
                     </td>
-                    <td class="currency" width="30%">{{ $formatCurrency(0) }}</td>
+                    <td class="currency" width="30%">{{ $formatCurrency($payslip->pbb_withholding_tax) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->philhealth ?: 'hidden' }}">
                     <td class="dots">Philhealth Contribution.............................................................................................................
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->philhealth) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->pagibig_contribution ?: 'hidden' }}">
                     <td class="dots">Pag-Ibig Contribution...............................................................................................................
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->pagibig_contribution) }}</td>
                 </tr>
-                <tr>
+                <tr  class="{{ $payslip->hdmf_contribution ?: 'hidden' }}">
                     <td class="dots">HDMF Contribution...................................................................................................................
                     </td>
-                    <td class="currency" width="30%">{{ $formatCurrency(0) }}</td>
+                    <td class="currency" width="30%">{{ $formatCurrency($payslip->hdmf_contribution) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -167,7 +171,17 @@
 
         <table>
             <tbody>
-                <tr>
+                <tr  class="{{  
+                    $payslip->salary_loan && 
+                    $payslip->policy_loan && 
+                    $payslip->eal && 
+                    $payslip->emergency_loan && 
+                    $payslip->mpl && 
+                    $payslip->housing_loan && 
+                    $payslip->computer && 
+                    $payslip->ouli_prem && 
+                    $payslip->gfal 
+                    ? '' : 'hidden' }}">
                     <td width="20%"></td>
                     <td width="15%"></td>
                     <td width="15%">Effective Date</td>
@@ -180,47 +194,47 @@
 
         <table>
             <tbody>
-                <tr>
+                <tr class="{{ $payslip->salary_loan ?: 'hidden' }}">
                     <td class="dots">GSIS - Salary Loan..................................................................................................................
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->salary_loan) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->policy_loan ?: 'hidden' }}">
                     <td class="dots">Policy Loan..............................................................................................................................
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->policy_loan) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->eal ?: 'hidden' }}">
                     <td class="dots">EAL..........................................................................................................................................
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->eal) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->emergency_loan ?: 'hidden' }}">
                     <td class="dots">Emergency Loan......................................................................................................................
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->emergency_loan) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->mpl ?: 'hidden' }}">
                     <td class="dots">MPL..........................................................................................................................................
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->mpl) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->housing_loan ?: 'hidden' }}">
                     <td class="dots">Housing....................................................................................................................................
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->housing_loan) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->computer ?: 'hidden' }}">
                     <td class="dots">Computer..................................................................................................................................
                     </td>
-                    <td class="currency" width="30%">{{ $formatCurrency(0) }}</td>
+                    <td class="currency" width="30%">{{ $formatCurrency($payslip->computer) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->ouli_prem ?: 'hidden' }}">
                     <td class="dots">OULI.........................................................................................................................................
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->ouli_prem) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->gfal ?: 'hidden' }}">
                     <td class="dots">GFAL........................................................................................................................................
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->gfal) }}</td>
@@ -232,48 +246,57 @@
 
         <table>
             <tbody>
-                <tr>
+                <tr class="{{ $payslip->mpl ?: 'hidden' }}">
                     <td class="dots">HDMF - Multi-Purpose Loan (MPL)..........................................................................................
                     </td>
                     <td class="currency" width="30%">{{ $formatCurrency($payslip->mpl) }}</td>
                 </tr>
                 <tr>
-                    <td class="dots">Other Loans/Payments</td>
+                    <td class="dots {{  
+                        $payslip->nycempc_share_capital_membership && 
+                        $payslip->nycempc_loan && 
+                        $payslip->nycempc_educ_loan && 
+                        $payslip->nycempc_personal_loan && 
+                        $payslip->nycempc_business_loan && 
+                        $payslip->nycempc_dues && 
+                        $payslip->coa_dis_allowance 
+                        ? '' : 'hidden' }}"
+                    >Other Loans/Payments</td>
                     <td class="currency" width="30%"></td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->nycempc_share_capital_membership ?: 'hidden' }}">
                     <td class="dots" style="padding-left: 20px;">NYCEMPC Share Capital/Membership............................................................................
                     </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip->eal) }}</td>
+                    <td class="currency" width="30%">{{ $formatCurrency($payslip->nycempc_share_capital_membership) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->nycempc_loan  ?: 'hidden' }}">
                     <td class="dots" style="padding-left: 20px;">NYCEMPC Loan (MPL)....................................................................................................
                     </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip->emergency_loan) }}</td>
+                    <td class="currency" width="30%">{{ $formatCurrency($payslip->nycempc_loan) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->nycempc_educ_loan ?: 'hidden' }}">
                     <td class="dots" style="padding-left: 20px;">NYCEMPC Educ. Loan (EL).............................................................................................
                     </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip->mpl) }}</td>
+                    <td class="currency" width="30%">{{ $formatCurrency($payslip->nycempc_educ_loan) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->nycempc_personal_loan ?: 'hidden' }}">
                     <td class="dots" style="padding-left: 20px;">NYCEMPC Personal Loan (PL)........................................................................................
                     </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip->housing_loan) }}</td>
+                    <td class="currency" width="30%">{{ $formatCurrency($payslip->nycempc_personal_loan) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->nycempc_business_loan ?: 'hidden' }}">
                     <td class="dots" style="padding-left: 20px;">NYCEMPC Business Loan...............................................................................................
-                    <td class="currency" width="30%">{{ $formatCurrency(0) }}</td>
+                    <td class="currency" width="30%">{{ $formatCurrency($payslip->nycempc_business_loan) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->nycempc_dues ?: 'hidden' }}">
                     <td class="dots" style="padding-left: 20px;">NYCEMPC Dues...............................................................................................................
                     </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip->ouli_prem) }}</td>
+                    <td class="currency" width="30%">{{ $formatCurrency($payslip->nycempc_dues) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->coa_dis_allowance ?: 'hidden' }}">
                     <td class="dots" style="padding-left: 20px;">COA Dis Allowance...........................................................................................................
                     </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip->gfal) }}</td>
+                    <td class="currency" width="30%">{{ $formatCurrency($payslip->coa_dis_allowance) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -282,15 +305,15 @@
 
         <table>
             <tbody>
-                <tr>
+                <tr class="{{ $payslip->landbank_mobile_saver ?: 'hidden' }}">
                     <td class="dots">Landbank Mobile Saver............................................................................................................
                     </td>
-                    <td class="currency" width="30%">-</td>
+                    <td class="currency" width="30%">{{ $formatCurrency($payslip->landbank_mobile_saver) }}</td>
                 </tr>
-                <tr>
+                <tr class="{{ $payslip->other_deductions ?: 'hidden' }}">
                     <td class="dots" style="padding-left: 20px;">Other Deductions (Philhealth Adjustment)........................................................................
                     </td>
-                    <td class="currency" width="30%" style="border-bottom: 1px solid black;">-</td>
+                    <td class="currency" width="30%" style="border-bottom: 1px solid black;">{{ $formatCurrency($payslip->other_deductions) }}</td>
                 </tr>
                 <tr>
                     <td class="dots" style="text-align: right !important; padding-right: 20px; font-weight:bold;">Total Deductions</td>

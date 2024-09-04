@@ -15,6 +15,8 @@ return new class extends Migration
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
                 $table->date('month')->nullable();
                 $table->double('credits_deducted')->nullable();        
+                $table->double('salary_deduction_credits')->nullable();        
+                $table->double('salary_deduction_amount')->nullable();        
                 $table->boolean('status')->nullable();
                 $table->timestamps();
             });
