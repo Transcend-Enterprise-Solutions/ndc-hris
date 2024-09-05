@@ -12,7 +12,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
-class PerOfficeDivisionExport implements FromCollection, WithEvents
+class PerUnitExport implements FromCollection, WithEvents
 {
     use Exportable;
 
@@ -89,9 +89,7 @@ class PerOfficeDivisionExport implements FromCollection, WithEvents
         $sheet->mergeCells('A2:L2');
         $sheet->setCellValue('A2', "NATIONAL YOUTH COMMISSION");
         $sheet->mergeCells('A3:L3');
-
-        $statuses = $this->filters['statuses'][0] === 'All' ? 'All' : implode(' | ', $this->filters['statuses']);
-        $sheet->setCellValue('A3', $this->filters['office_division'] . " - Employee List (" . $statuses . ")");
+        $sheet->setCellValue('A3', $this->filters['office_division'] . " - ". $this->filters['unit'] ." (Employee List)");
 
         // Apply some basic styling
         $sheet->getStyle('A1:L3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
@@ -128,7 +126,7 @@ class PerOfficeDivisionExport implements FromCollection, WithEvents
             return '₱ ' . number_format((float)$value, 2, '.', ',');
         };
 
-        return $this->filters['organizations']->get()
+        return $this->filters['users']->get()
             ->map(function ($user) use ($formatDate, $formatCurrency) {
                 $this->rowNumber++;
                 $sg_step = null;

@@ -1,7 +1,7 @@
 <div class="w-full flex justify-center"
 x-data="{ 
     selectedTab: 'cos',
-     selectedSubTab: 'payroll',
+    selectedSubTab: 'payroll',
 }" 
 x-cloak>
 

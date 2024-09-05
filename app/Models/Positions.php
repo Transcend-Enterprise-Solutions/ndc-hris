@@ -20,4 +20,8 @@ class Positions extends Model
     public function officeDivisions(){
         return $this->belongsTo(OfficeDivisions::class);
     }
+
+    public function user(){
+        return $this->hasOne(User::class, 'position_id');
+    }
 }

@@ -4,6 +4,8 @@ namespace App\Livewire\Admin;
 
 use App\Exports\AdminRolesExport;
 use App\Exports\PerOfficeDivisionExport;
+use App\Exports\PerUnitExport;
+use App\Imports\SalaryGradeImport;
 use App\Models\CosRegPayrolls;
 use App\Models\CosSkPayrolls;
 use App\Models\OfficeDivisions;
@@ -17,12 +19,12 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
-
-use function PHPUnit\Framework\isEmpty;
+use App\Exports\SalaryGradeExport;
+use Livewire\WithFileUploads;
 
 class RoleManagementTable extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
     public $addRole;
     public $editRole;
     public $employees;
@@ -73,6 +75,7 @@ class RoleManagementTable extends Component
     public $positionId;
     public $officeDivisionId;
     public $unitId;
+    public $file;
 
     public $status = [
         'active' => true,
@@ -119,7 +122,7 @@ class RoleManagementTable extends Component
                     'office_divisions.office_division',
                     'office_division_units.unit'
                 )
-                ->paginate(5);
+                ->paginate(10);
                 
             $empPos = User::where('user_role', 'emp')
                 ->join('user_data', 'user_data.user_id', 'users.id')
@@ -149,13 +152,15 @@ class RoleManagementTable extends Component
                 ->when($this->search3, function ($query) {
                     return $query->search(trim($this->search3));
                 })
-                ->paginate(5);
+                ->paginate(10);
             
 
         $organizations = User::where('user_role', 'emp')
                 ->join('user_data', 'user_data.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
+                ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
                 ->where('users.active_status', '!=', 4)
                 ->select(
                     'users.name', 
@@ -163,7 +168,15 @@ class RoleManagementTable extends Component
                     'users.active_status', 
                     'positions.position', 
                     'user_data.appointment', 
-                    'office_divisions.office_division')
+                    'office_divisions.office_division',
+                    DB::raw('
+                        CASE 
+                            WHEN cos_reg_payrolls.id IS NOT NULL THEN "REG"
+                            WHEN cos_sk_payrolls.id IS NOT NULL THEN "SK"
+                            ELSE ""
+                        END as appointment_type'
+                    )
+                )
                 ->when($this->search2, function ($query) {
                     return $query->search(trim($this->search2));
                 })
@@ -197,6 +210,11 @@ class RoleManagementTable extends Component
         $this->positionsByUnit = OfficeDivisionUnits::with(['positions' => function($query) {
             $query->where('position', '!=', 'Super Admin')->whereNotNull('unit_id');
             }])->get();
+
+
+        if($this->file){
+            $this->importFromExcel();
+        }
                 
 
         return view('livewire.admin.role-management-table',[
@@ -321,6 +339,57 @@ class RoleManagementTable extends Component
             ];
             return Excel::download(new PerOfficeDivisionExport($filters), $division . '_EmployeesList.xlsx');
         } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function exportEmployeesPerUnit($unitId = null, $divId){
+        try{
+            $users = User::where('users.office_division_id', $divId)
+                        ->join('positions', 'positions.id', 'users.position_id')
+                        ->where('positions.position', '!=', 'Super Admin')
+                        ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                        ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
+                        ->join('user_data', 'user_data.user_id', 'users.id')
+                        ->leftJoin('payrolls', 'payrolls.user_id', 'users.id')
+                        ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
+                        ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
+                        ->select(
+                            'users.name', 
+                            'users.email', 
+                            'users.emp_code', 
+                            'users.active_status', 
+                            'positions.position', 
+                            'user_data.appointment', 
+                            'user_data.date_hired', 
+                            'office_divisions.office_division',
+                            'office_division_units.unit',
+                            'payrolls.sg_step as plantilla_sg_step',
+                            'payrolls.rate_per_month as plantilla_rate',
+                            'cos_sk_payrolls.sg_step as cos_sk_sg_step',
+                            'cos_sk_payrolls.rate_per_month as cos_sk_rate',
+                            'cos_reg_payrolls.sg_step as cos_reg_sg_step',
+                            'cos_reg_payrolls.rate_per_month as cos_reg_rate',
+                        );
+
+            if ($unitId === null) {
+                $users->whereNull('users.unit_id');
+            } else {
+                $users->where('users.unit_id', $unitId);
+            }
+
+            $unit = OfficeDivisionUnits::where('id', $unitId)->first();
+            $officeDivison = OfficeDivisions::where('id', $divId)->first();
+            if($users){
+                $filters = [
+                    'users' => $users,
+                    'unit' => $unit ? $unit->unit : '',
+                    'office_division' => $officeDivison->office_division,
+                ];
+                $filename = $officeDivison->office_division . "-" . ($unit ? $unit->unit : '') . " EmployeesList.xlsx";
+                return Excel::download(new PerUnitExport($filters), $filename);
+            }
+        }catch(Exception $e){
             throw $e;
         }
     }
@@ -898,6 +967,52 @@ class RoleManagementTable extends Component
         $this->deleteId = $id;
         $this->data = $data;
         $this->deleteMessage = $data;
+    }
+
+    public function exportSalaryGrade(){
+        $sgStep = SalaryGrade::all();
+        $filters = [
+            'sgStep' => $sgStep,
+        ];
+        return Excel::download(new SalaryGradeExport ($filters), 'Salary-Grades.xlsx');
+    }
+
+    public function importFromExcel(){
+        $this->validate([
+            'file' => 'required|file|mimes:xlsx,xls',
+        ]);
+
+        try {
+            DB::beginTransaction();
+            
+            Excel::import(new SalaryGradeImport, $this->file);
+            
+            DB::commit();
+            
+            $this->dispatch('swal', [
+                'title' => "Salary Grade imported successfully!",
+                'icon' => 'success'
+            ]);
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            DB::rollBack();
+            $failures = $e->failures();
+            $errorMessages = collect($failures)->map(function ($failure) {
+                return "Row {$failure->row()}: {$failure->errors()[0]}";
+            })->implode(', ');
+            
+            $this->dispatch('swal', [
+                'title' => "Please upload the correct Salary Grade excel file!",
+                'icon' => 'error'
+            ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            $this->dispatch('swal', [
+                'title' => 'An error occurred during import: ' . $e->getMessage(),
+                'icon' => 'error'
+            ]);
+        }
+
+        $this->file = null;
     }
 
     public function resetVariables(){

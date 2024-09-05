@@ -1,6 +1,7 @@
 <div class="w-full"
 x-data="{ 
-    selectedTab: 'role',
+    selectedTab: 'org',
+    selectedSubTab: 'positions',
 }" 
 x-cloak>
 
@@ -70,7 +71,7 @@ x-cloak>
 
             <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
 
-                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'org'">
+                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'org' && selectedSubTab === 'headcount'">
                     <label for="search2" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
                     <input type="text" id="search2" wire:model.live="search2"
                         class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
@@ -97,7 +98,7 @@ x-cloak>
                         placeholder="Enter employee name or ID">
                 </div>
 
-                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'settings'">
+                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'settings' || selectedSubTab === 'positions'">
                     <label for="search4" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
                     <input type="text" id="search4" wire:model.live="search4"
                         class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
@@ -234,7 +235,21 @@ x-cloak>
                             <div>
                                 <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
                                     <div x-show="selectedTab === 'org'">
-                                        <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                        <div class="overflow-x-hidden">
+                                            <div class="flex gap-2 overflow-x-auto dark:bg-gray-700 bg-gray-200 rounded-t-lg">
+                                                <button @click="selectedSubTab = 'headcount'" 
+                                                        :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab === 'headcount', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab !== 'headcount' }" 
+                                                        class="h-min px-4 pt-2 pb-2 text-sm no-wrap">
+                                                    Headcounts
+                                                </button>
+                                                <button @click="selectedSubTab = 'positions'" 
+                                                        :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab === 'positions', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab !== 'positions' }" 
+                                                        class="h-min px-4 pt-2 pb-2 text-sm no-wrap">
+                                                    Position Distribution
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700" x-show="selectedSubTab === 'headcount'">
                                             @forelse ($organizations as $division => $users)
                                                 <div class="block lg:flex w-full bg-white dark:bg-gray-600 mb-5" style="max-height: 300px">
                                                     <div class="pb-4 flex flex-col gap-2 sm:w-1/5 bg-gray-50 dark:bg-gray-800 relative">
@@ -313,7 +328,7 @@ x-cloak>
                                                                                         @if($user->appointment == "ct")
                                                                                             Co-Terminus
                                                                                         @else
-                                                                                            {{ $user->appointment }}
+                                                                                            {{ $user->appointment }} {{ $user->appointment_type ? '- ' . $user->appointment_type : '' }}
                                                                                         @endif
                                                                                     @endif
                                                                                 </td>
@@ -344,6 +359,191 @@ x-cloak>
                                                     No records found!
                                                 </div>
                                             @endforelse
+                                        </div>
+                                        <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700" x-show="selectedSubTab === 'positions'">
+                                            @foreach ($officeDivisions as $officeDivision)
+
+                                                <!-- Office/Division Header -->
+                                                <div class="flex justify-between items-center w-full py-1.5 bg-gray-50 dark:bg-gray-800 px-4">
+                                                    <div class="flex items-end">
+                                                        <i class="bi bi-building mr-2 text-emerald-500 dark:text-emerald-300 mr-2"></i>
+                                                        <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-300">{{ $officeDivision->office_division }}</h3>
+                                                    </div>
+                                                </div>
+                                        
+                                                <div class="w-full p-4 flex flex-col mb-6 bg-white dark:bg-gray-600">
+                                                    <div class="w-full">
+                                                        <div class="flex justify-left items-center w-full">
+                                                            <h3 class="text-xs font-semibold text-gray-300 dark:text-gray-500">POSITIONS</h3>
+                                                            <button wire:click="exportEmployeesPerUnit(null, {{ $officeDivision->id }})" 
+                                                                class="peer inline-flex items-center justify-center px-2
+                                                                text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
+                                                                title="Export List">
+                                                                <img class="flex dark:hidden" src="/images/icons8-xls-export-dark.png" width="18" alt="" wire:loading.remove wire:target="exportEmployeesPerUnit(null, {{ $officeDivision->id }})">
+                                                                <img class="hidden dark:block" src="/images/icons8-xls-export-light.png" width="18" alt="" wire:loading.remove wire:target="exportEmployeesPerUnit(null, {{ $officeDivision->id }})">
+                                                                <div wire:loading wire:target="exportEmployeesPerUnit(null, {{ $officeDivision->id }})" style="margin-left: 5px">
+                                                                    <div class="spinner-border small text-primary" role="status">
+                                                                    </div>
+                                                                </div>
+                                                            </button>
+                                                        </div>
+                                                        @if($officeDivision->positions->isNotEmpty())
+                                                            <div class="pb-2 px-2 sm:w-4/5 flex flex-col">
+                                                                <div class="overflow-x-auto overflow-y-hidden">
+                                                                    <table class="w-full">
+                                                                        <thead class="bg-white dark:bg-gray-600 text-gray-300 dark:text-gray-400">
+                                                                            <tr class="whitespace-nowrap border-b border-gray-100 dark:border-gray-500">
+                                                                                <th width="30%" scope="col" class="px-2 py-3 text-xs font-medium text-left uppercase sticky top-0 bg-white dark:bg-gray-600">
+                                                                                    Position
+                                                                                </th>
+                                                                                <th width="30%" scope="col" class="px-2 py-3 text-xs font-medium text-left uppercase sticky top-0 bg-white dark:bg-gray-600">
+                                                                                    Name
+                                                                                </th>
+                                                                                <th width="5%" scope="col" class="px-2 py-3 text-xs font-medium text-center uppercase sticky top-0 bg-white dark:bg-gray-600">
+                                                                                    Status
+                                                                                </th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                    </table>
+                                                                </div>
+                                                                <div class="overflow-y-auto flex-grow scrollbar-thin1" style="max-height: calc(300px - 3rem);">
+                                                                    <table class="w-full">
+                                                                        <tbody>
+                                                                            @foreach ($officeDivision->positions as $position)
+                                                                                @php
+                                                                                    $user1 = App\Models\User::where('position_id', $position->id)
+                                                                                    ->where('office_division_id', $officeDivision->id)
+                                                                                    ->whereNull('unit_id')
+                                                                                    ->select('users.name', 'users.active_status')
+                                                                                    ->first();
+                                                                                @endphp
+                                                                                <tr class="text-neutral-800 dark:text-neutral-200 border-b border-gray-100 dark:border-gray-500 {{ $user1 ? '!text-teal-500' : '' }}">
+                                                                                    <td width="30%" class="px-2 py-2 text-left text-xs text-nowrap {{ $user1 ? '!font-bold' : '' }}">
+                                                                                        {{ $position->position }}
+                                                                                    </td>
+                                                                                    <td width="30%" class="px-2 py-2 text-left text-xs text-nowrap">
+                                                                                        {{ $user1 ? $user1->name : '' }}
+                                                                                    </td>                                                                
+                                                                                    <td width="5%" class="px-2 py-2 text-center text-xs text-nowrap">
+                                                                                        <span title="
+                                                                                            {{ $user1 && $user1->active_status == 0 ? 'Status: Inactive' : '' }} 
+                                                                                            {{ $user1 && $user1->active_status == 1 ? 'Status: Active' : '' }} 
+                                                                                            {{ $user1 && $user1->active_status == 2 ? 'Status: Resigned' : '' }} 
+                                                                                            {{ $user1 && $user1->active_status == 3 ? 'Status: Retired' : '' }}"
+                                                                                            class="inline-block px-3 py-1 text-xs font-semibold 
+                                                                                            {{ $user1 && $user1->active_status == 0 ? 'text-red-400' : '' }} 
+                                                                                            {{ $user1 && $user1->active_status == 1 ? 'text-green-400' : '' }} 
+                                                                                            {{ $user1 && $user1->active_status == 2 ? 'text-yellow-400' : '' }} 
+                                                                                            {{ $user1 && $user1->active_status == 3 ? 'text-purple-400' : '' }}">
+                                                                                            {{ $user1 ? '⦿' : '' }}
+                                                                                        </span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            @endforeach
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                    <div class="w-full pt-4">
+                                                        <h3 class="text-xs font-semibold text-gray-300 dark:text-gray-500">UNITS</h3>
+                                                        <!-- Units under the Office/Division -->
+                                                        @if($officeDivision->officeDivisionUnits->isNotEmpty())
+                                                            <div class="flex overflow-x-auto pb-4">
+                                                                @foreach ($officeDivision->officeDivisionUnits as $unit)
+                                                                    <!-- Unit Header -->
+                                                                    <div class="block px-4 border-l boder-gray-300 dark:border-gray-500 w-auto">
+                                                                        <div class="flex justify-left items-center w-full py-1" style="min-width: 100px">
+                                                                            <img class="flex dark:hidden" src="/images/unit-dark.png" width="15" alt="">
+                                                                            <img class="hidden dark:block" src="/images/unit-light.png" width="15" alt="">
+                                                                            <h4 class="ml-2 text-sm text-gray-500 dark:text-gray-300">{{ $unit->unit }}</h4>
+                                                                            <button wire:click="exportEmployeesPerUnit({{ $unit->id }}, {{ $officeDivision->id }})" 
+                                                                                class="peer inline-flex items-center justify-center px-2
+                                                                                text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
+                                                                                title="Export List">
+                                                                                <img class="flex dark:hidden" src="/images/icons8-xls-export-dark.png" width="18" alt="" wire:loading.remove wire:target="exportEmployeesPerUnit({{ $unit->id }}, {{ $officeDivision->id }})">
+                                                                                <img class="hidden dark:block" src="/images/icons8-xls-export-light.png" width="18" alt="" wire:loading.remove wire:target="exportEmployeesPerUnit({{ $unit->id }}, {{ $officeDivision->id }})">
+                                                                                <div wire:loading wire:target="exportEmployeesPerUnit({{ $unit->id }}, {{ $officeDivision->id }})" style="margin-left: 5px">
+                                                                                    <div class="spinner-border small text-primary" role="status">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="flex justify-between items-center w-full">
+                                                                            <h3 class="text-xs font-semibold text-gray-300 dark:text-gray-500">POSITIONS</h3>
+                                                                        </div>
+                                                                        <!-- Positions under the Unit -->
+                                                                        @if($unit->positions->isNotEmpty())
+                                                                            <div class="pb-2 pr-2 w-full flex flex-col" style="min-width: 100px">
+                                                                                <div class="overflow-x-auto overflow-y-hidden">
+                                                                                    <table class="w-full">
+                                                                                        <thead class="bg-white dark:bg-gray-600 text-gray-300 dark:text-gray-400">
+                                                                                            <tr class="whitespace-nowrap border-b border-gray-100 dark:border-gray-500" style="font-size: 10px">
+                                                                                                <th width="40%" scope="col" class="px-2 py-3 font-medium text-left uppercase sticky top-0 bg-white dark:bg-gray-600">
+                                                                                                    Position
+                                                                                                </th>
+                                                                                                <th width="40%" scope="col" class="px-2 py-3 font-medium text-left uppercase sticky top-0 bg-white dark:bg-gray-600">
+                                                                                                    Name
+                                                                                                </th>
+                                                                                                <th width="2%" scope="col" class="px-2 py-3 font-medium text-center uppercase sticky top-0 bg-white dark:bg-gray-600">
+                                                                                                    Status
+                                                                                                </th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                    </table>
+                                                                                </div>
+                                                                                <div class="overflow-y-auto flex-grow scrollbar-thin1" style="max-height: calc(300px - 3rem);">
+                                                                                    <table class="w-full">
+                                                                                        <tbody>
+                                                                                            @foreach ($unit->positions as $position)
+                                                                                                @php
+                                                                                                    $user = App\Models\User::where('users.office_division_id', $officeDivision->id)
+                                                                                                                ->where('users.unit_id', $unit->id)
+                                                                                                                ->where('users.position_id', $position->id)
+                                                                                                                ->join('positions', 'positions.id', 'users.position_id')
+                                                                                                                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                                                                                                                ->join('office_division_units', 'office_division_units.id', 'users.unit_id')
+                                                                                                                ->select('users.name', 'users.active_status')
+                                                                                                                ->first();
+                                                                                                @endphp
+                                                                                                <tr class="text-neutral-800 dark:text-neutral-200 border-b border-gray-100 dark:border-gray-500 {{ $user ? '!text-teal-500' : '' }}">
+                                                                                                    <td width="40%" class="px-2 py-2 text-left text-xs text-nowrap {{ $user ? '!font-bold' : '' }}">
+                                                                                                        {{ $position->position }}
+                                                                                                    </td>
+                                                                                                    <td width="40%" class="px-2 py-2 text-left text-xs text-nowrap">
+                                                                                                        {{ $user ? $user->name : '' }}
+                                                                                                    </td>                                                                
+                                                                                                    <td width="20%" class="px-2 py-2 text-center text-xs text-nowrap">
+                                                                                                        <span title="
+                                                                                                            {{ $user && $user->active_status == 0 ? 'Status: Inactive' : '' }} 
+                                                                                                            {{ $user && $user->active_status == 1 ? 'Status: Active' : '' }} 
+                                                                                                            {{ $user && $user->active_status == 2 ? 'Status: Resigned' : '' }} 
+                                                                                                            {{ $user && $user->active_status == 3 ? 'Status: Retired' : '' }}"
+                                                                                                            class="inline-block px-3 py-1 text-xs font-semibold 
+                                                                                                            {{ $user && $user->active_status == 0 ? 'text-red-400' : '' }} 
+                                                                                                            {{ $user && $user->active_status == 1 ? 'text-green-400' : '' }} 
+                                                                                                            {{ $user && $user->active_status == 2 ? 'text-yellow-400' : '' }} 
+                                                                                                            {{ $user && $user->active_status == 3 ? 'text-purple-400' : '' }}">
+                                                                                                            {{ $user ? '⦿' : '' }}
+                                                                                                        </span>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            @endforeach
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </div>
+                                                                        @endif
+                                                                                                                                                
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>                                       
+
+                                            @endforeach
                                         </div>
                                      </div>
                                     <div x-show="selectedTab === 'role'">
@@ -673,7 +873,6 @@ x-cloak>
 
                                             @endforeach
                                         </div>
-                                    
                                      </div>
                                     <div x-show="selectedTab === 'sgstep'">
                                         <div class="overflow-x-auto">
@@ -691,8 +890,30 @@ x-cloak>
                                                     <!-- SG/STEP -->
                                                     <div class="col-span-full sm:col-span-12  bg-gray-200 dark:bg-gray-700 rounded-lg shadow block">
                                                         <div class="flex flex-col items-center w-full pb-2 my-4">
-                                                            <div class="flex justify-left items-center mb-4">
+                                                            <div class="flex justify-center sm:justify-between items-center mb-4 w-full px-4">
                                                                 <h3 class="text-sm font-semibold text-black dark:text-gray-200 uppercase">Salary Grade & Step</h3>
+                                                                <div class="flex items-center">
+                                                                    <input type="file" id="salaryGrade" wire:model.live="file" style="display: none;" accept=".xlsx, .xls">
+                                                                    @if($file)
+                                                                        <p class="text-xs text-gray-600 dark:text-gray-100 mr-2">File selected: {{ $file->getClientOriginalName() }}</p>
+                                                                    @endif
+                                                                    @error('file') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                                                                    <button type="button" class="text-xs bg-green-500 hover:bg-green-700 text-white py-1 px-2 rounded" title="Import Salary Grade"
+                                                                        onclick="document.getElementById('salaryGrade').click()">
+                                                                        <i class="bi bi-upload" wire:target='file' wire:loading.remove></i>
+                                                                        <div wire:loading wire:target="file">
+                                                                            <div class="spinner-border small text-primary" role="status">
+                                                                            </div>
+                                                                        </div>
+                                                                    </button>
+                                                                    <button type="button" class="text-xs bg-green-500 hover:bg-green-700 text-white py-1 px-2 rounded ml-2" title="Export Salary Grade" wire:click='exportSalaryGrade'>
+                                                                        <i class="bi bi-download" wire:target='exportSalaryGrade' wire:loading.remove></i>
+                                                                        <div wire:loading wire:target="exportSalaryGrade">
+                                                                            <div class="spinner-border small text-primary" role="status">
+                                                                            </div>
+                                                                        </div>
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                             <div class="w-full overflow-hidden border dark:border-gray-700">
                                                                 <div class="overflow-x-auto">
@@ -711,7 +932,7 @@ x-cloak>
                                                                                 <th class="py-2 px-2 text-center sticky right-0 z-10 bg-gray-100 dark:bg-slate-800">Actions</th>
                                                                             </tr>
                                                                         </thead>
-                                                                        <tbody class="divide-y divide-neutral-200 dark:divide-gray-400 dark:bg-gray-700" style="font-size: 11px">
+                                                                        <tbody class="divide-y divide-neutral-200 dark:divide-gray-400 dark:bg-gray-700" style="font-size: 11px" wire:target='file' wire:loading.remove>
                                                                             @foreach ($salaryGrades as $salaryGrade)
                                                                                 <tr class="border-b border-gray-200 hover:bg-gray-100 !hover:text-gray-800">
                                                                                     <td class="py-2 px-2 text-left whitespace-nowrap text-gray-800 dark:text-gray-300">
@@ -726,12 +947,12 @@ x-cloak>
                                                                                         <div class="relative">
                                                                                             <button wire:click="editSG({{ $salaryGrade->id }})" 
                                                                                                 class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                                                -mr-2 text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600 
                                                                                                 focus:outline-none" title="Edit">
                                                                                                 <i class="fas fa-pencil-alt"></i>
                                                                                             </button>
                                                                                             <button wire:click="toggleDeleteSG({{ $salaryGrade->id }}, 'salary grade')" 
-                                                                                                class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                                                class="text-xs text-red-600 hover:text-red-900 dark:text-red-600 
                                                                                                 dark:hover:text-red-900" title="Delete">
                                                                                                 <i class="fas fa-trash"></i>
                                                                                             </button>
@@ -742,7 +963,7 @@ x-cloak>
                                                                         </tbody>
                                                                     </table>
                                                                 </div>
-                                                                <div class="text-xs flex justify-center items-center mt-4">
+                                                                <div class="text-xs flex justify-center items-center mt-4" wire:target='file' wire:loading.remove>
                                                                     <button wire:click="openSGModal" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">
                                                                         Add Salary Grade
                                                                     </button>

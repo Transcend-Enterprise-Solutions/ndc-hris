@@ -162,7 +162,7 @@ class Registration extends Component
             'emp_code' => 'required|unique:users,emp_code|numeric|min:0',
             'selectedPosition' => 'required|exists:positions,id',
             'selectedOfficeDivision' => 'required|exists:office_divisions,id',
-            'selectedUnit' => 'required|exists:office_division_unit,id',
+            // 'selectedUnit' => 'required|exists:office_division_unit,id',
             'date_hired' => 'required|date',
             'appointment' => 'required',
         ]);
