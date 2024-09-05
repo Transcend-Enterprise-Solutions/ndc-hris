@@ -97,7 +97,7 @@
 
                         <!-- End Date -->
                         <div class="flex mb-4 md:mb-0">
-                            <div>
+                            <div class="flex flex-col mb-4 md:mb-0">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">End
                                     Date:</label>
                                 <input type="month" wire:model.live="endDate"
@@ -105,23 +105,25 @@
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800">
                             </div>
-                            <div class="flex items-end">
-                                <button wire:click="exportExcel"
-                                    class="flex justify-center items-center px-2 transition-opacity duration-300 {{ $isDisabled ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer' }}"
-                                    type="button" title="Export Leave Card" {{ $isDisabled ? 'disabled' : '' }}>
-                                    <img class="flex dark:hidden" src="/images/export-excel.png" width="40"
-                                        alt="" wire:target="exportExcel" wire:loading.remove>
-                                    <img class="hidden dark:block" src="/images/export-excel-dark.png" width="40"
-                                        alt="" wire:target="exportExcel" wire:loading.remove>
-                                    <div wire:loading wire:target="exportExcel">
-                                        <div class="spinner-border small text-primary" role="status"></div>
-                                    </div>
-                                </button>
-                            </div>
                         </div>
 
                         <!-- Export Button -->
-
+                        <div class="flex items-end">
+                            <button wire:click="exportExcel"
+                                class="mt-4 sm:mt-0 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                                    justify-center px-4 py-1.5 text-sm font-medium tracking-wide
+                                    text-neutral-800 dark:text-neutral-200 transition-colors duration-200
+                                    rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none {{ $isDisabled ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer' }}"
+                                type="button" title="Export Leave Card" {{ $isDisabled ? 'disabled' : '' }}>
+                                <img class="flex dark:hidden" src="/images/export-excel.png" width="22"
+                                    alt="exportExcel" wire:target="exportExcel" wire:loading.remove>
+                                <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22"
+                                    alt="exportExcel" wire:target="exportExcel" wire:loading.remove>
+                                <div wire:loading wire:target="exportExcel">
+                                    <div class="spinner-border small text-primary" role="status"></div>
+                                </div>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
