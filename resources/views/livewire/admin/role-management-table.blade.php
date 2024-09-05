@@ -1,7 +1,7 @@
 <div class="w-full"
 x-data="{ 
     selectedTab: 'org',
-    selectedSubTab: 'positions',
+    selectedSubTab: 'headcount',
 }" 
 x-cloak>
 
