@@ -12,6 +12,7 @@ class Notification extends Model
     protected $fillable = [
         'user_id',
         'doc_request_id',
+        'leave_application_id',
         'type',
         'notif',
         'read',
@@ -33,4 +34,8 @@ class Notification extends Model
         return $this->belongsTo(DocRequest::class);
     }
 
+    public function leaveApplication()
+    {
+        return $this->belongsTo(LeaveApplication::class);
+    }
 }

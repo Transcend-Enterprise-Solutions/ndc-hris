@@ -161,16 +161,20 @@
                                         class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
                                         Details of Leave</th>
                                     <th scope="col"
-                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center"
+                                        x-show="selectedTab === 'pending'">
                                         Requested Day/s</th>
                                     <th scope="col"
-                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center"
+                                        x-show="selectedTab === 'pending'">
                                         Requested Date/s</th>
                                     <th scope="col"
-                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center"
+                                        x-show="selectedTab !== 'pending'">
                                         Approved Day/s</th>
                                     <th scope="col"
-                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center"
+                                        x-show="selectedTab !== 'pending'">
                                         Approved Date/s</th>
                                     <th scope="col"
                                         class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
@@ -214,14 +218,14 @@
                                                 {{ $truncatedDetailsOfLeave }}
                                             </span>
                                         </td>
-                                        <td class="px-4 py-2 text-center">
+                                        <td class="px-4 py-2 text-center" x-show="selectedTab === 'pending'">
                                             {{ $leaveApplication->number_of_days }}</td>
-                                        <td class="px-4 py-2 text-center">
+                                        <td class="px-4 py-2 text-center" x-show="selectedTab === 'pending'">
                                             {{ \Illuminate\Support\Str::limit($leaveApplication->list_of_dates, 10, '...') }}
                                         </td>
-                                        <td class="px-4 py-2 text-center">
+                                        <td class="px-4 py-2 text-center" x-show="selectedTab !== 'pending'">
                                             {{ $leaveApplication->approved_days ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2 text-center">
+                                        <td class="px-4 py-2 text-center" x-show="selectedTab !== 'pending'">
                                             {{ \Illuminate\Support\Str::limit($leaveApplication->approved_dates, 10, '...') ?? 'N/A' }}
                                         </td>
                                         <td class="px-4 py-2 text-center">
