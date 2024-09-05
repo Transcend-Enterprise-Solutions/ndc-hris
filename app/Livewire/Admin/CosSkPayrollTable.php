@@ -115,7 +115,14 @@ class CosSkPayrollTable  extends Component
     public $deleteMessage;
 
     public function mount(){
-        $this->employees = User::where('user_role', '=', 'emp')->get();
+        $this->employees = User::where('user_role', '=', 'emp')
+            ->leftJoin('payrolls', 'payrolls.user_id', '=', 'users.id')
+            ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', '=', 'users.id')
+            ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', '=', 'users.id')
+            ->whereNull('payrolls.id')
+            ->whereNull('cos_sk_payrolls.id')
+            ->whereNull('cos_reg_payrolls.id')
+            ->get();
         $this->salaryGrade = SalaryGrade::all();
     }
 
