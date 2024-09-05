@@ -13,7 +13,10 @@ class AdminLeaveCreditsTable extends Component
 
     public $search = '';
     public $inputCredits = false;
+    public $inputCTO = false;
+    public $editCTO = false;
     public $employees = [];
+    public $employeesForCTO = [];
     public $employee;
     public $vlClaimableCredits;
     public $vlClaimedCredits;
@@ -21,18 +24,33 @@ class AdminLeaveCreditsTable extends Component
     public $slClaimedCredits;
     public $splClaimableCredits;
     public $splClaimedCredits;
+    public $ctoClaimableCredits;
+    public $ctoClaimedCredits;
     public $selectedEmployeeId = null;
     public $processedEmployees = [];
+    public $editingEmployee;
 
     public function openInputCredits()
     {
         $this->inputCredits = true;
     }
 
+    public function openInputCTO()
+    {
+        $this->inputCTO = true;
+    }
+
     public function closeInputCredits()
     {
         $this->inputCredits = false;
         $this->resetInputFields();
+        $this->resetValidation();
+    }
+
+    public function closeInputCTO()
+    {
+        $this->inputCTO = false;
+        $this->resetCTOFields();
         $this->resetValidation();
     }
 
@@ -47,6 +65,14 @@ class AdminLeaveCreditsTable extends Component
         $this->resetValidation();
     }
 
+    public function resetCTOFields()
+    {
+        $this->ctoClaimableCredits = null;
+        $this->ctoClaimedCredits = null;
+        $this->selectedEmployeeId = null;
+        $this->resetValidation();
+    }
+
     public function resetVariables()
     {
         $this->vlClaimableCredits = null;
@@ -55,6 +81,7 @@ class AdminLeaveCreditsTable extends Component
         $this->slClaimedCredits = null;
         $this->splClaimableCredits = null;
         $this->splClaimedCredits = null;
+        $this->resetCTOFields();
         $this->resetValidation();
     }
 
@@ -78,7 +105,6 @@ class AdminLeaveCreditsTable extends Component
             return;
         }
 
-        // Retrieve or create leave credits record for the employee
         $leaveCredits = LeaveCredits::firstOrCreate(
             ['user_id' => $this->employee],
             [
@@ -134,6 +160,92 @@ class AdminLeaveCreditsTable extends Component
         $this->closeInputCredits();
     }
 
+    public function saveCTOCredits()
+    {
+        $this->validate([
+            'ctoClaimableCredits' => 'required|numeric',
+            'ctoClaimedCredits' => 'required|numeric',
+        ]);
+
+        if (is_null($this->selectedEmployeeId)) {
+            session()->flash('error', 'Please select an employee.');
+            return;
+        }
+
+        $leaveCredits = LeaveCredits::firstOrCreate(
+            ['user_id' => $this->selectedEmployeeId],
+            [
+                'cto_claimable_credits' => 0,
+                'cto_claimed_credits' => 0,
+            ]
+        );
+
+        // Update CTO credits
+        if (!is_null($this->ctoClaimableCredits)) {
+            $leaveCredits->cto_claimable_credits += $this->ctoClaimableCredits;
+        }
+        if (!is_null($this->ctoClaimedCredits)) {
+            $leaveCredits->cto_claimed_credits += $this->ctoClaimedCredits;
+        }
+
+        $leaveCredits->save();
+
+        $this->selectedEmployeeId = null;
+
+        $this->dispatch('swal', [
+            'title' => "CTO Credits added successfully!",
+            'icon' => 'success'
+        ]);
+
+        $this->closeInputCTO();
+    }
+
+    public function openEditCTO($employeeId)
+    {
+        $this->editCTO = true;
+        $this->editingEmployee = LeaveCredits::where('user_id', $employeeId)->first();
+        $this->selectedEmployeeId = $employeeId;
+        $this->ctoClaimableCredits = $this->editingEmployee->cto_claimable_credits;
+        $this->ctoClaimedCredits = $this->editingEmployee->cto_claimed_credits;
+    }
+
+    public function closeEditCTO()
+    {
+        $this->editCTO = false;
+        $this->resetCTOFields();
+    }
+
+    public function updateCTOCredits()
+    {
+        $this->validate([
+            'ctoClaimableCredits' => 'required|numeric',
+            'ctoClaimedCredits' => 'required|numeric',
+        ]);
+
+        if (is_null($this->editingEmployee)) {
+            session()->flash('error', 'Please select an employee.');
+            return;
+        }
+
+        $leaveCredits = LeaveCredits::where('user_id', $this->selectedEmployeeId)->first();
+
+        if (!is_null($this->ctoClaimableCredits)) {
+            $leaveCredits->cto_claimable_credits = $this->ctoClaimableCredits;
+        }
+        if (!is_null($this->ctoClaimedCredits)) {
+            $leaveCredits->cto_claimed_credits = $this->ctoClaimedCredits;
+        }
+
+        $leaveCredits->save();
+
+        $this->dispatch('swal', [
+            'title' => "CTO Credits updated successfully!",
+            'icon' => 'success'
+        ]);
+
+        $this->closeEditCTO();
+    }
+
     public function render()
     {
         $this->processedEmployees = [];
@@ -143,6 +255,8 @@ class AdminLeaveCreditsTable extends Component
                 $query->where('credits_inputted', 1);
             })
             ->get();
+
+        $this->employeesForCTO = User::where('user_role', 'emp')->get();
     
         $leaveCredits = LeaveCredits::with('user')
             ->whereHas('user', function ($query) {

@@ -23,10 +23,19 @@
                         <!-- Button aligned with input field -->
                         <div class="mt-2 sm:mt-0">
                             <button wire:click="openInputCredits"
-                                class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white">
+                                class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white h-10 w-32">
                                 <span
-                                    class="relative px-4 py-2 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                                    class="relative px-4 py-2 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 h-8 w-30 flex justify-center items-center">
                                     Input Credits
+                                </span>
+                            </button>
+                        </div>
+                        <div class="mt-2 sm:mt-0">
+                            <button wire:click="openInputCTO"
+                                class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white h-10 w-32">
+                                <span
+                                    class="relative px-6 py-3 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 h-8 w-30 flex justify-center items-center">
+                                    Input CTO
                                 </span>
                             </button>
                         </div>
@@ -34,6 +43,7 @@
 
                 </div>
 
+                {{-- Table --}}
                 <div class="overflow-x-auto">
                     <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                         <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700">
@@ -52,6 +62,11 @@
                                 class="h-min px-4 py-2 text-sm mb-4">
                                 Special Privilege Leave
                             </button>
+                            <button @click="selectedTab = 'cto'"
+                                :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'cto', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'cto' }"
+                                class="h-min px-4 py-2 text-sm mb-4">
+                                CTO Credits
+                            </button>
                         </div>
 
                         <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
@@ -59,6 +74,8 @@
                                 <th scope="col" class="px-4 py-2 text-center">Name</th>
                                 <th scope="col" class="px-4 py-2 text-center">Claimable Credits</th>
                                 <th scope="col" class="px-4 py-2 text-center">Claimed Credits</th>
+                                <th scope="col" class="px-4 py-2 text-center" x-show="selectedTab === 'cto'">Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -69,26 +86,41 @@
                                     <!-- Conditional Columns Based on Selected Tab -->
                                     <td class="px-4 py-2 text-center">
                                         <template x-if="selectedTab === 'vl'">
-                                            <span>{{ $leaveCredit->vl_claimable_credits }}</span>
+                                            <span>{{ number_format($leaveCredit->vl_claimable_credits ?? 0, 3) }}</span>
                                         </template>
                                         <template x-if="selectedTab === 'sl'">
-                                            <span>{{ $leaveCredit->sl_claimable_credits }}</span>
+                                            <span>{{ number_format($leaveCredit->sl_claimable_credits ?? 0, 3) }}</span>
                                         </template>
                                         <template x-if="selectedTab === 'spl'">
-                                            <span>{{ $leaveCredit->spl_claimable_credits }}</span>
+                                            <span>{{ number_format($leaveCredit->spl_claimable_credits ?? 0, 3) }}</span>
+                                        </template>
+                                        <template x-if="selectedTab === 'cto'">
+                                            <span>{{ number_format($leaveCredit->cto_claimable_credits ?? 0, 3) }}</span>
                                         </template>
                                     </td>
                                     <td class="px-4 py-2 text-center">
                                         <template x-if="selectedTab === 'vl'">
-                                            <span>{{ $leaveCredit->vl_claimed_credits }}</span>
+                                            <span>{{ number_format($leaveCredit->vl_claimed_credits ?? 0, 3) }}</span>
                                         </template>
                                         <template x-if="selectedTab === 'sl'">
-                                            <span>{{ $leaveCredit->sl_claimed_credits }}</span>
+                                            <span>{{ number_format($leaveCredit->sl_claimed_credits ?? 0, 3) }}</span>
                                         </template>
                                         <template x-if="selectedTab === 'spl'">
-                                            <span>{{ $leaveCredit->spl_claimed_credits }}</span>
+                                            <span>{{ number_format($leaveCredit->spl_claimed_credits ?? 0, 3) }}</span>
+                                        </template>
+                                        <template x-if="selectedTab === 'cto'">
+                                            <span>{{ number_format($leaveCredit->cto_claimed_credits ?? 0, 3) }}</span>
                                         </template>
                                     </td>
+                                    <td class="px-4 py-2 text-center" x-show="selectedTab === 'cto'">
+                                        <button wire:click="openEditCTO({{ $leaveCredit->user_id }})"
+                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none">
+                                            <i class="fas fa-pencil-alt ml-3"></i>
+                                        </button>
+                                    </td>
+
                                 </tr>
                             @endforeach
                         </tbody>
@@ -96,12 +128,13 @@
                 </div>
 
                 <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
-                    {{-- {{ $leaveCredits->links() }} --}}
+                    {{ $leaveCredits->links() }}
                 </div>
             </div>
         </div>
     </div>
 
+    {{-- Input Credits --}}
     <x-modal id="inputCredits" maxWidth="lg" wire:model="inputCredits">
         <div class="p-6">
             <!-- Modal Header -->
@@ -247,5 +280,145 @@
         </div>
     </x-modal>
 
+    {{-- Input CTO Credits --}}
+    <x-modal id="inputCTO" maxWidth="lg" wire:model="inputCTO">
+        <div class="p-6">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
+                    Input CTO Credits
+                </h3>
+                <button wire:click="closeInputCTO"
+                    class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form class="space-y-6" wire:submit.prevent="saveCTOCredits">
+                <!-- Employee Selection -->
+                <div>
+                    <label for="employee" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Employee
+                    </label>
+                    <select id="employee" wire:model="selectedEmployeeId"
+                        class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Select an employee</option>
+                        @foreach ($employeesForCTO as $emp)
+                            <option value="{{ $emp->id }}">{{ $emp->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('selectedEmployeeId')
+                        <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- CTO Credits Part -->
+                <div class="flex flex-col md:flex-row md:space-x-4">
+                    <!-- Claimable Credits -->
+                    <div class="w-full md:w-1/2">
+                        <label for="cto_claimable_credits"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">CTO
+                            Claimable Credits</label>
+                        <input id="cto_claimable_credits" type="number" wire:model="ctoClaimableCredits"
+                            class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter credits">
+                        @error('ctoClaimableCredits')
+                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Claimed Credits -->
+                    <div class="w-full md:w-1/2 mt-4 md:mt-0">
+                        <label for="cto_claimed_credits"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">CTO
+                            Claimed Credits</label>
+                        <input id="cto_claimed_credits" type="number" wire:model="ctoClaimedCredits"
+                            class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter credits">
+                        @error('ctoClaimedCredits')
+                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-6 flex justify-end space-x-4">
+                    <!-- Save Button -->
+                    <button type="submit"
+                        class="px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
+                        Save
+                    </button>
+
+                    <!-- Close Button -->
+                    <button type="button" wire:click="closeInputCTO"
+                        class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-offset-gray-800">
+                        Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </x-modal>
+
+    {{-- Edit CTO Credits --}}
+    <x-modal id="editCTO" maxWidth="lg" wire:model="editCTO">
+        <div class="p-6">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
+                    Input CTO Credits
+                </h3>
+                <button wire:click="closeEditCTO"
+                    class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form class="space-y-6" wire:submit.prevent="updateCTOCredits">
+                <!-- CTO Credits Part -->
+                <div class="flex flex-col md:flex-row md:space-x-4">
+                    <!-- Claimable Credits -->
+                    <div class="w-full md:w-1/2">
+                        <label for="cto_claimable_credits"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">CTO
+                            Claimable Credits</label>
+                        <input id="cto_claimable_credits" type="number" wire:model="ctoClaimableCredits"
+                            class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter credits">
+                        @error('ctoClaimableCredits')
+                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <!-- Claimed Credits -->
+                    <div class="w-full md:w-1/2 mt-4 md:mt-0">
+                        <label for="cto_claimed_credits"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">CTO
+                            Claimed Credits</label>
+                        <input id="cto_claimed_credits" type="number" wire:model="ctoClaimedCredits"
+                            class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter credits">
+                        @error('ctoClaimedCredits')
+                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-6 flex justify-end space-x-4">
+                    <!-- Save Button -->
+                    <button type="submit"
+                        class="px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
+                        Save
+                    </button>
+
+                    <!-- Close Button -->
+                    <button type="button" wire:click="closeEditCTO"
+                        class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-offset-gray-800">
+                        Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </x-modal>
 
 </div>

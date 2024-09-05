@@ -141,7 +141,7 @@ class AdminLeaveRequestTable extends Component
             );
 
             $this->dispatch('swal', [
-                'title' => "Leave application approved by successfully!",
+                'title' => "Leave application approved successfully!",
                 'icon' => 'success'
             ]);
         }
@@ -384,7 +384,7 @@ class AdminLeaveRequestTable extends Component
             ->through(function ($leaveApplication) use ($loggedInUserId, $userRole) {
                 $leaveApplication->isApprovedByHR = $leaveApplication->status === 'Approved by HR';
                 $leaveApplication->isPending = $leaveApplication->status === 'Pending';
-                $leaveApplication->isHR = $userRole === 'hr';
+                $leaveApplication->isHR = $userRole === 'hr' || $userRole === 'sa';
                 $leaveApplication->isEndorser1 = $loggedInUserId === $leaveApplication->endorser1_id;
                 $leaveApplication->isEndorser2 = $loggedInUserId === $leaveApplication->endorser2_id;
                 $leaveApplication->isEndorser = $leaveApplication->isEndorser1 || $leaveApplication->isEndorser2;
@@ -394,11 +394,11 @@ class AdminLeaveRequestTable extends Component
                     $leaveApplication->actionsVisible = $leaveApplication->isHR;
                 } elseif ($leaveApplication->stage == 1) {
                     $leaveApplication->actionsVisible = $leaveApplication->isEndorser1;
-                    $leaveApplication->isEndorser1Approved = $leaveApplication->isEndorser1 && $leaveApplication->status === 'Approved by Endorser 1';
-                    $leaveApplication->isEndorser2Approved = $leaveApplication->isEndorser2 && $leaveApplication->status === 'Approved by Endorser 2';
+                    $leaveApplication->isEndorser1Approved = $leaveApplication->isEndorser1 && $leaveApplication->status === 'Approved by Supervisor';
+                    $leaveApplication->isEndorser2Approved = $leaveApplication->isEndorser2 && $leaveApplication->status === 'Approved';
                 } elseif ($leaveApplication->stage == 2) {
                     $leaveApplication->actionsVisible = $leaveApplication->isEndorser2;
-                    $leaveApplication->isEndorser2Approved = $leaveApplication->isEndorser2 && $leaveApplication->status === 'Approved by Endorser 2';
+                    $leaveApplication->isEndorser2Approved = $leaveApplication->isEndorser2 && $leaveApplication->status === 'Approved';
                 }
     
                 return $leaveApplication;

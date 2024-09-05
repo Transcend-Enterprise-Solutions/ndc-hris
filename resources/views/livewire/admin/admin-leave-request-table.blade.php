@@ -125,7 +125,7 @@
                                                             @if ($leaveApplication->isEndorser1)
                                                                 <button
                                                                     @click="$wire.openEndorserApproveModal({{ $leaveApplication->id }})"
-                                                                    class="text-blue-500 {{ $leaveApplication->isEndorser1Approved ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                                    class="mx-4 text-blue-500 {{ $leaveApplication->isEndorser1Approved ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                                     :disabled="{{ $leaveApplication->isEndorser1Approved ? 'true' : 'false' }}">
                                                                     <i class="bi bi-check-lg" title="Approve"></i>
                                                                 </button>
@@ -135,9 +135,10 @@
                                                             @if ($leaveApplication->isEndorser2)
                                                                 <button
                                                                     @click="$wire.openEndorserApproveModal({{ $leaveApplication->id }})"
-                                                                    class="text-blue-500 {{ !$leaveApplication->isEndorser1Approved || $leaveApplication->isEndorser2Approved ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                                    class="mx-4 text-blue-500 {{ !$leaveApplication->isEndorser1Approved || $leaveApplication->isEndorser2Approved ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                                     :disabled="{{ !$leaveApplication->isEndorser1Approved || $leaveApplication->isEndorser2Approved ? 'true' : 'false' }}">
-                                                                    <i class="bi bi-check-lg" title="Approve"></i>
+                                                                    <i class="bi bi-check-lg"
+                                                                        title="Please wait for your turn to approve this"></i>
                                                                 </button>
                                                             @endif
                                                         @elseif ($leaveApplication->stage == 2)
@@ -145,7 +146,7 @@
                                                             @if ($leaveApplication->isEndorser2)
                                                                 <button
                                                                     @click="$wire.openEndorserApproveModal({{ $leaveApplication->id }})"
-                                                                    class="text-blue-500 {{ $leaveApplication->isEndorser2Approved ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                                    class="mx-4 text-blue-500 {{ $leaveApplication->isEndorser2Approved ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                                     :disabled="{{ $leaveApplication->isEndorser2Approved ? 'true' : 'false' }}">
                                                                     <i class="bi bi-check-lg" title="Approve"></i>
                                                                 </button>
