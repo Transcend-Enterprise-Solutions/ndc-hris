@@ -99,8 +99,8 @@ Route::middleware(['auth', 'checkrole:emp'])->group(function () {
         return view('livewire.user.my-schedule'); })->name('/daily-time-record/my-schedule');
     // Route::get('/daily-time-record/my-payroll', function () {
     //     return view('livewire.user.user-payroll'); })->name('/daily-time-record/my-payroll');
-    // Route::get('/daily-time-record/payslip', function () {
-    //     return view('livewire.user.payslip'); })->name('/daily-time-record/payslip');
+    Route::get('/daily-time-record/payslip', function () {
+        return view('livewire.user.payslip'); })->name('/daily-time-record/payslip');
 
     // Filing and Approval Tabs --------------------------------------------------------------- //
     Route::get('/filing-and-approval/leave-application', function () {
