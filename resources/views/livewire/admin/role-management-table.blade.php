@@ -240,7 +240,7 @@ x-cloak>
                                                 <button @click="selectedSubTab = 'headcount'" 
                                                         :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab === 'headcount', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab !== 'headcount' }" 
                                                         class="h-min px-4 pt-2 pb-2 text-sm no-wrap">
-                                                    Headcounts
+                                                    Headcount
                                                 </button>
                                                 <button @click="selectedSubTab = 'positions'" 
                                                         :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab === 'positions', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab !== 'positions' }" 
