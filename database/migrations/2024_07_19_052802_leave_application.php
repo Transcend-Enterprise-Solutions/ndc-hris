@@ -36,7 +36,6 @@ return new class extends Migration {
                 $table->string('approved_dates')->nullable();
                 $table->integer('approved_days')->nullable();
                 $table->string('remarks')->nullable();
-                $table->integer('stage')->nullable();
                 $table->timestamps();
             });
         }

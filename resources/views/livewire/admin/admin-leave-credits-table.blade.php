@@ -21,7 +21,7 @@
                                 class="py-2 px-3 mt-1 block w-full sm:w-80 shadow-sm text-sm font-medium border-gray-400 dark:border-gray-600 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
                         </div>
                         <!-- Button aligned with input field -->
-                        <div class="mt-2 sm:mt-0">
+                        <div class="flex w-full justify-between mt-2 sm:mt-0 sm:justify-start sm:space-x-4">
                             <button wire:click="openInputCredits"
                                 class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white h-10 w-32">
                                 <span
@@ -29,8 +29,8 @@
                                     Input Credits
                                 </span>
                             </button>
-                        </div>
-                        <div class="mt-2 sm:mt-0">
+                            {{-- </div> --}}
+                            {{-- <div class="mt-2 sm:mt-0"> --}}
                             <button wire:click="openInputCTO"
                                 class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white h-10 w-32">
                                 <span
@@ -46,25 +46,25 @@
                 {{-- Table --}}
                 <div class="overflow-x-auto">
                     <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
-                        <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700">
+                        <div class="flex gap-2 border-b border-slate-300 dark:border-slate-700">
                             <button @click="selectedTab = 'vl'"
                                 :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'vl', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'vl' }"
-                                class="h-min px-4 py-2 text-sm mb-4">
+                                class="h-min px-4 py-2 text-sm mb-4 whitespace-nowrap">
                                 Vacation Leave
                             </button>
                             <button @click="selectedTab = 'sl'"
                                 :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'sl', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'sl' }"
-                                class="h-min px-4 py-2 text-sm mb-4">
+                                class="h-min px-4 py-2 text-sm mb-4 whitespace-nowrap">
                                 Sick Leave
                             </button>
                             <button @click="selectedTab = 'spl'"
                                 :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'spl', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'spl' }"
-                                class="h-min px-4 py-2 text-sm mb-4">
+                                class="h-min px-4 py-2 text-sm mb-4 whitespace-nowrap">
                                 Special Privilege Leave
                             </button>
                             <button @click="selectedTab = 'cto'"
                                 :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'cto', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'cto' }"
-                                class="h-min px-4 py-2 text-sm mb-4">
+                                class="h-min px-4 py-2 text-sm mb-4 whitespace-nowrap">
                                 CTO Credits
                             </button>
                         </div>
