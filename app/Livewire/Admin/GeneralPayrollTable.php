@@ -8,11 +8,11 @@ use App\Exports\PayrollListExport;
 use App\Models\CosRegPayrolls;
 use App\Models\CosSkPayrolls;
 use App\Models\EmployeesDtr;
-use App\Models\GeneralPayroll;
 use App\Models\LeaveCredits;
 use App\Models\OfficeDivisions;
 use App\Models\Payrolls;
 use App\Models\PayrollsLeaveCreditsDeduction;
+use App\Models\PlantillaPayslip;
 use App\Models\Positions;
 use App\Models\SalaryGrade;
 use App\Models\Signatories;
@@ -21,7 +21,6 @@ use Exception;
 use Illuminate\Support\Carbon;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -69,7 +68,6 @@ class GeneralPayrollTable extends Component
         'amount_due_first_half' => true,
         'amount_due_second_half' => true,
     ];
-
     public $payrollColumns = [
         'name' => true,
         'emp_code' => true,
@@ -101,7 +99,6 @@ class GeneralPayrollTable extends Component
         'philhealth' => false,
         'total_deduction' => false,
     ];
-
     public $payroll;
     public $employees;
     public $userId;
@@ -166,6 +163,7 @@ class GeneralPayrollTable extends Component
     public $signatoryFor;
     public $signatures = [];
     public $preparedBySign;
+    public $unpayrolledEmployees;
 
     public $generalPayrolls;
 
@@ -200,14 +198,17 @@ class GeneralPayrollTable extends Component
     
 
     public function mount(){
-        $this->employees = User::where('user_role', '=', 'emp')
+        $this->unpayrolledEmployees = User::where('user_role', '=', 'emp')
             ->leftJoin('payrolls', 'payrolls.user_id', '=', 'users.id')
             ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', '=', 'users.id')
             ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', '=', 'users.id')
             ->whereNull('payrolls.id')
             ->whereNull('cos_sk_payrolls.id')
             ->whereNull('cos_reg_payrolls.id')
+            ->select('users.*')
             ->get();
+        
+        $this->employees = User::where('user_role', '=', 'emp')->get();
         $this->salaryGrade = SalaryGrade::all();
     }
 
@@ -385,6 +386,16 @@ class GeneralPayrollTable extends Component
         $payrolls = collect();
         
         if ($this->startMonth) {
+            $startDate = Carbon::parse($this->startMonth);
+            $payslip = PlantillaPayslip::whereMonth('start_date', $startDate->month)
+                                    ->whereYear('start_date', $startDate->year)
+                                    ->get();
+
+            if ($payslip->isEmpty()) {
+                $this->hasPayroll = false;
+            }
+
+
             $carbonDate = Carbon::createFromFormat('Y-m', $this->startMonth);
             $this->startDateFirstHalf = $carbonDate->startOfMonth()->toDateString();
             $this->endDateFirstHalf = $carbonDate->copy()->day(15)->toDateString();
@@ -435,11 +446,9 @@ class GeneralPayrollTable extends Component
                 return $payroll;
             });
         }
-    
         $this->generalPayrolls = $payrolls;
     }
     
-
     public function getDTRForPayroll($startDate, $endDate, $employeeId = null)
     {
         try {
@@ -747,7 +756,7 @@ class GeneralPayrollTable extends Component
                         $amount_due_second_half = floor($half_amount);
                         $amount_due_first_half = $net_amount_received - $amount_due_second_half;
 
-                        $p->absent_late_undertime_deduction = $deduction->salary_deduction_amount;
+                        $p->absent_late_undertime_deduction = $deduction ? $deduction->salary_deduction_amount : 0;
                         $p->net_amount_received = $net_amount_received;
                         $p->amount_due_first_half = $amount_due_first_half;
                         $p->amount_due_second_half = $amount_due_second_half;
@@ -955,67 +964,99 @@ class GeneralPayrollTable extends Component
 
     public function recordPayroll(){
         try {
-            if ($this->date) {
-                $carbonDate = Carbon::createFromFormat('Y-m', $this->date);
-                $startDateFirstHalf = $carbonDate->startOfMonth()->toDateString();
-                $endDateFirstHalf = $carbonDate->copy()->day(15)->toDateString();
-                $startDateSecondHalf = $carbonDate->copy()->day(16)->toDateString();
-                $endDateSecondHalf = $carbonDate->endOfMonth()->toDateString();
+            if ($this->startMonth) {
+                $carbonDate = Carbon::createFromFormat('Y-m', $this->startMonth);
+                $startDate= $carbonDate->startOfMonth()->toDateString();
+                $endDate = $carbonDate->endOfMonth()->toDateString();
 
-                $payrollAggregates = DB::table('employees_payroll')
-                    ->select('user_id')
-                    ->selectRaw("SUM(CASE 
-                                    WHEN start_date >= ? AND end_date <= ? 
-                                    THEN net_amount_due 
-                                    ELSE 0 
-                                END) as net_amount_due_first_half", [$startDateFirstHalf, $endDateFirstHalf])
-                    ->selectRaw("SUM(CASE 
-                                    WHEN start_date >= ? AND end_date <= ? 
-                                    THEN net_amount_due 
-                                    ELSE 0 
-                                END) as net_amount_due_second_half", [$startDateSecondHalf, $endDateSecondHalf])
-                    ->selectRaw("SUM(net_amount_due) as total_amount_due")
-                    ->selectRaw("SUM(gross_salary_less) as gross_salary_less")
-                    ->selectRaw("SUM(leave_days_withoutpay_amount) as leave_days_withoutpay_amount")
-                    ->selectRaw("SUM(absences_amount + late_undertime_hours_amount + late_undertime_mins_amount) as late_absences")
-                    ->groupBy('user_id');
-        
-                // Join the aggregate results with the general_payroll table
-                $payrolls = Payrolls::joinSub($payrollAggregates, 'payroll_aggregates', function ($join) {
-                                    $join->on('payrolls.user_id', '=', 'payroll_aggregates.user_id');
-                                })
-                                ->select('payrolls.*', 
-                                        'payroll_aggregates.net_amount_due_first_half',
-                                        'payroll_aggregates.net_amount_due_second_half',
-                                        'payroll_aggregates.total_amount_due',
-                                        'payroll_aggregates.gross_salary_less',
-                                        'payroll_aggregates.leave_days_withoutpay_amount',
-                                        'payroll_aggregates.late_absences')
-                                ->get();
-    
-                foreach ($payrolls as $payroll) {
-                    $userId = $payroll->user_id;
-                    $lateAbsences = $payroll->late_absences;
-                    $grossSalaryLess = $payroll->rate_per_month - $lateAbsences;
-                    $totalEarnings = $payroll->rate_per_month - $lateAbsences + $payroll->personal_economic_relief_allowance;
+                $payrolls = User::when($this->search, function ($query) {
+                        return $query->search(trim($this->search));
+                    })
+                    ->join('payrolls', 'payrolls.user_id', 'users.id')
+                    ->join('positions', 'positions.id', 'users.position_id')
+                    ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                    ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
+                    ->get()
+                    ->map(function ($payroll) {
+                        $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
+                        $half_amount = $net_amount_received / 2;
                         
-                    GeneralPayroll::create([
-                            'user_id' => $userId,
-                            'net_amount_received' => $payroll->total_amount_due,
-                            'amount_due_first_half' => $payroll->net_amount_due_first_half,
-                            'amount_due_second_half' => $payroll->net_amount_due_second_half,
-                            'gross_salary_less' => $grossSalaryLess,
-                            'late_absences' =>$lateAbsences,
-                            'leave_without_pay' =>$payroll->leave_days_withoutpay_amount,
-                            'others' => 0,
-                            'total_earnings' => $totalEarnings,
-                            'date' => $startDateFirstHalf,
+                        $amount_due_second_half = floor($half_amount);
+                        $amount_due_first_half = $net_amount_received - $amount_due_second_half;
+        
+                        $payroll->net_amount_received = $net_amount_received;
+                        $payroll->amount_due_first_half = $amount_due_first_half;
+                        $payroll->amount_due_second_half = $amount_due_second_half;
+        
+                        return $payroll;
+                    });
+                $payrollDTR = $this->getDTRForPayroll($startDate, $endDate);
+                $payrolls = $payrolls->map(function ($payroll) use ($payrollDTR) {
+                    $userId = $payroll->user_id;
+        
+                    if (isset($payrollDTR[$userId])) {
+                        $payroll->total_absent_days = $payrollDTR[$userId]['total_absent'];
+                        $payroll->total_late_minutes = $payrollDTR[$userId]['total_late'];
+                        $payroll->total_credits_deducted = $payrollDTR[$userId]['total_credits'];
+                        $payroll->absent_late_undertime_deduction = $payrollDTR[$userId]['absent_late_undertime_deduction'];
+                    } else {
+                        $payroll->total_absent_days = 0;
+                        $payroll->total_late_minutes = 0;
+                        $payroll->total_credits_deducted = 0.00;
+                        $payroll->absent_late_undertime_deduction = 0;
+                    }
+        
+                    return $payroll;
+                });
+
+                $admin = Auth::user();
+                $preparedBy = User::where('users.id', $admin->id)
+                    ->join('positions', 'positions.id', 'users.position_id')
+                    ->join('signatories', 'signatories.user_id', 'users.id')
+                    ->first();
+
+                foreach ($payrolls as $payroll) {
+                    PlantillaPayslip::create([
+                            'user_id' => $payroll->user_id,
+                            'sg_step' => $payroll->sg_step,
+                            'rate_per_month' => $payroll->rate_per_month,
+                            'personal_economic_relief_allowance' => $payroll->personal_economic_relief_allowance,
+                            'gross_amount' => $payroll->gross_amount,
+                            'additional_gsis_premium' => $payroll->additional_gsis_premium,
+                            'lbp_salary_loan' => $payroll->lbp_salary_loan,
+                            'nycea_deductions' => $payroll->nycea_deductions,
+                            'sc_membership' => $payroll->sc_membership,
+                            'total_loans' => $payroll->total_loans,
+                            'salary_loan' => $payroll->salary_loan,
+                            'policy_loan' => $payroll->policy_loan,
+                            'eal' => $payroll->eal,
+                            'emergency_loan' => $payroll->emergency_loan,
+                            'mpl' => $payroll->mpl,
+                            'housing_loan' => $payroll->housing_loan,
+                            'ouli_prem' => $payroll->ouli_prem,
+                            'gfal' => $payroll->gfal,
+                            'cpl' => $payroll->cpl,
+                            'pagibig_mpl' => $payroll->pagibig_mpl,
+                            'other_deduction_philheath_diff' => $payroll->other_deduction_philheath_diff,
+                            'life_retirement_insurance_premiums' => $payroll->life_retirement_insurance_premiums,
+                            'pagibig_contribution' => $payroll->pagibig_contribution,
+                            'w_holding_tax' => $payroll->w_holding_tax,
+                            'philhealth' => $payroll->philhealth,
+                            'other_deductions' => $payroll->other_deductions,
+                            'total_deduction' => $payroll->total_deduction,
+                            'net_amount_recieved' => $payroll->net_amount_received,
+                            'first_half_amount' => $payroll->amount_due_first_half,
+                            'second_half_amount' => $payroll->amount_due_second_half,
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'prepared_by_name' => $preparedBy->name,
+                            'prepared_by_position' => $preparedBy->position,
                         ]
                     );
                 }
     
                 $this->dispatch('swal', [
-                    'title' => 'General Payroll Saved!',
+                    'title' => 'Payroll Saved!',
                     'icon' => 'success'
                 ]);
             }else{

@@ -519,7 +519,7 @@ x-cloak>
                     </div> --}}
 
                     <!-- Save Payroll -->
-                    {{-- @if($hasPayroll == false)
+                    @if(!$hasPayroll)
                         <div class="w-full sm:w-auto">
                             <button wire:click="recordPayroll"
                                 class="mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
@@ -531,10 +531,10 @@ x-cloak>
                                     <div class="spinner-border small text-primary" role="status">
                                     </div>
                                 </div>
-                                Save Payroll
+                                Record Payroll
                             </button>
                         </div>
-                    @endif --}}
+                    @endif
 
                     <!-- Export to Excel -->
                     <div class="w-full sm:w-auto relative">
@@ -1392,7 +1392,7 @@ x-cloak>
                         <select id="userId" wire:model.live='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
                             {{ $addPayroll ? '' : 'disabled' }}>
                             <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
-                            @foreach ($employees as $employee)
+                            @foreach ($unpayrolledEmployees as $employee)
                                 <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                             @endforeach
                         </select>
@@ -1601,7 +1601,7 @@ x-cloak>
                     </div>
 
                     {{-- Save and Cancel buttons --}}
-                    <div class="mt-4 flex justify-end col-span-2">
+                    <div class="mt-4 flex justify-end col-span-2 text-sm">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                             <div wire:loading wire:target="savePayroll" style="margin-right: 5px">
                                 <div class="spinner-border small text-primary" role="status">

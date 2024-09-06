@@ -425,6 +425,15 @@
                                             </span>
                                         </a>
                                     </li>
+                                    <li class="mb-1 last:mb-0">
+                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/daily-time-record/payslip')) {{ '!text-blue-500' }} @endif"
+                                            href="{{ route('/daily-time-record/payslip') }}"wire:navigate>
+                                            <span class="text-sm font-medium transition-opacity duration-300"
+                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                                Payslip
+                                            </span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </li>

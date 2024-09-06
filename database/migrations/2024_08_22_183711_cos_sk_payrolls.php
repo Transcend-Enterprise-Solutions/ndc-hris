@@ -16,6 +16,11 @@ return new class extends Migration
                 $table->string('sg_step')->nullable();
                 $table->double('rate_per_month')->nullable();        
                 $table->double('additional_premiums')->nullable();
+                $table->double('adjustment')->nullable();
+                $table->double('withholding_tax')->nullable();
+                $table->double('nycempc')->nullable();
+                $table->double('other_deductions')->nullable();
+                $table->double('total_deduction')->nullable();
                 $table->timestamps();
             });
         }
