@@ -51,6 +51,7 @@
         $perHour = $perDay / 8;
         $perMinute = $perHour / 60;
         $lateUndertimeAbsencesAmount = $payslip['absences_amount'] + $payslip['late_undertime_hours_amount'] + $payslip['late_undertime_mins_amount'];
+        $lateUndertimeAbsencesAmount2 = $payslip2['absences_amount'] + $payslip2['late_undertime_hours_amount'] + $payslip2['late_undertime_mins_amount'];
         $totalNetPay = $payslip['net_amount_due'] + $payslip2['net_amount_due'];
     @endphp
 
@@ -268,7 +269,7 @@
                     <td width="25%"></td>
                     <td width="25%"></td>
                     <td width="30%" class="dots">Less: Late, Undertime & Absences</td>
-                    <td width="20%" class="currency" width="30%">{{ $formatCurrency($lateUndertimeAbsencesAmount) }}</td>
+                    <td width="20%" class="currency" width="30%">{{ $formatCurrency($lateUndertimeAbsencesAmount2) }}</td>
                 </tr>
                 <tr>
                     <td width="25%"></td>
