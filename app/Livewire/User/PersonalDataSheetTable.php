@@ -225,33 +225,7 @@ class PersonalDataSheetTable extends Component
     public $dateIssued;
 
     public function mount(){
-        $user = Auth::user();
-        $this->pds = [
-            'userData' => $user->userData,
-            'userSpouse' => $user->employeesSpouse,
-            'userMother' => $user->employeesMother,
-            'userFather' => $user->employeesFather,
-            'userChildren' => $user->employeesChildren,
-            'educBackground' => $user->employeesEducation,
-            'eligibility' => $user->eligibility,
-            'workExperience' => $user->workExperience,
-            'voluntaryWorks' => $user->voluntaryWorks,
-            'lds' => $user->learningAndDevelopment,
-            'skills' => $user->skills,
-            'hobbies' => $user->hobbies,
-            'non_acads_distinctions' => $user->nonAcadDistinctions,
-            'assOrgMemberships' => $user->assOrgMembership,
-            'references' => $user->charReferences,
-            'pds_c4_answers' => $user->pdsC4Answers,
-            'pds_gov_id' => $user->pdsGovIssuedId,
-        ];
         $this->getC4Answers();
-        $pdsGovId = PdsGovIssuedId::where('user_id', $user->id)->first();
-        if($pdsGovId){
-            $this->govId = $pdsGovId->gov_id;
-            $this->idNumber = $pdsGovId->id_number;
-            $this->dateIssued = Carbon::parse($pdsGovId->date_of_issuance)->format('m-d-Y');
-        }
     }
 
     public function render(){
@@ -285,6 +259,34 @@ class PersonalDataSheetTable extends Component
                 $cityCode = $cityCode->getAttributes();
                 $this->rbarangays = PhilippineBarangays::where('city_municipality_code', $cityCode['city_municipality_code'])->get();
             }    
+        }
+
+        $user = Auth::user();
+        $this->pds = [
+            'userData' => $user->userData,
+            'userSpouse' => $user->employeesSpouse,
+            'userMother' => $user->employeesMother,
+            'userFather' => $user->employeesFather,
+            'userChildren' => $user->employeesChildren,
+            'educBackground' => $user->employeesEducation,
+            'eligibility' => $user->eligibility,
+            'workExperience' => $user->workExperience,
+            'voluntaryWorks' => $user->voluntaryWorks,
+            'lds' => $user->learningAndDevelopment,
+            'skills' => $user->skills,
+            'hobbies' => $user->hobbies,
+            'non_acads_distinctions' => $user->nonAcadDistinctions,
+            'assOrgMemberships' => $user->assOrgMembership,
+            'references' => $user->charReferences,
+            'pds_c4_answers' => $user->pdsC4Answers,
+            'pds_gov_id' => $user->pdsGovIssuedId,
+        ];
+
+        $pdsGovId = PdsGovIssuedId::where('user_id', $user->id)->first();
+        if($pdsGovId){
+            $this->govId = $pdsGovId->gov_id;
+            $this->idNumber = $pdsGovId->id_number;
+            $this->dateIssued = Carbon::parse($pdsGovId->date_of_issuance)->format('m-d-Y');
         }
 
         return view('livewire.user.personal-data-sheet-table', [
@@ -1927,15 +1929,15 @@ class PersonalDataSheetTable extends Component
                     return;
                 }
 
-                if($qNum == 35 && $qLetter == 'b' && $qAnswer == 1 && $this->q35bDate_filed == null && $this->q35bStatus == null){
+                if($qNum == 35 && $qLetter == 'b' && $qAnswer == 1 && ($this->q35bDate_filed == null || $this->q35bStatus == null)){
                     $this->dispatch('swal', [
-                        'title' => "Please add date filed and status of case/s!",
+                        'title' => "Please add date filed and/or status of case/s!",
                         'icon' => 'error'
                     ]);
                     return;
                 }
 
-                if($qAnswer == 1 && $qDetails == null){
+                if($qAnswer == 1 && $qDetails == null && $qNum != 35 && $qLetter != "a"){
                     $this->dispatch('swal', [
                         'title' => "Please add details!",
                         'icon' => 'error'
