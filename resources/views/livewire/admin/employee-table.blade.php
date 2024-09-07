@@ -2109,8 +2109,10 @@
                                     </li>
                                     <!-- Add new filter for years_in_gov_service -->
                                     <li class="flex items-center">
-                                        <input id="years_in_gov_service" type="checkbox" wire:model.live="filters.years_in_gov_service" class="h-4 w-4">
-                                        <label for="years_in_gov_service" class="ml-2 text-gray-900 dark:text-gray-300">Years in Gov Service</label>
+                                        <input id="years_in_gov_service" type="checkbox"
+                                            wire:model.live="filters.years_in_gov_service" class="h-4 w-4">
+                                        <label for="years_in_gov_service"
+                                            class="ml-2 text-gray-900 dark:text-gray-300">Years in Gov Service</label>
                                     </li>
                                 </ul>
                             </div>
@@ -2126,9 +2128,12 @@
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                                 type="button" title="Export to Excel">
                                 <img class="flex dark:hidden" src="/images/export-excel.png" width="22"
-                                    alt="">
+                                    alt="" wire:target="exportUsers" wire:loading.remove>
                                 <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22"
-                                    alt="">
+                                    alt="" wire:target="exportUsers" wire:loading.remove>
+                                <div wire:loading wire:target="exportUsers">
+                                    <div class="spinner-border small text-primary" role="status"></div>
+                                </div>
                             </button>
                         </div>
 
@@ -2293,10 +2298,12 @@
                                                 @if ($filters['date_hired'])
                                                     <th scope="col"
                                                         class="px-5 py-3 text-sm font-medium uppercase text-center">
-                                                        Year in Current Position</th>
+                                                        Date Hired</th>
                                                 @endif
                                                 @if ($filters['years_in_gov_service'])
-                                                    <th scope="col" class="px-5 py-3 text-sm font-medium uppercase text-center">Years in Gov Service</th>
+                                                    <th scope="col"
+                                                        class="px-5 py-3 text-sm font-medium uppercase text-center">
+                                                        Years in Gov Service</th>
                                                 @endif
                                                 <th
                                                     class="px-5 py-3 text-gray-100 text-sm font-medium text-right sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
@@ -2421,7 +2428,8 @@
                                                             {{ $user->date_hired }}</td>
                                                     @endif
                                                     @if ($filters['years_in_gov_service'])
-                                                        <td class="px-4 py-2 text-center">{{ $user->years_in_gov_service }}</td>
+                                                        <td class="px-4 py-2 text-center">
+                                                            {{ $user->years_in_gov_service ?? 'N/A' }}</td>
                                                     @endif
                                                     <td
                                                         class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">

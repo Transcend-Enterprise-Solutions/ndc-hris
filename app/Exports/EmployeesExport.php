@@ -174,7 +174,7 @@ class EmployeesExport implements FromCollection, WithHeadings
             'residential_selectedZipcode' => 'Residential Address (Zip Code)',
             'active_status' => 'Active Status',
             'appointment' => 'Nature of Appointment',
-            'date_hired' => 'Years in Current Position',
+            'date_hired' => 'Date Hired',
             'years_in_gov_service' => 'Years in Government Service',
         ];
 

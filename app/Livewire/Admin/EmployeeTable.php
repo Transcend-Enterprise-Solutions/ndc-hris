@@ -374,6 +374,7 @@ class EmployeeTable extends Component
                     3 => 'Resigned'
                 ];
                 $user->active_status_label = $statusMapping[$user->active_status] ?? 'Unknown';
+                
                 return $user;
             });
 
@@ -486,6 +487,15 @@ class EmployeeTable extends Component
         $nameFields = ['surname', 'first_name', 'middle_name', 'name_extension'];
         if (count(array_intersect($nameFields, $selectedColumns)) > 0) {
             $selectedColumns[] = 'name';
+        }
+
+        $fieldsToFormat = ['gsis', 'pagibig', 'philhealth', 'sss', 'tin', 'agency_employee_no'];
+
+        foreach ($fieldsToFormat as $field) {
+            if (isset($user->$field) && is_numeric($user->$field)) {
+                // Prepend a single quote to make Excel treat the value as text
+                $user->$field = "'" . $user->$field;
+            }
         }
     
         $selectedColumns = array_unique($selectedColumns);
