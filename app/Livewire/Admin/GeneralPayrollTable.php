@@ -1044,7 +1044,7 @@ class GeneralPayrollTable extends Component
                             'philhealth' => $payroll->philhealth,
                             'other_deductions' => $payroll->other_deductions,
                             'total_deduction' => $payroll->total_deduction,
-                            'net_amount_recieved' => $payroll->net_amount_received,
+                            'net_amount_received' => $payroll->net_amount_received,
                             'first_half_amount' => $payroll->amount_due_first_half,
                             'second_half_amount' => $payroll->amount_due_second_half,
                             'start_date' => $startDate,

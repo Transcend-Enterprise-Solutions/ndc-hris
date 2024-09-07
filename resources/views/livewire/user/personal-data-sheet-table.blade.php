@@ -2750,7 +2750,7 @@ x-cloak
                                 </div>
 
                                 <div class="col-span-2 sm:col-span-1">
-                                    <label for="name_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name of Organization
+                                    <label for="name_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Place of Organization
                                         <i class="fas fa-times flex sm:hidden cursor-pointer text-red-500 hover:text-red-700 float-right mr-1" wire:click="removeNewVoluntaryWork({{ $index }})"></i>
                                     </label>
                                     <input type="text" id="comp_{{ $index }}" wire:model="newVoluntaryWorks.{{ $index }}.org_address" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
