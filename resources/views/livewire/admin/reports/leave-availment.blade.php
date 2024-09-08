@@ -10,7 +10,7 @@
     <div class="p-4">
         <div class="grid grid-cols-12 gap-4">
             <!-- Total Leave by Status -->
-            <div class="col-span-full sm:col-span-6 bg-blue-100 dark:bg-blue-800 p-4 rounded-lg shadow">
+            <div class="col-span-full sm:col-span-6 bg-blue-100 dark:bg-blue-800 p-4 rounded-lg shadow overflow-auto">
                 <div class="text-sm font-semibold text-blue-800 dark:text-gray-100 mb-4">Total Leave
                     <hr class="border-t border-blue-200 dark:border-blue-600">
                     <label class="text-xs text-gray-900 dark:text-gray-300">Select Status: </label>
@@ -34,7 +34,7 @@
                         </li>
                         <li class="flex items-center">
                             <input type="checkbox" value="Disapproved" wire:model.live="statuses" class="h-4 w-4">
-                            <label class="ml-2 text-gray-900 dark:text-gray-300">Disapproved</label>
+                            <label class="ml-2 mr-2 text-gray-900 dark:text-gray-300">Disapproved</label>
                         </li>
                     </ul>
                 </div>
@@ -75,7 +75,8 @@
             </div>
 
             <!-- Total Leave Card from Vacation Leave -->
-            <div class="col-span-full sm:col-span-6 bg-yellow-100 dark:bg-yellow-800 p-4 rounded-lg shadow">
+            <div
+                class="col-span-full sm:col-span-6 bg-yellow-100 dark:bg-yellow-800 p-4 rounded-lg shadow overflow-auto">
                 <div class="text-sm font-semibold text-yellow-800 dark:text-gray-100 mb-4">Total Vacation Leave
 
                     <hr class="border-t border-yellow-200 dark:border-yellow-600">
@@ -101,7 +102,7 @@
                         </li>
                         <li class="flex items-center">
                             <input type="checkbox" value="Disapproved" wire:model.live="statusesForVL" class="h-4 w-4">
-                            <label class="sm:ml-2 text-gray-900 dark:text-gray-300">Disapproved</label>
+                            <label class="sm:ml-2 mr-2 text-gray-900 dark:text-gray-300">Disapproved</label>
                         </li>
                     </ul>
                 </div>
@@ -144,7 +145,8 @@
             </div>
 
             <!-- Total Leave Card from Sick Leave -->
-            <div class="col-span-full sm:col-span-6 bg-purple-100 dark:bg-purple-800 p-4 rounded-lg shadow">
+            <div
+                class="col-span-full sm:col-span-6 bg-purple-100 dark:bg-purple-800 p-4 rounded-lg shadow overflow-auto">
                 <div class="text-sm font-semibold text-purple-800 dark:text-gray-100 mb-4">Total Sick Leave
 
                     <hr class="border-t border-purple-200 dark:border-purple-600">
@@ -171,7 +173,7 @@
                         <li class="flex items-center">
                             <input type="checkbox" value="Disapproved" wire:model.live="statusesForSL"
                                 class="h-4 w-4">
-                            <label class="sm:ml-2 text-gray-900 dark:text-gray-300">Disapproved</label>
+                            <label class="sm:ml-2 mr-2 text-gray-900 dark:text-gray-300">Disapproved</label>
                         </li>
                     </ul>
                 </div>
