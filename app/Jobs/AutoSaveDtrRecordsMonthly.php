@@ -132,39 +132,55 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
         $afternoonIn = null;
         $afternoonOut = null;
 
-        $morningTransactions = $transactions->filter(function ($transaction) {
+        // Filter for morning in (before 12:00)
+        $morningInTransactions = $transactions->filter(function ($transaction) {
             $time = Carbon::parse($transaction->punch_time);
-            return $time->hour < 13 || ($time->hour == 13 && $time->minute == 0);
+            return $transaction->punch_state == 0 && $time->hour < 12;
         });
 
-        $afternoonTransactions = $transactions->filter(function ($transaction) {
-            $time = Carbon::parse($transaction->punch_time);
-            return $time->hour >= 12;
-        });
-
-        $morningIns = $morningTransactions->where('punch_state', 0);
-        $morningOuts = $morningTransactions->where('punch_state', 1);
-
-        if ($morningIns->isNotEmpty()) {
-            $actualMorningIn = Carbon::parse($morningIns->first()->punch_time);
+        // Only process morning out if there's a morning in
+        if ($morningInTransactions->isNotEmpty()) {
+            $actualMorningIn = Carbon::parse($morningInTransactions->first()->punch_time);
             $morningIn = $actualMorningIn->lt($defaultStartTime) ? $defaultStartTime : $actualMorningIn;
-        }
-        if ($morningOuts->isNotEmpty()) {
-            $actualMorningOut = Carbon::parse($morningOuts->last()->punch_time);
-            $morningOut = $actualMorningOut;
+
+            // Filter for morning out (can be after 12:00, but must be after morning in)
+            $morningOutTransactions = $transactions->filter(function ($transaction) use ($actualMorningIn) {
+                $time = Carbon::parse($transaction->punch_time);
+                return $transaction->punch_state == 1 && $time->gt($actualMorningIn) && $time->hour < 13;  // Ensure morning out is before 13:00
+            });
+
+            if ($morningOutTransactions->isNotEmpty()) {
+                $actualMorningOut = Carbon::parse($morningOutTransactions->last()->punch_time);
+                // Limit morning out to 13:00
+                $morningOut = min($actualMorningOut, Carbon::parse($date)->setTime(13, 0, 0));
+            }
         }
 
-        $afternoonIns = $afternoonTransactions->where('punch_state', 0);
-        $afternoonOuts = $afternoonTransactions->where('punch_state', 1);
+        // Filter for afternoon in (after 12:00, or first in if no morning in)
+        $afternoonInTransactions = $transactions->filter(function ($transaction) use ($morningInTransactions, $morningOut) {
+            $time = Carbon::parse($transaction->punch_time);
+            if ($morningInTransactions->isEmpty()) {
+                return $transaction->punch_state == 0 && $time->hour >= 12;  // Ensure it's afternoon (12:00 or later)
+            }
+            return $transaction->punch_state == 0 && $time->gt($morningOut ?? $time->copy()->setTime(12, 0, 0));
+        });
 
-        if ($afternoonIns->isNotEmpty()) {
-            $actualAfternoonIn = Carbon::parse($afternoonIns->first()->punch_time);
+        // Filter for afternoon out (after 13:00 to avoid overlap with morning)
+        $afternoonOutTransactions = $transactions->filter(function ($transaction) use ($afternoonInTransactions) {
+            $time = Carbon::parse($transaction->punch_time);
+            return $transaction->punch_state == 1 && $time->hour >= 13 && $transaction->id > ($afternoonInTransactions->first()->id ?? 0);
+        });
+
+        // Process afternoon transactions
+        if ($afternoonInTransactions->isNotEmpty()) {
+            $actualAfternoonIn = Carbon::parse($afternoonInTransactions->first()->punch_time);
             $afternoonIn = $actualAfternoonIn;
         }
-        if ($afternoonOuts->isNotEmpty()) {
-            $actualAfternoonOut = Carbon::parse($afternoonOuts->last()->punch_time);
+        if ($afternoonOutTransactions->isNotEmpty()) {
+            $actualAfternoonOut = Carbon::parse($afternoonOutTransactions->last()->punch_time);
             $afternoonOut = $actualAfternoonOut;
         }
+
 
         $lunchBreakStart = $carbonDate->copy()->setTimeFromTimeString('12:00:00');
         $lunchBreakEnd = $carbonDate->copy()->setTimeFromTimeString('13:00:00');
@@ -188,11 +204,27 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
 
         // Calculate expected time out based on first time in
         if ($morningIn) {
+            // Calculate expected end time based on morning in time
             $expectedEndTime = $morningIn->copy()->addHours(9);
             if ($expectedEndTime->gt($defaultEndTime)) {
                 $expectedEndTime = $defaultEndTime;
             }
-        }
+        } elseif ($afternoonIn) {
+            // Use afternoon in time if no morning in time is available
+            if ($afternoonIn->lt($afternoonIn->copy()->setTime(13, 0))) {
+                // If afternoon in is earlier than 13:00, set expected end time to 17:00
+                $expectedEndTime = $carbonDate->copy()->setTime(17, 0);
+            } elseif ($afternoonIn->gt($afternoonIn->copy()->setTime(14, 30))) {
+                // If afternoon in is later than 14:30, use default end time
+                $expectedEndTime = $defaultEndTime;
+            } else {
+                // Otherwise, expected end time is afternoon in + 4 hours
+                $expectedEndTime = $afternoonIn->copy()->addHours(4);
+                if ($expectedEndTime->gt($defaultEndTime)) {
+                    $expectedEndTime = $defaultEndTime;
+                }
+            }
+        }    
 
         // Calculate lateness
         $late = Carbon::createFromTime(0, 0, 0);
