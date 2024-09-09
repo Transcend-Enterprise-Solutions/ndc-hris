@@ -147,7 +147,8 @@ class WfhAttendanceTable extends Component
     {
         $user = Auth::user();
         $now = Carbon::now();
-        $currentHour = $now->hour;
+        // $currentHour = $now->hour;
+        $currentHour = 12;
         $today = $now->format('l');
         $schedule = DTRSchedule::where('emp_code', $user->emp_code)->first();
     
@@ -156,7 +157,6 @@ class WfhAttendanceTable extends Component
             $isWFHDay = in_array($today, $wfhDays);
     
             if ($isWFHDay) {
-                // Disable all buttons initially
                 $this->morningInDisabled = true;
                 $this->morningOutDisabled = true;
                 $this->afternoonInDisabled = true;
@@ -168,19 +168,46 @@ class WfhAttendanceTable extends Component
                     ->whereDate('punch_time', Carbon::today())
                     ->pluck('verify_type_display');
     
-                if ($currentHour >= 6 && $currentHour < 12) { // Morning: 6 AM to 12 PM
-                    if (!$transactions->contains('Morning In')) {
-                        $this->morningInDisabled = false;
-                    } elseif (!$transactions->contains('Morning Out')) {
-                        $this->morningOutDisabled = false;
-                    }
-                } elseif ($currentHour >= 12) { // Afternoon: 12 PM to 6 PM
+                // if ($currentHour >= 6 && $currentHour < 13) {
+                //     if (!$transactions->contains('Morning In')) {
+                //         $this->morningInDisabled = false;
+                //     } elseif (!$transactions->contains('Morning Out')) {
+                //         $this->morningOutDisabled = false;
+                //     }
+                // } elseif ($currentHour >= 12) {
+                //     if (!$transactions->contains('Afternoon In')) {
+                //         $this->afternoonInDisabled = false;
+                //     } elseif (!$transactions->contains('Afternoon Out')) {
+                //         $this->afternoonOutDisabled = false;
+                //     }
+                // }
+
+                if ($currentHour >= 6 && $currentHour < 13) {
+                    // Morning: 6 AM to 12 PM
+                    // if ($currentHour < 13) {
+                        // Enable Morning In button if it's before 12 PM and not punched yet
+                        if (!$transactions->contains('Morning In')) {
+                            $this->morningInDisabled = false;
+                        } elseif (!$transactions->contains('Morning Out')) {
+                            $this->morningOutDisabled = false;
+                        }
+                    // } 
+                    
+                } 
+                // elseif ($currentHour >= 12) {
+                //     // Disable Morning In button after 12 PM if it wasn't punched
+                //     $this->morningInDisabled = true;
+                // }
+                if ($currentHour >= 12) {
+                    // Afternoon: 12 PM onwards
+                    $this->morningInDisabled = true;
                     if (!$transactions->contains('Afternoon In')) {
                         $this->afternoonInDisabled = false;
                     } elseif (!$transactions->contains('Afternoon Out')) {
                         $this->afternoonOutDisabled = false;
                     }
                 }
+                
             }
         }
     }

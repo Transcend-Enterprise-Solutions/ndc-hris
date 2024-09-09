@@ -350,6 +350,14 @@ class AdminLeaveRequestTable extends Component
                                       ->get();
     }
 
+    public function getFilteredEndorser2UsersProperty()
+    {
+        // Filter out the selected endorser1 from the list of users for endorser2
+        return $this->nonEmployeeUsers->filter(function ($user) {
+            return $user->id != $this->endorser1;
+        });
+    }
+
     public function disapproveLeave()
     {
         $this->validate([
@@ -411,6 +419,7 @@ class AdminLeaveRequestTable extends Component
             'leaveApplications' => $leaveApplications,
             'vacationLeaveDetails' => $vacationLeaveDetails,
             'sickLeaveDetails' => $sickLeaveDetails,
+            'filteredEndorser2Users' => $this->filteredEndorser2Users,
         ]);
     }
     

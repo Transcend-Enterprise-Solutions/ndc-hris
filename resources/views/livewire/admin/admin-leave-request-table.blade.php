@@ -233,11 +233,11 @@
                 {{-- New Section for Endorsers --}}
                 <div class="mb-4">
                     <label for="endorser1" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
-                        Select First Endorser
+                        Second Approver
                     </label>
-                    <select wire:model="endorser1" id="endorser1"
+                    <select wire:model.live="endorser1" id="endorser1"
                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
-                        <option value="">Select Endorser</option>
+                        <option value="">Select a supervisor</option>
                         @foreach ($nonEmployeeUsers as $user)
                             <option value="{{ $user->id }}">{{ $user->name }}</option>
                         @endforeach
@@ -249,12 +249,12 @@
 
                 <div class="mb-4">
                     <label for="endorser2" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
-                        Select Second Endorser
+                        Last Approver
                     </label>
-                    <select wire:model="endorser2" id="endorser2"
+                    <select wire:model.live="endorser2" id="endorser2"
                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
-                        <option value="">Select Endorser</option>
-                        @foreach ($nonEmployeeUsers as $user)
+                        <option value="">Select a supervisor</option>
+                        @foreach ($filteredEndorser2Users as $user)
                             <option value="{{ $user->id }}">{{ $user->name }}</option>
                         @endforeach
                     </select>
