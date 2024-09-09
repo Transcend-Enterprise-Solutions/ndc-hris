@@ -391,8 +391,10 @@ class GeneralPayrollTable extends Component
                                     ->whereYear('start_date', $startDate->year)
                                     ->get();
 
-            if ($payslip->isEmpty()) {
+            if ($payslip->isEmpty() && !$this->endMonth) {
                 $this->hasPayroll = false;
+            }else{
+                $this->hasPayroll = true;
             }
 
 
