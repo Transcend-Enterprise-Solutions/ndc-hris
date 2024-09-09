@@ -22,8 +22,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\SalaryGradeExport;
 use Livewire\WithFileUploads;
 
-use function Termwind\render;
-
 class RoleManagementTable extends Component
 {
     use WithPagination, WithFileUploads;
@@ -995,7 +993,6 @@ class RoleManagementTable extends Component
                 'title' => "Salary Grade imported successfully!",
                 'icon' => 'success'
             ]);
-            $this->render();
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             DB::rollBack();
             $failures = $e->failures();
@@ -1016,7 +1013,6 @@ class RoleManagementTable extends Component
         }
 
         $this->file = null;
-        
     }
 
     public function resetVariables(){
