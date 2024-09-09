@@ -7,33 +7,31 @@
 
             {{-- <div class="p-4"> --}}
 
-            <div class="">
-                <!-- Search input -->
-                <div class="relative inline-block text-left mb-4 w-full">
-                    <label for="search"
-                        class="block text-sm font-medium text-gray-700 dark:text-slate-400">Search</label>
-                    <input type="search" id="search" wire:model.live="search" placeholder="Enter employee name"
-                        class="py-2 px-3 block w-full sm:w-80 shadow-sm text-sm font-medium border-gray-400
+            {{-- <div class=""> --}}
+            <!-- Search input -->
+            <div class="relative inline-block text-left mb-4 w-full">
+                <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Search</label>
+                <input type="search" id="search" wire:model.live="search" placeholder="Enter employee name"
+                    class="py-2 px-3 block w-full sm:w-80 shadow-sm text-sm font-medium border-gray-400
                                    dark:text-neutral-200 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
-                </div>
+            </div>
 
 
-                <!-- Tabs -->
-                <div class="mb-2">
-                    <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700"
-                        role="tablist">
-                        <button @click="$wire.setActiveTab('pending')"
-                            :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': activeTab === 'pending', 'text-slate-700 font-bold dark:text-white': activeTab !== 'pending' }"
-                            class="h-min px-4 py-2 text-sm" role="tab">Pending</button>
-                        <button @click="$wire.setActiveTab('approved')"
-                            :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': activeTab === 'approved', 'text-slate-700 font-bold dark:text-white': activeTab !== 'approved' }"
-                            class="h-min px-4 py-2 text-sm" role="tab">Approved</button>
-                        <button @click="$wire.setActiveTab('disapproved')"
-                            :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': activeTab === 'disapproved', 'text-slate-700 font-bold dark:text-white': activeTab !== 'disapproved' }"
-                            class="h-min px-4 py-2 text-sm" role="tab">Disapproved</button>
-                    </div>
+            <!-- Tabs -->
+            <div class="mb-2">
+                <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700" role="tablist">
+                    <button @click="$wire.setActiveTab('pending')"
+                        :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': activeTab === 'pending', 'text-slate-700 font-bold dark:text-white': activeTab !== 'pending' }"
+                        class="h-min px-4 py-2 text-sm" role="tab">Pending</button>
+                    <button @click="$wire.setActiveTab('approved')"
+                        :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': activeTab === 'approved', 'text-slate-700 font-bold dark:text-white': activeTab !== 'approved' }"
+                        class="h-min px-4 py-2 text-sm" role="tab">Approved</button>
+                    <button @click="$wire.setActiveTab('disapproved')"
+                        :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': activeTab === 'disapproved', 'text-slate-700 font-bold dark:text-white': activeTab !== 'disapproved' }"
+                        class="h-min px-4 py-2 text-sm" role="tab">Disapproved</button>
                 </div>
             </div>
+            {{-- </div> --}}
 
             <div class="flex flex-col sm:p-4">
                 <!-- Table -->

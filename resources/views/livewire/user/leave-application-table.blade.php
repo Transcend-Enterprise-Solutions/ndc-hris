@@ -86,7 +86,7 @@
                     <!-- Date Inputs and Export Button -->
                     <div class="flex flex-col md:flex-row gap-4">
                         <!-- Start Date -->
-                        <div class="flex flex-col mb-4 md:mb-0">
+                        <div class="flex flex-col md:mb-0">
                             <label class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Start
                                 Date:</label>
                             <input type="month" wire:model.live="startDate"
@@ -96,8 +96,8 @@
                         </div>
 
                         <!-- End Date -->
-                        <div class="flex mb-4 md:mb-0">
-                            <div class="flex flex-col mb-4 md:mb-0">
+                        <div class="flex md:mb-0">
+                            <div class="flex flex-col md:mb-0">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">End
                                     Date:</label>
                                 <input type="month" wire:model.live="endDate"
@@ -110,7 +110,7 @@
                         <!-- Export Button -->
                         <div class="flex items-end">
                             <button wire:click="exportExcel"
-                                class="mt-4 sm:mt-0 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                                class="sm:mt-0 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                                     justify-center px-4 py-1.5 text-sm font-medium tracking-wide
                                     text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none {{ $isDisabled ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer' }}"
