@@ -20,7 +20,7 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="build/assets/app-BsxgFw5I.css">
+    <link rel="stylesheet" href="build/assets/app-DYRvWKQV.css">
 
     @livewireStyles
     <style>
