@@ -157,7 +157,7 @@ x-cloak
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Citizenship</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->citizenship ?: 'N/A' }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->citizenship ?: 'N/A' }} <span class="text-xs opacity-80">{{ $userData->dual_citizenship_type ? '| ' . $userData->dual_citizenship_type : '' }} {{ $userData->dual_citizenship_country ? '| ' . $userData->dual_citizenship_country : '' }}</span></p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Height</p>
