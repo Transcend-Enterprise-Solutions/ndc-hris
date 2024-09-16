@@ -15,6 +15,7 @@ class WorkExperience extends Model
         'user_id',
         'start_date',
         'end_date',
+        'toPresent',
         'position',
         'department',
         'monthly_salary',

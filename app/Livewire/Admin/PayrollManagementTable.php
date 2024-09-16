@@ -6,6 +6,7 @@ use App\Exports\CosPayrollListExport;
 use App\Exports\PayrollListExport;
 use App\Models\Admin;
 use App\Models\CosPayrolls;
+use App\Models\CosRegPayrolls;
 use App\Models\GeneralPayroll;
 use App\Models\Payrolls;
 use App\Models\SalaryGrade;
@@ -130,7 +131,7 @@ class PayrollManagementTable extends Component
                     })
                     ->paginate(5);
 
-        $cosPayrolls = CosPayrolls::when($this->search2, function ($query) {
+        $cosPayrolls = CosRegPayrolls::when($this->search2, function ($query) {
                         return $query->search(trim($this->search2));
                     })
                     ->paginate(5);
@@ -413,7 +414,7 @@ class PayrollManagementTable extends Component
             $sg_step = implode('-', [$this->sg, $this->step]);
             $message = null;
             $icon = null;
-            $cos = CosPayrolls::where('user_id', $user->id)->first();
+            $cos = CosRegPayrolls::where('user_id', $user->id)->first();
             if(!$cos){
                 $payrollData = [
                     'user_id' => $this->userId,
@@ -504,7 +505,7 @@ class PayrollManagementTable extends Component
         $this->editCosPayroll = true;
         $this->userId = $userId;
         try {
-            $payroll = CosPayrolls::where('user_id', $userId)->first();
+            $payroll = CosRegPayrolls::where('user_id', $userId)->first();
             $sg = explode('-', $payroll->sg_step);
             if ($payroll) {
                 $this->name = $payroll->name;
@@ -529,7 +530,7 @@ class PayrollManagementTable extends Component
     
     public function saveCosPayroll(){
         try {
-            $payroll = CosPayrolls::where('user_id', $this->userId)->first();
+            $payroll = CosRegPayrolls::where('user_id', $this->userId)->first();
             $user = User::where('id', $this->userId)->first();
             $sg_step = implode('-', [$this->sg, $this->step]);
             $message = null;
@@ -568,7 +569,7 @@ class PayrollManagementTable extends Component
                         'rate_per_month' => 'required|numeric',
                     ]);
                     $payrollData['name'] = $user->name;
-                    CosPayrolls::create($payrollData);
+                    CosRegPayrolls::create($payrollData);
                     $message = "COS Payroll added successfully!";
                     $icon = "success";
                 }

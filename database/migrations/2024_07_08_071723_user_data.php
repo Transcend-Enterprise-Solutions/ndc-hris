@@ -28,8 +28,8 @@ return new class extends Migration
                 $table->string('citizenship');
                 $table->string('dual_citizenship_type');
                 $table->string('dual_citizenship_country');
-                $table->integer('height');
-                $table->integer('weight');
+                $table->float('height');
+                $table->float('weight');
                 $table->string('blood_type', 5)->nullable();
                 $table->string('gsis', 50);
                 $table->string('pagibig', 50);

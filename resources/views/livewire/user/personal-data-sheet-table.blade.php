@@ -112,24 +112,24 @@ x-cloak
                             <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                    <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->surname }}</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->surname ?: 'N/A' }}</p>
                                 </div>
 
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                    <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->first_name }}</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->first_name ?: 'N/A' }}</p>
                                 </div>
                             </div>
 
                             <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 dark:bg-slate-700 bg-gray-50">Middlename</p>
-                                    <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->middle_name }}</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->middle_name ?: 'N/A' }}</p>
                                 </div>
 
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
-                                    <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->name_extension }}</p>
+                                    <p class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">{{ $userData->name_extension ?: 'N/A' }}</p>
                                 </div>
                             </div>
 
@@ -140,36 +140,36 @@ x-cloak
                             <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($userData->date_of_birth)->format('F d, Y') }}
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->date_of_birth ? \Carbon\Carbon::parse($userData->date_of_birth)->format('F d, Y') : 'N/A' }}
                                     </p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Place of Birth</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->place_of_birth }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->place_of_birth ?: 'N/A' }}</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Sex</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->sex }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->sex ?: 'N/A' }}</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Civil Status</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->civil_status }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->civil_status ?: 'N/A' }}</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Citizenship</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->citizenship }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->citizenship ?: 'N/A' }}</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Height</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->height }}m</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->height ?: 'N/A' }}m</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Weight</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->weight }}kg</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->weight ?: 'N/A' }}kg</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Bloodtype</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->blood_type }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->blood_type ?: 'N/A' }}</p>
                                 </div>
                             </div>
 
@@ -194,7 +194,7 @@ x-cloak
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Tel No.</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->tel_number }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->tel_number ?: 'N/A' }}</p>
                                 </div>
                             </div>
                             
@@ -206,14 +206,14 @@ x-cloak
                             <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Mobile No.</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->mobile_number }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->mobile_number ?: 'N/A' }}</p>
                                 </div>
                             </div>
 
                             <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Email</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->email }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->email ?: 'N/A' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -223,30 +223,30 @@ x-cloak
                             <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">GSIS ID No.</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->gsis }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->gsis ?: 'N/A' }}</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Pag-Ibig ID No.</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->pagibig }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->pagibig ?: 'N/A' }}</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">PhilHealth ID No.</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->philhealth }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->philhealth ?: 'N/A' }}</p>
                                 </div>
                             </div>
 
                             <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">SSS No.</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->sss }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->sss ?: 'N/A' }}</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">TIN No.</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->tin }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->tin ?: 'N/A' }}</p>
                                 </div>
                                 <div class="flex w-full sm:w-auto">
                                     <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Agency Employee No.</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->agency_employee_no }}</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userData->agency_employee_no ?: 'N/A' }}</p>
                                 </div>
                             </div>
 
@@ -271,24 +271,24 @@ x-cloak
                                 <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->surname }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->surname ?: 'N/A' }}</p>
                                     </div>
 
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->first_name }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->first_name ?: 'N/A' }}</p>
                                     </div>
                                 </div>
 
                                 <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->middle_name }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->middle_name ?: 'N/A' }}</p>
                                     </div>
 
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->name_extension }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->name_extension ?: 'N/A' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -297,24 +297,24 @@ x-cloak
                                 <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($userSpouse->birth_date)->format('F d, Y') }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->birth_date ? \Carbon\Carbon::parse($userSpouse->birth_date)->format('F d, Y') : 'N/A' }}</p>
                                     </div>
 
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Occupation</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->occupation }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->occupation ?: 'N/A' }}</p>
                                     </div>
                                 </div>
 
                                 <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Employer</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->employer }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->employer ?: 'N/A' }}</p>
                                     </div>
 
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Tel. No.</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->tel_number }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->tel_number ?: 'N/A' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -323,7 +323,7 @@ x-cloak
                                 <div class="w-full sm:w-4/4 block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 sm:w-1/5 bg-gray-50 dark:bg-slate-700">Business Address</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->business_address }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userSpouse->business_address ?: 'N/A' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -343,24 +343,24 @@ x-cloak
                                     <div class="w-full lg:w-2/4 md:w-full block">
                                         <div class="flex w-full sm:w-auto">
                                             <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->surname }}</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->surname ?: 'N/A' }}</p>
                                         </div>
 
                                         <div class="flex w-full sm:w-auto">
                                             <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->first_name }}</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->first_name ?: 'N/A' }}</p>
                                         </div>
                                     </div>
 
                                     <div class="w-full lg:w-2/4 md:w-full block">
                                         <div class="flex w-full sm:w-auto">
                                             <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
-                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->middle_name }}</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->middle_name ?: 'N/A' }}</p>
                                         </div>
 
                                         <div class="flex w-full sm:w-auto">
                                             <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
-                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->name_extension }}</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userFather->name_extension ?: 'N/A' }}</p>
                                         </div>
                                     </div>
 
@@ -381,27 +381,28 @@ x-cloak
                                 <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Surname</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->surname }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->surname ?: 'N/A' }}</p>
+                                    </div>
+
+                                    <div class="flex w-full sm:w-auto">
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->first_name ?: 'N/A' }}</p>
                                     </div>
                                 </div>
 
                                 <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
-                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Firstname</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->first_name }}</p>
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Middlename</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->middle_name ?: 'N/A' }}</p>
                                     </div>
-                                </div>
 
-                            </div>
-
-                            <div class="custom-d flex w-full">
-                                <div class="w-full sm:w-4/4 block">
                                     <div class="flex w-full sm:w-auto">
-                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 md:w-3/6 lg:w-1/5 bg-gray-50 dark:bg-slate-700">Middlename</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->middle_name }}</p>
+                                        <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name Extension</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $userMother->name_extension ?: 'N/A' }}</p>
                                     </div>
                                 </div>
-                            </div>
+
+                        </div>
                         @endif
 
                         {{-- Children --}}
@@ -420,14 +421,14 @@ x-cloak
                                     <div class="w-full lg:w-2/4 md:w-full block">
                                         <div class="flex w-full sm:w-auto">
                                             <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Fullname</p>
-                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $child->childs_name }}</p>
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $child->childs_name ?: 'N/A' }}</p>
                                         </div>
                                     </div>
 
                                     <div class="w-full lg:w-2/4 md:w-full block">
                                         <div class="flex w-full sm:w-auto">
                                             <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Date of Birth</p>
-                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ \Carbon\Carbon::parse($child->childs_birth_date)->format('F d, Y') }}
+                                            <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $child->childs_birth_date ? \Carbon\Carbon::parse($child->childs_birth_date)->format('F d, Y') : 'N/A' }}
                                                 <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('child', {{ $child->id }})"></i>
                                             </p>
                                         </div>
@@ -450,7 +451,7 @@ x-cloak
                         @foreach ($educBackground as $educ)
                             <div class="flex w-full sm:w-auto">
                                 <p class="border border-gray-200 dark:border-slate-600 p-1 w-1/7 bg-gray-200 font-bold dark:bg-slate-700 dark:text-gray-200">Level</p>
-                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 font-bold uppercase dark:text-gray-200">{{ $educ->level }}
+                                <p class="w-full border border-gray-200 dark:border-slate-600 p-1 font-bold uppercase dark:text-gray-200">{{ $educ->level ?: 'N/A' }}
                                     <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('educ', {{ $educ->id }})"></i>
                                 </p>
                             </div>
@@ -459,33 +460,33 @@ x-cloak
                                 <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Name of School</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->name_of_school }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->name_of_school ?: 'N/A' }}</p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Period of Attendance</p>
                                         <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            From: {{ $educ->from }} <br>
-                                            To: {{ $educ->to }}
+                                            From: {{ $educ->from ? \Carbon\Carbon::parse($educ->from)->format('m/d/Y') : 'N/A' }} <br>
+                                            To: {{ $educ->to ? \Carbon\Carbon::parse($educ->to)->format('m/d/Y') : '' }}{{ $educ->toPresent ?: '' }}
                                         </p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Scholarship/Academic Honors Received</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->award }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->award ?: 'N/A' }}</p>
                                     </div>
                                 </div>
 
                                 <div class="w-full lg:w-2/4 md:w-full block">
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Basic Education/<br>Degree/Course</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->basic_educ_degree_course }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->basic_educ_degree_course ?: 'N/A' }}</p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Highest Level/<br>Units Earned</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->highest_level_unit_earned }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->highest_level_unit_earned ?: 'N/A' }}</p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">Year Graduated</p>
-                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->year_graduated }}</p>
+                                        <p class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">{{ $educ->year_graduated ?: 'N/A' }}</p>
                                     </div>
                                 </div>
 
@@ -519,12 +520,12 @@ x-cloak
                                 <tbody class="">
                                     @foreach($eligibility as $elig)
                                         <tr class="dark:text-gray-200">
-                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->eligibility }}</td>
-                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->rating }}%</td>
-                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($elig->date)->format('F d, Y') }}</td>
-                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->place_of_exam }}</td>
-                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->license }}</td>
-                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($elig->date_of_validity)->format('F d, Y') }}
+                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->eligibility ?: 'N/A' }}</td>
+                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->rating ?: 'N/A' }}</td>
+                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->date  ? \Carbon\Carbon::parse($elig->date)->format('m/d/Y') : 'N/A'  }}</td>
+                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->place_of_exam ?: 'N/A' }}</td>
+                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->license ?: 'N/A' }}</td>
+                                            <td class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">{{ $elig->date_of_validity ? \Carbon\Carbon::parse($elig->date_of_validity)->format('m/d/Y') : 'N/A'  }}
                                                 <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('elig', {{ $elig->id }})"></i>
                                             </td>
                                         </tr>
@@ -576,18 +577,18 @@ x-cloak
                                             <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
                                                 <div class="flex w-full">
                                                     <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
-                                                        {{ $exp->start_date }}
+                                                        {{ $exp->start_date ? \Carbon\Carbon::parse($exp->start_date)->format('m/d/Y') : 'N/A'  }}
                                                     </div>
                                                     <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
-                                                        {{ $exp->end_date }}
+                                                        {{ $exp->end_date ? \Carbon\Carbon::parse($exp->end_date)->format('m/d/Y') : 'Present'  }}
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->position }}</td>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->department }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->position ?: 'N/A' }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->department ?: 'N/A' }}</td>
                                             <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ '₱ ' . number_format($exp->monthly_salary, 2) }}</td>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->sg_step }}</td>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->status_of_appointment }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->sg_step ?: 'N/A' }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->status_of_appointment ?: 'N/A' }}</td>
                                             <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $exp->gov_service ? 'Yes' : 'No' }}
                                                 <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('exp', {{ $exp->id }})"></i>
                                             </td>
@@ -637,20 +638,20 @@ x-cloak
                                 <tbody class="">
                                     @foreach($voluntaryWorks as $voluntary)
                                         <tr>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $voluntary->org_name }}</td>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $voluntary->org_address }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $voluntary->org_name ?: 'N/A' }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $voluntary->org_address ?: 'N/A' }}</td>
                                             <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
                                                 <div class="flex w-full">
                                                     <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
-                                                        {{ $voluntary->start_date }}
+                                                        {{ $voluntary->start_date ? \Carbon\Carbon::parse($voluntary->start_date)->format('m/d/Y') : 'N/A'  }}
                                                     </div>
                                                     <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
-                                                        {{ $voluntary->end_date }}
+                                                        {{ $voluntary->end_date ? \Carbon\Carbon::parse($voluntary->end_date)->format('m/d/Y') : 'Present'  }}
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">{{ $voluntary->no_of_hours }}</td>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">{{ $voluntary->position_nature }}
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">{{ $voluntary->no_of_hours ?: 'N/A' }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">{{ $voluntary->position_nature ?: 'N/A' }}
                                                 <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('voluntary', {{ $voluntary->id }})"></i>
                                             </td>
                                         </tr>
@@ -701,16 +702,16 @@ x-cloak
                                             <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
                                                 <div class="flex w-full">
                                                     <div class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
-                                                        {{ $ld->start_date }}
+                                                        {{ $ld->start_date ? \Carbon\Carbon::parse($ld->start_date)->format('m/d/Y') : 'N/A' }}
                                                     </div>
                                                     <div class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
-                                                        {{ $ld->end_date }}
+                                                        {{ $ld->end_date ? \Carbon\Carbon::parse($ld->end_date)->format('m/d/Y') : 'Present' }}
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->no_of_hours }}</td>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->type_of_ld }}</td>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->conducted_by }}
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->no_of_hours ?: 'N/A' }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->type_of_ld ?: 'N/A' }}</td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->conducted_by ?: 'N/A' }}
                                                 <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('ld', {{ $ld->id }})"></i>
                                             </td>
                                         </tr>
@@ -782,7 +783,7 @@ x-cloak
                                         <tr class="dark:text-gray-200">
                                             <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $non_acads_distinction->award }}</td>
                                             <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $non_acads_distinction->ass_org_name }}</td>
-                                            <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ \Carbon\Carbon::parse($non_acads_distinction->date_received)->format('F d, Y') }}
+                                            <td class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">{{ $non_acads_distinction->date_received ? \Carbon\Carbon::parse($non_acads_distinction->date_received)->format('m/d/Y') : '' }}
                                                 <i title="Delete" class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer" wire:click="toggleDelete('nonacad', {{ $non_acads_distinction->id }})"></i>
                                             </td>
                                         </tr>
@@ -971,7 +972,7 @@ x-cloak
                                                     <input type="date" value="{{ $q35bDate_filed }}" wire:model='q35bDate_filed' 
                                                     class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
                                                 @elseif($q35bDate_filed)
-                                                    {{ $q35bDate_filed }}
+                                                    {{ $q35bDate_filed ? \Carbon\Carbon::parse($q35bDate_filed)->format('m/d/Y') : '' }}
                                                 @endif
                                             </div>
                                         </div>
@@ -1408,7 +1409,7 @@ x-cloak
                                     <div class="flex w-full px-2 bg-gray-50 dark:bg-gray-800 items-center" style="height: 50px">
                                         <p class="w-2/3">Date/Place of Issuance:</p>
                                         @if($editGovId)
-                                            <input type="date" wire:model='dateIssued' 
+                                            <input type="text" wire:model='dateIssued' 
                                             class="w-1/3 text-sm bg-gray-100 text-gray-800 w-full" autofocus style="height: 35px">
                                         @elseif($dateIssued)
                                             <p class="w-2/3 text-gray-800 dark:text-gray-100 text-right">{{ $dateIssued }}</p>
@@ -1526,11 +1527,63 @@ x-cloak
                     </div>
 
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="citizenship" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Citizenship</label>
-                        <input type="text" id="citizenship" wire:model='citizenship' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                        @error('citizenship')
-                            <span class="text-red-500 text-sm">The citizenship is required!</span>
-                        @enderror
+                        <!-- Citizenship Radio Buttons -->
+                        <div class="w-full">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-slate-400">Citizenship</label>
+                            <div class="mt-2">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="citizenship" value="Filipino" wire:model.live="citizenship"
+                                        class="text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                                    <span class="ml-2">Filipino</span>
+                                </label>
+                                <label class="inline-flex items-center ml-6">
+                                    <input type="radio" name="citizenship" value="Dual Citizenship" wire:model.live="citizenship"
+                                        class="text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                                    <span class="ml-2">Dual Citizenship</span>
+                                </label>
+                            </div>
+                            @error('citizenship')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <!-- Dual Citizenship Additional Fields -->
+                        @if ($citizenship === 'Dual Citizenship')
+                            <!-- Dual Citizenship Type Radio Buttons -->
+                            <div class="w-full mt-4">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-400">Dual Citizenship Type</label>
+                                <div class="mt-2">
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="dual_citizenship_type" value="By Birth" wire:model="dual_citizenship_type"
+                                            class="text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                                        <span class="ml-2">By Birth</span>
+                                    </label>
+                                    <label class="inline-flex items-center ml-6">
+                                        <input type="radio" name="dual_citizenship_type" value="By Naturalization" wire:model="dual_citizenship_type"
+                                            class="text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                                        <span class="ml-2">By Naturalization</span>
+                                    </label>
+                                </div>
+                                @error('dual_citizenship_type')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Country Select Field -->
+                            <div class="w-full mt-4">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-400">Country</label>
+                                <select wire:model="dual_citizenship_country"
+                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    <option value="">Select Country</option>
+                                    @foreach ($countries as $country)
+                                        <option value="{{ $country->name }}">{{ $country->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('dual_citizenship_country')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        @endif
                     </div>
 
                     <div class="col-span-2 sm:col-span-1">
@@ -1897,7 +1950,7 @@ x-cloak
                     </div>
 
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="spouse_date_of_birth" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date</label>
+                        <label for="spouse_date_of_birth" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date of Birth</label>
                         <input type="date" id="spouse_date_of_birth" wire:model='spouse_date_of_birth' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                         @error('spouse_date_of_birth')
                             <span class="text-red-500 text-sm">The date is required!</span>
@@ -2062,6 +2115,11 @@ x-cloak
                         @enderror
                     </div>
 
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="mother_name_extension" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Name Extension</label>
+                        <input type="text" id="mother_name_extension" wire:model='mother_name_extension' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                    </div>
+
                     {{-- Save and Cancel buttons --}}
                     <div class="mt-4 flex justify-end col-span-2 sm:col-span-2">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -2206,8 +2264,14 @@ x-cloak
 
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">To</label>
-                                    <input type="date" id="to_{{ $index }}" wire:model="education.{{ $index }}.to" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                    @error('education.' . $index . '.to')
+                                    <div class="flex gap-4">
+                                        <input type="date" id="to_{{ $index }}" wire:model="education.{{ $index }}.to" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700 {{ $education[$index]['toPresent'] ? 'hidden' : '' }}">
+                                        <div class="flex items-center justify-center gap-2 mr-4 {{ $education[$index]['toPresent'] ? 'flex-row mt-4' : 'flex-col' }}">
+                                            <input type="checkbox" id="to_{{ $index }}" wire:model.live="education.{{ $index }}.toPresent" value="Present" @if($education[$index]['toPresent']) checked @endif>
+                                            <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
+                                        </div>
+                                    </div>
+                                    @error('education.' . $index . '.to' || 'education.' . $index . '.toPresent')
                                         <span class="text-red-500 text-sm">The end period of attendance is required!</span>
                                     @enderror
                                 </div>
@@ -2281,8 +2345,14 @@ x-cloak
 
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">To</label>
-                                    <input type="date" id="to_{{ $index }}" wire:model="newEducation.{{ $index }}.to" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                    @error('newEducation.' . $index . '.to')
+                                    <div class="flex gap-4">
+                                        <input type="date" id="to_{{ $index }}" wire:model="newEducation.{{ $index }}.to" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700 {{ $newEducation[$index]['toPresent'] ? 'hidden' : '' }}">
+                                        <div class="flex items-center justify-center gap-2 mr-4 {{ $newEducation[$index]['toPresent'] ? 'flex-row mt-4' : 'flex-col' }}">
+                                            <input type="checkbox" id="to_{{ $index }}" wire:model.live="newEducation.{{ $index }}.toPresent" value="Present">
+                                            <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
+                                        </div>
+                                    </div>
+                                    @error('newEducation.' . $index . '.to' || 'newEducation.' . $index . '.toPresent')
                                         <span class="text-red-500 text-sm">The end period of attendance is required!</span>
                                     @enderror
                                 </div>
@@ -2533,10 +2603,16 @@ x-cloak
                                 </div>
 
                                 <div class="col-span-2 sm:col-span-1">
-                                    <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
-                                    <input type="date" id="end_date_{{ $index }}" wire:model="workExperiences.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                    @error('workExperiences.' . $index . '.end_date')
-                                        <span class="text-red-500 text-sm">The end date is required!</span>
+                                    <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
+                                    <div class="flex gap-4">
+                                        <input type="date" id="to_{{ $index }}" wire:model="workExperiences.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700 {{ $workExperiences[$index]['toPresent'] ? 'hidden' : '' }}">
+                                        <div class="flex items-center justify-center gap-2 mr-4 {{ $workExperiences[$index]['toPresent'] ? 'flex-row mt-4' : 'flex-col' }}">
+                                            <input type="checkbox" id="to_{{ $index }}" wire:model.live="workExperiences.{{ $index }}.toPresent" value="Present"  @if($workExperiences[$index]['toPresent']) checked @endif>
+                                            <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
+                                        </div>
+                                    </div>
+                                    @error('workExperiences.' . $index . '.end_date' || 'workExperiences.' . $index . '.toPresent')
+                                        <span class="text-red-500 text-sm">The end period of attendance is required!</span>
                                     @enderror
                                 </div>
 
@@ -2607,10 +2683,16 @@ x-cloak
                                 </div>
 
                                 <div class="col-span-2 sm:col-span-1">
-                                    <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
-                                    <input type="date" id="end_date_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                    @error('newWorkExperiences.' . $index . '.end_date')
-                                        <span class="text-red-500 text-sm">The end date is required!</span>
+                                    <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
+                                    <div class="flex gap-4">
+                                        <input type="date" id="to_{{ $index }}" wire:model="newWorkExperiences.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700 {{ $newWorkExperiences[$index]['toPresent'] ? 'hidden' : '' }}">
+                                        <div class="flex items-center justify-center gap-2 mr-4 {{ $newWorkExperiences[$index]['toPresent'] ? 'flex-row mt-4' : 'flex-col' }}">
+                                            <input type="checkbox" id="to_{{ $index }}" wire:model.live="newWorkExperiences.{{ $index }}.toPresent" value="Present">
+                                            <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
+                                        </div>
+                                    </div>
+                                    @error('newWorkExperiences.' . $index . '.end_date' || 'newWorkExperiences.' . $index . '.toPresent')
+                                        <span class="text-red-500 text-sm">The end period of attendance is required!</span>
                                     @enderror
                                 </div>
 
@@ -2710,10 +2792,16 @@ x-cloak
                                 </div>
 
                                 <div class="col-span-2 sm:col-span-1">
-                                    <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
-                                    <input type="date" id="end_date_{{ $index }}" wire:model="voluntaryWork.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                    @error('voluntaryWork.' . $index . '.end_date')
-                                        <span class="text-red-500 text-sm">The end date is required!</span>
+                                    <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
+                                    <div class="flex gap-4">
+                                        <input type="date" id="to_{{ $index }}" wire:model="voluntaryWork.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700 {{ $voluntaryWork[$index]['toPresent'] ? 'hidden' : '' }}">
+                                        <div class="flex items-center justify-center gap-2 mr-4 {{ $voluntaryWork[$index]['toPresent'] ? 'flex-row mt-4' : 'flex-col' }}">
+                                            <input type="checkbox" id="to_{{ $index }}" wire:model.live="voluntaryWork.{{ $index }}.toPresent" value="Present"  @if($voluntaryWork[$index]['toPresent']) checked @endif>
+                                            <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
+                                        </div>
+                                    </div>
+                                    @error('voluntaryWork.' . $index . '.end_date' || 'voluntaryWork.' . $index . '.toPresent')
+                                        <span class="text-red-500 text-sm">The end period of attendance is required!</span>
                                     @enderror
                                 </div>
 
@@ -2768,10 +2856,16 @@ x-cloak
                                 </div>
 
                                 <div class="col-span-2 sm:col-span-1">
-                                    <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
-                                    <input type="date" id="end_date_{{ $index }}" wire:model="newVoluntaryWorks.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                    @error('newVoluntaryWorks.' . $index . '.end_date')
-                                        <span class="text-red-500 text-sm">The end date is required!</span>
+                                    <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
+                                    <div class="flex gap-4">
+                                        <input type="date" id="to_{{ $index }}" wire:model="newVoluntaryWorks.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700 {{ $newVoluntaryWorks[$index]['toPresent'] ? 'hidden' : '' }}">
+                                        <div class="flex items-center justify-center gap-2 mr-4 {{ $newVoluntaryWorks[$index]['toPresent'] ? 'flex-row mt-4' : 'flex-col' }}">
+                                            <input type="checkbox" id="to_{{ $index }}" wire:model.live="newVoluntaryWorks.{{ $index }}.toPresent" value="Present">
+                                            <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
+                                        </div>
+                                    </div>
+                                    @error('newVoluntaryWorks.' . $index . '.end_date' || 'newVoluntaryWorks.' . $index . '.toPresent')
+                                        <span class="text-red-500 text-sm">The end period of attendance is required!</span>
                                     @enderror
                                 </div>
 
@@ -2863,10 +2957,16 @@ x-cloak
                                 </div>
 
                                 <div class="col-span-2 sm:col-span-1">
-                                    <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
-                                    <input type="date" id="end_date_{{ $index }}" wire:model="learnAndDevs.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                    @error('learnAndDevs.' . $index . '.end_date')
-                                        <span class="text-red-500 text-sm">The end date is required!</span>
+                                    <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
+                                    <div class="flex gap-4">
+                                        <input type="date" id="to_{{ $index }}" wire:model="learnAndDevs.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700 {{ $learnAndDevs[$index]['toPresent'] ? 'hidden' : '' }}">
+                                        <div class="flex items-center justify-center gap-2 mr-4 {{ $learnAndDevs[$index]['toPresent'] ? 'flex-row mt-4' : 'flex-col' }}">
+                                            <input type="checkbox" id="to_{{ $index }}" wire:model.live="learnAndDevs.{{ $index }}.toPresent" value="Present"  @if($learnAndDevs[$index]['toPresent']) checked @endif>
+                                            <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
+                                        </div>
+                                    </div>
+                                    @error('learnAndDevs.' . $index . '.end_date' || 'learnAndDevs.' . $index . '.toPresent')
+                                        <span class="text-red-500 text-sm">The end period of attendance is required!</span>
                                     @enderror
                                 </div>
 
@@ -2921,10 +3021,16 @@ x-cloak
                                 </div>
 
                                 <div class="col-span-2 sm:col-span-1">
-                                    <label for="end_date_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
-                                    <input type="date" id="end_date_{{ $index }}" wire:model="newLearnAndDevs.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                    @error('newLearnAndDevs.' . $index . '.end_date')
-                                        <span class="text-red-500 text-sm">The end date is required!</span>
+                                    <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
+                                    <div class="flex gap-4">
+                                        <input type="date" id="to_{{ $index }}" wire:model="newLearnAndDevs.{{ $index }}.end_date" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700 {{ $newLearnAndDevs[$index]['toPresent'] ? 'hidden' : '' }}">
+                                        <div class="flex items-center justify-center gap-2 mr-4 {{ $newLearnAndDevs[$index]['toPresent'] ? 'flex-row mt-4' : 'flex-col' }}">
+                                            <input type="checkbox" id="to_{{ $index }}" wire:model.live="newLearnAndDevs.{{ $index }}.toPresent" value="Present">
+                                            <label for="to_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
+                                        </div>
+                                    </div>
+                                    @error('newLearnAndDevs.' . $index . '.end_date' || 'newLearnAndDevs.' . $index . '.toPresent')
+                                        <span class="text-red-500 text-sm">The end period of attendance is required!</span>
                                     @enderror
                                 </div>
 

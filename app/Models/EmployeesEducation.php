@@ -19,6 +19,7 @@ class EmployeesEducation extends Model
         'basic_educ_degree_course',
         'from',
         'to',
+        'toPresent',
         'highest_level_unit_earned',
         'year_graduated',
         'award',

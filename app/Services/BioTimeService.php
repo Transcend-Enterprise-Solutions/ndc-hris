@@ -24,7 +24,7 @@ class BioTimeService
     public function getTransactions($params = [])
     {
         try {
-            $apiUrl = "http://127.0.0.1:8082/iclock/api/transactions/";
+            $apiUrl = "http://45.64.120.27:8082/iclock/api/transactions/";
             $response = $this->client->get($apiUrl, [
                 'query' => $params
             ]);

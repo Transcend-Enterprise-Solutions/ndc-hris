@@ -16,6 +16,7 @@ class LearningAndDevelopment extends Model
         'title',
         'start_date',
         'end_date',
+        'toPresent',
         'no_of_hours',
         'type_of_ld',
         'conducted_by',
