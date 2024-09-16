@@ -147,8 +147,8 @@ class WfhAttendanceTable extends Component
     {
         $user = Auth::user();
         $now = Carbon::now();
-        // $currentHour = $now->hour;
-        $currentHour = 24;
+        $currentHour = $now->hour;
+        // $currentHour = 18;
         $today = $now->format('l');
         $schedule = DTRSchedule::where('emp_code', $user->emp_code)->first();
     
@@ -186,7 +186,7 @@ class WfhAttendanceTable extends Component
                 }
                 
                 if($currentHour >= 18) {
-                    $this->afternoonInDisabled = false;
+                    $this->afternoonInDisabled = true;
                 }
             }
         }
