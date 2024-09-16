@@ -34,7 +34,7 @@ class DashboardDtr extends Component
             DB::raw('COUNT(*) as count'),
             DB::raw("SUM(CASE WHEN remarks = 'Present' THEN 1 ELSE 0 END) as present_count"),
             DB::raw("SUM(CASE WHEN remarks = 'Absent' THEN 1 ELSE 0 END) as absent_count"),
-            DB::raw("SUM(CASE WHEN remarks = 'Late' THEN 1 ELSE 0 END) as late_count")
+            DB::raw("SUM(CASE WHEN remarks = 'Late/Undertime' THEN 1 ELSE 0 END) as late_count")
         )
             ->whereBetween('date', [$startDate, $endDate])
             ->groupBy('date')
