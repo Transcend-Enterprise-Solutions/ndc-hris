@@ -332,7 +332,7 @@ class EmployeeTable extends Component
             ->when($this->filters['date_hired'], function ($query) {
             $query->addSelect('user_data.date_hired');
             })
-            // ->where('users.user_role', 'emp')
+            ->where('users.user_role', 'emp')
             ->when($this->search, function ($query) {
                 $query->where('users.name', 'like', '%' . $this->search . '%');
             })
@@ -416,7 +416,7 @@ class EmployeeTable extends Component
         if($pdsGovId){
             $this->govId = $pdsGovId->gov_id;
             $this->idNumber = $pdsGovId->id_number;
-            $this->dateIssued = Carbon::parse($pdsGovId->date_of_issuance)->format('m-d-Y');
+            $this->dateIssued = $pdsGovId->date_of_issuance;
         }
 
         $this->personalDataSheetOpen = true;

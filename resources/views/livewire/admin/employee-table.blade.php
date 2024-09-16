@@ -136,7 +136,7 @@
                                             Surname</p>
                                         <p
                                             class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                            {{ $userData->surname }}</p>
+                                            {{ $userData->surname ?: 'N/A' }}</p>
                                     </div>
 
                                     <div class="flex w-full sm:w-auto">
@@ -145,7 +145,7 @@
                                             Firstname</p>
                                         <p
                                             class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                            {{ $userData->first_name }}</p>
+                                            {{ $userData->first_name ?: 'N/A' }}</p>
                                     </div>
                                 </div>
 
@@ -156,7 +156,7 @@
                                             Middlename</p>
                                         <p
                                             class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                            {{ $userData->middle_name }}</p>
+                                            {{ $userData->middle_name ?: 'N/A' }}</p>
                                     </div>
 
                                     <div class="flex w-full sm:w-auto">
@@ -165,7 +165,7 @@
                                             Name Extension</p>
                                         <p
                                             class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                            {{ $userData->name_extension }}</p>
+                                            {{ $userData->name_extension ?: 'N/A' }}</p>
                                     </div>
                                 </div>
 
@@ -180,7 +180,7 @@
                                             Date of Birth</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ \Carbon\Carbon::parse($userData->date_of_birth)->format('F d, Y') }}
+                                            {{ $userData->date_of_birth ? \Carbon\Carbon::parse($userData->date_of_birth)->format('F d, Y') : 'N/A' }}
                                         </p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
@@ -189,7 +189,7 @@
                                             Place of Birth</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->place_of_birth }}</p>
+                                            {{ $userData->place_of_birth ?: 'N/A' }}</p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p
@@ -197,7 +197,7 @@
                                             Sex</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->sex }}</p>
+                                            {{ $userData->sex ?: 'N/A' }}</p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p
@@ -205,7 +205,7 @@
                                             Civil Status</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->civil_status }}</p>
+                                            {{ $userData->civil_status ?: 'N/A' }}</p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p
@@ -213,7 +213,7 @@
                                             Citizenship</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->citizenship }}</p>
+                                            {{ $userData->citizenship ?: 'N/A' }}  <span class="text-xs opacity-80">{{ $userData->dual_citizenship_type ? '| ' . $userData->dual_citizenship_type : '' }} {{ $userData->dual_citizenship_country ? '| ' . $userData->dual_citizenship_country : '' }}</span></p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p
@@ -221,7 +221,7 @@
                                             Height</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->height }}m</p>
+                                            {{ $userData->height ?: 'N/A' }}m</p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p
@@ -229,7 +229,7 @@
                                             Weight</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->weight }}kg</p>
+                                            {{ $userData->weight ?: 'N/A' }}kg</p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p
@@ -237,7 +237,7 @@
                                             Bloodtype</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->blood_type }}</p>
+                                            {{ $userData->blood_type ?: 'N/A' }}</p>
                                     </div>
                                 </div>
 
@@ -274,7 +274,7 @@
                                             Tel No.</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->tel_number }}</p>
+                                            {{ $userData->tel_number ?: 'N/A' }}</p>
                                     </div>
                                 </div>
 
@@ -289,7 +289,7 @@
                                             Mobile No.</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->mobile_number }}</p>
+                                            {{ $userData->mobile_number ?: 'N/A' }}</p>
                                     </div>
                                 </div>
 
@@ -300,7 +300,7 @@
                                             Email</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->email }}</p>
+                                            {{ $userData->email ?: 'N/A' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -314,7 +314,7 @@
                                             GSIS ID No.</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->gsis }}</p>
+                                            {{ $userData->gsis ?: 'N/A' }}</p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p
@@ -322,7 +322,7 @@
                                             Pag-Ibig ID No.</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->pagibig }}</p>
+                                            {{ $userData->pagibig ?: 'N/A' }}</p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p
@@ -330,7 +330,7 @@
                                             PhilHealth ID No.</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->philhealth }}</p>
+                                            {{ $userData->philhealth ?: 'N/A' }}</p>
                                     </div>
                                 </div>
 
@@ -341,7 +341,7 @@
                                             SSS No.</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->sss }}</p>
+                                            {{ $userData->sss ?: 'N/A' }}</p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p
@@ -349,7 +349,7 @@
                                             TIN No.</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->tin }}</p>
+                                            {{ $userData->tin ?: 'N/A' }}</p>
                                     </div>
                                     <div class="flex w-full sm:w-auto">
                                         <p
@@ -357,7 +357,7 @@
                                             Agency Employee No.</p>
                                         <p
                                             class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                            {{ $userData->agency_employee_no }}</p>
+                                            {{ $userData->agency_employee_no ?: 'N/A' }}</p>
                                     </div>
                                 </div>
 
@@ -385,7 +385,7 @@
                                                 Surname</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userSpouse->surname }}</p>
+                                                {{ $userSpouse->surname ?: 'N/A' }}</p>
                                         </div>
 
                                         <div class="flex w-full sm:w-auto">
@@ -394,7 +394,7 @@
                                                 Firstname</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userSpouse->first_name }}</p>
+                                                {{ $userSpouse->first_name ?: 'N/A' }}</p>
                                         </div>
                                     </div>
 
@@ -405,7 +405,7 @@
                                                 Middlename</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userSpouse->middle_name }}</p>
+                                                {{ $userSpouse->middle_name ?: 'N/A' }}</p>
                                         </div>
 
                                         <div class="flex w-full sm:w-auto">
@@ -414,7 +414,7 @@
                                                 Name Extension</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userSpouse->name_extension }}</p>
+                                                {{ $userSpouse->name_extension ?: 'N/A' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -427,7 +427,7 @@
                                                 Date of Birth</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ \Carbon\Carbon::parse($userSpouse->birth_date)->format('F d, Y') }}
+                                                {{ $userSpouse->birth_date ? \Carbon\Carbon::parse($userSpouse->birth_date)->format('m/d/Y') : 'N/A' }}
                                             </p>
                                         </div>
 
@@ -437,7 +437,7 @@
                                                 Occupation</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userSpouse->occupation }}</p>
+                                                {{ $userSpouse->occupation ?: 'N/A' }}</p>
                                         </div>
                                     </div>
 
@@ -448,7 +448,7 @@
                                                 Employer</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userSpouse->employer }}</p>
+                                                {{ $userSpouse->employer ?: 'N/A' }}</p>
                                         </div>
 
                                         <div class="flex w-full sm:w-auto">
@@ -457,7 +457,7 @@
                                                 Tel. No.</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userSpouse->tel_number }}</p>
+                                                {{ $userSpouse->tel_number ?: 'N/A' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -470,7 +470,7 @@
                                                 Business Address</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userSpouse->business_address }}</p>
+                                                {{ $userSpouse->business_address ?: 'N/A' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -492,7 +492,7 @@
                                                 Surname</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userFather->surname }}</p>
+                                                {{ $userFather->surname ?: 'N/A' }}</p>
                                         </div>
 
                                         <div class="flex w-full sm:w-auto">
@@ -501,7 +501,7 @@
                                                 Firstname</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userFather->first_name }}</p>
+                                                {{ $userFather->first_name ?: 'N/A' }}</p>
                                         </div>
                                     </div>
 
@@ -512,7 +512,7 @@
                                                 Middlename</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userFather->middle_name }}</p>
+                                                {{ $userFather->middle_name ?: 'N/A' }}</p>
                                         </div>
 
                                         <div class="flex w-full sm:w-auto">
@@ -521,7 +521,7 @@
                                                 Name Extension</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userFather->name_extension }}</p>
+                                                {{ $userFather->name_extension ?: 'N/A' }}</p>
                                         </div>
                                     </div>
 
@@ -544,7 +544,7 @@
                                                 Surname</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userMother->surname }}</p>
+                                                {{ $userMother->surname ?: 'N/A' }}</p>
                                         </div>
 
                                         <div class="flex w-full sm:w-auto">
@@ -553,7 +553,7 @@
                                                 Firstname</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userMother->first_name }}</p>
+                                                {{ $userMother->first_name ?: 'N/A' }}</p>
                                         </div>
                                     </div>
 
@@ -564,7 +564,7 @@
                                                 Middlename</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userMother->middle_name }}</p>
+                                                {{ $userMother->middle_name ?: 'N/A' }}</p>
                                         </div>
 
                                         <div class="flex w-full sm:w-auto">
@@ -573,7 +573,7 @@
                                                 Name Extension</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $userMother->name_extension }}</p>
+                                                {{ $userMother->name_extension ?: 'N/A' }}</p>
                                         </div>
                                     </div>
 
@@ -608,7 +608,7 @@
                                                     Date of Birth</p>
                                                 <p
                                                     class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                    {{ \Carbon\Carbon::parse($child->childs_birth_date)->format('F d, Y') }}
+                                                    {{ $child->childs_birth_date ? \Carbon\Carbon::parse($child->childs_birth_date)->format('m/d/Y') : 'N/A' }}
                                                 </p>
                                             </div>
                                         </div>
@@ -632,7 +632,7 @@
                                         Level</p>
                                     <p
                                         class="w-full border border-gray-200 dark:border-slate-600 p-1 font-bold uppercase dark:text-gray-200">
-                                        {{ $educ->level }}
+                                        {{ $educ->level ?: 'N/A' }}
                                     </p>
                                 </div>
                                 <div class="custom-d flex w-full">
@@ -644,7 +644,7 @@
                                                 Name of School</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $educ->name_of_school }}</p>
+                                                {{ $educ->name_of_school ?: 'N/A' }}</p>
                                         </div>
                                         <div class="flex w-full sm:w-auto">
                                             <p
@@ -652,8 +652,8 @@
                                                 Period of Attendance</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                From: {{ $educ->from }} <br>
-                                                To: {{ $educ->to }}
+                                                From: {{ $educ->from ? \Carbon\Carbon::parse($educ->from)->format('m/d/Y') : 'N/A' }} <br>
+                                                To: {{ $educ->to ? \Carbon\Carbon::parse($educ->to)->format('m/d/Y') : 'Present' }}
                                             </p>
                                         </div>
                                         <div class="flex w-full sm:w-auto">
@@ -662,7 +662,7 @@
                                                 Scholarship/Academic Honors Received</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $educ->award }}</p>
+                                                {{ $educ->award ?: 'N/A' }}</p>
                                         </div>
                                     </div>
 
@@ -673,7 +673,7 @@
                                                 Basic Education/<br>Degree/Course</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $educ->basic_educ_degree_course }}</p>
+                                                {{ $educ->basic_educ_degree_course ?: 'N/A' }}</p>
                                         </div>
                                         <div class="flex w-full sm:w-auto">
                                             <p
@@ -681,7 +681,7 @@
                                                 Highest Level/<br>Units Earned</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $educ->highest_level_unit_earned }}</p>
+                                                {{ $educ->highest_level_unit_earned ?: 'N/A' }}</p>
                                         </div>
                                         <div class="flex w-full sm:w-auto">
                                             <p
@@ -689,7 +689,7 @@
                                                 Year Graduated</p>
                                             <p
                                                 class="w-full border border-gray-200 dark:border-slate-600 p-1 dark:text-gray-200">
-                                                {{ $educ->year_graduated }}</p>
+                                                {{ $educ->year_graduated ?: 'N/A' }}</p>
                                         </div>
                                     </div>
 
@@ -735,22 +735,22 @@
                                             <tr class="dark:text-gray-200">
                                                 <td
                                                     class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ $elig->eligibility }}</td>
+                                                    {{ $elig->eligibility ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ $elig->rating }}%</td>
+                                                    {{ $elig->rating ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ \Carbon\Carbon::parse($elig->date)->format('F d, Y') }}</td>
+                                                    {{ $elig->date ? \Carbon\Carbon::parse($elig->date)->format('m/d/Y') : 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ $elig->place_of_exam }}</td>
+                                                    {{ $elig->place_of_exam ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ $elig->license }}</td>
+                                                    {{ $elig->license ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ \Carbon\Carbon::parse($elig->date_of_validity)->format('F d, Y') }}
+                                                    {{ $elig->date_of_validity ? \Carbon\Carbon::parse($elig->date_of_validity)->format('m/d/Y') : 'N/A' }}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -816,29 +816,29 @@
                                                     <div class="flex w-full">
                                                         <div
                                                             class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
-                                                            {{ $exp->start_date }}
+                                                            {{ $exp->start_date ? \Carbon\Carbon::parse($exp->start_date)->format('m/d/Y') : 'N/A' }}
                                                         </div>
                                                         <div
                                                             class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
-                                                            {{ $exp->end_date }}
+                                                            {{ $exp->end_date ? \Carbon\Carbon::parse($exp->end_date)->format('m/d/Y') : 'Present' }}
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
-                                                    {{ $exp->position }}</td>
+                                                    {{ $exp->position ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
-                                                    {{ $exp->department }}</td>
+                                                    {{ $exp->department ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
                                                     {{ '₱ ' . number_format($exp->monthly_salary, 2) }}</td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
-                                                    {{ $exp->sg_step }}</td>
+                                                    {{ $exp->sg_step ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
-                                                    {{ $exp->status_of_appointment }}</td>
+                                                    {{ $exp->status_of_appointment ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
                                                     {{ $exp->gov_service ? 'Yes' : 'No' }}
@@ -898,29 +898,29 @@
                                             <tr>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
-                                                    {{ $voluntary->org_name }}</td>
+                                                    {{ $voluntary->org_name ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
-                                                    {{ $voluntary->org_address }}</td>
+                                                    {{ $voluntary->org_address ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
                                                     <div class="flex w-full">
                                                         <div
                                                             class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
-                                                            {{ $voluntary->start_date }}
+                                                            {{ $voluntary->start_date ? \Carbon\Carbon::parse($voluntary->start_date)->format('m/d/Y') : 'N/A' }}
                                                         </div>
                                                         <div
                                                             class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
-                                                            {{ $voluntary->end_date }}
+                                                            {{ $voluntary->end_date ? \Carbon\Carbon::parse($voluntary->end_datee)->format('m/d/Y') : 'Present' }}
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">
-                                                    {{ $voluntary->no_of_hours }}</td>
+                                                    {{ $voluntary->no_of_hours ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-sm text-left">
-                                                    {{ $voluntary->position_nature }}
+                                                    {{ $voluntary->position_nature ?: 'N/A' }}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -975,29 +975,29 @@
                                             <tr class="text-neutral-800 dark:text-neutral-200">
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
-                                                    {{ $ld->title }}</td>
+                                                    {{ $ld->title ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
                                                     <div class="flex w-full">
                                                         <div
                                                             class="flex justify-center border-r border-r-gray-300 p-1 w-2/4">
-                                                            {{ $ld->start_date }}
+                                                            {{ $ld->start_date ? \Carbon\Carbon::parse($ld->start_date)->format('m/d/Y') : 'N/A' }}
                                                         </div>
                                                         <div
                                                             class="flex justify-center border-l border-l-gray-300 p-1 w-2/4">
-                                                            {{ $ld->end_date }}
+                                                            {{ $ld->end_date ? \Carbon\Carbon::parse($ld->end_date)->format('m/d/Y') : 'Present' }}
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
-                                                    {{ $ld->no_of_hours }}</td>
+                                                    {{ $ld->no_of_hours ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
-                                                    {{ $ld->type_of_ld }}</td>
+                                                    {{ $ld->type_of_ld ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
-                                                    {{ $ld->conducted_by }}
+                                                    {{ $ld->conducted_by ?: 'N/A' }}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -1066,13 +1066,13 @@
                                             <tr class="dark:text-gray-200">
                                                 <td
                                                     class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ $non_acads_distinction->award }}</td>
+                                                    {{ $non_acads_distinction->award ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ $non_acads_distinction->ass_org_name }}</td>
+                                                    {{ $non_acads_distinction->ass_org_name ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ \Carbon\Carbon::parse($non_acads_distinction->date_received)->format('F d, Y') }}
+                                                    {{ $non_acads_distinction->date_received ? \Carbon\Carbon::parse($non_acads_distinction->date_received)->format('m/d/Y') : 'N/A' }}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -1102,10 +1102,10 @@
                                             <tr class="dark:text-gray-200">
                                                 <td
                                                     class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ $assOrgMembership->ass_org_name }}</td>
+                                                    {{ $assOrgMembership->ass_org_name ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ $assOrgMembership->position }}
+                                                    {{ $assOrgMembership->position ?: 'N/A' }}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -1571,13 +1571,13 @@
                                                     {{ $reference->surname }}</td>
                                                 <td
                                                     class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ $reference->address }}</td>
+                                                    {{ $reference->address ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ $reference->tel_number }}</td>
+                                                    {{ $reference->tel_number ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-r-2 border-l-2 border-t-2 border-gray-200 dark:border-slate-600 text-left">
-                                                    {{ $reference->mobile_number }}
+                                                    {{ $reference->mobile_number ?: 'N/A' }}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -1606,7 +1606,7 @@
                                                     style="height: 35px">
                                             @elseif($govId)
                                                 <p class="w-2/3 text-gray-800 dark:text-gray-100 text-right">
-                                                    {{ $govId }}</p>
+                                                    {{ $govId ?: 'N/A' }}</p>
                                             @endif
                                         </div>
                                         <div class="flex w-full border-b-2 border-gray-200 dark:border-slate-600 px-2 bg-gray-50 dark:bg-gray-800 items-center"
@@ -1619,19 +1619,19 @@
                                                     style="height: 35px">
                                             @elseif($idNumber)
                                                 <p class="w-2/3 text-gray-800 dark:text-gray-100 text-right">
-                                                    {{ $idNumber }}</p>
+                                                    {{ $idNumber ?: 'N/A' }}</p>
                                             @endif
                                         </div>
                                         <div class="flex w-full px-2 bg-gray-50 dark:bg-gray-800 items-center"
                                             style="height: 50px">
                                             <p class="w-2/3">Date/Place of Issuance:</p>
                                             @if ($editGovId)
-                                                <input type="date" wire:model='dateIssued'
+                                                <input type="text" wire:model='dateIssued'
                                                     class="w-1/3 text-sm bg-gray-100 text-gray-800 w-full" autofocus
                                                     style="height: 35px">
                                             @elseif($dateIssued)
                                                 <p class="w-2/3 text-gray-800 dark:text-gray-100 text-right">
-                                                    {{ $dateIssued }}</p>
+                                                    {{ $dateIssued ?: 'N/A' }}</p>
                                             @endif
                                         </div>
                                     </div>

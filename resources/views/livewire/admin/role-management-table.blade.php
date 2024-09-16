@@ -1037,13 +1037,13 @@ x-cloak>
 
                     <div class="col-span-full sm:col-span-1">
                         <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division <span class="text-red-500">*</span></label>
-                        <select id="office_division" wire:model.live='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                            <option class="text-gray-300" value="{{ $office_division }}">{{ $office_division ? $office_division : 'Select office/division' }}</option>
+                        <select id="office_division" wire:model.live='divId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option class="text-gray-300" value="{{ $divId }}">{{ $office_division ? $office_division : 'Select office/division' }}</option>
                             @foreach($officeDivisions as $office)
                                 <option value="{{ $office->id }}">{{ $office->office_division }}</option>
                             @endforeach
                         </select>
-                        @error('office_division') 
+                        @error('divId') 
                             <span class="text-red-500 text-sm">Please select office/division!</span> 
                         @enderror
                     </div>
