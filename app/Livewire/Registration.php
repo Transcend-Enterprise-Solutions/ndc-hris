@@ -160,7 +160,7 @@ class Registration extends Component
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
             'c_password' => 'required|same:password',
-            'emp_code' => 'required|unique:users,emp_code|numeric|min:0',
+            'emp_code' => 'required|unique:users,emp_code',
             'selectedPosition' => 'required|exists:positions,id',
             'selectedOfficeDivision' => 'required|exists:office_divisions,id',
             'date_hired' => 'required|date',
@@ -183,8 +183,10 @@ class Registration extends Component
         }
     
         DB::beginTransaction();
-    
+
         try {
+            $this->emp_code = str_replace('-', '', $this->emp_code); // Remove hyphens
+            $this->emp_code = str_replace('D', '1', $this->emp_code); // Replace 'D' with '1'
             // Creating the user
             $user = User::create([
                 'name' => $this->first_name . " " . $this->middle_name . " " . $this->surname,
