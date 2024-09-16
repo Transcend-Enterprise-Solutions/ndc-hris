@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('leave_application', function (Blueprint $table) {
-            $table->integer('stage')->nullable()->after('remarks');
-        });
+        // Schema::table('leave_application', function (Blueprint $table) {
+        //     $table->integer('stage')->nullable()->after('remarks');
+        // });
     }
 
     /**

@@ -10,7 +10,7 @@
     <div class="p-4">
         <div class="grid grid-cols-12 gap-4">
             <!-- Total Leave by Status -->
-            <div class="col-span-full sm:col-span-6 bg-blue-100 dark:bg-blue-800 p-4 rounded-lg shadow overflow-auto">
+            {{-- <div class="col-span-full sm:col-span-6 bg-blue-100 dark:bg-blue-800 p-4 rounded-lg shadow overflow-auto">
                 <div class="text-sm font-semibold text-blue-800 dark:text-gray-100 mb-4">Total Leave
                     <hr class="border-t border-blue-200 dark:border-blue-600">
                     <label class="text-xs text-gray-900 dark:text-gray-300">Select Status: </label>
@@ -72,8 +72,8 @@
                         </div>
                     </li>
                 </ul>
-            </div>
-
+            </div> --}}
+            {{-- 
             <!-- Total Leave Card from Vacation Leave -->
             <div
                 class="col-span-full sm:col-span-6 bg-yellow-100 dark:bg-yellow-800 p-4 rounded-lg shadow overflow-auto">
@@ -214,6 +214,47 @@
                     </li>
 
                 </ul>
+            </div> --}}
+
+            <div class="col-span-full sm:col-span-6 bg-yellow-100 dark:bg-yellow-800 p-4 rounded-lg shadow block">
+                <div class="block sm:flex justify-between items-center">
+                    <div class="flex justify-left items-center">
+                        <h3 class="text-sm font-semibold text-yellow-800 dark:text-gray-100">
+                            Total Leave Applications for the month of {{ $this->getFormattedMonth() ?? '-- --' }}
+                        </h3>
+                    </div>
+                    <div class="w-full sm:w-auto flex items-center relative">
+                        <input type="month" id="month" wire:model.live='month' value=""
+                            class="px-2 py-1.5 block w-32 sm:text-sm border border-teal-800 rounded-md
+                            text-teal-800 dark:bg-gray-200 cursor-pointer">
+
+                        <!-- Export to Excel -->
+                        <div class="flex justify-center items-center w-1/5 h-full ml-2"
+                            style="width: 32px; height: 32px;">
+                            <button wire:loading.remove wire:target="leaveAvailmentExport"
+                                wire:click="leaveAvailmentExport" class="inline-flex items-center focus:outline-none"
+                                type="button" title="Export to Excel">
+                                <img class="flex dark:hidden" src="/images/export-excel.png" alt="">
+                                <img class="hidden dark:block" src="/images/export-excel-dark.png" alt="">
+                            </button>
+                            <div style="margin-right: 5px">
+                                <svg wire:loading wire:target="leaveAvailmentExport" xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24" aria-hidden="true"
+                                    class="size-5 fill-green-600 motion-safe:animate-spin dark:fill-green-600">
+                                    <path
+                                        d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"
+                                        opacity=".25" />
+                                    <path
+                                        d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" />
+                                </svg>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-yellow-700 dark:text-yellow-100"></p>
+                </div>
             </div>
         </div>
     </div>

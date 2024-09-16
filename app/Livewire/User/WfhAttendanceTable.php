@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Models\DTRSchedule;
-use App\Models\Transaction;
+use App\Models\TransactionWFH;
 use Livewire\WithPagination;
 
 class WfhAttendanceTable extends Component
@@ -85,7 +85,7 @@ class WfhAttendanceTable extends Component
             'verify_type_display' => $verifyType,
         ];
 
-        Transaction::create($punchData);
+        TransactionWFH::create($punchData);
 
         // Disable buttons based on the action
         if ($verifyType == 'Morning In') {
@@ -147,8 +147,8 @@ class WfhAttendanceTable extends Component
     {
         $user = Auth::user();
         $now = Carbon::now();
-        $currentHour = $now->hour;
-        // $currentHour = 18;
+        // $currentHour = $now->hour;
+        $currentHour = 24;
         $today = $now->format('l');
         $schedule = DTRSchedule::where('emp_code', $user->emp_code)->first();
     
@@ -163,7 +163,7 @@ class WfhAttendanceTable extends Component
                 $this->afternoonOutDisabled = true;
     
                 // Fetch transactions for the current day
-                $transactions = Transaction::where('emp_code', $user->emp_code)
+                $transactions = TransactionWFH::where('emp_code', $user->emp_code)
                     ->where('punch_state_display', 'WFH')
                     ->whereDate('punch_time', Carbon::today())
                     ->pluck('verify_type_display');
@@ -186,7 +186,7 @@ class WfhAttendanceTable extends Component
                 }
                 
                 if($currentHour >= 18) {
-                    $this->afternoonInDisabled = true;
+                    $this->afternoonInDisabled = false;
                 }
             }
         }
@@ -198,7 +198,7 @@ class WfhAttendanceTable extends Component
         $this->checkWFHDay();
         $this->resetButtonStatesIfNeeded(); // Ensure buttons are updated based on time and transactions
         
-        $transactions = Transaction::where('emp_code', Auth::user()->emp_code)
+        $transactions = TransactionWFH::where('emp_code', Auth::user()->emp_code)
                                     ->where('punch_state_display', 'WFH')
                                     ->whereDate('punch_time', Carbon::today())
                                     ->orderBy('punch_time', 'asc')
