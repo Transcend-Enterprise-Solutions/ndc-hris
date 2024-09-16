@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();
             $table->string('surname')->nullable();
+            $table->string('name_extension')->nullable();
             $table->timestamps();
         });
     }

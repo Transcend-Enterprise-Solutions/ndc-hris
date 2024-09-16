@@ -16,6 +16,7 @@ class EmployeesMother extends Model
         'first_name',
         'middle_name',
         'surname',
+        'name_extension',
     ];
 
     public function user()

@@ -5,6 +5,7 @@ namespace App\Livewire\User;
 use App\Exports\PDSExport;
 use App\Models\AssOrgMemberships;
 use App\Models\CharReferences;
+use App\Models\Countries;
 use App\Models\Eligibility;
 use App\Models\EmployeesChildren;
 use App\Models\EmployeesEducation;
@@ -223,9 +224,13 @@ class PersonalDataSheetTable extends Component
     public $govId;
     public $idNumber;
     public $dateIssued;
+    public $countries;
+    public $dual_citizenship_type;
+    public $dual_citizenship_country;
 
     public function mount(){
         $this->getC4Answers();
+        $this->countries = Countries::all();
     }
 
     public function render(){
@@ -286,7 +291,7 @@ class PersonalDataSheetTable extends Component
         if($pdsGovId){
             $this->govId = $pdsGovId->gov_id;
             $this->idNumber = $pdsGovId->id_number;
-            $this->dateIssued = Carbon::parse($pdsGovId->date_of_issuance)->format('m-d-Y');
+            $this->dateIssued = $pdsGovId->date_of_issuance;
         }
 
         return view('livewire.user.personal-data-sheet-table', [
@@ -452,6 +457,8 @@ class PersonalDataSheetTable extends Component
             $this->r_house_number = $r_address_line1[0];
             $this->r_street = $r_address_line1[1];
             $this->r_subdivision = $r_address_line1[2];
+            $this->dual_citizenship_type = $this->pds['userData']->dual_citizenship_type;
+            $this->dual_citizenship_country =$this->pds['userData']->dual_citizenship_country;
             
         }catch(Exception $e){
             throw $e;
@@ -615,6 +622,7 @@ class PersonalDataSheetTable extends Component
             'basic_educ_degree_course' => '',
             'from' => '',
             'to' => '',
+            'toPresent' => '',
             'highest_level_unit_earned' => '',
             'year_graduated' => '',
             'award' => '',
@@ -638,11 +646,13 @@ class PersonalDataSheetTable extends Component
         $this->newWorkExperiences[] = [
             'start_date' => '', 
             'end_date' => '',
+            'toPresent' => '',
             'position' => '',
             'department' => '',
             'monthly_salary' => '',
             'status_of_appointment' => '',
             'gov_service' => '',
+            'sg_step' => '',
         ];
     }
     public function toggleAddVoluntaryWorks(){
@@ -653,6 +663,7 @@ class PersonalDataSheetTable extends Component
             'org_address' => '',
             'start_date' => '',
             'end_date' => '',
+            'toPresent' => '',
             'no_of_hours' => '',
             'position_nature' => '',
         ];
@@ -664,6 +675,7 @@ class PersonalDataSheetTable extends Component
             'title' => '', 
             'start_date' => '',
             'end_date' => '',
+            'toPresent' => '',
             'no_of_hours' => '',
             'type_of_ld' => '',
             'conducted_by' => '',
@@ -722,6 +734,15 @@ class PersonalDataSheetTable extends Component
 
                 $this->p_house_street = ($this->p_house_number ?: 'N/A') . ',' . ($this->p_street ?: 'N/A') . ',' . ($this->p_subdivision ?: 'N/A');
                 $this->r_house_street = ($this->r_house_number ?: 'N/A') . ',' . ($this->r_street ?: 'N/A') . ',' . ($this->r_subdivision ?: 'N/A');
+                if($this->citizenship === 'Dual Citizenship'){
+                    $this->validate([
+                        'dual_citizenship_type' => 'required',
+                        'dual_citizenship_country' => 'required',
+                    ]);
+                }else{
+                    $this->dual_citizenship_type = null;
+                    $this->dual_citizenship_country = null;
+                }
 
                 $this->validate([
                     'surname' => 'required|string|max:255',
@@ -729,10 +750,10 @@ class PersonalDataSheetTable extends Component
                     'middle_name' => 'nullable|string|max:255',
                     'name_extension' => 'nullable|string|max:10',
                     'date_of_birth' => 'required|date',
-                    'rlace_of_birth' => 'required|string|max:255',
+                    'place_of_birth' => 'required|string|max:255',
                     'sex' => 'required|in:Male,Female',
                     'civil_status' => 'required|in:Single,Married,Divorced,Widowed',
-                    'citizenship' => 'required|string|max:255',
+                    'citizenship' => 'required',
                     'height' => 'required|numeric|min:0|max:300',
                     'weight' => 'required|numeric|min:0|max:500',
                     'blood_type' => 'required|string|in:A,B,AB,O',
@@ -755,7 +776,7 @@ class PersonalDataSheetTable extends Component
                     'r_province' => 'required|string|max:255',
                     'r_zipcode' => 'required|numeric|digits:4',
                 ]);
-
+  
                 $user->userData->update([
                     'surname' => $this->surname,
                     'first_name' => $this->first_name,
@@ -766,6 +787,8 @@ class PersonalDataSheetTable extends Component
                     'sex' => $this->sex,
                     'civil_status' => $this->civil_status,
                     'citizenship' => $this->citizenship,
+                    'dual_citizenship_type' => $this->dual_citizenship_type ?: null,
+                    'dual_citizenship_country' => $this->dual_citizenship_country ?: null,
                     'height' => $this->height,
                     'weight' => $this->weight,
                     'blood_type' => $this->blood_type,
@@ -812,7 +835,7 @@ class PersonalDataSheetTable extends Component
                 $this->validate([
                     'spouse_surname' => 'required|string|max:255',
                     'spouse_first_name' => 'required|string|max:255',
-                    'spouse_date_of_birth' => 'required|date',
+                    // 'spouse_date_of_birth' => 'required|date',
                 ]);
 
                 if($this->addSpouse != true){
@@ -927,7 +950,6 @@ class PersonalDataSheetTable extends Component
                 if($this->addChildren != true){
                     $this->validate([
                         'children.*.childs_name' => 'required|string|max:255',
-                        'children.*.childs_birth_date' => 'required|date',
                     ]);
 
                     foreach ($this->children as $child) {
@@ -935,7 +957,7 @@ class PersonalDataSheetTable extends Component
                         if ($childRecord) {
                             $childRecord->update([
                                 'childs_name' => $child['childs_name'],
-                                'childs_birth_date' => $child['childs_birth_date'],
+                                'childs_birth_date' => $child['childs_birth_date'] ?: null,
                             ]);
                         }
                     }
@@ -949,14 +971,14 @@ class PersonalDataSheetTable extends Component
                 }else{
                     $this->validate([
                         'newChildren.*.childs_name' => 'required|string|max:255',
-                        'newChildren.*.childs_birth_date' => 'required|date',
+                        // 'newChildren.*.childs_birth_date' => 'required|date',
                     ]);
 
                     foreach ($this->newChildren as $child) {
                         EmployeesChildren::create([
                             'user_id' => $user->id,
                             'childs_name' => $child['childs_name'],
-                            'childs_birth_date' => $child['childs_birth_date'],
+                            'childs_birth_date' => $child['childs_birth_date'] ?: null,
                         ]);
                     }
                     $this->dispatch('swal', [
@@ -1045,25 +1067,37 @@ class PersonalDataSheetTable extends Component
             if ($user) {
 
                 if($this->addEducBackground != true){
-                    $this->validate([
-                        'newEducation.*.level_code' => 'required|string|max:255',
-                        'newEducation.*.name_of_school' => 'required|string',
-                        'newEducation.*.from' => 'required|date',
-                        'newEducation.*.to' => 'required|date',
-                        'newEducation.*.year_graduated' => 'required|numeric',
-                    ]);
-                    foreach ($this->education as $educ) {
+                    foreach ($this->education as $index => $educ) {
+                        $validationRules = [
+                            'education.'.$index.'.level_code' => 'required|numeric',
+                            'education.'.$index.'.name_of_school' => 'required|string',
+                            'education.'.$index.'.from' => 'required|date',
+                        ];
+                
+                        if (!$educ['toPresent']) {
+                            $validationRules['education.'.$index.'.to'] = 'required|date';
+                            $validationRules['education.'.$index.'.year_graduated'] = 'required|numeric';
+                            $educ['toPresent'] = null;
+                        } else {
+                            $validationRules['education.'.$index.'.toPresent'] = 'required';
+                            $educ['toPresent'] = 'Present';
+                            $educ['to'] = null;
+                        }
+                
+                        $this->validate($validationRules);
+
                         $educRecord = $user->employeesEducation->find($educ['id']);
                         if ($educRecord) {
                             $educRecord->update([
                                 'level' => $educ['level'],
                                 'name_of_school' => $educ['name_of_school'],
                                 'from' => $educ['from'],
-                                'to' => $educ['to'],
+                                'to' => $educ['to'] ?: null,
+                                'toPresent' => $educ['toPresent'] ?: null,
                                 'basic_educ_degree_course' => $educ['basic_educ_degree_course'],
                                 'award' => $educ['award'],
                                 'highest_level_unit_earned' => $educ['highest_level_unit_earned'],
-                                'year_graduated' => $educ['year_graduated'],
+                                'year_graduated' => $educ['year_graduated'] ?: null,
                             ]);
                         }
                     }
@@ -1076,14 +1110,25 @@ class PersonalDataSheetTable extends Component
                         'icon' => 'success'
                     ]);
                 }else{
-                    $this->validate([
-                        'newEducation.*.level_code' => 'required|string|max:255',
-                        'newEducation.*.name_of_school' => 'required|string',
-                        'newEducation.*.from' => 'required|date',
-                        'newEducation.*.to' => 'required|date',
-                        'newEducation.*.year_graduated' => 'required|numeric',
-                    ]);
-                    foreach ($this->newEducation as $educ) {
+                    foreach ($this->newEducation as $index => $educ) {
+                        $validationRules = [
+                            'newEducation.'.$index.'.level_code' => 'required|numeric',
+                            'newEducation.'.$index.'.name_of_school' => 'required|string',
+                            'newEducation.'.$index.'.from' => 'required|date',
+                        ];
+                
+                        if (!$educ['toPresent']) {
+                            $validationRules['newEducation.'.$index.'.to'] = 'required|date';
+                            $validationRules['newEducation.'.$index.'.year_graduated'] = 'required|numeric';
+                            $educ['toPresent'] = null;
+                        } else {
+                            $validationRules['newEducation.'.$index.'.toPresent'] = 'required';
+                            $educ['toPresent'] = 'Present';
+                            $educ['to'] = null;
+                        }
+                
+                        $this->validate($validationRules);
+
                         $level = '';
                         switch($educ['level_code']){
                             case 1:
@@ -1111,11 +1156,12 @@ class PersonalDataSheetTable extends Component
                             'level' => $level,
                             'name_of_school' => $educ['name_of_school'],
                             'from' => $educ['from'],
-                            'to' => $educ['to'],
+                            'to' => $educ['to'] ?: null,
+                            'toPresent' => $educ['toPresent'] ?: null,
                             'basic_educ_degree_course' => $educ['basic_educ_degree_course'],
                             'award' => $educ['award'],
                             'highest_level_unit_earned' => $educ['highest_level_unit_earned'],
-                            'year_graduated' => $educ['year_graduated'],
+                            'year_graduated' => $educ['year_graduated'] ?: null,
                         ]);
                     }
                     
@@ -1129,11 +1175,6 @@ class PersonalDataSheetTable extends Component
                 }
             }
         } catch (Exception $e) {
-            $this->resetValidation();
-            $this->dispatch('swal', [
-                'title' => "Education background update was unsuccessful!",
-                'icon' => 'error'
-            ]);
             throw $e;
         }
     }
@@ -1223,11 +1264,13 @@ class PersonalDataSheetTable extends Component
         $this->newWorkExperiences[] = [
             'start_date' => '', 
             'end_date' => '',
+            'toPresent' => '',
             'position' => '',
             'department' => '',
             'monthly_salary' => '',
             'status_of_appointment' => '',
             'gov_service' => '',
+            'sg_step' => '',
         ];
     }
     public function removeNewWorkExp($index){
@@ -1240,21 +1283,32 @@ class PersonalDataSheetTable extends Component
             if ($user) {
 
                 if($this->addWorkExp != true){
-                    $this->validate([
-                        'workExperiences.*.department' => 'required|string|max:255',
-                        'workExperiences.*.monthly_salary' => 'required|numeric',
-                        'workExperiences.*.start_date' => 'required|date',
-                        'workExperiences.*.end_date' => 'required|date',
-                        'workExperiences.*.status_of_appointment' => 'required|string',
-                        'workExperiences.*.gov_service' => 'required',
-                    ]);
+                    foreach ($this->workExperiences as $index => $exp) {
+                        $validationRules = [
+                            'workExperiences.'.$index.'.department' => 'required|string',
+                            'workExperiences.'.$index.'.monthly_salary' => 'required|string',
+                            'workExperiences.'.$index.'.start_date' => 'required|date',
+                            'workExperiences.'.$index.'.gov_service' => 'required',
+                            'workExperiences.'.$index.'.status_of_appointment' => 'required|string',
+                        ];
+                
+                        if (!$exp['toPresent']) {
+                            $validationRules['workExperiences.'.$index.'.end_date'] = 'required|date';
+                            $exp['toPresent'] = null;
+                        } else {
+                            $validationRules['workExperiences.'.$index.'.toPresent'] = 'required';
+                            $exp['toPresent'] = 'Present';
+                            $exp['end_date'] = null;
+                        }
+                
+                        $this->validate($validationRules);
 
-                    foreach ($this->workExperiences as $exp) {
                         $expRecord = $user->workExperience->find($exp['id']);
                         if ($expRecord) {
                             $expRecord->update([
                                 'start_date' => $exp['start_date'],
-                                'end_date' => $exp['end_date'],
+                                'end_date' => $exp['end_date'] ?: null,
+                                'toPresent' => $exp['toPresent'] ?: null,
                                 'position' => $exp['position'],
                                 'department' => $exp['department'],
                                 'monthly_salary' => $exp['monthly_salary'],
@@ -1271,20 +1325,29 @@ class PersonalDataSheetTable extends Component
                         'icon' => 'success'
                     ]);
                 }else{
-                    $this->validate([
-                        'newWorkExperiences.*.department' => 'required|string|max:255',
-                        'newWorkExperiences.*.monthly_salary' => 'required|numeric',
-                        'newWorkExperiences.*.start_date' => 'required|date',
-                        'newWorkExperiences.*.end_date' => 'required|date',
-                        'newWorkExperiences.*.status_of_appointment' => 'required|string',
-                        'newWorkExperiences.*.gov_service' => 'required',
-                    ]);
+                    foreach ($this->newWorkExperiences as $index => $exp) {
+                        $validationRules = [
+                            'newWorkExperiences.'.$index.'.department' => 'required|numeric',
+                            'newWorkExperiences.'.$index.'.monthly_salary' => 'required|string',
+                            'newWorkExperiences.'.$index.'.start_date' => 'required|date',
+                            'newWorkExperiences.'.$index.'.gov_service' => 'required',
+                            'newWorkExperiences.'.$index.'.status_of_appointment' => 'required|string',
+                        ];
+                
+                        if (!$exp['toPresent']) {
+                            $validationRules['newWorkExperiences.'.$index.'.end_date'] = 'required|date';
+                            $exp['toPresent'] = null;
+                        } else {
+                            $validationRules['newWorkExperiences.'.$index.'.toPresent'] = 'required';
+                            $exp['toPresent'] = 'Present';
+                            $exp['end_date'] = null;
+                        }
 
-                    foreach ($this->newWorkExperiences as $exp) {
                         WorkExperience::create([
                             'user_id' => $user->id,
                             'start_date' => $exp['start_date'],
-                            'end_date' => $exp['end_date'],
+                            'end_date' => $exp['end_date'] ?: null,
+                            'toPresent' => $exp['toPresent'] ?: null,
                             'position' => $exp['position'],
                             'department' => $exp['department'],
                             'monthly_salary' => $exp['monthly_salary'],
@@ -1316,6 +1379,7 @@ class PersonalDataSheetTable extends Component
             'org_name' => '', 
             'org_address' => '',
             'start_date' => '',
+            'toPresent' => '',
             'end_date' => '',
             'no_of_hours' => '',
             'position_nature' => '',
@@ -1331,21 +1395,32 @@ class PersonalDataSheetTable extends Component
             if ($user) {
 
                 if($this->addVoluntaryWorks != true){
-                    $this->validate([
-                        'voluntaryWork.*.org_name' => 'required|string|max:255',
-                        'voluntaryWork.*.org_address' => 'required|string|max:255',
-                        'voluntaryWork.*.no_of_hours' => 'required|numeric',
-                        'voluntaryWork.*.start_date' => 'required|date',
-                        'voluntaryWork.*.end_date' => 'required|date',
-                        'voluntaryWork.*.position_nature' => 'required|string',
-                    ]);
+                    foreach ($this->voluntaryWork as $index => $work) {
+                        $validationRules = [
+                            'voluntaryWork.'.$index.'.org_name' => 'required|string',
+                            'voluntaryWork.'.$index.'.org_address' => 'required|string',
+                            'voluntaryWork.'.$index.'.no_of_hours' => 'required|numeric',
+                            'voluntaryWork.'.$index.'.start_date' => 'required|date',
+                            'voluntaryWork.'.$index.'.position_nature' => 'required|string',
+                        ];
+                
+                        if (!$work['toPresent']) {
+                            $validationRules['voluntaryWork.'.$index.'.end_date'] = 'required|date';
+                            $work['toPresent'] = null;
+                        } else {
+                            $validationRules['voluntaryWork.'.$index.'.toPresent'] = 'required';
+                            $work['toPresent'] = 'Present';
+                            $work['end_date'] = null;
+                        }
+                
+                        $this->validate($validationRules);
 
-                    foreach ($this->voluntaryWork as $work) {
                         $workRecord = $user->voluntaryWorks->find($work['id']);
                         if ($workRecord) {
                             $workRecord->update([
                                 'start_date' => $work['start_date'],
-                                'end_date' => $work['end_date'],
+                                'end_date' => $work['end_date'] ?: null,
+                                'toPresent' => $work['toPresent'] ?: null,
                                 'org_name' => $work['org_name'],
                                 'org_address' => $work['org_address'],
                                 'no_of_hours' => $work['no_of_hours'],
@@ -1360,20 +1435,31 @@ class PersonalDataSheetTable extends Component
                         'icon' => 'success'
                     ]);
                 }else{
-                    $this->validate([
-                        'newVoluntaryWorks.*.org_name' => 'required|string|max:255',
-                        'newVoluntaryWorks.*.org_address' => 'required|string|max:255',
-                        'newVoluntaryWorks.*.no_of_hours' => 'required|numeric',
-                        'newVoluntaryWorks.*.start_date' => 'required|date',
-                        'newVoluntaryWorks.*.end_date' => 'required|date',
-                        'newVoluntaryWorks.*.position_nature' => 'required|string',
-                    ]);
+                    foreach ($this->newVoluntaryWorks as $index => $work) {
+                        $validationRules = [
+                            'newVoluntaryWorks.'.$index.'.org_name' => 'required|string',
+                            'newVoluntaryWorks.'.$index.'.org_address' => 'required|string',
+                            'newVoluntaryWorks.'.$index.'.no_of_hours' => 'required|numeric',
+                            'newVoluntaryWorks.'.$index.'.start_date' => 'required|date',
+                            'newVoluntaryWorks.'.$index.'.position_nature' => 'required|string',
+                        ];
+                
+                        if (!$work['toPresent']) {
+                            $validationRules['newVoluntaryWorks.'.$index.'.end_date'] = 'required|date';
+                            $work['toPresent'] = null;
+                        } else {
+                            $validationRules['newVoluntaryWorks.'.$index.'.toPresent'] = 'required';
+                            $work['toPresent'] = 'Present';
+                            $work['end_date'] = null;
+                        }
+                
+                        $this->validate($validationRules);
 
-                    foreach ($this->newVoluntaryWorks as $work) {
                         VoluntaryWorks::create([
                             'user_id' => $user->id,
                             'start_date' => $work['start_date'],
                             'end_date' => $work['end_date'],
+                            'toPresent' => $work['toPresent'],
                             'org_name' => $work['org_name'],
                             'org_address' => $work['org_address'],
                             'no_of_hours' => $work['no_of_hours'],
@@ -1402,6 +1488,7 @@ class PersonalDataSheetTable extends Component
             'title' => '', 
             'start_date' => '',
             'end_date' => '',
+            'toPresent' => '',
             'no_of_hours' => '',
             'type_of_ld' => '',
             'conducted_by' => '',
@@ -1417,21 +1504,32 @@ class PersonalDataSheetTable extends Component
             if ($user) {
 
                 if($this->addLearnDev != true){
-                    $this->validate([
-                        'learnAndDevs.*.title' => 'required|string|max:255',
-                        'learnAndDevs.*.type_of_ld' => 'required|string|max:255',
-                        'learnAndDevs.*.no_of_hours' => 'required|numeric',
-                        'learnAndDevs.*.start_date' => 'required|date',
-                        'learnAndDevs.*.end_date' => 'required|date',
-                        'learnAndDevs.*.conducted_by' => 'required|string',
-                    ]);
-    
-                    foreach ($this->learnAndDevs as $ld) {
+                    foreach ($this->learnAndDevs as $index => $ld) {
+                        $validationRules = [
+                            'learnAndDevs.'.$index.'.title' => 'required|string',
+                            'learnAndDevs.'.$index.'.type_of_ld' => 'required|string',
+                            'learnAndDevs.'.$index.'.no_of_hours' => 'required|numeric',
+                            'learnAndDevs.'.$index.'.start_date' => 'required|date',
+                            'learnAndDevs.'.$index.'.conducted_by' => 'required|string',
+                        ];
+                
+                        if (!$ld['toPresent']) {
+                            $validationRules['learnAndDevs.'.$index.'.end_date'] = 'required|date';
+                            $ld['toPresent'] = null;
+                        } else {
+                            $validationRules['learnAndDevs.'.$index.'.toPresent'] = 'required';
+                            $ld['toPresent'] = 'Present';
+                            $ld['end_date'] = null;
+                        }
+                
+                        $this->validate($validationRules);
+
                         $ldRecord = $user->learningAndDevelopment->find($ld['id']);
                         if ($ldRecord) {
                             $ldRecord->update([
                                 'start_date' => $ld['start_date'],
-                                'end_date' => $ld['end_date'],
+                                'end_date' => $ld['end_date'] ?: null,
+                                'toPresent' => $ld['toPresent'] ?: null,
                                 'title' => $ld['title'],
                                 'type_of_ld' => $ld['type_of_ld'],
                                 'no_of_hours' => $ld['no_of_hours'],
@@ -1446,20 +1544,31 @@ class PersonalDataSheetTable extends Component
                         'icon' => 'success'
                     ]);
                 }else{
-                    $this->validate([
-                        'newLearnAndDevs.*.title' => 'required|string|max:255',
-                        'newLearnAndDevs.*.type_of_ld' => 'required|string|max:255',
-                        'newLearnAndDevs.*.no_of_hours' => 'required|numeric',
-                        'newLearnAndDevs.*.start_date' => 'required|date',
-                        'newLearnAndDevs.*.end_date' => 'required|date',
-                        'newLearnAndDevs.*.conducted_by' => 'required|string',
-                    ]);
-    
-                    foreach ($this->newLearnAndDevs as $ld) {
+                    foreach ($this->newLearnAndDevs as $index => $ld) {
+                        $validationRules = [
+                            'newLearnAndDevs.'.$index.'.title' => 'required|string',
+                            'newLearnAndDevs.'.$index.'.type_of_ld' => 'required|string',
+                            'newLearnAndDevs.'.$index.'.no_of_hours' => 'required|numeric',
+                            'newLearnAndDevs.'.$index.'.start_date' => 'required|date',
+                            'newLearnAndDevs.'.$index.'.conducted_by' => 'required|string',
+                        ];
+                
+                        if (!$ld['toPresent']) {
+                            $validationRules['newLearnAndDevs.'.$index.'.end_date'] = 'required|date';
+                            $ld['toPresent'] = null;
+                        } else {
+                            $validationRules['newLearnAndDevs.'.$index.'.toPresent'] = 'required';
+                            $ld['toPresent'] = 'Present';
+                            $ld['end_date'] = null;
+                        }
+                
+                        $this->validate($validationRules);
+
                         LearningAndDevelopment::create([
                             'user_id' => $user->id,
                             'start_date' => $ld['start_date'],
-                            'end_date' => $ld['end_date'],
+                            'end_date' => $ld['end_date'] ?: null,
+                            'toPresent' => $ld['toPresent'] ?: null,
                             'title' => $ld['title'],
                             'type_of_ld' => $ld['type_of_ld'],
                             'no_of_hours' => $ld['no_of_hours'],

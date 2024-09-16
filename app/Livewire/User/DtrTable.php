@@ -31,6 +31,15 @@ class DtrTable extends Component
         'sortDirection' => ['except' => 'asc'],
     ];
 
+    public function placeholder()
+    {
+        return <<<'HTML'
+        <div class="flex w-full flex-col gap-2">
+            <livewire:skeleton/>
+        </div>
+        HTML;
+    }
+
     public function mount()
     {
         $this->startDate = Carbon::now()->startOfMonth()->toDateString();

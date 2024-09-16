@@ -277,19 +277,17 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
         // Initialize remarks
         $remarks = '';
 
-        // Add specific remarks for Saturday and Sunday
-        if ($dayOfWeek === 'Saturday') {
-            $remarks = 'Saturday';
-        } elseif ($dayOfWeek === 'Sunday') {
-            $remarks = 'Sunday';
-        }
-
-
         // Adjust remarks based on presence or lateness
         if (!$actualMorningIn && !$actualAfternoonIn) {
             $remarks = 'Absent';
         } elseif ($lateFormatted !== '00:00') {
             $remarks = 'Late/Undertime';
+        }
+        // Add specific remarks for Saturday and Sunday
+        if ($dayOfWeek === 'Saturday') {
+            $remarks = 'Saturday';
+        } elseif ($dayOfWeek === 'Sunday') {
+            $remarks = 'Sunday';
         }
         // Check for holiday or leave
         $holiday = Holiday::whereDate('holiday_date', $date)->first();

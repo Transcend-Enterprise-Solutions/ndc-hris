@@ -14,8 +14,9 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('org_name');
             $table->string('org_address');
-            $table->date('start_date')->format('F d Y');
-            $table->date('end_date')->format('F d Y');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->string('toPresent')->nullable();
             $table->string('no_of_hours');
             $table->string('position_nature');
             $table->timestamps();

@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('gov_id')->nullable();
             $table->string('id_number')->nullable();
-            $table->date('date_of_issuance')->format('F d Y')->nullable();    
+            $table->string('date_of_issuance')->nullable();    
             $table->timestamps();
         });
     }

@@ -3,7 +3,7 @@
 
         <div>
 
-            @livewire('user.dtr-table')
+            <livewire:user.dtr-table lazy />
 
         </div>
 

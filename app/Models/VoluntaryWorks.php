@@ -17,6 +17,7 @@ class VoluntaryWorks extends Model
         'org_address',
         'start_date',
         'end_date',
+        'toPresent',
         'no_of_hours',
         'position_nature',
     ];
