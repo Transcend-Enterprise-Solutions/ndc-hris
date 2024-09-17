@@ -69,7 +69,7 @@
                             @endif
                         </div>
 
-                        <div
+                        {{-- <div
                             class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700 relative">
                             <h3
                                 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">
@@ -101,7 +101,66 @@
                                     @endforeach
                                 </div>
                             </div>
+                        </div> --}}
+                        <div
+                            class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700 relative">
+                            <h3
+                                class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">
+                                {{ $scheduleType === 'WFH' ? 'WFH Punch Time' : 'Onsite Punch Time' }}
+                            </h3>
+
+                            @php
+                                $today = \Carbon\Carbon::now()->format('l'); // Get the current day name
+                            @endphp
+
+                            <div class="mb-4">
+                                <h4 class="text-xl font-semibold text-gray-900 dark:text-white text-center border-b">
+                                    {{ $today }}
+                                </h4>
+
+                                <div class="mt-2 text-center">
+                                    @if ($scheduleType === 'WFH')
+                                        @foreach (['Morning In', 'Morning Out', 'Afternoon In', 'Afternoon Out'] as $type)
+                                            <div class="mb-2 text-center">
+                                                <strong>{{ $type }}</strong>
+                                                <div>
+                                                    @forelse ($groupedTransactions[$type] ?? [] as $transaction)
+                                                        <div class="text-gray-700 dark:text-gray-300">
+                                                            {{ \Carbon\Carbon::parse($transaction->punch_time)->format('H:i:s') }}
+                                                        </div>
+                                                    @empty
+                                                        <div class="text-gray-400">No punch time recorded</div>
+                                                    @endforelse
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        {{-- Onsite punch times from EmployeesDTR --}}
+                                        <div class="mb-2 text-center">
+                                            <strong>Morning In</strong>
+                                            <div>{{ $groupedTransactions->morning_in ?? 'No punch time recorded' }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-2 text-center">
+                                            <strong>Morning Out</strong>
+                                            <div>{{ $groupedTransactions->morning_out ?? 'No punch time recorded' }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-2 text-center">
+                                            <strong>Afternoon In</strong>
+                                            <div>{{ $groupedTransactions->afternoon_in ?? 'No punch time recorded' }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-2 text-center">
+                                            <strong>Afternoon Out</strong>
+                                            <div>{{ $groupedTransactions->afternoon_out ?? 'No punch time recorded' }}
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
+
 
                     </div>
                 </div>

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Models\DTRSchedule;
+use App\Models\EmployeesDTR;
 use App\Models\TransactionWFH;
 use Livewire\WithPagination;
 
@@ -24,20 +25,34 @@ class WfhAttendanceTable extends Component
     public $morningOutDisabled = true;
     public $afternoonInDisabled = true;
     public $afternoonOutDisabled = true;
+    public $scheduleType = 'WFH'; // Default value
 
     public function checkWFHDay()
     {
         $user = Auth::user();
         $today = Carbon::now()->format('l');
         $schedule = DTRSchedule::where('emp_code', $user->emp_code)->first();
-
+    
         if ($schedule) {
             $wfhDays = explode(',', $schedule->wfh_days);
-            $this->isWFHDay = in_array($today, $wfhDays);
+            $this->scheduleType = in_array($today, $wfhDays) ? 'WFH' : 'Onsite';
         } else {
-            $this->isWFHDay = false;
+            $this->scheduleType = 'Onsite';
         }
     }
+    // public function checkWFHDay()
+    // {
+    //     $user = Auth::user();
+    //     $today = Carbon::now()->format('l');
+    //     $schedule = DTRSchedule::where('emp_code', $user->emp_code)->first();
+
+    //     if ($schedule) {
+    //         $wfhDays = explode(',', $schedule->wfh_days);
+    //         $this->isWFHDay = in_array($today, $wfhDays);
+    //     } else {
+    //         $this->isWFHDay = false;
+    //     }
+    // }
 
     public function confirmPunch($state, $verifyType)
     {
@@ -198,17 +213,25 @@ class WfhAttendanceTable extends Component
         $this->checkWFHDay();
         $this->resetButtonStatesIfNeeded(); // Ensure buttons are updated based on time and transactions
         
-        $transactions = TransactionWFH::where('emp_code', Auth::user()->emp_code)
-                                    ->where('punch_state_display', 'WFH')
-                                    ->whereDate('punch_time', Carbon::today())
-                                    ->orderBy('punch_time', 'asc')
-                                    ->get();
-        
-        // Group transactions by punch type
-        $groupedTransactions = $transactions->groupBy('verify_type_display');
-
+        if ($this->scheduleType === 'WFH') {
+            $transactions = TransactionWFH::where('emp_code', Auth::user()->emp_code)
+                ->whereDate('punch_time', Carbon::today())
+                ->orderBy('punch_time', 'asc')
+                ->get();
+        } else {
+            // Fetch onsite punch times from EmployeesDTR table
+            $transactions = EmployeesDTR::where('emp_code', Auth::user()->emp_code)
+                ->whereDate('date', Carbon::today())
+                ->first(); // Since EmployeesDTR stores punches in columns, we'll retrieve a single row
+        }
+    
+        $groupedTransactions = ($this->scheduleType === 'WFH')
+            ? $transactions->groupBy('verify_type_display')
+            : $transactions; // No need to group for Onsite punches
+    
         return view('livewire.user.wfh-attendance-table', [
             'groupedTransactions' => $groupedTransactions,
+            'scheduleType' => $this->scheduleType,
         ]);
     }
 }
