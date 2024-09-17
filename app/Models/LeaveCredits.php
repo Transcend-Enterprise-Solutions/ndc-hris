@@ -23,6 +23,7 @@ class LeaveCredits extends Model
         'cto_total_credits',
         'cto_claimable_credits',
         'cto_claimed_credits',
+        'fl_claimable_credits',
         'credits_transferred',
     ];
 

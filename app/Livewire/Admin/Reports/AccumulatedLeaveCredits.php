@@ -19,6 +19,9 @@ class AccumulatedLeaveCredits extends Component
 
     public function render()
     {
-        return view('livewire.admin.reports.accumulated-leave-credits');
+        $totalLeaveCreditsCount = LeaveCredits::count();
+        return view('livewire.admin.reports.accumulated-leave-credits',[
+            'totalLeaveCreditsCount' => $totalLeaveCreditsCount,
+        ]);
     }
 }

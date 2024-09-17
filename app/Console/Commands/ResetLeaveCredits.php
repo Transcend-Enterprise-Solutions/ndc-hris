@@ -19,7 +19,7 @@ class ResetLeaveCredits extends Command
      *
      * @var string
      */
-    protected $description = 'Resets SPL claimable and claimed credits to 0 and adds 3 to VL claimable credits at the start of each year';
+    protected $description = 'Resets spl claimable to 3, spl claimed to 0 and fl claimable to 5 at the start of each year';
 
     /**
      * Execute the console command.
@@ -32,6 +32,7 @@ class ResetLeaveCredits extends Command
         LeaveCredits::query()->update([
             'spl_claimable_credits' => 3,
             'spl_claimed_credits' => 0,
+            'fl_claimable_credits' => 5,
         ]);
 
         $this->info('Leave credits have been reset successfully.');

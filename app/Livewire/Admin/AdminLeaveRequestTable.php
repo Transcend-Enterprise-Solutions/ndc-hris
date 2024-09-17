@@ -140,6 +140,10 @@ class AdminLeaveRequestTable extends Component
                 ['third_approver' => Auth::id(), 'stage' => 3]
             );
 
+            if ($application->remarks === 'With Pay') {
+                $this->updateLeaveDetails($application->approved_days, $application->remarks);
+            }
+
             $this->dispatch('swal', [
                 'title' => "Leave application approved successfully!",
                 'icon' => 'success'
@@ -232,11 +236,16 @@ class AdminLeaveRequestTable extends Component
                     ['first_approver' => Auth::id(), 'stage' => 1]
                 );
     
-                if ($this->status === 'With Pay') {
-                    $this->updateLeaveDetails($this->days, $this->status);
+                // if ($this->status === 'With Pay') {
+                //     $this->updateLeaveDetails($this->days, $this->status);
                     
-                    if ($this->getErrorBag()->has('days')) {
-                        // There was an error in updateLeaveDetails, so we return without saving
+                //     if ($this->getErrorBag()->has('days')) {
+                //         // There was an error in updateLeaveDetails, so we return without saving
+                //         return;
+                //     }
+                // }
+                if ($this->status === 'With Pay') {
+                    if (!$this->checkLeaveCredits($this->days)) {
                         return;
                     }
                 }
@@ -273,6 +282,37 @@ class AdminLeaveRequestTable extends Component
             $this->closeApproveModal();
         }
     }
+
+    protected function checkLeaveCredits($days)
+    {
+        $user_id = $this->selectedApplication->user_id;
+        $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
+    
+        if (!$leaveCredits) {
+            $this->addError('days', "Leave credits not found for this user.");
+            return false;
+        }
+    
+        $leaveTypes = explode(',', $this->selectedApplication->type_of_leave);
+        foreach ($leaveTypes as $leaveType) {
+            $leaveType = trim($leaveType);
+    
+            if ($leaveType === "Mandatory/Forced Leave") {
+                if ($leaveCredits->fl_claimable_credits < $days || $leaveCredits->vl_claimable_credits < $days) {
+                    $this->addError('days', "Insufficient Forced Leave Credits. Available FL: {$leaveCredits->fl_claimable_credits}");
+                    return false;
+                }
+            } else {
+                $totalCredits = $leaveCredits->spl_claimable_credits + $leaveCredits->sl_claimable_credits + $leaveCredits->vl_claimable_credits;
+                if ($totalCredits < $days) {
+                    $this->addError('days', "Insufficient leave credits. Available credits: {$totalCredits}");
+                    return false;
+                }
+            }
+        }
+    
+        return true;
+    }
     
     protected function updateLeaveDetails($days, $status)
     {
@@ -287,57 +327,80 @@ class AdminLeaveRequestTable extends Component
         $leaveTypes = explode(',', $this->selectedApplication->type_of_leave);
     
         foreach ($leaveTypes as $leaveType) {
-            $totalDeducted = 0; // Track total days deducted across SPL, SL, and VL
+            $leaveType = trim($leaveType);  // Remove any leading/trailing whitespace
+
+            if ($leaveType === "Vacation Leave" || $leaveType === "Sick Leave") {
+                $totalDeducted = 0;
     
-            // Deduct from SPL first
-            if ($leaveCredits->spl_claimable_credits > 0) {
-                $deduct = min($days, $leaveCredits->spl_claimable_credits);
-                $leaveCredits->spl_claimable_credits -= $deduct;
-                $leaveCredits->spl_claimed_credits += $deduct;
-                $totalDeducted += $deduct;
+                // Deduct from SPL first
+                if ($leaveCredits->spl_claimable_credits > 0) {
+                    $deduct = min($days, $leaveCredits->spl_claimable_credits);
+                    $leaveCredits->spl_claimable_credits -= $deduct;
+                    $leaveCredits->spl_claimed_credits += $deduct;
+                    $totalDeducted += $deduct;
+                }
+        
+                // If more days are needed, try deducting from SL next
+                if ($totalDeducted < $days && $leaveCredits->sl_claimable_credits > 0) {
+                    $remainingDays = $days - $totalDeducted;
+                    $deduct = min($remainingDays, $leaveCredits->sl_claimable_credits);
+                    $leaveCredits->sl_claimable_credits -= $deduct;
+                    $leaveCredits->sl_claimed_credits += $deduct;
+                    $totalDeducted += $deduct;
+                }
+        
+                // Finally, if still more days are needed, try deducting from VL
+                if ($totalDeducted < $days && $leaveCredits->vl_claimable_credits > 0) {
+                    $remainingDays = $days - $totalDeducted;
+                    $deduct = min($remainingDays, $leaveCredits->vl_claimable_credits);
+                    $leaveCredits->vl_claimable_credits -= $deduct;
+                    $leaveCredits->vl_claimed_credits += $deduct;
+                    $totalDeducted += $deduct;
+                }
+    
+                // If the total deducted days are still less than requested, show an error
+                if ($totalDeducted < $days) {
+                    $this->addError('days', "Insufficient leave credits. Available SPL: {$leaveCredits->spl_claimable_credits}, SL: {$leaveCredits->sl_claimable_credits}, VL: {$leaveCredits->vl_claimable_credits}");
+                    return;
+                }
+        
+                $leaveCredits->save();
+        
+                // Updating LeaveCreditsCalculation
+                $month = date('m', strtotime($this->selectedApplication->start_date));
+                $year = date('Y', strtotime($this->selectedApplication->start_date));
+        
+                $leaveCreditsCalculation = LeaveCreditsCalculation::where('user_id', $user_id)
+                    ->where('month', $month)
+                    ->where('year', $year)
+                    ->first();
+    
+                if ($leaveCreditsCalculation) {
+                    $leaveCreditsCalculation->leave_credits_earned -= $totalDeducted;
+                    $leaveCreditsCalculation->save();
+                }
+    
+            } elseif ($leaveType === "Mandatory/Forced Leave") {
+                // Deduct from both FL and VL simultaneously
+                if ($leaveCredits->fl_claimable_credits < $days || $leaveCredits->vl_claimable_credits < $days) {
+                    $this->addError('days', "Insufficient leave credits for Mandatory/Forced Leave");
+                    return;
+                }
+    
+                // Deduct from FL
+                $leaveCredits->fl_claimable_credits -= $days;
+                // $leaveCredits->fl_claimed_credits += $days;
+    
+                // Deduct from VL
+                $leaveCredits->vl_claimable_credits -= $days;
+                $leaveCredits->vl_claimed_credits += $days;
+    
+                $leaveCredits->save();
+            } else {
+
+                continue;
             }
-    
-            // If more days are needed, try deducting from SL next
-            if ($totalDeducted < $days && $leaveCredits->sl_claimable_credits > 0) {
-                $remainingDays = $days - $totalDeducted;
-                $deduct = min($remainingDays, $leaveCredits->sl_claimable_credits);
-                $leaveCredits->sl_claimable_credits -= $deduct;
-                $leaveCredits->sl_claimed_credits += $deduct;
-                $totalDeducted += $deduct;
-            }
-    
-            // Finally, if still more days are needed, try deducting from VL
-            if ($totalDeducted < $days && $leaveCredits->vl_claimable_credits > 0) {
-                $remainingDays = $days - $totalDeducted;
-                $deduct = min($remainingDays, $leaveCredits->vl_claimable_credits);
-                $leaveCredits->vl_claimable_credits -= $deduct;
-                $leaveCredits->vl_claimed_credits += $deduct;
-                $totalDeducted += $deduct;
-            }
-    
-            // If the total deducted days are still less than requested, show an error
-            if ($totalDeducted < $days) {
-                $this->addError('days', "Insufficient leave credits. Available SPL: {$leaveCredits->spl_claimable_credits}, SL: {$leaveCredits->sl_claimable_credits}, VL: {$leaveCredits->vl_claimable_credits}");
-                return;
-            }
-    
-            $leaveCredits->save();
-    
-            // Updating LeaveCreditsCalculation
-            $month = date('m', strtotime($this->selectedApplication->start_date));
-            $year = date('Y', strtotime($this->selectedApplication->start_date));
-    
-            $leaveCreditsCalculation = LeaveCreditsCalculation::where('user_id', $user_id)
-                ->where('month', $month)
-                ->where('year', $year)
-                ->first();
-    
-            if ($leaveCreditsCalculation) {
-                $leaveCreditsCalculation->leave_credits_earned -= $totalDeducted;
-                $leaveCreditsCalculation->save();
-            }
-    
-            // Break out after processing the current leave type
+
             break;
         }
     }
