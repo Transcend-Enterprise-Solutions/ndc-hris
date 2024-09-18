@@ -766,7 +766,24 @@
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
+
                                 <div class="relative w-full" x-data="{ show: false }">
+                                    <div class="relative inline-block" x-data="{ tooltip: false }">
+                                        <!-- Info Icon -->
+                                        <i class="bi bi-info-circle-fill text-blue-700 cursor-pointer"
+                                        @mouseenter="tooltip = true" @mouseleave="tooltip = false"></i>
+                                        <div x-show="tooltip" 
+                                            class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 z-10 w-auto px-4 py-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm dark:bg-gray-700 transition-opacity duration-300"
+                                            style="display: none;">
+                                            <ul class="list-none space-y-2 whitespace-nowrap">
+                                                <li>- At least 8 characters</li>
+                                                <li>- One uppercase letter</li>
+                                                <li>- One number</li>
+                                                <li>- One special character</li>
+                                            </ul>
+                                            <div class="tooltip-arrow" data-popper-arrow></div>
+                                        </div>
+                                    </div>
                                     <label for="password" class="text-sm text-gray-700">Password <span
                                             class="text-red-600">*</span></label>
                                     <div class="relative">
@@ -783,6 +800,22 @@
                                     @enderror
                                 </div>
                                 <div class="relative w-full" x-data="{ show: false }">
+                                    <div class="relative inline-block" x-data="{ tooltip: false }">
+                                        <!-- Info Icon -->
+                                        <i class="bi bi-info-circle-fill text-blue-700 cursor-pointer"
+                                        @mouseenter="tooltip = true" @mouseleave="tooltip = false"></i>
+                                        <div x-show="tooltip" 
+                                            class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 z-10 w-auto px-4 py-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm dark:bg-gray-700 transition-opacity duration-300"
+                                            style="display: none;">
+                                            <ul class="list-none space-y-2 whitespace-nowrap">
+                                                <li>- At least 8 characters</li>
+                                                <li>- One uppercase letter</li>
+                                                <li>- One number</li>
+                                                <li>- One special character</li>
+                                            </ul>
+                                            <div class="tooltip-arrow" data-popper-arrow></div>
+                                        </div>
+                                    </div>
                                     <label for="c_password" class="text-sm text-gray-700">Confirm Password <span
                                             class="text-red-600">*</span></label>
                                     <div class="relative">
