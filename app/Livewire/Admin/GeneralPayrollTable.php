@@ -81,7 +81,7 @@ class GeneralPayrollTable extends Component
         'lbp_salary_loan' => false,
         'nycea_deductions' => false,
         'sc_membership' => false,
-        'total_loans' => false,
+        'nycempc_total' => false,
         'salary_loan' => false,
         'policy_loan' => false,
         'eal' => false,
@@ -92,15 +92,18 @@ class GeneralPayrollTable extends Component
         'gfal' => false,
         'cpl' => false,
         'pagibig_mpl' => false,
-        'other_deduction_philheath_diff' => false,
-        'life_retirement_insurance_premiums' => false,
+        'lwop' => false,
+        'gsis_rlip' => false,
         'pagibig_contribution' => false,
-        'w_holding_tax' => false,
         'philhealth' => false,
+        'w_holding_tax' => false,
+        'other_deductions' => false,
         'total_deduction' => false,
     ];
     public $payroll;
     public $employees;
+
+    // Add or Edit Payroll Variables ---------------------------------------------------------- //
     public $userId;
     public $name;
     public $employee_number;
@@ -116,7 +119,11 @@ class GeneralPayrollTable extends Component
     public $lbp_salary_loan;
     public $nycea_deductions;
     public $sc_membership;
-    public $total_loans;
+    public $nycempc_mpl;
+    public $nycempc_educ_loan;
+    public $nycempc_pi;
+    public $nycempc_business_loan;
+    public $nycempc_total;
     public $salary_loan;
     public $policy_loan;
     public $eal;
@@ -126,14 +133,22 @@ class GeneralPayrollTable extends Component
     public $ouli_prem;
     public $gfal;
     public $cpl;
-    public $pagibig_mpl;
-    public $other_deduction_philheath_diff;
-    public $life_retirement_insurance_premiums;
     public $pagibig_contribution;
+    public $pagibig_gs;
+    public $pagibig_mpl;
+    public $pagibig_calamity_loan;
+    public $lwop;
+    public $gsis_rlip;
+    public $gsis_gs;
+    public $gsis_ecip;
     public $w_holding_tax;
     public $philhealth;
+    public $philhealth_es;
     public $other_deductions;
     public $total_deduction;
+
+    // End of Add or Edit Payroll Variables ---------------------------------------------------------- //
+
     public $net_amount_received;
     public $amount_due_first_half;
     public $amount_due_second_half;
@@ -222,7 +237,7 @@ class GeneralPayrollTable extends Component
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                 ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
-                ->paginate(5);
+                ->paginate(10);
 
 
         if($this->userId){
@@ -234,28 +249,37 @@ class GeneralPayrollTable extends Component
             $this->office_division = $officeDiv->office_division;
         }
 
-        $this->total_deduction = 
-                ($this->additional_gsis_premium ?: 0) +
-                ($this->lbp_salary_loan ?: 0 )+
-                ($this->nycea_deductions ?: 0) +
-                ($this->sc_membership ?: 0) +
-                ($this->total_loans ?: 0) +
-                ($this->salary_loan ?: 0) +
-                ($this->policy_loan ?: 0) +
-                ($this->eal ?: 0) +
-                ($this->emergency_loan ?: 0) +
-                ($this->mpl ?: 0) +
-                ($this->housing_loan ?: 0) +
-                ($this->ouli_prem ?: 0) +
-                ($this->gfal ?: 0) +
-                ($this->cpl ?: 0) +
-                ($this->pagibig_mpl ?: 0) +
-                ($this->other_deduction_philheath_diff ?: 0) +
-                ($this->life_retirement_insurance_premiums ?: 0) +
-                ($this->pagibig_contribution ?: 0) +
-                ($this->w_holding_tax ?: 0) +
-                ($this->other_deductions ?: 0) + 
-                ($this->philhealth ?: 0);
+        $this->nycempc_total = 
+                ($this->nycempc_mpl ?: 0) +
+                ($this->nycempc_educ_loan ?: 0 )+
+                ($this->nycempc_pi ?: 0) +
+                ($this->nycempc_business_loan ?: 0);
+
+        if(!$this->payroll){
+            $this->total_deduction = 
+                    ($this->additional_gsis_premium ?: 0) +
+                    ($this->lbp_salary_loan ?: 0 )+
+                    ($this->nycea_deductions ?: 0) +
+                    ($this->sc_membership ?: 0) +
+                    ($this->nycempc_total ?: 0) +
+                    ($this->salary_loan ?: 0) +
+                    ($this->policy_loan ?: 0) +
+                    ($this->eal ?: 0) +
+                    ($this->emergency_loan ?: 0) +
+                    ($this->mpl ?: 0) +
+                    ($this->housing_loan ?: 0) +
+                    ($this->ouli_prem ?: 0) +
+                    ($this->gfal ?: 0) +
+                    ($this->cpl ?: 0) +
+                    ($this->pagibig_mpl ?: 0) +
+                    ($this->pagibig_calamity_loan ?: 0) +
+                    ($this->lwop ?: 0) +
+                    ($this->gsis_rlip ?: 0) +
+                    ($this->pagibig_contribution ?: 0) +
+                    ($this->w_holding_tax ?: 0) +
+                    ($this->other_deductions ?: 0) + 
+                    ($this->philhealth ?: 0);
+        }
         
         $this->total_deduction = number_format((float)$this->total_deduction, 2, '.', '');
 
@@ -884,7 +908,11 @@ class GeneralPayrollTable extends Component
                 $this->lbp_salary_loan = $payroll->lbp_salary_loan;
                 $this->nycea_deductions = $payroll->nycea_deductions;
                 $this->sc_membership = $payroll->sc_membership;
-                $this->total_loans = $payroll->total_loans;
+                $this->nycempc_mpl = $payroll->nycempc_mpl;
+                $this->nycempc_educ_loan = $payroll->nycempc_educ_loan;
+                $this->nycempc_pi = $payroll->nycempc_pi;
+                $this->nycempc_business_loan = $payroll->nycempc_business_loan;
+                $this->nycempc_total = $payroll->nycempc_total;
                 $this->salary_loan = $payroll->salary_loan;
                 $this->policy_loan = $payroll->policy_loan;
                 $this->eal = $payroll->eal;
@@ -894,12 +922,17 @@ class GeneralPayrollTable extends Component
                 $this->ouli_prem = $payroll->ouli_prem;
                 $this->gfal = $payroll->gfal;
                 $this->cpl = $payroll->cpl;
-                $this->pagibig_mpl = $payroll->pagibig_mpl;
-                $this->other_deduction_philheath_diff = $payroll->other_deduction_philheath_diff;
-                $this->life_retirement_insurance_premiums = $payroll->life_retirement_insurance_premiums;
+                $this->lwop = $payroll->lwop;
+                $this->gsis_rlip = $payroll->gsis_rlip;
+                $this->gsis_gs = $payroll->gsis_gs;
+                $this->gsis_ecip = $payroll->gsis_ecip;
                 $this->pagibig_contribution = $payroll->pagibig_contribution;
+                $this->pagibig_gs = $payroll->pagibig_gs;
+                $this->pagibig_mpl = $payroll->pagibig_mpl;
+                $this->pagibig_calamity_loan = $payroll->pagibig_calamity_loan;
                 $this->w_holding_tax = $payroll->w_holding_tax;
                 $this->philhealth = $payroll->philhealth;
+                $this->philhealth_es = $payroll->philhealth_es;
                 $this->total_deduction = $payroll->total_deduction;
                 $this->net_amount_received = $payroll->net_amount_received;
                 $this->amount_due_first_half = $payroll->amount_due_first_half;
@@ -933,7 +966,11 @@ class GeneralPayrollTable extends Component
         $this->lbp_salary_loan = null;
         $this->nycea_deductions = null;
         $this->sc_membership = null;
-        $this->total_loans = null;
+        $this->nycempc_mpl = null;
+        $this->nycempc_educ_loan = null;
+        $this->nycempc_pi = null;
+        $this->nycempc_business_loan = null;
+        $this->nycempc_total = null;
         $this->salary_loan = null;
         $this->policy_loan = null;
         $this->eal = null;
@@ -943,12 +980,17 @@ class GeneralPayrollTable extends Component
         $this->ouli_prem = null;
         $this->gfal = null;
         $this->cpl = null;
-        $this->pagibig_mpl = null;
-        $this->other_deduction_philheath_diff = null;
-        $this->life_retirement_insurance_premiums = null;
+        $this->lwop = null;
+        $this->gsis_rlip = null;
+        $this->gsis_gs = null;
+        $this->gsis_ecip = null;
         $this->pagibig_contribution = null;
+        $this->pagibig_gs = null;
+        $this->pagibig_mpl = null;
+        $this->pagibig_calamity_loan = null;
         $this->w_holding_tax = null;
         $this->philhealth = null;
+        $this->philhealth_es = null;
         $this->total_deduction = null;
         $this->addSignatory = null;
         $this->editSignatory = null;
@@ -1113,7 +1155,11 @@ class GeneralPayrollTable extends Component
                 $this->lbp_salary_loan = $payroll->lbp_salary_loan;
                 $this->nycea_deductions = $payroll->nycea_deductions;
                 $this->sc_membership = $payroll->sc_membership;
-                $this->total_loans = $payroll->total_loans;
+                $this->nycempc_mpl = $payroll->nycempc_mpl;
+                $this->nycempc_educ_loan = $payroll->nycempc_educ_loan;
+                $this->nycempc_pi = $payroll->nycempc_pi;
+                $this->nycempc_business_loan = $payroll->nycempc_business_loan;
+                $this->nycempc_total = $payroll->nycempc_total;
                 $this->salary_loan = $payroll->salary_loan;
                 $this->policy_loan = $payroll->policy_loan;
                 $this->eal = $payroll->eal;
@@ -1124,11 +1170,17 @@ class GeneralPayrollTable extends Component
                 $this->gfal = $payroll->gfal;
                 $this->cpl = $payroll->cpl;
                 $this->pagibig_mpl = $payroll->pagibig_mpl;
-                $this->other_deduction_philheath_diff = $payroll->other_deduction_philheath_diff;
-                $this->life_retirement_insurance_premiums = $payroll->life_retirement_insurance_premiums;
+                $this->lwop = $payroll->other_deduction_philheath_diff;
+                $this->gsis_rlip = $payroll->gsis_rlip;
+                $this->gsis_gs = $payroll->gsis_gs;
+                $this->gsis_ecip = $payroll->gsis_ecip;
                 $this->pagibig_contribution = $payroll->pagibig_contribution;
+                $this->pagibig_gs = $payroll->pagibig_gs;
+                $this->pagibig_calamity_loan = $payroll->pagibig_calamity_loan;
                 $this->w_holding_tax = $payroll->w_holding_tax;
                 $this->philhealth = $payroll->philhealth;
+                $this->philhealth_es = $payroll->philhealth_es;
+                $this->lwop = $payroll->lwop;
                 $this->other_deductions = $payroll->other_deductions;
                 $this->total_deduction = $payroll->total_deduction;
             } else {
@@ -1164,7 +1216,11 @@ class GeneralPayrollTable extends Component
                     'lbp_salary_loan' => $this->lbp_salary_loan,
                     'nycea_deductions' => $this->nycea_deductions,
                     'sc_membership' => $this->sc_membership,
-                    'total_loans' => $this->total_loans,
+                    'nycempc_mpl' => $this->nycempc_mpl,
+                    'nycempc_educ_loan' => $this->nycempc_educ_loan,
+                    'nycempc_pi' => $this->nycempc_pi,
+                    'nycempc_business_loan' => $this->nycempc_business_loan,
+                    'nycempc_total' => $this->nycempc_total,
                     'salary_loan' => $this->salary_loan,
                     'policy_loan' => $this->policy_loan,
                     'eal' => $this->eal,
@@ -1174,12 +1230,17 @@ class GeneralPayrollTable extends Component
                     'ouli_prem' => $this->ouli_prem,
                     'gfal' => $this->gfal,
                     'cpl' => $this->cpl,
-                    'pagibig_mpl' => $this->pagibig_mpl,
-                    'other_deduction_philheath_diff' => $this->other_deduction_philheath_diff,
-                    'life_retirement_insurance_premiums' => $this->life_retirement_insurance_premiums,
+                    'lwop' => $this->lwop,
+                    'gsis_rlip' => $this->gsis_rlip,
+                    'gsis_gs' => $this->gsis_gs,
+                    'gsis_ecip' => $this->gsis_ecip,
                     'pagibig_contribution' => $this->pagibig_contribution,
+                    'pagibig_mpl' => $this->pagibig_mpl,
+                    'pagibig_calamity_loan' => $this->pagibig_calamity_loan,
+                    'pagibig_gs' => $this->pagibig_gs,
                     'w_holding_tax' => $this->w_holding_tax,
                     'philhealth' => $this->philhealth,
+                    'philhealth_es' => $this->philhealth_es,
                     'other_deductions' => $this->other_deductions,
                     'total_deduction' => $this->total_deduction,
                 ];
