@@ -2,6 +2,7 @@
 namespace App\Jobs;
 
 use App\Models\Transaction;
+use App\Models\TransactionWFH;
 use App\Models\User;
 use App\Models\DTRSchedule;
 use App\Models\EmployeesDtr;
@@ -24,47 +25,63 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
     {
         echo "AutoSaveDtrRecordsMonthly job started\n";
         Log::info("AutoSaveDtrRecordsMonthly job started");
-
+    
         try {
             // Get the current month's start and end dates
             $startDate = Carbon::now()->startOfMonth();
             $endDate = Carbon::now()->endOfMonth();
-
+    
             echo "Processing month: {$startDate->format('F Y')}\n";
             Log::info("Processing month: {$startDate->format('F Y')}");
-
+    
             $users = User::where('user_role', 'emp')->get();
-
+    
             foreach ($users as $user) {
                 echo "Processing user: {$user->emp_code}\n";
                 Log::info("Processing user: {$user->emp_code}");
-
+    
                 // Create a period for the entire month
                 $datePeriod = CarbonPeriod::create($startDate, $endDate);
-
+    
                 foreach ($datePeriod as $date) {
                     $currentDate = $date->toDateString();
-
+    
+                    // Get the user's schedule for the current date
+                    $schedule = DTRSchedule::where('emp_code', $user->emp_code)
+                        ->whereDate('start_date', '<=', $currentDate)
+                        ->whereDate('end_date', '>=', $currentDate)
+                        ->first();
+    
+                    $isWFH = false;
+                    if ($schedule) {
+                        $wfhDays = array_map('ucfirst', array_map('trim', explode(',', $schedule->wfh_days)));
+                        $dayOfWeek = $date->format('l');
+                        $isWFH = in_array($dayOfWeek, $wfhDays);
+                    }
+    
+                    // Determine which transaction model to use
+                    $transactionModel = $isWFH ? TransactionWFH::class : Transaction::class;
+    
                     // Get the transactions for the current date
-                    $transactions = Transaction::where('emp_code', $user->emp_code)
+                    $transactions = $transactionModel::where('emp_code', $user->emp_code)
                         ->whereDate('punch_time', $currentDate)
                         ->orderBy('punch_time')
                         ->get();
-
+    
                     // Get approved leaves for the current date
                     $approvedLeaves = LeaveApplication::where('user_id', $user->id)
                         ->where('status', 'Approved')
                         ->whereRaw("FIND_IN_SET(?, approved_dates) > 0", [$currentDate])
                         ->get();
-
+    
                     echo "Total transactions found for user {$user->emp_code} on {$currentDate}: " . $transactions->count() . "\n";
                     Log::info("Total transactions found for user {$user->emp_code} on {$currentDate}: " . $transactions->count());
-
+    
                     // Process the transactions for the current date
                     $calculatedData = $this->calculateTimeRecords($transactions, $user->emp_code, $currentDate, $approvedLeaves);
                     echo "Calculated data for user {$user->emp_code} on {$currentDate}: " . json_encode($calculatedData) . "\n";
                     Log::info("Calculated data for user {$user->emp_code} on {$currentDate}: " . json_encode($calculatedData));
-
+    
                     try {
                         $record = EmployeesDtr::updateOrCreate(
                             ['user_id' => $user->id, 'date' => $currentDate],
@@ -78,7 +95,7 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
                     }
                 }
             }
-
+    
             echo "AutoSaveDtrRecordsMonthly job completed successfully\n";
             Log::info("AutoSaveDtrRecordsMonthly job completed successfully");
         } catch (\Exception $e) {
@@ -87,6 +104,7 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
             Log::error($e->getTraceAsString());
         }
     }
+
     private function calculateTimeRecords($transactions, $empCode, $date, $approvedLeaves)
     {
         $carbonDate = Carbon::parse($date);
@@ -101,11 +119,13 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
         $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString('18:30:00');
         $lateThreshold = $carbonDate->copy()->setTimeFromTimeString('09:30:00');
         $location = 'Onsite';
+        $isWFH = false;
         // Set values for Work From Home (WFH) days
         if ($schedule) {
             $wfhDays = array_map('ucfirst', array_map('trim', explode(',', $schedule->wfh_days)));
             if (in_array($dayOfWeek, $wfhDays)) {
                 $location = 'WFH';
+                $isWFH = true;
                 $defaultStartTime = $carbonDate->copy()->setTimeFromTimeString('08:00:00');
                 $defaultEndTime = $carbonDate->copy()->setTimeFromTimeString('17:00:00');
                 $lateThreshold = $defaultStartTime;
@@ -116,9 +136,17 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
         }
 
         // Adjust late threshold for Monday and not WFH
-        if ($dayOfWeek === 'Monday' &&  $location !== 'WFH' ) {
+        if ($dayOfWeek === 'Monday' && !$isWFH) {
             $lateThreshold = $carbonDate->copy()->setTimeFromTimeString('09:00:00');
         }
+        // Use TransactionWFH model if it's a WFH day, otherwise use Transaction
+        $transactionModel = $isWFH ? TransactionWFH::class : Transaction::class;
+
+        // Get the transactions for the current date using the appropriate model
+        $transactions = $transactionModel::where('emp_code', $empCode)
+            ->whereDate('punch_time', $date)
+            ->orderBy('punch_time')
+            ->get();
 
         // Determine location
         // Default value

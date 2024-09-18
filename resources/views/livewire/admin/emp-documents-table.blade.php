@@ -54,7 +54,7 @@
                                                     v{{ $index + 1 }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500 dark:text-gray-200">
-                                                    <a href="{{ Storage::url($document->file_path) }}" download class="text-blue-500 hover:text-blue-700" title="Download">
+                                                    <a wire:click="downloadDocument({{ $document->id }})" download class="text-blue-500 hover:text-blue-700" title="Download">
                                                         <i class="fas fa-download"></i>
                                                     </a>
                                                     <button wire:click="confirmDelete({{ $document->id }})" class="text-red-500 hover:text-red-700" title="Delete" :disabled="$wire.isDeleting">
