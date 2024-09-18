@@ -327,7 +327,7 @@ class AdminLeaveRequestTable extends Component
         $leaveTypes = explode(',', $this->selectedApplication->type_of_leave);
     
         foreach ($leaveTypes as $leaveType) {
-            $leaveType = trim($leaveType);  // Remove any leading/trailing whitespace
+            $leaveType = trim($leaveType);
 
             if ($leaveType === "Vacation Leave" || $leaveType === "Sick Leave") {
                 $totalDeducted = 0;
@@ -338,6 +338,13 @@ class AdminLeaveRequestTable extends Component
                     $leaveCredits->spl_claimable_credits -= $deduct;
                     $leaveCredits->spl_claimed_credits += $deduct;
                     $totalDeducted += $deduct;
+
+                    // Also deduct the same amount from FL if available
+                    if ($leaveCredits->fl_claimable_credits > 0) {
+                        $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
+                        $leaveCredits->fl_claimable_credits -= $flDeduct;
+                        $leaveCredits->fl_claimed_credits += $flDeduct;
+                    }
                 }
         
                 // If more days are needed, try deducting from SL next
@@ -347,6 +354,13 @@ class AdminLeaveRequestTable extends Component
                     $leaveCredits->sl_claimable_credits -= $deduct;
                     $leaveCredits->sl_claimed_credits += $deduct;
                     $totalDeducted += $deduct;
+
+                    // Also deduct the same amount from FL if available
+                    if ($leaveCredits->fl_claimable_credits > 0) {
+                        $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
+                        $leaveCredits->fl_claimable_credits -= $flDeduct;
+                        $leaveCredits->fl_claimed_credits += $flDeduct;
+                    }
                 }
         
                 // Finally, if still more days are needed, try deducting from VL
@@ -356,11 +370,18 @@ class AdminLeaveRequestTable extends Component
                     $leaveCredits->vl_claimable_credits -= $deduct;
                     $leaveCredits->vl_claimed_credits += $deduct;
                     $totalDeducted += $deduct;
+
+                    // Also deduct the same amount from FL if available
+                    if ($leaveCredits->fl_claimable_credits > 0) {
+                        $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
+                        $leaveCredits->fl_claimable_credits -= $flDeduct;
+                        $leaveCredits->fl_claimed_credits += $flDeduct;
+                    }
                 }
     
                 // If the total deducted days are still less than requested, show an error
                 if ($totalDeducted < $days) {
-                    $this->addError('days', "Insufficient leave credits. Available SPL: {$leaveCredits->spl_claimable_credits}, SL: {$leaveCredits->sl_claimable_credits}, VL: {$leaveCredits->vl_claimable_credits}");
+                    $this->addError('days', "Insufficient leave credits. Available SPL: {$leaveCredits->spl_claimable_credits}, SL: {$leaveCredits->sl_claimable_credits}, VL: {$leaveCredits->vl_claimable_credits}, FL: {$leaveCredits->fl_claimable_credits}");
                     return;
                 }
         
@@ -380,23 +401,7 @@ class AdminLeaveRequestTable extends Component
                     $leaveCreditsCalculation->save();
                 }
     
-            } elseif ($leaveType === "Mandatory/Forced Leave") {
-                // Deduct from both FL and VL simultaneously
-                if ($leaveCredits->fl_claimable_credits < $days || $leaveCredits->vl_claimable_credits < $days) {
-                    $this->addError('days', "Insufficient leave credits for Mandatory/Forced Leave");
-                    return;
-                }
-    
-                // Deduct from FL
-                $leaveCredits->fl_claimable_credits -= $days;
-                // $leaveCredits->fl_claimed_credits += $days;
-    
-                // Deduct from VL
-                $leaveCredits->vl_claimable_credits -= $days;
-                $leaveCredits->vl_claimed_credits += $days;
-    
-                $leaveCredits->save();
-            } else {
+            } else{
 
                 continue;
             }
