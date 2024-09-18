@@ -22,6 +22,7 @@
         <!-- Table -->
         <div class="mt-4 overflow-x-auto">
             <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
+                
                 <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                     <tr class="whitespace-nowrap">
                         <th class="px-4 py-2 text-center">Employee ID</th>
@@ -37,7 +38,9 @@
                         <tr class="border-b dark:border-gray-600 whitespace-nowrap">
                             <td class="px-4 py-2 text-center">{{ $schedule->emp_code }}</td>
                             <td class="px-4 py-2 text-center">{{ $schedule->user?->name ?? 'No User Assigned' }}</td>
-                            <td class="px-4 py-2 text-center">{{ implode(', ', explode(',', $schedule->wfh_days)) }}</td>
+                            <td class="px-4 py-2 text-center">
+                                {{ $this->getSortedWfhDays($schedule->wfh_days) }}
+                            </td>                            
                             <td class="px-4 py-2 text-center">{{ $schedule->default_start_time }} - {{ $schedule->default_end_time }}</td>
                             <td class="px-4 py-2 text-center">{{ $schedule->start_date->format('Y-m-d') }} - {{ $schedule->end_date->format('Y-m-d') }}</td>
                             <td class="px-4 py-2 text-center">
