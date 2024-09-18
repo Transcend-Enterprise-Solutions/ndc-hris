@@ -10,7 +10,7 @@
     <div class="p-4">
         <div class="grid grid-cols-12 gap-4">
             <!-- Total Leave by Status -->
-            {{-- <div class="col-span-full sm:col-span-6 bg-blue-100 dark:bg-blue-800 p-4 rounded-lg shadow overflow-auto">
+            <div class="col-span-full sm:col-span-6 bg-blue-100 dark:bg-blue-800 p-4 rounded-lg shadow overflow-auto">
                 <div class="text-sm font-semibold text-blue-800 dark:text-gray-100 mb-4">Total Leave
                     <hr class="border-t border-blue-200 dark:border-blue-600">
                     <label class="text-xs text-gray-900 dark:text-gray-300">Select Status: </label>
@@ -72,8 +72,8 @@
                         </div>
                     </li>
                 </ul>
-            </div> --}}
-            {{-- 
+            </div>
+
             <!-- Total Leave Card from Vacation Leave -->
             <div
                 class="col-span-full sm:col-span-6 bg-yellow-100 dark:bg-yellow-800 p-4 rounded-lg shadow overflow-auto">
@@ -214,19 +214,31 @@
                     </li>
 
                 </ul>
-            </div> --}}
+            </div>
 
-            <div class="col-span-full sm:col-span-6 bg-yellow-100 dark:bg-yellow-800 p-4 rounded-lg shadow block">
+            {{-- LeaveAvailment Report --}}
+            <div class="col-span-full sm:col-span-6 bg-green-100 dark:bg-green-800 p-4 rounded-lg shadow block">
                 <div class="block sm:flex justify-between items-center">
                     <div class="flex justify-left items-center">
-                        <h3 class="text-sm font-semibold text-yellow-800 dark:text-gray-100">
-                            Total Leave Applications for the month of {{ $this->getFormattedMonth() ?? '-- --' }}
+                        <h3 class="text-sm font-semibold text-green-800 dark:text-gray-100">
+                            Leave Availment for the month of {{ $this->getFormattedMonth() ?? '-- --' }}
                         </h3>
                     </div>
                     <div class="w-full sm:w-auto flex items-center relative">
-                        <input type="month" id="month" wire:model.live='month' value=""
+                        <input type="month" id="month" wire:model.live='month' value="{{ $month }}"
                             class="px-2 py-1.5 block w-32 sm:text-sm border border-teal-800 rounded-md
                             text-teal-800 dark:bg-gray-200 cursor-pointer">
+
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex bg-green-50 dark:bg-green-900 px-4 py-2 rounded-sm justify-between mb-2">
+                        <div class="flex justify-center items-center">
+                            <p class="text-xs text-green-800 dark:text-white">Total Leave
+                                Applications:
+                                <span class="ml-2 text-sm font-bold dark:text-white">{{ $totalLeaveCount }}</span>
+                            </p>
+                        </div>
 
                         <!-- Export to Excel -->
                         <div class="flex justify-center items-center w-1/5 h-full ml-2"
@@ -238,8 +250,8 @@
                                 <img class="hidden dark:block" src="/images/export-excel-dark.png" alt="">
                             </button>
                             <div style="margin-right: 5px">
-                                <svg wire:loading wire:target="leaveAvailmentExport" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24" aria-hidden="true"
+                                <svg wire:loading wire:target="leaveAvailmentExport"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"
                                     class="size-5 fill-green-600 motion-safe:animate-spin dark:fill-green-600">
                                     <path
                                         d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"
@@ -249,11 +261,7 @@
                                 </svg>
                             </div>
                         </div>
-
                     </div>
-                </div>
-                <div>
-                    <p class="text-3xl font-bold text-yellow-700 dark:text-yellow-100"></p>
                 </div>
             </div>
         </div>
