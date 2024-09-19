@@ -299,9 +299,16 @@ class AutoSaveDtrRecords implements ShouldQueue
         // Adjust remarks based on presence or lateness
         if (!$actualMorningIn && !$actualAfternoonIn) {
             $remarks = 'Absent';
+        } elseif (($actualMorningIn && !$actualMorningOut) || ($actualAfternoonIn && !$actualAfternoonOut)) {
+            $remarks = 'Incomplete';
         } elseif ($lateFormatted !== '00:00') {
             $remarks = 'Late/Undertime';
+        } else {
+            $remarks = 'Present';
         }
+        
+
+
         // Add specific remarks for Saturday and Sunday
         if ($dayOfWeek === 'Saturday') {
             $remarks = 'Saturday';
