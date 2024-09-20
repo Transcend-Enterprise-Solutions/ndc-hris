@@ -344,7 +344,7 @@ class PersonalDataSheetTable extends Component
                 foreach ($question['fields'] as $field) {
                     $fieldKey = $key . ucfirst($field);
                     if($answer && $field == "date_filed"){
-                        $this->{$fieldKey} = $answer ? Carbon::parse($answer->{$field})->format('m-d-Y') : null;
+                        $this->{$fieldKey} = $answer ? Carbon::parse($answer->{$field})->format('m/d/Y') : null;
                     }else{
                         $this->{$fieldKey} = $answer ? $answer->{$field} : null;
                     }

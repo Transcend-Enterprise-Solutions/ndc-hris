@@ -19,6 +19,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Maatwebsite\Excel\Concerns\WithDrawings;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use SebastianBergmann\Diff\Chunk;
 
 class GeneralPayrollExport
 {
@@ -31,6 +32,10 @@ class GeneralPayrollExport
     protected $currentRow = 1;
     protected $workingSheetCount = 1;
     protected $chunksCount;
+    protected $pData;
+    protected $pDataCount = 0;
+    protected $headerRow = 1;
+    protected $hasHeader = false;
 
     public function __construct($filters){
         $this->filters = $filters;
@@ -137,6 +142,10 @@ class GeneralPayrollExport
             ]);
         }
 
+        if($isWorkingSheet){
+            $this->currentRow = 6;
+        }
+
         foreach ($this->months as $month) {
             $data = $this->getPayrollData($month);
             $chunks = array_chunk($data->toArray(), 20);
@@ -203,9 +212,8 @@ class GeneralPayrollExport
                     }
                 }
             }else{
-                $this->currentRow = 6;
                 foreach ($chunks as $index => $chunk) {
-                    $subtotal = $this->workingSheetDataRows($chunk, $sheet, $index === $totalChunks - 1);
+                    $subtotal = $this->workingSheetDataRows($chunk, $sheet, $index === $totalChunks - 1, $month);
                     foreach ($grandTotal as $key => $value) {
                         $value += $subtotal[$key];
                         $grandTotal[$key] = $value;
@@ -213,8 +221,13 @@ class GeneralPayrollExport
                     if ($index === $totalChunks - 1) {
                         $this->addWorkingSheetGrandTotalRow($sheet, $grandTotal);
                     }
+                    $this->hasHeader = true;
                 }
+
+                $this->headerRow = $this->currentRow + 2;
+                $this->currentRow = $this->headerRow + 2;
             }
+            $this->hasHeader = false;
         }
     }
 
@@ -1204,7 +1217,7 @@ class GeneralPayrollExport
         $this->formatAllMonths($sheet, true);
     }
     
-    private function workingSheetDataRows($data, $sheet, $isLastChunk){
+    private function workingSheetDataRows($data, $sheet, $isLastChunk, $month){
         $subtotal = [
             'rate_per_month' => 0, 
             'personal_economic_relief_allowance' => 0, 
@@ -1243,6 +1256,28 @@ class GeneralPayrollExport
             'amount_due_first_half' => 0, 
             'amount_due_second_half' => 0,
         ];
+
+        $carbonDate = Carbon::parse($month);
+        $payrollMonth = $carbonDate->format('F');
+        $payrollYear = $carbonDate->format('Y');
+
+        if(!$this->hasHeader){ 
+            $startHeader = $this->headerRow;
+            if($this->headerRow != 1){
+                $sheet->mergeCells("B{$this->headerRow}:AP{$this->headerRow}");
+            }
+            $sheet->setCellValue("B{$this->headerRow}", "GENERAL PAYROLL");
+    
+            $this->headerRow++;
+            $endHeader = $this->headerRow;
+            if($this->headerRow != 2){
+                $sheet->mergeCells("B{$this->headerRow}:AP{$this->headerRow}");
+            }
+            $sheet->setCellValue("B{$this->headerRow}", "FOR THE MONTH OF " . strtoupper($payrollMonth) . " " . $payrollYear);
+    
+            $sheet->getStyle("B{$startHeader}:B{$endHeader}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("B{$startHeader}:B{$endHeader}")->getFont()->setBold(true);
+        }
 
         $totalRows = count($data);
         foreach ($data as $index => $row) {
@@ -1345,7 +1380,6 @@ class GeneralPayrollExport
             $subtotal['nycempc_educ_loan'] += (float)$row[38];
             $subtotal['nycempc_pi'] += (float)$row[39];
             $subtotal['nycempc_business_loan'] += (float)$row[40];
-
             $this->workingSheetCount++;
         }
 
@@ -1354,7 +1388,7 @@ class GeneralPayrollExport
         $sheet->setCellValue("B{$this->currentRow}", "SUB-TOTAL");
         $sheet->setCellValue("C{$this->currentRow}", "");
         $sheet->setCellValue("D{$this->currentRow}", $this->formatCurrency($subtotal['rate_per_month']));
-        $sheet->setCellValue("E{$this->currentRow}", "");
+        $sheet->setCellValue("E{$this->currentRow}", $this->formatCurrency($subtotal['personal_economic_relief_allowance']));
         $sheet->setCellValue("F{$this->currentRow}", "");
         $sheet->setCellValue("G{$this->currentRow}", "");
         $sheet->setCellValue("H{$this->currentRow}", "");
@@ -1417,6 +1451,11 @@ class GeneralPayrollExport
         ]);
         $sheet->getStyle("A{$this->currentRow}:AU{$this->currentRow}")->getFont()->setBold(true);
 
+        $this->pData[$this->pDataCount]['grossAmountMinusAN'] = (float)$subtotal['gross_amount'];
+        $this->pData[$this->pDataCount]['totalDeduction'] = (float)$subtotal['total_deduction'];
+
+        $this->pDataCount++;
+
         return $subtotal;
     }
 
@@ -1426,7 +1465,7 @@ class GeneralPayrollExport
         $sheet->setCellValue("B{$this->currentRow}", "GRAND TOTAL");
         $sheet->setCellValue("C{$this->currentRow}", "");
         $sheet->setCellValue("D{$this->currentRow}", $this->formatCurrency($grandTotal['rate_per_month']));
-        $sheet->setCellValue("E{$this->currentRow}", "");
+        $sheet->setCellValue("E{$this->currentRow}", $this->formatCurrency($grandTotal['personal_economic_relief_allowance']));
         $sheet->setCellValue("F{$this->currentRow}", "");
         $sheet->setCellValue("G{$this->currentRow}", "");
         $sheet->setCellValue("H{$this->currentRow}", "");
@@ -1489,9 +1528,56 @@ class GeneralPayrollExport
                 ],
             ],
         ]);
+        $sheet->getStyle("D{$this->currentRow}:AS{$this->currentRow}")->applyFromArray([
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'FFB4C6E7'],
+            ],
+        ]);
         $sheet->getStyle("A{$this->currentRow}:AU{$this->currentRow}")->getFont()->setBold(true);
 
+
+        // Last Calculation 
         $this->currentRow += 2;
+        $sheet->setCellValue("C{$this->currentRow}", "TOTAL (" . $this->chunksCount . ")");
+        $sheet->setCellValue("D{$this->currentRow}", $this->formatCurrency($grandTotal['rate_per_month']));
+        $sheet->setCellValue("E{$this->currentRow}", $this->formatCurrency($grandTotal['personal_economic_relief_allowance']));
+        $sheet->getStyle("D{$this->currentRow}:E{$this->currentRow}")->applyFromArray([
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => Border::BORDER_DOUBLE,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ]);
+        $sheet->getStyle("A{$this->currentRow}:AU{$this->currentRow}")->getFont()->setBold(true);
+
+
+        $total1 = 0;
+        $total2 = 0;
+        for($i = 0; $i < $this->chunksCount; $i++){
+            $this->currentRow ++;
+            $sheet->setCellValue("C{$this->currentRow}", "P" . $i + 1);
+            $sheet->setCellValue("D{$this->currentRow}", $this->formatCurrency($this->pData[$i]['grossAmountMinusAN']));
+            $sheet->setCellValue("E{$this->currentRow}", $this->formatCurrency($this->pData[$i]['totalDeduction']));
+            $total1 += (float)$this->pData[$i]['grossAmountMinusAN'];
+            $total2 += (float)$this->pData[$i]['totalDeduction'];
+            $sheet->getStyle("A{$this->currentRow}:AU{$this->currentRow}")->getFont()->setBold(true);
+        }
+
+        $this->currentRow ++;
+        $sheet->setCellValue("D{$this->currentRow}", $this->formatCurrency($total1));
+        $sheet->setCellValue("E{$this->currentRow}", $this->formatCurrency($total2));
+        $sheet->getStyle("D{$this->currentRow}:E{$this->currentRow}")->applyFromArray([
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => Border::BORDER_DOUBLE,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ]);
+        $sheet->getStyle("A{$this->currentRow}:AU{$this->currentRow}")->getFont()->setBold(true);
+        
 
     }
 }

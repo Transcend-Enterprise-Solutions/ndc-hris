@@ -972,7 +972,7 @@ x-cloak
                                                     <input type="date" value="{{ $q35bDate_filed }}" wire:model='q35bDate_filed' 
                                                     class="text-sm bg-gray-100 text-gray-800 w-full" autofocus>
                                                 @elseif($q35bDate_filed)
-                                                    {{ $q35bDate_filed ? \Carbon\Carbon::parse($q35bDate_filed)->format('m/d/Y') : '' }}
+                                                    {{ $q35bDate_filed ?: '' }}
                                                 @endif
                                             </div>
                                         </div>
