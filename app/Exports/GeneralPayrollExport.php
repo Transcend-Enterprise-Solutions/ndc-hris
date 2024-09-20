@@ -17,8 +17,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Maatwebsite\Excel\Concerns\WithDrawings;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class GeneralPayrollExport implements WithEvents, WithDrawings
+class GeneralPayrollExport
 {
     use Exportable;
 
@@ -27,10 +29,8 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
     protected $totalPayroll;
     protected $months;
     protected $currentRow = 1;
-
-    public function drawings(){
-        return [];
-    }
+    protected $workingSheetCount = 1;
+    protected $chunksCount;
 
     public function __construct($filters){
         $this->filters = $filters;
@@ -50,44 +50,98 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
         return $months;
     }
 
-    public function registerEvents(): array{
-        return [
-            AfterSheet::class => function(AfterSheet $event) {
-                $sheet = $event->sheet;
-                // Set column widths
-                $sheet->getColumnDimension('A')->setWidth(4);
-                $sheet->getColumnDimension('B')->setWidth(12);
-                $sheet->getColumnDimension('C')->setWidth(30);
-                $sheet->getColumnDimension('D')->setWidth(20);
-                $sheet->getColumnDimension('E')->setWidth(8);
-                $sheet->getColumnDimension('F')->setWidth(15);
-                $sheet->getColumnDimension('G')->setWidth(13);
-                $sheet->getColumnDimension('H')->setWidth(15);
-                for ($col = 'I'; $col <= 'Z'; $col++) {
-                    $sheet->getColumnDimension($col)->setWidth(13);
-                }
-                $sheet->getColumnDimension('AA')->setWidth(13);
-                $sheet->getColumnDimension('AB')->setWidth(13);
-                for ($col = 'AC'; $col <= 'AF'; $col++) {
-                    $sheet->getColumnDimension($col)->setWidth(15);
-                }
-                $sheet->getStyle("A:AF")->applyFromArray([
-                    'font' => [
-                        'bold' => true,
-                        'name' => 'Cambria',
-                    ],
-                ]);
+    public function export(){
+        try {
+            $spreadsheet = IOFactory::load(storage_path('app/templates/plantilla_payroll_template.xlsx'));
+            $sheet = $spreadsheet->getSheetByName(worksheetName: 'General Payroll NYC');
+           
+            $this->formatAllMonths($sheet);
 
-                $this->formatAllMonths($sheet);
-            },
-        ];
+            $sheet = $spreadsheet->getSheetByName(worksheetName: 'Working Sheet');
+
+            $this->workingSheet($sheet);
+
+            $writer = new Xlsx($spreadsheet);
+            $filename = "General Payroll.xlsx";
+            $tempFile = tempnam(sys_get_temp_dir(), 'excel_');
+            $writer->save($tempFile);
+            $fileContent = file_get_contents($tempFile);
+            unlink($tempFile);
+            return [
+                'content' => $fileContent,
+                'filename' => $filename
+            ];
+
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
-    private function formatAllMonths($sheet){
+    // public function registerEvents(): array{
+    //     return [
+    //         AfterSheet::class => function(AfterSheet $event) {
+    //             $sheet = $event->sheet;
+    //             // Set column widths
+    //             $sheet->getColumnDimension('A')->setWidth(4);
+    //             $sheet->getColumnDimension('B')->setWidth(12);
+    //             $sheet->getColumnDimension('C')->setWidth(30);
+    //             $sheet->getColumnDimension('D')->setWidth(20);
+    //             $sheet->getColumnDimension('E')->setWidth(8);
+    //             $sheet->getColumnDimension('F')->setWidth(15);
+    //             $sheet->getColumnDimension('G')->setWidth(13);
+    //             $sheet->getColumnDimension('H')->setWidth(15);
+    //             for ($col = 'I'; $col <= 'Z'; $col++) {
+    //                 $sheet->getColumnDimension($col)->setWidth(13);
+    //             }
+    //             $sheet->getColumnDimension('AA')->setWidth(13);
+    //             $sheet->getColumnDimension('AB')->setWidth(13);
+    //             for ($col = 'AC'; $col <= 'AF'; $col++) {
+    //                 $sheet->getColumnDimension($col)->setWidth(15);
+    //             }
+    //             $sheet->getStyle("A:AF")->applyFromArray([
+    //                 'font' => [
+    //                     'bold' => true,
+    //                     'name' => 'Cambria',
+    //                 ],
+    //             ]);
+
+    //             $this->formatAllMonths($sheet);
+    //         },
+    //     ];
+    // }
+
+
+    private function formatAllMonths($sheet, $isWorkingSheet = null){
+        if(!$isWorkingSheet){
+            $sheet->getColumnDimension('A')->setWidth(4);
+            $sheet->getColumnDimension('B')->setWidth(12);
+            $sheet->getColumnDimension('C')->setWidth(30);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(8);
+            $sheet->getColumnDimension('F')->setWidth(15);
+            $sheet->getColumnDimension('G')->setWidth(13);
+            $sheet->getColumnDimension('H')->setWidth(15);
+            for ($col = 'I'; $col <= 'Z'; $col++) {
+                $sheet->getColumnDimension($col)->setWidth(13);
+            }
+            $sheet->getColumnDimension('AA')->setWidth(13);
+            $sheet->getColumnDimension('AB')->setWidth(13);
+            for ($col = 'AC'; $col <= 'AF'; $col++) {
+                $sheet->getColumnDimension($col)->setWidth(15);
+            }
+            $sheet->getStyle("A:AF")->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'name' => 'Cambria',
+                ],
+            ]);
+        }
+
         foreach ($this->months as $month) {
             $data = $this->getPayrollData($month);
             $chunks = array_chunk($data->toArray(), 20);
             $totalChunks = count($chunks);
+            $this->chunksCount = $totalChunks;
             
             $grandTotal = [
                 'rate_per_month' => 0, 
@@ -98,6 +152,10 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
                 'nycea_deductions' => 0,
                 'sc_membership' => 0, 
                 'nycempc_total' => 0, 
+                'nycempc_mpl' => 0, 
+                'nycempc_educ_loan' => 0, 
+                'nycempc_pi' => 0, 
+                'nycempc_business_loan' => 0, 
                 'salary_loan' => 0, 
                 'policy_loan' => 0, 
                 'eal' => 0,
@@ -110,40 +168,53 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
                 'pagibig_mpl' => 0, 
                 'lwop' => 0,
                 'gsis_rlip' => 0, 
+                'gsis_gs' => 0, 
+                'gsis_ecip' => 0, 
                 'pagibig_contribution' => 0,
+                'pagibig_gs' => 0,
+                'pagibig_calamity_loan' => 0,
                 'w_holding_tax' => 0, 
                 'philhealth' => 0, 
+                'philhealth_es' => 0, 
                 'total_deduction' => 0, 
                 'net_amount_received' => 0,
                 'amount_due_first_half' => 0, 
                 'amount_due_second_half' => 0,
             ];
 
-            foreach ($chunks as $index => $chunk) {
-                $this->Header($month, $sheet);
-                $this->TableHeader($month, $sheet);
-                $subtotal = $this->DataRows($chunk, $sheet, $index === $totalChunks - 1);
-                
-                // Add subtotal to grand total
-                foreach ($grandTotal as $key => $value) {
-                    $value += $subtotal[$key];
-                    $grandTotal[$key] = $value;
+            if(!$isWorkingSheet){
+                foreach ($chunks as $index => $chunk) {
+                    $this->Header($month, $sheet);
+                    $this->TableHeader($month, $sheet);
+                    $subtotal = $this->DataRows($chunk, $sheet, $index === $totalChunks - 1);
+                    
+                    // Add subtotal to grand total
+                    foreach ($grandTotal as $key => $value) {
+                        $value += $subtotal[$key];
+                        $grandTotal[$key] = $value;
+                    }
+    
+                    if ($index === $totalChunks - 1) {
+                        // Add grand total row
+                        $this->addGrandTotalRow($sheet, $grandTotal);
+                        $this->Footer($sheet, $grandTotal);
+                    } else {
+                        $this->addPageBreak($sheet);
+                    }
                 }
-
-                if ($index === $totalChunks - 1) {
-                    // Add grand total row
-                    $this->addGrandTotalRow($sheet, $grandTotal);
-                    $this->Footer($sheet, $grandTotal);
-                } else {
-                    $this->addPageBreak($sheet);
+            }else{
+                $this->currentRow = 6;
+                foreach ($chunks as $index => $chunk) {
+                    $subtotal = $this->workingSheetDataRows($chunk, $sheet, $index === $totalChunks - 1);
+                    foreach ($grandTotal as $key => $value) {
+                        $value += $subtotal[$key];
+                        $grandTotal[$key] = $value;
+                    }
+                    if ($index === $totalChunks - 1) {
+                        $this->addWorkingSheetGrandTotalRow($sheet, $grandTotal);
+                    }
                 }
             }
-
-            // $data = $this->getPayrollData($month);
-            // $this->Header($month, $sheet);
-            // $this->TableHeader($month, $sheet);
-            // $this->DataRows($data, $sheet);
-            // $this->Footer($sheet);
         }
     }
 
@@ -155,6 +226,30 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
         $sheet->setCellValue("F{$this->currentRow}", $this->formatCurrency($grandTotal['rate_per_month']));
         $sheet->setCellValue("G{$this->currentRow}", $this->formatCurrency($grandTotal['personal_economic_relief_allowance']));
         $sheet->setCellValue("H{$this->currentRow}", $this->formatCurrency($grandTotal['gross_amount']));
+        $sheet->setCellValue("I{$this->currentRow}", $this->formatCurrency($grandTotal['additional_gsis_premium']));
+        $sheet->setCellValue("J{$this->currentRow}", $this->formatCurrency($grandTotal['lbp_salary_loan']));
+        $sheet->setCellValue("K{$this->currentRow}", $this->formatCurrency($grandTotal['nycea_deductions']));
+        $sheet->setCellValue("L{$this->currentRow}", $this->formatCurrency($grandTotal['sc_membership']));
+        $sheet->setCellValue("M{$this->currentRow}", $this->formatCurrency($grandTotal['nycempc_total']));
+        $sheet->setCellValue("N{$this->currentRow}", $this->formatCurrency($grandTotal['salary_loan']));
+        $sheet->setCellValue("O{$this->currentRow}", $this->formatCurrency($grandTotal['policy_loan']));
+        $sheet->setCellValue("P{$this->currentRow}", $this->formatCurrency($grandTotal['eal']));
+        $sheet->setCellValue("Q{$this->currentRow}", $this->formatCurrency($grandTotal['emergency_loan']));
+        $sheet->setCellValue("R{$this->currentRow}", $this->formatCurrency($grandTotal['mpl']));
+        $sheet->setCellValue("S{$this->currentRow}", $this->formatCurrency($grandTotal['housing_loan']));
+        $sheet->setCellValue("T{$this->currentRow}", $this->formatCurrency($grandTotal['ouli_prem']));
+        $sheet->setCellValue("U{$this->currentRow}", $this->formatCurrency($grandTotal['gfal']));
+        $sheet->setCellValue("V{$this->currentRow}", $this->formatCurrency($grandTotal['cpl']));
+        $sheet->setCellValue("W{$this->currentRow}", $this->formatCurrency($grandTotal['pagibig_mpl']));
+        $sheet->setCellValue("X{$this->currentRow}", $this->formatCurrency($grandTotal['lwop']));
+        $sheet->setCellValue("Y{$this->currentRow}", $this->formatCurrency($grandTotal['gsis_rlip']));
+        $sheet->setCellValue("Z{$this->currentRow}", $this->formatCurrency($grandTotal['pagibig_contribution']));
+        $sheet->setCellValue("AA{$this->currentRow}", $this->formatCurrency($grandTotal['w_holding_tax']));
+        $sheet->setCellValue("AB{$this->currentRow}", $this->formatCurrency($grandTotal['philhealth']));
+        $sheet->setCellValue("AC{$this->currentRow}", $this->formatCurrency($grandTotal['total_deduction']));
+        $sheet->setCellValue("AD{$this->currentRow}", $this->formatCurrency($grandTotal['net_amount_received']));
+        $sheet->setCellValue("AE{$this->currentRow}", $this->formatCurrency($grandTotal['amount_due_first_half']));
+        $sheet->setCellValue("AF{$this->currentRow}", $this->formatCurrency($grandTotal['amount_due_second_half']));
 
         $sheet->getRowDimension($this->currentRow )->setRowHeight(30);
         $sheet->getStyle("A{$this->currentRow}:C{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
@@ -471,27 +566,22 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
 
         $data = $query->get()->map(function ($payroll) use ($month){
 
-            // For Tenths ------------------------------------------------------------- //
-            // $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
-            // $amount_due_second_half = floor($net_amount_received / 2 / 10) * 10;
-            // $amount_due_first_half = $net_amount_received - $amount_due_second_half;
-        
-            // $payroll->net_amount_received = $net_amount_received;
-            // $payroll->amount_due_first_half = $amount_due_first_half;
-            // $payroll->amount_due_second_half = $amount_due_second_half;
-
             // Check if the user has a salary deduction
             $deduction = PayrollsLeaveCreditsDeduction::where('user_id', $payroll->user_id)
-                ->whereMonth('month', Carbon::parse($month)->month)
-                ->whereYear('month', Carbon::parse($month)->year)
-                ->first();
-
+                        ->whereMonth('month', Carbon::parse($month)->month)
+                        ->whereYear('month', Carbon::parse($month)->year)
+                        ->first();
             $salaryDeduction = $deduction ? $deduction->salary_deduction_amount : 0;
             $net_amount_received = $payroll->gross_amount - $payroll->total_deduction - $salaryDeduction;
-            $half_amount = $net_amount_received / 2;
-        
-            $amount_due_second_half = floor($half_amount);
+
+            // For Tenths ------------------------------------------------------------- //
+            $amount_due_second_half = floor($net_amount_received / 2 / 10) * 10;
             $amount_due_first_half = $net_amount_received - $amount_due_second_half;
+
+            // For Ones ------------------------------------------------------------- //
+            // $half_amount = $net_amount_received / 2;
+            // $amount_due_second_half = floor($half_amount);
+            // $amount_due_first_half = $net_amount_received - $amount_due_second_half;
 
             $payroll->net_amount_received = $net_amount_received;
             $payroll->amount_due_first_half = $amount_due_first_half;
@@ -554,6 +644,15 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
                 29 => $payroll->net_amount_received,
                 30 => $payroll->amount_due_first_half,
                 31 => $payroll->amount_due_second_half,
+                32 => $payroll->pagibig_gs,
+                33 => $payroll->pagibig_calamity_loan,
+                34 => $payroll->philhealth_es,
+                35 => $payroll->gsis_gs,
+                36 => $payroll->gsis_ecip,
+                37 => $payroll->nycempc_mpl,
+                38 => $payroll->nycempc_educ_loan,
+                39 => $payroll->nycempc_pi,
+                40 => $payroll->nycempc_business_loan,
             ];
         });
     
@@ -572,6 +671,10 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
             'nycea_deductions' => 0,
             'sc_membership' => 0, 
             'nycempc_total' => 0, 
+            'nycempc_mpl' => 0, 
+            'nycempc_educ_loan' => 0, 
+            'nycempc_pi' => 0, 
+            'nycempc_business_loan' => 0, 
             'salary_loan' => 0, 
             'policy_loan' => 0, 
             'eal' => 0,
@@ -584,9 +687,14 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
             'pagibig_mpl' => 0, 
             'lwop' => 0,
             'gsis_rlip' => 0, 
+            'gsis_gs' => 0, 
+            'gsis_ecip' => 0, 
             'pagibig_contribution' => 0,
+            'pagibig_gs' => 0,
+            'pagibig_calamity_loan' => 0,
             'w_holding_tax' => 0, 
             'philhealth' => 0, 
+            'philhealth_es' => 0, 
             'total_deduction' => 0, 
             'net_amount_received' => 0,
             'amount_due_first_half' => 0, 
@@ -645,6 +753,30 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
             $subtotal['rate_per_month'] += (float)$row[5];
             $subtotal['personal_economic_relief_allowance'] += (float)$row[6];
             $subtotal['gross_amount'] += (float)$row[7];
+            $subtotal['additional_gsis_premium'] += (float)$row[8]; 
+            $subtotal['lbp_salary_loan'] += (float)$row[9]; 
+            $subtotal['nycea_deductions'] += (float)$row[10];
+            $subtotal['sc_membership'] += (float)$row[11]; 
+            $subtotal['nycempc_total'] += (float)$row[12]; 
+            $subtotal['salary_loan'] += (float)$row[13]; 
+            $subtotal['policy_loan'] += (float)$row[14]; 
+            $subtotal['eal'] += (float)$row[15];
+            $subtotal['emergency_loan'] += (float)$row[16]; 
+            $subtotal['mpl'] += (float)$row[17]; 
+            $subtotal['housing_loan'] += (float)$row[18]; 
+            $subtotal['ouli_prem'] += (float)$row[19]; 
+            $subtotal['gfal'] += (float)$row[20]; 
+            $subtotal['cpl'] += (float)$row[21];
+            $subtotal['pagibig_mpl'] += (float)$row[22]; 
+            $subtotal['lwop'] += (float)$row[23];
+            $subtotal['gsis_rlip'] += (float)$row[24]; 
+            $subtotal['pagibig_contribution'] += (float)$row[25];
+            $subtotal['w_holding_tax'] += (float)$row[26]; 
+            $subtotal['philhealth'] += (float)$row[27]; 
+            $subtotal['total_deduction'] += (float)$row[28]; 
+            $subtotal['net_amount_received'] += (float)$row[29];
+            $subtotal['amount_due_first_half'] += (float)$row[30]; 
+            $subtotal['amount_due_second_half'] += (float)$row[31];
         }
 
         $this->currentRow++;
@@ -654,6 +786,30 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
         $sheet->setCellValue("F{$this->currentRow}", $this->formatCurrency($subtotal['rate_per_month']));
         $sheet->setCellValue("G{$this->currentRow}", $this->formatCurrency($subtotal['personal_economic_relief_allowance']));
         $sheet->setCellValue("H{$this->currentRow}", $this->formatCurrency($subtotal['gross_amount']));
+        $sheet->setCellValue("I{$this->currentRow}", $this->formatCurrency($subtotal['additional_gsis_premium']));
+        $sheet->setCellValue("J{$this->currentRow}", $this->formatCurrency($subtotal['lbp_salary_loan']));
+        $sheet->setCellValue("K{$this->currentRow}", $this->formatCurrency($subtotal['nycea_deductions']));
+        $sheet->setCellValue("L{$this->currentRow}", $this->formatCurrency($subtotal['sc_membership']));
+        $sheet->setCellValue("M{$this->currentRow}", $this->formatCurrency($subtotal['nycempc_total']));
+        $sheet->setCellValue("N{$this->currentRow}", $this->formatCurrency($subtotal['salary_loan']));
+        $sheet->setCellValue("O{$this->currentRow}", $this->formatCurrency($subtotal['policy_loan']));
+        $sheet->setCellValue("P{$this->currentRow}", $this->formatCurrency($subtotal['eal']));
+        $sheet->setCellValue("Q{$this->currentRow}", $this->formatCurrency($subtotal['emergency_loan']));
+        $sheet->setCellValue("R{$this->currentRow}", $this->formatCurrency($subtotal['mpl']));
+        $sheet->setCellValue("S{$this->currentRow}", $this->formatCurrency($subtotal['housing_loan']));
+        $sheet->setCellValue("T{$this->currentRow}", $this->formatCurrency($subtotal['ouli_prem']));
+        $sheet->setCellValue("U{$this->currentRow}", $this->formatCurrency($subtotal['gfal']));
+        $sheet->setCellValue("V{$this->currentRow}", $this->formatCurrency($subtotal['cpl']));
+        $sheet->setCellValue("W{$this->currentRow}", $this->formatCurrency($subtotal['pagibig_mpl']));
+        $sheet->setCellValue("X{$this->currentRow}", $this->formatCurrency($subtotal['lwop']));
+        $sheet->setCellValue("Y{$this->currentRow}", $this->formatCurrency($subtotal['gsis_rlip']));
+        $sheet->setCellValue("Z{$this->currentRow}", $this->formatCurrency($subtotal['pagibig_contribution']));
+        $sheet->setCellValue("AA{$this->currentRow}", $this->formatCurrency($subtotal['w_holding_tax']));
+        $sheet->setCellValue("AB{$this->currentRow}", $this->formatCurrency($subtotal['philhealth']));
+        $sheet->setCellValue("AC{$this->currentRow}", $this->formatCurrency($subtotal['total_deduction']));
+        $sheet->setCellValue("AD{$this->currentRow}", $this->formatCurrency($subtotal['net_amount_received']));
+        $sheet->setCellValue("AE{$this->currentRow}", $this->formatCurrency($subtotal['amount_due_first_half']));
+        $sheet->setCellValue("AF{$this->currentRow}", $this->formatCurrency($subtotal['amount_due_second_half']));
 
         $sheet->getRowDimension($this->currentRow )->setRowHeight(30);
         $sheet->getStyle("A{$this->currentRow}:C{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
@@ -684,7 +840,8 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
             'height' => 50,
             'width' => 100
         ];
-        $worksheet = $sheet->getDelegate();
+
+        // $worksheet = $sheet->getDelegate();
 
         $signatories = $this->filters['signatories']->get()->groupBy('signatory');
         $getSignatoryInfo = function($key) use ($signatories) {
@@ -732,35 +889,35 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
         $sheet->getStyle("J{$startRow}")->getFont()->setBold(true);
 
         // Signature A
-        $startRow++;
-        $sheet->mergeCells("A{$startRow}:E{$startRow}");
-        $signatureA = $this->getTemporarySignaturePath($signatoryA);
-        if ($signatureA) {
-            $drawingA = new Drawing();
-            $drawingA->setName('Signature A');
-            $drawingA->setDescription('Signature A');
-            $drawingA->setPath($signatureA);
-            $drawingA->setHeight($imageOptions['height']);
-            $drawingA->setWidth($imageOptions['width']);
-            $drawingA->setCoordinates("C{$startRow}");
-            $drawingA->setOffsetX(100);
-            $drawingA->setWorksheet($worksheet);
-        }
+        // $startRow++;
+        // $sheet->mergeCells("A{$startRow}:E{$startRow}");
+        // $signatureA = $this->getTemporarySignaturePath($signatoryA);
+        // if ($signatureA) {
+        //     $drawingA = new Drawing();
+        //     $drawingA->setName('Signature A');
+        //     $drawingA->setDescription('Signature A');
+        //     $drawingA->setPath($signatureA);
+        //     $drawingA->setHeight($imageOptions['height']);
+        //     $drawingA->setWidth($imageOptions['width']);
+        //     $drawingA->setCoordinates("C{$startRow}");
+        //     $drawingA->setOffsetX(100);
+        //     $drawingA->setWorksheet($worksheet);
+        // }
 
         // Signature C
-        $signatureC = $this->getTemporarySignaturePath($signatoryC);
-        if ($signatureC) {
-            $drawingC = new Drawing();
-            $drawingC->setName('Signature C');
-            $drawingC->setDescription('Signature C');
-            $drawingC->setPath($signatureC);
-            $drawingC->setHeight($imageOptions['height']);
-            $drawingC->setWidth($imageOptions['width']);
-            $drawingC->setCoordinates("M{$startRow}");
-            $drawingC->setOffsetX(50);
-            $drawingC->setWorksheet($worksheet);
-        }
-        $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] - 2);
+        // $signatureC = $this->getTemporarySignaturePath($signatoryC);
+        // if ($signatureC) {
+        //     $drawingC = new Drawing();
+        //     $drawingC->setName('Signature C');
+        //     $drawingC->setDescription('Signature C');
+        //     $drawingC->setPath($signatureC);
+        //     $drawingC->setHeight($imageOptions['height']);
+        //     $drawingC->setWidth($imageOptions['width']);
+        //     $drawingC->setCoordinates("M{$startRow}");
+        //     $drawingC->setOffsetX(50);
+        //     $drawingC->setWorksheet($worksheet);
+        // }
+        // $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] - 2);
 
         $startRow ++;
         $sheet->mergeCells("A{$startRow}:E{$startRow}");
@@ -807,34 +964,34 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
 
         $startRow++;
         // Signature B
-        $sheet->mergeCells("A{$startRow}:E{$startRow}");
-        $signatureB = $this->getTemporarySignaturePath($signatoryB);
-        if ($signatureB) {
-            $drawingB = new Drawing();
-            $drawingB->setName('Signature A');
-            $drawingB->setDescription('Signature A');
-            $drawingB->setPath($signatureB);
-            $drawingB->setHeight($imageOptions['height']);
-            $drawingB->setWidth($imageOptions['width']);
-            $drawingB->setCoordinates("C{$startRow}");
-            $drawingB->setOffsetX(100);
-            $drawingB->setWorksheet($worksheet);
-        }
+        // $sheet->mergeCells("A{$startRow}:E{$startRow}");
+        // $signatureB = $this->getTemporarySignaturePath($signatoryB);
+        // if ($signatureB) {
+        //     $drawingB = new Drawing();
+        //     $drawingB->setName('Signature A');
+        //     $drawingB->setDescription('Signature A');
+        //     $drawingB->setPath($signatureB);
+        //     $drawingB->setHeight($imageOptions['height']);
+        //     $drawingB->setWidth($imageOptions['width']);
+        //     $drawingB->setCoordinates("C{$startRow}");
+        //     $drawingB->setOffsetX(100);
+        //     $drawingB->setWorksheet($worksheet);
+        // }
 
         // Signature D
-        $signatureD = $this->getTemporarySignaturePath($signatoryD);
-        if ($signatureD) {
-            $drawingD = new Drawing();
-            $drawingD->setName('Signature D');
-            $drawingD->setDescription('Signature D');
-            $drawingD->setPath($signatureD);
-            $drawingD->setHeight($imageOptions['height']);
-            $drawingD->setWidth($imageOptions['width']);
-            $drawingD->setCoordinates("M{$startRow}");
-            $drawingD->setOffsetX(50);
-            $drawingD->setWorksheet($worksheet);
-        }
-        $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] / 2);
+        // $signatureD = $this->getTemporarySignaturePath($signatoryD);
+        // if ($signatureD) {
+        //     $drawingD = new Drawing();
+        //     $drawingD->setName('Signature D');
+        //     $drawingD->setDescription('Signature D');
+        //     $drawingD->setPath($signatureD);
+        //     $drawingD->setHeight($imageOptions['height']);
+        //     $drawingD->setWidth($imageOptions['width']);
+        //     $drawingD->setCoordinates("M{$startRow}");
+        //     $drawingD->setOffsetX(50);
+        //     $drawingD->setWorksheet($worksheet);
+        // }
+        // $sheet->getRowDimension($startRow)->setRowHeight($imageOptions['height'] / 2);
 
         $sheet->mergeCells("J{$startRow}:Q{$startRow}");
         $sheet->setCellValue("J{$startRow}", "");
@@ -879,7 +1036,7 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
 
         $sheet->getStyle("I{$iBorderLeftStart}:I{$startRow}")->getBorders()->getLeft()->setBorderStyle(Border::BORDER_THIN);
 
-        $sheet->getStyle("U1:AF{$startRow}")->getBorders()->getRight()->setBorderStyle(Border::BORDER_THIN); 
+        $sheet->getStyle("U{$iBorderLeftStart}:AF{$startRow}")->getBorders()->getRight()->setBorderStyle(Border::BORDER_THIN); 
         $sheet->getStyle("AD{$eBorderStart}:AD{$startRow}")->getBorders()->getLeft()->setBorderStyle(Border::BORDER_THIN);
 
         $this->currentRow = $startRow + 5;
@@ -1042,6 +1199,300 @@ class GeneralPayrollExport implements WithEvents, WithDrawings
         }
         return null;
     }
+
+    private function workingSheet($sheet){
+        $this->formatAllMonths($sheet, true);
+    }
     
+    private function workingSheetDataRows($data, $sheet, $isLastChunk){
+        $subtotal = [
+            'rate_per_month' => 0, 
+            'personal_economic_relief_allowance' => 0, 
+            'gross_amount' => 0,
+            'additional_gsis_premium' => 0, 
+            'lbp_salary_loan' => 0, 
+            'nycea_deductions' => 0,
+            'sc_membership' => 0, 
+            'nycempc_total' => 0, 
+            'nycempc_mpl' => 0, 
+            'nycempc_educ_loan' => 0, 
+            'nycempc_pi' => 0, 
+            'nycempc_business_loan' => 0, 
+            'salary_loan' => 0, 
+            'policy_loan' => 0, 
+            'eal' => 0,
+            'emergency_loan' => 0, 
+            'mpl' => 0, 
+            'housing_loan' => 0, 
+            'ouli_prem' => 0, 
+            'gfal' => 0, 
+            'cpl' => 0,
+            'pagibig_mpl' => 0, 
+            'lwop' => 0,
+            'gsis_rlip' => 0, 
+            'gsis_gs' => 0, 
+            'gsis_ecip' => 0, 
+            'pagibig_contribution' => 0,
+            'pagibig_gs' => 0,
+            'pagibig_calamity_loan' => 0,
+            'w_holding_tax' => 0, 
+            'philhealth' => 0, 
+            'philhealth_es' => 0, 
+            'total_deduction' => 0, 
+            'net_amount_received' => 0,
+            'amount_due_first_half' => 0, 
+            'amount_due_second_half' => 0,
+        ];
+
+        $totalRows = count($data);
+        foreach ($data as $index => $row) {
+            $this->currentRow++;
+            $sheet->setCellValue("A{$this->currentRow}", $row[0]);
+            $sheet->setCellValue("B{$this->currentRow}", $row[2]);
+            $sheet->setCellValue("C{$this->currentRow}", $row[3]);
+            $sheet->setCellValue("D{$this->currentRow}", $this->formatCurrency($row[5]));
+            $sheet->setCellValue("E{$this->currentRow}", $this->formatCurrency($row[6]));
+            $sheet->setCellValue("K{$this->currentRow}", $this->formatCurrency($row[7]));
+            $sheet->setCellValue("L{$this->currentRow}", $this->formatCurrency($row[26]));
+            $sheet->setCellValue("M{$this->currentRow}", $this->formatCurrency($row[25]));
+            $sheet->setCellValue("N{$this->currentRow}", $this->formatCurrency($row[32]));
+            $sheet->setCellValue("O{$this->currentRow}", $this->formatCurrency($row[22]));
+            $sheet->setCellValue("P{$this->currentRow}", $this->formatCurrency($row[33]));
+            $sheet->setCellValue("Q{$this->currentRow}", $this->formatCurrency($row[27]));
+            $sheet->setCellValue("R{$this->currentRow}", $this->formatCurrency($row[34]));
+            $sheet->setCellValue("S{$this->currentRow}", $this->formatCurrency($row[24]));
+            $sheet->setCellValue("T{$this->currentRow}", $this->formatCurrency($row[35]));
+            $sheet->setCellValue("U{$this->currentRow}", $this->formatCurrency($row[36]));
+            $sheet->setCellValue("V{$this->currentRow}", $this->formatCurrency($row[13]));
+            $sheet->setCellValue("W{$this->currentRow}", $this->formatCurrency($row[14]));
+            $sheet->setCellValue("X{$this->currentRow}", $this->formatCurrency($row[15]));
+            $sheet->setCellValue("Y{$this->currentRow}", $this->formatCurrency($row[16]));
+            $sheet->setCellValue("Z{$this->currentRow}", $this->formatCurrency($row[17]));
+            $sheet->setCellValue("AA{$this->currentRow}", $this->formatCurrency($row[18]));
+            $sheet->setCellValue("AB{$this->currentRow}", $this->formatCurrency($row[19]));
+            $sheet->setCellValue("AC{$this->currentRow}", $this->formatCurrency($row[20]));
+            $sheet->setCellValue("AD{$this->currentRow}", $this->formatCurrency($row[21]));
+            $sheet->setCellValue("AE{$this->currentRow}", $this->formatCurrency($row[11]));
+            $sheet->setCellValue("AF{$this->currentRow}", $this->formatCurrency($row[37]));
+            $sheet->setCellValue("AG{$this->currentRow}", $this->formatCurrency($row[38]));
+            $sheet->setCellValue("AH{$this->currentRow}", $this->formatCurrency($row[39]));
+            $sheet->setCellValue("AI{$this->currentRow}", $this->formatCurrency($row[40]));
+            $sheet->setCellValue("AJ{$this->currentRow}", $this->formatCurrency($row[12]));
+            $sheet->setCellValue("AK{$this->currentRow}", $this->formatCurrency($row[9]));
+            $sheet->setCellValue("AL{$this->currentRow}", $this->formatCurrency($row[10]));
+            $sheet->setCellValue("AM{$this->currentRow}", $this->formatCurrency($row[23]));
+            $sheet->setCellValue("AN{$this->currentRow}", '');
+            $sheet->setCellValue("AO{$this->currentRow}", '');
+            $sheet->setCellValue("AP{$this->currentRow}", $this->formatCurrency($row[28]));
+            $sheet->setCellValue("AQ{$this->currentRow}", $this->formatCurrency($row[29]));
+            $sheet->setCellValue("AR{$this->currentRow}", $this->formatCurrency($row[30]));
+            $sheet->setCellValue("AS{$this->currentRow}", $this->formatCurrency($row[31]));
+
+            $difference = $this->formatCurrency($row[30] - $row[31]);
+            $quotient = $this->formatCurrency($row[29] / 2);
+
+            $sheet->setCellValue("AT{$this->currentRow}", $difference);
+            $sheet->setCellValue("AU{$this->currentRow}", $quotient);
+
+            $sheet->getStyle("A{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("B{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+            $sheet->getStyle("C{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle("D{$this->currentRow}:AS{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle("A{$this->currentRow}:AS{$this->currentRow}")->getAlignment()->setVertical(Alignment::VERTICAL_BOTTOM);
+            $sheet->getStyle("A{$this->currentRow}:AS{$this->currentRow}")->applyFromArray([
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['argb' => 'FF000000'],
+                    ],
+                ],
+            ]);
+
+            $subtotal['rate_per_month'] += (float)$row[5];
+            $subtotal['personal_economic_relief_allowance'] += (float)$row[6];
+            $subtotal['gross_amount'] += (float)$row[7];
+            $subtotal['additional_gsis_premium'] += (float)$row[8]; 
+            $subtotal['lbp_salary_loan'] += (float)$row[9]; 
+            $subtotal['nycea_deductions'] += (float)$row[10];
+            $subtotal['sc_membership'] += (float)$row[11]; 
+            $subtotal['nycempc_total'] += (float)$row[12]; 
+            $subtotal['salary_loan'] += (float)$row[13]; 
+            $subtotal['policy_loan'] += (float)$row[14]; 
+            $subtotal['eal'] += (float)$row[15];
+            $subtotal['emergency_loan'] += (float)$row[16]; 
+            $subtotal['mpl'] += (float)$row[17]; 
+            $subtotal['housing_loan'] += (float)$row[18]; 
+            $subtotal['ouli_prem'] += (float)$row[19]; 
+            $subtotal['gfal'] += (float)$row[20]; 
+            $subtotal['cpl'] += (float)$row[21];
+            $subtotal['pagibig_mpl'] += (float)$row[22]; 
+            $subtotal['lwop'] += (float)$row[23];
+            $subtotal['gsis_rlip'] += (float)$row[24]; 
+            $subtotal['pagibig_contribution'] += (float)$row[25];
+            $subtotal['w_holding_tax'] += (float)$row[26]; 
+            $subtotal['philhealth'] += (float)$row[27]; 
+            $subtotal['total_deduction'] += (float)$row[28]; 
+            $subtotal['net_amount_received'] += (float)$row[29];
+            $subtotal['amount_due_first_half'] += (float)$row[30]; 
+            $subtotal['amount_due_second_half'] += (float)$row[31];
+
+            $subtotal['pagibig_gs'] += (float)$row[32];
+            $subtotal['pagibig_calamity_loan'] += (float)$row[33];
+            $subtotal['philhealth_es'] += (float)$row[34];
+            $subtotal['gsis_gs'] += (float)$row[35];
+            $subtotal['gsis_ecip'] += (float)$row[36];
+            $subtotal['nycempc_mpl'] += (float)$row[37];
+            $subtotal['nycempc_educ_loan'] += (float)$row[38];
+            $subtotal['nycempc_pi'] += (float)$row[39];
+            $subtotal['nycempc_business_loan'] += (float)$row[40];
+
+            $this->workingSheetCount++;
+        }
+
+        $this->currentRow++;
+        $sheet->setCellValue("A{$this->currentRow}", "");
+        $sheet->setCellValue("B{$this->currentRow}", "SUB-TOTAL");
+        $sheet->setCellValue("C{$this->currentRow}", "");
+        $sheet->setCellValue("D{$this->currentRow}", $this->formatCurrency($subtotal['rate_per_month']));
+        $sheet->setCellValue("E{$this->currentRow}", "");
+        $sheet->setCellValue("F{$this->currentRow}", "");
+        $sheet->setCellValue("G{$this->currentRow}", "");
+        $sheet->setCellValue("H{$this->currentRow}", "");
+        $sheet->setCellValue("I{$this->currentRow}", "");
+        $sheet->setCellValue("J{$this->currentRow}", "");
+        $sheet->setCellValue("K{$this->currentRow}", $this->formatCurrency($subtotal['gross_amount']));
+        $sheet->setCellValue("L{$this->currentRow}", $this->formatCurrency($subtotal['w_holding_tax']));
+        $sheet->setCellValue("M{$this->currentRow}", $this->formatCurrency($subtotal['pagibig_contribution']));
+        $sheet->setCellValue("N{$this->currentRow}", $this->formatCurrency($subtotal['pagibig_gs']));
+        $sheet->setCellValue("O{$this->currentRow}", $this->formatCurrency($subtotal['pagibig_mpl']));
+        $sheet->setCellValue("P{$this->currentRow}", $this->formatCurrency($subtotal['pagibig_calamity_loan']));
+        $sheet->setCellValue("Q{$this->currentRow}", $this->formatCurrency($subtotal['philhealth']));
+        $sheet->setCellValue("R{$this->currentRow}", $this->formatCurrency($subtotal['philhealth_es']));
+        $sheet->setCellValue("S{$this->currentRow}", $this->formatCurrency($subtotal['gsis_rlip']));
+        $sheet->setCellValue("T{$this->currentRow}", $this->formatCurrency($subtotal['gsis_gs']));
+        $sheet->setCellValue("U{$this->currentRow}", $this->formatCurrency($subtotal['gsis_ecip']));
+        // $sheet->setCellValue("L{$this->currentRow}", $this->formatCurrency($subtotal['additional_gsis_premium']));
+        $sheet->setCellValue("V{$this->currentRow}", $this->formatCurrency($subtotal['salary_loan']));
+        $sheet->setCellValue("W{$this->currentRow}", $this->formatCurrency($subtotal['policy_loan']));
+        $sheet->setCellValue("X{$this->currentRow}", $this->formatCurrency($subtotal['eal']));
+        $sheet->setCellValue("Y{$this->currentRow}", $this->formatCurrency($subtotal['emergency_loan']));
+        $sheet->setCellValue("Z{$this->currentRow}", $this->formatCurrency($subtotal['mpl']));
+        $sheet->setCellValue("AA{$this->currentRow}", $this->formatCurrency($subtotal['housing_loan']));
+        $sheet->setCellValue("AB{$this->currentRow}", $this->formatCurrency($subtotal['ouli_prem']));
+        $sheet->setCellValue("AC{$this->currentRow}", $this->formatCurrency($subtotal['gfal']));
+        $sheet->setCellValue("AD{$this->currentRow}", $this->formatCurrency($subtotal['cpl']));
+        $sheet->setCellValue("AE{$this->currentRow}", $this->formatCurrency($subtotal['sc_membership']));
+        $sheet->setCellValue("AF{$this->currentRow}", $this->formatCurrency($subtotal['nycempc_mpl']));
+        $sheet->setCellValue("AG{$this->currentRow}", $this->formatCurrency($subtotal['nycempc_educ_loan']));
+        $sheet->setCellValue("AH{$this->currentRow}", $this->formatCurrency($subtotal['nycempc_pi']));
+        $sheet->setCellValue("AI{$this->currentRow}", $this->formatCurrency($subtotal['nycempc_business_loan']));
+        $sheet->setCellValue("AJ{$this->currentRow}", $this->formatCurrency($subtotal['nycempc_total']));
+        $sheet->setCellValue("AK{$this->currentRow}", $this->formatCurrency($subtotal['lbp_salary_loan']));
+        $sheet->setCellValue("AL{$this->currentRow}", $this->formatCurrency($subtotal['nycea_deductions']));
+        $sheet->setCellValue("AM{$this->currentRow}", $this->formatCurrency($subtotal['lwop']));
+        $sheet->setCellValue("AN{$this->currentRow}", "");
+        $sheet->setCellValue("AO{$this->currentRow}", "");
+        $sheet->setCellValue("AP{$this->currentRow}", $this->formatCurrency($subtotal['total_deduction']));
+        $sheet->setCellValue("AQ{$this->currentRow}", $this->formatCurrency($subtotal['net_amount_received']));
+        $sheet->setCellValue("AR{$this->currentRow}", $this->formatCurrency($subtotal['amount_due_first_half']));
+        $sheet->setCellValue("AS{$this->currentRow}", $this->formatCurrency($subtotal['amount_due_second_half']));
+
+        $difference = $this->formatCurrency($subtotal['amount_due_first_half'] - $subtotal['amount_due_second_half']);
+        $quotient = $this->formatCurrency($subtotal['net_amount_received'] / 2);
+
+        $sheet->setCellValue("AT{$this->currentRow}", $difference);
+        $sheet->setCellValue("AU{$this->currentRow}", $quotient);
+
+        $sheet->getRowDimension($this->currentRow )->setRowHeight(20);
+        $sheet->getStyle("A{$this->currentRow}:C{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle("D{$this->currentRow}:AS{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+        $sheet->getStyle("A{$this->currentRow}:AS{$this->currentRow}")->getAlignment()->setVertical(Alignment::VERTICAL_BOTTOM);
+        $sheet->getStyle("A{$this->currentRow}:AS{$this->currentRow}")->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ]);
+        $sheet->getStyle("A{$this->currentRow}:AU{$this->currentRow}")->getFont()->setBold(true);
+
+        return $subtotal;
+    }
+
+    private function addWorkingSheetGrandTotalRow($sheet, $grandTotal){
+        $this->currentRow++;
+        $sheet->setCellValue("A{$this->currentRow}", "");
+        $sheet->setCellValue("B{$this->currentRow}", "GRAND TOTAL");
+        $sheet->setCellValue("C{$this->currentRow}", "");
+        $sheet->setCellValue("D{$this->currentRow}", $this->formatCurrency($grandTotal['rate_per_month']));
+        $sheet->setCellValue("E{$this->currentRow}", "");
+        $sheet->setCellValue("F{$this->currentRow}", "");
+        $sheet->setCellValue("G{$this->currentRow}", "");
+        $sheet->setCellValue("H{$this->currentRow}", "");
+        $sheet->setCellValue("I{$this->currentRow}", "");
+        $sheet->setCellValue("J{$this->currentRow}", "");
+        $sheet->setCellValue("K{$this->currentRow}", $this->formatCurrency($grandTotal['gross_amount']));
+        $sheet->setCellValue("L{$this->currentRow}", $this->formatCurrency($grandTotal['w_holding_tax']));
+        $sheet->setCellValue("M{$this->currentRow}", $this->formatCurrency($grandTotal['pagibig_contribution']));
+        $sheet->setCellValue("N{$this->currentRow}", $this->formatCurrency($grandTotal['pagibig_gs']));
+        $sheet->setCellValue("O{$this->currentRow}", $this->formatCurrency($grandTotal['pagibig_mpl']));
+        $sheet->setCellValue("P{$this->currentRow}", $this->formatCurrency($grandTotal['pagibig_calamity_loan']));
+        $sheet->setCellValue("Q{$this->currentRow}", $this->formatCurrency($grandTotal['philhealth']));
+        $sheet->setCellValue("R{$this->currentRow}", $this->formatCurrency($grandTotal['philhealth_es']));
+        $sheet->setCellValue("S{$this->currentRow}", $this->formatCurrency($grandTotal['gsis_rlip']));
+        $sheet->setCellValue("T{$this->currentRow}", $this->formatCurrency($grandTotal['gsis_gs']));
+        $sheet->setCellValue("U{$this->currentRow}", $this->formatCurrency($grandTotal['gsis_ecip']));
+        // $sheet->setCellValue("L{$this->currentRow}", $this->formatCurrency($grandTotal['additional_gsis_premium']));
+        $sheet->setCellValue("V{$this->currentRow}", $this->formatCurrency($grandTotal['salary_loan']));
+        $sheet->setCellValue("W{$this->currentRow}", $this->formatCurrency($grandTotal['policy_loan']));
+        $sheet->setCellValue("X{$this->currentRow}", $this->formatCurrency($grandTotal['eal']));
+        $sheet->setCellValue("Y{$this->currentRow}", $this->formatCurrency($grandTotal['emergency_loan']));
+        $sheet->setCellValue("Z{$this->currentRow}", $this->formatCurrency($grandTotal['mpl']));
+        $sheet->setCellValue("AA{$this->currentRow}", $this->formatCurrency($grandTotal['housing_loan']));
+        $sheet->setCellValue("AB{$this->currentRow}", $this->formatCurrency($grandTotal['ouli_prem']));
+        $sheet->setCellValue("AC{$this->currentRow}", $this->formatCurrency($grandTotal['gfal']));
+        $sheet->setCellValue("AD{$this->currentRow}", $this->formatCurrency($grandTotal['cpl']));
+        $sheet->setCellValue("AE{$this->currentRow}", $this->formatCurrency($grandTotal['sc_membership']));
+        $sheet->setCellValue("AF{$this->currentRow}", $this->formatCurrency($grandTotal['nycempc_mpl']));
+        $sheet->setCellValue("AG{$this->currentRow}", $this->formatCurrency($grandTotal['nycempc_educ_loan']));
+        $sheet->setCellValue("AH{$this->currentRow}", $this->formatCurrency($grandTotal['nycempc_pi']));
+        $sheet->setCellValue("AI{$this->currentRow}", $this->formatCurrency($grandTotal['nycempc_business_loan']));
+        $sheet->setCellValue("AJ{$this->currentRow}", $this->formatCurrency($grandTotal['nycempc_total']));
+        $sheet->setCellValue("AK{$this->currentRow}", $this->formatCurrency($grandTotal['lbp_salary_loan']));
+        $sheet->setCellValue("AL{$this->currentRow}", $this->formatCurrency($grandTotal['nycea_deductions']));
+        $sheet->setCellValue("AM{$this->currentRow}", $this->formatCurrency($grandTotal['lwop']));
+        $sheet->setCellValue("AN{$this->currentRow}", "");
+        $sheet->setCellValue("AO{$this->currentRow}", "");
+        $sheet->setCellValue("AP{$this->currentRow}", $this->formatCurrency($grandTotal['total_deduction']));
+        $sheet->setCellValue("AQ{$this->currentRow}", $this->formatCurrency($grandTotal['net_amount_received']));
+        $sheet->setCellValue("AR{$this->currentRow}", $this->formatCurrency($grandTotal['amount_due_first_half']));
+        $sheet->setCellValue("AS{$this->currentRow}", $this->formatCurrency($grandTotal['amount_due_second_half']));
+
+        $difference = $this->formatCurrency($grandTotal['amount_due_first_half'] - $grandTotal['amount_due_second_half']);
+        $quotient = $this->formatCurrency($grandTotal['net_amount_received'] / 2);
+
+        $sheet->setCellValue("AT{$this->currentRow}", $difference);
+        $sheet->setCellValue("AU{$this->currentRow}", $quotient);
+
+        $sheet->getRowDimension($this->currentRow )->setRowHeight(30);
+        $sheet->getStyle("A{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle("B{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+        $sheet->getStyle("C{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle("D{$this->currentRow}:AS{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+        $sheet->getStyle("A{$this->currentRow}:AS{$this->currentRow}")->getAlignment()->setVertical(Alignment::VERTICAL_BOTTOM);
+        $sheet->getStyle("A{$this->currentRow}:AS{$this->currentRow}")->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ]);
+        $sheet->getStyle("A{$this->currentRow}:AU{$this->currentRow}")->getFont()->setBold(true);
+
+        $this->currentRow += 2;
+
+    }
 }
 

@@ -436,13 +436,23 @@ class GeneralPayrollTable extends Component
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                 ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
                 ->get()
-                ->map(function ($payroll) {
-                    $net_amount_received = $payroll->gross_amount - $payroll->total_deduction;
-                    $half_amount = $net_amount_received / 2;
-                    
-                    $amount_due_second_half = floor($half_amount);
+                ->map(function ($payroll) use ($carbonDate) {
+                    $deduction = PayrollsLeaveCreditsDeduction::where('user_id', $payroll->user_id)
+                                ->whereMonth('month', Carbon::parse($carbonDate)->month)
+                                ->whereYear('month', Carbon::parse($carbonDate)->year)
+                                ->first();
+                    $salaryDeduction = $deduction ? $deduction->salary_deduction_amount : 0;
+                    $net_amount_received = $payroll->gross_amount - $payroll->total_deduction - $salaryDeduction;
+
+                    // Ones
+                    // $half_amount = $net_amount_received / 2;
+                    // $amount_due_second_half = floor($half_amount);
+                    // $amount_due_first_half = $net_amount_received - $amount_due_second_half;
+
+                    // Tenths
+                    $amount_due_second_half = floor($net_amount_received / 2 / 10) * 10;
                     $amount_due_first_half = $net_amount_received - $amount_due_second_half;
-    
+
                     $payroll->net_amount_received = $net_amount_received;
                     $payroll->amount_due_first_half = $amount_due_first_half;
                     $payroll->amount_due_second_half = $amount_due_second_half;
@@ -702,7 +712,18 @@ class GeneralPayrollTable extends Component
         }
         $fileName .= '.xlsx';
     
-        return Excel::download(new GeneralPayrollExport($filters), $fileName);
+        // return Excel::download(new GeneralPayrollExport($filters), $fileName);
+
+        try {
+            $exporter = new GeneralPayrollExport($filters);
+            $result = $exporter->export();
+
+            return response()->streamDownload(function () use ($result) {
+                echo $result['content'];
+            }, $result['filename']);
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     public function exportIndivPayroll($id){
