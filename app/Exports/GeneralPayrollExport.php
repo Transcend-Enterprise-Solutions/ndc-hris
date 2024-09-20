@@ -1538,9 +1538,87 @@ class GeneralPayrollExport
 
 
         // Last Calculation 
-        $this->currentRow += 2;
+        $this->currentRow ++;
+        $sheet->setCellValue("C{$this->currentRow}", "LWOP");
+        $sheet->setCellValue("D{$this->currentRow}", "-");
+        $sheet->setCellValue("E{$this->currentRow}", "-");
+
+        $pagibigPsGs = ($grandTotal['pagibig_contribution'] ?: 0) + ($grandTotal['pagibig_gs'] ?: 0);
+        $sheet->setCellValue("N{$this->currentRow}", $this->formatCurrency($pagibigPsGs));
+        $sheet->getStyle("N{$this->currentRow}")->applyFromArray([
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => Border::BORDER_DOUBLE,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ]);
+
+        $pagibigMplCalamintyLoan = ($grandTotal['pagibig_mpl'] ?: 0) + ($grandTotal['pagibig_calamity_loan'] ?: 0);
+        $sheet->setCellValue("P{$this->currentRow}", $this->formatCurrency($pagibigMplCalamintyLoan));
+        $sheet->getStyle("P{$this->currentRow}")->applyFromArray([
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ]);
+        
+        $philhealthTotal = ($grandTotal['philhealth'] ?: 0) + ($grandTotal['philhealth_es'] ?: 0);
+        $sheet->setCellValue("R{$this->currentRow}", $this->formatCurrency($philhealthTotal));
+        $sheet->getStyle("R{$this->currentRow}")->applyFromArray([
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => Border::BORDER_DOUBLE,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ]);
+        
+        $gsisTotal = 
+            ($grandTotal['salary_loan'] ?: 0) + 
+            ($grandTotal['policy_loan'] ?: 0) +
+            ($grandTotal['eal'] ?: 0) +
+            ($grandTotal['emergency_loan'] ?: 0) +
+            ($grandTotal['mpl'] ?: 0) +
+            ($grandTotal['housing_loan'] ?: 0) +
+            ($grandTotal['ouli_prem'] ?: 0) +
+            ($grandTotal['gfal'] ?: 0) +
+            ($grandTotal['cpl'] ?: 0);
+        $sheet->setCellValue("AD{$this->currentRow}", $this->formatCurrency($gsisTotal));
+        $sheet->getStyle("AD{$this->currentRow}")->applyFromArray([
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => Border::BORDER_DOUBLE,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ]);
+
+        $nycempcTotal = 
+            ($grandTotal['sc_membership'] ?: 0) + 
+            ($grandTotal['nycempc_mpl'] ?: 0) +
+            ($grandTotal['nycempc_educ_loan'] ?: 0) +
+            ($grandTotal['nycempc_pi'] ?: 0) +
+            ($grandTotal['nycempc_business_loan'] ?: 0);
+        $sheet->setCellValue("AH{$this->currentRow}", $this->formatCurrency($nycempcTotal));
+        $sheet->getStyle("AH{$this->currentRow}")->applyFromArray([
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => Border::BORDER_DOUBLE,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ]);
+
+        $sheet->getStyle("C{$this->currentRow}:AS{$this->currentRow}")->getFont()->setBold(true);
+
+
+
+        $this->currentRow ++;
         $sheet->setCellValue("C{$this->currentRow}", "TOTAL (" . $this->chunksCount . ")");
-        $sheet->setCellValue("D{$this->currentRow}", $this->formatCurrency($grandTotal['rate_per_month']));
+        $sheet->setCellValue("D{$this->currentRow}", $this->formatCurrency($grandTotal['gross_amount']));
         $sheet->setCellValue("E{$this->currentRow}", $this->formatCurrency($grandTotal['personal_economic_relief_allowance']));
         $sheet->getStyle("D{$this->currentRow}:E{$this->currentRow}")->applyFromArray([
             'borders' => [
@@ -1550,6 +1628,44 @@ class GeneralPayrollExport
                 ],
             ],
         ]);
+
+        $pagibigTotal = (($grandTotal['pagibig_contribution'] ?: 0) + ($grandTotal['pagibig_calamity_loan'] ?: 0) + ($grandTotal['pagibig_gs'] ?: 0) + ($grandTotal['pagibig_mpl'] ?: 0)) - ($grandTotal['pagibig_gs'] ?: 0);
+        $sheet->setCellValue("P{$this->currentRow}", $this->formatCurrency($pagibigTotal));
+        $sheet->getStyle("P{$this->currentRow}")->applyFromArray([
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => Border::BORDER_DOUBLE,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ]);
+
+        $gsisGrandTotal = 
+            ($grandTotal['gsis_rlip'] ?: 0) + 
+            ($gsisTotal ?: 0);
+        $sheet->setCellValue("AD{$this->currentRow}", $this->formatCurrency($gsisGrandTotal));
+        $sheet->getStyle("AD{$this->currentRow}")->applyFromArray([
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => Border::BORDER_DOUBLE,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ]);
+        
+        $nycDeductionsTotal = 
+            ($grandTotal['nycea_deductions'] ?: 0) + 
+            ($nycempcTotal ?: 0);
+        $sheet->setCellValue("AL{$this->currentRow}", $this->formatCurrency($nycDeductionsTotal));
+        $sheet->getStyle("AL{$this->currentRow}")->applyFromArray([
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => Border::BORDER_DOUBLE,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ]);
+
         $sheet->getStyle("A{$this->currentRow}:AU{$this->currentRow}")->getFont()->setBold(true);
 
 
