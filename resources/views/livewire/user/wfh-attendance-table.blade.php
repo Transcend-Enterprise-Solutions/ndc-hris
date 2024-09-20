@@ -58,7 +58,7 @@
 
                             </div>
 
-                            @if (!$isWFHDay)
+                            @if ($scheduleType !== 'WFH')
                                 <div
                                     class="absolute inset-0 flex justify-center items-center bg-gray-700 bg-opacity-75">
                                     <div class="text-center">

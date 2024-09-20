@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Models\DTRSchedule;
-use App\Models\EmployeesDTR;
+use App\Models\EmployeesDtr;
 use App\Models\TransactionWFH;
 use Livewire\WithPagination;
 
@@ -220,7 +220,7 @@ class WfhAttendanceTable extends Component
                 ->get();
         } else {
             // Fetch onsite punch times from EmployeesDTR table
-            $transactions = EmployeesDTR::where('emp_code', Auth::user()->emp_code)
+            $transactions = EmployeesDtr::where('emp_code', Auth::user()->emp_code)
                 ->whereDate('date', Carbon::today())
                 ->first(); // Since EmployeesDTR stores punches in columns, we'll retrieve a single row
         }
