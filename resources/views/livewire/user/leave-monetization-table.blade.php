@@ -3,7 +3,7 @@
         <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
             <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Leave Monetization</h1>
 
-            <div>
+            {{-- <div>
                 <button wire:click="openRequestForm"
                     class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white mb-2">
                     <span
@@ -11,7 +11,7 @@
                         Request to Monetize Credits
                     </span>
                 </button>
-            </div>
+            </div> --}}
 
             <!-- Tab Buttons -->
             <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700 mb-4">
