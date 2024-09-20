@@ -134,23 +134,23 @@ class PDSExport
                 $sheet->setCellValue('I33', $this->pds['userData']->mobile_number ?: 'N/A');
                 $sheet->setCellValue('I34', $this->pds['userData']->email ?: 'N/A');
 
-                $sheet->setCellValue('D36', $this->pds['userSpouse']->surname ?: 'N/A');
-                $sheet->setCellValue('D37', $this->pds['userSpouse']->first_name ?: 'N/A');
-                $sheet->setCellValue('D38', $this->pds['userSpouse']->middle_name ?: 'N/A');
-                $sheet->setCellValue('H37', $this->pds['userSpouse']->name_extension ?: 'N/A');
-                $sheet->setCellValue('D39', $this->pds['userSpouse']->occupation ?: 'N/A');
-                $sheet->setCellValue('D40', $this->pds['userSpouse']->employer ?: 'N/A');
-                $sheet->setCellValue('D41', $this->pds['userSpouse']->business_address ?: 'N/A');
-                $sheet->setCellValue('D42', $this->pds['userSpouse']->tel_number ?: 'N/A');
+                $sheet->setCellValue('D36', $this->pds['userSpouse'] ? $this->pds['userSpouse']->surname : 'N/A');
+                $sheet->setCellValue('D37', $this->pds['userSpouse'] ? $this->pds['userSpouse']->first_name : 'N/A');
+                $sheet->setCellValue('D38', $this->pds['userSpouse'] ? $this->pds['userSpouse']->middle_name : 'N/A');
+                $sheet->setCellValue('H37', $this->pds['userSpouse'] ? $this->pds['userSpouse']->name_extension : 'N/A');
+                $sheet->setCellValue('D39', $this->pds['userSpouse'] ? $this->pds['userSpouse']->occupation : 'N/A');
+                $sheet->setCellValue('D40', $this->pds['userSpouse'] ? $this->pds['userSpouse']->employer : 'N/A');
+                $sheet->setCellValue('D41', $this->pds['userSpouse'] ? $this->pds['userSpouse']->business_address : 'N/A');
+                $sheet->setCellValue('D42', $this->pds['userSpouse'] ? $this->pds['userSpouse']->tel_number : 'N/A');
 
-                $sheet->setCellValue('D43', $this->pds['userFather']->surname ?: 'N/A');
-                $sheet->setCellValue('D44', $this->pds['userFather']->first_name ?: 'N/A');
-                $sheet->setCellValue('D45', $this->pds['userFather']->middle_name ?: 'N/A');
-                $sheet->setCellValue('H44', $this->pds['userFather']->name_extension ?: 'N/A');
+                $sheet->setCellValue('D43', $this->pds['userFather'] ? $this->pds['userFather']->surname : 'N/A');
+                $sheet->setCellValue('D44', $this->pds['userFather'] ? $this->pds['userFather']->first_name : 'N/A');
+                $sheet->setCellValue('D45', $this->pds['userFather'] ? $this->pds['userFather']->middle_name : 'N/A');
+                $sheet->setCellValue('H44', $this->pds['userFather'] ? $this->pds['userFather']->name_extension : 'N/A');
 
-                $sheet->setCellValue('D47', $this->pds['userMother']->surname ?: 'N/A');
-                $sheet->setCellValue('D48', $this->pds['userMother']->first_name ?: 'N/A');
-                $sheet->setCellValue('D49', $this->pds['userMother']->middle_name ?: 'N/A');
+                $sheet->setCellValue('D47', $this->pds['userMother'] ? $this->pds['userMother']->surname : 'N/A');
+                $sheet->setCellValue('D48', $this->pds['userMother'] ? $this->pds['userMother']->first_name : 'N/A');
+                $sheet->setCellValue('D49', $this->pds['userMother'] ? $this->pds['userMother']->middle_name : 'N/A');
 
                 $childRow = 37;
                 if(!$this->pds['userChildren']->isEmpty()){
