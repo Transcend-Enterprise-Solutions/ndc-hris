@@ -306,8 +306,6 @@ class AutoSaveDtrRecords implements ShouldQueue
         } else {
             $remarks = 'Present';
         }
-        
-
 
         // Add specific remarks for Saturday and Sunday
         if ($dayOfWeek === 'Saturday') {

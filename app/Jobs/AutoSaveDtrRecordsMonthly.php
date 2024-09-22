@@ -95,7 +95,6 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
                     }
                 }
             }
-    
             echo "AutoSaveDtrRecordsMonthly job completed successfully\n";
             Log::info("AutoSaveDtrRecordsMonthly job completed successfully");
         } catch (\Exception $e) {
@@ -208,8 +207,6 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
             $actualAfternoonOut = Carbon::parse($afternoonOutTransactions->last()->punch_time);
             $afternoonOut = $actualAfternoonOut;
         }
-
-
         $lunchBreakStart = $carbonDate->copy()->setTimeFromTimeString('12:00:00');
         $lunchBreakEnd = $carbonDate->copy()->setTimeFromTimeString('13:00:00');
 
@@ -330,7 +327,6 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
         if ($isOnLeave) {
             $remarks = 'Leave';
         }
-
         return [
             'day_of_week' => $dayOfWeek,
             'location' => $location,
