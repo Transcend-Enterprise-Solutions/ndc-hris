@@ -13,7 +13,7 @@ class BioTimeService
     {
         $this->client = new Client([
             'headers' => [
-                'Authorization' => 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluMTIzIiwiZXhwIjoxNzI2NzMyMzYwLCJlbWFpbCI6ImFkbWluMTIzQGdtYWlsLmNvbSIsIm9yaWdfaWF0IjoxNzI2MTI3NTYwfQ.fdrrcnDE3aA7Q70ho79hCXXTZ3b22lX-Ub27R5gKyAo',
+                'Authorization' => 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluMTIzIiwiZXhwIjoxNzI3ODM3MTMwLCJlbWFpbCI6ImFkbWluMTIzQGdtYWlsLmNvbSIsIm9yaWdfaWF0IjoxNzI3MjMyMzMwfQ.IkbPVnDyfQLUinftSgLJugJFB4vhH6SKvqNJpBdcFZg',
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ],
