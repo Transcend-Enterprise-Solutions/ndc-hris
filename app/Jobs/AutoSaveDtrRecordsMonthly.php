@@ -262,12 +262,13 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
             if ($morningIn->gt($lateThreshold)) {
                 $late = $late->addMinutes($morningIn->diffInMinutes($lateThreshold));
             }
-        } else{
+        } else {
             $late = $late->addHours(4);
             if ($afternoonIn && $afternoonIn->gt($lunchEnd)){
                 $late = $late->addMinutes($lunchEnd->diffInMinutes($afternoonIn));
             }
         }
+
         // Calculate undertime
         $undertime = Carbon::createFromTime(0, 0, 0);
         $lunchTime = $carbonDate->copy()->setTimeFromTimeString('12:00:00');
@@ -288,11 +289,16 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
         // Add undertime to lateness
         $late->addMinutes($undertime->diffInMinutes($carbonDate->copy()->setTimeFromTimeString('00:00:00')));
 
-        // Calculate overtime if applicable
+        // Calculate overtime
         $overtime = Carbon::createFromTime(0, 0, 0);
-        if ($afternoonOut && $afternoonOut->gt($defaultEndTime)) {
-            $overtime = $overtime->addMinutes($afternoonOut->diffInMinutes($defaultEndTime));
+        if ($afternoonOut && $afternoonOut->gt($expectedEndTime)) {
+            $overtime = $overtime->addMinutes($afternoonOut->diffInMinutes($expectedEndTime));
         }
+
+        // Calculate total hours rendered (8 hours minus late time, plus overtime)
+        $totalMinutesRendered = 8 * 60 - $late->diffInMinutes($carbonDate->copy()->setTimeFromTimeString('00:00:00'));
+        $totalMinutesRendered += $overtime->diffInMinutes($carbonDate->copy()->setTimeFromTimeString('00:00:00'));
+        $totalHoursRendered = Carbon::createFromTime(0, 0, 0)->addMinutes($totalMinutesRendered)->format('H:i');
 
         // Convert to time format
         $lateFormatted = $late->format('H:i');
