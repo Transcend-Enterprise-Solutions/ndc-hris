@@ -300,15 +300,26 @@ class AutoSaveDtrRecords implements ShouldQueue
         // Initialize remarks
         $remarks = '';
 
-        // Adjust remarks based on presence or lateness
-        if (!$actualMorningIn && !$actualAfternoonIn) {
-            $remarks = 'Absent';
-        } elseif (($actualMorningIn && !$actualMorningOut) || ($actualAfternoonIn && !$actualAfternoonOut)) {
+        $timeEntryCount = collect([$actualMorningIn, $actualMorningOut, $actualAfternoonIn, $actualAfternoonOut])
+        ->filter()
+        ->count();
+
+        if ($timeEntryCount === 1) {
+            $totalHoursRendered = '00:00';
+            $lateFormatted = '08:00';
+            $overtimeFormatted = '00:00';
             $remarks = 'Incomplete';
-        } elseif ($lateFormatted !== '00:00') {
-            $remarks = 'Late/Undertime';
         } else {
-            $remarks = 'Present';
+            // Adjust remarks based on presence or lateness
+            if (!$actualMorningIn && !$actualAfternoonIn) {
+                $remarks = 'Absent';
+            } elseif (($actualMorningIn && !$actualMorningOut) || ($actualAfternoonIn && !$actualAfternoonOut)) {
+                $remarks = 'Incomplete';
+            } elseif ($lateFormatted !== '00:00') {
+                $remarks = 'Late/Undertime';
+            } else {
+                $remarks = 'Present';
+            }
         }
         // Add specific remarks for Saturday and Sunday
         if ($dayOfWeek === 'Saturday') {
