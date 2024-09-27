@@ -199,8 +199,6 @@ class AutoSaveDtrRecords implements ShouldQueue
             $actualAfternoonOut = Carbon::parse($afternoonOutTransactions->last()->punch_time);
             $afternoonOut = $actualAfternoonOut;
         }
-
-
         $lunchBreakStart = $carbonDate->copy()->setTimeFromTimeString('12:00:00');
         $lunchBreakEnd = $carbonDate->copy()->setTimeFromTimeString('13:00:00');
 
@@ -256,12 +254,13 @@ class AutoSaveDtrRecords implements ShouldQueue
             if ($morningIn->gt($lateThreshold)) {
                 $late = $late->addMinutes($morningIn->diffInMinutes($lateThreshold));
             }
-        } else{
+        } else {
             $late = $late->addHours(4);
             if ($afternoonIn && $afternoonIn->gt($lunchEnd)){
                 $late = $late->addMinutes($lunchEnd->diffInMinutes($afternoonIn));
             }
         }
+
         // Calculate undertime
         $undertime = Carbon::createFromTime(0, 0, 0);
         $lunchTime = $carbonDate->copy()->setTimeFromTimeString('12:00:00');
@@ -282,11 +281,16 @@ class AutoSaveDtrRecords implements ShouldQueue
         // Add undertime to lateness
         $late->addMinutes($undertime->diffInMinutes($carbonDate->copy()->setTimeFromTimeString('00:00:00')));
 
-        // Calculate overtime if applicable
+        // Calculate overtime
         $overtime = Carbon::createFromTime(0, 0, 0);
-        if ($afternoonOut && $afternoonOut->gt($defaultEndTime)) {
-            $overtime = $overtime->addMinutes($afternoonOut->diffInMinutes($defaultEndTime));
+        if ($afternoonOut && $afternoonOut->gt($expectedEndTime)) {
+            $overtime = $overtime->addMinutes($afternoonOut->diffInMinutes($expectedEndTime));
         }
+
+        // Calculate total hours rendered (8 hours minus late time, plus overtime)
+        $totalMinutesRendered = 8 * 60 - $late->diffInMinutes($carbonDate->copy()->setTimeFromTimeString('00:00:00'));
+        $totalMinutesRendered += $overtime->diffInMinutes($carbonDate->copy()->setTimeFromTimeString('00:00:00'));
+        $totalHoursRendered = Carbon::createFromTime(0, 0, 0)->addMinutes($totalMinutesRendered)->format('H:i');
 
         // Convert to time format
         $lateFormatted = $late->format('H:i');
@@ -296,11 +300,26 @@ class AutoSaveDtrRecords implements ShouldQueue
         // Initialize remarks
         $remarks = '';
 
-        // Adjust remarks based on presence or lateness
-        if (!$actualMorningIn && !$actualAfternoonIn) {
-            $remarks = 'Absent';
-        } elseif ($lateFormatted !== '00:00') {
-            $remarks = 'Late/Undertime';
+        $timeEntryCount = collect([$actualMorningIn, $actualMorningOut, $actualAfternoonIn, $actualAfternoonOut])
+        ->filter()
+        ->count();
+
+        if ($timeEntryCount === 1) {
+            $totalHoursRendered = '00:00';
+            $lateFormatted = '08:00';
+            $overtimeFormatted = '00:00';
+            $remarks = 'Incomplete';
+        } else {
+            // Adjust remarks based on presence or lateness
+            if (!$actualMorningIn && !$actualAfternoonIn) {
+                $remarks = 'Absent';
+            } elseif (($actualMorningIn && !$actualMorningOut) || ($actualAfternoonIn && !$actualAfternoonOut)) {
+                $remarks = 'Incomplete';
+            } elseif ($lateFormatted !== '00:00') {
+                $remarks = 'Late/Undertime';
+            } else {
+                $remarks = 'Present';
+            }
         }
         // Add specific remarks for Saturday and Sunday
         if ($dayOfWeek === 'Saturday') {
@@ -317,7 +336,6 @@ class AutoSaveDtrRecords implements ShouldQueue
         if ($isOnLeave) {
             $remarks = 'Leave';
         }
-
         return [
             'day_of_week' => $dayOfWeek,
             'location' => $location,

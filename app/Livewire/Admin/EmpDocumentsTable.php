@@ -87,7 +87,6 @@ class EmpDocumentsTable extends Component
                 if (Storage::exists($document->file_path)) {
                     Storage::delete($document->file_path);
                 }
-
                 $document->delete();
 
                 $this->loadEmployeesWithoutUpload();
