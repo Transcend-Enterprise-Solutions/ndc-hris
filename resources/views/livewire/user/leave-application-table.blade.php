@@ -1,4 +1,4 @@
-<div x-data="{ open: false, selectedTab: 'pending' }" class="w-full">
+<div x-data="{ open: false }" class="w-full">
     <style>
         .scrollbar-thin1::-webkit-scrollbar {
             width: 5px;
@@ -128,21 +128,36 @@
                 </div>
 
 
-                <div x-data="{ selectedTab: 'pending' }" class="flex flex-col">
+                <div x-data="{ activeTab: @entangle('activeTab') }" class="flex flex-col">
                     <!-- Tabs for Status -->
                     <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700">
-                        <button @click="selectedTab = 'pending'"
-                            :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'pending', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'pending' }"
+                        <button @click="$wire.setActiveTab('pending')"
+                            :class="{
+                                'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': $wire
+                                    .activeTab === 'pending',
+                                'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': $wire
+                                    .activeTab !== 'pending'
+                            }"
                             class="h-min px-4 py-2 text-sm mb-4">
                             Pending
                         </button>
-                        <button @click="selectedTab = 'approved'"
-                            :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'approved', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'approved' }"
+                        <button @click="$wire.setActiveTab('approved')"
+                            :class="{
+                                'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': $wire
+                                    .activeTab === 'approved',
+                                'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': $wire
+                                    .activeTab !== 'approved'
+                            }"
                             class="h-min px-4 py-2 text-sm mb-4">
                             Approved
                         </button>
-                        <button @click="selectedTab = 'disapproved'"
-                            :class="{ 'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': selectedTab === 'disapproved', 'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': selectedTab !== 'disapproved' }"
+                        <button @click="$wire.setActiveTab('disapproved')"
+                            :class="{
+                                'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': $wire
+                                    .activeTab === 'disapproved',
+                                'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': $wire
+                                    .activeTab !== 'disapproved'
+                            }"
                             class="h-min px-4 py-2 text-sm mb-4">
                             Disapproved
                         </button>
@@ -162,22 +177,25 @@
                                     <th scope="col"
                                         class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
                                         Details of Leave</th>
-                                    <th scope="col"
-                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center"
-                                        x-show="selectedTab === 'pending'">
-                                        Requested Day/s</th>
-                                    <th scope="col"
-                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center"
-                                        x-show="selectedTab === 'pending'">
-                                        Requested Date/s</th>
-                                    <th scope="col"
-                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center"
-                                        x-show="selectedTab !== 'pending'">
-                                        Approved Day/s</th>
-                                    <th scope="col"
-                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center"
-                                        x-show="selectedTab !== 'pending'">
-                                        Approved Date/s</th>
+                                    @if ($activeTab === 'pending')
+                                        <th scope="col"
+                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            Requested Day/s
+                                        </th>
+                                        <th scope="col"
+                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            Requested Date/s
+                                        </th>
+                                    @else
+                                        <th scope="col"
+                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            Approved Day/s
+                                        </th>
+                                        <th scope="col"
+                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            Approved Date/s
+                                        </th>
+                                    @endif
                                     <th scope="col"
                                         class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
                                         Status</th>
@@ -188,9 +206,8 @@
                             </thead>
                             <tbody>
                                 <!-- Filtering based on selected tab -->
-                                @foreach ($leaveApplications as $leaveApplication)
-                                    <tr x-show="selectedTab === '{{ strtolower($leaveApplication->status) }}'"
-                                        class="whitespace-nowrap">
+                                @foreach ($activeTab === 'pending' ? $pendingApplications : ($activeTab === 'approved' ? $approvedApplications : $disapprovedApplications) as $leaveApplication)
+                                    <tr class="whitespace-nowrap">
                                         <td class="px-4 py-2 text-center">
                                             {{ $leaveApplication->date_of_filing }}</td>
                                         <td class="px-4 py-2 text-center">
@@ -220,22 +237,25 @@
                                                 {{ $truncatedDetailsOfLeave }}
                                             </span>
                                         </td>
-                                        <td class="px-4 py-2 text-center" x-show="selectedTab === 'pending'">
-                                            {{ $leaveApplication->number_of_days }}</td>
-                                        <td class="px-4 py-2 text-center" x-show="selectedTab === 'pending'">
-                                            {{ \Illuminate\Support\Str::limit($leaveApplication->list_of_dates, 10, '...') }}
-                                        </td>
-                                        <td class="px-4 py-2 text-center" x-show="selectedTab !== 'pending'">
-                                            {{ $leaveApplication->approved_days ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2 text-center" x-show="selectedTab !== 'pending'">
-                                            {{ \Illuminate\Support\Str::limit($leaveApplication->approved_dates, 10, '...') ?? 'N/A' }}
-                                        </td>
+                                        @if ($activeTab === 'pending')
+                                            <td class="px-4 py-2 text-center">{{ $leaveApplication->number_of_days }}
+                                            </td>
+                                            <td class="px-4 py-2 text-center">
+                                                {{ \Illuminate\Support\Str::limit($leaveApplication->list_of_dates, 10, '...') }}
+                                            </td>
+                                        @else
+                                            <td class="px-4 py-2 text-center">
+                                                {{ $leaveApplication->approved_days ?? 'N/A' }}</td>
+                                            <td class="px-4 py-2 text-center">
+                                                {{ \Illuminate\Support\Str::limit($leaveApplication->approved_dates, 10, '...') ?? 'N/A' }}
+                                            </td>
+                                        @endif
                                         <td class="px-4 py-2 text-center">
                                             <span
                                                 class="inline-block px-3 py-1 text-sm font-semibold 
-                                                {{ str_starts_with($leaveApplication->status, 'Approved')
+                                                {{ in_array($leaveApplication->status, ['Approved by HR', 'Approved by Supervisor', 'Approved'])
                                                     ? 'text-green-800 bg-green-200'
-                                                    : (str_starts_with($leaveApplication->status, 'Disapproved')
+                                                    : ($leaveApplication->status === 'Disapproved'
                                                         ? 'text-red-800 bg-red-200'
                                                         : 'text-yellow-800 bg-yellow-200') }} rounded-full">
                                                 {{ $leaveApplication->status }}
@@ -243,7 +263,7 @@
                                         </td>
                                         <td
                                             class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                            @if ($leaveApplication->status === 'Approved' || $leaveApplication->status === 'Disapproved')
+                                            @if (in_array($leaveApplication->status, ['Approved by HR', 'Approved by Supervisor', 'Approved', 'Disapproved']))
                                                 <button type="button"
                                                     wire:click.prevent="exportPDF({{ $leaveApplication->id }})">
                                                     <i class="bi bi-file-earmark-arrow-down"></i>
@@ -261,7 +281,13 @@
                         </table>
                     </div>
                     <div class="p-5 border-t border-neutral-500 dark:border-neutral-200">
-                        {{ $leaveApplications->links() }}
+                        @if ($activeTab === 'pending')
+                            {{ $pendingApplications->links() }}
+                        @elseif ($activeTab === 'approved')
+                            {{ $approvedApplications->links() }}
+                        @else
+                            {{ $disapprovedApplications->links() }}
+                        @endif
                     </div>
 
                 </div>

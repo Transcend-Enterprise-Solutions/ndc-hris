@@ -54,6 +54,8 @@ class LeaveApplicationTable extends Component
     public $startDate;
     public $endDate;
 
+    public $activeTab = 'pending';
+
     protected $rules = [
         'office_or_department' => 'required|string|max:255',
         'position' => 'required|string|max:255',
@@ -517,15 +519,41 @@ class LeaveApplicationTable extends Component
     public function render()
     {
         $userId = Auth::id();
-        $leaveApplications = LeaveApplication::where('user_id', $userId)
-            ->with('vacationLeaveDetails', 'sickLeaveDetails')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        // $leaveApplications = LeaveApplication::where('user_id', $userId)
+        //     ->with('vacationLeaveDetails', 'sickLeaveDetails')
+        //     ->orderBy('created_at', 'desc')
+        //     ->paginate(10);
+
+        $pendingApplications = $this->getApplications(['Pending']);
+        $approvedApplications = $this->getApplications(['Approved by HR', 'Approved by Supervisor', 'Approved']);
+        $disapprovedApplications = $this->getApplications(['Disapproved']);
 
         $leaveCredits = LeaveCredits::where('user_id', $userId)->first();
 
         return view('livewire.user.leave-application-table', [
-            'leaveApplications' => $leaveApplications,
+            'pendingApplications' => $pendingApplications,
+            'approvedApplications' => $approvedApplications,
+            'disapprovedApplications' => $disapprovedApplications,
+            // 'leaveApplications' => $leaveApplications,
         ]);
+    }
+
+    private function getApplications($statuses)
+    {
+        return LeaveApplication::where('user_id', Auth::id())
+            ->whereIn('status', $statuses)
+            ->with('vacationLeaveDetails', 'sickLeaveDetails')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10, ['*'], $this->getPaginationPageName($statuses[0]));
+    }
+
+    private function getPaginationPageName($status)
+    {
+        return strtolower(str_replace(' ', '_', $status)) . '_page';
+    }
+
+    public function setActiveTab($tab)
+    {
+        $this->activeTab = $tab;
     }
 }
