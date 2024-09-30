@@ -47,24 +47,25 @@ class AdminScheduleTable extends Component
 
 
     public function filterSchedules()
-    {   
-    $now = Carbon::now();
-    $orderedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+{   
+    $now = Carbon::now()->startOfDay();
+    $yesterday = $now->copy()->subDay();
 
     return DTRSchedule::with('user')
-        ->when($this->selectedTab, function ($query) use ($now) {
+        ->when($this->selectedTab, function ($query) use ($now, $yesterday) {
             switch ($this->selectedTab) {
                 case 'current':
-                    return $query->where('start_date', '<=', $now)->where('end_date', '>=', $now);
+                    return $query->where('start_date', '<=', $now)
+                                 ->where('end_date', '>=', $now);
                 case 'incoming':
                     return $query->where('start_date', '>', $now);
                 case 'expired':
-                    return $query->where('end_date', '<', $now);
+                    return $query->where('end_date', '<=', $yesterday);
             }
         })
-        ->orderByRaw("FIELD(DAYNAME(wfh_days), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')")
+        ->orderBy('end_date', 'desc')
         ->paginate($this->perPage);
-    }
+}
  
 
     public function getSortedWfhDays($wfhDays)
