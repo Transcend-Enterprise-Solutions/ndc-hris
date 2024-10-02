@@ -27,10 +27,10 @@
                     @if (Auth::user()->user_role != 'emp')
 
                         <!-- Dashboard -->
-                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))]
                         @if (in_array(Request::segment(1), ['dashboard'])) {{ 'bg-gray-200 dark:bg-slate-900' }} @endif"
                             x-data="{ open: {{ in_array(Request::segment(1), ['dashboard']) ? 1 : 0 }} }">
-                            <a class="block text-gray-800 dark:text-gray-100 truncate transition 
+                            <a class="block text-gray-800 dark:text-gray-100 truncate transition
                             @if (Route::is('dashboard')) {{ '!text-blue-500' }} @endif"
                                 href="{{ route('dashboard') }}" wire:navigate>
                                 <div class="flex items-center justify-between">
@@ -47,10 +47,10 @@
 
                         @if (Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
                             <!-- Role Management -->
-                            <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                            <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))]
                             @if (in_array(Request::segment(1), ['org-management'])) {{ 'bg-gray-200 dark:bg-slate-900' }} @endif"
                                 x-data="{ open: {{ in_array(Request::segment(1), ['org-management']) ? 1 : 0 }} }">
-                                <a class="block text-gray-800 dark:text-gray-100 truncate transition 
+                                <a class="block text-gray-800 dark:text-gray-100 truncate transition
                                 @if (Route::is('org-management')) {{ '!text-blue-500' }} @endif"
                                     href="{{ route('org-management') }}" wire:navigate>
                                     <div class="flex items-center justify-between">
@@ -68,7 +68,7 @@
                         @if (Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr' || Auth::user()->user_role === 'sv')
 
                             <!-- Employee Management -->
-                            <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                            <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))]
                             @if (in_array(Request::segment(1), ['employee-management'])) {{ 'bg-gray-200 dark:bg-slate-900' }} @endif"
                                 x-data="{ open: {{ in_array(Request::segment(1), ['employee-management']) ? 1 : 0 }} }">
                                 <a class="block text-gray-800 dark:text-gray-100 truncate transition" href="#0"
@@ -156,7 +156,7 @@
                         @endif
                         @if (Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr' || Auth::user()->user_role === 'sv')
                             <!-- Leave Management -->
-                            <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                            <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))]
                             @if (in_array(Request::segment(1), ['leave-management'])) {{ 'bg-gray-200 dark:bg-slate-900' }} @endif"
                                 x-data="{ open: {{ in_array(Request::segment(1), ['leave-management']) ? 1 : 0 }} }">
                                 <a class="block text-gray-800 dark:text-gray-100 truncate transition" href="#0"
@@ -222,7 +222,7 @@
                         @endif
                         @if (Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr' || Auth::user()->user_role === 'pa')
                             <!-- Payroll Management -->
-                            <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                            <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))]
                             @if (in_array(Request::segment(1), ['payroll'])) {{ 'bg-gray-200 dark:bg-slate-900' }} @endif"
                                 x-data="{ open: {{ in_array(Request::segment(1), ['payroll']) ? 1 : 0 }} }">
                                 <a class="block text-gray-800 dark:text-gray-100 truncate transition" href="#0"
@@ -277,10 +277,10 @@
                         @endif
                         @if (Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
                             <!-- Report Generation -->
-                            <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                            <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))]
                             @if (in_array(Request::segment(1), ['report-generation'])) {{ 'bg-gray-200 dark:bg-slate-900' }} @endif"
                                 x-data="{ open: {{ in_array(Request::segment(1), ['report-generation']) ? 1 : 0 }} }">
-                                <a class="block text-gray-800 dark:text-gray-100 truncate transition 
+                                <a class="block text-gray-800 dark:text-gray-100 truncate transition
                                 @if (Route::is('report-generation')) {{ '!text-blue-500' }} @endif"
                                     href="{{ route('report-generation') }}" wire:navigate>
                                     <div class="flex items-center justify-between">
@@ -302,10 +302,10 @@
 
                     @if (Auth::user()->user_role === 'emp')
                         <!-- Home -->
-                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))]
                         @if (in_array(Request::segment(1), ['home'])) {{ 'bg-gray-200 dark:bg-slate-900' }} @endif"
                             x-data="{ open: {{ in_array(Request::segment(1), ['home']) ? 1 : 0 }} }">
-                            <a class="block text-gray-800 dark:text-gray-100 truncate transition 
+                            <a class="block text-gray-800 dark:text-gray-100 truncate transition
                             @if (Route::is('home')) {{ '!text-blue-500' }} @endif"
                                 href="{{ route('home') }}" wire:navigate>
                                 <div class="flex items-center justify-between">
@@ -321,7 +321,7 @@
                         </li>
 
                         <!-- My Records -->
-                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))]
                         @if (in_array(Request::segment(1), ['my-records'])) {{ 'bg-gray-200 dark:bg-slate-900' }} @endif"
                             x-data="{ open: {{ in_array(Request::segment(1), ['my-records']) ? 1 : 0 }} }">
                             <a class="block text-gray-800 dark:text-gray-100 truncate transition" href="#0"
@@ -374,7 +374,7 @@
                         </li>
 
                         <!-- DTR -->
-                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))]
                         @if (in_array(Request::segment(1), ['daily-time-record'])) {{ 'bg-gray-200 dark:bg-slate-900' }} @endif"
                             x-data="{ open: {{ in_array(Request::segment(1), ['daily-time-record']) ? 1 : 0 }} }">
                             <a class="block text-gray-800 dark:text-gray-100 truncate transition" href="#0"
@@ -430,7 +430,7 @@
                         </li>
 
                         <!-- Filing and Approval -->
-                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                        <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))]
                         @if (in_array(Request::segment(1), ['filing-and-approval'])) {{ 'bg-gray-200 dark:bg-slate-900' }} @endif"
                             x-data="{ open: {{ in_array(Request::segment(1), ['filing-and-approval']) ? 1 : 0 }} }">
                             <a class="block text-gray-800 dark:text-gray-100 truncate transition" href="#0"
