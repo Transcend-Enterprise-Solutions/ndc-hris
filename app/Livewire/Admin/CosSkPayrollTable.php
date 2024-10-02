@@ -7,6 +7,7 @@ use App\Exports\IndivCosPayrollExport;
 use App\Exports\PayrollExport;
 use App\Models\CosRegPayrolls;
 use App\Models\CosSkPayrolls;
+use App\Models\CosSkPayslip;
 use App\Models\CosSkSemiMonthlyPayrolls;
 use App\Models\EmployeesDtr;
 use App\Models\Holiday;
@@ -54,9 +55,11 @@ class CosSkPayrollTable  extends Component
         'late_undertime_mins',
         'late_undertime_mins_amount',
         'gross_salary_less',
+        'adjustment',
         'withholding_tax',
         'nycempc',
-        'total_deductions',
+        'other_deductions',
+        'total_deduction',
         'net_amount_due',
     ];
 
@@ -67,6 +70,12 @@ class CosSkPayrollTable  extends Component
         'office_division' => true,
         'sg_step' => true,
         'rate_per_month' => true,
+        'additional_premiums' => true,
+        'adjustment' => true,
+        'withholding_tax' => true,
+        'nycempc' => true,
+        'other_deductions' => true,
+        'total_deduction' => true,
     ];
 
     public $view;
@@ -113,15 +122,24 @@ class CosSkPayrollTable  extends Component
     public $salaryGrade;
     public $deleteId;
     public $deleteMessage;
+    public $additional_premiums;
+    public $adjustment;
+    public $withholding_tax;
+    public $other_deductions;
+    public $unpayrolledEmployees;
+    public $canExportPayslip = false;
 
     public function mount(){
-        $this->employees = User::where('user_role', '=', 'emp')
+        $this->employees = User::where('users.user_role', '=', 'emp')
+            ->join('user_data', 'user_data.user_id', 'users.id')
             ->leftJoin('payrolls', 'payrolls.user_id', '=', 'users.id')
             ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', '=', 'users.id')
             ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', '=', 'users.id')
             ->whereNull('payrolls.id')
             ->whereNull('cos_sk_payrolls.id')
             ->whereNull('cos_reg_payrolls.id')
+            ->where('user_data.appointment', 'cos')
+            ->select('users.*')
             ->get();
         $this->salaryGrade = SalaryGrade::all();
     }
@@ -130,22 +148,24 @@ class CosSkPayrollTable  extends Component
         $users = User::paginate(10);
         $payrolls = collect();
         if ($this->startDate && $this->endDate) {
-            $query = CosSkSemiMonthlyPayrolls::where('start_date', $this->startDate)
+            $query = CosSkPayslip::where('start_date', $this->startDate)
                 ->where('end_date', $this->endDate)
                 ->when($this->search, function ($query) {
                     return $query->search(trim($this->search));
                 });
     
             if ($query->exists()) {
-                $payrolls = $query->paginate(10);
-                $this->employeePayslip = $query->get();
                 $this->hasPayroll = true;
             } else {
-                $payrolls = $this->getPayroll();
                 $this->hasPayroll = false;
-                $this->employeePayslip = $payrolls;
             }
+            $payrolls = $this->getPayroll();
 
+            $carbonStartDate = Carbon::parse($this->startDate);
+            $carbonEndDate = Carbon::parse($this->endDate);
+            $isStartDate16 = $carbonStartDate->day === 16;
+            $isEndDateEndOfMonth = $carbonEndDate->isLastOfMonth();
+            $this->canExportPayslip = $isStartDate16 && $isEndDateEndOfMonth;
         }
 
 
@@ -215,8 +235,14 @@ class CosSkPayrollTable  extends Component
         }
 
         if($this->sg){
-
         }
+
+        $this->total_deduction = 
+            ($this->additional_premiums ?: 0) +
+            ($this->adjustment ?: 0) +
+            ($this->nycempc ?: 0) +
+            ($this->withholding_tax ?: 0) +
+            ($this->other_deductions ?: 0);
 
         return view('livewire.admin.cos-sk-payroll-table', [
             'users' => $users,
@@ -288,10 +314,19 @@ class CosSkPayrollTable  extends Component
         $this->getPayroll();
     }
 
-    public function getPayroll($employeeId = null){
+    public function getPayroll($employeeId = null, $payslip = null){
         $payrolls = collect();
         try {
-            if ($this->startDate && $this->endDate) {
+            $sDate = $this->startDate;
+            $eDate = $this->endDate;
+
+            if($payslip){
+                $carbonDate = Carbon::parse($this->startDate);
+                $sDate = $carbonDate->startOfMonth()->toDateString();
+                $eDate = $carbonDate->copy()->day(15)->toDateString();
+            }
+
+            if ($sDate && $eDate) {
                 $payrollsAll = null;
                 if ($employeeId) {
                     $payrollsAll =User::join('positions', 'positions.id', 'users.position_id')
@@ -315,9 +350,9 @@ class CosSkPayrollTable  extends Component
                             'office_divisions.office_division')
                         ->get();
                 }
-                $payrollDTR = $this->getDTRForPayroll($this->startDate, $this->endDate);
-                $startDate = Carbon::parse($this->startDate);
-                $endDate = Carbon::parse($this->endDate);
+                $payrollDTR = $this->getDTRForPayroll($sDate, $eDate);
+                $startDate = Carbon::parse($sDate);
+                $endDate = Carbon::parse($eDate);
                 
                 $totalWorkingDaysInMonth = Carbon::parse($startDate)->daysInMonth - 
                     Carbon::parse($startDate)->daysInMonth * 2 / 7;
@@ -363,6 +398,12 @@ class CosSkPayrollTable  extends Component
                 $deductionBalance = 0;
                 $nycempc = 0;
                 $netAmountDue = 0;
+
+                $admin = Auth::user();
+                $preparedBy = User::where('users.id', $admin->id)
+                    ->join('positions', 'positions.id', 'users.position_id')
+                    ->join('signatories', 'signatories.user_id', 'users.id')
+                    ->first();
 
                 foreach ($payrollsAll as $payrollRecord) {
                     $userId = $payrollRecord->user_id;
@@ -429,8 +470,12 @@ class CosSkPayrollTable  extends Component
                     $grossSalaryLess = $grossSalary - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount - $absentAmount;
 
 
-                    $withholdingTax = $payrollRecord->w_holding_tax;
+                    $withholdingTax = $payrollRecord->withholding_tax;
                     $nycempc = $payrollRecord->nycempc;
+                    $adjustment = $payrollRecord->adjustment;
+                    $otherDeductions = $payrollRecord->other_deductions;
+                    $additionalPremiums = $payrollRecord->additional_premiums;
+
 
                     // Calculate remaining deductions
                     $totalDeductions = $withholdingTax + $nycempc;
@@ -444,33 +489,31 @@ class CosSkPayrollTable  extends Component
 
     
                     if($this->savePayroll){
-                        CosSkSemiMonthlyPayrolls::updateOrCreate(
-                            [
-                                'user_id' => $userId,
-                                'start_date' => $this->startDate,
-                                'end_date' => $this->endDate,
-                            ],[
-                                'name' => $payrollRecord->name,
-                                'employee_number' => $payrollRecord->emp_code,
-                                'office_division' => $payrollRecord->office_division,
-                                'position' => $payrollRecord->position,
-                                'salary_grade' => $payrollRecord->sg_step,
-                                'daily_salary_rate' => $dailySalaryRate,
-                                'no_of_days_covered' => $totalDays,
-                                'gross_salary' => $grossSalary,
-                                'absences_days' => $absentDays,
-                                'absences_amount' => $absentAmount,
-                                'late_undertime_hours' => $lateUndertimeHours,
-                                'late_undertime_hours_amount' => $lateUndertimeHoursAmount,
-                                'late_undertime_mins' => $lateUndertimeMins,
-                                'late_undertime_mins_amount' => $lateUndertimeMinsAmount,
-                                'gross_salary_less' => $grossSalaryLess,
-                                'withholding_tax' => $withholdingTax,
-                                'nycempc' => $nycempc,
-                                'total_deductions' => $totalDeductions,
-                                'net_amount_due' => $netAmountDue,
-                            ]
-                        );
+                        CosSkPayslip::create([
+                            'user_id' => $user->id,
+                            'salary_grade' => $payrollRecord->sg_step,
+                            'rate_per_month' => $payrollRecord->rate_per_month,
+                            'days_covered' => $totalDays,
+                            'gross_salary' => $grossSalary,
+                            'absences_days' => $absentDays,
+                            'absences_amount' => $absentAmount,
+                            'late_undertime_hours' => $lateUndertimeHours,
+                            'late_undertime_hours_amount' => $lateUndertimeHoursAmount,
+                            'late_undertime_minutes' => $lateUndertimeMins,
+                            'late_undertime_minutes_amount' => $lateUndertimeMinsAmount,
+                            'gross_salary_less' => $grossSalaryLess,
+                            'additional_premiums' => $additionalPremiums,
+                            'adjustment' => $adjustment,
+                            'w_holding_tax' => $withholdingTax,
+                            'nycempc' => $nycempc,
+                            'other_deductions' => $otherDeductions,
+                            'total_deduction' => $totalDeductions,
+                            'net_amount_received' => $netAmountDue,
+                            'start_date' => $sDate,
+                            'end_date' => $eDate,
+                            'prepared_by_name' => $preparedBy->name,
+                            'prepared_by_position' => $preparedBy->position,
+                        ]);
                     }else{
                         $payrolls->push([
                             'user_id' => $user->id,
@@ -493,12 +536,14 @@ class CosSkPayrollTable  extends Component
                             'late_undertime_mins' => $lateUndertimeMins,
                             'late_undertime_mins_amount' => $lateUndertimeMinsAmount,
                             'gross_salary_less' => $grossSalaryLess,
+                            'adjustment' => $adjustment,
                             'withholding_tax' => $withholdingTax,
                             'nycempc' => $nycempc,
+                            'other_deductions' => $otherDeductions,
                             'total_deductions' => $totalDeductions,
                             'net_amount_due' => $netAmountDue,
-                            'start_date' => $this->startDate,
-                            'end_date' => $this->endDate,
+                            'start_date' => $sDate,
+                            'end_date' => $eDate,
                         ]);
 
                     }
@@ -507,7 +552,7 @@ class CosSkPayrollTable  extends Component
                 if($this->savePayroll){
                     $this->dispatch('swal', [
                         'title' => 'Payroll Saved!',
-                        'type' => 'success'
+                        'icon' => 'success'
                     ]);
                     $this->savePayroll = null;
                     return;
@@ -526,7 +571,7 @@ class CosSkPayrollTable  extends Component
         } catch (Exception $e) {
             $this->dispatch('swal', [
                 'title' => 'Fetching or Saving data was unsuccessful!',
-                'type' => 'error'
+                'icon' => 'error'
             ]);
             return new LengthAwarePaginator([], 0, 1);
         }
@@ -589,6 +634,84 @@ class CosSkPayrollTable  extends Component
             }
             return $payrollDTR;
         } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function exportPayslip($userId){
+        try {
+            $user = User::where('id', $userId)->first();
+            if ($user) {
+                $admin = Auth::user();
+                $signatories = User::join('signatories', 'signatories.user_id', 'users.id')
+                        ->join('positions', 'positions.id', 'users.position_id')
+                        ->where('signatories.signatory_type', 'cos_payslip')
+                        ->where('signatories.signatory', 'Noted By')
+                        ->select('users.name', 'positions.*', 'signatories.*')
+                        ->first();
+                    
+                $payslip = $this->getPayroll($userId, true)->first();
+                $payslip2 = $this->getPayroll($userId)->first();
+
+                $dates = [
+                    'startDate' => $this->startDate,
+                    'endDate' => $this->endDate,
+                ];
+
+                $carbonDate = Carbon::parse($this->startDate);
+                $payslipFor = $carbonDate->format('F') . " 1 - 15 " . $carbonDate->format('Y');
+                $payslipFor2 = $carbonDate->format('F') . " 16 - " . $carbonDate->endOfMonth()->format('d') . " " . $carbonDate->format('Y');
+                $monthPaylipFor = $carbonDate->format('F') . " 1 - " . $carbonDate->endOfMonth()->format('d') . " " . $carbonDate->format('Y');
+
+
+                $preparedBy = User::where('users.id', $admin->id)
+                    ->join('positions', 'positions.id', 'users.position_id')
+                    ->join('signatories', 'signatories.user_id', 'users.id')
+                    ->first();
+
+                if(!$signatories){
+                    $this->dispatch('swal', [
+                        'title' => 'Please set the payslip signatory for "Noted By"',
+                        'icon' => 'error'
+                    ]);
+                    return;
+                }
+        
+        
+                // Generate temporary paths for signatures
+                $preparedBySignaturePath = $preparedBy ? $this->getTemporarySignaturePath($preparedBy) : null;
+                $signatoriesSignaturePath = $signatories ? $this->getTemporarySignaturePath($signatories) : null;
+
+                if ($payslip) {
+                    $pdf = Pdf::loadView('pdf.cos-semi-monthly-payslip', [
+                        'preparedBy' => $preparedBy,
+                        'payslip' => $payslip,
+                        'payslip2' => $payslip2,
+                        'payslipFor' => $payslipFor,
+                        'payslipFor2' => $payslipFor2,
+                        'monthPaylipFor' => $monthPaylipFor,
+                        'signatories' => $signatories,
+                        'preparedBySignaturePath' => $preparedBySignaturePath,
+                        'signatoriesSignaturePath' => $signatoriesSignaturePath,
+                    ]);
+                    $pdf->setPaper('A4', 'portrait');
+                    return response()->streamDownload(function () use ($pdf) {
+                        echo $pdf->stream();
+                    }, $payslip['name'] . ' ' . $monthPaylipFor . ' Payslip.pdf');
+                } else {
+                    throw new Exception('Payslip not found for the user.');
+                }
+            }
+    
+            $this->dispatch('swal', [
+                'title' => 'Payslip exported!',
+                'icon' => 'success'
+            ]);
+        } catch (Exception $e) {
+            $this->dispatch('swal', [
+                'title' => 'Unable to export payslip: ' . $e->getMessage(),
+                'icon' => 'error'
+            ]);
             throw $e;
         }
     }
@@ -676,43 +799,6 @@ class CosSkPayrollTable  extends Component
         }
     }
 
-    public function exportPayslip($userId){
-        try {
-            $user = User::where('id', $userId)->first();
-            if ($user) {
-                $payslip = null;
-            
-                if ($this->hasPayroll) {
-                    // If payroll exists in the database
-                    $payslip = $this->employeePayslip->where('user_id', $userId)->first();
-                } else {
-                    // If payroll is generated on the fly
-                    $payslip = collect($this->employeePayslip)->firstWhere('user_id', $userId);
-                }
-
-                if ($payslip) {
-                    $pdf = Pdf::loadView('pdf.semi-monthly-payslip', ['payslip' => (object)$payslip]);
-                    $pdf->setPaper([0, 0, 396, 612], 'portrait');
-                    return response()->streamDownload(function () use ($pdf) {
-                        echo $pdf->stream();
-                    }, $payslip['name'] . ' Payslip.pdf');
-                } else {
-                    throw new Exception('Payslip not found for the user.');
-                }
-            }
-    
-            $this->dispatch('swal', [
-                'message' => 'Payslip exported!',
-                'icon' => 'success'
-            ]);
-        } catch (Exception $e) {
-            $this->dispatch('swal', [
-                'message' => 'Unable to export payslip: ' . $e->getMessage(),
-                'icon' => 'error'
-            ]);
-        }
-    }
-
     public function toggleEditCosPayroll($userId){
         $this->editCosPayroll = true;
         $this->userId = $userId;
@@ -753,6 +839,12 @@ class CosSkPayrollTable  extends Component
                     'user_id' => $this->userId,
                     'sg_step' => $this->sg,
                     'rate_per_month' => $this->rate_per_month,
+                    'additional_premiums' => $this->additional_premiums,
+                    'adjustment' => $this->adjustment,
+                    'withholding_tax' => $this->withholding_tax,
+                    'nycempc' => $this->nycempc,
+                    'other_deductions' => $this->other_deductions,
+                    'total_deduction' => $this->total_deduction,
                 ];
         
                 if ($payroll) {
@@ -1065,6 +1157,23 @@ class CosSkPayrollTable  extends Component
         }catch(Exception $e){
             throw $e;
         }
+    }
+
+    private function getTemporarySignaturePath($signatory){
+        if ($signatory->signature) {
+            $path = str_replace('public/', '', $signatory->signature);
+            $originalPath = Storage::disk('public')->get($path);
+            $filename = str_replace('public/signatures/', '', $signatory->signature);
+            $tempPath = public_path('temp/' . $filename);
+            if (!file_exists(dirname($tempPath))) {
+                mkdir(dirname($tempPath), 0755, true);
+            }
+
+            file_put_contents($tempPath, $originalPath);
+            
+            return $tempPath;
+        }
+        return null;
     }
 
     public function deleteData(){

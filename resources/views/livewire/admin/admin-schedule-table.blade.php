@@ -22,6 +22,7 @@
         <!-- Table -->
         <div class="mt-4 overflow-x-auto">
             <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
+                
                 <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                     <tr class="whitespace-nowrap">
                         <th class="px-4 py-2 text-center">Employee ID</th>
@@ -37,7 +38,9 @@
                         <tr class="border-b dark:border-gray-600 whitespace-nowrap">
                             <td class="px-4 py-2 text-center">{{ $schedule->emp_code }}</td>
                             <td class="px-4 py-2 text-center">{{ $schedule->user?->name ?? 'No User Assigned' }}</td>
-                            <td class="px-4 py-2 text-center">{{ implode(', ', explode(',', $schedule->wfh_days)) }}</td>
+                            <td class="px-4 py-2 text-center">
+                                {{ $this->getSortedWfhDays($schedule->wfh_days) }}
+                            </td>                            
                             <td class="px-4 py-2 text-center">{{ $schedule->default_start_time }} - {{ $schedule->default_end_time }}</td>
                             <td class="px-4 py-2 text-center">{{ $schedule->start_date->format('Y-m-d') }} - {{ $schedule->end_date->format('Y-m-d') }}</td>
                             <td class="px-4 py-2 text-center">
@@ -60,7 +63,8 @@
 
     <!-- Modal -->
     <div x-show="isModalOpen" class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
-        <div @click.away="isModalOpen = false" x-show="isModalOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4" class="relative bg-white dark:bg-gray-800 p-6 mx-auto max-w-lg rounded-2xl">
+        <div @click.away="isModalOpen = false" x-show="isModalOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4" 
+            class="relative bg-white dark:bg-gray-800 p-6 mx-4 md:mx-auto max-w-lg w-full md:max-w-lg rounded-2xl">
             <!-- Modal content -->
             <div class="flex items-center justify-between pb-4">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
@@ -72,41 +76,41 @@
                     </svg>
                 </button>
             </div>
-
+    
             <!-- Form -->
             <form wire:submit.prevent="saveSchedule" class="space-y-4">
                 <div>
                     <label for="emp_code" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Employee</label>
-                    <select id="emp_code" wire:model="emp_code" class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700" :disabled="isEditMode">
+                    <select id="emp_code" wire:model="emp_code" class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700">
                         <option value="" disabled selected>Select an employee</option>
                         @foreach ($employees as $employee)
                             <option value="{{ $employee->emp_code }}">{{ $employee->name }}</option>
                         @endforeach
                     </select>
-                    @error('emp_code') <span class="text-red-500">{{ "Employee Field is required!" }}</span> @enderror
+                    @error('emp_code') <span class="text-red-500">{{ 'Employee Field is required!' }}</span> @enderror
                 </div>
-
+    
                 <div class="flex space-x-4">
                     <div class="w-1/2">
                         <label for="default_start_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Default Start Time</label>
                         <input id="default_start_time" type="time" wire:model="default_start_time" class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700">
                         @error('default_start_time') <span class="text-red-500">{{ $message }}</span> @enderror
                     </div>
-
+    
                     <div class="w-1/2">
                         <label for="default_end_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Default End Time</label>
                         <input id="default_end_time" type="time" wire:model="default_end_time" class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700">
                         @error('default_end_time') <span class="text-red-500">{{ $message }}</span> @enderror
                     </div>
                 </div>
-
+    
                 <div class="flex space-x-4">
                     <div class="w-1/2">
                         <label for="start_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
                         <input id="start_date" type="date" wire:model="start_date" class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700">
                         @error('start_date') <span class="text-red-500">{{ $message }}</span> @enderror
                     </div>
-
+    
                     <div class="w-1/2">
                         <label for="end_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
                         <input id="end_date" type="date" wire:model="end_date" class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700">
@@ -116,10 +120,10 @@
                 <div>
                     @error('date_range') <span class="text-red-500">{{ $message }}</span> @enderror
                 </div>
-
+    
                 <div>
                     <label for="wfh_days" class="block text-sm font-medium text-gray-700 dark:text-gray-300">WFH Days</label>
-                    <div class="mt-1 flex space-x-2">
+                    <div class="mt-1 flex space-x-2 overflow-x-auto">
                         @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] as $day)
                             <label class="inline-flex items-center">
                                 <input type="checkbox" wire:model="wfh_days" value="{{ $day }}" class="form-checkbox text-blue-500">
@@ -129,7 +133,7 @@
                     </div>
                     @error('wfh_days') <span class="text-red-500">{{ $message }}</span> @enderror
                 </div>
-
+    
                 <!-- Save Button -->
                 <div class="mt-4 flex justify-end">
                     <button type="submit" class="px-4 py-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 dark:text-gray-300">

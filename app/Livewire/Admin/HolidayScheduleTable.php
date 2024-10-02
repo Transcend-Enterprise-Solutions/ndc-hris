@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use App\Models\Holiday;
 use Livewire\WithPagination;
+use Carbon\Carbon;
 
 class HolidayScheduleTable extends Component
 {
@@ -115,6 +116,10 @@ class HolidayScheduleTable extends Component
 
     private function loadHolidays()
     {
-        return Holiday::paginate(10);
+        $currentYear = Carbon::now()->year;
+
+        return Holiday::whereYear('holiday_date', '>=', $currentYear)
+            ->orderBy('holiday_date', 'asc')
+            ->paginate(10);
     }
 }

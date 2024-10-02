@@ -155,9 +155,19 @@ class User extends Authenticatable
         return $this->hasMany(DTRSchedule::class, 'emp_code', 'emp_code');
     }
 
-    public function generalPayroll()
+    public function plantillaPayslip()
     {
-        return $this->hasMany(GeneralPayroll::class);
+        return $this->hasMany(PlantillaPayslip::class);
+    }
+
+    public function cosRegPayslip()
+    {
+        return $this->hasMany(CosRegPayslip::class);
+    }
+
+    public function cosSkPayslip()
+    {
+        return $this->hasMany(CosSkPayslip::class);
     }
 
     public function payrolls()
@@ -191,14 +201,6 @@ class User extends Authenticatable
 
     public function cosSkPayrolls(){
         return $this->hasOne(CosSkPayrolls::class);
-    }
-
-    public function cosRegSemiPayrolls(){
-        return $this->hasMany(CosRegSemiMonthlyPayrolls::class);
-    }
-
-    public function cosSkSemiPayrolls(){
-        return $this->hasMany(CosSkSemiMonthlyPayrolls::class);
     }
 
     public function pdsC4Answers(){

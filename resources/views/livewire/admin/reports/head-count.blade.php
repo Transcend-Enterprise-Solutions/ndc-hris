@@ -75,27 +75,29 @@
 
             <!-- Office/Division Distribution Card -->
             <div class="col-span-full sm:col-span-6 bg-purple-100 dark:bg-purple-800 p-4 rounded-lg shadow">
-                <div class="text-sm font-semibold text-purple-800 dark:text-gray-100 mb-4">Office/Division Distribution
+                <div class="text-sm font-semibold text-purple-800 dark:text-gray-100 mb-4 overflow-hidden">Office/Division Distribution
                     <hr class="border-t border-purple-200 dark:border-purple-600">
                     <label for="allColActive" class="text-xs text-gray-900 dark:text-gray-300">Select Status: </label>
-                    <ul class="flex space-x-4 text-xs mt-2">
-                        <li class="flex flex-col sm:flex-row items-center justify-center">
-                            <input id="allColActive" type="checkbox" wire:model.live="status.active" class="h-4 w-4">
-                            <label for="allColActive" class="sm:ml-2 text-gray-900 dark:text-gray-300">Active</label>
-                        </li>
-                        <li class="flex flex-col sm:flex-row items-center justify-center">
-                            <input id="allColInactive" type="checkbox" wire:model.live="status.inactive" class="h-4 w-4">
-                            <label for="allColInactive" class="sm:ml-2 text-gray-900 dark:text-gray-300">Inactive</label>
-                        </li>
-                        <li class="flex flex-col sm:flex-row items-center justify-center">
-                            <input id="allColResigned" type="checkbox" wire:model.live="status.resigned" class="h-4 w-4">
-                            <label for="allColResigned" class="sm:ml-2 text-gray-900 dark:text-gray-300">Resigned</label>
-                        </li>
-                        <li class="flex flex-col sm:flex-row items-center justify-center">
-                            <input id="allColRetired" type="checkbox" wire:model.live="status.retired" class="h-4 w-4">
-                            <label for="allColRetired" class="sm:ml-2 text-gray-900 dark:text-gray-300">Retired</label>
-                        </li>
-                    </ul>                    
+                    <div class="overflow-hidden">
+                        <ul class="flex flex-wrap  text-xs mt-2 overflow-wrap wrap">
+                            <li class="flex flex-col sm:flex-row items-center justify-center sm:mb-2">
+                                <input id="allColActive" type="checkbox" wire:model.live="status.active" class="sm:mr-2 h-4 w-4">
+                                <label for="allColActive" class="sm:mr-2 text-gray-900 dark:text-gray-300">Active</label>
+                            </li>
+                            <li class="flex flex-col sm:flex-row items-center justify-center sm:mb-2">
+                                <input id="allColInactive" type="checkbox" wire:model.live="status.inactive" class="sm:mr-2 h-4 w-4">
+                                <label for="allColInactive" class="sm:mr-2 text-gray-900 dark:text-gray-300">Inactive</label>
+                            </li>
+                            <li class="flex flex-col sm:flex-row items-center justify-center sm:mb-2">
+                                <input id="allColResigned" type="checkbox" wire:model.live="status.resigned" class="sm:mr-2 h-4 w-4">
+                                <label for="allColResigned" class="sm:mr-2 text-gray-900 dark:text-gray-300">Resigned</label>
+                            </li>
+                            <li class="flex flex-col sm:flex-row items-center justify-center sm:mb-2">
+                                <input id="allColRetired" type="checkbox" wire:model.live="status.retired" class="sm:mr-2 h-4 w-4">
+                                <label for="allColRetired" class="sm:mr-2 text-gray-900 dark:text-gray-300">Retired</label>
+                            </li>
+                        </ul>                    
+                    </div>
                 </div>
                 <ul class="mt-2">
                     @foreach($officeDivisionCounts as $officeDiv)

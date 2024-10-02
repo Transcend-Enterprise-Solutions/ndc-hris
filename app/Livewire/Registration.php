@@ -11,6 +11,7 @@ use App\Models\PhilippineBarangays;
 use App\Models\Positions;
 use App\Models\OfficeDivisions;
 use App\Models\OfficeDivisionUnits;
+use Illuminate\Support\Facades\DB;
 use App\Models\PhilippineRegions;
 use App\Models\EmployeesLeaves;
 use Carbon\Carbon;
@@ -159,101 +160,105 @@ class Registration extends Component
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
             'c_password' => 'required|same:password',
-            'emp_code' => 'required|unique:users,emp_code|numeric|min:0',
+            'emp_code' => 'required|unique:users,emp_code',
             'selectedPosition' => 'required|exists:positions,id',
             'selectedOfficeDivision' => 'required|exists:office_divisions,id',
-            // 'selectedUnit' => 'required|exists:office_division_unit,id',
             'date_hired' => 'required|date',
             'appointment' => 'required',
         ]);
-
-        if($this->p_house == null && $this->p_street == null && $this->p_subdivision == null){
+    
+        if ($this->p_house == null && $this->p_street == null && $this->p_subdivision == null) {
             $this->addError('p_subdivision', 'Please add either House/Block/Lot No. or Street or Subdivision/Village.');
             return;
         }
-
-        if($this->r_house == null && $this->r_street == null && $this->r_subdivision == null){
+    
+        if ($this->r_house == null && $this->r_street == null && $this->r_subdivision == null) {
             $this->addError('r_subdivision', 'Please add either House/Block/Lot No. or Street or Subdivision/Village.');
             return;
         }
-
+    
         if (!$this->isPasswordComplex($this->password)) {
             $this->addError('password', 'The password must contain at least one uppercase letter, one number, and one special character.');
             return;
         }
+    
+        DB::beginTransaction();
 
-        $currentYear = now()->year;
-        $userCount = User::whereYear('created_at', $currentYear)->count();
-
-        $user = User::create([
-            'name' => $this->first_name . " " . $this->middle_name . " " . $this->surname,
-            'email' => $this->email,
-            'password' => $this->password,
-            'user_role' => 'emp',
-            'active_status' => $this->active_status,
-            'emp_code' => $this->emp_code,
-            'position_id' => $this->selectedPosition,
-            'office_division_id' => $this->selectedOfficeDivision,
-            'unit_id' => $this->selectedUnit,
-
-        ]);
-
-        $p_h = $this->p_house ? $this->p_house : "N/A";
-        $p_st = $this->p_street? $this->p_street : "N/A";
-        $p_s = $this->p_subdivision ? $this->p_subdivision : "N/A";
-        $p_house_street = $p_h . ',' . $p_st . ',' . $p_s;
-
-        $r_h = $this->r_house ? $this->r_house : "N/A";
-        $r_st = $this->r_street? $this->r_street : "N/A";
-        $r_s = $this->r_subdivision ? $this->r_subdivision : "N/A";
-        $r_house_street = $r_h . ',' . $r_st . ',' . $r_s;
-        $sexValue = $this->getSexValue();
-
-        $user->userData()->create([
-            'user_id' => $user->id,
-            'first_name' => $this->first_name,
-            'middle_name' => $this->middle_name,
-            'surname' => $this->surname,
-            'name_extension' => $this->name_extension,
-            'sex' => $sexValue,
-            'email' => $this->email,
-            'date_of_birth' => $this->date_of_birth,
-            'place_of_birth' => $this->place_of_birth,
-            'citizenship' => $this->citizenship,
-            'dual_citizenship_type' => $this->dual_citizenship_type,
-            'dual_citizenship_country' => $this->dual_citizenship_country,
-            'civil_status' => $this->civil_status,
-            'height' => $this->height,
-            'weight' => $this->weight,
-            'blood_type' => $this->blood_type,
-            'gsis' => $this->gsis,
-            'pagibig' => $this->pagibig,
-            'philhealth' => $this->philhealth,
-            'sss' => $this->sss,
-            'tin' => $this->tin,
-            'agency_employee_no' => $this->agency_employee_no,
-            'permanent_selectedZipcode' => $this->permanent_selectedZipcode,
-            'permanent_selectedProvince' => $this->permanent_selectedProvince,
-            'permanent_selectedCity' => $this->permanent_selectedCity,
-            'permanent_selectedBarangay' => $this->permanent_selectedBarangay,
-            'p_house_street' => $p_house_street,
-            'residential_selectedZipcode' => $this->residential_selectedZipcode,
-            'residential_selectedProvince' => $this->residential_selectedProvince,
-            'residential_selectedCity' => $this->residential_selectedCity,
-            'residential_selectedBarangay' => $this->residential_selectedBarangay,
-            'r_house_street' => $r_house_street,
-            'tel_number' => $this->tel_number,
-            'mobile_number' => $this->mobile_number,
-            'pwd' => $this->pwd,
-            'date_hired' => $this->date_hired,
-            'appointment' => $this->appointment,
-            'item_number' => $this->itemNumber,
-
-        ]);
-
-        session()->flash('message', 'Registration successful!');
-        return redirect()->route('login');
+        try {
+            $this->emp_code = str_replace('-', '', $this->emp_code); // Remove hyphens
+            $this->emp_code = str_replace('D', '1', $this->emp_code); // Replace 'D' with '1'
+            // Creating the user
+            $user = User::create([
+                'name' => $this->first_name . " " . $this->middle_name . " " . $this->surname,
+                'email' => $this->email,
+                'password' => $this->password,
+                'user_role' => 'emp',
+                'active_status' => $this->active_status,
+                'emp_code' => $this->emp_code,
+                'position_id' => $this->selectedPosition,
+                'office_division_id' => $this->selectedOfficeDivision,
+                'unit_id' => $this->selectedUnit,
+            ]);
+    
+            // Preparing user data fields
+            $p_house_street = $this->p_house ?? "N/A" . ',' . $this->p_street ?? "N/A" . ',' . $this->p_subdivision ?? "N/A";
+            $r_house_street = $this->r_house ?? "N/A" . ',' . $this->r_street ?? "N/A" . ',' . $this->r_subdivision ?? "N/A";
+            $sexValue = $this->getSexValue();
+    
+            // Creating user data
+            $userData = $user->userData()->create([
+                'user_id' => $user->id,
+                'first_name' => $this->first_name,
+                'middle_name' => $this->middle_name,
+                'surname' => $this->surname,
+                'name_extension' => $this->name_extension,
+                'sex' => $sexValue,
+                'email' => $this->email,
+                'date_of_birth' => $this->date_of_birth,
+                'place_of_birth' => $this->place_of_birth,
+                'citizenship' => $this->citizenship,
+                'dual_citizenship_type' => $this->dual_citizenship_type,
+                'dual_citizenship_country' => $this->dual_citizenship_country,
+                'civil_status' => $this->civil_status,
+                'height' => $this->height,
+                'weight' => $this->weight,
+                'blood_type' => $this->blood_type,
+                'gsis' => $this->gsis,
+                'pagibig' => $this->pagibig,
+                'philhealth' => $this->philhealth,
+                'sss' => $this->sss,
+                'tin' => $this->tin,
+                'agency_employee_no' => $this->agency_employee_no,
+                'permanent_selectedZipcode' => $this->permanent_selectedZipcode,
+                'permanent_selectedProvince' => $this->permanent_selectedProvince,
+                'permanent_selectedCity' => $this->permanent_selectedCity,
+                'permanent_selectedBarangay' => $this->permanent_selectedBarangay,
+                'p_house_street' => $p_house_street,
+                'residential_selectedZipcode' => $this->residential_selectedZipcode,
+                'residential_selectedProvince' => $this->residential_selectedProvince,
+                'residential_selectedCity' => $this->residential_selectedCity,
+                'residential_selectedBarangay' => $this->residential_selectedBarangay,
+                'r_house_street' => $r_house_street,
+                'tel_number' => $this->tel_number,
+                'mobile_number' => $this->mobile_number,
+                'pwd' => $this->pwd,
+                'date_hired' => $this->date_hired,
+                'appointment' => $this->appointment,
+                'item_number' => $this->itemNumber,
+            ]);
+    
+            // Commit the transaction if both user and user data are created successfully
+            DB::commit();
+    
+            session()->flash('message', 'Registration successful!');
+            return redirect()->route('login');
+        } catch (\Exception $e) {
+            // Rollback the transaction if there was an error
+            DB::rollBack();
+            $this->addError('submit', 'There was an error processing your registration. Please try again.');
+        }
     }
+    
 
     public function mount(){
         $this->getProvicesAndCities();

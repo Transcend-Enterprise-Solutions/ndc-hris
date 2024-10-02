@@ -40,7 +40,10 @@
                                                     Remarks</th>
                                                 <th scope="col"
                                                     class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                                    Approved Days</th>
+                                                    Approved Day/s</th>
+                                                <th scope="col"
+                                                    class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                    Approved Date/s</th>
                                                 <th scope="col"
                                                     class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
                                                     Status</th>
@@ -56,14 +59,40 @@
                                                     <td class="px-4 py-2 text-center">
                                                         {{ $leaveApplication->date_of_filing }}</td>
                                                     <td class="px-4 py-2 text-center">
-                                                        {{ $leaveApplication->type_of_leave }}
+                                                        {{-- {{ $leaveApplication->type_of_leave }} --}}
+                                                        @php
+                                                            $typeOfLeave = $leaveApplication->type_of_leave;
+                                                            $truncatedTypeOfLeave = \Illuminate\Support\Str::limit(
+                                                                $typeOfLeave,
+                                                                10,
+                                                                '...',
+                                                            );
+                                                        @endphp
+                                                        <span
+                                                            @if (strlen($typeOfLeave) > 10) title="{{ $typeOfLeave }}" @endif>
+                                                            {{ $truncatedTypeOfLeave }}
+                                                        </span>
                                                     </td>
                                                     <td class="px-4 py-2 text-center">
-                                                        {{ $leaveApplication->details_of_leave }}</td>
+                                                        {{-- {{ $leaveApplication->details_of_leave }} --}}
+                                                        @php
+                                                            $detailsOfLeave = $leaveApplication->details_of_leave;
+                                                            $truncatedDetailsOfLeave = \Illuminate\Support\Str::limit(
+                                                                $detailsOfLeave,
+                                                                10,
+                                                                '...',
+                                                            );
+                                                        @endphp
+                                                        <span
+                                                            @if (strlen($detailsOfLeave) > 10) title="{{ $detailsOfLeave }}" @endif>
+                                                            {{ $truncatedDetailsOfLeave }}
+                                                        </span>
+                                                    </td>
                                                     <td class="px-4 py-2 text-center">
                                                         {{ $leaveApplication->number_of_days }}</td>
                                                     <td class="px-4 py-2 text-center">
-                                                        {{ $leaveApplication->list_of_dates }}</td>
+                                                        {{ \Illuminate\Support\Str::limit($leaveApplication->list_of_dates, 10, '...') }}
+                                                    </td>
                                                     <td class="px-4 py-2 text-center">
                                                         @if ($leaveApplication->file_name)
                                                             @php
@@ -86,10 +115,14 @@
                                                             No file
                                                         @endif
                                                     </td>
-                                                    <td class="px-4 py-2 text-center">{{ $leaveApplication->remarks }}
+                                                    <td class="px-4 py-2 text-center">
+                                                        {{ $leaveApplication->remarks ?? 'N/A' }}
                                                     </td>
                                                     <td class="px-4 py-2 text-center">
-                                                        {{ $leaveApplication->approved_days }}
+                                                        {{ $leaveApplication->approved_days ?? 'N/A' }}
+                                                    </td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        {{ \Illuminate\Support\Str::limit($leaveApplication->approved_dates, 10, '...') ?? 'N/A' }}
                                                     </td>
                                                     <td class="px-4 py-2 text-center">
                                                         <span
@@ -203,7 +236,8 @@
 
                 @if ($status === 'With Pay' || $status === 'Without Pay')
                     <div class="mb-4">
-                        <label for="days" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number
+                        <label for="days"
+                            class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number
                             of Days</label>
                         <input type="number" wire:model="days" id="days"
                             class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700"
@@ -233,11 +267,11 @@
                 {{-- New Section for Endorsers --}}
                 <div class="mb-4">
                     <label for="endorser1" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
-                        Select First Endorser
+                        Second Approver
                     </label>
-                    <select wire:model="endorser1" id="endorser1"
+                    <select wire:model.live="endorser1" id="endorser1"
                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
-                        <option value="">Select Endorser</option>
+                        <option value="">Select a supervisor</option>
                         @foreach ($nonEmployeeUsers as $user)
                             <option value="{{ $user->id }}">{{ $user->name }}</option>
                         @endforeach
@@ -249,12 +283,12 @@
 
                 <div class="mb-4">
                     <label for="endorser2" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
-                        Select Second Endorser
+                        Last Approver
                     </label>
-                    <select wire:model="endorser2" id="endorser2"
+                    <select wire:model.live="endorser2" id="endorser2"
                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
-                        <option value="">Select Endorser</option>
-                        @foreach ($nonEmployeeUsers as $user)
+                        <option value="">Select a supervisor</option>
+                        @foreach ($filteredEndorser2Users as $user)
                             <option value="{{ $user->id }}">{{ $user->name }}</option>
                         @endforeach
                     </select>

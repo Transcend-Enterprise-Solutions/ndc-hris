@@ -136,7 +136,7 @@ x-cloak>
                     </div>
 
                     <!-- Save Payroll -->
-                    {{-- @if($hasPayroll == false)
+                    @if($hasPayroll == false)
                         <div class="w-full sm:w-auto">
                             <button wire:click="recordPayroll"
                                 class="mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
@@ -148,10 +148,10 @@ x-cloak>
                                     <div class="spinner-border small text-primary" role="status">
                                     </div>
                                 </div>
-                                Save Payroll
+                                Record Payroll
                             </button>
                         </div>
-                    @endif --}}
+                    @endif
 
                     <!-- Export to Excel -->
                     <div class="w-full sm:w-auto relative">
@@ -250,6 +250,12 @@ x-cloak>
                                                                 <td class="px-5 py-4 {{ $column == 'name' ? 'text-left' : 'text-center' }} text-sm font-medium whitespace-nowrap">
                                                                     @if(in_array($column, [
                                                                         'rate_per_month', 
+                                                                        'additional_premiums',
+                                                                        'adjustment',
+                                                                        'withholding_tax',
+                                                                        'nycempc',
+                                                                        'other_deductions',
+                                                                        'total_deduction',
                                                                     ]))
                                                                         {{ currency_format($payroll->$column) }}
                                                                     @else
@@ -334,10 +340,19 @@ x-cloak>
                                                     Gross Salary Less<br>(Absences/Lates/Undertime)
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Additional Premiums
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Adjustment
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                     Withholding Tax
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                     NYCEMPC
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                    Other Deductions
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
                                                     Total Deduction
@@ -396,10 +411,19 @@ x-cloak>
                                                         {{ currency_format($payroll['gross_salary_less'] ?? 0) }}
                                                     </td>
                                                     <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['additional_premiums'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['adjustment'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                         {{ currency_format($payroll['withholding_tax'] ?? 0) }}
                                                     </td>
                                                     <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                         {{ currency_format($payroll['nycempc'] ?? 0) }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ currency_format($payroll['other_deductions'] ?? 0) }}
                                                     </td>
                                                     <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                         {{ currency_format($payroll['total_deductions'] ?? 0) }}
@@ -416,14 +440,27 @@ x-cloak>
                                                                 <i class="fas fa-eye ml-3"></i>
                                                             </button>
                                                         </div>
-                                                        <button wire:click="exportIndivPayroll({{ $payroll['user_id'] }})" class="inline-flex items-center justify-center 
-                                                            px-4 py-2 -m-5 -mr-3 text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none" title="Export Payroll">
-                                                            <div wire:loading wire:target="exportIndivPayroll({{ $payroll['user_id'] }})">
+                                                        <button wire:click="exportPayslip({{ $payroll['user_id'] }})" class="relative z-10 peer inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 {{ $canExportPayslip ? '' : 'hidden' }}
+                                                            text-sm font-medium tracking-wide text-gray-800 dark:text-white  hover:text-gray-300 focus:outline-nones" title="Export Payroll">
+                                                            <div wire:loading wire:target="exportPayslip({{ $payroll['user_id'] }})">
                                                                 <div class="ml-2 spinner-border small text-primary" role="status">
                                                                 </div>
                                                             </div>
-                                                            <i class="fas fa-file-export ml-3" wire:loading.remove wire:target="exportIndivPayroll({{ $payroll['user_id'] }})"></i>
+                                                            <i class="fas fa-file-export ml-3" wire:loading.remove wire:target="exportPayslip({{ $payroll['user_id'] }})"></i>
                                                         </button>
+                                                        <div class="relative">
+                                                            <button wire:click="exportIndivPayroll({{ $payroll['user_id'] }})" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 
+                                                                text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
+                                                                title="Export Payroll">
+                                                                <img class="flex dark:hidden ml-3 mt-4" src="/images/icons8-xls-export-dark.png" width="18" alt="" wire:target="exportIndivPayroll({{ $payroll['user_id'] }})"  wire:loading.remove>
+                                                                <img class="hidden dark:block ml-3 mt-4" src="/images/icons8-xls-export-light.png" width="18" alt="" wire:target="exportIndivPayroll({{ $payroll['user_id'] }})" wire:loading.remove>
+                                                                <div wire:loading wire:target="exportIndivPayroll({{ $payroll['user_id'] }})">
+                                                                    <div class="mt-4 ml-3 spinner-border small text-primary" role="status">
+                                                                    </div>
+                                                                </div>
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -895,8 +932,39 @@ x-cloak>
                         @enderror
                     </div>
 
+                    
+                    <div class="col-span-full sm:col-span-1">
+                        <label for="additional_premiums" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Additional Premiums</label>
+                        <input type="numer" step="0.01" id="additional_premiums" wire:model.live='additional_premiums' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    </div>
+
+                    <div class="col-span-full sm:col-span-1">
+                        <label for="adjustment" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Adjustment</label>
+                        <input type="numer" step="0.01" id="adjustment" wire:model.live='adjustment' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    </div>
+
+                    <div class="col-span-full sm:col-span-1">
+                        <label for="withholding_tax" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Withholding Tax</label>
+                        <input type="numer" step="0.01" id="withholding_tax" wire:model.live='withholding_tax' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    </div>
+
+                    <div class="col-span-full sm:col-span-1">
+                        <label for="nycempc" class="block text-sm font-medium text-gray-700 dark:text-slate-400">NYCEMPC</label>
+                        <input type="numer" step="0.01" id="nycempc" wire:model.live='nycempc' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    </div>
+
+                    <div class="col-span-full sm:col-span-1">
+                        <label for="other_deductions" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Other Deductions</label>
+                        <input type="numer" step="0.01" id="other_deductions" wire:model.live='other_deductions' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    </div>
+
+                    <div class="col-span-full sm:col-span-1">
+                        <label for="total_deduction" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Total Deduction</label>
+                        <input type="numer" step="0.01" id="total_deduction" wire:model.live='total_deduction' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                    </div>
+
                     {{-- Save and Cancel buttons --}}
-                    <div class="mt-4 flex justify-end col-span-2">
+                    <div class="mt-4 flex justify-end col-span-2 text-sm">
                         <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                             <div wire:loading wire:target="saveCosPayroll" style="margin-right: 5px">
                                 <div class="spinner-border small text-primary" role="status">

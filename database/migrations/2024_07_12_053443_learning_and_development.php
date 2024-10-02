@@ -13,8 +13,9 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('title');
-            $table->date('start_date')->format('F d Y');
-            $table->date('end_date')->format('F d Y');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->string('toPresent')->nullable();
             $table->integer('no_of_hours');
             $table->string('type_of_ld');
             $table->string('conducted_by');

@@ -37,6 +37,22 @@ class EmpDocumentsTable extends Component
 
         $this->loadEmployeesWithoutUpload();
     }
+    public function downloadDocument($documentId)
+    {
+        $document = EmployeeDocument::findOrFail($documentId);
+
+        // Check if the file exists in storage
+        if (Storage::exists($document->file_path)) {
+            // Use response()->download to ensure proper headers and download
+            return Storage::download($document->file_path, $document->file_name);
+        } else {
+            // Handle file not found
+            $this->dispatch('swal', [
+                'title' => 'File not found!',
+                'icon' => 'error'
+            ]);
+        }
+    }
 
     public function loadEmployeesWithoutUpload()
     {
@@ -71,7 +87,6 @@ class EmpDocumentsTable extends Component
                 if (Storage::exists($document->file_path)) {
                     Storage::delete($document->file_path);
                 }
-
                 $document->delete();
 
                 $this->loadEmployeesWithoutUpload();

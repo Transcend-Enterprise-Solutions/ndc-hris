@@ -19,7 +19,7 @@ class ResetLeaveCredits extends Command
      *
      * @var string
      */
-    protected $description = 'Resets SPL claimable and claimed credits to 0 and adds 3 to VL claimable credits at the start of each year';
+    protected $description = 'Resets SPL claimable to 3, SPL claimed to 0, and FL claimable to 5 at the start of each year. Deducts remaining FL claimable credits from VL claimable credits if applicable.';
 
     /**
      * Execute the console command.
@@ -28,13 +28,29 @@ class ResetLeaveCredits extends Command
      */
     public function handle()
     {
-        // Reset SPL credits and add 3 to VL claimable credits
-        LeaveCredits::query()->update([
-            'spl_claimable_credits' => 3,
-            'spl_claimed_credits' => 0,
-        ]);
+        // Get all users' leave credits
+        $leaveCreditsList = LeaveCredits::all();
 
-        $this->info('Leave credits have been reset successfully.');
+        foreach ($leaveCreditsList as $leaveCredits) {
+            // Check remaining FL claimable credits
+            $remainingFL = $leaveCredits->fl_claimable_credits;
+
+            // If there are FL credits left, deduct them from VL
+            if ($remainingFL > 0) {
+                $leaveCredits->vl_claimable_credits = max(0, $leaveCredits->vl_claimable_credits - $remainingFL);
+            }
+
+            // Reset SPL and FL credits
+            $leaveCredits->spl_claimable_credits = 3;
+            $leaveCredits->spl_claimed_credits = 0;
+            $leaveCredits->fl_claimable_credits = 5;
+            $leaveCredits->fl_claimed_credits = 0;
+
+            // Save the updated leave credits
+            $leaveCredits->save();
+        }
+
+        $this->info('Leave credits have been reset successfully, and remaining FL credits have been deducted from VL credits.');
         return Command::SUCCESS;
     }
 }

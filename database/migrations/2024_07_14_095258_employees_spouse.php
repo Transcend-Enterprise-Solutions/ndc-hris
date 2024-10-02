@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('middle_name')->nullable();
             $table->string('surname')->nullable();
             $table->string('name_extension')->nullable();
-            $table->date('birth_date')->format('F d Y')->nullable();
+            $table->date('birth_date')->nullable();
             $table->string('occupation')->nullable();
             $table->string('employer')->nullable();
             $table->string('business_address')->nullable();

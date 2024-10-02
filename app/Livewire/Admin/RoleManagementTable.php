@@ -76,6 +76,7 @@ class RoleManagementTable extends Component
     public $officeDivisionId;
     public $unitId;
     public $file;
+    public $divId;
 
     public $status = [
         'active' => true,
@@ -513,12 +514,10 @@ class RoleManagementTable extends Component
                     $this->validate([
                         'units.*.value' => 'required|string|max:255',
                     ]);
-
-                    foreach ($this->settingsData as $setting) {
-                        $officeDiv = OfficeDivisions::create([
-                            'office_division' => $setting['value'],
-                        ]);
-                    }
+       
+                    $officeDiv = OfficeDivisions::create([
+                        'office_division' => $this->settings_data,
+                    ]);
 
                     foreach($this->units as $unit){
                         OfficeDivisionUnits::create([
@@ -705,6 +704,7 @@ class RoleManagementTable extends Component
                 $this->unitName = $admin->unit;
                 $this->unit = $admin->unitId;
                 $this->position = $admin->position;
+                $this->divId = $admin->divId;
             }
         } catch (Exception $e) {
             throw $e;
@@ -752,7 +752,7 @@ class RoleManagementTable extends Component
                 if($this->addRole){
                     $this->validate([
                         'user_role' => 'required',
-                        'office_division' => 'required',
+                        'divId' => 'required',
                         'admin_email' => 'required|email|unique:users,email',
                         'password' => 'required|min:8',
                         'cpassword' => 'required|same:password',
@@ -790,7 +790,7 @@ class RoleManagementTable extends Component
                         'user_role' => $this->user_role,
                         'active_status' => 1,
                         'position_id' => $user->posId,
-                        'office_division_id' => $this->office_division,
+                        'office_division_id' => $this->divId,
                         'unit_id' => $this->unit,
                     ]);
                 }else{
@@ -806,7 +806,7 @@ class RoleManagementTable extends Component
                     $admin->update([
                         'email' => $this->admin_email,
                         'user_role' => $this->user_role,
-                        'office_division_id' => $this->office_division,
+                        'office_division_id' => $this->divId,
                         'unit_id' => $this->unit,
                     ]);
                 }

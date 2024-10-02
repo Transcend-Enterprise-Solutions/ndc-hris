@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Notification;
 
 use Livewire\Component;
@@ -18,17 +17,20 @@ class NotificationsDropdown extends Component
 
     public function refreshNotifications()
     {
+        $user = Auth::user();
         $query = NotificationModel::with('docRequest')
             ->where('read', false)
             ->latest();
 
-        if (Auth::user()->user_role === 'sa') {
+        if ($user->user_role === 'sa') {
             // 'sa' users see only notifications with type 'request'
             $this->notifications = $query->where('type', 'request')->get();
             $this->unreadCount = $this->notifications->count();
         } else {
-            // Non-'sa' users exclude 'request' type notifications and group the rest
-            $notifications = $query->where('type', '!=', 'request')->get();
+            // Non-'sa' users see only their own notifications, excluding 'request' type
+            $notifications = $query->where('user_id', $user->id)
+                ->where('type', '!=', 'request')
+                ->get();
 
             $this->notifications = $notifications->groupBy('type')
                 ->map(function ($group) {
@@ -39,42 +41,38 @@ class NotificationsDropdown extends Component
                         'ids' => $group->pluck('id')->toArray(),
                     ];
                 });
-
-            $this->unreadCount = $this->notifications->count();
+            $this->unreadCount = $notifications->count();
         }
     }
 
     public function markGroupAsRead($type)
     {
+        $user = Auth::user();
         $query = NotificationModel::where('type', $type)
             ->where('read', false);
 
-        if (Auth::user()->user_role === 'sa') {
+        if ($user->user_role === 'sa') {
             $query->where('type', 'request');
-        }
-        if (Auth::user()->user_role === 'sa') {
-            $query->where('type', 'Leave request');
         } else {
-            $query->where('user_id', Auth::id());
+            $query->where('user_id', $user->id);
         }
 
         $query->update(['read' => true]);
-
         $this->refreshNotifications();
     }
 
     public function markAllAsRead()
     {
+        $user = Auth::user();
         $query = NotificationModel::where('read', false);
 
-        if (Auth::user()->user_role === 'sa') {
+        if ($user->user_role === 'sa') {
             $query->where('type', 'request');
         } else {
-            $query->where('user_id', Auth::id());
+            $query->where('user_id', $user->id);
         }
 
         $query->update(['read' => true]);
-
         $this->refreshNotifications();
     }
 
@@ -86,7 +84,6 @@ class NotificationsDropdown extends Component
             'leaveCredits' => 'Certificate of Leave Credits',
             'ipcrRatings' => 'Certificate of IPCR Ratings',
         ];
-
         return $documentTypes[$documentType] ?? $documentType;
     }
 

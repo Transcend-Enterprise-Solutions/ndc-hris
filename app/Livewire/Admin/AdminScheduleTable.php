@@ -40,17 +40,19 @@ class AdminScheduleTable extends Component
 
     public function render()
     {
-        $filteredSchedules = $this->filterSchedules();
         return view('livewire.admin.admin-schedule-table', [
-            'filteredSchedules' => $filteredSchedules->paginate($this->perPage)
+            'filteredSchedules' => $this->filterSchedules() 
         ]);
     }
 
-    public function filterSchedules()
-    {
-        $now = Carbon::now();
 
-        return DTRSchedule::with('user')->when($this->selectedTab, function ($query) use ($now) {
+    public function filterSchedules()
+    {   
+    $now = Carbon::now();
+    $orderedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+    return DTRSchedule::with('user')
+        ->when($this->selectedTab, function ($query) use ($now) {
             switch ($this->selectedTab) {
                 case 'current':
                     return $query->where('start_date', '<=', $now)->where('end_date', '>=', $now);
@@ -59,7 +61,22 @@ class AdminScheduleTable extends Component
                 case 'expired':
                     return $query->where('end_date', '<', $now);
             }
+        })
+        ->orderByRaw("FIELD(DAYNAME(wfh_days), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')")
+        ->paginate($this->perPage);
+    }
+ 
+
+    public function getSortedWfhDays($wfhDays)
+    {
+        $dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+        $wfhDaysArray = explode(',', $wfhDays);
+        usort($wfhDaysArray, function ($a, $b) use ($dayOrder) {
+            return array_search($a, $dayOrder) - array_search($b, $dayOrder);
         });
+
+        return implode(', ', $wfhDaysArray);
     }
 
     public function setTab($tab)
@@ -86,9 +103,11 @@ class AdminScheduleTable extends Component
     {
         $this->default_start_time = date('H:i', strtotime($this->default_start_time));
         $this->default_end_time = date('H:i', strtotime($this->default_end_time));
-
+    
         $this->validate();
-
+    
+        $wfhDaysString = !empty($this->wfh_days) ? implode(',', $this->wfh_days) : null;
+    
         $overlappingSchedule = DTRSchedule::where('emp_code', $this->emp_code)
             ->where(function ($query) {
                 $query->whereBetween('start_date', [$this->start_date, $this->end_date])
@@ -102,29 +121,29 @@ class AdminScheduleTable extends Component
                 return $query->where('id', '!=', $this->scheduleId);
             })
             ->first();
-
+    
         if ($overlappingSchedule) {
             $this->addError('date_range', 'This schedule overlaps with an existing schedule for this employee.');
             return;
         }
-
+    
         DTRSchedule::updateOrCreate(
             ['id' => $this->scheduleId],
             [
                 'emp_code' => $this->emp_code,
-                'wfh_days' => implode(',', $this->wfh_days),
+                'wfh_days' => $wfhDaysString,
                 'default_start_time' => $this->default_start_time,
                 'default_end_time' => $this->default_end_time,
                 'start_date' => $this->start_date,
                 'end_date' => $this->end_date,
             ]
         );
-
+    
         $this->dispatch('swal', [
             'title' => $this->scheduleId ? 'Schedule updated successfully.' : 'Schedule created successfully.',
             'icon' => 'success'
         ]);
-
+    
         $this->closeModal();
     }
 
@@ -133,7 +152,7 @@ class AdminScheduleTable extends Component
         $schedule = DTRSchedule::findOrFail($id);
         $this->scheduleId = $id;
         $this->emp_code = $schedule->emp_code;
-        $this->wfh_days = explode(',', $schedule->wfh_days);
+        $this->wfh_days = !empty($schedule->wfh_days) ? explode(',', $schedule->wfh_days) : [];
         $this->default_start_time = date('H:i', strtotime($schedule->default_start_time));
         $this->default_end_time = date('H:i', strtotime($schedule->default_end_time));
         $this->start_date = $schedule->start_date->format('Y-m-d');

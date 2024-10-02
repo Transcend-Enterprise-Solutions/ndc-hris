@@ -166,9 +166,6 @@
                     <h3 class="text-lg font-medium text-gray-900 mb-4" id="modal-title">
                         To download your documents please rate your experience
                     </h3>
-
-
-
                     <div class="space-y-6">
                         @foreach(['responsiveness', 'reliability', 'access_facilities', 'communication', 'cost', 'integrity', 'assurance', 'outcome'] as $criterion)
                         <div class="flex items-center space-x-4 mb-6">

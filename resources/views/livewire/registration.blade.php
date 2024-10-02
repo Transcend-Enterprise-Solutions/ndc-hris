@@ -6,9 +6,9 @@
                     Registration Form
                 </h1>
                 <p class="mt-4 text-base font-medium text-gray-500"></p>
-            </div>
-            <div class="p-2 mt-8 border bg-gray-50 rounded-3xl">
-                <div class="p-4 md:p-10 bg-white border shadow-lg rounded-2xl">
+                </div>
+                <div class="p-2 mt-8 border bg-gray-50 rounded-3xl">
+                    <div class="p-4 md:p-10 bg-white border shadow-lg rounded-2xl">
                     <!-- Step 1 -->
                     @if ($step === 1)
                         <div>
@@ -72,7 +72,8 @@
                                         <option value="Others">Others</option>
                                     </select>
 
-                                    <input x-show="showOthers" wire:model="otherSex" type="text" id="others" placeholder="Please specify"
+                                    <input x-show="showOthers" wire:model="otherSex" type="text" id="others"
+                                        placeholder="Please specify"
                                         class="mt-2 w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
 
                                     @error('sex')
@@ -118,17 +119,20 @@
                             </div>
 
                             <div class="mt-4 gap-2 lg:columns-1 sm:columns-1">
-                                 <!-- Citizenship Radio Buttons -->
+                                <!-- Citizenship Radio Buttons -->
                                 <div class="w-full">
-                                    <label class="text-sm text-gray-700">Citizenship <span class="text-red-600">*</span></label>
+                                    <label class="text-sm text-gray-700">Citizenship <span
+                                            class="text-red-600">*</span></label>
                                     <div class="mt-2">
                                         <label class="inline-flex items-center">
-                                            <input type="radio" name="citizenship" value="Filipino" wire:model.live="citizenship"
+                                            <input type="radio" name="citizenship" value="Filipino"
+                                                wire:model.live="citizenship"
                                                 class="text-indigo-600 border-gray-300 focus:ring-indigo-500">
                                             <span class="ml-2">Filipino</span>
                                         </label>
                                         <label class="inline-flex items-center ml-6">
-                                            <input type="radio" name="citizenship" value="Dual Citizenship" wire:model.live="citizenship"
+                                            <input type="radio" name="citizenship" value="Dual Citizenship"
+                                                wire:model.live="citizenship"
                                                 class="text-indigo-600 border-gray-300 focus:ring-indigo-500">
                                             <span class="ml-2">Dual Citizenship</span>
                                         </label>
@@ -142,15 +146,18 @@
                                 @if ($citizenship === 'Dual Citizenship')
                                     <!-- Dual Citizenship Type Radio Buttons -->
                                     <div class="w-full mt-4">
-                                        <label class="text-sm text-gray-700">Dual Citizenship Type <span class="text-red-600">*</span></label>
+                                        <label class="text-sm text-gray-700">Dual Citizenship Type <span
+                                                class="text-red-600">*</span></label>
                                         <div class="mt-2">
                                             <label class="inline-flex items-center">
-                                                <input type="radio" name="dual_citizenship_type" value="By Birth" wire:model="dual_citizenship_type"
+                                                <input type="radio" name="dual_citizenship_type" value="By Birth"
+                                                    wire:model="dual_citizenship_type"
                                                     class="text-indigo-600 border-gray-300 focus:ring-indigo-500">
                                                 <span class="ml-2">By Birth</span>
                                             </label>
                                             <label class="inline-flex items-center ml-6">
-                                                <input type="radio" name="dual_citizenship_type" value="By Naturalization" wire:model="dual_citizenship_type"
+                                                <input type="radio" name="dual_citizenship_type"
+                                                    value="By Naturalization" wire:model="dual_citizenship_type"
                                                     class="text-indigo-600 border-gray-300 focus:ring-indigo-500">
                                                 <span class="ml-2">By Naturalization</span>
                                             </label>
@@ -162,7 +169,8 @@
 
                                     <!-- Country Select Field -->
                                     <div class="w-full mt-4">
-                                        <label class="text-sm text-gray-700">Country <span class="text-red-600">*</span></label>
+                                        <label class="text-sm text-gray-700">Country <span
+                                                class="text-red-600">*</span></label>
                                         <select wire:model="dual_citizenship_country"
                                             class="w-full h-12 px-4 py-2 text-black border rounded-lg bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                             <option value="">Select Country</option>
@@ -412,9 +420,9 @@
                                     </div>
 
                                     <div class="w-full mt-2">
-                                        <label for="p_house" class="block text-sm text-gray-700">House/Block/Lot No. <span class="text-red-600">*</span></label>
-                                        <input type="text" id="p_house"
-                                            wire:model.live="p_house"
+                                        <label for="p_house" class="block text-sm text-gray-700">House/Block/Lot No.
+                                            <span class="text-red-600">*</span></label>
+                                        <input type="text" id="p_house" wire:model.live="p_house"
                                             class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                                             name="p_house" required>
                                         @error('p_house')
@@ -423,9 +431,9 @@
                                     </div>
 
                                     <div class="w-full mt-2">
-                                        <label for="p_street" class="block text-sm text-gray-700">Street <span class="text-red-600">*</span></label>
-                                        <input type="text" id="p_street"
-                                            wire:model.live="p_street"
+                                        <label for="p_street" class="block text-sm text-gray-700">Street <span
+                                                class="text-red-600">*</span></label>
+                                        <input type="text" id="p_street" wire:model.live="p_street"
                                             class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                                             name="p_street" required>
                                         @error('p_street')
@@ -434,9 +442,10 @@
                                     </div>
 
                                     <div class="w-full mt-2">
-                                        <label for="p_subdivision" class="block text-sm text-gray-700">Subdivision/Village <span class="text-red-600">*</span></label>
-                                        <input type="text" id="p_subdivision"
-                                            wire:model.live="p_subdivision"
+                                        <label for="p_subdivision"
+                                            class="block text-sm text-gray-700">Subdivision/Village <span
+                                                class="text-red-600">*</span></label>
+                                        <input type="text" id="p_subdivision" wire:model.live="p_subdivision"
                                             class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                                             name="p_subdivision" required>
                                         @error('p_subdivision')
@@ -553,9 +562,9 @@
                                         </div>
 
                                         <div class="w-full mt-2">
-                                            <label for="r_house" class="block text-sm text-gray-700">House/Block/Lot No. <span class="text-red-600">*</span></label>
-                                            <input type="text" id="r_house"
-                                                wire:model.live="r_house"
+                                            <label for="r_house" class="block text-sm text-gray-700">House/Block/Lot
+                                                No. <span class="text-red-600">*</span></label>
+                                            <input type="text" id="r_house" wire:model.live="r_house"
                                                 class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                                                 name="r_house" required>
                                             @error('r_house')
@@ -564,9 +573,9 @@
                                         </div>
 
                                         <div class="w-full mt-2">
-                                            <label for="r_street" class="block text-sm text-gray-700">Street <span class="text-red-600">*</span></label>
-                                            <input type="text" id="r_street"
-                                                wire:model.live="r_street"
+                                            <label for="r_street" class="block text-sm text-gray-700">Street <span
+                                                    class="text-red-600">*</span></label>
+                                            <input type="text" id="r_street" wire:model.live="r_street"
                                                 class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                                                 name="r_street" required>
                                             @error('r_street')
@@ -575,9 +584,10 @@
                                         </div>
 
                                         <div class="w-full mt-2">
-                                            <label for="r_subdivision" class="block text-sm text-gray-700">Subdivision/Village <span class="text-red-600">*</span></label>
-                                            <input type="text" id="r_subdivision"
-                                                wire:model.live="r_subdivision"
+                                            <label for="r_subdivision"
+                                                class="block text-sm text-gray-700">Subdivision/Village <span
+                                                    class="text-red-600">*</span></label>
+                                            <input type="text" id="r_subdivision" wire:model.live="r_subdivision"
                                                 class="block w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-white border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                                                 name="r_subdivision" required>
                                             @error('r_subdivision')
@@ -620,7 +630,8 @@
                             </div>
                             <div x-data="{ appointment: @entangle('appointment') }" class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                                 <div class="w-full">
-                                    <label for="office_division" class="text-sm text-gray-700">Nature of Appointment <span class="text-red-600">*</span></label>
+                                    <label for="office_division" class="text-sm text-gray-700">Nature of Appointment
+                                        <span class="text-red-600">*</span></label>
                                     <select id="office_division" x-model="appointment"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <option value="">Please Choose one</option>
@@ -634,7 +645,8 @@
 
                                 <!-- Plantilla Item Number Field -->
                                 <div class="w-full mt-4">
-                                    <label for="itemNumber" class="text-sm text-gray-700">Item Number <span class="text-red-600">*</span></label>
+                                    <label for="itemNumber" class="text-sm text-gray-700">Item Number <span
+                                            class="text-red-600">*</span></label>
                                     <input id="itemNumber" wire:model="itemNumber"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                                         type="text" placeholder="Enter Item Number">
@@ -654,19 +666,21 @@
                                 </div> --}}
                             </div>
                             @error('appointment')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
 
                             {{-- division unit position --}}
                             <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
 
                                 <div class="w-full">
-                                    <label for="office_division" class="text-sm text-gray-700">Office Division <span class="text-red-600">*</span></label>
+                                    <label for="office_division" class="text-sm text-gray-700">Office Division <span
+                                            class="text-red-600">*</span></label>
                                     <select id="office_division" wire:model.live="selectedOfficeDivision"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <option value="" selected>Select an office division</option>
-                                        @foreach($officeDivisions as $officeDivision)
-                                            <option value="{{ $officeDivision->id }}">{{ $officeDivision->office_division }}</option>
+                                        @foreach ($officeDivisions as $officeDivision)
+                                            <option value="{{ $officeDivision->id }}">
+                                                {{ $officeDivision->office_division }}</option>
                                         @endforeach
                                     </select>
 
@@ -679,7 +693,7 @@
                                     <select id="unit" wire:model.live="selectedUnit"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <option value="" selected>Select a unit</option>
-                                        @foreach($units as $unit)
+                                        @foreach ($units as $unit)
                                             <option value="{{ $unit->id }}">{{ $unit->unit }}</option>
                                         @endforeach
                                     </select>
@@ -692,13 +706,15 @@
                             </div>
                             <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                                 <div class="w-full">
-                                    <label for="position" class="text-sm text-gray-700">Position <span class="text-red-600">*</span></label>
+                                    <label for="position" class="text-sm text-gray-700">Position <span
+                                            class="text-red-600">*</span></label>
                                     <select id="position" wire:model.live="selectedPosition"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <option value="" selected>Select a position</option>
-                                        @foreach($positions as $position)
-                                            @if($position->position !== 'Super Admin')
-                                                <option value="{{ $position->id }}">{{ $position->position }}</option>
+                                        @foreach ($positions as $position)
+                                            @if ($position->position !== 'Super Admin')
+                                                <option value="{{ $position->id }}">{{ $position->position }}
+                                                </option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -707,21 +723,32 @@
 
                             </div>
                             @error('selectedPosition')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                                    @enderror
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                             <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
                                 <div class="w-full">
-                                    <label for="date_hired" class="text-sm text-gray-700">Date of assumption <span class="text-red-600">*</span></label>
+                                    <label for="date_hired" class="text-sm text-gray-700">Date of assumption <span
+                                            class="text-red-600">*</span></label>
                                     <input type="date" id="date_hired" wire:model.live="date_hired"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('date_hired')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="w-full">
+                                <div x-data="{ appointment: @entangle('appointment'), empCode: @entangle('emp_code') }" class="w-full">
                                     <label for="emp_code" class="text-sm text-gray-700">Employee Code<span
                                             class="text-red-600">*</span></label>
-                                    <input type="number" id="emp_code" wire:model.live="emp_code"
+                                    <input type="text" id="emp_code" x-model="empCode" x-init="$watch('appointment', value => {
+                                        if (value === 'cos') empCode = 'D-';
+                                    })"
+                                        x-on:input="
+                                            if (appointment === 'cos') {
+                                                let cleanValue = empCode.replace(/[^0-9]/g, '');
+                                                empCode = 'D-' + cleanValue.match(/.{1,4}/g)?.join('-') || '';
+                                            } else {
+                                                empCode = empCode.replace(/[^0-9]/g, '').match(/.{1,4}/g)?.join('-') || '';
+                                            }
+                                        "
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('emp_code')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -731,15 +758,34 @@
 
                             <div class="mt-4 gap-2 lg:columns-1 sm:columns-1">
                                 <div class="w-full">
-                                    <label for="email" class="text-sm text-gray-700">Email Address<span class="text-red-600">*</span></label>
+                                    <label for="email" class="text-sm text-gray-700">Email Address<span
+                                            class="text-red-600">*</span></label>
                                     <input type="text" id="email" wire:model.live="email"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('email')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
+
                                 <div class="relative w-full" x-data="{ show: false }">
-                                    <label for="password" class="text-sm text-gray-700">Password <span class="text-red-600">*</span></label>
+                                    <div class="relative inline-block" x-data="{ tooltip: false }">
+                                        <!-- Info Icon -->
+                                        <i class="bi bi-info-circle-fill text-blue-700 cursor-pointer"
+                                        @mouseenter="tooltip = true" @mouseleave="tooltip = false"></i>
+                                        <div x-show="tooltip" 
+                                            class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 z-10 w-auto px-4 py-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm dark:bg-gray-700 transition-opacity duration-300"
+                                            style="display: none;">
+                                            <ul class="list-none space-y-2 whitespace-nowrap">
+                                                <li>- At least 8 characters</li>
+                                                <li>- One uppercase letter</li>
+                                                <li>- One number</li>
+                                                <li>- One special character</li>
+                                            </ul>
+                                            <div class="tooltip-arrow" data-popper-arrow></div>
+                                        </div>
+                                    </div>
+                                    <label for="password" class="text-sm text-gray-700">Password <span
+                                            class="text-red-600">*</span></label>
                                     <div class="relative">
                                         <input :type="show ? 'text' : 'password'" id="password"
                                             wire:model.live="password"
@@ -754,7 +800,24 @@
                                     @enderror
                                 </div>
                                 <div class="relative w-full" x-data="{ show: false }">
-                                    <label for="c_password" class="text-sm text-gray-700">Confirm Password <span class="text-red-600">*</span></label>
+                                    <div class="relative inline-block" x-data="{ tooltip: false }">
+                                        <!-- Info Icon -->
+                                        <i class="bi bi-info-circle-fill text-blue-700 cursor-pointer"
+                                        @mouseenter="tooltip = true" @mouseleave="tooltip = false"></i>
+                                        <div x-show="tooltip" 
+                                            class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 z-10 w-auto px-4 py-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm dark:bg-gray-700 transition-opacity duration-300"
+                                            style="display: none;">
+                                            <ul class="list-none space-y-2 whitespace-nowrap">
+                                                <li>- At least 8 characters</li>
+                                                <li>- One uppercase letter</li>
+                                                <li>- One number</li>
+                                                <li>- One special character</li>
+                                            </ul>
+                                            <div class="tooltip-arrow" data-popper-arrow></div>
+                                        </div>
+                                    </div>
+                                    <label for="c_password" class="text-sm text-gray-700">Confirm Password <span
+                                            class="text-red-600">*</span></label>
                                     <div class="relative">
                                         <input :type="show ? 'text' : 'password'" id="c_password"
                                             wire:model.live="c_password"

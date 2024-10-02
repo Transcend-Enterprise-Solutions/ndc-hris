@@ -425,6 +425,15 @@
                                             </span>
                                         </a>
                                     </li>
+                                    <li class="mb-1 last:mb-0">
+                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/daily-time-record/payslip')) {{ '!text-blue-500' }} @endif"
+                                            href="{{ route('/daily-time-record/payslip') }}"wire:navigate>
+                                            <span class="text-sm font-medium transition-opacity duration-300"
+                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                                Payslip
+                                            </span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </li>
@@ -454,7 +463,7 @@
                             <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
                                 <ul class="pl-9 mt-1 transition-all duration-300 overflow-hidden"
                                     :class="open ? '!block' : 'hidden'">
-                                    <li class="mb-1 last:mb-0">
+                                    {{-- <li class="mb-1 last:mb-0">
                                         <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/filing-and-approval')) {{ '!text-blue-500' }} @endif"
                                             href="#0">
                                             <span class="text-sm font-medium transition-opacity duration-300"
@@ -462,7 +471,7 @@
                                                 Overtime
                                             </span>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                     <li class="mb-1 last:mb-0">
                                         <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/filing-and-approval/leave-application')) {{ '!text-blue-500' }} @endif"
                                             href="{{ route('/filing-and-approval/leave-application') }}"

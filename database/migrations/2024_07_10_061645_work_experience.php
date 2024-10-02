@@ -12,8 +12,9 @@ return new class extends Migration
             $table->id('id');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->date('start_date')->format('F d Y')->nullable();
-            $table->date('end_date')->format('F d Y')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->string('toPresent')->nullable();
             $table->string('position')->nullable();
             $table->string('department')->nullable();
             $table->string('monthly_salary')->nullable();

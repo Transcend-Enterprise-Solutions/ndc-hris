@@ -332,7 +332,7 @@ class EmployeeTable extends Component
             ->when($this->filters['date_hired'], function ($query) {
             $query->addSelect('user_data.date_hired');
             })
-            // ->where('users.user_role', 'emp')
+            ->where('users.user_role', 'emp')
             ->when($this->search, function ($query) {
                 $query->where('users.name', 'like', '%' . $this->search . '%');
             })
@@ -374,6 +374,7 @@ class EmployeeTable extends Component
                     3 => 'Resigned'
                 ];
                 $user->active_status_label = $statusMapping[$user->active_status] ?? 'Unknown';
+                
                 return $user;
             });
 
@@ -415,7 +416,7 @@ class EmployeeTable extends Component
         if($pdsGovId){
             $this->govId = $pdsGovId->gov_id;
             $this->idNumber = $pdsGovId->id_number;
-            $this->dateIssued = Carbon::parse($pdsGovId->date_of_issuance)->format('m-d-Y');
+            $this->dateIssued = $pdsGovId->date_of_issuance;
         }
 
         $this->personalDataSheetOpen = true;
@@ -486,6 +487,15 @@ class EmployeeTable extends Component
         $nameFields = ['surname', 'first_name', 'middle_name', 'name_extension'];
         if (count(array_intersect($nameFields, $selectedColumns)) > 0) {
             $selectedColumns[] = 'name';
+        }
+
+        $fieldsToFormat = ['gsis', 'pagibig', 'philhealth', 'sss', 'tin', 'agency_employee_no'];
+
+        foreach ($fieldsToFormat as $field) {
+            if (isset($user->$field) && is_numeric($user->$field)) {
+                // Prepend a single quote to make Excel treat the value as text
+                $user->$field = "'" . $user->$field;
+            }
         }
     
         $selectedColumns = array_unique($selectedColumns);

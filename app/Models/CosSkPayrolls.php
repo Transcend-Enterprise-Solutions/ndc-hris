@@ -16,6 +16,11 @@ class CosSkPayrolls extends Model
         'sg_step',
         'rate_per_month', 
         'additional_premiums',
+        'adjustment',
+        'withholding_tax',
+        'nycempc',
+        'other_deductions',
+        'total_deduction',
     ];
 
     public function user()
