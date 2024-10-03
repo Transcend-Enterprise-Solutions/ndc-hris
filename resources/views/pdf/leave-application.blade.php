@@ -150,8 +150,8 @@
 
     {{-- Header --}}
     <p class="s2" style="padding-top: 9pt; text-indent: 0pt; text-align: center;">Republic of the Philippines</p>
-    <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;">(Agency Name)</h2>
-    <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;"> (Agency Address)</h2>
+    {{-- <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;">(Agency Name)</h2> --}}
+    {{-- <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;"> (Agency Address)</h2> --}}
 
     <p style="padding-top: 4pt; text-indent: 0pt; text-align: left;"><br /></p>
 
@@ -222,7 +222,7 @@
                         6.A TYPE OF LEAVE TO BE AVAILED OF
                     </p>
                     <div style="padding-left: 3px; display: grid;">
-                        @foreach (['Vacation Leave', 'Mandatory/Forced Leave', 'Sick Leave', 'Maternity Leave', 'Paternity Leave', 'Special Privilege Leave', 'Solo Parent Leave', 'Study Leave', '10-Day VAWC Leave', 'Rehabilitation Privilege', 'Special Leave Benefits for Women', 'Special Emergency (Calamity) Leave', 'Adoption Leave'] as $leaveType)
+                        @foreach (['Vacation Leave', 'Mandatory/Forced Leave', 'Sick Leave', 'Maternity Leave', 'Paternity Leave', 'Special Privilege Leave', 'Solo Parent Leave', 'Study Leave', '10-Day VAWC Leave', 'Rehabilitation Privilege', 'Special Leave Benefits for Women', 'Special Emergency (Calamity) Leave', 'Adoption Leave', 'CTO Leave'] as $leaveType)
                             <div style="display: block; width: 100%; margin-left: 5px;">
                                 <div style="display: inline-block; vertical-align: middle;">
                                     <input type="checkbox"
@@ -494,8 +494,18 @@
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="padding-top: 3pt;text-indent: 0pt;text-align: left;"><br /></p>
-                    {{-- <p class="s5" style="padding-left: 66pt;text-indent: 0pt;text-align: left;">(Signature of
-                        Applicant)</p> --}}
+                    @if ($signatureImagePath)
+                        <p style="text-align: center; margin-bottom: -15px;">
+                            <img src="{{ $signatureImagePath }}" alt="E-Signature"
+                                style="width: 100px; height: auto;" />
+                        </p>
+                    @endif
+                    <p class="s5" style="padding-left: 1pt; text-indent: 0pt; text-align: center; z-index: 1;">
+                        {{ $leaveApplication->name }}</p>
+                    <p class="s5"
+                        style="padding-left: 1pt; text-indent: 0pt; text-align: center; border-top-style: solid; border-top-width: medium; width: 50%; margin: 0 auto;">
+                        (Signature of Applicant)
+                    </p>
                 </td>
             </tr>
             <tr style="height:13pt">

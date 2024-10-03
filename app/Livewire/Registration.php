@@ -295,23 +295,26 @@ class Registration extends Component
     {
         if ($this->permanent_selectedProvince != null) {
             $provinceCode = PhilippineProvinces::where('province_description', $this->permanent_selectedProvince)
+                            // ->where('region_code', isset($regionCode['region_code']) ? $regionCode['region_code'] : '')
                             ->select('province_code')->first();
-            $provinceCode = $provinceCode->getAttributes();
-            $this->pcities = PhilippineCities::where('province_code', $provinceCode['province_code'])->get();
+            $provinceCode = $provinceCode ? $provinceCode->getAttributes() : [];
+            $this->pcities = PhilippineCities::where('province_code', isset($provinceCode['province_code']) ? $provinceCode['province_code'] : '')->get();
         }
 
         if ($this->residential_selectedProvince != null) {
             $provinceCode = PhilippineProvinces::where('province_description', $this->residential_selectedProvince)
+                            // ->where('region_code', isset($regionCode['region_code']) ? $regionCode['region_code'] : '')
                             ->select('province_code')->first();
-            $provinceCode = $provinceCode->getAttributes();
-            $this->rcities = PhilippineCities::where('province_code', $provinceCode['province_code'])->get();
+            $provinceCode = $provinceCode ? $provinceCode->getAttributes() : [];
+            $this->rcities = PhilippineCities::where('province_code', isset($provinceCode['province_code']) ? $provinceCode['province_code'] : '')->get();
         }
 
         if ($this->permanent_selectedCity != null) {
             $cityCode = PhilippineCities::where('city_municipality_description', $this->permanent_selectedCity)
+                            ->where('province_code', isset($provinceCode['province_code']) ? $provinceCode['province_code'] : '')
                             ->select('city_municipality_code')->first();
-            $cityCode = $cityCode->getAttributes();
-            $this->pbarangays = PhilippineBarangays::where('city_municipality_code', $cityCode['city_municipality_code'])->get();
+            $cityCode = $cityCode ? $cityCode->getAttributes() : [];
+            $this->pbarangays = PhilippineBarangays::where('city_municipality_code', isset($cityCode['city_municipality_code']) ? $cityCode['city_municipality_code'] : '')->get();
         }
 
         if ($this->residential_selectedCity != null) {

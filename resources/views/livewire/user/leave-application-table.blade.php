@@ -109,20 +109,24 @@
 
                         <!-- Export Button -->
                         <div class="flex items-end">
-                            <button wire:click="exportExcel"
-                                class="sm:mt-0 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                            <div class="flex flex-col md:mb-0">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Generate
+                                    Leave Card</label>
+                                <button wire:click="exportExcel"
+                                    class="sm:mt-0 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                                     justify-center px-4 py-1.5 text-sm font-medium tracking-wide
                                     text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none {{ $isDisabled ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer' }}"
-                                type="button" title="Export Leave Card" {{ $isDisabled ? 'disabled' : '' }}>
-                                <img class="flex dark:hidden" src="/images/export-excel.png" width="22"
-                                    alt="exportExcel" wire:target="exportExcel" wire:loading.remove>
-                                <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22"
-                                    alt="exportExcel" wire:target="exportExcel" wire:loading.remove>
-                                <div wire:loading wire:target="exportExcel">
-                                    <div class="spinner-border small text-primary" role="status"></div>
-                                </div>
-                            </button>
+                                    type="button" title="Export Leave Card" {{ $isDisabled ? 'disabled' : '' }}>
+                                    <img class="flex dark:hidden" src="/images/export-excel.png" width="22"
+                                        alt="exportExcel" wire:target="exportExcel" wire:loading.remove>
+                                    <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22"
+                                        alt="exportExcel" wire:target="exportExcel" wire:loading.remove>
+                                    <div wire:loading wire:target="exportExcel">
+                                        <div class="spinner-border small text-primary" role="status"></div>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -423,6 +427,10 @@
                             <input type="checkbox" value="Adoption Leave" wire:model.live="type_of_leave">
                             <label class="text-md text-gray-700 dark:text-slate-100">Adoption Leave</label>
                         </div>
+                        <div class="gap-2 columns-1">
+                            <input type="checkbox" value="CTO Leave" wire:model.live="type_of_leave">
+                            <label class="text-md text-gray-700 dark:text-slate-100">CTO Leave</label>
+                        </div>
 
                         <div class="gap-2 columns-1">
                             <input type="checkbox" value="Others" wire:model.live="type_of_leave">
@@ -596,7 +604,8 @@
                                     in_array('Solo Parent Leave', $type_of_leave) ||
                                     in_array('10-Day VAWC Leave', $type_of_leave) ||
                                     in_array('Special Emergency (Calamity) Leave', $type_of_leave) ||
-                                    in_array('Adoption Leave', $type_of_leave))
+                                    in_array('Adoption Leave', $type_of_leave) ||
+                                    in_array('CTO Leave', $type_of_leave))
                                 <div class="gap-2 columns-1 mt-2">
                                     <label class="block text-sm font-medium text-gray-700 dark:text-slate-100">List of
                                         Dates</label>
@@ -709,6 +718,9 @@
                                 </ul>
                             </div>
                         @endif
+                        @error('files')
+                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                        @enderror
                         @error('files.*')
                             <span class="text-red-500 text-xs">{{ $message }}</span>
                         @enderror
