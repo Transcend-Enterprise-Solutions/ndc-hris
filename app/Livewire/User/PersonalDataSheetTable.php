@@ -449,8 +449,8 @@ class PersonalDataSheetTable extends Component
             $this->r_province = $this->pds['userData']->residential_selectedProvince;
             $this->r_city = $this->pds['userData']->residential_selectedCity;
             $this->r_barangay = $this->pds['userData']->residential_selectedBarangay;
-            $p_address_line1 = explode(",", $this->p_house_street);
-            $r_address_line1 = explode(",", $this->r_house_street);
+            $p_address_line1 = explode(',', $this->p_house_street);
+            $r_address_line1 = explode(',', $this->r_house_street);
             $this->p_house_number = $p_address_line1[0];
             $this->p_street = $p_address_line1[1];
             $this->p_subdivision = $p_address_line1[2];

@@ -113,7 +113,7 @@ class GeneralPayrollTable extends Component
     public $sg;
     public $step;
     public $rate_per_month;
-    public $personal_economic_relief_allowance = 0;
+    public $personal_economic_relief_allowance = 2000;
     public $gross_amount;
     public $additional_gsis_premium;
     public $lbp_salary_loan;
@@ -284,11 +284,11 @@ class GeneralPayrollTable extends Component
         $this->total_deduction = number_format((float)$this->total_deduction, 2, '.', '');
 
 
-        if($this->rate_per_month && $this->personal_economic_relief_allowance){
-            $this->gross_amount = $this->rate_per_month + $this->personal_economic_relief_allowance;
-        }
-
         $this->getRate();
+
+        if($this->rate_per_month){
+            $this->gross_amount = $this->rate_per_month + $this->personal_economic_relief_allowance ?: 0;
+        }
 
         $plantillaPayrollSignatories = User::join('signatories', 'signatories.user_id', 'users.id')
             ->join('positions', 'positions.id', 'users.position_id')
@@ -1276,7 +1276,6 @@ class GeneralPayrollTable extends Component
                         'rate_per_month' => 'required|numeric',
                         'gross_amount' => 'required|numeric',
                         'pagibig_contribution' => 'required|numeric',
-                        'w_holding_tax' => 'required|numeric',
                         'philhealth' => 'required|numeric',
                         'total_deduction' => 'required|numeric',
                     ]);

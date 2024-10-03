@@ -118,6 +118,16 @@
                                         @endif
                                         @if (Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
                                             <li class="mb-1 last:mb-0">
+                                                <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/admin-schedule')) {{ '!text-blue-500' }} @endif"
+                                                    href="{{ route('/employee-management/admin-schedule') }}"wire:navigate>
+                                                    <span class="text-sm font-medium transition-opacity duration-300"
+                                                        :class="sidebarExpanded ? 'opacity-100 lg:inline' :
+                                                            'opacity-0 lg:hidden'">
+                                                        Schedule
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/admin-doc-request')) {{ '!text-blue-500' }} @endif"
                                                     href="{{ route('/employee-management/admin-doc-request') }}"
                                                     wire:navigate>
@@ -139,12 +149,12 @@
                                                 </a>
                                             </li>
                                             <li class="mb-1 last:mb-0">
-                                                <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/admin-schedule')) {{ '!text-blue-500' }} @endif"
-                                                    href="{{ route('/employee-management/admin-schedule') }}"wire:navigate>
+                                                <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/service-records')) {{ '!text-blue-500' }} @endif"
+                                                    href="{{ route('/employee-management/service-records') }}"wire:navigate>
                                                     <span class="text-sm font-medium transition-opacity duration-300"
                                                         :class="sidebarExpanded ? 'opacity-100 lg:inline' :
                                                             'opacity-0 lg:hidden'">
-                                                        Schedule
+                                                        Service Records
                                                     </span>
                                                 </a>
                                             </li>
