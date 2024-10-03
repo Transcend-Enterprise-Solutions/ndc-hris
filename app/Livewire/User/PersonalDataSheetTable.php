@@ -24,6 +24,7 @@ use App\Models\PhilippineProvinces;
 use App\Models\Skills;
 use App\Models\VoluntaryWorks;
 use App\Models\WorkExperience;
+use App\Models\ESignature;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -228,6 +229,10 @@ class PersonalDataSheetTable extends Component
     public $dual_citizenship_type;
     public $dual_citizenship_country;
 
+    // E-Signature
+    public $e_signature;
+    public $temporaryUrl;
+
     public function mount(){
         $this->getC4Answers();
         $this->countries = Countries::all();
@@ -294,6 +299,8 @@ class PersonalDataSheetTable extends Component
             $this->dateIssued = $pdsGovId->date_of_issuance;
         }
 
+        $eSignature = ESignature::where('user_id', $user->id)->first();
+
         return view('livewire.user.personal-data-sheet-table', [
             'userData' => $this->pds['userData'],
             'userSpouse' => $this->pds['userSpouse'],
@@ -310,6 +317,7 @@ class PersonalDataSheetTable extends Component
             'non_acads_distinctions' => $this->pds['non_acads_distinctions'],
             'assOrgMemberships' => $this->pds['assOrgMemberships'],
             'references' => $this->pds['references'],
+            'eSignature' => $eSignature,
         ]);
     }
 
@@ -2360,5 +2368,49 @@ class PersonalDataSheetTable extends Component
             ]);
             throw $e;
         }
+    }
+
+    public function updatedESignature()
+    {
+        // Generate a temporary URL for the selected image
+        if ($this->e_signature) {
+            $this->temporaryUrl = $this->e_signature->temporaryUrl();
+        }
+    }
+
+    public function uploadSignature()
+    {
+        $this->validate([
+            'e_signature' => 'image|max:1024', // 1MB Max
+        ]);
+    
+        // Get the existing e-signature record for the user
+        $existingSignature = ESignature::where('user_id', Auth::id())->first();
+
+        // If the user already has an e-signature, delete the old file
+        if ($existingSignature && Storage::disk('public')->exists($existingSignature->file_path)) {
+            Storage::disk('public')->delete($existingSignature->file_path);
+        }
+
+        // Store the new uploaded image
+        $originalFilename = $this->e_signature->getClientOriginalName();
+
+        // Store the uploaded image with its original name (or custom name)
+        $filePath = $this->e_signature->storeAs('signatures', $originalFilename, 'public');
+
+        // Update or create the user's e-signature record with the new file
+        ESignature::updateOrCreate(
+            ['user_id' => Auth::id()], // Find the signature by user_id
+            ['file_path' => $filePath] // Update or create the file_path
+        );
+
+        $this->e_signature = null;
+        $this->temporaryUrl = null;
+    
+        // Set a success message
+        $this->dispatch('swal', [
+            'title' => "E-Signature uploaded successfully!",
+            'icon' => 'success'
+        ]);
     }
 }

@@ -3,17 +3,18 @@
 namespace App\Exports;
 
 use App\Models\LeaveCredits;
-use App\Models\User; // Import User model
+use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+// use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use Carbon\Carbon;
 
-class LeaveCreditsExport implements FromCollection, WithMapping, WithColumnFormatting, WithEvents
+class LeaveCreditsExport implements FromCollection, WithMapping, WithEvents
 {
     protected $selectedLeaveTypes;
 
@@ -24,20 +25,23 @@ class LeaveCreditsExport implements FromCollection, WithMapping, WithColumnForma
 
     public function collection()
     {
-        $columns = ['user_id'];
+        // $columns = ['user_id'];
 
-        if (in_array('Vacation Leave', $this->selectedLeaveTypes)) {
-            $columns[] = 'vl_claimable_credits';
-        }
+        // if (in_array('Vacation Leave', $this->selectedLeaveTypes)) {
+        //     $columns[] = 'vl_claimable_credits';
+        // }
 
-        if (in_array('Sick Leave', $this->selectedLeaveTypes)) {
-            $columns[] = 'sl_claimable_credits';
-        }
+        // if (in_array('Sick Leave', $this->selectedLeaveTypes)) {
+        //     $columns[] = 'sl_claimable_credits';
+        // }
 
-        if (in_array('Special Privilege Leave', $this->selectedLeaveTypes)) {
-            $columns[] = 'spl_claimable_credits';
-        }
+        // if (in_array('Special Privilege Leave', $this->selectedLeaveTypes)) {
+        //     $columns[] = 'spl_claimable_credits';
+        // }
 
+        // return LeaveCredits::select($columns)->get();
+
+        $columns = ['user_id', 'vl_claimable_credits', 'sl_claimable_credits', 'fl_claimable_credits', 'spl_claimable_credits', 'updated_at'];
         return LeaveCredits::select($columns)->get();
     }
 
@@ -47,26 +51,21 @@ class LeaveCreditsExport implements FromCollection, WithMapping, WithColumnForma
 
         $vlClaimable = number_format($row->vl_claimable_credits ?? 0, 3, '.', '');
         $slClaimable = number_format($row->sl_claimable_credits ?? 0, 3, '.', '');
+        $flClaimable = number_format($row->fl_claimable_credits ?? 0, 3, '.', '');
         $splClaimable = number_format($row->spl_claimable_credits ?? 0, 3, '.', '');
         $totalClaimable = number_format(($row->vl_claimable_credits ?? 0) + ($row->sl_claimable_credits ?? 0), 3, '.', '');
 
-        return [
-            $user ? $user->name : 'N/A', // User Name
-            $user ? $user->emp_code : 'N/A', // Employee ID
-            $vlClaimable, // VL Claimable Credits
-            $slClaimable, // SL Claimable Credits
-            $totalClaimable, // Total Claimable Credits
-            $splClaimable // SPL Claimable Credits
-        ];
-    }
+        $formattedDate = Carbon::parse($row->updated_at)->format('M j, Y');
 
-    public function columnFormats(): array
-    {
         return [
-            'C' => '#,##0.000',
-            'D' => '#,##0.000',
-            'E' => '#,##0.000',
-            'F' => '#,##0.000',
+            $user ? $user->name : 'N/A',
+            $user ? $user->emp_code : 'N/A',
+            $vlClaimable,
+            $slClaimable,
+            $totalClaimable,
+            $splClaimable,
+            $flClaimable,
+            $formattedDate,
         ];
     }
 
@@ -76,9 +75,8 @@ class LeaveCreditsExport implements FromCollection, WithMapping, WithColumnForma
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
 
-                // Merge and style header cells A1 to A4
-                $sheet->mergeCells('A1:F1');
-                $sheet->getStyle('A1:F1')->applyFromArray([
+                $sheet->mergeCells('A1:H1');
+                $sheet->getStyle('A1:H1')->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'size' => 18,
@@ -90,8 +88,8 @@ class LeaveCreditsExport implements FromCollection, WithMapping, WithColumnForma
                 ]);
                 $sheet->setCellValue('A1', 'REPORT ON LEAVE CREDITS');
 
-                $sheet->mergeCells('A2:F2');
-                $sheet->getStyle('A2:F2')->applyFromArray([
+                $sheet->mergeCells('A2:H2');
+                $sheet->getStyle('A2:H2')->applyFromArray([
                     'font' => [
                         'bold' => false,
                         'size' => 14,
@@ -103,14 +101,16 @@ class LeaveCreditsExport implements FromCollection, WithMapping, WithColumnForma
                 ]);
                 $sheet->setCellValue('A2', '');
 
-                // Set column headers in row 4
+                // Set column headers in row 3
                 $headers = [
                     'A3' => 'NAME',
                     'B3' => 'EMPLOYEE ID',
                     'C3' => 'VL',
                     'D3' => 'SL',
                     'E3' => 'Total',
-                    'F3' => 'SPL',
+                    'F3' => 'FL',
+                    'G3' => 'SPL',
+                    'H3' => 'UPDATED AS OF',
                 ];
 
                 foreach ($headers as $cell => $header) {
@@ -151,23 +151,33 @@ class LeaveCreditsExport implements FromCollection, WithMapping, WithColumnForma
                     $rowIndex++;
                 }
 
+                $lastRow = $sheet->getHighestRow();
+                $columnsToFormat = ['C', 'D', 'E', 'F', 'G'];
+                foreach ($columnsToFormat as $column) {
+                    $sheet->getStyle("{$column}4:{$column}{$lastRow}")
+                        ->getNumberFormat()
+                        ->setFormatCode('#,##0.000');
+                }
+
                 // Center all cells and wrap text for specific columns
-                $sheet->getStyle('A4:F' . $sheet->getHighestRow())->applyFromArray([
+                $sheet->getStyle('A4:H' . $sheet->getHighestRow())->applyFromArray([
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_LEFT,
                         'vertical' => Alignment::VERTICAL_CENTER,
                     ],
                 ]);
 
-                $sheet->getStyle('C4:F' . $sheet->getHighestRow())->getAlignment()->setWrapText(true);
+                $sheet->getStyle('C4:H' . $sheet->getHighestRow())->getAlignment()->setWrapText(true);
 
                 // Set default column widths
-                $sheet->getColumnDimension('A')->setWidth(35); // Adjusted width for User Name
-                $sheet->getColumnDimension('B')->setWidth(20); // Adjusted width for Employee ID
-                $sheet->getColumnDimension('C')->setWidth(15); // Width for VL Claimable Credits
-                $sheet->getColumnDimension('D')->setWidth(15); // Width for SL Claimable Credits
-                $sheet->getColumnDimension('E')->setWidth(15); // Width for Total Claimable Credits
-                $sheet->getColumnDimension('F')->setWidth(15); // Width for SPL Claimable Credits
+                $sheet->getColumnDimension('A')->setWidth(35);
+                $sheet->getColumnDimension('B')->setWidth(20);
+                $sheet->getColumnDimension('C')->setWidth(15);
+                $sheet->getColumnDimension('D')->setWidth(15);
+                $sheet->getColumnDimension('E')->setWidth(15);
+                $sheet->getColumnDimension('F')->setWidth(15);
+                $sheet->getColumnDimension('G')->setWidth(15);
+                $sheet->getColumnDimension('H')->setWidth(20);
             },
         ];
     }

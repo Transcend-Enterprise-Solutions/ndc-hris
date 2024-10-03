@@ -18,6 +18,7 @@ use App\Models\CosRegPayrolls;
 use App\Models\CosSkPayrolls;
 use App\Models\OfficeDivisions;
 use App\Models\Positions;
+use App\Models\ESignature;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
@@ -168,7 +169,7 @@ class LeaveApplicationTable extends Component
         // if ($this->list_of_dates !== null) {
         //     $rules['list_of_dates'] = 'required|min:1';
         // }
-        // Define the leave types that require list_of_dates
+
         $leaveTypesRequiringDates = [
             'Vacation Leave',
             'Sick Leave',
@@ -179,23 +180,18 @@ class LeaveApplicationTable extends Component
             '10-Day VAWC Leave',
             'Special Emergency (Calamity) Leave',
             'Adoption Leave',
+            'CTO Leave',
         ];
 
-        // Check if the current type_of_leave requires list_of_dates validation
         if (!empty(array_intersect($this->type_of_leave, $leaveTypesRequiringDates))) {
             $rules['list_of_dates'] = 'required|array|min:1';
         }
 
-        // Check if start_date and end_date are present in the form
-        // if ($this->start_date !== null || $this->end_date !== null) {
-        //     $rules['start_date'] = 'required|date';
-        //     $rules['end_date'] = 'required|date|after_or_equal:start_date';
-        // }
-
-        // If new_date is present, add its validation
-        // if ($this->new_date !== null) {
-        //     $rules['new_date'] = 'required|date';
-        // }
+        // Require file upload if CTO Leave is selected
+        if (in_array('CTO Leave', $this->type_of_leave)) {
+            $rules['files'] = 'required|array|min:1';
+            $rules['files.*'] = 'file|mimes:jpg,jpeg,png,gif,svg|max:2048';
+        }
 
         $this->validate($rules);
 
@@ -259,39 +255,6 @@ class LeaveApplicationTable extends Component
         // $currentMonth = now()->month;
         // $currentYear = now()->year;
         $userId = Auth::id();
-
-        // $leaveCreditsCalculation = \App\Models\LeaveCreditsCalculation::where('user_id', $userId)
-        //     ->where('month', $currentMonth)
-        //     ->where('year', $currentYear)
-        //     ->first();
-
-        // $leaveCreditsEarned = $leaveCreditsCalculation ? $leaveCreditsCalculation->leave_credits_earned : 0;
-
-        // $leaveCredits = LeaveCredits::where('user_id', $userId)->first();
-        // if ($leaveCredits) {
-        //     if (!$leaveCredits->credits_transferred) {
-        //         // Set total credits based on the new columns
-        //         $leaveCredits->vl_total_credits = $leaveCredits->vl_claimable_credits + $leaveCredits->vl_claimed_credits;
-        //         $leaveCredits->sl_total_credits = $leaveCredits->sl_claimable_credits + $leaveCredits->sl_claimed_credits;
-        //         $leaveCredits->spl_total_credits = $leaveCredits->spl_claimable_credits + $leaveCredits->spl_claimed_credits;
-                
-        //         $leaveCredits->save();
-        
-        //         $leaveCredits->credits_transferred = true;
-        //         $leaveCredits->save();
-        //     }
-        // } else {
-        //     LeaveCredits::create([
-        //         'user_id' => $userId,
-        //         'vl_total_credits' => $leaveCreditsEarned,
-        //         'sl_total_credits' => $leaveCreditsEarned,
-        //         'spl_total_credits' => $leaveCreditsEarned,
-        //         'vl_claimable_credits' => $leaveCreditsEarned,
-        //         'sl_claimable_credits' => $leaveCreditsEarned,
-        //         'spl_claimable_credits' => $leaveCreditsEarned,
-        //         'credits_transferred' => true
-        //     ]);
-        // }
 
         $leaveApplication = LeaveApplication::create([
             'user_id' => $userId,
@@ -388,6 +351,13 @@ class LeaveApplicationTable extends Component
     {
         $leaveApplication = LeaveApplication::findOrFail($leaveApplicationId);
 
+        $eSignature = ESignature::where('user_id', $leaveApplication->user_id)->first();
+
+        $signatureImagePath = null;
+        if ($eSignature && $eSignature->file_path) {
+            $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
+        }
+
         $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
 
         $otherLeave = '';
@@ -397,31 +367,6 @@ class LeaveApplicationTable extends Component
                 break;
             }
         }
-
-        // $detailsOfLeave = $leaveApplication->details_of_leave ? explode(',', $leaveApplication->details_of_leave) : [];
-        // $isDetailPresent = function($detail) use ($detailsOfLeave) {
-        //     foreach ($detailsOfLeave as $item) {
-        //         if (Str::startsWith($item, $detail)) {
-        //             return true;
-        //         }
-        //     }
-        //     return false;
-        // };
-
-        // $detailsOfLeave = $leaveApplication->details_of_leave ? array_map('trim', explode(',', $leaveApplication->details_of_leave)) : [];
-        // $isDetailPresent = function($detail) use ($detailsOfLeave) {
-        //     return in_array($detail, array_map('trim', $detailsOfLeave));
-        // };
-
-        // $getDetailValue = function($detail) use ($detailsOfLeave) {
-        //     foreach ($detailsOfLeave as $item) {
-        //         if (Str::startsWith($item, $detail)) {
-        //             $parts = explode('=', $item, 2);
-        //             return count($parts) > 1 ? trim($parts[1]) : '';
-        //         }
-        //     }
-        //     return '';
-        // };
 
         $detailsOfLeave = $leaveApplication->details_of_leave ? array_map('trim', explode(',', $leaveApplication->details_of_leave)) : [];
 
@@ -489,6 +434,8 @@ class LeaveApplicationTable extends Component
             'firstApproverName' => $firstApproverName,
             'secondApproverName' => $secondApproverName,
             'thirdApproverName' => $thirdApproverName,
+            'eSignature' => $eSignature,
+            'signatureImagePath' => $signatureImagePath,
         ]);
 
         return response()->streamDownload(function() use ($pdf) {
@@ -498,21 +445,17 @@ class LeaveApplicationTable extends Component
 
     public function exportExcel()
     {
-        // Fetch the latest leave application of the logged-in user
         $leaveApplication = LeaveApplication::where('user_id', Auth::id())
             ->latest('created_at')
             ->first();
 
-        // Check if a leave application is found for the logged-in user
         if (!$leaveApplication) {
             session()->flash('error', 'No leave application found for the current user.');
             return;
         }
 
-        // Create an instance of the LeaveCardExport class with the leave application ID, start date, and end date
         $export = new LeaveCardExport($leaveApplication->id, $this->startDate, $this->endDate);
 
-        // Return the export response
         return $export->export();
     }
 
