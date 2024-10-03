@@ -2372,45 +2372,45 @@ class PersonalDataSheetTable extends Component
 
     public function updatedESignature()
     {
-        // Generate a temporary URL for the selected image
+        // Check if a new file has been uploaded
         if ($this->e_signature) {
+            // Generate a temporary URL for the file
             $this->temporaryUrl = $this->e_signature->temporaryUrl();
         }
     }
 
     public function uploadSignature()
     {
+        // Validate the file (you can adjust the validation rules as needed)
         $this->validate([
-            'e_signature' => 'image|max:1024', // 1MB Max
+            'e_signature' => 'image|max:1024', // 1MB max size
         ]);
-    
-        // Get the existing e-signature record for the user
+
         $existingSignature = ESignature::where('user_id', Auth::id())->first();
 
-        // If the user already has an e-signature, delete the old file
+        // Delete the old signature if it exists
         if ($existingSignature && Storage::disk('public')->exists($existingSignature->file_path)) {
             Storage::disk('public')->delete($existingSignature->file_path);
         }
 
-        // Store the new uploaded image
-        $originalFilename = $this->e_signature->getClientOriginalName();
+        // Save the new signature
+        $filePath = $this->e_signature->store('signatures', 'public');
 
-        // Store the uploaded image with its original name (or custom name)
-        $filePath = $this->e_signature->storeAs('signatures', $originalFilename, 'public');
-
-        // Update or create the user's e-signature record with the new file
+        // Update or create the signature record in the database
         ESignature::updateOrCreate(
-            ['user_id' => Auth::id()], // Find the signature by user_id
-            ['file_path' => $filePath] // Update or create the file_path
+            ['user_id' => Auth::id()],
+            ['file_path' => $filePath]
         );
 
+        // Reset the file input and temporary URL
         $this->e_signature = null;
         $this->temporaryUrl = null;
-    
-        // Set a success message
+
+        // Display success message
         $this->dispatch('swal', [
             'title' => "E-Signature uploaded successfully!",
             'icon' => 'success'
         ]);
     }
+    
 }
