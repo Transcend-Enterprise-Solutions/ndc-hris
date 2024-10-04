@@ -920,8 +920,8 @@
                                         Number of Working Days</p>
                                     <p
                                         class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->number_of_days }} |
-                                        {{ $leaveApplicationDetails->list_of_dates }}
+                                        {{ $leaveApplicationDetails->number_of_days ?? 'N/A' }} |
+                                        {{ $leaveApplicationDetails->list_of_dates ?? 'N/A' }}
                                     </p>
                                 </div>
 
