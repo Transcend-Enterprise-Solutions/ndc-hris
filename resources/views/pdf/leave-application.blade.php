@@ -176,10 +176,14 @@
                     colspan="3">
                     <p class="s5" style="padding-top: 1pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">2.
                         NAME :
-                        (First)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Middle)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Last)
+                        <span>(Last)</span>
+                        <span style="margin-left: 50px;">(First)</span>
+                        <span style="margin-left: 50px;">(Middle)</span>
                     </p>
                     <u
-                        style="margin-left: 25px; color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $leaveApplication->name }}</u>
+                        style="margin-left: 50px; color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $leaveApplication->user->userData->surname }},
+                        {{ $leaveApplication->user->userData->first_name }}
+                        {{ $leaveApplication->user->userData->middle_name }}</u>
                 </td>
             </tr>
             <tr style="height: 29pt;">
