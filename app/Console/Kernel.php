@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('leave-credits:reset')->everyMinute();
 
         // Fetch BioTime transactions daily at 1:00 AM
-        $schedule->command('fetch:biotime-transactions-monthly --months=1')->dailyAt('01:00');
+        //$schedule->command('fetch:biotime-transactions-monthly --months=1')->dailyAt('01:00');
     }
 
     /**
