@@ -9,6 +9,7 @@ use Barryvdh\DomPDF\PDF as DomPDFPDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class AdminDtrTable extends Component
 {
@@ -131,6 +132,20 @@ class AdminDtrTable extends Component
             echo $pdf->output();
         }, 'dtr_report.pdf');
 
+    }
+    public function downloadFile($dtrId)
+    {
+        $dtr = EmployeesDtr::find($dtrId);
+        if ($dtr && $dtr->attachment) {
+            $originalExtension = pathinfo($dtr->attachment, PATHINFO_EXTENSION);
+            $friendlyFilename = "DTR_" . $dtr->date . "." . $originalExtension;
+            return Storage::download($dtr->attachment, $friendlyFilename);
+        } else {
+            $this->dispatch('swal', [
+                'title' => 'File not found!',
+                'icon' => 'error'
+            ]);
+        }
     }
 
 
