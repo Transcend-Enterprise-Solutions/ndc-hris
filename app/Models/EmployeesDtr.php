@@ -24,6 +24,7 @@ class EmployeesDtr extends Model
         'overtime',
         'total_hours_rendered',
         'remarks',
+        'attachment'
     ];
     protected $casts = [
         'late' => 'string',  // Changed from float to string
