@@ -117,7 +117,7 @@
                                                 </td>
                                                 <td
                                                     class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                    <button wire:click="showUser({{ $user->id }})"
+                                                    <button wire:click="toggleViewRecord({{ $user->id }})"
                                                         class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 focus:outline-none">
                                                         <i class="fas fa-eye" title="Show Details"></i>
                                                     </button>
@@ -138,4 +138,67 @@
 
         </div>
     </div>
+
+
+    {{-- View Modal --}}
+    <x-modal id="roleModal" maxWidth="4xl" wire:model="recordId" centered>
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-t-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                {{ $thisRecord ? $thisRecord->name : '' }}'s Service Record
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                
+                <div class="col-span-full">
+                    <div class="w-full grid grid-cols-11 gap-0 text-xs">
+                        <div class="col-span-2">
+                            SERVICE
+                        </div>
+                        <div class="col-span-4">
+                            RECORD OF APPOINTMENT
+                        </div>
+                        <div class="col-span-1">
+                            OFFICE <br>
+                            Place of <br>
+                            Assignment
+                        </div>
+                        <div class="col-span-1">
+                            Branch <br>
+                            of <br>
+                            Service
+                        </div>
+                        <div class="col-span-1">
+                            LEAVE <br>
+                            ABSENCES <br>
+                            W/O PAY
+                        </div>
+                        <div class="col-span-2">
+                            SEPARATION      
+                        </div>
+                    </div>
+
+
+                </div>
+                
+
+                <div class="mt-4 flex justify-end col-span-2">
+                    <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" wire:click='exportRecord'>
+                        <div wire:loading wire:target="exportRecord" class="spinner-border small text-primary" role="status">
+                        </div>
+                        Export
+                    </button>
+                    <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                        Cancel
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </x-modal>
+
+
+
 </div>

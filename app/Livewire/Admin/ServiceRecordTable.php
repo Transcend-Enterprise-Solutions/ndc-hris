@@ -12,6 +12,8 @@ class ServiceRecordTable extends Component
     use WithPagination;
 
     public $search;
+    public $recordId;
+    public $thisRecord;
 
     public function render()
     {
@@ -60,5 +62,43 @@ class ServiceRecordTable extends Component
             $result[] = $months . ' ' . ($months == 1 ? 'month' : 'months');
         }
         return empty($result) ? '0 months' : implode(' ', $result);
+    }
+
+
+    public function toggleViewRecord($id){
+        $this->recordId = $id;
+        $user = User::where('users.id', $id)
+            ->join('positions', 'positions.id', 'users.position_id')
+            ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+            ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
+            ->select('users.*')
+            ->addSelect(DB::raw('(
+                SELECT SUM(
+                    CASE
+                        WHEN work_experience.toPresent = "Present" THEN DATEDIFF(CURDATE(), work_experience.start_date)
+                        WHEN work_experience.end_date IS NOT NULL THEN DATEDIFF(work_experience.end_date, work_experience.start_date)
+                        ELSE 0
+                    END
+                )
+                FROM work_experience
+                WHERE work_experience.user_id = users.id AND work_experience.gov_service = 1
+            ) as total_days_gov_service'))
+            ->first();
+        $totalDays = $user->total_days_gov_service;
+        $years = floor($totalDays / 365.25);
+        $months = floor(($totalDays % 365.25) / 30.44);
+        $user->formatted_gov_service = $this->formatService($years, $months);
+
+        $this->thisRecord = $user;
+    }
+
+    public function exportRecord(){
+
+    }
+
+    public function resetVariables(){
+        $this->resetValidation();
+        $this->recordId = null;
+        $this->thisRecord = null;
     }
 }
