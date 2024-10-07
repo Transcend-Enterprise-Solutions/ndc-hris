@@ -22,6 +22,11 @@ class DtrTable extends Component
     public $sortField = 'date';
     public $sortDirection = 'asc';
     public $eSignature;
+    public $attachment;
+    public $fileName;
+    public $remarks;
+    public $selectedDtrId;
+    public $currentAttachment;
 
     protected $queryString = [
         'searchTerm' => ['except' => ''],
@@ -30,6 +35,8 @@ class DtrTable extends Component
         'sortField' => ['except' => 'date'],
         'sortDirection' => ['except' => 'asc'],
     ];
+
+    protected $listeners = ['openModal'];
 
     public function placeholder()
     {
@@ -83,29 +90,83 @@ class DtrTable extends Component
 
         return view('livewire.user.dtr-table', ['dtrs' => $dtrs]);
     }
-    public function updateRemarks($dtrId, $remarks)
-    {
-        // Find the record by its ID
-        $dtr = EmployeesDtr::find($dtrId);
 
+    public function openModal($dtrId)
+    {
+        $dtr = EmployeesDtr::find($dtrId);
         if ($dtr) {
-            // Update the remarks field
-            $dtr->remarks = $remarks;
+            $this->selectedDtrId = $dtrId;
+            $this->remarks = $dtr->remarks;
+            $this->currentAttachment = $dtr->attachment;
+            $this->fileName = $dtr->attachment ? basename($dtr->attachment) : '';
+            $this->dispatch('modal-opened', [
+                'dtrId' => $this->selectedDtrId,
+                'remarks' => $this->remarks,
+                'fileName' => $this->fileName
+            ]);
+        }
+    }
+
+    public function updatedAttachment()
+    {
+        $this->validate([
+            'attachment' => 'file|max:10240', // 10MB Max
+        ]);
+
+        $this->fileName = $this->attachment->getClientOriginalName();
+    }
+
+    public function updateRemarks()
+    {
+        $dtr = EmployeesDtr::find($this->selectedDtrId);
+        if ($dtr) {
+            $dtr->remarks = $this->remarks;
+            
+            if ($this->attachment) {
+                // Delete old file if exists
+                if ($dtr->attachment) {
+                    Storage::delete($dtr->attachment);
+                }
+                
+                $path = $this->attachment->store('public/upload/employee_document');
+                $dtr->attachment = $path;
+                $this->currentAttachment = $path;
+                $this->fileName = $this->attachment->getClientOriginalName();
+            }
+            
             $dtr->save();
 
-            // Dispatch SweetAlert notification
             $this->dispatch('swal', [
-                'title' => 'Remarks updated successfully!',
+                'title' => 'Remarks and attachment updated successfully!',
                 'icon' => 'success'
             ]);
+
+            $this->dispatch('modal-updated', [
+                'fileName' => $this->fileName
+            ]);
         } else {
-            // Dispatch SweetAlert notification for error
             $this->dispatch('swal', [
                 'title' => 'Record not found!',
                 'icon' => 'error'
             ]);
         }
     }
+
+    public function downloadFile($dtrId)
+    {
+        $dtr = EmployeesDtr::find($dtrId);
+        if ($dtr && $dtr->attachment) {
+            $originalExtension = pathinfo($dtr->attachment, PATHINFO_EXTENSION);
+            $friendlyFilename = "DTR_" . $dtr->date . "." . $originalExtension;
+            return Storage::download($dtr->attachment, $friendlyFilename);
+        } else {
+            $this->dispatch('swal', [
+                'title' => 'File not found!',
+                'icon' => 'error'
+            ]);
+        }
+    }
+
 
     public function exportToPdf($signatoryName)
     {
@@ -168,5 +229,4 @@ class DtrTable extends Component
             Storage::disk('public')->delete($eSignaturePath);
         }
     }
-
 }

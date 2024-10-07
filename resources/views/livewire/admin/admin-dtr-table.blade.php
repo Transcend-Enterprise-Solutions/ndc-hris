@@ -116,6 +116,7 @@
                         </th>
                         <th class="px-4 py-2 text-center">Overtime</th>
                         <th class="px-4 py-2 text-center">Hours Rendered</th>
+                        <th class="px-4 py-2 text-center">Attachment</th>
                         <th class="px-4 py-2 text-center">Remarks</th>
                     </tr>
                 </thead>
@@ -134,6 +135,15 @@
                             <td class="px-4 py-2 text-center">{{ $dtr->late }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->overtime }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->total_hours_rendered }}</td>
+                            <td class="px-4 py-2 text-center">
+                                @if($dtr->attachment)
+                                    <a href="#" wire:click.prevent="downloadFile({{ $dtr->id }})" class="text-blue-600 hover:underline">
+                                        {{ $dtr->date }} (Download)
+                                    </a>
+                                @else
+                                    No file
+                                @endif
+                            </td>
                             <td class="px-4 py-2 text-center">
                                 @switch(strtolower($dtr->remarks))
                                     @case('absent')
