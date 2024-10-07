@@ -663,6 +663,12 @@ class PersonalDataSheetTable extends Component
             'status_of_appointment' => '',
             'gov_service' => '',
             'sg_step' => '',
+            'pera' => '',
+            'branch' => '',
+            'leave_absence_wo_pay' => '',
+            'separation_date' => '',
+            'separation_cause' => '',
+            'remarks' => '',
         ];
     }
     public function toggleAddVoluntaryWorks(){
@@ -1281,6 +1287,12 @@ class PersonalDataSheetTable extends Component
             'status_of_appointment' => '',
             'gov_service' => '',
             'sg_step' => '',
+            'pera' => '',
+            'branch' => '',
+            'leave_absence_wo_pay' => '',
+            'separation_date' => '',
+            'separation_cause' => '',
+            'remarks' => '',
         ];
     }
     public function removeNewWorkExp($index){
@@ -1296,7 +1308,7 @@ class PersonalDataSheetTable extends Component
                     foreach ($this->workExperiences as $index => $exp) {
                         $validationRules = [
                             'workExperiences.'.$index.'.department' => 'required|string',
-                            'workExperiences.'.$index.'.monthly_salary' => 'required|string',
+                            'workExperiences.'.$index.'.monthly_salary' => 'required|numeric',
                             'workExperiences.'.$index.'.start_date' => 'required|date',
                             'workExperiences.'.$index.'.gov_service' => 'required',
                             'workExperiences.'.$index.'.status_of_appointment' => 'required|string',
@@ -1325,6 +1337,12 @@ class PersonalDataSheetTable extends Component
                                 'sg_step' => $exp['sg_step'],
                                 'status_of_appointment' => $exp['status_of_appointment'],
                                 'gov_service' => $exp['gov_service'],
+                                'pera' => $exp['pera'],
+                                'branch' => $exp['branch'],
+                                'leave_absence_wo_pay' => $exp['leave_absence_wo_pay'],
+                                'separation_date' => $exp['separation_date'],
+                                'separation_cause' => $exp['separation_cause'],
+                                'remarks' => $exp['remarks'],
                             ]);
                         }
                     }
@@ -1338,7 +1356,7 @@ class PersonalDataSheetTable extends Component
                     foreach ($this->newWorkExperiences as $index => $exp) {
                         $validationRules = [
                             'newWorkExperiences.'.$index.'.department' => 'required|numeric',
-                            'newWorkExperiences.'.$index.'.monthly_salary' => 'required|string',
+                            'newWorkExperiences.'.$index.'.monthly_salary' => 'required|numeric',
                             'newWorkExperiences.'.$index.'.start_date' => 'required|date',
                             'newWorkExperiences.'.$index.'.gov_service' => 'required',
                             'newWorkExperiences.'.$index.'.status_of_appointment' => 'required|string',
@@ -1364,6 +1382,12 @@ class PersonalDataSheetTable extends Component
                             'sg_step' => $exp['sg_step'],
                             'status_of_appointment' => $exp['status_of_appointment'],
                             'gov_service' => $exp['gov_service'],
+                            'pera' => $exp['pera'],
+                            'branch' => $exp['branch'],
+                            'leave_absence_wo_pay' => $exp['leave_absence_wo_pay'],
+                            'separation_date' => $exp['separation_date'],
+                            'separation_cause' => $exp['separation_cause'],
+                            'remarks' => $exp['remarks'],
                         ]);
                     }
                     $this->editWorkExp = null;
@@ -1376,9 +1400,8 @@ class PersonalDataSheetTable extends Component
                 }
             }
         } catch (Exception $e) {
-            $this->resetValidation();
             $this->dispatch('swal', [
-                'title' => "Work Experience update was unsuccessful!",
+                'title' => $e->getMessage(),
                 'icon' => 'error'
             ]);
             throw $e;
@@ -2372,45 +2395,45 @@ class PersonalDataSheetTable extends Component
 
     public function updatedESignature()
     {
-        // Generate a temporary URL for the selected image
+        // Check if a new file has been uploaded
         if ($this->e_signature) {
+            // Generate a temporary URL for the file
             $this->temporaryUrl = $this->e_signature->temporaryUrl();
         }
     }
 
     public function uploadSignature()
     {
+        // Validate the file (you can adjust the validation rules as needed)
         $this->validate([
-            'e_signature' => 'image|max:1024', // 1MB Max
+            'e_signature' => 'image|max:1024', // 1MB max size
         ]);
-    
-        // Get the existing e-signature record for the user
+
         $existingSignature = ESignature::where('user_id', Auth::id())->first();
 
-        // If the user already has an e-signature, delete the old file
+        // Delete the old signature if it exists
         if ($existingSignature && Storage::disk('public')->exists($existingSignature->file_path)) {
             Storage::disk('public')->delete($existingSignature->file_path);
         }
 
-        // Store the new uploaded image
-        $originalFilename = $this->e_signature->getClientOriginalName();
+        // Save the new signature
+        $filePath = $this->e_signature->store('signatures', 'public');
 
-        // Store the uploaded image with its original name (or custom name)
-        $filePath = $this->e_signature->storeAs('signatures', $originalFilename, 'public');
-
-        // Update or create the user's e-signature record with the new file
+        // Update or create the signature record in the database
         ESignature::updateOrCreate(
-            ['user_id' => Auth::id()], // Find the signature by user_id
-            ['file_path' => $filePath] // Update or create the file_path
+            ['user_id' => Auth::id()],
+            ['file_path' => $filePath]
         );
 
+        // Reset the file input and temporary URL
         $this->e_signature = null;
         $this->temporaryUrl = null;
-    
-        // Set a success message
+
+        // Display success message
         $this->dispatch('swal', [
             'title' => "E-Signature uploaded successfully!",
             'icon' => 'success'
         ]);
     }
+    
 }

@@ -55,6 +55,9 @@ class LeaveApplicationTable extends Component
     public $startDate;
     public $endDate;
 
+    public $openLeaveDetails = false;
+    public $leaveApplicationDetails;
+
     public $activeTab = 'pending';
 
     protected $rules = [
@@ -349,7 +352,7 @@ class LeaveApplicationTable extends Component
 
     public function exportPDF($leaveApplicationId)
     {
-        $leaveApplication = LeaveApplication::findOrFail($leaveApplicationId);
+        $leaveApplication = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
 
         $eSignature = ESignature::where('user_id', $leaveApplication->user_id)->first();
 
@@ -498,5 +501,16 @@ class LeaveApplicationTable extends Component
     public function setActiveTab($tab)
     {
         $this->activeTab = $tab;
+    }
+
+    public function showLeaveDetails($leaveApplicationId)
+    {
+        $this->leaveApplicationDetails = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
+        $this->openLeaveDetails = true;
+    }
+
+    public function closeLeaveDetails()
+    {
+        $this->openLeaveDetails = false;
     }
 }

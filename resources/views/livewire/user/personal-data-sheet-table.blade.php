@@ -1,5 +1,5 @@
 <div class="w-full" x-data="{
-    selectedTab: 'C1',
+    selectedTab: 'C2',
 }" x-cloak>
 
     <style>
@@ -233,32 +233,44 @@
 
                             <div class="w-full lg:w-2/4 md:w-full block">
                                 <div class="flex w-full sm:w-auto" style="height: 112px">
-                                    <p class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">Permanent Address</p>
-                                    <p class="custom-p w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200 text-xs" style="overflow: hidden;">
+                                    <p
+                                        class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">
+                                        Permanent Address</p>
+                                    <p class="custom-p w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200 text-xs"
+                                        style="overflow: hidden;">
                                         @php
-                                            $address1 = explode(',', $userData->p_house_street ?: '')
+                                            $address1 = explode(',', $userData->p_house_street ?: '');
                                         @endphp
                                         @foreach ($address1 as $add)
-                                            {{ $add != 'N/A' ? ($add . ' ') : ' ' }} 
+                                            {{ $add != 'N/A' ? $add . ' ' : ' ' }}
                                         @endforeach
                                         <br>
-                                        {{ $userData->permanent_selectedBarangay != 'N/A' ? $userData->permanent_selectedBarangay : '' }} {{ $userData->permanent_selectedCity != 'N/A' ? $userData->permanent_selectedCity : '' }} <br>
-                                        {{ $userData->permanent_selectedProvince != 'N/A' ? $userData->permanent_selectedProvince : '' }}, Philippines <br>
+                                        {{ $userData->permanent_selectedBarangay != 'N/A' ? $userData->permanent_selectedBarangay : '' }}
+                                        {{ $userData->permanent_selectedCity != 'N/A' ? $userData->permanent_selectedCity : '' }}
+                                        <br>
+                                        {{ $userData->permanent_selectedProvince != 'N/A' ? $userData->permanent_selectedProvince : '' }},
+                                        Philippines <br>
                                         {{ $userData->permanent_selectedZipcode != 'N/A' ? $userData->permanent_selectedZipcode : '' }}
                                     </p>
                                 </div>
                                 <div class="flex w-full sm:w-auto" style="height: 112px">
-                                    <p class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">Residential Address</p>
-                                    <p class="w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200 text-xs" style="overflow: hidden;">
+                                    <p
+                                        class="border border-gray-200 dark:border-slate-600 px-1 w-3/6 bg-gray-50 dark:bg-slate-700  py-2.5">
+                                        Residential Address</p>
+                                    <p class="w-full border border-gray-200 dark:border-slate-600 px-1 py-2.5 dark:text-gray-200 text-xs"
+                                        style="overflow: hidden;">
                                         @php
-                                            $address2 = explode(',', $userData->r_house_street ?: '')
+                                            $address2 = explode(',', $userData->r_house_street ?: '');
                                         @endphp
                                         @foreach ($address2 as $add)
-                                            {{ $add != 'N/A' ? ($add . ' ') : ' ' }} 
+                                            {{ $add != 'N/A' ? $add . ' ' : ' ' }}
                                         @endforeach
                                         <br>
-                                        {{ $userData->residential_selectedBarangay != 'N/A' ? $userData->residential_selectedBarangay : '' }} {{ $userData->residential_selectedCity != 'N/A' ? $userData->residential_selectedCity : '' }} <br>
-                                        {{ $userData->residential_selectedProvince != 'N/A' ? $userData->residential_selectedProvince : '' }}, Philippines <br>
+                                        {{ $userData->residential_selectedBarangay != 'N/A' ? $userData->residential_selectedBarangay : '' }}
+                                        {{ $userData->residential_selectedCity != 'N/A' ? $userData->residential_selectedCity : '' }}
+                                        <br>
+                                        {{ $userData->residential_selectedProvince != 'N/A' ? $userData->residential_selectedProvince : '' }},
+                                        Philippines <br>
                                         {{ $userData->residential_selectedZipcode != 'N/A' ? $userData->residential_selectedZipcode : '' }}
                                     </p>
                                 </div>
@@ -878,14 +890,15 @@
                                 <tbody class="">
                                     @foreach ($workExperience as $exp)
                                         <tr class="text-neutral-800 dark:text-neutral-200">
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
+                                            <td
+                                                class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
                                                 <div class="flex w-full items-center">
                                                     <div class="flex justify-center p-1 w-2/4">
-                                                        {{ $exp->start_date ? \Carbon\Carbon::parse($exp->start_date)->format('m/d/Y') : 'N/A'  }}
+                                                        {{ $exp->start_date ? \Carbon\Carbon::parse($exp->start_date)->format('m/d/Y') : 'N/A' }}
                                                     </div>
                                                     <strong>-</strong>
                                                     <div class="flex justify-center p-1 w-2/4">
-                                                        {{ $exp->end_date ? \Carbon\Carbon::parse($exp->end_date)->format('m/d/Y') : 'Present'  }}
+                                                        {{ $exp->end_date ? \Carbon\Carbon::parse($exp->end_date)->format('m/d/Y') : 'Present' }}
                                                     </div>
                                                 </div>
                                             </td>
@@ -972,16 +985,21 @@
                                 <tbody class="">
                                     @foreach ($voluntaryWorks as $voluntary)
                                         <tr>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $voluntary->org_name ?: 'N/A' }}</td>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $voluntary->org_address ?: 'N/A' }}</td>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
+                                            <td
+                                                class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
+                                                {{ $voluntary->org_name ?: 'N/A' }}</td>
+                                            <td
+                                                class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
+                                                {{ $voluntary->org_address ?: 'N/A' }}</td>
+                                            <td
+                                                class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
                                                 <div class="flex w-full items-center">
                                                     <div class="flex justify-center p-1 w-2/4">
-                                                        {{ $voluntary->start_date ? \Carbon\Carbon::parse($voluntary->start_date)->format('m/d/Y') : 'N/A'  }}
+                                                        {{ $voluntary->start_date ? \Carbon\Carbon::parse($voluntary->start_date)->format('m/d/Y') : 'N/A' }}
                                                     </div>
                                                     <strong>-</strong>
                                                     <div class="flex justify-center p-1 w-2/4">
-                                                        {{ $voluntary->end_date ? \Carbon\Carbon::parse($voluntary->end_date)->format('m/d/Y') : 'Present'  }}
+                                                        {{ $voluntary->end_date ? \Carbon\Carbon::parse($voluntary->end_date)->format('m/d/Y') : 'Present' }}
                                                     </div>
                                                 </div>
                                             </td>
@@ -1054,8 +1072,11 @@
                                 <tbody class="">
                                     @foreach ($lds as $ld)
                                         <tr class="text-neutral-800 dark:text-neutral-200">
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">{{ $ld->title }}</td>
-                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
+                                            <td
+                                                class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
+                                                {{ $ld->title }}</td>
+                                            <td
+                                                class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left w-1/5">
                                                 <div class="flex w-full items-center">
                                                     <div class="flex justify-center p-1 w-2/4">
                                                         {{ $ld->start_date ? \Carbon\Carbon::parse($ld->start_date)->format('m/d/Y') : 'N/A' }}
@@ -1999,18 +2020,21 @@
                                     </div>
 
                                     @if ($temporaryUrl)
-                                        <div class="mt-2 mb-2 border rounded-md">
-                                            <img src="{{ $temporaryUrl }}" alt="Temporary E-Signature"
-                                                class="rounded-md w-40 h-40" />
+                                        <!-- Show the text prompt when a file is selected -->
+                                        <div class="mt-2 mb-2 border rounded-md w-40 h-40">
+                                            <span class="text-blue-600 font-semibold">Click "Upload" to save the
+                                                signature</span>
                                         </div>
                                     @elseif ($eSignature && $eSignature->file_path)
-                                        <!-- Display the previously uploaded image if no new file is selected -->
+                                        <!-- Show the stored signature if it's already uploaded -->
                                         <div class="mt-2 mb-2 border rounded-md">
-                                            <img src="{{ asset('storage/' . $eSignature->file_path) }}"
+                                            <img src="{{ route('signature.file', basename($eSignature->file_path)) }}"
                                                 alt="E-Signature" class="rounded-md w-40 h-40" />
                                         </div>
                                     @else
+                                        <!-- Show a placeholder if no signature is uploaded yet -->
                                         <div class="mt-2 mb-2 border rounded-md w-40 h-40">
+                                            <span class="text-gray-500">No signature uploaded</span>
                                         </div>
                                     @endif
 
@@ -2021,7 +2045,9 @@
 
                                             <label for="e_signature"
                                                 class="cursor-pointer px-2 py-3 rounded-md bg-slate-200 dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 text-slate-600 dark:text-slate-300 mt-2 me-1">
-                                                Select an Image
+                                                <span wire:loading wire:target="e_signature">Loading...</span>
+                                                <span wire:loading.remove wire:target="e_signature">Select an
+                                                    Image</span>
                                             </label>
 
                                             @error('e_signature')
@@ -3275,8 +3301,11 @@
                                 </div>
 
                                 <div class="col-span-2 sm:col-span-1">
-                                    <label for="rating_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Rating</label>
-                                    <input type="number" step="0.01" id="rating_{{ $index }}" wire:model="eligibilities.{{ $index }}.rating" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                    <label for="rating_{{ $index }}"
+                                        class="block text-sm font-medium text-gray-700 dark:text-slate-400">Rating</label>
+                                    <input type="number" step="0.01" id="rating_{{ $index }}"
+                                        wire:model="eligibilities.{{ $index }}.rating"
+                                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                     @error('eligibilities.' . $index . '.rating')
                                         <span class="text-red-500 text-sm">The rating is required!</span>
                                     @enderror
@@ -3472,13 +3501,13 @@
                                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                                         <label class="inline-flex items-center">
                                             <input type="radio" id="gov_service_yes_{{ $index }}"
-                                                wire:model="workExperiences.{{ $index }}.gov_service"
+                                                wire:model.live="workExperiences.{{ $index }}.gov_service"
                                                 value="1" class="form-radio text-green-600">
                                             <span class="ml-2">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center ml-6">
                                             <input type="radio" id="gov_service_no_{{ $index }}"
-                                                wire:model="workExperiences.{{ $index }}.gov_service"
+                                                wire:model.live="workExperiences.{{ $index }}.gov_service"
                                                 value="0" class="form-radio text-green-600">
                                             <span class="ml-2">No</span>
                                         </label>
@@ -3548,7 +3577,7 @@
                                     <label for="monthly_salary_{{ $index }}"
                                         class="block text-sm font-medium text-gray-700 dark:text-slate-400">Monthly
                                         Salary</label>
-                                    <input type="number" id="monthly_salary_{{ $index }}"
+                                    <input type="number" step="0.01" id="monthly_salary_{{ $index }}"
                                         wire:model="workExperiences.{{ $index }}.monthly_salary"
                                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                 </div>
@@ -3562,6 +3591,54 @@
                                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700"
                                         placeholder="Format (00-0) / Increment">
                                 </div>
+
+                                @if($workExperiences[$index]['gov_service'])
+                                    <fieldset class="border border-gray-300 rounded-md pt-2 pl-2 pr-2 pb-4 col-span-2 grid grid-cols-2 gap-4">
+                                        <legend class="px-2">For Service Record</legend>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="pera_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Longevity Pay/Allowance</label>
+                                            <input type="text" id="pera_{{ $index }}"
+                                                wire:model="workExperiences.{{ $index }}.pera"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="branch_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Branch of Service</label>
+                                            <input type="text" id="branch_{{ $index }}"
+                                                wire:model="workExperiences.{{ $index }}.branch"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="leave_absence_wo_pay_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Leave/Absences W/O Pay</label>
+                                            <input type="text" id="leave_absence_wo_pay_{{ $index }}"
+                                                wire:model="workExperiences.{{ $index }}.leave_absence_wo_pay"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="remarks_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Remarks</label>
+                                            <input type="text" id="remarks_{{ $index }}"
+                                                wire:model="workExperiences.{{ $index }}.remarks"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="separation_date_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Separation Date</label>
+                                            <input type="date" id="separation_date_{{ $index }}"
+                                                wire:model="workExperiences.{{ $index }}.separation_date"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="separation_cause_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Separation Cause</label>
+                                            <input type="text" id="separation_cause_{{ $index }}"
+                                                wire:model="workExperiences.{{ $index }}.separation_cause"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                    </fieldset>
+                                @endif
 
                             </div>
                         @endforeach
@@ -3595,13 +3672,13 @@
                                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                                         <label class="inline-flex items-center">
                                             <input type="radio" id="gov_service_yes_{{ $index }}"
-                                                wire:model="newWorkExperiences.{{ $index }}.gov_service"
+                                                wire:model.live="newWorkExperiences.{{ $index }}.gov_service"
                                                 value="1" class="form-radio text-green-600">
                                             <span class="ml-2">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center ml-6">
                                             <input type="radio" id="gov_service_no_{{ $index }}"
-                                                wire:model="newWorkExperiences.{{ $index }}.gov_service"
+                                                wire:model.live="newWorkExperiences.{{ $index }}.gov_service"
                                                 value="0" class="form-radio text-green-600">
                                             <span class="ml-2">No</span>
                                         </label>
@@ -3685,6 +3762,54 @@
                                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700"
                                         placeholder="Format (00-0) / Increment">
                                 </div>
+
+                                @if($newWorkExperiences[$index]['gov_service'])
+                                    <fieldset class="border border-gray-300 rounded-md pt-2 pl-2 pr-2 pb-4 col-span-2 grid grid-cols-2 gap-4">
+                                        <legend class="px-2">For Service Record</legend>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="pera_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Longevity Pay/Allowance</label>
+                                            <input type="text" id="pera_{{ $index }}"
+                                                wire:model="newWorkExperiences.{{ $index }}.pera"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="branch_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Branch of Service</label>
+                                            <input type="text" id="branch_{{ $index }}"
+                                                wire:model="newWorkExperiences.{{ $index }}.branch"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="leave_absence_wo_pay_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Leave/Absences W/O Pay</label>
+                                            <input type="text" id="leave_absence_wo_pay_{{ $index }}"
+                                                wire:model="newWorkExperiences.{{ $index }}.leave_absence_wo_pay"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="remarks_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Remarks</label>
+                                            <input type="text" id="remarks_{{ $index }}"
+                                                wire:model="newWorkExperiences.{{ $index }}.remarks"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="separation_date_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Separation Date</label>
+                                            <input type="date" id="separation_date_{{ $index }}"
+                                                wire:model="newWorkExperiences.{{ $index }}.separation_date"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="separation_cause_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Separation Cause</label>
+                                            <input type="text" id="separation_cause_{{ $index }}"
+                                                wire:model="newWorkExperiences.{{ $index }}.separation_cause"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                    </fieldset>
+                                @endif
 
                             </div>
                         @endforeach
