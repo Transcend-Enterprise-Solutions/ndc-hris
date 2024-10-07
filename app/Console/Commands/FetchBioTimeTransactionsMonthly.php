@@ -44,8 +44,8 @@ class FetchBioTimeTransactionsMonthly extends Command
                 foreach ($response['data'] as $transactionData) {
                     Transaction::updateOrCreate(
                         ['id' => $transactionData['id']],
+                        ['emp_code' => $transactionData['emp_code']],
                         [
-                            'emp_code' => $transactionData['emp_code'],
                             'punch_time' => $transactionData['punch_time'],
                             'punch_state' => $transactionData['punch_state'],
                             'punch_state_display' => $transactionData['punch_state_display'],
