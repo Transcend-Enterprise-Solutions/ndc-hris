@@ -23,6 +23,7 @@ class DocRequestTable extends Component
         'employmentCompensation' => 'Certificate of Employment with Compensation',
         'leaveCredits' => 'Certificate of Leave Credits',
         'ipcrRatings' => 'Certificate of IPCR Ratings',
+        'serviceRecord' => 'Service Record',
     ];
 
     public $showRatingModal = false;
