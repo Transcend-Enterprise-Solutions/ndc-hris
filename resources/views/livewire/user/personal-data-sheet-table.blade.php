@@ -1,5 +1,5 @@
 <div class="w-full" x-data="{
-    selectedTab: 'C1',
+    selectedTab: 'C2',
 }" x-cloak>
 
     <style>
@@ -3472,13 +3472,13 @@
                                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                                         <label class="inline-flex items-center">
                                             <input type="radio" id="gov_service_yes_{{ $index }}"
-                                                wire:model="workExperiences.{{ $index }}.gov_service"
+                                                wire:model.live="workExperiences.{{ $index }}.gov_service"
                                                 value="1" class="form-radio text-green-600">
                                             <span class="ml-2">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center ml-6">
                                             <input type="radio" id="gov_service_no_{{ $index }}"
-                                                wire:model="workExperiences.{{ $index }}.gov_service"
+                                                wire:model.live="workExperiences.{{ $index }}.gov_service"
                                                 value="0" class="form-radio text-green-600">
                                             <span class="ml-2">No</span>
                                         </label>
@@ -3548,7 +3548,7 @@
                                     <label for="monthly_salary_{{ $index }}"
                                         class="block text-sm font-medium text-gray-700 dark:text-slate-400">Monthly
                                         Salary</label>
-                                    <input type="number" id="monthly_salary_{{ $index }}"
+                                    <input type="number" step="0.01" id="monthly_salary_{{ $index }}"
                                         wire:model="workExperiences.{{ $index }}.monthly_salary"
                                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                 </div>
@@ -3562,6 +3562,54 @@
                                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700"
                                         placeholder="Format (00-0) / Increment">
                                 </div>
+
+                                @if($workExperiences[$index]['gov_service'])
+                                    <fieldset class="border border-gray-300 rounded-md pt-2 pl-2 pr-2 pb-4 col-span-2 grid grid-cols-2 gap-4">
+                                        <legend class="px-2">For Service Record</legend>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="pera_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Longevity Pay/Allowance</label>
+                                            <input type="text" id="pera_{{ $index }}"
+                                                wire:model="workExperiences.{{ $index }}.pera"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="branch_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Branch of Service</label>
+                                            <input type="text" id="branch_{{ $index }}"
+                                                wire:model="workExperiences.{{ $index }}.branch"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="leave_absence_wo_pay_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Leave/Absences W/O Pay</label>
+                                            <input type="text" id="leave_absence_wo_pay_{{ $index }}"
+                                                wire:model="workExperiences.{{ $index }}.leave_absence_wo_pay"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="remarks_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Remarks</label>
+                                            <input type="text" id="remarks_{{ $index }}"
+                                                wire:model="workExperiences.{{ $index }}.remarks"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="separation_date_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Separation Date</label>
+                                            <input type="date" id="separation_date_{{ $index }}"
+                                                wire:model="workExperiences.{{ $index }}.separation_date"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="separation_cause_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Separation Cause</label>
+                                            <input type="text" id="separation_cause_{{ $index }}"
+                                                wire:model="workExperiences.{{ $index }}.separation_cause"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                    </fieldset>
+                                @endif
 
                             </div>
                         @endforeach
@@ -3595,13 +3643,13 @@
                                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                                         <label class="inline-flex items-center">
                                             <input type="radio" id="gov_service_yes_{{ $index }}"
-                                                wire:model="newWorkExperiences.{{ $index }}.gov_service"
+                                                wire:model.live="newWorkExperiences.{{ $index }}.gov_service"
                                                 value="1" class="form-radio text-green-600">
                                             <span class="ml-2">Yes</span>
                                         </label>
                                         <label class="inline-flex items-center ml-6">
                                             <input type="radio" id="gov_service_no_{{ $index }}"
-                                                wire:model="newWorkExperiences.{{ $index }}.gov_service"
+                                                wire:model.live="newWorkExperiences.{{ $index }}.gov_service"
                                                 value="0" class="form-radio text-green-600">
                                             <span class="ml-2">No</span>
                                         </label>
@@ -3685,6 +3733,54 @@
                                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700"
                                         placeholder="Format (00-0) / Increment">
                                 </div>
+
+                                @if($newWorkExperiences[$index]['gov_service'])
+                                    <fieldset class="border border-gray-300 rounded-md pt-2 pl-2 pr-2 pb-4 col-span-2 grid grid-cols-2 gap-4">
+                                        <legend class="px-2">For Service Record</legend>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="pera_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Longevity Pay/Allowance</label>
+                                            <input type="text" id="pera_{{ $index }}"
+                                                wire:model="newWorkExperiences.{{ $index }}.pera"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="branch_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Branch of Service</label>
+                                            <input type="text" id="branch_{{ $index }}"
+                                                wire:model="newWorkExperiences.{{ $index }}.branch"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="leave_absence_wo_pay_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Leave/Absences W/O Pay</label>
+                                            <input type="text" id="leave_absence_wo_pay_{{ $index }}"
+                                                wire:model="newWorkExperiences.{{ $index }}.leave_absence_wo_pay"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="remarks_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Remarks</label>
+                                            <input type="text" id="remarks_{{ $index }}"
+                                                wire:model="newWorkExperiences.{{ $index }}.remarks"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="separation_date_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Separation Date</label>
+                                            <input type="date" id="separation_date_{{ $index }}"
+                                                wire:model="newWorkExperiences.{{ $index }}.separation_date"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                        <div class="col-span-2 sm:col-span-1">
+                                            <label for="separation_cause_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Separation Cause</label>
+                                            <input type="text" id="separation_cause_{{ $index }}"
+                                                wire:model="newWorkExperiences.{{ $index }}.separation_cause"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                    </fieldset>
+                                @endif
 
                             </div>
                         @endforeach

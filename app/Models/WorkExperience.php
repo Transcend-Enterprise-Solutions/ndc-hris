@@ -22,6 +22,12 @@ class WorkExperience extends Model
         'sg_step',
         'status_of_appointment',
         'gov_service',
+        'pera',
+        'branch',
+        'leave_absence_wo_pay',
+        'separation_date',
+        'separation_cause',
+        'remarks',
     ];
 
     public function user()

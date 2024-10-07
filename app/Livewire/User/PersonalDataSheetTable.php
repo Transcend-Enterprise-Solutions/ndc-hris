@@ -663,6 +663,12 @@ class PersonalDataSheetTable extends Component
             'status_of_appointment' => '',
             'gov_service' => '',
             'sg_step' => '',
+            'pera' => '',
+            'branch' => '',
+            'leave_absence_wo_pay' => '',
+            'separation_date' => '',
+            'separation_cause' => '',
+            'remarks' => '',
         ];
     }
     public function toggleAddVoluntaryWorks(){
@@ -1281,6 +1287,12 @@ class PersonalDataSheetTable extends Component
             'status_of_appointment' => '',
             'gov_service' => '',
             'sg_step' => '',
+            'pera' => '',
+            'branch' => '',
+            'leave_absence_wo_pay' => '',
+            'separation_date' => '',
+            'separation_cause' => '',
+            'remarks' => '',
         ];
     }
     public function removeNewWorkExp($index){
@@ -1296,7 +1308,7 @@ class PersonalDataSheetTable extends Component
                     foreach ($this->workExperiences as $index => $exp) {
                         $validationRules = [
                             'workExperiences.'.$index.'.department' => 'required|string',
-                            'workExperiences.'.$index.'.monthly_salary' => 'required|string',
+                            'workExperiences.'.$index.'.monthly_salary' => 'required|numeric',
                             'workExperiences.'.$index.'.start_date' => 'required|date',
                             'workExperiences.'.$index.'.gov_service' => 'required',
                             'workExperiences.'.$index.'.status_of_appointment' => 'required|string',
@@ -1325,6 +1337,12 @@ class PersonalDataSheetTable extends Component
                                 'sg_step' => $exp['sg_step'],
                                 'status_of_appointment' => $exp['status_of_appointment'],
                                 'gov_service' => $exp['gov_service'],
+                                'pera' => $exp['pera'],
+                                'branch' => $exp['branch'],
+                                'leave_absence_wo_pay' => $exp['leave_absence_wo_pay'],
+                                'separation_date' => $exp['separation_date'],
+                                'separation_cause' => $exp['separation_cause'],
+                                'remarks' => $exp['remarks'],
                             ]);
                         }
                     }
@@ -1338,7 +1356,7 @@ class PersonalDataSheetTable extends Component
                     foreach ($this->newWorkExperiences as $index => $exp) {
                         $validationRules = [
                             'newWorkExperiences.'.$index.'.department' => 'required|numeric',
-                            'newWorkExperiences.'.$index.'.monthly_salary' => 'required|string',
+                            'newWorkExperiences.'.$index.'.monthly_salary' => 'required|numeric',
                             'newWorkExperiences.'.$index.'.start_date' => 'required|date',
                             'newWorkExperiences.'.$index.'.gov_service' => 'required',
                             'newWorkExperiences.'.$index.'.status_of_appointment' => 'required|string',
@@ -1364,6 +1382,12 @@ class PersonalDataSheetTable extends Component
                             'sg_step' => $exp['sg_step'],
                             'status_of_appointment' => $exp['status_of_appointment'],
                             'gov_service' => $exp['gov_service'],
+                            'pera' => $exp['pera'],
+                            'branch' => $exp['branch'],
+                            'leave_absence_wo_pay' => $exp['leave_absence_wo_pay'],
+                            'separation_date' => $exp['separation_date'],
+                            'separation_cause' => $exp['separation_cause'],
+                            'remarks' => $exp['remarks'],
                         ]);
                     }
                     $this->editWorkExp = null;
@@ -1376,9 +1400,8 @@ class PersonalDataSheetTable extends Component
                 }
             }
         } catch (Exception $e) {
-            $this->resetValidation();
             $this->dispatch('swal', [
-                'title' => "Work Experience update was unsuccessful!",
+                'title' => $e->getMessage(),
                 'icon' => 'error'
             ]);
             throw $e;

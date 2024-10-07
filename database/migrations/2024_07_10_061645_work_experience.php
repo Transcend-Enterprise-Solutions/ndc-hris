@@ -17,10 +17,16 @@ return new class extends Migration
             $table->string('toPresent')->nullable();
             $table->string('position')->nullable();
             $table->string('department')->nullable();
-            $table->string('monthly_salary')->nullable();
+            $table->double('monthly_salary')->nullable();
             $table->string('sg_step')->nullable();
             $table->string('status_of_appointment')->nullable();
             $table->boolean('gov_service')->default(0);
+            $table->double('pera')->nullable();
+            $table->string('branch')->nullable();
+            $table->integer('leave_absence_wo_pay')->nullable();
+            $table->date('separation_date')->nullable();
+            $table->string('separation_cause')->nullable();
+            $table->string('remarks')->nullable();
             $table->timestamps();
         });
     }
