@@ -58,11 +58,14 @@ class AdminDtrTable extends Component
 
     public function render()
     {
-
-        //sleep(3);
         $query = EmployeesDtr::query()
             ->join('users', 'employees_dtr.user_id', '=', 'users.id')
-            ->select('employees_dtr.*', 'users.name as user_name', 'users.emp_code');
+            ->join('user_data', 'users.id', '=', 'user_data.user_id')
+            ->select('employees_dtr.*', 'users.name as user_name', 
+                DB::raw("CASE 
+                    WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
+                    ELSE users.emp_code 
+                END as emp_code"));
 
         if ($this->searchTerm) {
             $query->where(function($q) {
@@ -85,7 +88,10 @@ class AdminDtrTable extends Component
         } elseif ($this->sortField === 'user.name') {
             $query->orderBy('users.name', $this->sortDirection);
         } elseif ($this->sortField === 'emp_code') {
-            $query->orderBy('users.emp_code', $this->sortDirection);
+            $query->orderByRaw("CASE 
+                WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
+                ELSE users.emp_code 
+            END " . $this->sortDirection);
         } else {
             $query->orderBy('employees_dtr.' . $this->sortField, $this->sortDirection);
         }
@@ -100,7 +106,12 @@ class AdminDtrTable extends Component
         $this->signatoryName = $signatoryName;
         $query = EmployeesDtr::query()
             ->join('users', 'employees_dtr.user_id', '=', 'users.id')
-            ->select('employees_dtr.*', 'users.name as user_name', 'users.emp_code')
+            ->join('user_data', 'users.id', '=', 'user_data.user_id')
+            ->select('employees_dtr.*', 'users.name as user_name', 
+                DB::raw("CASE 
+                    WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
+                    ELSE users.emp_code 
+                END as emp_code"))
             ->whereBetween('employees_dtr.date', [$this->startDate, $this->endDate]);
 
         // Apply the search term if it's set
@@ -123,6 +134,7 @@ class AdminDtrTable extends Component
             'endDate' => $this->endDate,
             'signatoryName' => $this->signatoryName,
         ]);
+
         $this->dispatch('swal', [
             'title' => 'DTR Exported Successfully!',
             'icon' => 'success'
@@ -131,7 +143,6 @@ class AdminDtrTable extends Component
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->output();
         }, 'dtr_report.pdf');
-
     }
     public function downloadFile($dtrId)
     {

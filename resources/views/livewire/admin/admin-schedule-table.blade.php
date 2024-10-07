@@ -22,7 +22,6 @@
         <!-- Table -->
         <div class="mt-4 overflow-x-auto">
             <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
-                
                 <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                     <tr class="whitespace-nowrap">
                         <th class="px-4 py-2 text-center">Employee ID</th>
@@ -35,23 +34,23 @@
                 </thead>
                 <tbody>
                     @foreach ($filteredSchedules as $schedule)
-                        <tr class="border-b dark:border-gray-600 whitespace-nowrap">
-                            <td class="px-4 py-2 text-center">{{ $schedule->emp_code }}</td>
-                            <td class="px-4 py-2 text-center">{{ $schedule->user?->name ?? 'No User Assigned' }}</td>
-                            <td class="px-4 py-2 text-center">
-                                {{ $this->getSortedWfhDays($schedule->wfh_days) }}
-                            </td>                            
-                            <td class="px-4 py-2 text-center">{{ $schedule->default_start_time }} - {{ $schedule->default_end_time }}</td>
-                            <td class="px-4 py-2 text-center">{{ $schedule->start_date->format('Y-m-d') }} - {{ $schedule->end_date->format('Y-m-d') }}</td>
-                            <td class="px-4 py-2 text-center">
-                                <button wire:click="edit({{ $schedule->id }})" class="text-indigo-600 hover:text-indigo-900 dark:text-blue-900 dark:hover:text-blue-800" title="Edit">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
-                                <button wire:click="confirmDelete({{ $schedule->id }})" class="ml-2 text-red-600 hover:text-red-900 dark:text-red-600 dark:hover:text-red-900" title="Delete">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
+                    <tr class="border-b dark:border-gray-600 whitespace-nowrap">
+                        <td class="px-4 py-2 text-center">{{ $this->getDisplayEmpCode($schedule->emp_code, $schedule->user?->appointment) }}</td>
+                        <td class="px-4 py-2 text-center">{{ $schedule->user?->name ?? 'No User Assigned' }}</td>
+                        <td class="px-4 py-2 text-center">
+                            {{ $this->getSortedWfhDays($schedule->wfh_days) }}
+                        </td>
+                        <td class="px-4 py-2 text-center">{{ $schedule->default_start_time }} - {{ $schedule->default_end_time }}</td>
+                        <td class="px-4 py-2 text-center">{{ $schedule->start_date->format('Y-m-d') }} - {{ $schedule->end_date->format('Y-m-d') }}</td>
+                        <td class="px-4 py-2 text-center">
+                            <button wire:click="edit({{ $schedule->id }})" class="text-indigo-600 hover:text-indigo-900 dark:text-blue-900 dark:hover:text-blue-800" title="Edit">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button wire:click="confirmDelete({{ $schedule->id }})" class="ml-2 text-red-600 hover:text-red-900 dark:text-red-600 dark:hover:text-red-900" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
