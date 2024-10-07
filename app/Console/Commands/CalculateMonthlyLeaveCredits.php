@@ -17,7 +17,7 @@ class CalculateMonthlyLeaveCredits extends Command
     public function handle()
     {
         // Get the just-ended month and year
-        $date = Carbon::now()->subMonth()->endOfMonth();
+        $date = Carbon::now();
         $month = $date->month;
         $year = $date->year;
 
@@ -32,7 +32,7 @@ class CalculateMonthlyLeaveCredits extends Command
         $this->info("Processing " . $users->count() . " active users for " . $date->format('F Y') . ".");
 
         foreach ($users as $user) {
-            // $currentVlBalance = LeaveCredits::where('user_id', $user->id)->value('vl_claimable_credits');
+            $currentVlBalance = LeaveCredits::where('user_id', $user->id)->value('vl_claimable_credits');
 
             $totalLateMinutes = EmployeesDtr::where('user_id', $user->id)
                 ->whereMonth('date', $month)
@@ -44,9 +44,9 @@ class CalculateMonthlyLeaveCredits extends Command
                     return $hours * 60 + $minutes;
                 });
 
-            // if ($currentVlBalance > 0) {
-            //     $totalLateMinutes = 0;
-            // }
+            if ($currentVlBalance > 0) {
+                $totalLateMinutes = 0;
+            }
 
             $totalLateTime = $this->convertMinutesToHoursAndMinutes($totalLateMinutes);
             $totalCreditsEarned = $this->calculateTotalCreditsEarned($totalLateMinutes);
