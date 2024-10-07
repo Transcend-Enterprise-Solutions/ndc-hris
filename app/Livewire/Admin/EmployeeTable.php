@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Exports\PDSExport;
+use App\Models\LearningAndDevelopment;
 use App\Models\PdsC4Answers;
 use Livewire\Component;
 use App\Models\User;
@@ -18,6 +19,9 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EmployeeTable extends Component
 {
@@ -609,4 +613,31 @@ class EmployeeTable extends Component
             ->where('question_letter', $qLetter)
             ->first();
     }    
+
+    public function downloadCertificate($documentId)
+    {
+        $document = LearningAndDevelopment::findOrFail($documentId);
+        $filePath = $document->certificate;
+        $fileName = basename($filePath);
+
+        if (!Storage::disk('public')->exists($filePath)) {
+            throw new NotFoundHttpException("The file does not exist.");
+        }
+
+        $fileSize = Storage::disk('public')->size($filePath);
+
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            'Content-Length' => $fileSize,
+        ];
+
+        return new StreamedResponse(function () use ($filePath) {
+            $stream = Storage::disk('public')->readStream($filePath);
+            fpassthru($stream);
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        }, 200, $headers);
+    }
 }

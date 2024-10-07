@@ -33,6 +33,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Livewire\WithFileUploads;
 use Illuminate\Http\UploadedFile;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PersonalDataSheetTable extends Component
 {
@@ -666,8 +668,8 @@ class PersonalDataSheetTable extends Component
             'pera' => '',
             'branch' => '',
             'leave_absence_wo_pay' => '',
-            'separation_date' => '',
-            'separation_cause' => '',
+            // 'separation_date' => '',
+            // 'separation_cause' => '',
             'remarks' => '',
         ];
     }
@@ -695,6 +697,7 @@ class PersonalDataSheetTable extends Component
             'no_of_hours' => '',
             'type_of_ld' => '',
             'conducted_by' => '',
+            'certificate' => null,
         ];
     }
     public function toggleAddSkills(){
@@ -1290,8 +1293,8 @@ class PersonalDataSheetTable extends Component
             'pera' => '',
             'branch' => '',
             'leave_absence_wo_pay' => '',
-            'separation_date' => '',
-            'separation_cause' => '',
+            // 'separation_date' => '',
+            // 'separation_cause' => '',
             'remarks' => '',
         ];
     }
@@ -1337,12 +1340,12 @@ class PersonalDataSheetTable extends Component
                                 'sg_step' => $exp['sg_step'],
                                 'status_of_appointment' => $exp['status_of_appointment'],
                                 'gov_service' => $exp['gov_service'],
-                                'pera' => $exp['pera'],
-                                'branch' => $exp['branch'],
-                                'leave_absence_wo_pay' => $exp['leave_absence_wo_pay'],
-                                'separation_date' => $exp['separation_date'],
-                                'separation_cause' => $exp['separation_cause'],
-                                'remarks' => $exp['remarks'],
+                                'pera' => $exp['gov_service'] ? $exp['pera'] : null,
+                                'branch' => $exp['gov_service'] ? $exp['branch'] : null,
+                                'leave_absence_wo_pay' => $exp['gov_service'] ? $exp['leave_absence_wo_pay'] : null,
+                                // 'separation_date' => $exp['separation_date'],
+                                // 'separation_cause' => $exp['separation_cause'],
+                                'remarks' => $exp['gov_service'] ? $exp['remarks'] : null,
                             ]);
                         }
                     }
@@ -1355,7 +1358,7 @@ class PersonalDataSheetTable extends Component
                 }else{
                     foreach ($this->newWorkExperiences as $index => $exp) {
                         $validationRules = [
-                            'newWorkExperiences.'.$index.'.department' => 'required|numeric',
+                            'newWorkExperiences.'.$index.'.department' => 'required',
                             'newWorkExperiences.'.$index.'.monthly_salary' => 'required|numeric',
                             'newWorkExperiences.'.$index.'.start_date' => 'required|date',
                             'newWorkExperiences.'.$index.'.gov_service' => 'required',
@@ -1371,6 +1374,8 @@ class PersonalDataSheetTable extends Component
                             $exp['end_date'] = null;
                         }
 
+                        $this->validate($validationRules);
+
                         WorkExperience::create([
                             'user_id' => $user->id,
                             'start_date' => $exp['start_date'],
@@ -1382,12 +1387,12 @@ class PersonalDataSheetTable extends Component
                             'sg_step' => $exp['sg_step'],
                             'status_of_appointment' => $exp['status_of_appointment'],
                             'gov_service' => $exp['gov_service'],
-                            'pera' => $exp['pera'],
-                            'branch' => $exp['branch'],
-                            'leave_absence_wo_pay' => $exp['leave_absence_wo_pay'],
-                            'separation_date' => $exp['separation_date'],
-                            'separation_cause' => $exp['separation_cause'],
-                            'remarks' => $exp['remarks'],
+                            'pera' => $exp['gov_service'] ? $exp['pera'] : null,
+                            'branch' => $exp['gov_service'] ? $exp['branch'] : null,
+                            'leave_absence_wo_pay' => $exp['gov_service'] ? $exp['leave_absence_wo_pay'] : null,
+                            // 'separation_date' => $exp['separation_date'],
+                            // 'separation_cause' => $exp['separation_cause'],
+                            'remarks' => $exp['gov_service'] ? $exp['remarks'] : null,
                         ]);
                     }
                     $this->editWorkExp = null;
@@ -1400,10 +1405,6 @@ class PersonalDataSheetTable extends Component
                 }
             }
         } catch (Exception $e) {
-            $this->dispatch('swal', [
-                'title' => $e->getMessage(),
-                'icon' => 'error'
-            ]);
             throw $e;
         }
     }
@@ -1525,8 +1526,14 @@ class PersonalDataSheetTable extends Component
             'no_of_hours' => '',
             'type_of_ld' => '',
             'conducted_by' => '',
+            'certificate' => null,
         ];
     }
+
+    public function removeFile($index){
+        $this->newLearnAndDevs[$index]['certificate'] = '';
+    }
+
     public function removeNewLearnAndDev($index){
         unset($this->newLearnAndDevs[$index]);
         $this->newLearnAndDevs = array_values($this->newLearnAndDevs);
@@ -1557,6 +1564,16 @@ class PersonalDataSheetTable extends Component
                 
                         $this->validate($validationRules);
 
+                        $filePath = null;
+                        if($ld['certificate']){
+                            if(!is_string($ld['certificate'])){
+                                $originalFilename = $ld['certificate']->getClientOriginalName();
+                                $filePath = $ld['certificate']->storeAs('ld-certificates', $originalFilename, 'public');
+                            }elseif(is_string($ld['certificate']) && $ld['certificate'] != null){
+                                $filePath = $ld['certificate'];
+                            }
+                        }
+
                         $ldRecord = $user->learningAndDevelopment->find($ld['id']);
                         if ($ldRecord) {
                             $ldRecord->update([
@@ -1567,6 +1584,7 @@ class PersonalDataSheetTable extends Component
                                 'type_of_ld' => $ld['type_of_ld'],
                                 'no_of_hours' => $ld['no_of_hours'],
                                 'conducted_by' => $ld['conducted_by'],
+                                'certificate' => $filePath,
                             ]);
                         }
                     }
@@ -1597,6 +1615,12 @@ class PersonalDataSheetTable extends Component
                 
                         $this->validate($validationRules);
 
+                        $filePath = null;
+                        if($ld['certificate']){
+                            $originalFilename = $ld['certificate']->getClientOriginalName();
+                            $filePath = $ld['certificate']->storeAs('ld-certificates', $originalFilename, 'public');
+                        }
+
                         LearningAndDevelopment::create([
                             'user_id' => $user->id,
                             'start_date' => $ld['start_date'],
@@ -1606,6 +1630,7 @@ class PersonalDataSheetTable extends Component
                             'type_of_ld' => $ld['type_of_ld'],
                             'no_of_hours' => $ld['no_of_hours'],
                             'conducted_by' => $ld['conducted_by'],
+                            'certificate' => $filePath,
                         ]);
                     }
                     $this->editLearnDev = null;
@@ -2434,6 +2459,33 @@ class PersonalDataSheetTable extends Component
             'title' => "E-Signature uploaded successfully!",
             'icon' => 'success'
         ]);
+    }
+
+    public function downloadCertificate($documentId)
+    {
+        $document = LearningAndDevelopment::findOrFail($documentId);
+        $filePath = $document->certificate;
+        $fileName = basename($filePath);
+
+        if (!Storage::disk('public')->exists($filePath)) {
+            throw new NotFoundHttpException("The file does not exist.");
+        }
+
+        $fileSize = Storage::disk('public')->size($filePath);
+
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            'Content-Length' => $fileSize,
+        ];
+
+        return new StreamedResponse(function () use ($filePath) {
+            $stream = Storage::disk('public')->readStream($filePath);
+            fpassthru($stream);
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        }, 200, $headers);
     }
     
 }

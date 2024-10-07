@@ -967,7 +967,13 @@
                                                 class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase">
                                                 Type of LD</th>
                                             <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase"
-                                                width="20%">Conducted/Sponsored By</th>
+                                                width="20%">
+                                                Conducted/Sponsored By
+                                            </th>
+                                            <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase"
+                                                width="20%">
+                                                Certificate
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody class="">
@@ -994,10 +1000,18 @@
                                                     {{ $ld->no_of_hours ?: 'N/A' }}</td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
-                                                    {{ $ld->type_of_ld ?: 'N/A' }}</td>
+                                                    {{ $ld->type_of_ld ?: 'N/A' }}
+                                                </td>
                                                 <td
                                                     class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
                                                     {{ $ld->conducted_by ?: 'N/A' }}
+                                                </td>
+                                                <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
+                                                    @php
+                                                        $fileName = $ld->certificate ? basename($ld->certificate) : 'N/A';
+                                                        $truncatedFileName = strlen($fileName) > 15 ? substr($fileName, 0, 15) . '...' : $fileName;
+                                                    @endphp
+                                                    <span class="{{ $ld->certificate ? 'text-blue-500 cursor-pointer' : '' }}" @if($ld->certificate)wire:click='downloadCertificate({{ $ld->id }})'@endif>{{ $truncatedFileName }}</span>
                                                 </td>
                                             </tr>
                                         @endforeach

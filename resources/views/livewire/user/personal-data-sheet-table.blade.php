@@ -1,5 +1,5 @@
 <div class="w-full" x-data="{
-    selectedTab: 'C2',
+    selectedTab: 'C1',
 }" x-cloak>
 
     <style>
@@ -1066,7 +1066,13 @@
                                             class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase">
                                             Type of LD</th>
                                         <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase"
-                                            width="20%">Conducted/Sponsored By</th>
+                                            width="20%">
+                                            Conducted/Sponsored By
+                                        </th>
+                                        <th class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 font-medium text-left uppercase"
+                                            width="20%">
+                                            Certificate
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody class="">
@@ -1096,8 +1102,15 @@
                                             <td
                                                 class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
                                                 {{ $ld->conducted_by ?: 'N/A' }}
+                                            </td>
+                                            <td class="p-1 border-2 border-gray-200 dark:border-slate-600 dark:text-gray-200 text-left">
+                                                @php
+                                                    $fileName = $ld->certificate ? basename($ld->certificate) : 'N/A';
+                                                    $truncatedFileName = strlen($fileName) > 15 ? substr($fileName, 0, 15) . '...' : $fileName;
+                                                @endphp
+                                                <span class="{{ $ld->certificate ? 'text-blue-500 cursor-pointer' : '' }}" @if($ld->certificate)wire:click='downloadCertificate({{ $ld->id }})'@endif>{{ $truncatedFileName }}</span>
                                                 <i title="Delete"
-                                                    class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1  mr-1 cursor-pointer"
+                                                    class="fas fa-trash text-red-500 hover:text-red-700 float-right mt-1 mr-1 cursor-pointer"
                                                     wire:click="toggleDelete('ld', {{ $ld->id }})"></i>
                                             </td>
                                         </tr>
@@ -3598,7 +3611,7 @@
                                         <div class="col-span-2 sm:col-span-1">
                                             <label for="pera_{{ $index }}"
                                                 class="block text-sm font-medium text-gray-700 dark:text-slate-400">Longevity Pay/Allowance</label>
-                                            <input type="text" id="pera_{{ $index }}"
+                                            <input type="number" step="0.01" id="pera_{{ $index }}"
                                                 wire:model="workExperiences.{{ $index }}.pera"
                                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                         </div>
@@ -3612,7 +3625,7 @@
                                         <div class="col-span-2 sm:col-span-1">
                                             <label for="leave_absence_wo_pay_{{ $index }}"
                                                 class="block text-sm font-medium text-gray-700 dark:text-slate-400">Leave/Absences W/O Pay</label>
-                                            <input type="text" id="leave_absence_wo_pay_{{ $index }}"
+                                            <input type="number" id="leave_absence_wo_pay_{{ $index }}"
                                                 wire:model="workExperiences.{{ $index }}.leave_absence_wo_pay"
                                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                         </div>
@@ -3623,7 +3636,7 @@
                                                 wire:model="workExperiences.{{ $index }}.remarks"
                                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                         </div>
-                                        <div class="col-span-2 sm:col-span-1">
+                                        {{-- <div class="col-span-2 sm:col-span-1">
                                             <label for="separation_date_{{ $index }}"
                                                 class="block text-sm font-medium text-gray-700 dark:text-slate-400">Separation Date</label>
                                             <input type="date" id="separation_date_{{ $index }}"
@@ -3636,7 +3649,7 @@
                                             <input type="text" id="separation_cause_{{ $index }}"
                                                 wire:model="workExperiences.{{ $index }}.separation_cause"
                                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                        </div>
+                                        </div> --}}
                                     </fieldset>
                                 @endif
 
@@ -3769,7 +3782,7 @@
                                         <div class="col-span-2 sm:col-span-1">
                                             <label for="pera_{{ $index }}"
                                                 class="block text-sm font-medium text-gray-700 dark:text-slate-400">Longevity Pay/Allowance</label>
-                                            <input type="text" id="pera_{{ $index }}"
+                                            <input type="number" step="0.01" id="pera_{{ $index }}"
                                                 wire:model="newWorkExperiences.{{ $index }}.pera"
                                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                         </div>
@@ -3783,7 +3796,7 @@
                                         <div class="col-span-2 sm:col-span-1">
                                             <label for="leave_absence_wo_pay_{{ $index }}"
                                                 class="block text-sm font-medium text-gray-700 dark:text-slate-400">Leave/Absences W/O Pay</label>
-                                            <input type="text" id="leave_absence_wo_pay_{{ $index }}"
+                                            <input type="number" id="leave_absence_wo_pay_{{ $index }}"
                                                 wire:model="newWorkExperiences.{{ $index }}.leave_absence_wo_pay"
                                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                         </div>
@@ -3794,7 +3807,7 @@
                                                 wire:model="newWorkExperiences.{{ $index }}.remarks"
                                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                         </div>
-                                        <div class="col-span-2 sm:col-span-1">
+                                        {{-- <div class="col-span-2 sm:col-span-1">
                                             <label for="separation_date_{{ $index }}"
                                                 class="block text-sm font-medium text-gray-700 dark:text-slate-400">Separation Date</label>
                                             <input type="date" id="separation_date_{{ $index }}"
@@ -3807,7 +3820,7 @@
                                             <input type="text" id="separation_cause_{{ $index }}"
                                                 wire:model="newWorkExperiences.{{ $index }}.separation_cause"
                                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
-                                        </div>
+                                        </div> --}}
                                     </fieldset>
                                 @endif
 
@@ -4107,9 +4120,13 @@
                                     <label for="type_{{ $index }}"
                                         class="block text-sm font-medium text-gray-700 dark:text-slate-400">Type of
                                         LD</label>
-                                    <input type="text" id="type_{{ $index }}"
-                                        wire:model="learnAndDevs.{{ $index }}.type_of_ld"
+                                    <select name="ld_type" id="" wire:model="learnAndDevs.{{ $index }}.type_of_ld" 
                                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        <option value="">Select type of LD</option>
+                                        <option value="Supervisory">Supervisory</option>
+                                        <option value="Technical">Technical</option>
+                                        <option value="Leadership">Leadership</option>
+                                    </select>
                                     @error('learnAndDevs.' . $index . '.type_of_ld')
                                         <span class="text-red-500 text-sm">The type of ld is required!</span>
                                     @enderror
@@ -4137,11 +4154,11 @@
                                             class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700 {{ $learnAndDevs[$index]['toPresent'] ? 'hidden' : '' }}">
                                         <div
                                             class="flex items-center justify-center gap-2 mr-4 {{ $learnAndDevs[$index]['toPresent'] ? 'flex-row mt-4' : 'flex-col' }}">
+                                            <label for="to_{{ $index }}"
+                                            class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
                                             <input type="checkbox" id="to_{{ $index }}"
                                                 wire:model.live="learnAndDevs.{{ $index }}.toPresent"
                                                 value="Present" @if ($learnAndDevs[$index]['toPresent']) checked @endif>
-                                            <label for="to_{{ $index }}"
-                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
                                         </div>
                                     </div>
                                     @error('learnAndDevs.' . $index . '.end_date' || 'learnAndDevs.' . $index .
@@ -4175,6 +4192,41 @@
                                     @enderror
                                 </div>
 
+                                  <!-- File upload section -->
+                                  <div class="flex flex-col items-center justify-center w-full col-span-2 mt-4 md:mt-0">
+                                    <label for="dropzone-file{{ $index }}"
+                                        class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <i class="bi bi-cloud-arrow-up" style="font-size: 2rem;"></i>
+                                            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span
+                                                    class="font-semibold">Click
+                                                    to upload</span></p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">PDF</p>
+                                        </div>
+                                        <input id="dropzone-file{{ $index }}" type="file" wire:model="learnAndDevs.{{ $index }}.certificate"
+                                            class="hidden" accept="application/pdf" />
+                                    </label>
+
+                                    <!-- Display selected files -->
+                                    @if ($learnAndDevs[$index]['certificate'])
+                                        <div class="mt-4">
+                                            <ul class="list-disc list-inside">
+                                                <li class="flex items-center text-md text-gray-700 dark:text-gray-300">
+                                                    @if(is_string($learnAndDevs[$index]['certificate']))
+                                                        {{ $learnAndDevs[$index]['certificate'] ? basename($learnAndDevs[$index]['certificate']) : '' }} 
+                                                    @else
+                                                        {{ $learnAndDevs[$index]['certificate']->getClientOriginalName() }}
+                                                    @endif
+                                                    <button type="button" wire:click="removeFile({{ $index }})"
+                                                        class="ml-2 text-red-500">
+                                                        &times;
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    @endif
+                                </div>
+
                             </div>
                         @endforeach
                     @else
@@ -4203,9 +4255,13 @@
                                         <i class="fas fa-times hidden sm:flex cursor-pointer text-red-500 hover:text-red-700 float-right mr-1"
                                             wire:click="removeNewLearnAndDev({{ $index }})"></i>
                                     </label>
-                                    <input type="text" id="type_{{ $index }}"
-                                        wire:model="newLearnAndDevs.{{ $index }}.type_of_ld"
+                                    <select name="ld_type" id="" wire:model="newLearnAndDevs.{{ $index }}.type_of_ld" 
                                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
+                                        <option value="">Select type of LD</option>
+                                        <option value="Supervisory">Supervisory</option>
+                                        <option value="Technical">Technical</option>
+                                        <option value="Leadership">Leadership</option>
+                                    </select>
                                     @error('newLearnAndDevs.' . $index . '.type_of_ld')
                                         <span class="text-red-500 text-sm">The type of ld is required!</span>
                                     @enderror
@@ -4233,11 +4289,11 @@
                                             class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700 {{ $newLearnAndDevs[$index]['toPresent'] ? 'hidden' : '' }}">
                                         <div
                                             class="flex items-center justify-center gap-2 mr-4 {{ $newLearnAndDevs[$index]['toPresent'] ? 'flex-row mt-4' : 'flex-col' }}">
+                                            <label for="to_{{ $index }}"
+                                            class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
                                             <input type="checkbox" id="to_{{ $index }}"
                                                 wire:model.live="newLearnAndDevs.{{ $index }}.toPresent"
                                                 value="Present">
-                                            <label for="to_{{ $index }}"
-                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
                                         </div>
                                     </div>
                                     @error('newLearnAndDevs.' . $index . '.end_date' || 'newLearnAndDevs.' . $index .
@@ -4269,6 +4325,37 @@
                                     @error('newLearnAndDevs.' . $index . '.conducted_by')
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
+                                </div>
+
+                                <!-- File upload section -->
+                                <div class="flex flex-col items-center justify-center w-full col-span-2 mt-4 md:mt-0">
+                                    <label for="dropzone-file{{ $index }}"
+                                        class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <i class="bi bi-cloud-arrow-up" style="font-size: 2rem;"></i>
+                                            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span
+                                                    class="font-semibold">Click
+                                                    to upload</span></p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">PDF</p>
+                                        </div>
+                                        <input id="dropzone-file{{ $index }}" type="file" wire:model="newLearnAndDevs.{{ $index }}.certificate"
+                                            class="hidden" accept="application/pdf" />
+                                    </label>
+
+                                    <!-- Display selected files -->
+                                    @if ($newLearnAndDevs[$index]['certificate'])
+                                        <div class="mt-4">
+                                            <ul class="list-disc list-inside">
+                                                <li class="flex items-center text-md text-gray-700 dark:text-gray-300">
+                                                    {{ $newLearnAndDevs[$index]['certificate']->getClientOriginalName() }}
+                                                    <button type="button" wire:click="removeFile({{ $index }})"
+                                                        class="ml-2 text-red-500">
+                                                        &times;
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    @endif
                                 </div>
 
                             </div>

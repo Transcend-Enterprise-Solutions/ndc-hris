@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('no_of_hours');
             $table->string('type_of_ld');
             $table->string('conducted_by');
+            $table->string('certificate');
             $table->timestamps();
         });
     }

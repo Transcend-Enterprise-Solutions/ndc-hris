@@ -20,6 +20,7 @@ class LearningAndDevelopment extends Model
         'no_of_hours',
         'type_of_ld',
         'conducted_by',
+        'certificate',
     ];
 
     public function user()
