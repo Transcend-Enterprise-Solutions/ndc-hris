@@ -47,24 +47,23 @@ class AdminScheduleTable extends Component
 
 
     public function filterSchedules()
-    {   
+    {
         $now = Carbon::now()->startOfDay();
-        $activePeriod = Carbon::now()->subDays(30)->startOfDay(); // Consider schedules active for 30 days after start date
     
         return DTRSchedule::with('user')
-            ->when($this->selectedTab, function ($query) use ($now, $activePeriod) {
+            ->when($this->selectedTab, function ($query) use ($now) {
                 switch ($this->selectedTab) {
                     case 'current':
                         return $query->where('start_date', '<=', $now)
-                                     ->where('start_date', '>=', $activePeriod);
+                                     ->where('end_date', '>=', $now);
                     case 'incoming':
                         return $query->where('start_date', '>', $now);
                     case 'expired':
-                        return $query->where('start_date', '<', $activePeriod);
+                        return $query->where('end_date', '<', $now);
                 }
             })
             ->when($this->selectedTab === 'expired', function ($query) {
-                return $query->orderBy('start_date', 'desc');
+                return $query->orderBy('end_date', 'desc');
             }, function ($query) {
                 return $query->orderBy('start_date', 'asc');
             })
