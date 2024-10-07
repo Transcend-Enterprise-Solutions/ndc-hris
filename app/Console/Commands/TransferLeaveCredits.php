@@ -37,21 +37,18 @@ class TransferLeaveCredits extends Command
                 [
                     'vl_total_credits' => 0,
                     'sl_total_credits' => 0,
-                    // 'spl_total_credits' => 0,
                     'vl_claimable_credits' => 0,
                     'sl_claimable_credits' => 0,
-                    // 'spl_claimable_credits' => 0,
                 ]
             );
 
-            // Update credits based on the calculation
+            // Update only Vacation Leave (VL) and Sick Leave (SL) based on credits earned
             $leaveCredits->vl_total_credits += $leaveCreditsEarned;
             $leaveCredits->sl_total_credits += $leaveCreditsEarned;
-            // $leaveCredits->spl_total_credits += $leaveCreditsEarned;
 
+            // Update claimable credits (if needed for current calculation period)
             $leaveCredits->vl_claimable_credits += $leaveCreditsEarned;
             $leaveCredits->sl_claimable_credits += $leaveCreditsEarned;
-            // $leaveCredits->spl_claimable_credits += $leaveCreditsEarned;
 
             $leaveCredits->save();
         }
