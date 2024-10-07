@@ -8,11 +8,11 @@
 
         </div>
 
-        <div class="sm:flex sm:justify-between sm:items-center mb-8">
+        {{-- <div class="sm:flex sm:justify-between sm:items-center mb-8">
 
             @livewire('user.leave-monetization-table')
 
-        </div>
+        </div> --}}
 
     </div>
 </x-app-layout>
