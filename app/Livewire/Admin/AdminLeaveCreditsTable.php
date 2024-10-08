@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\LeaveCredits;
 use Livewire\WithPagination;
 use App\Models\User;
+use Carbon\Carbon;
 
 class AdminLeaveCreditsTable extends Component
 {
@@ -27,6 +28,7 @@ class AdminLeaveCreditsTable extends Component
     public $ctoClaimedCredits;
     public $selectedEmployeeId = null;
     public $processedEmployees = [];
+    public $credits_inputted;
 
     public function openInputCredits()
     {
@@ -103,6 +105,9 @@ class AdminLeaveCreditsTable extends Component
         // Update Vacation Leave credits
         if (!is_null($this->vlClaimableCredits)) {
             $leaveCredits->vl_claimable_credits += $this->vlClaimableCredits;
+
+            $leaveCredits->vlbalance_brought_forward = $this->vlClaimableCredits; // Store inputted credits
+            $leaveCredits->date_forwarded = Carbon::now(); // Store current date
         }
         if (!is_null($this->vlClaimedCredits)) {
             $leaveCredits->vl_claimed_credits += $this->vlClaimedCredits;
@@ -112,6 +117,9 @@ class AdminLeaveCreditsTable extends Component
         // Update Sick Leave credits
         if (!is_null($this->slClaimableCredits)) {
             $leaveCredits->sl_claimable_credits += $this->slClaimableCredits;
+
+            $leaveCredits->slbalance_brought_forward = $this->slClaimableCredits; // Store inputted credits
+            $leaveCredits->date_forwarded = Carbon::now(); // Store current date
         }
         if (!is_null($this->slClaimedCredits)) {
             $leaveCredits->sl_claimed_credits += $this->slClaimedCredits;
@@ -160,6 +168,9 @@ class AdminLeaveCreditsTable extends Component
             $this->slClaimableCredits = $this->editEmployeeCredits->sl_claimable_credits;
             $this->splClaimableCredits = $this->editEmployeeCredits->spl_claimable_credits;
             $this->ctoClaimableCredits = $this->editEmployeeCredits->cto_claimable_credits;
+
+            $this->credits_inputted = $this->editEmployeeCredits->credits_inputted;
+
             $this->selectedEmployeeId = $employeeId;
         } else {
             session()->flash('error', 'Leave credits not found for the selected employee.');
