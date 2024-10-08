@@ -1709,21 +1709,26 @@
                                 <!-- Provinces Dropdown -->
                                 <div class="relative inline-block text-left w-full">
                                     <button wire:click="toggleDropdownProvince"
-                                        class="w-full mr-4 p-2 mb-4 text-left text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 rounded-lg border border-gray-400 hover:bg-gray-200 dark:hover:bg-slate-600 focus:outline-none"
+                                        class="w-full mr-4 p-2 mb-4 text-left text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 
+                                        transition-colors duration-200 rounded-lg border border-gray-400 hover:bg-gray-200 
+                                        dark:hover:bg-slate-600 focus:outline-none
+                                        {{ $dropdownForProvinceOpen ? 'bg-gray-100 dark:bg-gray-800' : '' }}"
                                         type="button">
-                                        Filter by Province
+                                        Group by Province
                                         <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
                                     </button>
                                     @if ($dropdownForProvinceOpen)
+                                    <div class="w-full absolute z-20">
                                         <div
-                                            class="absolute z-20 w-full p-3 bg-gray-50 rounded-lg border border-gray-400 shadow-md dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
+                                            class="w-full p-3 rounded-lg border border-gray-400 shadow-md bg-gray-100 dark:bg-gray-800
+                                             max-h-60 overflow-y-auto scrollbar-thin1">
                                             <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Province
                                             </h6>
                                             <ul class="space-y-2 text-sm">
                                                 <li class="flex items-center">
                                                     <input id="select-all-provinces" type="checkbox"
                                                         wire:model.live="selectAllProvinces"
-                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                                                     <label for="select-all-provinces"
                                                         class="ml-2 text-gray-900 dark:text-gray-300">Select
                                                         All</label>
@@ -1733,34 +1738,41 @@
                                                         <input id="province-{{ $province->province_description }}"
                                                             type="checkbox" wire:model.live="selectedProvinces"
                                                             value="{{ $province->province_description }}"
-                                                            class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                            class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                                                         <label for="province-{{ $province->province_description }}"
                                                             class="ml-2 text-gray-900 dark:text-gray-300">{{ $province->province_description }}</label>
                                                     </li>
                                                 @endforeach
                                             </ul>
                                         </div>
+                                        <div class="h-3 w-full"></div>
+                                    </div>
                                     @endif
                                 </div>
 
                                 <!-- Cities Dropdown -->
                                 <div class="relative inline-block text-left w-full">
                                     <button wire:click="toggleDropdownCity"
-                                        class="w-full mr-4 p-2 mb-4 text-left text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 rounded-lg border border-gray-400 hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600"
+                                        class="w-full mr-4 p-2 mb-4 text-left text-sm font-medium tracking-wide text-neutral-800 
+                                        dark:text-neutral-200 transition-colors duration-200 rounded-lg border border-gray-400 
+                                        hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600
+                                        {{ $dropdownForCityOpen ? 'bg-gray-100 dark:bg-gray-800' : '' }}"
                                         type="button">
-                                        Filter by City
+                                        Group by City
                                         <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
                                     </button>
                                     @if ($dropdownForCityOpen)
+                                    <div class="w-full absolute z-20">
                                         <div
-                                            class="absolute z-20 w-full p-3 bg-gray-50 rounded-lg border border-gray-400 shadow-md dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
+                                            class="w-full p-3 rounded-lg border border-gray-400 shadow-md bg-gray-100 dark:bg-gray-800
+                                             max-h-60 overflow-y-auto scrollbar-thin1">
                                             <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">City
                                             </h6>
                                             <ul class="space-y-2 text-sm">
                                                 <li class="flex items-center">
                                                     <input id="select-all-cities" type="checkbox"
                                                         wire:model.live="selectAllCities"
-                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                                                     <label for="select-all-cities"
                                                         class="ml-2 text-gray-900 dark:text-gray-300">Select
                                                         All</label>
@@ -1770,34 +1782,41 @@
                                                         <input id="city-{{ $city->city_municipality_description }}"
                                                             type="checkbox" wire:model.live="selectedCities"
                                                             value="{{ $city->city_municipality_description }}"
-                                                            class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                            class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                                                         <label for="city-{{ $city->city_municipality_description }}"
                                                             class="ml-2 text-gray-900 dark:text-gray-300">{{ $city->city_municipality_description }}</label>
                                                     </li>
                                                 @endforeach
                                             </ul>
                                         </div>
+                                        <div class="h-3 w-full"></div>
+                                    </div>
                                     @endif
                                 </div>
 
                                 <!-- Barangay Dropdown -->
                                 <div class="relative inline-block text-left w-full">
                                     <button wire:click="toggleDropdownBarangay"
-                                        class="w-full mr-4 p-2 mb-4 text-left text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200 transition-colors duration-200 rounded-lg border border-gray-400 hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600"
+                                        class="w-full mr-4 p-2 mb-4 text-left text-sm font-medium tracking-wide text-neutral-800 
+                                        dark:text-neutral-200 transition-colors duration-200 rounded-lg border 
+                                        border-gray-400 hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600
+                                        {{ $dropdownForBarangayOpen ? 'bg-gray-100 dark:bg-gray-800' : '' }}"
                                         type="button">
-                                        Filter by Barangay
+                                        Group by Barangay
                                         <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
                                     </button>
                                     @if ($dropdownForBarangayOpen)
+                                    <div class="w-full absolute z-20">
                                         <div
-                                            class="absolute z-20 w-full p-3 bg-gray-50 rounded-lg border border-gray-400 shadow-md dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
+                                            class="w-full p-3 rounded-lg border border-gray-400 shadow-md bg-gray-100 dark:bg-gray-800
+                                             max-h-60 overflow-y-auto scrollbar-thin1">
                                             <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Barangay
                                             </h6>
                                             <ul class="space-y-2 text-sm">
                                                 <li class="flex items-center">
                                                     <input id="select-all-barangays" type="checkbox"
                                                         wire:model.live="selectAllBarangays"
-                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                                                     <label for="select-all-barangays"
                                                         class="ml-2 text-gray-900 dark:text-gray-300">Select
                                                         All</label>
@@ -1807,13 +1826,15 @@
                                                         <input id="barangay-{{ $barangay->barangay_description }}"
                                                             type="checkbox" wire:model.live="selectedBarangays"
                                                             value="{{ $barangay->barangay_description }}"
-                                                            class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                            class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                                                         <label for="barangay-{{ $barangay->barangay_description }}"
                                                             class="ml-2 text-gray-900 dark:text-gray-300">{{ $barangay->barangay_description }}</label>
                                                     </li>
                                                 @endforeach
                                             </ul>
                                         </div>
+                                        <div class="h-3 w-full"></div>
+                                    </div>
                                     @endif
                                 </div>
 
@@ -1823,15 +1844,17 @@
                                         class="w-full mr-4 p-2 mb-4 text-left
                                                 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200
                                                 transition-colors duration-200 rounded-lg border border-gray-400
-                                                hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600"
+                                                hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600
+                                                {{ $dropdownForCivilStatusOpen ? 'bg-gray-100 dark:bg-gray-800' : '' }}"
                                         type="button">
-                                        Filter by Civil Status
+                                        Group by Civil Status
                                         <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
                                     </button>
                                     @if ($dropdownForCivilStatusOpen)
+                                    <div class="w-full absolute z-20">
                                         <div
-                                            class="absolute z-20 w-full p-3 bg-gray-50 rounded-lg border border-gray-400
-                                                shadow-md dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
+                                            class="w-full p-3 rounded-lg border border-gray-400
+                                                shadow-md bg-gray-100 dark:bg-gray-800 max-h-60 overflow-y-auto scrollbar-thin1">
                                             <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
                                                 Civil Status
                                             </h6>
@@ -1839,33 +1862,35 @@
                                                 <li class="flex items-center">
                                                     <input id="single" type="checkbox"
                                                         wire:model.live="selectedCivilStatuses" value="Single"
-                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                                                     <label for="single"
                                                         class="ml-2 text-gray-900 dark:text-gray-300">Single</label>
                                                 </li>
                                                 <li class="flex items-center">
                                                     <input id="married" type="checkbox"
                                                         wire:model.live="selectedCivilStatuses" value="Married"
-                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                                                     <label for="married"
                                                         class="ml-2 text-gray-900 dark:text-gray-300">Married</label>
                                                 </li>
                                                 <li class="flex items-center">
                                                     <input id="widowed" type="checkbox"
                                                         wire:model.live="selectedCivilStatuses" value="Widowed"
-                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                                                     <label for="widowed"
                                                         class="ml-2 text-gray-900 dark:text-gray-300">Widowed</label>
                                                 </li>
                                                 <li class="flex items-center">
                                                     <input id="separated" type="checkbox"
                                                         wire:model.live="selectedCivilStatuses" value="Separated"
-                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                                                     <label for="separated"
                                                         class="ml-2 text-gray-900 dark:text-gray-300">Separated</label>
                                                 </li>
                                             </ul>
                                         </div>
+                                        <div class="h-3 w-full"></div>
+                                    </div>
                                     @endif
                                 </div>
 
@@ -1875,15 +1900,17 @@
                                         class="w-full mr-4 p-2 mb-4 text-left
                                                 text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200
                                                 transition-colors duration-200 rounded-lg border border-gray-400
-                                                hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600"
+                                                hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600
+                                                {{ $dropdownForSexOpen ? 'bg-gray-100 dark:bg-gray-800' : '' }}"
                                         type="button">
-                                        Filter by Sex
+                                        Group by Sex
                                         <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
                                     </button>
                                     @if ($dropdownForSexOpen)
+                                    <div class="w-full absolute z-20">
                                         <div
-                                            class="absolute z-20 w-full p-3 bg-gray-50 rounded-lg border border-gray-400
-                                                    shadow-md dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
+                                            class="w-full p-3 rounded-lg border border-gray-400
+                                                    shadow-md bg-gray-100 dark:bg-gray-800 max-h-60 overflow-y-auto scrollbar-thin1">
                                             <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Sex
                                             </h6>
                                             <ul class="space-y-2 text-sm">
@@ -1916,6 +1943,57 @@
                                                         class="ml-2 text-gray-900 dark:text-gray-300">Others</label>
                                                 </li>
                                             </ul>
+                                        </div>
+                                        <div class="h-3 w-full"></div>
+                                    </div>
+                                    @endif
+                                </div>
+
+                                <!-- Learning and Development Dropdown -->
+                                <div class="relative inline-block text-left w-full">
+                                    <button wire:click="toggleDropdownLD"
+                                        class="w-full mr-4 p-2 mb-4 text-left
+                                                text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200
+                                                transition-colors duration-200 rounded-lg border border-gray-400
+                                                hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600
+                                                {{ $dropdownForLDOpen ? 'bg-gray-100 dark:bg-gray-800' : '' }}"
+                                        type="button">
+                                        Group by L&D
+                                        <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
+                                    </button>
+                                    @if ($dropdownForLDOpen)
+                                        <div class="w-full absolute z-20">
+                                            <div
+                                                class="w-full p-3 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-400
+                                                    shadow-md max-h-60 overflow-y-auto scrollbar-thin1">
+                                                <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
+                                                    Learning and Development
+                                                </h6>
+                                                <ul class="space-y-2 text-sm">
+                                                    <li class="flex items-center">
+                                                        <input id="married" type="checkbox"
+                                                            wire:model.live="selectedLD" value="Technical"
+                                                            class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        <label for="married"
+                                                            class="ml-2 text-gray-900 dark:text-gray-300">Technical</label>
+                                                    </li>
+                                                    <li class="flex items-center">
+                                                        <input id="widowed" type="checkbox"
+                                                            wire:model.live="selectedLD" value="Supervisory"
+                                                            class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        <label for="widowed"
+                                                            class="ml-2 text-gray-900 dark:text-gray-300">Supervisory</label>
+                                                    </li>
+                                                    <li class="flex items-center">
+                                                        <input id="separated" type="checkbox"
+                                                            wire:model.live="selectedLD" value="Leadership"
+                                                            class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        <label for="separated"
+                                                            class="ml-2 text-gray-900 dark:text-gray-300">Leadership</label>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="h-3 w-full"></div>
                                         </div>
                                     @endif
                                 </div>
@@ -2134,6 +2212,12 @@
                                         <label for="years_in_gov_service"
                                             class="ml-2 text-gray-900 dark:text-gray-300">Years in Gov Service</label>
                                     </li>
+                                    <li class="flex items-center">
+                                        <input id="learning_and_development" type="checkbox"
+                                            wire:model.live="filters.learning_and_development" class="h-4 w-4">
+                                        <label for="learning_and_development"
+                                            class="ml-2 text-gray-900 dark:text-gray-300">Learning and Development</label>
+                                    </li>
                                 </ul>
                             </div>
                             {{-- @endif --}}
@@ -2325,6 +2409,11 @@
                                                         class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                         Years in Gov Service</th>
                                                 @endif
+                                                @if ($filters['learning_and_development'])
+                                                    <th scope="col"
+                                                        class="px-5 py-3 text-sm font-medium uppercase text-center">
+                                                        Learning and Development</th>
+                                                @endif
                                                 <th
                                                     class="px-5 py-3 text-gray-100 text-sm font-medium text-right sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
                                                     Action</th>
@@ -2450,6 +2539,18 @@
                                                     @if ($filters['years_in_gov_service'])
                                                         <td class="px-4 py-2 text-center">
                                                             {{ $user->years_in_gov_service ?? 'N/A' }}</td>
+                                                    @endif
+                                                    @php
+                                                        $ld = $learnDev->where('user_id', $user->id)->get();
+                                                    @endphp
+                                                    @if ($filters['learning_and_development'])
+                                                        <td class="px-4 py-2 text-center">
+                                                            @if($ld)
+                                                                @foreach ($ld as $item)                                                              
+                                                                    {{ $item ? ('• ' . $item->type_of_ld) : '' }}
+                                                                @endforeach
+                                                            @endif
+                                                        </td>
                                                     @endif
                                                     <td
                                                         class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">

@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\LearningAndDevelopment;
 use App\Models\User;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -30,6 +31,7 @@ class EmployeesExport implements FromCollection, WithEvents
             'selectedProvince' => [],
             'selectedCity' => [],
             'selectedBarangay' => [],
+            'selectedLD' => [],
             'office_division' => '',
             'unit' => '',
         ], $filters);
@@ -146,16 +148,17 @@ class EmployeesExport implements FromCollection, WithEvents
 
     public function collection()
     {
-        $query = User::join('user_data', 'users.id', '=', 'user_data.user_id');
-
+        $query = User::join('user_data', 'users.id', '=', 'user_data.user_id')
+                ->leftJoin('learning_and_development', 'learning_and_development.user_id', 'users.id');
+    
         $columnsToSelect = ['users.id'];
         $columnsToGroupBy = ['users.id'];
-
+    
         $nameFields = ['surname', 'first_name', 'middle_name', 'name_extension'];
         $nameFieldsSelected = false;
-
+    
         foreach ($this->selectedColumns as $column) {
-            if ($column !== 'years_in_gov_service') {
+            if ($column !== 'years_in_gov_service' && $column !== 'learning_and_development') {
                 if (in_array($column, $nameFields)) {
                     $columnsToSelect[] = "user_data.$column";
                     $columnsToGroupBy[] = "user_data.$column";
@@ -171,16 +174,16 @@ class EmployeesExport implements FromCollection, WithEvents
                 }
             }
         }
-
+    
         if (!$nameFieldsSelected && in_array('name', $this->selectedColumns)) {
             foreach ($nameFields as $field) {
                 $columnsToSelect[] = "user_data.$field";
                 $columnsToGroupBy[] = "user_data.$field";
             }
         }
-
+    
         $query->select($columnsToSelect);
-
+    
         if (in_array('years_in_gov_service', $this->selectedColumns)) {
             $query->addSelect(DB::raw('(
                 SELECT FLOOR(SUM(
@@ -194,7 +197,7 @@ class EmployeesExport implements FromCollection, WithEvents
                 WHERE work_experience.user_id = users.id AND work_experience.gov_service = 1
             ) as years_in_gov_service'));
         }
-
+    
         // Apply filters
         if (!empty($this->filters['sex'])) {
             if($this->filters['sex'] == 'others'){
@@ -216,9 +219,14 @@ class EmployeesExport implements FromCollection, WithEvents
         if (!empty($this->filters['selectedBarangay'])) {
             $query->whereIn('user_data.permanent_selectedBarangay', $this->filters['selectedBarangay']);
         }
-
+        if (!empty($this->filters['selectedLD'])) {
+            $query->whereIn('learning_and_development.type_of_ld', $this->filters['selectedLD']);
+            $columnsToSelect[] = 'learning_and_development.user_id as learning_and_development';
+            $columnsToGroupBy[] = 'learning_and_development.user_id';
+        }
+    
         $query->groupBy($columnsToGroupBy);
-
+    
         return $query->get()
             ->map(function ($user) use ($nameFields, $nameFieldsSelected) {
                 $this->rowNumber++;
@@ -233,7 +241,7 @@ class EmployeesExport implements FromCollection, WithEvents
                     ]));
                     $userData[] = $fullName;
                 }
-
+    
                 foreach ($this->selectedColumns as $column) {
                     if ($column !== 'name' && $column !== 'id') {
                         if ($column === 'active_status') {
@@ -250,6 +258,17 @@ class EmployeesExport implements FromCollection, WithEvents
                             $userData[] = $user->$column ? Carbon::parse($user->$column)->format('F d, Y') : 'N/A';
                         } elseif ($column === 'sex') {
                             $userData[] = $user->$column == 'No' ? 'Prefer Not To Say' : $user->$column;
+                        } elseif ($column === 'learning_and_development') {
+                            $lds = LearningAndDevelopment::where('user_id', $user->id)->get();
+                            if(!$lds->isEmpty()){
+                                $leardDev = '';
+                                foreach($lds as $ld){
+                                    $leardDev = $leardDev . (' • ' . $ld->type_of_ld);
+                                }
+                                $userData[] = $leardDev;
+                            }else{
+                                $userData[] = 'N/A';
+                            }
                         } else {
                             $userData[] = $user->$column ?? 'N/A';
                         }
@@ -311,6 +330,7 @@ class EmployeesExport implements FromCollection, WithEvents
             'appointment' => 'Nature of Appointment',
             'date_hired' => 'Date Hired',
             'years_in_gov_service' => 'Years in Government Service',
+            'learning_and_development' => 'Learning and Development',
         ];
 
         return $headers[$column] ?? $column;

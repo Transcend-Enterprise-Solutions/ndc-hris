@@ -65,6 +65,7 @@ class EmployeeTable extends Component
         'appointment' => true,
         'date_hired' => true,
         'years_in_gov_service' => true,
+        'learning_and_development' => true,
         // 'tel_number' => false,
         // 'mobile_number' => false,
         // 'email' => false,
@@ -79,6 +80,7 @@ class EmployeeTable extends Component
     public $selectedProvinces = [];
     public $selectedCities = [];
     public $selectedBarangays = [];
+    public $selectedLD = [];
     public $provinces;
     public $cities;
     public $barangays;
@@ -91,6 +93,7 @@ class EmployeeTable extends Component
     public $dropdownForFilter = false;
     public $dropdownForSexOpen = false;
     public $dropdownForCivilStatusOpen = false;
+    public $dropdownForLDOpen = false;
     public $dropdownForProvinceOpen = false;
     public $dropdownForCityOpen = false;
     public $dropdownForBarangayOpen = false;
@@ -172,11 +175,24 @@ class EmployeeTable extends Component
         $this->dropdownForProvinceOpen = false;
         $this->dropdownForCityOpen = false;
         $this->dropdownForBarangayOpen = false;
+        $this->dropdownForLDOpen = false;
     }
 
     public function toggleDropdownCivilStatus()
     {
         $this->dropdownForCivilStatusOpen = !$this->dropdownForCivilStatusOpen;
+        $this->dropdownForCategoryOpen = false;
+        $this->dropdownForSexOpen = false;
+        $this->dropdownForProvinceOpen = false;
+        $this->dropdownForCityOpen = false;
+        $this->dropdownForBarangayOpen = false;
+        $this->dropdownForLDOpen = false;
+    }
+
+    public function toggleDropdownLD()
+    {
+        $this->dropdownForLDOpen = !$this->dropdownForLDOpen;
+        $this->dropdownForCivilStatusOpen = false;
         $this->dropdownForCategoryOpen = false;
         $this->dropdownForSexOpen = false;
         $this->dropdownForProvinceOpen = false;
@@ -192,6 +208,7 @@ class EmployeeTable extends Component
         $this->dropdownForCivilStatusOpen = false;
         $this->dropdownForCityOpen = false;
         $this->dropdownForBarangayOpen = false;
+        $this->dropdownForLDOpen = false;
     }
 
     public function toggleDropdownCity()
@@ -202,6 +219,7 @@ class EmployeeTable extends Component
         $this->dropdownForCivilStatusOpen = false;
         $this->dropdownForProvinceOpen = false;
         $this->dropdownForBarangayOpen = false;
+        $this->dropdownForLDOpen = false;
     }
 
     public function toggleDropdownBarangay()
@@ -212,6 +230,7 @@ class EmployeeTable extends Component
         $this->dropdownForCivilStatusOpen = false;
         $this->dropdownForCityOpen = false;
         $this->dropdownForProvinceOpen = false;
+        $this->dropdownForLDOpen = false;
     }
 
     public function updatedSelectAllProvinces($value)
@@ -250,133 +269,168 @@ class EmployeeTable extends Component
     {
         $this->checkFilter();
 
-        $query = User::join('user_data', 'user_data.user_id', '=','users.id')
-            ->select('users.id')
-            ->when($this->filters['name'], function ($query) {
-                $query->addSelect('users.name');
-            })
-            ->when($this->filters['date_of_birth'], function ($query) {
-                $query->addSelect('user_data.date_of_birth');
-            })
-            ->when($this->filters['place_of_birth'], function ($query) {
-                $query->addSelect('user_data.place_of_birth');
-            })
-            ->when($this->filters['sex'], function ($query) {
-                $query->addSelect('user_data.sex');
-            })
-            ->when($this->filters['civil_status'], function ($query) {
-                $query->addSelect('user_data.civil_status');
-            })
-            ->when($this->filters['citizenship'], function ($query) {
-                $query->addSelect('user_data.citizenship');
-            })
-            ->when($this->filters['height'], function ($query) {
-                $query->addSelect('user_data.height');
-            })
-            ->when($this->filters['weight'], function ($query) {
-                $query->addSelect('user_data.weight');
-            })
-            ->when($this->filters['blood_type'], function ($query) {
-                $query->addSelect('user_data.blood_type');
-            })
-            ->when($this->filters['gsis'], function ($query) {
-                $query->addSelect('user_data.gsis');
-            })
-            ->when($this->filters['pagibig'], function ($query) {
-                $query->addSelect('user_data.pagibig');
-            })
-            ->when($this->filters['philhealth'], function ($query) {
-                $query->addSelect('user_data.philhealth');
-            })
-            ->when($this->filters['sss'], function ($query) {
-                $query->addSelect('user_data.sss');
-            })
-            ->when($this->filters['tin'], function ($query) {
-                $query->addSelect('user_data.tin');
-            })
-            ->when($this->filters['agency_employee_no'], function ($query) {
-                $query->addSelect('user_data.agency_employee_no');
-            })
-            ->when($this->filters['permanent_selectedProvince'], function ($query) {
-                $query->addSelect('user_data.permanent_selectedProvince');
-            })
-            ->when($this->filters['permanent_selectedCity'], function ($query) {
-                $query->addSelect('user_data.permanent_selectedCity');
-            })
-            ->when($this->filters['permanent_selectedBarangay'], function ($query) {
-                $query->addSelect('user_data.permanent_selectedBarangay');
-            })
-            ->when($this->filters['p_house_street'], function ($query) {
-                $query->addSelect('user_data.p_house_street');
-            })
-            ->when($this->filters['permanent_selectedZipcode'], function ($query) {
-                $query->addSelect('user_data.permanent_selectedZipcode');
-            })
-            ->when($this->filters['residential_selectedProvince'], function ($query) {
-                $query->addSelect('user_data.residential_selectedProvince');
-            })
-            ->when($this->filters['residential_selectedCity'], function ($query) {
-                $query->addSelect('user_data.residential_selectedCity');
-            })
-            ->when($this->filters['residential_selectedBarangay'], function ($query) {
-                $query->addSelect('user_data.residential_selectedBarangay');
-            })
-            ->when($this->filters['r_house_street'], function ($query) {
-            $query->addSelect('user_data.r_house_street');
-            })
-            ->when($this->filters['residential_selectedZipcode'], function ($query) {
-            $query->addSelect('user_data.residential_selectedZipcode');
-            })
-            ->when($this->filters['active_status'], function ($query) {
-                $query->addSelect('users.active_status');
-            })
-            ->when($this->filters['appointment'], function ($query) {
-                $query->addSelect('user_data.appointment');
-            })
-            ->when($this->filters['date_hired'], function ($query) {
-                $query->addSelect('user_data.date_hired');
-            })
-            ->when($this->search, function ($query) {
-                $query->where('users.name', 'like', '%' . $this->search . '%');
-            })
-            ->when($this->sex, function ($query) {
-                if($this->sex == 'others'){
-                    $query->where('user_data.sex', '!=', 'Female')
-                          ->where('user_data.sex', '!=', 'Male');
-                }else{
-                    $query->where('user_data.sex', $this->sex);
-                }
-            })
-            ->when($this->civil_status, function ($query) {
-                $query->where('user_data.civil_status', $this->civil_status);
-            })
-            ->when(!empty($this->selectedCivilStatuses), function ($query) {
-                $query->whereIn('user_data.civil_status', $this->selectedCivilStatuses);
-            })
-            ->when(!empty($this->selectedProvinces), function ($query) {
-                $query->whereIn('user_data.permanent_selectedProvince', $this->selectedProvinces);
-            })
-            ->when(!empty($this->selectedCities), function ($query) {
-                $query->whereIn('user_data.permanent_selectedCity', $this->selectedCities);
-            })
-            ->when(!empty($this->selectedBarangays), function ($query) {
-                $query->whereIn('user_data.permanent_selectedBarangay', $this->selectedBarangays);
-            })
-            ->when($this->filters['years_in_gov_service'], function ($query) {
-                $query->addSelect(DB::raw('(
-                    SELECT FLOOR(SUM(
-                        CASE
-                            WHEN work_experience.toPresent = "Present" THEN TIMESTAMPDIFF(MONTH, work_experience.start_date, CURDATE())
-                            WHEN work_experience.end_date IS NOT NULL THEN TIMESTAMPDIFF(MONTH, work_experience.start_date, work_experience.end_date)
-                            ELSE 0
-                        END
-                    ) / 12)
-                    FROM work_experience
-                    WHERE work_experience.user_id = users.id AND work_experience.gov_service = 1
-                ) as years_in_gov_service'));
-            })
-            ->where('users.user_role', '=','emp')
-            ->paginate(10);
+        $query = User::join('user_data', 'user_data.user_id', '=', 'users.id')
+                ->leftJoin('learning_and_development', 'learning_and_development.user_id', 'users.id')
+                ->select('users.id')
+                ->groupBy('users.id')
+                ->when($this->filters['name'], function ($query) {
+                    $query->addSelect('users.name');
+                    $query->groupBy('users.name');
+                })
+                ->when($this->filters['date_of_birth'], function ($query) {
+                    $query->addSelect('user_data.date_of_birth');
+                    $query->groupBy('user_data.date_of_birth');
+                })
+                ->when($this->filters['place_of_birth'], function ($query) {
+                    $query->addSelect('user_data.place_of_birth');
+                    $query->groupBy('user_data.place_of_birth');
+                })
+                ->when($this->filters['sex'], function ($query) {
+                    $query->addSelect('user_data.sex');
+                    $query->groupBy('user_data.sex');
+                })
+                ->when($this->filters['civil_status'], function ($query) {
+                    $query->addSelect('user_data.civil_status');
+                    $query->groupBy('user_data.civil_status');
+                })
+                ->when($this->filters['citizenship'], function ($query) {
+                    $query->addSelect('user_data.citizenship');
+                    $query->groupBy('user_data.citizenship');
+                })
+                ->when($this->filters['height'], function ($query) {
+                    $query->addSelect('user_data.height');
+                    $query->groupBy('user_data.height');
+                })
+                ->when($this->filters['weight'], function ($query) {
+                    $query->addSelect('user_data.weight');
+                    $query->groupBy('user_data.weight');
+                })
+                ->when($this->filters['blood_type'], function ($query) {
+                    $query->addSelect('user_data.blood_type');
+                    $query->groupBy('user_data.blood_type');
+                })
+                ->when($this->filters['gsis'], function ($query) {
+                    $query->addSelect('user_data.gsis');
+                    $query->groupBy('user_data.gsis');
+                })
+                ->when($this->filters['pagibig'], function ($query) {
+                    $query->addSelect('user_data.pagibig');
+                    $query->groupBy('user_data.pagibig');
+                })
+                ->when($this->filters['philhealth'], function ($query) {
+                    $query->addSelect('user_data.philhealth');
+                    $query->groupBy('user_data.philhealth');
+                })
+                ->when($this->filters['sss'], function ($query) {
+                    $query->addSelect('user_data.sss');
+                    $query->groupBy('user_data.sss');
+                })
+                ->when($this->filters['tin'], function ($query) {
+                    $query->addSelect('user_data.tin');
+                    $query->groupBy('user_data.tin');
+                })
+                ->when($this->filters['agency_employee_no'], function ($query) {
+                    $query->addSelect('user_data.agency_employee_no');
+                    $query->groupBy('user_data.agency_employee_no');
+                })
+                ->when($this->filters['permanent_selectedProvince'], function ($query) {
+                    $query->addSelect('user_data.permanent_selectedProvince');
+                    $query->groupBy('user_data.permanent_selectedProvince');
+                })
+                ->when($this->filters['permanent_selectedCity'], function ($query) {
+                    $query->addSelect('user_data.permanent_selectedCity');
+                    $query->groupBy('user_data.permanent_selectedCity');
+                })
+                ->when($this->filters['permanent_selectedBarangay'], function ($query) {
+                    $query->addSelect('user_data.permanent_selectedBarangay');
+                    $query->groupBy('user_data.permanent_selectedBarangay');
+                })
+                ->when($this->filters['p_house_street'], function ($query) {
+                    $query->addSelect('user_data.p_house_street');
+                    $query->groupBy('user_data.p_house_street');
+                })
+                ->when($this->filters['permanent_selectedZipcode'], function ($query) {
+                    $query->addSelect('user_data.permanent_selectedZipcode');
+                    $query->groupBy('user_data.permanent_selectedZipcode');
+                })
+                ->when($this->filters['residential_selectedProvince'], function ($query) {
+                    $query->addSelect('user_data.residential_selectedProvince');
+                    $query->groupBy('user_data.residential_selectedProvince');
+                })
+                ->when($this->filters['residential_selectedCity'], function ($query) {
+                    $query->addSelect('user_data.residential_selectedCity');
+                    $query->groupBy('user_data.residential_selectedCity');
+                })
+                ->when($this->filters['residential_selectedBarangay'], function ($query) {
+                    $query->addSelect('user_data.residential_selectedBarangay');
+                    $query->groupBy('user_data.residential_selectedBarangay');
+                })
+                ->when($this->filters['r_house_street'], function ($query) {
+                    $query->addSelect('user_data.r_house_street');
+                    $query->groupBy('user_data.r_house_street');
+                })
+                ->when($this->filters['residential_selectedZipcode'], function ($query) {
+                    $query->addSelect('user_data.residential_selectedZipcode');
+                    $query->groupBy('user_data.residential_selectedZipcode');
+                })
+                ->when($this->filters['active_status'], function ($query) {
+                    $query->addSelect('users.active_status');
+                    $query->groupBy('users.active_status');
+                })
+                ->when($this->filters['appointment'], function ($query) {
+                    $query->addSelect('user_data.appointment');
+                    $query->groupBy('user_data.appointment');
+                })
+                ->when($this->filters['date_hired'], function ($query) {
+                    $query->addSelect('user_data.date_hired');
+                    $query->groupBy('user_data.date_hired');
+                })
+                ->when($this->search, function ($query) {
+                    $query->where('users.name', 'like', '%' . $this->search . '%');
+                })
+                ->when($this->sex, function ($query) {
+                    if($this->sex == 'others'){
+                        $query->where('user_data.sex', '!=', 'Female')
+                            ->where('user_data.sex', '!=', 'Male');
+                    }else{
+                        $query->where('user_data.sex', $this->sex);
+                    }
+                })
+                ->when($this->civil_status, function ($query) {
+                    $query->where('user_data.civil_status', $this->civil_status);
+                })
+                ->when(!empty($this->selectedCivilStatuses), function ($query) {
+                    $query->whereIn('user_data.civil_status', $this->selectedCivilStatuses);
+                })
+                ->when(!empty($this->selectedProvinces), function ($query) {
+                    $query->whereIn('user_data.permanent_selectedProvince', $this->selectedProvinces);
+                })
+                ->when(!empty($this->selectedCities), function ($query) {
+                    $query->whereIn('user_data.permanent_selectedCity', $this->selectedCities);
+                })
+                ->when(!empty($this->selectedBarangays), function ($query) {
+                    $query->whereIn('user_data.permanent_selectedBarangay', $this->selectedBarangays);
+                })
+                ->when(!empty($this->selectedLD), function ($query) {
+                    $query->whereIn('learning_and_development.type_of_ld', $this->selectedLD);
+                })
+                ->when($this->filters['years_in_gov_service'], function ($query) {
+                    $query->addSelect(DB::raw('(
+                        SELECT FLOOR(SUM(
+                            CASE
+                                WHEN work_experience.toPresent = "Present" THEN TIMESTAMPDIFF(MONTH, work_experience.start_date, CURDATE())
+                                WHEN work_experience.end_date IS NOT NULL THEN TIMESTAMPDIFF(MONTH, work_experience.start_date, work_experience.end_date)
+                                ELSE 0
+                            END
+                        ) / 12)
+                        FROM work_experience
+                        WHERE work_experience.user_id = users.id AND work_experience.gov_service = 1
+                    ) as years_in_gov_service'));
+                })
+                ->addSelect('learning_and_development.user_id')
+                ->groupBy('learning_and_development.user_id')
+                ->where('users.user_role', '=','emp')
+                ->paginate(10);
 
             $query->getCollection()->transform(function ($user) {
                 $statusMapping = [
@@ -398,10 +452,13 @@ class EmployeeTable extends Component
                 $this->dropdownForCategoryOpen = null;
             }
 
+            $learnDev = LearningAndDevelopment::select('type_of_ld');
+
             return view('livewire.admin.employee-table', [
                 'users' => $query,
                 'cities' => $this->cities,
                 'barangays' => $this->barangays,
+                'learnDev' => $learnDev,
             ]);
     }
 
@@ -493,6 +550,7 @@ class EmployeeTable extends Component
             'selectedProvince' => $this->selectedProvinces ?? [],
             'selectedCity' => $this->selectedCities ?? [],
             'selectedBarangay' => $this->selectedBarangays ?? [],
+            'selectedLD' => $this->selectedLD ?? [],
         ];
     
         $selectedColumns = array_keys(array_filter($this->filters));
