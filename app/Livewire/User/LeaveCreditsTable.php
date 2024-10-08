@@ -5,6 +5,7 @@ namespace App\Livewire\User;
 use Livewire\Component;
 use App\Models\LeaveCredits;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class LeaveCreditsTable extends Component
 {
@@ -22,6 +23,7 @@ class LeaveCreditsTable extends Component
             'sl_claimed_credits' => $leaveCredits->sl_claimed_credits ?? 0,
             'spl_claimable_credits' => $leaveCredits->spl_claimable_credits ?? 0,
             'spl_claimed_credits' => $leaveCredits->spl_claimed_credits ?? 0,
+            'updated_at' => $leaveCredits->updated_at ? Carbon::parse($leaveCredits->updated_at)->format('M d, Y') : null,
         ]);
     }
 }

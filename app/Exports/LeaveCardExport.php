@@ -63,7 +63,6 @@ class LeaveCardExport
             $formattedDateHired = 'N/A'; // If no date_hired is found
         }
 
-        // Define the mapping of appointment types to their full descriptions
         $appointmentMap = [
             'plantilla' => 'Plantilla',
             'cos' => 'Contract of Service',
@@ -103,10 +102,6 @@ class LeaveCardExport
         $this->setBoldLabelWithValue($sheet, 'A5', 'Status: ', $appointmentDisplay);
         $this->setBoldLabelWithValue($sheet, 'L4', 'Entrance to Duty: ', $formattedDateHired);
 
-        // $sheet->setCellValue('K11', 'Balance Brought Forward');
-        // $sheet->setCellValue('N11', $vl_balance_brought_forward);
-        $sheet->setCellValue('R11', $sl_balance_brought_forward);
-
         // Insert "Particulars" based on the selected months
         $startDate = Carbon::createFromFormat('Y-m', $this->startDate)->startOfMonth();
         $endDate = Carbon::createFromFormat('Y-m', $this->endDate)->endOfMonth();
@@ -114,10 +109,12 @@ class LeaveCardExport
         $rowIndex = 11;
         // $firstMonthProcessed = false;
         $currentBalance = $vl_balance_brought_forward;
+        $currentBalanceSl = $sl_balance_brought_forward;
 
         // Set Balance Brought Forward
         $sheet->setCellValue('K' . $rowIndex, 'Balance Brought Forward');
         $sheet->setCellValue('N' . $rowIndex, $currentBalance);
+        $sheet->setCellValue('R' . $rowIndex, $currentBalanceSl);
 
         $rowIndex++;
 
@@ -136,15 +133,6 @@ class LeaveCardExport
         
             $sheet->setCellValue('L' . $rowIndex, $leaveCredits);
             $sheet->setCellValue('P' . $rowIndex, $leaveCredits);
-
-            // if (!$firstMonthProcessed) {
-            //     $sumValue = $leaveCredits + $vl_balance_brought_forward; // Sum of leave credits and balance brought forward
-            //     $sheet->setCellValue('N' . $rowIndex, $sumValue); // Store the sum in column N
-            //     $firstMonthProcessed = true; // Set the flag to true after processing the first month
-            // } else {
-            //     // If not the first month, just set the value in N column to the leave credits
-            //     $sheet->setCellValue('N' . $rowIndex, $leaveCredits);
-            // }
 
             $lateTime = LeaveCreditsCalculation::where('user_id', $user->id)
                 ->where('month', $month)
@@ -204,74 +192,68 @@ class LeaveCardExport
 
             $currentBalance += $leaveCredits;
             $sheet->setCellValue('N' . $rowIndex, $currentBalance);
+            $currentBalanceSl += $leaveCredits;
+            $sheet->setCellValue('R' . $rowIndex, $currentBalanceSl);
 
             $rowIndex++;
 
-            // if ($lateTime && $lateTime !== '00:00') {
-            //     $rowIndex++;
-            //     $sheet->setCellValue('K' . $rowIndex, 'Lates/Undertime');
-                
-            //     list($hours, $minutes) = explode(':', $lateTime);
-            //     $totalMinutes = (intval($hours) * 60) + intval($minutes);
-                
-            //     $days = floor($totalMinutes / (8 * 60));
-            //     $remainingMinutes = $totalMinutes % (8 * 60);
-            //     $hours = floor($remainingMinutes / 60);
-            //     $minutes = $remainingMinutes % 60;
-                
-            //     if ($days > 0) {
-            //         $sheet->setCellValue('C' . $rowIndex, $days);
-            //     }
-            //     if ($hours > 0 || $days > 0) {
-            //         $sheet->setCellValue('D' . $rowIndex, $hours);
-            //     }
-            //     $sheet->setCellValue('E' . $rowIndex, $minutes);
-
-            //     $sheet->setCellValue('A' . $rowIndex, $totalVLDays);
-            //     $sheet->setCellValue('B' . $rowIndex, $totalSickLeaveDays);
-
-            //     $totalCreditsEarned = LeaveCreditsCalculation::where('user_id', $user->id)
-            //         ->where('month', $month)
-            //         ->where('year', $year)
-            //         ->value('total_credits_earned') ?? 0;
-
-            //     $sheet->setCellValue('M' . $rowIndex, $totalCreditsEarned);
-            //     $subtracted = $sumValue - $totalCreditsEarned;
-            //     $sheet->setCellValue('N' . $rowIndex, $subtracted);
-            // }
-
-            if ($lateTime && $lateTime !== '00:00') {
+            if ($totalVLDays > 0 || $totalSickLeaveDays > 0 || ($lateTime && $lateTime !== '00:00')) {
                 $sheet->setCellValue('K' . $rowIndex, 'Lates/Undertime');
                 
-                list($hours, $minutes) = explode(':', $lateTime);
-                $totalMinutes = (intval($hours) * 60) + intval($minutes);
-                
-                $days = floor($totalMinutes / (8 * 60));
-                $remainingMinutes = $totalMinutes % (8 * 60);
-                $hours = floor($remainingMinutes / 60);
-                $minutes = $remainingMinutes % 60;
-                
-                // Store Lates/Undertime details in C, D, E columns
-                if ($days > 0) {
-                    $sheet->setCellValue('C' . $rowIndex, $days);
+                // Record VL days in column A
+                if ($totalVLDays > 0) {
+                    $sheet->setCellValue('A' . $rowIndex, $totalVLDays);
                 }
-                if ($hours > 0 || $days > 0) {
-                    $sheet->setCellValue('D' . $rowIndex, $hours);
+                
+                // Record SL days in column B
+                if ($totalSickLeaveDays > 0) {
+                    $sheet->setCellValue('B' . $rowIndex, $totalSickLeaveDays);
                 }
-                $sheet->setCellValue('E' . $rowIndex, $minutes);
-    
-                // Calculate Lates/Undertime in days
-                $lateTimeDays = $totalMinutes / (8 * 60);
-                $sheet->setCellValue('M' . $rowIndex, $lateTimeDays);
-    
-                // Subtract late time from current balance
-                $currentBalance -= $lateTimeDays;
+
+                // Process late time if exists
+                $lateTimeDays = 0;
+                if ($lateTime && $lateTime !== '00:00') {
+                    list($hours, $minutes) = explode(':', $lateTime);
+                    $totalMinutes = (intval($hours) * 60) + intval($minutes);
+                    
+                    $days = floor($totalMinutes / (8 * 60));
+                    $remainingMinutes = $totalMinutes % (8 * 60);
+                    $hours = floor($remainingMinutes / 60);
+                    $minutes = $remainingMinutes % 60;
+
+                    // Record late time in columns C, D, E
+                    if ($days > 0) {
+                        $sheet->setCellValue('C' . $rowIndex, $days);
+                    }
+                    if ($hours > 0) {
+                        $sheet->setCellValue('D' . $rowIndex, $hours);
+                    }
+                    if ($minutes > 0) {
+                        $sheet->setCellValue('E' . $rowIndex, $minutes);
+                    }
+
+                    $lateTimeDays = $totalMinutes / (8 * 60);
+                }
+
+                // Calculate total deductions for VL (A + C + D + E columns)
+                $totalDeductionVL = $totalVLDays + $lateTimeDays;
+                $sheet->setCellValue('M' . $rowIndex, $totalDeductionVL);
+                
+                // Record SL deductions
+                $sheet->setCellValue('Q' . $rowIndex, $totalSickLeaveDays);
+
+                // Update balances after all deductions
+                $currentBalance -= $totalDeductionVL;
+                $currentBalanceSl -= $totalSickLeaveDays;
+
+                // Record new balances
                 $sheet->setCellValue('N' . $rowIndex, $currentBalance);
-    
+                $sheet->setCellValue('R' . $rowIndex, $currentBalanceSl);
+
                 $rowIndex++;
             }
         
-            $rowIndex++;
+            // $rowIndex++;
         }
 
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
