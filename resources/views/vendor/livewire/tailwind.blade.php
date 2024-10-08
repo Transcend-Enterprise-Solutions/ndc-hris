@@ -57,7 +57,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                     @else
                         {{-- Page Size Selector (only if pageSize and pageSizes properties exist) --}}
                         @if (property_exists($this, 'pageSize') && property_exists($this, 'pageSizes'))
-                            <select wire:model.live="pageSize" class="mr-4 px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <select wire:model.live="pageSize" class="mr-4 px-5 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 @foreach ($this->pageSizes as $size)
                                     <option value="{{ $size }}">{{ $size }} per page</option>
                                 @endforeach
