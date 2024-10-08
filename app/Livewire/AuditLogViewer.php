@@ -15,7 +15,8 @@ class AuditLogViewer extends Component
     use WithPagination;
 
     public $search = '';
-    public $perPage = 10;
+    public $pageSize = 10; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
     public $sortField = 'created_at';
     public $sortDirection = 'desc';
     public $dateFrom = '';
@@ -24,6 +25,10 @@ class AuditLogViewer extends Component
     protected $queryString = ['search', 'sortField', 'sortDirection', 'dateFrom', 'dateTo'];
 
     public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+    public function updatedPageSize()
     {
         $this->resetPage();
     }
@@ -75,7 +80,7 @@ class AuditLogViewer extends Component
                 $query->whereDate('created_at', '<=', $this->dateTo);
             })
             ->orderBy($this->sortField, $this->sortDirection)
-            ->paginate($this->perPage);
+            ->paginate($this->pageSize);
 
         foreach ($audits as $audit) {
             $audit->resolved_new_values = $this->resolveValues($audit, $audit->new_values);
