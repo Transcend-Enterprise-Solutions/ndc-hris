@@ -499,9 +499,13 @@
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="padding-top: 3pt;text-indent: 0pt;text-align: left;"><br /></p>
                     @if ($signatureImagePath)
-                        <p style="text-align: center; margin-bottom: -15px;">
+                        <p style="text-align: center;">
                             <img src="{{ $signatureImagePath }}" alt="E-Signature"
                                 style="width: 100px; height: auto;" />
+                        </p>
+                    @else
+                        <p style="text-align: center; color: red;">
+                            Please upload your e-sign
                         </p>
                     @endif
                     <p class="s5" style="padding-left: 1pt; text-indent: 0pt; text-align: center; z-index: 1;">
