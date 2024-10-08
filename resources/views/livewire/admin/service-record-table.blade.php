@@ -110,7 +110,11 @@
                                                     {{ $user->name }}
                                                 </td>
                                                 <td class="px-4 py-2 text-center">
-                                                    {{ $user->emp_code }}
+                                                    @if($user->appointment == 'cos')
+                                                        {{ $user->emp_code ? 'D-' . substr($user->emp_code, 1) : '' }}
+                                                    @else
+                                                        {{ $user->emp_code }}
+                                                    @endif
                                                 </td>
                                                 <td class="px-4 py-2 text-center">
                                                     {{ $user->formatted_gov_service }}

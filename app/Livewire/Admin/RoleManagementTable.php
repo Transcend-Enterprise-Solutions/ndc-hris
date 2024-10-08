@@ -124,6 +124,17 @@ class RoleManagementTable extends Component
                     'office_division_units.unit'
                 )
                 ->paginate(10);
+
+        foreach($admins as $admin){
+            $empCode = explode('-', $admin->emp_code);
+            $appt = User::where('users.emp_code', $empCode[1])
+                        ->join('user_data', 'user_data.user_id', 'users.id')
+                        ->select('user_data.appointment')
+                        ->first();
+            if($appt){
+                $admin->appointment = $appt->appointment;
+            }
+        }
                 
             $empPos = User::where('user_role', 'emp')
                 ->join('user_data', 'user_data.user_id', 'users.id')

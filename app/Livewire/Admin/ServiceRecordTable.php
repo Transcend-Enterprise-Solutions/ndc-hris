@@ -23,12 +23,13 @@ class ServiceRecordTable extends Component
     public function render()
     {
         $users = User::join('positions', 'positions.id', 'users.position_id')
+            ->join('user_data', 'user_data.user_id', 'users.id')
             ->where('positions.position', '!=', 'Super Admin')
             ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
             ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
             ->where('users.user_role', 'emp')
             ->where('users.active_status', '!=', 4)
-            ->select('users.*')
+            ->select('users.*', 'user_data.appointment')
             ->withCount(['workExperience as total_months_gov_service' => function ($query) {
                 $query->where('gov_service', 1)
                     ->select(DB::raw('SUM(

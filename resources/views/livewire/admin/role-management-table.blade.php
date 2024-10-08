@@ -309,7 +309,11 @@ x-cloak>
                                                                                     {{ $user->name ?? 'N/A' }}
                                                                                 </td>
                                                                                 <td width="15%" class="px-2 py-2 text-center text-xs text-nowrap">
-                                                                                    {{ $user->emp_code }}
+                                                                                    @if($user->appointment == 'cos')
+                                                                                        {{ $user->emp_code ? 'D-' . substr($user->emp_code, 1) : '' }}
+                                                                                    @else
+                                                                                        {{ $user->emp_code }}
+                                                                                    @endif
                                                                                 </td>
                                                                                 <td width="30%" class="px-2 py-2 text-center text-xs text-nowrap">
                                                                                     {{ $user->position ?? 'N/A' }}
@@ -595,7 +599,11 @@ x-cloak>
                                                                 @php
                                                                     $empCode = explode('-', $admin->emp_code);
                                                                 @endphp
-                                                                {{ $empCode[1] }}
+                                                                @if($admin->appointment == 'cos')
+                                                                    {{ $empCode[1] ? 'D-' . substr($empCode[1], 1) : '' }}
+                                                                @else
+                                                                    {{ $empCode[1] }}
+                                                                @endif
                                                             </td>
                                                             <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                                 {{ $admin->office_division }}
@@ -674,7 +682,11 @@ x-cloak>
                                                                     {{ $pos->name }}
                                                                 </td>
                                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                                    {{ $pos->emp_code }}
+                                                                    @if($pos->appointment == 'cos')
+                                                                        {{ $pos->emp_code ? 'D-' . substr($pos->emp_code, 1) : '' }}
+                                                                    @else
+                                                                        {{ $pos->emp_code }}
+                                                                    @endif
                                                                 </td>
                                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                                     {{ $pos->office_division }}
