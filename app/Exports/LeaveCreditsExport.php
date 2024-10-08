@@ -107,7 +107,7 @@ class LeaveCreditsExport implements FromCollection, WithMapping, WithEvents
                     'B3' => 'EMPLOYEE ID',
                     'C3' => 'VL',
                     'D3' => 'SL',
-                    'E3' => 'Total',
+                    'E3' => 'TOTAL',
                     'F3' => 'FL',
                     'G3' => 'SPL',
                     'H3' => 'UPDATED AS OF',
