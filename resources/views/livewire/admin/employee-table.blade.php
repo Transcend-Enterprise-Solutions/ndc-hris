@@ -1695,7 +1695,7 @@
                                     text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                     rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none w-full sm:w-fit"
                                 type="button">
-                                Filter by
+                                Group by
                                 <i class="bi bi-chevron-down w-5 h-5 ml-2"></i>
                             </button>
 
@@ -1869,7 +1869,6 @@
                                     @endif
                                 </div>
 
-
                                 <!-- Sex Dropdown -->
                                 <div class="relative inline-block text-left w-full">
                                     <button wire:click="toggleDropdownSex"
@@ -1891,23 +1890,30 @@
                                                 <li class="flex items-center">
                                                     <input id="default" type="radio" wire:model.live="sex"
                                                         value=""
-                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-blue-500 focus:text-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                                                     <label for="default"
-                                                        class="ml-2 text-gray-900 dark:text-gray-300">Default</label>
+                                                        class="ml-2 text-gray-900 dark:text-gray-300">All</label>
                                                 </li>
                                                 <li class="flex items-center">
                                                     <input id="male" type="radio" wire:model.live="sex"
                                                         value="Male"
-                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-blue-500 focus:text-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                                                     <label for="male"
                                                         class="ml-2 text-gray-900 dark:text-gray-300">Male</label>
                                                 </li>
                                                 <li class="flex items-center">
                                                     <input id="female" type="radio" wire:model.live="sex"
                                                         value="Female"
-                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-neutral-900 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-blue-500 focus:text-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
                                                     <label for="female"
                                                         class="ml-2 text-gray-900 dark:text-gray-300">Female</label>
+                                                </li>
+                                                <li class="flex items-center">
+                                                    <input id="others" type="radio" wire:model.live="sex"
+                                                        value="others"
+                                                        class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 focus:ring-blue-500 focus:text-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                    <label for="others"
+                                                        class="ml-2 text-gray-900 dark:text-gray-300">Others</label>
                                                 </li>
                                             </ul>
                                         </div>
@@ -2340,7 +2346,7 @@
                                                     @endif
                                                     @if ($filters['sex'])
                                                         <td class="px-4 py-2 text-center">
-                                                            {{ $user->sex }}
+                                                            {{ $user->sex == 'No' ? 'Prefer Not To Say' : $user->sex }}
                                                         </td>
                                                     @endif
                                                     @if ($filters['citizenship'])

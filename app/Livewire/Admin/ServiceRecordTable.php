@@ -68,7 +68,6 @@ class ServiceRecordTable extends Component
         return empty($result) ? '0 months' : implode(' ', $result);
     }
 
-
     public function toggleViewRecord($id){
         $this->recordId = $id;
         $user = User::where('users.id', $id)

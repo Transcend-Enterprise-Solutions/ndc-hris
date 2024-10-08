@@ -3618,12 +3618,8 @@
                                         <div class="col-span-2 sm:col-span-1">
                                             <label for="branch_{{ $index }}"
                                                 class="block text-sm font-medium text-gray-700 dark:text-slate-400">Branch of Service</label>
-                                            <input type="text" id="branch_{{ $index }}"
-                                                
-                                                class="">
-                                            <select name="branch" id="branch" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700"
-                                                wire:model="workExperiences.{{ $index }}.branch"
-                                                >
+                                            <select name="branch" id="branch_{{ $index }}" class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700"
+                                                wire:model="workExperiences.{{ $index }}.branch">
                                                 <option value="">Select Branch of Service</option>
                                                 <option value="NGA">NGA</option>
                                                 <option value="LGU">LGU</option>

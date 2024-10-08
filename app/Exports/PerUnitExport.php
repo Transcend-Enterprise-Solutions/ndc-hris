@@ -48,7 +48,7 @@ class PerUnitExport implements FromCollection, WithEvents
 
 
                 // Set row height for row 4
-                $sheet->getRowDimension(4)->setRowHeight(40); 
+                $sheet->getRowDimension(4)->setRowHeight(20); 
 ; 
 
                 // Merge cells A12 and A13
