@@ -77,11 +77,8 @@
                         <!-- Apply for Leave Button -->
                         <div class="flex items-center mb-4 md:mb-0">
                             <button wire:click="openLeaveForm"
-                                class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white mb-2">
-                                <span
-                                    class="relative px-4 py-2 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-                                    Apply for Leave
-                                </span>
+                                class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
+                                Apply For Leave
                             </button>
                         </div>
 
@@ -272,23 +269,26 @@
                                                 </span>
                                             </td>
                                             <td
-                                                class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800 flex justify-evenly">
+                                                class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                 {{-- @if (in_array($leaveApplication->status, ['Approved by HR', 'Approved by Supervisor', 'Approved', 'Disapproved'])) --}}
-                                                <button type="button"
-                                                    wire:click.prevent="exportPDF({{ $leaveApplication->id }})"
-                                                    class="text-red-500 hover:text-red-600">
-                                                    <i class="bi bi-file-earmark-arrow-down" title="Export in PDF"></i>
-                                                </button>
-                                                {{-- @else
-                                                <button type="button" disabled title="Wait for the action"
-                                                    class="cursor-not-allowed">
-                                                    <i class="bi bi-file-earmark-arrow-down"></i>
-                                                </button>
-                                            @endif --}}
-                                                <button wire:click="showLeaveDetails({{ $leaveApplication->id }})"
-                                                    class="text-blue-500 hover:text-blue-600">
-                                                    <i class="fas fa-eye" title="Show Details"></i>
-                                                </button>
+                                                <div class="relative">
+                                                    <button type="button"
+                                                        wire:click.prevent="exportPDF({{ $leaveApplication->id }})"
+                                                        class="text-red-500 hover:text-red-600">
+                                                        <i class="bi bi-file-earmark-arrow-down"
+                                                            title="Export in PDF"></i>
+                                                    </button>
+                                                    {{-- @else
+                                                        <button type="button" disabled title="Wait for the action"
+                                                            class="cursor-not-allowed">
+                                                            <i class="bi bi-file-earmark-arrow-down"></i>
+                                                        </button>
+                                                    @endif --}}
+                                                    <button wire:click="showLeaveDetails({{ $leaveApplication->id }})"
+                                                        class="text-blue-500 hover:text-blue-600">
+                                                        <i class="fas fa-eye" title="Show Details"></i>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -793,18 +793,20 @@
                         </div>
 
                         <div class="custom-d flex w-full">
-                            <div class="w-full sm:w-2/4 block">
+                            <div class="w-full block">
                                 <div class="flex w-full sm:w-auto">
                                     <p
-                                        class="border border-gray-200 dark:border-slate-600 p-1 w-2/6 bg-gray-50 dark:bg-slate-700">
-                                        Lastname</p>
+                                        class="border border-gray-200 dark:border-slate-600 p-1 w-1/6 bg-gray-50 dark:bg-slate-700">
+                                        Fullname</p>
                                     <p
                                         class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->user->userData->surname }}
+                                        {{ $leaveApplicationDetails->user->userData->surname }},
+                                        {{ $leaveApplicationDetails->user->userData->first_name }}
+                                        {{ $leaveApplicationDetails->user->userData->middle_name }}
                                     </p>
                                 </div>
                             </div>
-                            <div class="w-full sm:w-2/4 block">
+                            {{-- <div class="w-full sm:w-2/4 block">
                                 <div class="flex w-full sm:w-auto">
                                     <p
                                         class="border border-gray-200 dark:border-slate-600 p-1 w-2/6 bg-gray-50 dark:bg-slate-700">
@@ -836,7 +838,7 @@
                                         {{ $leaveApplicationDetails->user->userData->name_extension }}
                                     </p>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
 
                         <div class="custom-d flex w-full">
@@ -896,10 +898,14 @@
                                     <p
                                         class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">
                                         Type of Leave</p>
-                                    <p
+                                    <div
                                         class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->type_of_leave }}
-                                    </p>
+                                        <ul class="list-disc ml-5">
+                                            @foreach (explode(',', $leaveApplicationDetails->type_of_leave) as $leaveType)
+                                                <li>{{ $leaveType }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
                                 </div>
 
                                 <div class="flex w-full sm:w-auto">

@@ -41,6 +41,7 @@
                                 <th scope="col" class="px-4 py-2 text-center">SL Credits</th>
                                 <th scope="col" class="px-4 py-2 text-center">SPL Credits</th>
                                 <th scope="col" class="px-4 py-2 text-center">CTO Credits</th>
+                                <th scope="col" class="px-4 py-2 text-center">Updated as of</th>
                                 <th scope="col" class="px-4 py-2 text-center">Actions</th>
                             </tr>
                         </thead>
@@ -56,6 +57,9 @@
                                         {{ number_format($leaveCredit->spl_claimable_credits ?? 0, 3) }}</td>
                                     <td class="px-4 py-2 text-center">
                                         {{ number_format($leaveCredit->cto_claimable_credits ?? 0, 3) }}</td>
+                                    <td class="px-4 py-2 text-center">
+                                        {{ \Carbon\Carbon::parse($leaveCredit->updated_at)->format('M d, Y') }}
+                                    </td>
                                     <td class="px-4 py-2 text-center">
                                         <button wire:click="openEditCredits({{ $leaveCredit->user_id }})"
                                             class="peer inline-flex items-center justify-center px-4 py-2 -m-5 

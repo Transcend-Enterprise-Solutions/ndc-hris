@@ -630,18 +630,18 @@
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Claimable Credits
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Total Earned
                     </p>
                 </td>
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->vl_claimable_credits }}</p>
+                        {{ $leaveCredits->vl_total_credits }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->sl_claimable_credits }}</p>
+                        {{ $leaveCredits->sl_total_credits }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -671,7 +671,8 @@
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Claimed Credits
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Less this
+                        application
                     </p>
                 </td>
                 <td
@@ -712,17 +713,17 @@
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Total Credits</p>
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Balance</p>
                 </td>
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->vl_total_credits }}</p>
+                        {{ $leaveCredits->vl_claimable_credits }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->sl_total_credits }}</p>
+                        {{ $leaveCredits->sl_claimable_credits }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
