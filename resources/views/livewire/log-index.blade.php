@@ -4,7 +4,7 @@
             <livewire:audit-log-viewer lazy />
         </div>
         <div class="pt-4">
-        <livewire:api-audit-log-component />
+        <livewire:api-audit-log-component lazy/>
         </div>
     </div>
 </x-app-layout>

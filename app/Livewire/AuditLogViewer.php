@@ -81,8 +81,6 @@ class AuditLogViewer extends Component
             $audit->resolved_new_values = $this->resolveValues($audit, $audit->new_values);
             $audit->resolved_old_values = $this->resolveValues($audit, $audit->old_values);
         }
-        sleep(1);
-
         return view('livewire.audit-log-viewer', [
             'audits' => $audits,
         ]);
