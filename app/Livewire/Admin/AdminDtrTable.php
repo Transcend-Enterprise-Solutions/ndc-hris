@@ -22,6 +22,8 @@ class AdminDtrTable extends Component
     public $sortDirection = 'asc';
     public $signatoryName='';
     public $eSignaturePath='';
+    public $pageSize = 30; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
 
     protected $queryString = [
         'searchTerm' => ['except' => ''],
@@ -29,11 +31,18 @@ class AdminDtrTable extends Component
         'endDate' => ['except' => ''],
         'sortField' => ['except' => 'date'],
         'sortDirection' => ['except' => 'asc'],
+        'pageSize' => ['except' => 30], 
     ];
+
     public function mount()
     {
         $this->startDate = Carbon::now()->startOfMonth()->toDateString();
         $this->endDate = Carbon::now()->endOfMonth()->toDateString();
+    }
+
+    public function updatedPageSize()
+    {
+        $this->resetPage();
     }
 
     public function sortBy($field)
@@ -96,9 +105,11 @@ class AdminDtrTable extends Component
             $query->orderBy('employees_dtr.' . $this->sortField, $this->sortDirection);
         }
 
-        $dtrs = $query->paginate(30);
+        $dtrs = $query->paginate($this->pageSize);
 
-        return view('livewire.admin.admin-dtr-table', ['dtrs' => $dtrs]);
+        return view('livewire.admin.admin-dtr-table', [
+            'dtrs' => $dtrs,
+        ]);
     }
 
     public function exportToPdf($signatoryName)
