@@ -30,6 +30,9 @@ class LeaveCredits extends Model
         'fl_claimable_credits',
         'fl_claimed_credits',
         
+        'vlbalance_brought_forward',
+        'slbalance_brought_forward',
+        'date_forwarded',
         'credits_transferred',
     ];
 

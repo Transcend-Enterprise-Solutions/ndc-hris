@@ -201,47 +201,53 @@
 
             <form class="space-y-6" wire:submit.prevent="updateCredits">
 
-                <div class="flex flex-col md:flex-row md:space-x-4">
-                    <!-- Claimable Credits -->
-                    <div class="w-full">
-                        <label for="vlClaimableCredits"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">VL Credits</label>
-                        <input id="vlClaimableCredits" type="text" wire:model="vlClaimableCredits"
-                            class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Enter credits">
-                        @error('vlClaimableCredits')
-                            <span class="text-red-500 text-xs mt-1">This field is required!</span>
-                        @enderror
+                @if ($credits_inputted != 1)
+                    <div class="flex flex-col md:flex-row md:space-x-4">
+                        <!-- Claimable Credits -->
+                        <div class="w-full">
+                            <label for="vlClaimableCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">VL Credits</label>
+                            <input id="vlClaimableCredits" type="text" wire:model="vlClaimableCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter credits">
+                            @error('vlClaimableCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
                     </div>
-                </div>
+                @endif
 
-                <div class="flex flex-col md:flex-row md:space-x-4">
-                    <!-- Claimable Credits -->
-                    <div class="w-full">
-                        <label for="slClaimableCredits"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">SL Credits</label>
-                        <input id="slClaimableCredits" type="text" wire:model="slClaimableCredits"
-                            class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Enter credits">
-                        @error('slClaimableCredits')
-                            <span class="text-red-500 text-xs mt-1">This field is required!</span>
-                        @enderror
+                @if ($credits_inputted != 1)
+                    <div class="flex flex-col md:flex-row md:space-x-4">
+                        <!-- Claimable Credits -->
+                        <div class="w-full">
+                            <label for="slClaimableCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">SL Credits</label>
+                            <input id="slClaimableCredits" type="text" wire:model="slClaimableCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter credits">
+                            @error('slClaimableCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
                     </div>
-                </div>
+                @endif
 
-                <div class="flex flex-col md:flex-row md:space-x-4">
-                    <!-- Claimable Credits -->
-                    <div class="w-full">
-                        <label for="splClaimableCredits"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">SPL Credits</label>
-                        <input id="splClaimableCredits" type="text" wire:model="splClaimableCredits"
-                            class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Enter credits">
-                        @error('splClaimableCredits')
-                            <span class="text-red-500 text-xs mt-1">This field is required!</span>
-                        @enderror
+                @if ($credits_inputted != 1)
+                    <div class="flex flex-col md:flex-row md:space-x-4">
+                        <!-- Claimable Credits -->
+                        <div class="w-full">
+                            <label for="splClaimableCredits"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">SPL Credits</label>
+                            <input id="splClaimableCredits" type="text" wire:model="splClaimableCredits"
+                                class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter credits">
+                            @error('splClaimableCredits')
+                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            @enderror
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- CTO Leave Part -->
                 {{-- <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0"> --}}
