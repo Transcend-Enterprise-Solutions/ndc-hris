@@ -10,7 +10,7 @@ class BioTimeService
 {
     protected $client;
     protected $authUrl = 'http://45.64.120.27:8082/jwt-api-token-auth/';
-    protected $username = 'admin1232'; 
+    protected $username = 'admin123'; 
     protected $password = 'admin123'; 
     protected $token;
 

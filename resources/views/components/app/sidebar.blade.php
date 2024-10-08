@@ -306,7 +306,7 @@
                             </li>
                         @endif
                         @if (Auth::user()->user_role === 'sa')
-                            <!-- Report Generation -->
+                            <!-- logs -->
                             <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
                             @if (in_array(Request::segment(1), ['audit-logs'])) {{ 'bg-gray-200 dark:bg-slate-900' }} @endif"
                                 x-data="{ open: {{ in_array(Request::segment(1), ['audit-logs']) ? 1 : 0 }} }">
