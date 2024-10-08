@@ -3,5 +3,8 @@
         <div>
             <livewire:audit-log-viewer lazy />
         </div>
+        <div class="pt-4">
+        <livewire:api-audit-log-component />
+        </div>
     </div>
 </x-app-layout>

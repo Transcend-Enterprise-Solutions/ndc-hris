@@ -43,7 +43,7 @@ Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
     Route::get('/report-generation', function () {
         return view('livewire.admin.report-generation'); })->name('report-generation');
     Route::get('/audit-logs', function () {
-        return view('livewire.log-index'); })->name('audit-log-viewer');
+        return view('livewire.log-index'); })->name('audit-logs');
 
 
 });

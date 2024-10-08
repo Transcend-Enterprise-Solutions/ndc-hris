@@ -4,12 +4,13 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use App\Models\AuditLog;
 
 class BioTimeService
 {
     protected $client;
     protected $authUrl = 'http://45.64.120.27:8082/jwt-api-token-auth/';
-    protected $username = 'admin123'; 
+    protected $username = 'admin1232'; 
     protected $password = 'admin123'; 
     protected $token;
 
@@ -36,16 +37,18 @@ class BioTimeService
                     'password' => $this->password,
                 ],
             ]);
-
             $data = json_decode($response->getBody(), true);
-            $this->token = $data['token']; // Store the JWT token
-
+            $this->token = $data['token'];
         } catch (RequestException $e) {
+            $this->logError('auth_error', 'Error authenticating', [
+                'message' => $e->getMessage(),
+                'request' => $e->getRequest()->getBody()->getContents(),
+                'response' => $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null,
+            ]);
             throw new \Exception('Error authenticating: ' . $e->getMessage());
         }
     }
 
-    // Function to fetch transactions with JWT token
     public function getTransactions($params = [])
     {
         try {
@@ -55,11 +58,24 @@ class BioTimeService
                 ],
                 'query' => $params
             ]);
-
             return json_decode($response->getBody(), true);
-
         } catch (RequestException $e) {
+            $this->logError('fetch_error', 'Error fetching transactions', [
+                'message' => $e->getMessage(),
+                'params' => $params,
+                'request' => $e->getRequest()->getBody()->getContents(),
+                'response' => $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null,
+            ]);
             throw new \Exception('Error fetching transactions: ' . $e->getMessage());
         }
+    }
+
+    private function logError($type, $message, $context)
+    {
+        AuditLog::create([
+            'type' => $type,
+            'message' => $message,
+            'context' => $context,
+        ]);
     }
 }

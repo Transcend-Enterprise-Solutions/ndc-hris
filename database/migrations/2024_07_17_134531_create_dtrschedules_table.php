@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('dtrschedules', function (Blueprint $table) {
             $table->id();
             $table->string('emp_code'); // Employee ID (foreign key)
-            $table->string('wfh_days'); // Comma-separated days for WFH
+            $table->string('wfh_days')->nullable();; // Comma-separated days for WFH
             $table->time('default_start_time')->nullable(); // Default start time for office work
             $table->time('default_end_time')->nullable(); // Default end time for office work
             $table->date('start_date'); // Schedule start date
