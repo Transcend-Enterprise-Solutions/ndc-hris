@@ -89,6 +89,22 @@
                                             @endforeach
                                         @endif
                                     </div>
+                                @elseif ($audit->auditable_type === App\Models\LeaveApplication::class)
+                                    <span>User {{ $audit->user->name ?? 'System' }} {{ $audit->event }} a leave application (ID: {{ $audit->auditable_id }}).</span>
+                                    <div class="mt-1 text-xs">
+                                        @if ($audit->event === 'created' || $audit->event === 'updated')
+                                            <strong>Leave Application Details:</strong><br>
+                                            @foreach ($audit->resolved_new_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                        @if ($audit->event === 'updated' || $audit->event === 'deleted')
+                                            <strong>Old values:</strong><br>
+                                            @foreach ($audit->resolved_old_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                    </div>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">

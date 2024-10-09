@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\DocRequest;
 use App\Models\DTRSchedule;
 use App\Models\Holiday;
+use App\Models\LeaveApplication;
 
 class AuditLogViewer extends Component
 {
@@ -28,6 +29,7 @@ class AuditLogViewer extends Component
     {
         $this->resetPage();
     }
+
     public function updatedPageSize()
     {
         $this->resetPage();
@@ -66,6 +68,7 @@ class AuditLogViewer extends Component
                               WHEN audits.auditable_type = 'App\\Models\\DocRequest' THEN 'document request'
                               WHEN audits.auditable_type = 'App\\Models\\DTRSchedule' THEN 'schedule'
                               WHEN audits.auditable_type = 'App\\Models\\Holiday' THEN 'holiday'
+                              WHEN audits.auditable_type = 'App\\Models\\LeaveApplication' THEN 'leave application'
                               ELSE audits.auditable_type
                           END,
                           ' (ID: ',
@@ -104,6 +107,14 @@ class AuditLogViewer extends Component
             if (isset($resolved['emp_code'])) {
                 $user = User::where('emp_code', $resolved['emp_code'])->first();
                 $resolved['employee_name'] = $user ? $user->name : 'Unknown Employee';
+            }
+        } elseif ($audit->auditable_type === LeaveApplication::class) {
+            if (isset($resolved['user_id'])) {
+                $user = User::find($resolved['user_id']);
+                $resolved['user_name'] = $user ? $user->name : 'Unknown User';
+            }
+            if (isset($resolved['type_of_leave'])) {
+                $resolved['leave_type'] = $resolved['type_of_leave'];
             }
         }
 
