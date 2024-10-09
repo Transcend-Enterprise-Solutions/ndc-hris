@@ -60,6 +60,9 @@ class LeaveApplicationTable extends Component
 
     public $activeTab = 'pending';
 
+    public $pageSize = 10; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
+
     protected $rules = [
         'office_or_department' => 'required|string|max:255',
         'position' => 'required|string|max:255',
@@ -490,7 +493,7 @@ class LeaveApplicationTable extends Component
             ->whereIn('status', $statuses)
             ->with('vacationLeaveDetails', 'sickLeaveDetails')
             ->orderBy('created_at', 'desc')
-            ->paginate(10, ['*'], $this->getPaginationPageName($statuses[0]));
+            ->paginate($this->pageSize, ['*'], $this->getPaginationPageName($statuses[0]));
     }
 
     private function getPaginationPageName($status)

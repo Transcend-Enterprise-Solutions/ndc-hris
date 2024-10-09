@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('fetch:biotime-transactions')->everyMinute();
+        // $schedule->command('fetch:biotime-transactions')->everyMinute();
         $schedule->job(new AutoSaveDtrRecords())->everyMinute();
         $schedule->job(new AutoSaveDtrRecordsMonthly())->dailyAt('04:00');
         $schedule->command('calculate:monthly-leave-credits')->monthlyOn(1, '00:00');
@@ -23,6 +23,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('leave-credits:reset')->yearlyOn(1, 1, '00:00');
         $schedule->command('credits:calculate')->everyMinute();
         // $schedule->command('leave-credits:reset')->everyMinute();
+        $schedule->command('credits:calculate-monthly')->monthlyOn(1, '00:00');
 
         // Fetch BioTime transactions daily at 1:00 AM
         //$schedule->command('fetch:biotime-transactions-monthly --months=1')->dailyAt('01:00');
