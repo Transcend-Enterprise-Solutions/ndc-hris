@@ -8,8 +8,8 @@
 
     <!-- Chart.js graph -->
     <div class="w-full flex justify-center items-center">
-        <div class="relative w-52">
-            <canvas id="employeeChart" class="w-full"></canvas>
+        <div class="relative w-full h-64">
+            <canvas id="employeeChart" class="w-full h-full"></canvas>
         </div>
     </div>
 </div>
@@ -19,69 +19,48 @@
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.0.6/dist/alpine.min.js" defer></script>
 <script>
     function initEmployeeChart() {
-        const ctx = document.getElementById('employeeChart').getContext('2d');
+        return {
+            init() {
+                const ctx = document.getElementById('employeeChart').getContext('2d');
 
-        new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: @json($months),
-                datasets: [{
-                    label: 'Employees Hired per Month',
-                    data: @json($monthlyHires),
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: @json($months),
+                        datasets: [{
+                            label: 'Users Created per Month',
+                            data: @json($monthlyCreations),
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
                     },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
                                 }
-                                if (context.raw !== null) {
-                                    label += context.raw;
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return `Users created: ${context.raw}`;
+                                    }
                                 }
-                                return label;
                             }
                         }
                     }
-                }
+                });
             }
-        });
+        }
     }
 </script>

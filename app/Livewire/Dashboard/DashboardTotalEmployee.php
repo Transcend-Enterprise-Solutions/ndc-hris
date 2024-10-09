@@ -10,23 +10,28 @@ class DashboardTotalEmployee extends Component
 {
     public $totalEmployees;
     public $months;
-    public $monthlyHires;
+    public $monthlyCreations;
 
     public function mount()
     {
-        $this->totalEmployees = User::where('user_role', 'emp')->count();
+        $currentYear = date('Y');
 
-        $hiredByMonth = User::where('user_role', 'emp')
-            ->groupBy(FacadesDB::raw('MONTH(created_at)'))
-            ->orderBy(FacadesDB::raw('MONTH(created_at)'), 'asc')
-            ->select(FacadesDB::raw('COUNT(*) as count'), FacadesDB::raw('MONTH(created_at) as month'))
+        $this->totalEmployees = User::whereYear('created_at', $currentYear)->count();
+
+        $createdByMonth = User::whereYear('created_at', $currentYear)
+            ->selectRaw('COUNT(*) as count, MONTH(created_at) as month')
+            ->groupBy('month')
+            ->orderBy('month')
             ->get();
 
-        $this->months = $hiredByMonth->pluck('month')->map(function ($month) {
+        $this->months = array_map(function ($month) {
             return date('M', mktime(0, 0, 0, $month, 1));
-        })->toArray();
+        }, range(1, 12));
 
-        $this->monthlyHires = $hiredByMonth->pluck('count')->toArray();
+        $monthlyData = $createdByMonth->pluck('count', 'month')->toArray();
+        $this->monthlyCreations = array_map(function ($month) use ($monthlyData) {
+            return $monthlyData[$month] ?? 0;
+        }, range(1, 12));
     }
 
     public function render()
