@@ -630,6 +630,7 @@ class PersonalDataSheetTable extends Component
         $this->addEducBackground = true;
         $this->newEducation[] = [
             'level' => '', 
+            'level_code' => '', 
             'name_of_school' => '',
             'basic_educ_degree_course' => '',
             'from' => '',
@@ -638,6 +639,8 @@ class PersonalDataSheetTable extends Component
             'highest_level_unit_earned' => '',
             'year_graduated' => '',
             'award' => '',
+            'is_bachelor' => 0,
+            'graduateStudy' => '',
         ];
     }
     public function toggleAddEligibility(){
@@ -1067,6 +1070,7 @@ class PersonalDataSheetTable extends Component
     public function addNewEducation(){
         $this->newEducation[] = [
             'level' => '', 
+            'level_code' => '', 
             'name_of_school' => '',
             'basic_educ_degree_course' => '',
             'from' => '',
@@ -1074,6 +1078,8 @@ class PersonalDataSheetTable extends Component
             'highest_level_unit_earned' => '',
             'year_graduated' => '',
             'award' => '',
+            'is_bachelor' => 0,
+            'graduateStudy' => '',
         ];
     }
     public function removeNewEducation($index){
@@ -1140,10 +1146,14 @@ class PersonalDataSheetTable extends Component
                             $validationRules['newEducation.'.$index.'.to'] = 'required|date';
                             $validationRules['newEducation.'.$index.'.year_graduated'] = 'required|numeric';
                             $educ['toPresent'] = null;
-                        } else {
+                        }else {
                             $validationRules['newEducation.'.$index.'.toPresent'] = 'required';
                             $educ['toPresent'] = 'Present';
                             $educ['to'] = null;
+                        }
+
+                        if($educ['level_code'] == 5){
+                            $validationRules['newEducation.'.$index.'.graduateStudy'] = 'required';
                         }
                 
                         $this->validate($validationRules);
@@ -1169,6 +1179,16 @@ class PersonalDataSheetTable extends Component
                                 break;
                         }
 
+                        $isMaster = 0;
+                        $isDoctor = 0;
+                        if($educ['graduateStudy'] == 'm'){
+                            $isMaster = 1;
+                            $isDoctor = 0;
+                        }elseif($educ['graduateStudy'] == 'd'){
+                            $isMaster = 0;
+                            $isDoctor = 1;
+                        }
+
                         EmployeesEducation::create([
                             'user_id' => $user->id,
                             'level_code' => $educ['level_code'],
@@ -1181,6 +1201,9 @@ class PersonalDataSheetTable extends Component
                             'award' => $educ['award'],
                             'highest_level_unit_earned' => $educ['highest_level_unit_earned'],
                             'year_graduated' => $educ['year_graduated'] ?: null,
+                            'is_bachelor' => $educ['is_bachelor'] ?: 0,
+                            'is_master' => $isMaster,
+                            'is_doctor' => $isDoctor,
                         ]);
                     }
                     

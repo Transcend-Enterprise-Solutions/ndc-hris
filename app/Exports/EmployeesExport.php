@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\EmployeesEducation;
 use App\Models\LearningAndDevelopment;
 use App\Models\User;
 use Carbon\Carbon;
@@ -149,6 +150,7 @@ class EmployeesExport implements FromCollection, WithEvents
     public function collection()
     {
         $query = User::join('user_data', 'users.id', '=', 'user_data.user_id')
+                ->leftJoin('employees_education', 'employees_education.user_id', 'users.id')
                 ->leftJoin('learning_and_development', 'learning_and_development.user_id', 'users.id');
     
         $columnsToSelect = ['users.id'];
@@ -158,7 +160,13 @@ class EmployeesExport implements FromCollection, WithEvents
         $nameFieldsSelected = false;
     
         foreach ($this->selectedColumns as $column) {
-            if ($column !== 'years_in_gov_service' && $column !== 'learning_and_development') {
+            if ($column !== 'years_in_gov_service' 
+                && $column !== 'learning_and_development'
+                && $column !== 'ld_title'
+                && $column !== 'educational_background'
+                && $column !== 'name_of_school'
+                && $column !== 'course'
+                && $column !== 'year_graduated') {
                 if (in_array($column, $nameFields)) {
                     $columnsToSelect[] = "user_data.$column";
                     $columnsToGroupBy[] = "user_data.$column";
@@ -224,6 +232,29 @@ class EmployeesExport implements FromCollection, WithEvents
             $columnsToSelect[] = 'learning_and_development.user_id as learning_and_development';
             $columnsToGroupBy[] = 'learning_and_development.user_id';
         }
+        if (!empty($this->filters['selectedEduc'])) {
+            $query->where(function($subQuery) {
+                $isBachelor = in_array('b', $this->filters['selectedEduc']);
+                $isMaster = in_array('m', $this->filters['selectedEduc']);
+                $isDoctor = in_array('d', $this->filters['selectedEduc']);
+        
+                if ($isBachelor) {
+                    $subQuery->orWhere('employees_education.is_bachelor', 1);
+                    $columnsToSelect[] = 'employees_education.is_bachelor';
+                    $columnsToGroupBy[] = 'employees_education.is_bachelor';
+                }
+                if ($isMaster) {
+                    $subQuery->orWhere('employees_education.is_master', 1);
+                    $columnsToSelect[] = 'employees_education.is_master';
+                    $columnsToGroupBy[] = 'employees_education.is_master';
+                }
+                if ($isDoctor) {
+                    $subQuery->orWhere('employees_education.is_doctor', 1);
+                    $columnsToSelect[] = 'employees_education.is_doctor';
+                    $columnsToGroupBy[] = 'employees_education.is_doctor';
+                }
+            });
+        }
     
         $query->groupBy($columnsToGroupBy);
     
@@ -243,6 +274,9 @@ class EmployeesExport implements FromCollection, WithEvents
                 }
     
                 foreach ($this->selectedColumns as $column) {
+                    $educs = EmployeesEducation::where('user_id', $user->id)->get();
+                    $lds = LearningAndDevelopment::where('user_id', $user->id)->get();
+
                     if ($column !== 'name' && $column !== 'id') {
                         if ($column === 'active_status') {
                             $statusMapping = [
@@ -259,17 +293,99 @@ class EmployeesExport implements FromCollection, WithEvents
                         } elseif ($column === 'sex') {
                             $userData[] = $user->$column == 'No' ? 'Prefer Not To Say' : $user->$column;
                         } elseif ($column === 'learning_and_development') {
-                            $lds = LearningAndDevelopment::where('user_id', $user->id)->get();
                             if(!$lds->isEmpty()){
                                 $leardDev = '';
                                 foreach($lds as $ld){
-                                    $leardDev = $leardDev . (' • ' . $ld->type_of_ld);
+                                    $leardDev = $leardDev . ("• " . $ld->type_of_ld . "\n");
                                 }
                                 $userData[] = $leardDev;
                             }else{
                                 $userData[] = 'N/A';
                             }
-                        } else {
+                        } elseif ($column === 'ld_title') {
+                            if(!$lds->isEmpty()){
+                                $ldTitle = '';
+                                foreach($lds as $ld){
+                                    $ldTitle = $ldTitle . ("• " . $ld->title . "\n");
+                                }
+                                $userData[] = $ldTitle;
+                            }else{
+                                $userData[] = 'N/A';
+                            }
+                        }elseif ($column === 'educational_background') {
+                            if(!$educs->isEmpty()){
+                                $degree = '';
+                                foreach($educs as $ed){
+                                    if($ed->is_bachelor){
+                                        $degree = $degree . ("• Bachelor's Degree \n");
+                                    }
+                                    if($ed->is_master){
+                                        $degree = $degree . ("• Master's Degree \n");
+                                    }
+                                    if($ed->is_doctor){
+                                        $degree = $degree . ("• Doctorate Degree \n");
+                                    }
+                                }
+                                $userData[] = $degree;
+                            }else{
+                                $userData[] = 'N/A';
+                            }
+                        } elseif ($column === 'course') {
+                            if(!$educs->isEmpty()){
+                                $course = '';
+                                foreach($educs as $ed){
+                                    if($ed->is_bachelor){
+                                        $course = $course . ("• " . $ed->basic_educ_degree_course . "\n");
+                                    }
+                                    if($ed->is_master){
+                                        $course = $course . ("• " . $ed->basic_educ_degree_course . "\n");
+                                    }
+                                    if($ed->is_doctor){
+                                        $course = $course . ("• " . $ed->basic_educ_degree_course . "\n");
+                                    }
+                                }
+                                $userData[] = $course;
+                            }else{
+                                $userData[] = 'N/A';
+                            }
+                        } elseif ($column === 'name_of_school') {
+                            if(!$educs->isEmpty()){
+                                $nameOfSchool = '';
+                                foreach($educs as $ed){
+                                    if($ed->is_bachelor){
+                                        $nameOfSchool = $nameOfSchool . ("• " . $ed->name_of_school . "\n");
+                                    }
+                                    if($ed->is_master){
+                                        $nameOfSchool = $nameOfSchool . ("• " . $ed->name_of_school . "\n");
+                                    }
+                                    if($ed->is_doctor){
+                                        $nameOfSchool = $nameOfSchool . ("• " . $ed->name_of_school . "\n");
+                                    }
+                                }
+                                $userData[] = $nameOfSchool;
+                            }else{
+                                $userData[] = 'N/A';
+                            }
+                        } elseif ($column === 'year_graduated') {
+                            if(!$educs->isEmpty()){
+                                $yearGraduated = '';
+                                foreach($educs as $ed){
+                                    if($ed->is_bachelor){
+                                        $yearGraduated = $yearGraduated . ("• " . $ed->year_graduated . "\n");
+                                    }
+                                    if($ed->is_master){
+                                        $yearGraduated = $yearGraduated . ("• " . $ed->year_graduated . "\n");
+                                    }
+                                    if($ed->is_doctor){
+                                        $yearGraduated = $yearGraduated . ("• " . $ed->year_graduated . "\n");
+                                    }
+                                }
+                                $userData[] = $yearGraduated;
+                            }else{
+                                $userData[] = 'N/A';
+                            }
+                        } 
+                        else {
                             $userData[] = $user->$column ?? 'N/A';
                         }
                     }
@@ -330,7 +446,12 @@ class EmployeesExport implements FromCollection, WithEvents
             'appointment' => 'Nature of Appointment',
             'date_hired' => 'Date Hired',
             'years_in_gov_service' => 'Years in Government Service',
-            'learning_and_development' => 'Learning and Development',
+            'ld_title' => 'Learning and Development',
+            'learning_and_development' => 'Type of LD',
+            'educational_background' => 'Degree',
+            'course' => 'Course',
+            'name_of_school' => 'Name of School',
+            'year_graduated' => 'Year Graduated',
         ];
 
         return $headers[$column] ?? $column;

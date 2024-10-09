@@ -23,6 +23,9 @@ class EmployeesEducation extends Model
         'highest_level_unit_earned',
         'year_graduated',
         'award',
+        'is_bachelor',
+        'is_master',
+        'is_doctor',
     ];
 
     public function user()

@@ -1688,7 +1688,7 @@
                     <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
 
                         <!-- Filter Dropdown -->
-                        <div x-data="{ open: @entangle('toggleDropdownFilter') }" class="w-full sm:w-auto">
+                        <div x-data="{ open: @entangle('toggleDropdownFilter') }" class="w-full sm:w-auto relative">
                             <button @click="open = !open"
                                 class="mt-4 sm:mt-0 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                                     justify-center px-2 py-1.5 text-sm font-medium tracking-wide
@@ -1701,7 +1701,7 @@
 
                             {{-- @if ($dropdownForFilter) --}}
                             <div x-show="open" @click.away="open = false"
-                                class="absolute z-20 w-64 p-3 border border-gray-400
+                                class="absolute top-14 sm:top-10 z-20 w-64 p-3 border border-gray-400
                                         bg-white rounded-lg shadow-2xl dark:bg-gray-700
                                         overflow-x-hidden scrollbar-thin1"
                                 style="height: fit-content">
@@ -1714,7 +1714,13 @@
                                         dark:hover:bg-slate-600 focus:outline-none
                                         {{ $dropdownForProvinceOpen ? 'bg-gray-100 dark:bg-gray-800' : '' }}"
                                         type="button">
-                                        Group by Province
+                                        @if($selectedProvinces)
+                                            @foreach ($selectedProvinces as $item)
+                                                {{ $item }}, 
+                                            @endforeach
+                                        @else
+                                            Group by Province
+                                        @endif
                                         <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
                                     </button>
                                     @if ($dropdownForProvinceOpen)
@@ -1758,7 +1764,13 @@
                                         hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600
                                         {{ $dropdownForCityOpen ? 'bg-gray-100 dark:bg-gray-800' : '' }}"
                                         type="button">
-                                        Group by City
+                                        @if($selectedCities)
+                                            @foreach ($selectedCities as $item)
+                                                {{ $item }}, 
+                                            @endforeach
+                                        @else
+                                            Group by City
+                                        @endif
                                         <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
                                     </button>
                                     @if ($dropdownForCityOpen)
@@ -1802,7 +1814,13 @@
                                         border-gray-400 hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600
                                         {{ $dropdownForBarangayOpen ? 'bg-gray-100 dark:bg-gray-800' : '' }}"
                                         type="button">
-                                        Group by Barangay
+                                        @if($selectedBarangays)
+                                            @foreach ($selectedBarangays as $item)
+                                                {{ $item }}, 
+                                            @endforeach
+                                        @else
+                                            Group by Barangay
+                                        @endif
                                         <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
                                     </button>
                                     @if ($dropdownForBarangayOpen)
@@ -1847,7 +1865,13 @@
                                                 hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600
                                                 {{ $dropdownForCivilStatusOpen ? 'bg-gray-100 dark:bg-gray-800' : '' }}"
                                         type="button">
-                                        Group by Civil Status
+                                        @if($selectedCivilStatuses)
+                                            @foreach ($selectedCivilStatuses as $item)
+                                                {{ $item }}, 
+                                            @endforeach
+                                        @else
+                                            Group by Civil Status
+                                        @endif
                                         <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
                                     </button>
                                     @if ($dropdownForCivilStatusOpen)
@@ -1903,7 +1927,11 @@
                                                 hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600
                                                 {{ $dropdownForSexOpen ? 'bg-gray-100 dark:bg-gray-800' : '' }}"
                                         type="button">
-                                        Group by Sex
+                                        @if($sex)
+                                           {{ $sex }}
+                                        @else
+                                            Group by Sex
+                                        @endif
                                         <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
                                     </button>
                                     @if ($dropdownForSexOpen)
@@ -1958,7 +1986,13 @@
                                                 hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600
                                                 {{ $dropdownForLDOpen ? 'bg-gray-100 dark:bg-gray-800' : '' }}"
                                         type="button">
-                                        Group by L&D
+                                        @if($selectedLD)
+                                            @foreach ($selectedLD as $item)
+                                                {{ $item }}, 
+                                            @endforeach
+                                        @else
+                                            Group by L&D
+                                        @endif
                                         <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
                                     </button>
                                     @if ($dropdownForLDOpen)
@@ -1997,12 +2031,73 @@
                                         </div>
                                     @endif
                                 </div>
+
+                                <!-- Education Dropdown -->
+                                <div class="relative inline-block text-left w-full">
+                                    <button wire:click="toggleDropdownEduc"
+                                        class="w-full mr-4 p-2 mb-4 text-left
+                                                text-sm font-medium tracking-wide text-neutral-800 dark:text-neutral-200
+                                                transition-colors duration-200 rounded-lg border border-gray-400
+                                                hover:bg-gray-200 focus:outline-none dark:hover:bg-slate-600
+                                                {{ $dropdownForEducOpen ? 'bg-gray-100 dark:bg-gray-800' : '' }}"
+                                        type="button">
+                                        @if($selectedEduc)
+                                            @foreach ($selectedEduc as $item)
+                                                @if($item == 'b')
+                                                    Bachelors, 
+                                                @elseif($item == 'm')
+                                                    Masters, 
+                                                @elseif($item == 'd')
+                                                    Doctors, 
+                                                @endif
+                                            @endforeach
+                                        @else
+                                            Group by Education
+                                        @endif
+                                        <i class="bi bi-chevron-down w-5 h-5 ml-2 float-right"></i>
+                                    </button>
+                                    @if ($dropdownForEducOpen)
+                                        <div class="w-full absolute z-20">
+                                            <div
+                                                class="w-full p-3 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-400
+                                                    shadow-md max-h-60 overflow-y-auto scrollbar-thin1">
+                                                <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
+                                                    Educational Background
+                                                </h6>
+                                                <ul class="space-y-2 text-sm">
+                                                    <li class="flex items-center">
+                                                        <input id="b" type="checkbox"
+                                                            wire:model.live="selectedEduc" value="b"
+                                                            class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        <label for="b"
+                                                            class="ml-2 text-gray-900 dark:text-gray-300">Bachelor's Degree</label>
+                                                    </li>
+                                                    <li class="flex items-center">
+                                                        <input id="m" type="checkbox"
+                                                            wire:model.live="selectedEduc" value="m"
+                                                            class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        <label for="separated"
+                                                            class="ml-2 text-gray-900 dark:text-gray-300">Master's Degree</label>
+                                                    </li>
+                                                    <li class="flex items-center">
+                                                        <input id="d" type="checkbox"
+                                                            wire:model.live="selectedEduc" value="d"
+                                                            class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                                        <label for="separated"
+                                                            class="ml-2 text-gray-900 dark:text-gray-300">Doctorate Degree</label>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="h-3 w-full"></div>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                             {{-- @endif --}}
                         </div>
 
                         <!-- Sort Dropdown -->
-                        <div x-data="{ open: @entangle('dropdownForCategoryOpen') }" class="w-full sm:w-auto">
+                        <div x-data="{ open: @entangle('dropdownForCategoryOpen') }" class="w-full sm:w-auto relative">
                             <button @click="open = !open"
                                 class="mt-4 sm:mt-0 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                                 justify-center px-2 py-1.5 text-sm font-medium tracking-wide
@@ -2015,7 +2110,7 @@
 
                             {{-- @if ($dropdownForCategoryOpen) --}}
                             <div x-show="open" @click.away="open = false"
-                                class="absolute z-20 w-56 p-3 border border-gray-400 bg-white rounded-lg
+                                class="absolute top-14 sm:top-10 z-20 w-56 p-3 border border-gray-400 bg-white rounded-lg
                                         shadow-2xl dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1">
                                 <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Category</h6>
                                 <ul class="space-y-2 text-sm">
@@ -2218,6 +2313,12 @@
                                         <label for="learning_and_development"
                                             class="ml-2 text-gray-900 dark:text-gray-300">Learning and Development</label>
                                     </li>
+                                    <li class="flex items-center">
+                                        <input id="educational_background" type="checkbox"
+                                            wire:model.live="filters.educational_background" class="h-4 w-4">
+                                        <label for="educational_background"
+                                            class="ml-2 text-gray-900 dark:text-gray-300">Educational Background</label>
+                                    </li>
                                 </ul>
                             </div>
                             {{-- @endif --}}
@@ -2414,6 +2515,11 @@
                                                         class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                         Learning and Development</th>
                                                 @endif
+                                                @if ($filters['educational_background'])
+                                                    <th scope="col"
+                                                        class="px-5 py-3 text-sm font-medium uppercase text-center">
+                                                        Educational Background</th>
+                                                @endif
                                                 <th
                                                     class="px-5 py-3 text-gray-100 text-sm font-medium text-right sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
                                                     Action</th>
@@ -2540,14 +2646,29 @@
                                                         <td class="px-4 py-2 text-center">
                                                             {{ $user->years_in_gov_service ?? 'N/A' }}</td>
                                                     @endif
-                                                    @php
-                                                        $ld = $learnDev->where('user_id', $user->id)->get();
-                                                    @endphp
                                                     @if ($filters['learning_and_development'])
                                                         <td class="px-4 py-2 text-center">
-                                                            @if($ld)
-                                                                @foreach ($ld as $item)                                                              
-                                                                    {{ $item ? ('• ' . $item->type_of_ld) : '' }}
+                                                            @if(isset($learnDev[$user->id]))
+                                                                @foreach ($learnDev[$user->id] as $item)
+                                                                    {{ '• ' . $item->type_of_ld }} 
+                                                                @endforeach
+                                                            @endif
+                                                        </td>
+                                                    @endif
+
+                                                    @if ($filters['educational_background'])
+                                                        <td class="px-4 py-2 text-center">
+                                                            @if(isset($educBg[$user->id]))
+                                                                @foreach ($educBg[$user->id] as $ed)
+                                                                    @if($ed->is_bachelor)
+                                                                        • Bachelor's Degree 
+                                                                    @endif
+                                                                    @if($ed->is_master)
+                                                                        • Master's Degree 
+                                                                    @endif
+                                                                    @if($ed->is_doctor)
+                                                                        • Doctorate Degree 
+                                                                    @endif
                                                                 @endforeach
                                                             @endif
                                                         </td>
