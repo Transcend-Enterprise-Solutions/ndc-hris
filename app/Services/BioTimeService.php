@@ -8,7 +8,7 @@ use App\Models\AuditLog;
 class BioTimeService
 {
     protected $client;
-    protected $authUrl = 'http://45.64.120.27:8082/jwt-api-token-auth/';
+    protected $authUrl = 'http://45.64.120.227:8082/jwt-api-token-auth/';
     protected $username = 'admin123';
     protected $password = 'admin123';
     protected $token;
@@ -76,7 +76,7 @@ class BioTimeService
                 'request' => $e->getRequest()->getBody()->getContents(),
                 'response' => $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null,
             ]);
-            // Instead of throwing an exception, we'll return an empty array
+
             return [];
         }
     }
