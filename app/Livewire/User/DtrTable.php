@@ -27,6 +27,8 @@ class DtrTable extends Component
     public $remarks;
     public $selectedDtrId;
     public $currentAttachment;
+    public $pageSize = 15; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
 
     protected $queryString = [
         'searchTerm' => ['except' => ''],
@@ -86,7 +88,7 @@ class DtrTable extends Component
 
         $query->orderBy($this->sortField, $this->sortDirection);
 
-        $dtrs = $query->paginate(30);
+        $dtrs = $query->paginate($this->pageSize);
 
         return view('livewire.user.dtr-table', ['dtrs' => $dtrs]);
     }

@@ -13,6 +13,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
 <div>
     @if ($paginator->hasPages())
         <nav role="navigation" aria-label="{{ __('Pagination Navigation') }}" class="flex items-center justify-between">
+            {{-- Mobile view pagination controls --}}
             <div class="flex justify-between flex-1 sm:hidden">
                 {{-- Previous Page Link --}}
                 @if ($paginator->onFirstPage())
@@ -37,6 +38,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                 @endif
             </div>
 
+            {{-- Desktop view pagination controls --}}
             <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
                     <p class="text-sm text-gray-700 dark:text-gray-300 leading-5">
@@ -51,7 +53,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                 </div>
 
                 <div class="flex items-center">
-                    @if (method_exists($paginator->getCollection()->first(), 'getCursorName'))
+                    @if ($paginator->count() > 0 && method_exists($paginator->getCollection()->first(), 'getCursorName'))
                         {{-- Cursor Pagination --}}
                         <!-- ... cursor pagination code ... -->
                     @else
@@ -61,7 +63,6 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                                     <option value="{{ $size }}">{{ $size }} per page</option>
                                 @endforeach
                             </select>
-
                         @endif
 
                         <span class="relative z-0 inline-flex shadow-sm rounded-md">

@@ -76,7 +76,7 @@ class BioTimeService
                 'request' => $e->getRequest()->getBody()->getContents(),
                 'response' => $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null,
             ]);
-            // Instead of throwing an exception, we'll return an empty array
+
             return [];
         }
     }
