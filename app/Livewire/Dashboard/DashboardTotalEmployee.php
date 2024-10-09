@@ -16,9 +16,10 @@ class DashboardTotalEmployee extends Component
     {
         $currentYear = date('Y');
 
-        $this->totalEmployees = User::whereYear('created_at', $currentYear)->count();
+        $this->totalEmployees = User::whereYear('created_at', $currentYear)->where('user_role', '=','emp')->count();
 
         $createdByMonth = User::whereYear('created_at', $currentYear)
+            ->where('user_role', '=','emp')
             ->selectRaw('COUNT(*) as count, MONTH(created_at) as month')
             ->groupBy('month')
             ->orderBy('month')
