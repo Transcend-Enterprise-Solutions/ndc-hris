@@ -35,6 +35,8 @@ class EmployeeTable extends Component
     public $r_full_address;
     public $childrenNames;
     public $childrenBirthDates;
+    public $pageSize = 10; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
 
     public $filters = [
         'name' => true,
@@ -474,7 +476,7 @@ class EmployeeTable extends Component
                     ) as years_in_gov_service'));
                 })
                 ->where('users.user_role', '=','emp')
-                ->paginate(10);
+                ->paginate($this->pageSize);
 
             $query->getCollection()->transform(function ($user) {
                 $statusMapping = [

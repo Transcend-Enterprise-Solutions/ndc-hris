@@ -128,6 +128,8 @@ class CosSkPayrollTable  extends Component
     public $other_deductions;
     public $unpayrolledEmployees;
     public $canExportPayslip = false;
+    public $pageSize = 10; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
 
     public function mount(){
         $this->employees = User::where('users.user_role', '=', 'emp')
@@ -176,7 +178,7 @@ class CosSkPayrollTable  extends Component
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                 ->select('users.name', 'users.emp_code as employee_number', 'cos_sk_payrolls.*', 'positions.*', 'office_divisions.*')
-                ->paginate(5);
+                ->paginate($this->pageSize);
 
         if($this->userId){
             $user = User::where('id', $this->userId)->first();

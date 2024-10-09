@@ -210,6 +210,8 @@ class GeneralPayrollTable extends Component
         "0.125" => 60
     ];
     public $absentLateUndertimeDeductionAmount = 0;
+    public $pageSize = 10; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
     
 
     public function mount(){
@@ -237,7 +239,7 @@ class GeneralPayrollTable extends Component
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                 ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
-                ->paginate(10);
+                ->paginate($this->pageSize);
 
 
         if($this->userId){
@@ -1325,9 +1327,9 @@ class GeneralPayrollTable extends Component
 
     public function deleteData(){
         try {
-            $user = User::where('id', $this->deleteId)->first();
+            $user = Payrolls::where('user_id', $this->deleteId)->first();
             if ($user) {
-                $user->payrolls()->delete();
+                $user->delete();
                 $message = "Plantilla payroll deleted successfully!";
                 $this->resetVariables();
                 $this->dispatch('swal', [

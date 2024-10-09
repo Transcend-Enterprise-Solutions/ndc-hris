@@ -2,6 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Models\CosRegPayrolls;
+use App\Models\CosRegPayslip;
+use App\Models\CosSkPayrolls;
 use Livewire\Component;
 use Livewire\WithPagination;
 use OwenIt\Auditing\Models\Audit;
@@ -10,6 +13,8 @@ use App\Models\DocRequest;
 use App\Models\DTRSchedule;
 use App\Models\Holiday;
 use App\Models\LeaveApplication;
+use App\Models\Payrolls;
+use App\Models\PlantillaPayslip;
 
 class AuditLogViewer extends Component
 {
@@ -69,6 +74,13 @@ class AuditLogViewer extends Component
                               WHEN audits.auditable_type = 'App\\Models\\DTRSchedule' THEN 'schedule'
                               WHEN audits.auditable_type = 'App\\Models\\Holiday' THEN 'holiday'
                               WHEN audits.auditable_type = 'App\\Models\\LeaveApplication' THEN 'leave application'
+                              WHEN audits.auditable_type = 'App\\Models\\Payrolls' THEN 'payroll'
+                              WHEN audits.auditable_type = 'App\\Models\\PlantillaPayslip' THEN 'payroll'
+                              WHEN audits.auditable_type = 'App\\Models\\CosRegPayrolls' THEN 'payroll'
+                              WHEN audits.auditable_type = 'App\\Models\\CosRegPayslip' THEN 'payroll'
+                              WHEN audits.auditable_type = 'App\\Models\\CosSkPayrolls' THEN 'payroll'
+                              WHEN audits.auditable_type = 'App\\Models\\CosSkPayslip' THEN 'payroll'
+                              WHEN audits.auditable_type = 'App\\Models\\User' THEN 'user'
                               ELSE audits.auditable_type
                           END,
                           ' (ID: ',
@@ -116,6 +128,45 @@ class AuditLogViewer extends Component
             if (isset($resolved['type_of_leave'])) {
                 $resolved['leave_type'] = $resolved['type_of_leave'];
             }
+        }elseif ($audit->auditable_type === Payrolls::class) {
+            if (isset($resolved['user_id'])) {
+                $user = User::find($resolved['user_id']);
+                $resolved['employee_name'] = $user ? $user->name : 'Unknown Employee';
+            }
+        }elseif ($audit->auditable_type === User::class) {
+            if (isset($resolved['email'])) {
+                $resolved['email'] = $this->maskEmail($resolved['email']);
+            }
+        }
+        elseif ($audit->auditable_type === PlantillaPayslip::class) {
+            if (isset($resolved['user_id'])) {
+                $user = User::find($resolved['user_id']);
+                $resolved['employee_name'] = $user ? $user->name : 'Unknown Employee';
+            }
+        }
+        elseif ($audit->auditable_type === CosRegPayrolls::class) {
+            if (isset($resolved['user_id'])) {
+                $user = User::find($resolved['user_id']);
+                $resolved['employee_name'] = $user ? $user->name : 'Unknown Employee';
+            }
+        }
+        elseif ($audit->auditable_type === CosRegPayslip::class) {
+            if (isset($resolved['user_id'])) {
+                $user = User::find($resolved['user_id']);
+                $resolved['employee_name'] = $user ? $user->name : 'Unknown Employee';
+            }
+        }
+        elseif ($audit->auditable_type === CosSkPayrolls::class) {
+            if (isset($resolved['user_id'])) {
+                $user = User::find($resolved['user_id']);
+                $resolved['employee_name'] = $user ? $user->name : 'Unknown Employee';
+            }
+        }
+        elseif ($audit->auditable_type === CosRegPayslip::class) {
+            if (isset($resolved['user_id'])) {
+                $user = User::find($resolved['user_id']);
+                $resolved['employee_name'] = $user ? $user->name : 'Unknown Employee';
+            }
         }
 
         return $resolved;
@@ -128,5 +179,14 @@ class AuditLogViewer extends Component
             <livewire:skeleton/>
         </div>
         HTML;
+    }
+
+    private function maskEmail($email)
+    {
+        $parts = explode('@', $email);
+        $name = $parts[0];
+        $domain = $parts[1] ?? '';
+        $maskedName = substr($name, 0, 2) . str_repeat('*', strlen($name) - 2);
+        return $maskedName . '@' . $domain;
     }
 }

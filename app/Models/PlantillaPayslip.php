@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
 
-class PlantillaPayslip extends Model
+class PlantillaPayslip extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $table = 'plantilla_payslip';
 
@@ -50,5 +52,19 @@ class PlantillaPayslip extends Model
 
     public function user(){
         return $this->belongsTo(User::class);
+    }
+
+    public function getAuditDescriptionForEvent(string $eventName): string
+    {
+        switch ($eventName) {
+            case 'created':
+                return "Created by user {$this->user->name}";
+            case 'updated':
+                return "Updated by user {$this->user->name}";
+            case 'deleted':
+                return "Deleted by user {$this->user->name}";
+            default:
+                return '';
+        }
     }
 }
