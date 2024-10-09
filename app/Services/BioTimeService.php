@@ -8,7 +8,7 @@ use App\Models\AuditLog;
 class BioTimeService
 {
     protected $client;
-    protected $authUrl = 'http://45.64.120.227:8082/jwt-api-token-auth/';
+    protected $authUrl = 'http://45.64.120.27:8082/jwt-api-token-auth/';
     protected $username = 'admin123';
     protected $password = 'admin123';
     protected $token;
