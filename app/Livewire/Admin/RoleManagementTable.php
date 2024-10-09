@@ -77,6 +77,8 @@ class RoleManagementTable extends Component
     public $unitId;
     public $file;
     public $divId;
+    public $pageSize = 10; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
 
     public $status = [
         'active' => true,
@@ -123,7 +125,7 @@ class RoleManagementTable extends Component
                     'office_divisions.office_division',
                     'office_division_units.unit'
                 )
-                ->paginate(10);
+                ->paginate($this->pageSize);
 
         foreach($admins as $admin){
             $empCode = explode('-', $admin->emp_code);
@@ -164,7 +166,7 @@ class RoleManagementTable extends Component
                 ->when($this->search3, function ($query) {
                     return $query->search(trim($this->search3));
                 })
-                ->paginate(10);
+                ->paginate($this->pageSize);
             
 
         $organizations = User::where('user_role', 'emp')

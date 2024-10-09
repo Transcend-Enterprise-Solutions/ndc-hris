@@ -19,7 +19,9 @@ return new class extends Migration
                 $table->string('month')->nullable();
                 $table->string('year')->nullable();
                 $table->decimal('vl_latest_credits', 10, 3)->nullable();
+                $table->decimal('vl_latest_claimed', 10, 3)->nullable();
                 $table->decimal('sl_latest_credits', 10, 3)->nullable();
+                $table->decimal('sl_latest_claimed', 10, 3)->nullable();
                 $table->timestamps();
             });
         }

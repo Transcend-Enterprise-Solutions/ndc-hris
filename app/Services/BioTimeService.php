@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services;
 
 use GuzzleHttp\Client;
@@ -10,8 +9,8 @@ class BioTimeService
 {
     protected $client;
     protected $authUrl = 'http://45.64.120.27:8082/jwt-api-token-auth/';
-    protected $username = 'admin123'; 
-    protected $password = 'admin123'; 
+    protected $username = 'admin123';
+    protected $password = 'admin123';
     protected $token;
 
     public function __construct()
@@ -23,13 +22,15 @@ class BioTimeService
             ],
             'allow_redirects' => true,
         ]);
-
-        $this->authenticate(); // Automatically authenticate when the service is initialized
     }
 
     // Function to authenticate and get JWT token
     public function authenticate()
     {
+        if ($this->token) {
+            return;
+        }
+
         try {
             $response = $this->client->post($this->authUrl, [
                 'json' => [
@@ -45,12 +46,21 @@ class BioTimeService
                 'request' => $e->getRequest()->getBody()->getContents(),
                 'response' => $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null,
             ]);
-            throw new \Exception('Error authenticating: ' . $e->getMessage());
+            // Instead of throwing an exception, we'll just set the token to null
+            $this->token = null;
         }
     }
 
     public function getTransactions($params = [])
     {
+        $this->authenticate(); // Try to authenticate before each request
+
+        if (!$this->token) {
+            // If we couldn't authenticate, log an error and return an empty array
+            $this->logError('fetch_error', 'Unable to fetch transactions due to authentication failure', []);
+            return [];
+        }
+
         try {
             $response = $this->client->get('http://45.64.120.27:8082/iclock/api/transactions/', [
                 'headers' => [
@@ -66,7 +76,8 @@ class BioTimeService
                 'request' => $e->getRequest()->getBody()->getContents(),
                 'response' => $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null,
             ]);
-            throw new \Exception('Error fetching transactions: ' . $e->getMessage());
+            // Instead of throwing an exception, we'll return an empty array
+            return [];
         }
     }
 

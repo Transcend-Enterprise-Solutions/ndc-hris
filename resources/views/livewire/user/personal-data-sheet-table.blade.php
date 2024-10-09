@@ -3149,7 +3149,7 @@
                                             wire:click="removeNewEducation({{ $index }})"></i>
                                     </label>
                                     <select id="level_code_{{ $index }}"
-                                        wire:model="newEducation.{{ $index }}.level_code"
+                                        wire:model.live="newEducation.{{ $index }}.level_code"
                                         class="mt-1 px-2 pt-2 pb-2.5 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                         <option value=""></option>
                                         <option value="1">Elementary</option>
@@ -3178,6 +3178,45 @@
                                     @enderror
                                 </div>
 
+                                @if($newEducation[$index]['level_code'] == 4)
+                                    <div class="col-span-2">
+                                        <div class="flex gap-2 items-center">
+                                            <input type="checkbox" id="bachelor_{{ $index }}"
+                                                wire:model="newEducation.{{ $index }}.is_bachelor"
+                                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 
+                                                checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                            <label for="bachelor_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Bachelor's Degree
+                                            </label>
+                                        </div>
+                                    </div>
+                                @elseif($newEducation[$index]['level_code'] == 5)
+                                    <div class="col-span-2">
+                                        <div class="flex gap-2 items-center">
+                                            <input type="radio" id="bachelor_{{ $index }}" value="m"
+                                                wire:model="newEducation.{{ $index }}.graduateStudy"
+                                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 checked:bg-blue-500 
+                                                focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                            <label for="bachelor_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Master's Degree
+                                            </label>
+                                        </div>
+                                        <div class="flex gap-2 items-center">
+                                            <input type="radio" id="bachelor_{{ $index }}" value="d"
+                                                wire:model="newEducation.{{ $index }}.graduateStudy"
+                                                class="h-4 w-4 text-neutral-800 dark:text-neutral-200 border-gray-300 dark:border-neutral-500 
+                                                checked:bg-blue-500 focus:ring-offset-2 focus:ring-2 focus:outline-none">
+                                            <label for="bachelor_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Doctorate Degree
+                                            </label>
+                                        </div>
+                                        @error('newEducation.' . $index . '.graduateStudy')
+                                            <span class="text-red-500 text-sm">Please select 1</span>
+                                        @enderror
+                                    </div>
+                                @endif
+
+
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="from_{{ $index }}"
                                         class="block text-sm font-medium text-gray-700 dark:text-slate-400">From</label>
@@ -3199,11 +3238,11 @@
                                             class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700 {{ $newEducation[$index]['toPresent'] ? 'hidden' : '' }}">
                                         <div
                                             class="flex items-center justify-center gap-2 mr-4 {{ $newEducation[$index]['toPresent'] ? 'flex-row mt-4' : 'flex-col' }}">
+                                            <label for="to_{{ $index }}"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
                                             <input type="checkbox" id="to_{{ $index }}"
                                                 wire:model.live="newEducation.{{ $index }}.toPresent"
                                                 value="Present">
-                                            <label for="to_{{ $index }}"
-                                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
                                         </div>
                                     </div>
                                     @error('newEducation.' . $index . '.to' || 'newEducation.' . $index . '.toPresent')

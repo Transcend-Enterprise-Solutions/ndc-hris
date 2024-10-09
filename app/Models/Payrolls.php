@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
 
-class Payrolls extends Model
+class Payrolls extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $table = 'payrolls';
 
@@ -89,5 +91,19 @@ class Payrolls extends Model
                 ->orWhere('signatories.signatory', 'like', $term)
                 ->orWhere('signatories.signatory_type', 'like', $term);
         });
+    }
+
+    public function getAuditDescriptionForEvent(string $eventName): string
+    {
+        switch ($eventName) {
+            case 'created':
+                return "Created by user {$this->user->name}";
+            case 'updated':
+                return "Updated by user {$this->user->name}";
+            case 'deleted':
+                return "Deleted by user {$this->user->name}";
+            default:
+                return '';
+        }
     }
 }

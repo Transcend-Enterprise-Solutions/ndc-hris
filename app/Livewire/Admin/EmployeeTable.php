@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Exports\PDSExport;
+use App\Models\EmployeesEducation;
 use App\Models\LearningAndDevelopment;
 use App\Models\PdsC4Answers;
 use Livewire\Component;
@@ -34,6 +35,8 @@ class EmployeeTable extends Component
     public $r_full_address;
     public $childrenNames;
     public $childrenBirthDates;
+    public $pageSize = 10; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
 
     public $filters = [
         'name' => true,
@@ -64,8 +67,13 @@ class EmployeeTable extends Component
         'active_status' => true,
         'appointment' => true,
         'date_hired' => true,
-        'years_in_gov_service' => true,
-        'learning_and_development' => true,
+        'years_in_gov_service' => false,
+        'learning_and_development' => false,
+        'ld_title' => false,
+        'educational_background' => false,
+        'course' => false,
+        'name_of_school' => false,
+        'year_graduated' => false,
         // 'tel_number' => false,
         // 'mobile_number' => false,
         // 'email' => false,
@@ -81,6 +89,7 @@ class EmployeeTable extends Component
     public $selectedCities = [];
     public $selectedBarangays = [];
     public $selectedLD = [];
+    public $selectedEduc = [];
     public $provinces;
     public $cities;
     public $barangays;
@@ -94,6 +103,7 @@ class EmployeeTable extends Component
     public $dropdownForSexOpen = false;
     public $dropdownForCivilStatusOpen = false;
     public $dropdownForLDOpen = false;
+    public $dropdownForEducOpen = false;
     public $dropdownForProvinceOpen = false;
     public $dropdownForCityOpen = false;
     public $dropdownForBarangayOpen = false;
@@ -161,6 +171,8 @@ class EmployeeTable extends Component
         $this->dropdownForProvinceOpen = false;
         $this->dropdownForCityOpen = false;
         $this->dropdownForBarangayOpen = false;
+        $this->dropdownForEducOpen = false;
+        $this->dropdownForLDOpen = false;
     }
 
     public function toggleDropdownFilter(){
@@ -176,6 +188,7 @@ class EmployeeTable extends Component
         $this->dropdownForCityOpen = false;
         $this->dropdownForBarangayOpen = false;
         $this->dropdownForLDOpen = false;
+        $this->dropdownForEducOpen = false;
     }
 
     public function toggleDropdownCivilStatus()
@@ -187,11 +200,25 @@ class EmployeeTable extends Component
         $this->dropdownForCityOpen = false;
         $this->dropdownForBarangayOpen = false;
         $this->dropdownForLDOpen = false;
+        $this->dropdownForEducOpen = false;
     }
 
     public function toggleDropdownLD()
     {
         $this->dropdownForLDOpen = !$this->dropdownForLDOpen;
+        $this->dropdownForCivilStatusOpen = false;
+        $this->dropdownForCategoryOpen = false;
+        $this->dropdownForSexOpen = false;
+        $this->dropdownForProvinceOpen = false;
+        $this->dropdownForCityOpen = false;
+        $this->dropdownForBarangayOpen = false;
+        $this->dropdownForEducOpen = false;
+    }
+
+    public function toggleDropdownEduc()
+    {
+        $this->dropdownForEducOpen = !$this->dropdownForEducOpen;
+        $this->dropdownForLDOpen = false;
         $this->dropdownForCivilStatusOpen = false;
         $this->dropdownForCategoryOpen = false;
         $this->dropdownForSexOpen = false;
@@ -209,6 +236,7 @@ class EmployeeTable extends Component
         $this->dropdownForCityOpen = false;
         $this->dropdownForBarangayOpen = false;
         $this->dropdownForLDOpen = false;
+        $this->dropdownForEducOpen = false;
     }
 
     public function toggleDropdownCity()
@@ -220,6 +248,7 @@ class EmployeeTable extends Component
         $this->dropdownForProvinceOpen = false;
         $this->dropdownForBarangayOpen = false;
         $this->dropdownForLDOpen = false;
+        $this->dropdownForEducOpen = false;
     }
 
     public function toggleDropdownBarangay()
@@ -231,6 +260,7 @@ class EmployeeTable extends Component
         $this->dropdownForCityOpen = false;
         $this->dropdownForProvinceOpen = false;
         $this->dropdownForLDOpen = false;
+        $this->dropdownForEducOpen = false;
     }
 
     public function updatedSelectAllProvinces($value)
@@ -271,6 +301,7 @@ class EmployeeTable extends Component
 
         $query = User::join('user_data', 'user_data.user_id', '=', 'users.id')
                 ->leftJoin('learning_and_development', 'learning_and_development.user_id', 'users.id')
+                ->leftJoin('employees_education', 'employees_education.user_id', 'users.id')
                 ->select('users.id')
                 ->groupBy('users.id')
                 ->when($this->filters['name'], function ($query) {
@@ -414,6 +445,23 @@ class EmployeeTable extends Component
                 ->when(!empty($this->selectedLD), function ($query) {
                     $query->whereIn('learning_and_development.type_of_ld', $this->selectedLD);
                 })
+                ->when(!empty($this->selectedEduc), function ($query) {
+                    $query->where(function($subQuery) {
+                        $isBachelor = in_array('b', $this->selectedEduc);
+                        $isMaster = in_array('m', $this->selectedEduc);
+                        $isDoctor = in_array('d', $this->selectedEduc);
+                
+                        if ($isBachelor) {
+                            $subQuery->orWhere('employees_education.is_bachelor', 1);
+                        }
+                        if ($isMaster) {
+                            $subQuery->orWhere('employees_education.is_master', 1);
+                        }
+                        if ($isDoctor) {
+                            $subQuery->orWhere('employees_education.is_doctor', 1);
+                        }
+                    });
+                })
                 ->when($this->filters['years_in_gov_service'], function ($query) {
                     $query->addSelect(DB::raw('(
                         SELECT FLOOR(SUM(
@@ -427,10 +475,8 @@ class EmployeeTable extends Component
                         WHERE work_experience.user_id = users.id AND work_experience.gov_service = 1
                     ) as years_in_gov_service'));
                 })
-                ->addSelect('learning_and_development.user_id')
-                ->groupBy('learning_and_development.user_id')
                 ->where('users.user_role', '=','emp')
-                ->paginate(10);
+                ->paginate($this->pageSize);
 
             $query->getCollection()->transform(function ($user) {
                 $statusMapping = [
@@ -452,13 +498,16 @@ class EmployeeTable extends Component
                 $this->dropdownForCategoryOpen = null;
             }
 
-            $learnDev = LearningAndDevelopment::select('type_of_ld');
+            $userIds = $query->pluck('id');
+            $learnDev = LearningAndDevelopment::whereIn('user_id', $userIds)->get()->groupBy('user_id');
+            $educBg = EmployeesEducation::whereIn('user_id', $userIds)->get()->groupBy('user_id');
 
             return view('livewire.admin.employee-table', [
                 'users' => $query,
                 'cities' => $this->cities,
                 'barangays' => $this->barangays,
                 'learnDev' => $learnDev,
+                'educBg' => $educBg,
             ]);
     }
 
@@ -551,6 +600,7 @@ class EmployeeTable extends Component
             'selectedCity' => $this->selectedCities ?? [],
             'selectedBarangay' => $this->selectedBarangays ?? [],
             'selectedLD' => $this->selectedLD ?? [],
+            'selectedEduc' => $this->selectedEduc ?? [],
         ];
     
         $selectedColumns = array_keys(array_filter($this->filters));
@@ -592,6 +642,22 @@ class EmployeeTable extends Component
             $this->barangays = PhilippineBarangays::whereIn('city_municipality_code', $cityCodes)->get();
         } else {
             $this->barangays = collect();
+        }
+
+        if($this->filters['educational_background']){
+            $this->filters['course'] = true;
+            $this->filters['name_of_school'] = true;
+            $this->filters['year_graduated'] = true;
+        }else{
+            $this->filters['course'] = false;
+            $this->filters['name_of_school'] = false;
+            $this->filters['year_graduated'] = false;
+        }
+
+        if($this->filters['learning_and_development']){
+            $this->filters['ld_title'] = true;
+        }else{
+            $this->filters['ld_title'] = false;
         }
     }
       

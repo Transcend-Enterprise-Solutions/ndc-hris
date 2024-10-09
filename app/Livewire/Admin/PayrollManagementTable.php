@@ -117,6 +117,8 @@ class PayrollManagementTable extends Component
     public $signatoryFor;
     public $signatures = [];
     public $preparedBySign;
+    public $pageSize = 10; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
 
     public function mount(){
         $this->employees = User::where('user_role', '=', 'emp')->get();
@@ -134,7 +136,7 @@ class PayrollManagementTable extends Component
         $cosPayrolls = CosRegPayrolls::when($this->search2, function ($query) {
                         return $query->search(trim($this->search2));
                     })
-                    ->paginate(5);
+                    ->paginate($this->pageSize);
         
         if($this->userId){
             $user = User::where('id', $this->userId)->first();

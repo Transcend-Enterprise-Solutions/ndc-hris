@@ -16,7 +16,9 @@ class MonthlyCredits extends Model
         'month',
         'year',
         'vl_latest_credits',
+        'vl_latest_claimed',
         'sl_latest_credits',
+        'sl_latest_claimed',
     ];
 
     public function user()
