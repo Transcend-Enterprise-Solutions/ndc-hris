@@ -76,7 +76,6 @@ class BioTimeService
                 'request' => $e->getRequest()->getBody()->getContents(),
                 'response' => $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null,
             ]);
-
             return [];
         }
     }

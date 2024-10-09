@@ -9,6 +9,7 @@ use App\Models\Positions;
 use App\Models\UserData;
 use App\Models\OfficeDivisionUnits;
 use App\Models\MonetizationRequest;
+use App\Models\MonthlyCredits;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -42,9 +43,66 @@ class LeaveCardExport
         $sheet->setCellValue($cell, $richText);
     }
 
+    private function getBalanceBroughtForward($userId, $startDate)
+    {
+        $startDateCarbon = Carbon::createFromFormat('Y-m', $startDate);
+        
+        // Convert month to numeric (1-12)
+        $month = (int)$startDateCarbon->format('n');
+        $year = (int)$startDateCarbon->format('Y');
+        
+        // Get the monthly credits for the selected month
+        $monthlyCredits = MonthlyCredits::where('user_id', $userId)
+            ->where('year', $year)
+            ->where('month', $month)
+            ->first();
+
+        // For debugging
+        \Log::info('Monthly Credits Query:', [
+            'user_id' => $userId,
+            'month' => $month,
+            'year' => $year,
+            'result' => $monthlyCredits
+        ]);
+
+        if ($monthlyCredits) {
+            $total = $monthlyCredits->vl_latest_credits + $monthlyCredits->vl_latest_claimed;
+            \Log::info('Balance Calculation:', [
+                'vl_latest_credits' => $monthlyCredits->vl_latest_credits,
+                'vl_latest_claimed' => $monthlyCredits->vl_latest_claimed,
+                'total' => $total
+            ]);
+            return $total;
+        }
+
+        return 0;
+    }
+
+    private function getSickLeaveBalanceBroughtForward($userId, $startDate)
+    {
+        $startDateCarbon = Carbon::createFromFormat('Y-m', $startDate);
+        
+        // Convert month to numeric (1-12)
+        $month = (int)$startDateCarbon->format('n');
+        $year = (int)$startDateCarbon->format('Y');
+        
+        // Get the monthly credits for the selected month
+        $monthlyCredits = MonthlyCredits::where('user_id', $userId)
+            ->where('year', $year)
+            ->where('month', $month)
+            ->first();
+
+        if ($monthlyCredits) {
+            return $monthlyCredits->sl_latest_credits + $monthlyCredits->sl_latest_claimed;
+        }
+
+        return 0;
+    }
+
     public function export(): StreamedResponse
     {
         $leaveApplication = LeaveApplication::with('user')->findOrFail($this->leaveApplicationId);
+        $user = $leaveApplication->user;
 
         // Fetching user data
         $user = $leaveApplication->user;
@@ -108,8 +166,10 @@ class LeaveCardExport
 
         $rowIndex = 11;
         // $firstMonthProcessed = false;
-        $currentBalance = $vl_balance_brought_forward;
-        $currentBalanceSl = $sl_balance_brought_forward;
+        $currentBalance = $this->getBalanceBroughtForward($user->id, $this->startDate);
+        $currentBalanceSl = $this->getSickLeaveBalanceBroughtForward($user->id, $this->startDate);
+
+        
 
         // Set Balance Brought Forward
         $sheet->setCellValue('K' . $rowIndex, 'Balance Brought Forward');
@@ -117,6 +177,8 @@ class LeaveCardExport
         $sheet->setCellValue('R' . $rowIndex, $currentBalanceSl);
 
         $rowIndex++;
+        $startDate = Carbon::createFromFormat('Y-m', $this->startDate)->startOfMonth();
+        $endDate = Carbon::createFromFormat('Y-m', $this->endDate)->endOfMonth();
 
         for ($date = $startDate; $date->lessThanOrEqualTo($endDate); $date->addMonth()) {
             $month = intval($date->format('n'));

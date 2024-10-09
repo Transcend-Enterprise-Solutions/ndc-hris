@@ -232,6 +232,11 @@ class User extends Authenticatable implements AuditableContract
         return $this->hasMany(PayrollsLeaveCreditsDeduction::class);
     }
 
+    public function monthlyCredits()
+    {
+        return $this->hasMany(MonthlyCredits::class);
+    }
+
     /**
      * The attributes that should be cast.
      *

@@ -325,57 +325,104 @@ class AdminLeaveRequestTable extends Component
         }
     
         $leaveTypes = explode(',', $this->selectedApplication->type_of_leave);
+        $updatedLeaveTypes = [];
     
         foreach ($leaveTypes as $leaveType) {
             $leaveType = trim($leaveType);
+            $originalLeaveType = $leaveType;
 
             if ($leaveType === "Vacation Leave" || $leaveType === "Sick Leave") {
                 $totalDeducted = 0;
-    
-                // Deduct from SPL first
-                if ($leaveCredits->spl_claimable_credits > 0) {
-                    $deduct = min($days, $leaveCredits->spl_claimable_credits);
-                    $leaveCredits->spl_claimable_credits -= $deduct;
-                    $leaveCredits->spl_claimed_credits += $deduct;
-                    $totalDeducted += $deduct;
+                $deductedFrom = '';
+                
+                if ($leaveType === "Vacation Leave") {
+                    // Check if SPL has enough credits
+                    if ($leaveCredits->spl_claimable_credits >= $days) {
+                        // Deduct from SPL since it has enough credits
+                        $deduct = $days;
+                        $leaveCredits->spl_claimable_credits -= $deduct;
+                        $leaveCredits->spl_claimed_credits += $deduct;
+                        $totalDeducted += $deduct;
+                        $deductedFrom = 'SPL';
 
-                    // Also deduct the same amount from FL if available
-                    if ($leaveCredits->fl_claimable_credits > 0) {
-                        $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
-                        $leaveCredits->fl_claimable_credits -= $flDeduct;
-                        $leaveCredits->fl_claimed_credits += $flDeduct;
+                        // Also deduct the same amount from FL if available
+                        if ($leaveCredits->fl_claimable_credits > 0) {
+                            $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
+                            $leaveCredits->fl_claimable_credits -= $flDeduct;
+                            $leaveCredits->fl_claimed_credits += $flDeduct;
+                        }
+                    } 
+                    // If SPL doesn't have enough, check if SL has enough
+                    // else if ($leaveCredits->sl_claimable_credits >= $days) {
+                    //     // Deduct from SL since it has enough credits
+                    //     $deduct = $days;
+                    //     $leaveCredits->sl_claimable_credits -= $deduct;
+                    //     $leaveCredits->sl_claimed_credits += $deduct;
+                    //     $totalDeducted += $deduct;
+                    //     $deductedFrom = 'SL';
+
+                    //     // Also deduct the same amount from FL if available
+                    //     if ($leaveCredits->fl_claimable_credits > 0) {
+                    //         $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
+                    //         $leaveCredits->fl_claimable_credits -= $flDeduct;
+                    //         $leaveCredits->fl_claimed_credits += $flDeduct;
+                    //     }
+                    // }
+                    // If neither SPL nor SL has enough, try VL
+                    else if ($leaveCredits->vl_claimable_credits > 0) {
+                        $deduct = min($days, $leaveCredits->vl_claimable_credits);
+                        $leaveCredits->vl_claimable_credits -= $deduct;
+                        $leaveCredits->vl_claimed_credits += $deduct;
+                        $totalDeducted += $deduct;
+                        $deductedFrom = 'VL';
+
+                        // Also deduct the same amount from FL if available
+                        if ($leaveCredits->fl_claimable_credits > 0) {
+                            $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
+                            $leaveCredits->fl_claimable_credits -= $flDeduct;
+                            $leaveCredits->fl_claimed_credits += $flDeduct;
+                        }
                     }
-                }
-        
-                // If more days are needed, try deducting from SL next
-                if ($totalDeducted < $days && $leaveCredits->sl_claimable_credits > 0) {
-                    $remainingDays = $days - $totalDeducted;
-                    $deduct = min($remainingDays, $leaveCredits->sl_claimable_credits);
-                    $leaveCredits->sl_claimable_credits -= $deduct;
-                    $leaveCredits->sl_claimed_credits += $deduct;
-                    $totalDeducted += $deduct;
 
-                    // Also deduct the same amount from FL if available
-                    if ($leaveCredits->fl_claimable_credits > 0) {
-                        $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
-                        $leaveCredits->fl_claimable_credits -= $flDeduct;
-                        $leaveCredits->fl_claimed_credits += $flDeduct;
+                    if ($deductedFrom === 'SPL' || $deductedFrom === 'SL') {
+                        $leaveType = "Special Privilege Leave";
                     }
-                }
-        
-                // Finally, if still more days are needed, try deducting from VL
-                if ($totalDeducted < $days && $leaveCredits->vl_claimable_credits > 0) {
-                    $remainingDays = $days - $totalDeducted;
-                    $deduct = min($remainingDays, $leaveCredits->vl_claimable_credits);
-                    $leaveCredits->vl_claimable_credits -= $deduct;
-                    $leaveCredits->vl_claimed_credits += $deduct;
-                    $totalDeducted += $deduct;
 
-                    // Also deduct the same amount from FL if available
-                    if ($leaveCredits->fl_claimable_credits > 0) {
-                        $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
-                        $leaveCredits->fl_claimable_credits -= $flDeduct;
-                        $leaveCredits->fl_claimed_credits += $flDeduct;
+                } else {
+                    // For Sick Leave, check SPL first then move to SL if not enough
+                    if ($leaveCredits->spl_claimable_credits >= $days) {
+                        // Deduct from SPL since it has enough credits
+                        $deduct = $days;
+                        $leaveCredits->spl_claimable_credits -= $deduct;
+                        $leaveCredits->spl_claimed_credits += $deduct;
+                        $totalDeducted += $deduct;
+                        $deductedFrom = 'SPL';
+
+                        // Also deduct the same amount from FL if available
+                        if ($leaveCredits->fl_claimable_credits > 0) {
+                            $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
+                            $leaveCredits->fl_claimable_credits -= $flDeduct;
+                            $leaveCredits->fl_claimed_credits += $flDeduct;
+                        }
+                    }
+                    // If SPL doesn't have enough, move directly to SL
+                    else if ($leaveCredits->sl_claimable_credits > 0) {
+                        $deduct = min($days, $leaveCredits->sl_claimable_credits);
+                        $leaveCredits->sl_claimable_credits -= $deduct;
+                        $leaveCredits->sl_claimed_credits += $deduct;
+                        $totalDeducted += $deduct;
+                        $deductedFrom = 'SL';
+
+                        // Also deduct the same amount from FL if available
+                        if ($leaveCredits->fl_claimable_credits > 0) {
+                            $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
+                            $leaveCredits->fl_claimable_credits -= $flDeduct;
+                            $leaveCredits->fl_claimed_credits += $flDeduct;
+                        }
+                    }
+
+                    if ($deductedFrom === 'SPL') {
+                        $leaveType = "Special Privilege Leave";
                     }
                 }
     
@@ -401,13 +448,18 @@ class AdminLeaveRequestTable extends Component
                     $leaveCreditsCalculation->save();
                 }
     
-            } else{
+            } else {
 
+                $updatedLeaveTypes[] = $leaveType;
                 continue;
             }
 
-            break;
+            // break;
+            $updatedLeaveTypes[] = $leaveType;
         }
+
+        $this->selectedApplication->type_of_leave = implode(',', $updatedLeaveTypes);
+        $this->selectedApplication->save();
     }
     
     public function fetchNonEmployeeUsers()
