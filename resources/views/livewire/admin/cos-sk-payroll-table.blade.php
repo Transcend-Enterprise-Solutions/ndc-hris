@@ -1,4 +1,4 @@
-<div class="w-full flex justify-center"
+<div class="w-full flex flex-col justify-center"
 x-data="{ 
     selectedTab: 'cos',
      selectedSubTab: 'payroll',
@@ -844,6 +844,11 @@ x-cloak>
         </div>
     </div>
 
+    {{-- Released Payrolls --}}
+    <div x-show="selectedTab === 'export'" class="mt-4">
+        @livewire('admin.payroll-component.cos-sk-recorded-payroll')
+    </div>
+
     {{-- Add and Edit COS Payroll Modal --}}
     <x-modal id="cosPayroll" maxWidth="2xl" wire:model="editCosPayroll">
         <div class="p-4">
@@ -862,7 +867,7 @@ x-cloak>
                         <select id="userId" wire:model.live='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
                             {{ $addCosPayroll ? '' : 'disabled' }}>
                             <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
-                            @foreach ($employees as $employee)
+                            @foreach ($unpayrolledEmployees as $employee)
                                 <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                             @endforeach
                         </select>

@@ -78,7 +78,7 @@ class PayrollExport implements FromCollection, WithEvents
                 $this->rowNumber,
                 'name' => $payroll['name'],
                 'position' => $payroll['position'],
-                'employee_number' => $payroll['employee_number'],
+                'employee_number' => ('D-' . substr($payroll['employee_number'], 1)),
                 'salary_grade' => $payroll['salary_grade'],
                 'daily_salary_rate' => $formatCurrency($payroll['daily_salary_rate']),
                 'no_of_days_covered' => $zeroCheck($payroll['no_of_days_covered']),

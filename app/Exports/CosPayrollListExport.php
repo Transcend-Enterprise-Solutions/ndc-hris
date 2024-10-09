@@ -56,7 +56,7 @@ class CosPayrollListExport implements FromCollection, WithEvents
             return [
                 $this->rowNumber,
                 'name' => $payroll->name,
-                'employee_number' => $payroll->emp_code,
+                'employee_number' => ('D-' . substr($payroll->emp_code, 1)),
                 'position' => $payroll->position,
                 'office_division' => $payroll->office_division,
                 'unit' => $payroll->unit ?: '-',

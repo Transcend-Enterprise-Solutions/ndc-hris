@@ -129,6 +129,7 @@ class PerUnitExport implements FromCollection, WithEvents
         return $this->filters['users']->get()
             ->map(function ($user) use ($formatDate, $formatCurrency) {
                 $this->rowNumber++;
+                $cosEmpCode = null;
                 $sg_step = null;
                 $cosTag = "";
                 if($user->plantilla_sg_step){
@@ -165,6 +166,7 @@ class PerUnitExport implements FromCollection, WithEvents
                         $appointment = 'Co-Terminus';
                     }else{
                         $appointment = 'COS' . $cosTag;
+                        $cosEmpCode = ('D-' . substr($user->emp_code, 1));
                     }
                 }
 
@@ -188,7 +190,7 @@ class PerUnitExport implements FromCollection, WithEvents
                     $this->rowNumber,
                     'Name' => $user->name,
                     'Email' => $user->email,
-                    'Employee ID' => $user->emp_code,
+                    'Employee ID' => $cosEmpCode ?: $user->emp_code,
                     'Position' => $user->position,
                     'Appointment' => $appointment,
                     'Office/Division' => $user->office_division,

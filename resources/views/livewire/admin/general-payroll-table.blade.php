@@ -1,4 +1,4 @@
-<div class="w-full flex justify-center" x-data="{
+<div class="w-full flex flex-col justify-center" x-data="{
     selectedTab: 'plantilla',
     selectedSubTab: 'payroll',
 }" x-cloak>
@@ -1426,6 +1426,11 @@
             </div>
 
         </div>
+    </div>
+
+    {{-- Released Payrolls --}}
+    <div x-show="selectedTab === 'export'" class="mt-4">
+        @livewire('admin.payroll-component.plantilla-recorded-payroll')
     </div>
 
     {{-- View Modal --}}
