@@ -60,7 +60,7 @@
         }
     </style>
 
-    @if (!$openLeaveDetails)
+    @if (!$showPDFPreview)
         {{-- Leave Application Table --}}
         <div class="w-full flex justify-center">
             <div class="flex justify-center w-full">
@@ -274,19 +274,15 @@
                                                 <div class="relative">
                                                     <button type="button"
                                                         wire:click.prevent="exportPDF({{ $leaveApplication->id }})"
-                                                        class="text-red-500 hover:text-red-600">
+                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-red-500 hover:text-red-600 
+                                                                focus:outline-none">
                                                         <i class="bi bi-file-earmark-arrow-down"
                                                             title="Export in PDF"></i>
                                                     </button>
-                                                    {{-- @else
-                                                        <button type="button" disabled title="Wait for the action"
-                                                            class="cursor-not-allowed">
-                                                            <i class="bi bi-file-earmark-arrow-down"></i>
-                                                        </button>
-                                                    @endif --}}
-                                                    <button wire:click="showLeaveDetails({{ $leaveApplication->id }})"
+                                                    <button wire:click="showPDF({{ $leaveApplication->id }})"
                                                         class="text-blue-500 hover:text-blue-600">
-                                                        <i class="fas fa-eye" title="Show Details"></i>
+                                                        <i class="bi bi-eye" title="Show Details"></i>
                                                     </button>
                                                 </div>
                                             </td>
@@ -644,8 +640,7 @@
                                                     wire:click="addDate" style="font-size: 2rem;"></i></button>
                                         </div>
                                         @error('list_of_dates')
-                                            <span class="text-red-500 text-sm">Please add at least one date to the
-                                                list.</span>
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 @endif
@@ -727,7 +722,7 @@
                                     <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span
                                             class="font-semibold">Click
                                             to upload</span></p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">JPEG, JPG, PNG or PDF</p>
                                 </div>
                                 <input id="dropzone-file" type="file" wire:model="files" multiple
                                     class="hidden" />
@@ -774,7 +769,8 @@
         </div>
     @else
         <div class="flex justify-center w-full">
-            <div class="overflow-x-auto w-full bg-white rounded-2xl p-3 shadow dark:bg-gray-800 relative">
+            <div
+                class="overflow-x-auto w-full h-full overflow-y-auto bg-white rounded-2xl p-3 shadow dark:bg-gray-800 relative">
                 <button wire:click="closeLeaveDetails"
                     class="absolute top-2 right-2 text-black dark:text-white whitespace-nowrap mx-2">
                     <i class="bi bi-x-circle" title="Close"></i>
@@ -785,164 +781,9 @@
                     </h1>
                 </div>
 
-                <div class="overflow-hidden text-sm pb-3">
-                    <div class="relative z-10">
-                        <div
-                            class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold rounded-t-lg">
-                            BASIC INFORMATION
-                        </div>
-
-                        <div class="custom-d flex w-full">
-                            <div class="w-full block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 p-1 w-1/6 bg-gray-50 dark:bg-slate-700">
-                                        Fullname</p>
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->user->userData->surname }},
-                                        {{ $leaveApplicationDetails->user->userData->first_name }}
-                                        {{ $leaveApplicationDetails->user->userData->middle_name }}
-                                    </p>
-                                </div>
-                            </div>
-                            {{-- <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 p-1 w-2/6 bg-gray-50 dark:bg-slate-700">
-                                        Firstname</p>
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->user->userData->first_name }}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 p-1 w-2/6 bg-gray-50 dark:bg-slate-700">
-                                        Middlename</p>
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->user->userData->middle_name }}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 p-1 w-4/6 bg-gray-50 dark:bg-slate-700">
-                                        Name Extension</p>
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->user->userData->name_extension }}
-                                    </p>
-                                </div>
-                            </div> --}}
-                        </div>
-
-                        <div class="custom-d flex w-full">
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">
-                                        Office/Department</p>
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->office_or_department }}
-                                    </p>
-                                </div>
-
-                                <div class="flex w-full sm:w-auto">
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">
-                                        Position</p>
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->position }}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 dark:bg-slate-700 bg-gray-50">
-                                        Date of Filing</p>
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->date_of_filing }}
-                                    </p>
-                                </div>
-
-                                <div class="flex w-full sm:w-auto">
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">
-                                        Salary</p>
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->salary }}
-                                    </p>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="bg-gray-400 dark:bg-slate-300 p-2 text-gray-50 dark:text-slate-900 font-bold">
-                            DETAILS OF APPLICATION
-                        </div>
-
-                        <div class="custom-d flex w-full">
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">
-                                        Type of Leave</p>
-                                    <div
-                                        class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        <ul class="list-disc ml-5">
-                                            @foreach (explode(',', $leaveApplicationDetails->type_of_leave) as $leaveType)
-                                                <li>{{ $leaveType }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                <div class="flex w-full sm:w-auto">
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">
-                                        Details of Leave</p>
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->details_of_leave }}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="w-full sm:w-2/4 block">
-                                <div class="flex w-full sm:w-auto">
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">
-                                        Number of Working Days</p>
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->number_of_days ?? 'N/A' }} |
-                                        {{ $leaveApplicationDetails->list_of_dates ?? 'N/A' }}
-                                    </p>
-                                </div>
-
-                                <div class="flex w-full sm:w-auto">
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 p-1 w-3/6 bg-gray-50 dark:bg-slate-700">
-                                        Commutation</p>
-                                    <p
-                                        class="border border-gray-200 dark:border-slate-600 w-full p-1 dark:text-gray-200">
-                                        {{ $leaveApplicationDetails->commutation }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="mt-2" style="overflow: hidden;">
+                    <iframe id="pdfIframe" src="data:application/pdf;base64,{{ $pdfContent }}"
+                        style="width: 100%; max-height: 80vh; min-height: 500px;" frameborder="0"></iframe>
                 </div>
             </div>
         </div>
@@ -960,4 +801,20 @@
             studyLeave: false,
         }));
     });
+
+    function resizeIframe() {
+        const iframe = document.getElementById('pdfIframe');
+        const pdfDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+        if (pdfDocument) {
+            // Set the iframe height based on the content
+            iframe.style.height = pdfDocument.body.scrollHeight + 'px';
+        }
+    }
+
+    // Adjust iframe size when the PDF is loaded
+    document.getElementById('pdfIframe').onload = resizeIframe;
+
+    // Optional: Adjust iframe size when the window is resized
+    window.onresize = resizeIframe;
 </script>

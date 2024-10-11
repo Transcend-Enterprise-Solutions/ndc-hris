@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 use App\Exports\LeaveCardExport; 
+use Carbon\Carbon;
 
 class LeaveApplicationTable extends Component
 {
@@ -55,8 +56,9 @@ class LeaveApplicationTable extends Component
     public $startDate;
     public $endDate;
 
-    public $openLeaveDetails = false;
     public $leaveApplicationDetails;
+    public $pdfContent;
+    public $showPDFPreview = false;
 
     public $activeTab = 'pending';
 
@@ -68,7 +70,7 @@ class LeaveApplicationTable extends Component
         'position' => 'required|string|max:255',
         'salary' => 'required|string|max:255',
         'type_of_leave' => 'required|array|min:1',
-        'files.*' => 'file|mimes:jpeg,png,jpg,gif,pdf|max:2048',
+        'files.*' => 'file|mimes:jpeg,png,jpg,pdf|max:2048',
     ];
 
     public function openLeaveForm()
@@ -196,10 +198,36 @@ class LeaveApplicationTable extends Component
         // Require file upload if CTO Leave is selected
         if (in_array('CTO Leave', $this->type_of_leave)) {
             $rules['files'] = 'required|array|min:1';
-            $rules['files.*'] = 'file|mimes:jpg,jpeg,png,gif,svg|max:2048';
+            $rules['files.*'] = 'file|mimes:jpeg,png,jpg,pdf|max:2048';
         }
 
         $this->validate($rules);
+
+        // New validation for Vacation Leave and Mandatory/Forced Leave
+        $now = now();
+        $fiveDaysFromNow = $now->copy()->addDays(5)->startOfDay();
+
+        if (in_array('Vacation Leave', $this->type_of_leave) || in_array('Mandatory/Forced Leave', $this->type_of_leave)) {
+            // Validation for dates at least 5 days from now
+            $invalidDates = collect($this->list_of_dates)->filter(function ($date) use ($fiveDaysFromNow) {
+                return Carbon::parse($date)->startOfDay()->lt($fiveDaysFromNow);
+            });
+
+            if ($invalidDates->isNotEmpty()) {
+                $this->addError('list_of_dates', 'For Vacation Leave or Mandatory/Forced Leave, all leave dates must be at least 5 days from now.');
+                return;
+            }
+
+            // Validation for future dates
+            $invalidPastDates = collect($this->list_of_dates)->filter(function ($date) use ($now) {
+                return Carbon::parse($date)->startOfDay()->lte($now->startOfDay());
+            });
+
+            if ($invalidPastDates->isNotEmpty()) {
+                $this->addError('list_of_dates', 'For Vacation Leave or Mandatory/Forced Leave, all dates must be in the future.');
+                return;
+            }
+        }
 
         if (in_array('Others', $this->type_of_leave)) {
             $this->type_of_leave = array_filter($this->type_of_leave, function ($leave) {
@@ -506,14 +534,105 @@ class LeaveApplicationTable extends Component
         $this->activeTab = $tab;
     }
 
-    public function showLeaveDetails($leaveApplicationId)
-    {
-        $this->leaveApplicationDetails = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
-        $this->openLeaveDetails = true;
-    }
-
     public function closeLeaveDetails()
     {
-        $this->openLeaveDetails = false;
+        $this->showPDFPreview = false;
+        $this->pdfContent = null;
     }
+
+    public function showPDF($leaveApplicationId)
+    {
+        $leaveApplication = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
+
+        $eSignature = ESignature::where('user_id', $leaveApplication->user_id)->first();
+
+        $signatureImagePath = null;
+        if ($eSignature && $eSignature->file_path) {
+            $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
+        }
+
+        $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
+
+        $otherLeave = '';
+        foreach ($selectedLeaveTypes as $leaveType) {
+            if (strpos($leaveType, 'Others: ') === 0) {
+                $otherLeave = str_replace('Others: ', '', $leaveType);
+                break;
+            }
+        }
+
+        $detailsOfLeave = $leaveApplication->details_of_leave ? array_map('trim', explode(',', $leaveApplication->details_of_leave)) : [];
+
+        $isDetailPresent = function($detail) use ($detailsOfLeave) {
+            foreach ($detailsOfLeave as $item) {
+                $parts = explode('=', $item, 2);
+                $key = trim($parts[0]);
+                if ($key === $detail) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        $getDetailValue = function($detail) use ($detailsOfLeave) {
+            foreach ($detailsOfLeave as $item) {
+                $parts = explode('=', $item, 2);
+                if (count($parts) === 2) {
+                    $key = trim($parts[0]);
+                    $value = trim($parts[1]);
+                    if ($key === $detail) {
+                        return $value;
+                    }
+                }
+            }
+            return '';
+        };
+
+        $daysWithPay = '';
+        $daysWithoutPay = '';
+        $otherRemarks = '';
+
+        if ($leaveApplication->status === 'Approved') {
+            if ($leaveApplication->remarks === 'With Pay') {
+                $daysWithPay = $leaveApplication->approved_days;
+            } elseif ($leaveApplication->remarks === 'Without Pay') {
+                $daysWithoutPay = $leaveApplication->approved_days;
+            } else {
+                $otherRemarks = $leaveApplication->remarks;
+            }
+        }
+
+        // Fetch the first approver from leave_approvals
+        $leaveApproval = LeaveApprovals::where('application_id', $leaveApplicationId)->first();
+        $firstApprover = $leaveApproval ? $leaveApproval->first_approver : null;
+        $firstApproverName = $firstApprover ? User::find($firstApprover)->name : 'N/A';
+        $secondApprover = $leaveApproval ? $leaveApproval->second_approver : null;
+        $secondApproverName = $secondApprover ? User::find($secondApprover)->name : 'N/A';
+        $thirdApprover = $leaveApproval ? $leaveApproval->third_approver : null;
+        $thirdApproverName = $thirdApprover ? User::find($thirdApprover)->name : 'N/A';
+
+        $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
+
+        $pdf = PDF::loadView('pdf.leave-application', [
+            'leaveApplication' => $leaveApplication,
+            'selectedLeaveTypes' => $selectedLeaveTypes,
+            'otherLeave' => $otherLeave,
+            'detailsOfLeave' => $detailsOfLeave,
+            'isDetailPresent' => $isDetailPresent,
+            'getDetailValue' => $getDetailValue,
+            'daysWithPay' => $daysWithPay,
+            'daysWithoutPay' => $daysWithoutPay,
+            'otherRemarks' => $otherRemarks,
+            'leaveCredits' => $leaveCredits,
+            'firstApproverName' => $firstApproverName,
+            'secondApproverName' => $secondApproverName,
+            'thirdApproverName' => $thirdApproverName,
+            'eSignature' => $eSignature,
+            'signatureImagePath' => $signatureImagePath,
+        ]);
+
+        $this->pdfContent = base64_encode($pdf->output());
+        $this->showPDFPreview = true;
+    }
+
 }
