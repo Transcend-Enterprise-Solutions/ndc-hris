@@ -497,23 +497,29 @@
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="padding-top: 3pt;text-indent: 0pt;text-align: left;"><br /></p>
-                    @if ($signatureImagePath)
-                        <p style="text-align: center;">
-                            <img src="{{ $signatureImagePath }}" alt="E-Signature"
-                                style="width: 100px; height: auto;" />
+                    {{-- <p style="padding-top: 0pt;text-indent: 0pt;text-align: left;"><br /></p> --}}
+                    <div style="position:relative;padding-top:30px;">
+                        @if ($signatureImagePath)
+                            <div style="position:absolute;top:0;left:0;width:100%;text-align:center;">
+                                <img src="{{ $signatureImagePath }}" alt="E-Signature"
+                                    style="width: 100px; height: auto;" />
+                            </div>
+                        @else
+                            {{-- <p style="text-align: center; color: red;">
+                                Please upload your e-sign
+                            </p> --}}
+                            <div style="position:absolute;top:0;left:0;width:100%;text-align:center;color: red;">
+                                Please upload your e-sign
+                            </div>
+                        @endif
+                        <p class="s5"
+                            style="padding-left: 1pt; text-indent: 0pt; text-align: center; z-index: 1;">
+                            {{ $leaveApplication->name }}</p>
+                        <p class="s5"
+                            style="padding-left: 1pt; text-indent: 0pt; text-align: center; border-top-style: solid; border-top-width: medium; width: 50%; margin: 0 auto;">
+                            (Signature of Applicant)
                         </p>
-                    @else
-                        <p style="text-align: center; color: red;">
-                            Please upload your e-sign
-                        </p>
-                    @endif
-                    <p class="s5" style="padding-left: 1pt; text-indent: 0pt; text-align: center; z-index: 1;">
-                        {{ $leaveApplication->name }}</p>
-                    <p class="s5"
-                        style="padding-left: 1pt; text-indent: 0pt; text-align: center; border-top-style: solid; border-top-width: medium; width: 50%; margin: 0 auto;">
-                        (Signature of Applicant)
-                    </p>
+                    </div>
                 </td>
             </tr>
             <tr style="height:13pt">
