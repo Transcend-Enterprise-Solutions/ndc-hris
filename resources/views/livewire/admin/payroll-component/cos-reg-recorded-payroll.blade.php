@@ -1,7 +1,7 @@
 <div class="flex justify-center w-full">
     <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
         <div class="pb-4 mb-3 pt-4 sm:pt-0">
-            <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white mb-4">Released Payrolls</h1>
+            <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white mb-4">Processed Payrolls</h1>
 
             <div class="flex flex-col">
                 <!-- Select Date -->

@@ -1261,7 +1261,7 @@ class GeneralPayrollTable extends Component
                     'pagibig_mpl' => $this->pagibig_mpl,
                     'pagibig_calamity_loan' => $this->pagibig_calamity_loan,
                     'pagibig_gs' => $this->pagibig_gs,
-                    'w_holding_tax' => $this->w_holding_tax,
+                    'w_holding_tax' => $this->w_holding_tax ?: 0,
                     'philhealth' => $this->philhealth,
                     'philhealth_es' => $this->philhealth_es,
                     'other_deductions' => $this->other_deductions,
@@ -1295,7 +1295,6 @@ class GeneralPayrollTable extends Component
                         'rate_per_month' => 'required|numeric',
                         'gross_amount' => 'required|numeric',
                         'pagibig_contribution' => 'required|numeric',
-                        'w_holding_tax' => 'required|numeric',
                         'philhealth' => 'required|numeric',
                         'total_deduction' => 'required|numeric',
                     ]);

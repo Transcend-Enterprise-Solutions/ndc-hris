@@ -3434,7 +3434,7 @@
                                         <i class="fas fa-times hidden sm:flex cursor-pointer text-red-500 hover:text-red-700 float-right mr-1"
                                             wire:click="removeNewEligibility({{ $index }})"></i>
                                     </label>
-                                    <input type="number" id="rating_{{ $index }}"
+                                    <input type="number" step="0.01" id="rating_{{ $index }}"
                                         wire:model="newEligibilities.{{ $index }}.rating"
                                         class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700">
                                     @error('newEligibilities.' . $index . '.rating')
