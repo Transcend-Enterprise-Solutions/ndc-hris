@@ -80,7 +80,6 @@ class AuditLogViewer extends Component
                               WHEN audits.auditable_type = 'App\\Models\\CosRegPayslip' THEN 'payroll'
                               WHEN audits.auditable_type = 'App\\Models\\CosSkPayrolls' THEN 'payroll'
                               WHEN audits.auditable_type = 'App\\Models\\CosSkPayslip' THEN 'payroll'
-                              WHEN audits.auditable_type = 'App\\Models\\User' THEN 'user'
                               ELSE audits.auditable_type
                           END,
                           ' (ID: ',
@@ -133,12 +132,7 @@ class AuditLogViewer extends Component
                 $user = User::find($resolved['user_id']);
                 $resolved['employee_name'] = $user ? $user->name : 'Unknown Employee';
             }
-        }elseif ($audit->auditable_type === User::class) {
-            if (isset($resolved['email'])) {
-                $resolved['email'] = $this->maskEmail($resolved['email']);
-            }
-        }
-        elseif ($audit->auditable_type === PlantillaPayslip::class) {
+        }elseif ($audit->auditable_type === PlantillaPayslip::class) {
             if (isset($resolved['user_id'])) {
                 $user = User::find($resolved['user_id']);
                 $resolved['employee_name'] = $user ? $user->name : 'Unknown Employee';

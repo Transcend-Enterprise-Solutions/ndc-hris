@@ -121,22 +121,6 @@
                                             @endforeach
                                         @endif
                                     </div>
-                                @elseif ($audit->auditable_type === App\Models\User::class)
-                                    <span>User {{ $audit->user->name ?? 'System' }} {{ $audit->event }} a user record (ID: {{ $audit->auditable_id }}).</span>
-                                    <div class="mt-1 text-xs">
-                                        @if ($audit->event === 'created' || $audit->event === 'updated')
-                                            <strong>User Details:</strong><br>
-                                            @foreach ($audit->resolved_new_values as $key => $value)
-                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
-                                            @endforeach
-                                        @endif
-                                        @if ($audit->event === 'updated' || $audit->event === 'deleted')
-                                            <strong>Old values:</strong><br>
-                                            @foreach ($audit->resolved_old_values as $key => $value)
-                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
-                                            @endforeach
-                                        @endif
-                                    </div>
                                 @elseif ($audit->auditable_type === App\Models\PlantillaPayslip::class)
                                     <span>User {{ $audit->user->name ?? 'System' }} {{ $audit->event }} a payroll record (ID: {{ $audit->auditable_id }}).</span>
                                     <div class="mt-1 text-xs">
