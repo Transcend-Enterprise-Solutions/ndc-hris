@@ -22,13 +22,36 @@ class LeaveAvailmentExport implements FromCollection, WithEvents, WithStyles
         $this->month = $month;
     }
 
+    // public function collection()
+    // {
+    //     // Extract the year and month from the selected month (format: YYYY-MM)
+    //     $year = substr($this->month, 0, 4);
+    //     $month = substr($this->month, 5, 2);
+
+    //     // Filter leave applications by the selected month (using date_of_filing)
+    //     return LeaveApplication::with(['user.userData'])
+    //         ->whereYear('date_of_filing', $year)
+    //         ->whereMonth('date_of_filing', $month)
+    //         ->get()
+    //         ->map(function ($leaveApplication) {
+    //             return [
+    //                 'Control No.' => $leaveApplication->id,
+    //                 'Date Filed' => $this->formatDates($leaveApplication->date_of_filing ?? 'N/A'),
+    //                 'Surname' => $leaveApplication->user->userData->surname ?? 'N/A',
+    //                 'First Name' => $leaveApplication->user->userData->first_name ?? 'N/A',
+    //                 'Division' => $leaveApplication->office_or_department ?? 'N/A',
+    //                 'Sex' => $leaveApplication->user->userData->sex ?? 'N/A',
+    //                 'Type of Leave' => $leaveApplication->type_of_leave ?? 'N/A',
+    //                 'Date of Leave' => $this->formatDates($leaveApplication->list_of_dates ?? 'N/A'),
+    //                 'Date Approved' => $this->getDateApprovedOrDC($leaveApplication),
+    //                 'Remarks' => $leaveApplication->remarks ?? 'N/A',
+    //             ];
+    //         });
+    // }
     public function collection()
     {
-        // Extract the year and month from the selected month (format: YYYY-MM)
-        $year = substr($this->month, 0, 4);
-        $month = substr($this->month, 5, 2);
+        list($year, $month) = explode('-', $this->month);
 
-        // Filter leave applications by the selected month (using date_of_filing)
         return LeaveApplication::with(['user.userData'])
             ->whereYear('date_of_filing', $year)
             ->whereMonth('date_of_filing', $month)
@@ -36,14 +59,14 @@ class LeaveAvailmentExport implements FromCollection, WithEvents, WithStyles
             ->map(function ($leaveApplication) {
                 return [
                     'Control No.' => $leaveApplication->id,
-                    'Date Filed' => $this->formatDates($leaveApplication->date_of_filing ?? 'N/A'),
+                    'Date Filed' => $leaveApplication->date_of_filing,
                     'Surname' => $leaveApplication->user->userData->surname ?? 'N/A',
                     'First Name' => $leaveApplication->user->userData->first_name ?? 'N/A',
                     'Division' => $leaveApplication->office_or_department ?? 'N/A',
                     'Sex' => $leaveApplication->user->userData->sex ?? 'N/A',
                     'Type of Leave' => $leaveApplication->type_of_leave ?? 'N/A',
-                    'Date of Leave' => $this->formatDates($leaveApplication->list_of_dates ?? 'N/A'),
-                    'Date Approved' => $this->getDateApprovedOrDC($leaveApplication),
+                    'Date of Leave' => $leaveApplication->list_of_dates ?? 'N/A',
+                    'Date Approved' => $leaveApplication->date_approved ?? 'N/A',
                     'Remarks' => $leaveApplication->remarks ?? 'N/A',
                 ];
             });
