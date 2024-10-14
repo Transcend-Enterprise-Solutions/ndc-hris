@@ -102,8 +102,8 @@ class RoleManagementTable extends Component
         if($this->office_division){
             $this->divsUnits = OfficeDivisionUnits::where('office_division_id' , $this->office_division)->get();
         }
-        if($this->officeDivisionId){
-            $this->divsUnits = OfficeDivisionUnits::where('office_division_id' , $this->officeDivisionId)->get();
+        if($this->divId){
+            $this->divsUnits = OfficeDivisionUnits::where('office_division_id' , $this->divId)->get();
         }
 
 

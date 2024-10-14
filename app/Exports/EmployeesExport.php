@@ -262,16 +262,6 @@ class EmployeesExport implements FromCollection, WithEvents
             ->map(function ($user) use ($nameFields, $nameFieldsSelected) {
                 $this->rowNumber++;
                 $userData = [$this->rowNumber];
-                
-                if (in_array('name', $this->selectedColumns) || $nameFieldsSelected) {
-                    $fullName = trim(implode(' ', [
-                        $user->surname ?? '',
-                        $user->first_name ?? '',
-                        $user->middle_name ?? '',
-                        $user->name_extension ?? ''
-                    ]));
-                    $userData[] = $fullName;
-                }
     
                 foreach ($this->selectedColumns as $column) {
                     $educs = EmployeesEducation::where('user_id', $user->id)->get();
@@ -397,12 +387,8 @@ class EmployeesExport implements FromCollection, WithEvents
     private function getColumnHeaders(): array
     {
         $headers = ['#'];
-        if (in_array('name', $this->selectedColumns) || 
-            array_intersect(['surname', 'first_name', 'middle_name', 'name_extension'], $this->selectedColumns)) {
-            $headers[] = 'Name';
-        }
         foreach ($this->selectedColumns as $column) {
-            if ($column !== 'name' && $column !== 'id') {
+            if ($column !== 'id') {
                 $headers[] = $this->getColumnHeader($column);
             }
         }

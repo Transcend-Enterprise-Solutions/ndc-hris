@@ -40,6 +40,10 @@ class EmployeeTable extends Component
 
     public $filters = [
         'name' => true,
+        'surname' => true,
+        'first_name' => true,
+        'middle_name' => true,
+        'name_extension' => true,
         'date_of_birth' => true,
         'place_of_birth' => true,
         'sex' => true,
@@ -603,13 +607,9 @@ class EmployeeTable extends Component
             'selectedEduc' => $this->selectedEduc ?? [],
         ];
     
+        $this->filters['name'] = false;
         $selectedColumns = array_keys(array_filter($this->filters));
-        
-        // Include 'name' if any name-related fields are selected
-        $nameFields = ['surname', 'first_name', 'middle_name', 'name_extension'];
-        if (count(array_intersect($nameFields, $selectedColumns)) > 0) {
-            $selectedColumns[] = 'name';
-        }
+        $this->filters['name'] = true;
 
         $fieldsToFormat = ['gsis', 'pagibig', 'philhealth', 'sss', 'tin', 'agency_employee_no'];
 
@@ -660,7 +660,6 @@ class EmployeeTable extends Component
             $this->filters['ld_title'] = false;
         }
     }
-      
 
     public function mount(){
         $this->getProvicesAndCities();
