@@ -11,6 +11,8 @@ use App\Models\VacationLeaveDetails;
 use App\Models\SickLeaveDetails;
 use App\Models\LeaveApprovals;
 use App\Models\User;
+use App\Models\ESignature;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
 class AdminLeaveRequestTable extends Component
@@ -33,6 +35,9 @@ class AdminLeaveRequestTable extends Component
     public $showEndorserApprove = false;
     public $showEndorserDisapprove = false;
 
+    public $leaveApplicationDetails;
+    public $pdfContent;
+    public $showPDFPreview = false;
 
     protected $rules = [
         'status' => 'required_if:showApproveModal,true',
@@ -569,6 +574,107 @@ class AdminLeaveRequestTable extends Component
         }
 
         return true;
+    }
+
+    public function closeLeaveDetails()
+    {
+        $this->showPDFPreview = false;
+        $this->pdfContent = null;
+    }
+
+    public function showPDF($leaveApplicationId)
+    {
+        $leaveApplication = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
+
+        $eSignature = ESignature::where('user_id', $leaveApplication->user_id)->first();
+
+        $signatureImagePath = null;
+        if ($eSignature && $eSignature->file_path) {
+            $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
+        }
+
+        $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
+
+        $otherLeave = '';
+        foreach ($selectedLeaveTypes as $leaveType) {
+            if (strpos($leaveType, 'Others: ') === 0) {
+                $otherLeave = str_replace('Others: ', '', $leaveType);
+                break;
+            }
+        }
+
+        $detailsOfLeave = $leaveApplication->details_of_leave ? array_map('trim', explode(',', $leaveApplication->details_of_leave)) : [];
+
+        $isDetailPresent = function($detail) use ($detailsOfLeave) {
+            foreach ($detailsOfLeave as $item) {
+                $parts = explode('=', $item, 2);
+                $key = trim($parts[0]);
+                if ($key === $detail) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        $getDetailValue = function($detail) use ($detailsOfLeave) {
+            foreach ($detailsOfLeave as $item) {
+                $parts = explode('=', $item, 2);
+                if (count($parts) === 2) {
+                    $key = trim($parts[0]);
+                    $value = trim($parts[1]);
+                    if ($key === $detail) {
+                        return $value;
+                    }
+                }
+            }
+            return '';
+        };
+
+        $daysWithPay = '';
+        $daysWithoutPay = '';
+        $otherRemarks = '';
+
+        if ($leaveApplication->status === 'Approved') {
+            if ($leaveApplication->remarks === 'With Pay') {
+                $daysWithPay = $leaveApplication->approved_days;
+            } elseif ($leaveApplication->remarks === 'Without Pay') {
+                $daysWithoutPay = $leaveApplication->approved_days;
+            } else {
+                $otherRemarks = $leaveApplication->remarks;
+            }
+        }
+
+        // Fetch the first approver from leave_approvals
+        $leaveApproval = LeaveApprovals::where('application_id', $leaveApplicationId)->first();
+        $firstApprover = $leaveApproval ? $leaveApproval->first_approver : null;
+        $firstApproverName = $firstApprover ? User::find($firstApprover)->name : 'N/A';
+        $secondApprover = $leaveApproval ? $leaveApproval->second_approver : null;
+        $secondApproverName = $secondApprover ? User::find($secondApprover)->name : 'N/A';
+        $thirdApprover = $leaveApproval ? $leaveApproval->third_approver : null;
+        $thirdApproverName = $thirdApprover ? User::find($thirdApprover)->name : 'N/A';
+
+        $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
+
+        $pdf = PDF::loadView('pdf.leave-application', [
+            'leaveApplication' => $leaveApplication,
+            'selectedLeaveTypes' => $selectedLeaveTypes,
+            'otherLeave' => $otherLeave,
+            'detailsOfLeave' => $detailsOfLeave,
+            'isDetailPresent' => $isDetailPresent,
+            'getDetailValue' => $getDetailValue,
+            'daysWithPay' => $daysWithPay,
+            'daysWithoutPay' => $daysWithoutPay,
+            'otherRemarks' => $otherRemarks,
+            'leaveCredits' => $leaveCredits,
+            'firstApproverName' => $firstApproverName,
+            'secondApproverName' => $secondApproverName,
+            'thirdApproverName' => $thirdApproverName,
+            'eSignature' => $eSignature,
+            'signatureImagePath' => $signatureImagePath,
+        ]);
+
+        $this->pdfContent = base64_encode($pdf->output());
+        $this->showPDFPreview = true;
     }
 
 }
