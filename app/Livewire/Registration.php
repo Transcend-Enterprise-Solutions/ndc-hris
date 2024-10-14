@@ -184,6 +184,11 @@ class Registration extends Component
     
         DB::beginTransaction();
 
+        // Capitalize the first letter of each word for the names
+        $this->first_name = ucwords(strtolower($this->first_name));
+        $this->middle_name = ucwords(strtolower($this->middle_name));
+        $this->surname = ucwords(strtolower($this->surname));
+
         try {
             $this->emp_code = str_replace('-', '', $this->emp_code); // Remove hyphens
             $this->emp_code = str_replace('D', '1', $this->emp_code); // Replace 'D' with '1'
