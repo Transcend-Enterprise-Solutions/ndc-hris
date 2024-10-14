@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\ESignature;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AdminLeaveRequestTable extends Component
 {
@@ -511,7 +512,8 @@ class AdminLeaveRequestTable extends Component
         $loggedInUserId = auth()->id();
         $userRole = auth()->user()->user_role;
         
-        $leaveApplications = LeaveApplication::orderBy('created_at', 'desc')
+        $leaveApplications = LeaveApplication::where('status', '!=', 'Disapproved')
+            ->orderBy('created_at', 'desc')
             ->select('id', 'name', 'date_of_filing', 'type_of_leave', 'details_of_leave', 'number_of_days', 'list_of_dates', 'approved_dates', 'file_name', 'file_path', 'status', 'remarks', 'approved_days', 'endorser1_id', 'endorser2_id', 'stage')
             ->paginate(10)
             ->through(function ($leaveApplication) use ($loggedInUserId, $userRole) {
@@ -675,6 +677,26 @@ class AdminLeaveRequestTable extends Component
 
         $this->pdfContent = base64_encode($pdf->output());
         $this->showPDFPreview = true;
+    }
+
+    public function downloadFile($filePath)
+    {
+        if (Storage::disk('public')->exists($filePath)) {
+            $fullPath = Storage::disk('public')->path($filePath);
+            $fileName = basename($filePath);
+            $mimeType = Storage::disk('public')->mimeType($filePath);
+
+            return response()->download($fullPath, $fileName, [
+                'Content-Type' => $mimeType,
+                'Content-Disposition' => 'attachment; filename="' . $fileName . '"'
+            ]);
+        }
+
+        // Handle file not found
+        $this->dispatch('swal', [
+            'title' => 'File not found!',
+            'icon' => 'error'
+        ]);
     }
 
 }
