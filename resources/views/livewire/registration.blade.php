@@ -6,9 +6,9 @@
                     Registration Form
                 </h1>
                 <p class="mt-4 text-base font-medium text-gray-500"></p>
-                </div>
-                <div class="p-2 mt-8 border bg-gray-50 rounded-3xl">
-                    <div class="p-4 md:p-10 bg-white border shadow-lg rounded-2xl">
+            </div>
+            <div class="p-2 mt-8 border bg-gray-50 rounded-3xl">
+                <div class="p-4 md:p-10 bg-white border shadow-lg rounded-2xl">
                     <!-- Step 1 -->
                     @if ($step === 1)
                         <div>
@@ -771,8 +771,8 @@
                                     <div class="relative inline-block" x-data="{ tooltip: false }">
                                         <!-- Info Icon -->
                                         <i class="bi bi-info-circle-fill text-blue-700 cursor-pointer"
-                                        @mouseenter="tooltip = true" @mouseleave="tooltip = false"></i>
-                                        <div x-show="tooltip" 
+                                            @mouseenter="tooltip = true" @mouseleave="tooltip = false"></i>
+                                        <div x-show="tooltip"
                                             class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 z-10 w-auto px-4 py-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm dark:bg-gray-700 transition-opacity duration-300"
                                             style="display: none;">
                                             <ul class="list-none space-y-2 whitespace-nowrap">
@@ -803,8 +803,8 @@
                                     <div class="relative inline-block" x-data="{ tooltip: false }">
                                         <!-- Info Icon -->
                                         <i class="bi bi-info-circle-fill text-blue-700 cursor-pointer"
-                                        @mouseenter="tooltip = true" @mouseleave="tooltip = false"></i>
-                                        <div x-show="tooltip" 
+                                            @mouseenter="tooltip = true" @mouseleave="tooltip = false"></i>
+                                        <div x-show="tooltip"
                                             class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 z-10 w-auto px-4 py-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm dark:bg-gray-700 transition-opacity duration-300"
                                             style="display: none;">
                                             <ul class="list-none space-y-2 whitespace-nowrap">
