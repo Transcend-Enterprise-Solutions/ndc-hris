@@ -776,24 +776,24 @@ class RoleManagementTable extends Component
                         return;
                     }
 
-                    $payrollId = null;
-                    $payrolls = Payrolls::where('user_id', $user->id)->first();
-                    $cosRegPayrolls = CosRegPayrolls::where('user_id', $user->id)->first();
-                    $cosSkPayrolls = CosSkPayrolls::where('user_id', $user->id)->first();
+                    // $payrollId = null;
+                    // $payrolls = Payrolls::where('user_id', $user->id)->first();
+                    // $cosRegPayrolls = CosRegPayrolls::where('user_id', $user->id)->first();
+                    // $cosSkPayrolls = CosSkPayrolls::where('user_id', $user->id)->first();
 
-                    if($payrolls){
-                        $payrollId = $payrolls->user_id;
-                    }else if($cosRegPayrolls){
-                        $payrollId = $cosRegPayrolls->user_id;
-                    }else if($cosSkPayrolls){
-                        $payrollId = $cosSkPayrolls->user_id;
-                    }else{
-                        $this->dispatch('swal', [
-                            'title' => "This employee don't have a payroll yet!",
-                            'icon' => 'error'
-                        ]);
-                        return;
-                    }
+                    // if($payrolls){
+                    //     $payrollId = $payrolls->user_id;
+                    // }else if($cosRegPayrolls){
+                    //     $payrollId = $cosRegPayrolls->user_id;
+                    // }else if($cosSkPayrolls){
+                    //     $payrollId = $cosSkPayrolls->user_id;
+                    // }else{
+                    //     $this->dispatch('swal', [
+                    //         'title' => "This employee don't have a payroll yet!",
+                    //         'icon' => 'error'
+                    //     ]);
+                    //     return;
+                    // }
 
                     $admin = User::create([
                         'name' => $user->name,
