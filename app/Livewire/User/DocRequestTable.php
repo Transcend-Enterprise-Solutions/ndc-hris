@@ -19,7 +19,7 @@ class DocRequestTable extends Component
     public $rejectedCount = 0;
     public $documentType;
     public $availableDocumentTypes = [
-        'certificateOfEmployment' => 'Certificate of Employment',
+        'employment' => 'Certificate of Employment',
         'employmentCompensation' => 'Certificate of Employment with Compensation',
         'leaveCredits' => 'Certificate of Leave Credits',
         'ipcrRatings' => 'Certificate of IPCR Ratings',
@@ -99,7 +99,7 @@ class DocRequestTable extends Component
             'user_id' => Auth::id(),
             'doc_request_id' => $docRequest->id,
             'type' => 'request',
-            'notif' => 'document',
+
             'read' => 0,
         ]);
 
