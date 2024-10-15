@@ -24,6 +24,7 @@ use App\Models\PhilippineProvinces;
 use App\Models\Skills;
 use App\Models\VoluntaryWorks;
 use App\Models\WorkExperience;
+use App\Models\ESignature;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -32,6 +33,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Livewire\WithFileUploads;
 use Illuminate\Http\UploadedFile;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PersonalDataSheetTable extends Component
 {
@@ -228,6 +231,10 @@ class PersonalDataSheetTable extends Component
     public $dual_citizenship_type;
     public $dual_citizenship_country;
 
+    // E-Signature
+    public $e_signature;
+    public $temporaryUrl;
+
     public function mount(){
         $this->getC4Answers();
         $this->countries = Countries::all();
@@ -294,6 +301,8 @@ class PersonalDataSheetTable extends Component
             $this->dateIssued = $pdsGovId->date_of_issuance;
         }
 
+        $eSignature = ESignature::where('user_id', $user->id)->first();
+
         return view('livewire.user.personal-data-sheet-table', [
             'userData' => $this->pds['userData'],
             'userSpouse' => $this->pds['userSpouse'],
@@ -310,6 +319,7 @@ class PersonalDataSheetTable extends Component
             'non_acads_distinctions' => $this->pds['non_acads_distinctions'],
             'assOrgMemberships' => $this->pds['assOrgMemberships'],
             'references' => $this->pds['references'],
+            'eSignature' => $eSignature,
         ]);
     }
 
@@ -418,47 +428,49 @@ class PersonalDataSheetTable extends Component
     public function toggleEditPersonalInfo(){
         $this->personalInfo = true;
         try{
-            $this->surname = $this->pds['userData']->surname;
-            $this->first_name = $this->pds['userData']->first_name;
-            $this->middle_name = $this->pds['userData']->middle_name;
-            $this->name_extension = $this->pds['userData']->name_extension;
-            $this->date_of_birth = $this->pds['userData']->date_of_birth;
-            $this->place_of_birth = $this->pds['userData']->place_of_birth;
-            $this->sex = $this->pds['userData']->sex;
-            $this->civil_status = $this->pds['userData']->civil_status;
-            $this->citizenship = $this->pds['userData']->citizenship;
-            $this->height = $this->pds['userData']->height;
-            $this->weight = $this->pds['userData']->weight;
-            $this->blood_type = $this->pds['userData']->blood_type;
-            $this->mobile_number = $this->pds['userData']->mobile_number;
-            $this->tel_number = $this->pds['userData']->tel_number;
-            $this->gsis = $this->pds['userData']->gsis;
-            $this->sss = $this->pds['userData']->sss;
-            $this->pagibig = $this->pds['userData']->pagibig;
-            $this->philhealth = $this->pds['userData']->philhealth;
-            $this->tin = $this->pds['userData']->tin;
-            $this->agency_employee_no = $this->pds['userData']->agency_employee_no;
-            $this->email = $this->pds['userData']->email;
-            $this->p_house_street = $this->pds['userData']->p_house_street;
-            $this->p_zipcode = $this->pds['userData']->permanent_selectedZipcode;
-            $this->p_province = $this->pds['userData']->permanent_selectedProvince;
-            $this->p_city = $this->pds['userData']->permanent_selectedCity;
-            $this->p_barangay = $this->pds['userData']->permanent_selectedBarangay;
-            $this->r_house_street = $this->pds['userData']->r_house_street;
-            $this->r_zipcode = $this->pds['userData']->residential_selectedZipcode;
-            $this->r_province = $this->pds['userData']->residential_selectedProvince;
-            $this->r_city = $this->pds['userData']->residential_selectedCity;
-            $this->r_barangay = $this->pds['userData']->residential_selectedBarangay;
-            $p_address_line1 = explode(",", $this->p_house_street);
-            $r_address_line1 = explode(",", $this->r_house_street);
-            $this->p_house_number = $p_address_line1[0];
-            $this->p_street = $p_address_line1[1];
-            $this->p_subdivision = $p_address_line1[2];
-            $this->r_house_number = $r_address_line1[0];
-            $this->r_street = $r_address_line1[1];
-            $this->r_subdivision = $r_address_line1[2];
-            $this->dual_citizenship_type = $this->pds['userData']->dual_citizenship_type;
-            $this->dual_citizenship_country =$this->pds['userData']->dual_citizenship_country;
+            $this->surname = $this->pds['userData']->surname ?: 'N/A';
+            $this->first_name = $this->pds['userData']->first_name ?: 'N/A';
+            $this->middle_name = $this->pds['userData']->middle_name ?: 'N/A';
+            $this->name_extension = $this->pds['userData']->name_extension ?: 'N/A';
+            $this->date_of_birth = $this->pds['userData']->date_of_birth ?: 'N/A';
+            $this->place_of_birth = $this->pds['userData']->place_of_birth ?: 'N/A';
+            $this->sex = $this->pds['userData']->sex ?: 'N/A';
+            $this->civil_status = $this->pds['userData']->civil_status ?: 'N/A';
+            $this->citizenship = $this->pds['userData']->citizenship ?: 'N/A';
+            $this->height = $this->pds['userData']->height ?: 'N/A';
+            $this->weight = $this->pds['userData']->weight ?: 'N/A';
+            $this->blood_type = $this->pds['userData']->blood_type ?: 'N/A';
+            $this->mobile_number = $this->pds['userData']->mobile_number ?: 'N/A';
+            $this->tel_number = $this->pds['userData']->tel_number ?: 'N/A';
+            $this->gsis = $this->pds['userData']->gsis ?: 'N/A';
+            $this->sss = $this->pds['userData']->sss ?: 'N/A';
+            $this->pagibig = $this->pds['userData']->pagibig ?: 'N/A';
+            $this->philhealth = $this->pds['userData']->philhealth ?: 'N/A';
+            $this->tin = $this->pds['userData']->tin ?: 'N/A';
+            $this->agency_employee_no = $this->pds['userData']->agency_employee_no ?: 'N/A';
+            $this->email = $this->pds['userData']->email ?: 'N/A';
+            $this->p_house_street = $this->pds['userData']->p_house_street ?: 'N/A';
+            $this->p_zipcode = $this->pds['userData']->permanent_selectedZipcode ?: 'N/A';
+            $this->p_province = $this->pds['userData']->permanent_selectedProvince ?: 'N/A';
+            $this->p_city = $this->pds['userData']->permanent_selectedCity ?: 'N/A';
+            $this->p_barangay = $this->pds['userData']->permanent_selectedBarangay ?: 'N/A';
+            $this->r_house_street = $this->pds['userData']->r_house_street ?: 'N/A';
+            $this->r_zipcode = $this->pds['userData']->residential_selectedZipcode ?: 'N/A';
+            $this->r_province = $this->pds['userData']->residential_selectedProvince ?: 'N/A';
+            $this->r_city = $this->pds['userData']->residential_selectedCity ?: 'N/A';
+            $this->r_barangay = $this->pds['userData']->residential_selectedBarangay ?: 'N/A';
+
+            $p_address_line1 = explode(',', $this->p_house_street);
+            $r_address_line1 = explode(',', $this->r_house_street);
+
+            $this->p_house_number = $p_address_line1[0] ?: 'N/A';
+            $this->p_street = $p_address_line1[1] ?: 'N/A';
+            $this->p_subdivision = $p_address_line1[2] ?: 'N/A';
+            $this->r_house_number = $r_address_line1[0] ?: 'N/A';
+            $this->r_street = $r_address_line1[1] ?: 'N/A';
+            $this->r_subdivision = $r_address_line1[2] ?: 'N/A';
+            $this->dual_citizenship_type = $this->pds['userData']->dual_citizenship_type ?: 'N/A';
+            $this->dual_citizenship_country =$this->pds['userData']->dual_citizenship_country ?: 'N/A';
             
         }catch(Exception $e){
             throw $e;
@@ -618,6 +630,7 @@ class PersonalDataSheetTable extends Component
         $this->addEducBackground = true;
         $this->newEducation[] = [
             'level' => '', 
+            'level_code' => '', 
             'name_of_school' => '',
             'basic_educ_degree_course' => '',
             'from' => '',
@@ -626,6 +639,8 @@ class PersonalDataSheetTable extends Component
             'highest_level_unit_earned' => '',
             'year_graduated' => '',
             'award' => '',
+            'is_bachelor' => 0,
+            'graduateStudy' => '',
         ];
     }
     public function toggleAddEligibility(){
@@ -653,6 +668,12 @@ class PersonalDataSheetTable extends Component
             'status_of_appointment' => '',
             'gov_service' => '',
             'sg_step' => '',
+            'pera' => '',
+            'branch' => '',
+            'leave_absence_wo_pay' => '',
+            // 'separation_date' => '',
+            // 'separation_cause' => '',
+            'remarks' => '',
         ];
     }
     public function toggleAddVoluntaryWorks(){
@@ -679,6 +700,7 @@ class PersonalDataSheetTable extends Component
             'no_of_hours' => '',
             'type_of_ld' => '',
             'conducted_by' => '',
+            'certificate' => null,
         ];
     }
     public function toggleAddSkills(){
@@ -1048,6 +1070,7 @@ class PersonalDataSheetTable extends Component
     public function addNewEducation(){
         $this->newEducation[] = [
             'level' => '', 
+            'level_code' => '', 
             'name_of_school' => '',
             'basic_educ_degree_course' => '',
             'from' => '',
@@ -1055,6 +1078,8 @@ class PersonalDataSheetTable extends Component
             'highest_level_unit_earned' => '',
             'year_graduated' => '',
             'award' => '',
+            'is_bachelor' => 0,
+            'graduateStudy' => '',
         ];
     }
     public function removeNewEducation($index){
@@ -1121,10 +1146,14 @@ class PersonalDataSheetTable extends Component
                             $validationRules['newEducation.'.$index.'.to'] = 'required|date';
                             $validationRules['newEducation.'.$index.'.year_graduated'] = 'required|numeric';
                             $educ['toPresent'] = null;
-                        } else {
+                        }else {
                             $validationRules['newEducation.'.$index.'.toPresent'] = 'required';
                             $educ['toPresent'] = 'Present';
                             $educ['to'] = null;
+                        }
+
+                        if($educ['level_code'] == 5){
+                            $validationRules['newEducation.'.$index.'.graduateStudy'] = 'required';
                         }
                 
                         $this->validate($validationRules);
@@ -1150,6 +1179,16 @@ class PersonalDataSheetTable extends Component
                                 break;
                         }
 
+                        $isMaster = 0;
+                        $isDoctor = 0;
+                        if($educ['graduateStudy'] == 'm'){
+                            $isMaster = 1;
+                            $isDoctor = 0;
+                        }elseif($educ['graduateStudy'] == 'd'){
+                            $isMaster = 0;
+                            $isDoctor = 1;
+                        }
+
                         EmployeesEducation::create([
                             'user_id' => $user->id,
                             'level_code' => $educ['level_code'],
@@ -1162,6 +1201,9 @@ class PersonalDataSheetTable extends Component
                             'award' => $educ['award'],
                             'highest_level_unit_earned' => $educ['highest_level_unit_earned'],
                             'year_graduated' => $educ['year_graduated'] ?: null,
+                            'is_bachelor' => $educ['is_bachelor'] ?: 0,
+                            'is_master' => $isMaster,
+                            'is_doctor' => $isDoctor,
                         ]);
                     }
                     
@@ -1271,6 +1313,12 @@ class PersonalDataSheetTable extends Component
             'status_of_appointment' => '',
             'gov_service' => '',
             'sg_step' => '',
+            'pera' => '',
+            'branch' => '',
+            'leave_absence_wo_pay' => '',
+            // 'separation_date' => '',
+            // 'separation_cause' => '',
+            'remarks' => '',
         ];
     }
     public function removeNewWorkExp($index){
@@ -1286,7 +1334,7 @@ class PersonalDataSheetTable extends Component
                     foreach ($this->workExperiences as $index => $exp) {
                         $validationRules = [
                             'workExperiences.'.$index.'.department' => 'required|string',
-                            'workExperiences.'.$index.'.monthly_salary' => 'required|string',
+                            'workExperiences.'.$index.'.monthly_salary' => 'required|numeric',
                             'workExperiences.'.$index.'.start_date' => 'required|date',
                             'workExperiences.'.$index.'.gov_service' => 'required',
                             'workExperiences.'.$index.'.status_of_appointment' => 'required|string',
@@ -1315,6 +1363,12 @@ class PersonalDataSheetTable extends Component
                                 'sg_step' => $exp['sg_step'],
                                 'status_of_appointment' => $exp['status_of_appointment'],
                                 'gov_service' => $exp['gov_service'],
+                                'pera' => $exp['gov_service'] ? $exp['pera'] : null,
+                                'branch' => $exp['gov_service'] ? $exp['branch'] : null,
+                                'leave_absence_wo_pay' => $exp['gov_service'] ? $exp['leave_absence_wo_pay'] : null,
+                                // 'separation_date' => $exp['separation_date'],
+                                // 'separation_cause' => $exp['separation_cause'],
+                                'remarks' => $exp['gov_service'] ? $exp['remarks'] : null,
                             ]);
                         }
                     }
@@ -1327,8 +1381,8 @@ class PersonalDataSheetTable extends Component
                 }else{
                     foreach ($this->newWorkExperiences as $index => $exp) {
                         $validationRules = [
-                            'newWorkExperiences.'.$index.'.department' => 'required|numeric',
-                            'newWorkExperiences.'.$index.'.monthly_salary' => 'required|string',
+                            'newWorkExperiences.'.$index.'.department' => 'required',
+                            'newWorkExperiences.'.$index.'.monthly_salary' => 'required|numeric',
                             'newWorkExperiences.'.$index.'.start_date' => 'required|date',
                             'newWorkExperiences.'.$index.'.gov_service' => 'required',
                             'newWorkExperiences.'.$index.'.status_of_appointment' => 'required|string',
@@ -1343,6 +1397,8 @@ class PersonalDataSheetTable extends Component
                             $exp['end_date'] = null;
                         }
 
+                        $this->validate($validationRules);
+
                         WorkExperience::create([
                             'user_id' => $user->id,
                             'start_date' => $exp['start_date'],
@@ -1354,6 +1410,12 @@ class PersonalDataSheetTable extends Component
                             'sg_step' => $exp['sg_step'],
                             'status_of_appointment' => $exp['status_of_appointment'],
                             'gov_service' => $exp['gov_service'],
+                            'pera' => $exp['gov_service'] ? $exp['pera'] : null,
+                            'branch' => $exp['gov_service'] ? $exp['branch'] : null,
+                            'leave_absence_wo_pay' => $exp['gov_service'] ? $exp['leave_absence_wo_pay'] : null,
+                            // 'separation_date' => $exp['separation_date'],
+                            // 'separation_cause' => $exp['separation_cause'],
+                            'remarks' => $exp['gov_service'] ? $exp['remarks'] : null,
                         ]);
                     }
                     $this->editWorkExp = null;
@@ -1366,11 +1428,6 @@ class PersonalDataSheetTable extends Component
                 }
             }
         } catch (Exception $e) {
-            $this->resetValidation();
-            $this->dispatch('swal', [
-                'title' => "Work Experience update was unsuccessful!",
-                'icon' => 'error'
-            ]);
             throw $e;
         }
     }
@@ -1492,8 +1549,14 @@ class PersonalDataSheetTable extends Component
             'no_of_hours' => '',
             'type_of_ld' => '',
             'conducted_by' => '',
+            'certificate' => null,
         ];
     }
+
+    public function removeFile($index){
+        $this->newLearnAndDevs[$index]['certificate'] = '';
+    }
+
     public function removeNewLearnAndDev($index){
         unset($this->newLearnAndDevs[$index]);
         $this->newLearnAndDevs = array_values($this->newLearnAndDevs);
@@ -1524,6 +1587,16 @@ class PersonalDataSheetTable extends Component
                 
                         $this->validate($validationRules);
 
+                        $filePath = null;
+                        if($ld['certificate']){
+                            if(!is_string($ld['certificate'])){
+                                $originalFilename = $ld['certificate']->getClientOriginalName();
+                                $filePath = $ld['certificate']->storeAs('ld-certificates', $originalFilename, 'public');
+                            }elseif(is_string($ld['certificate']) && $ld['certificate'] != null){
+                                $filePath = $ld['certificate'];
+                            }
+                        }
+
                         $ldRecord = $user->learningAndDevelopment->find($ld['id']);
                         if ($ldRecord) {
                             $ldRecord->update([
@@ -1534,6 +1607,7 @@ class PersonalDataSheetTable extends Component
                                 'type_of_ld' => $ld['type_of_ld'],
                                 'no_of_hours' => $ld['no_of_hours'],
                                 'conducted_by' => $ld['conducted_by'],
+                                'certificate' => $filePath,
                             ]);
                         }
                     }
@@ -1564,6 +1638,12 @@ class PersonalDataSheetTable extends Component
                 
                         $this->validate($validationRules);
 
+                        $filePath = null;
+                        if($ld['certificate']){
+                            $originalFilename = $ld['certificate']->getClientOriginalName();
+                            $filePath = $ld['certificate']->storeAs('ld-certificates', $originalFilename, 'public');
+                        }
+
                         LearningAndDevelopment::create([
                             'user_id' => $user->id,
                             'start_date' => $ld['start_date'],
@@ -1573,6 +1653,7 @@ class PersonalDataSheetTable extends Component
                             'type_of_ld' => $ld['type_of_ld'],
                             'no_of_hours' => $ld['no_of_hours'],
                             'conducted_by' => $ld['conducted_by'],
+                            'certificate' => $filePath,
                         ]);
                     }
                     $this->editLearnDev = null;
@@ -2359,4 +2440,75 @@ class PersonalDataSheetTable extends Component
             throw $e;
         }
     }
+
+    public function updatedESignature()
+    {
+        // Check if a new file has been uploaded
+        if ($this->e_signature) {
+            // Generate a temporary URL for the file
+            $this->temporaryUrl = $this->e_signature->temporaryUrl();
+        }
+    }
+
+    public function uploadSignature()
+    {
+        // Validate the file (you can adjust the validation rules as needed)
+        $this->validate([
+            'e_signature' => 'image|max:1024', // 1MB max size
+        ]);
+
+        $existingSignature = ESignature::where('user_id', Auth::id())->first();
+
+        // Delete the old signature if it exists
+        if ($existingSignature && Storage::disk('public')->exists($existingSignature->file_path)) {
+            Storage::disk('public')->delete($existingSignature->file_path);
+        }
+
+        // Save the new signature
+        $filePath = $this->e_signature->store('signatures', 'public');
+
+        // Update or create the signature record in the database
+        ESignature::updateOrCreate(
+            ['user_id' => Auth::id()],
+            ['file_path' => $filePath]
+        );
+
+        // Reset the file input and temporary URL
+        $this->e_signature = null;
+        $this->temporaryUrl = null;
+
+        // Display success message
+        $this->dispatch('swal', [
+            'title' => "E-Signature uploaded successfully!",
+            'icon' => 'success'
+        ]);
+    }
+
+    public function downloadCertificate($documentId)
+    {
+        $document = LearningAndDevelopment::findOrFail($documentId);
+        $filePath = $document->certificate;
+        $fileName = basename($filePath);
+
+        if (!Storage::disk('public')->exists($filePath)) {
+            throw new NotFoundHttpException("The file does not exist.");
+        }
+
+        $fileSize = Storage::disk('public')->size($filePath);
+
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            'Content-Length' => $fileSize,
+        ];
+
+        return new StreamedResponse(function () use ($filePath) {
+            $stream = Storage::disk('public')->readStream($filePath);
+            fpassthru($stream);
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        }, 200, $headers);
+    }
+    
 }

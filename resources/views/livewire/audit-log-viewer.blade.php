@@ -13,7 +13,6 @@
                    class="w-full sm:w-auto px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                    placeholder="To Date" aria-label="To Date">
         </div>
-
         <div class="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-700">
@@ -90,6 +89,118 @@
                                             @endforeach
                                         @endif
                                     </div>
+                                @elseif ($audit->auditable_type === App\Models\LeaveApplication::class)
+                                    <span>User {{ $audit->user->name ?? 'System' }} {{ $audit->event }} a leave application (ID: {{ $audit->auditable_id }}).</span>
+                                    <div class="mt-1 text-xs">
+                                        @if ($audit->event === 'created' || $audit->event === 'updated')
+                                            <strong>Leave Application Details:</strong><br>
+                                            @foreach ($audit->resolved_new_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                        @if ($audit->event === 'updated' || $audit->event === 'deleted')
+                                            <strong>Old values:</strong><br>
+                                            @foreach ($audit->resolved_old_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                @elseif ($audit->auditable_type === App\Models\Payrolls::class)
+                                    <span>User {{ $audit->user->name ?? 'System' }} {{ $audit->event }} a payroll record (ID: {{ $audit->auditable_id }}).</span>
+                                    <div class="mt-1 text-xs">
+                                        @if ($audit->event === 'created' || $audit->event === 'updated')
+                                            <strong>Payroll Details:</strong><br>
+                                            @foreach ($audit->resolved_new_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                        @if ($audit->event === 'updated' || $audit->event === 'deleted')
+                                            <strong>Old values:</strong><br>
+                                            @foreach ($audit->resolved_old_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                @elseif ($audit->auditable_type === App\Models\PlantillaPayslip::class)
+                                    <span>User {{ $audit->user->name ?? 'System' }} {{ $audit->event }} a payroll record (ID: {{ $audit->auditable_id }}).</span>
+                                    <div class="mt-1 text-xs">
+                                        @if ($audit->event === 'created' || $audit->event === 'updated')
+                                            <strong>Payroll Details:</strong><br>
+                                            @foreach ($audit->resolved_new_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                        @if ($audit->event === 'updated' || $audit->event === 'deleted')
+                                            <strong>Old values:</strong><br>
+                                            @foreach ($audit->resolved_old_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                @elseif ($audit->auditable_type === App\Models\CosRegPayrolls::class)
+                                    <span>User {{ $audit->user->name ?? 'System' }} {{ $audit->event }} a payroll record (ID: {{ $audit->auditable_id }}).</span>
+                                    <div class="mt-1 text-xs">
+                                        @if ($audit->event === 'created' || $audit->event === 'updated')
+                                            <strong>Payroll Details:</strong><br>
+                                            @foreach ($audit->resolved_new_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                        @if ($audit->event === 'updated' || $audit->event === 'deleted')
+                                            <strong>Old values:</strong><br>
+                                            @foreach ($audit->resolved_old_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                @elseif ($audit->auditable_type === App\Models\CosRegPayslip::class)
+                                    <span>User {{ $audit->user->name ?? 'System' }} {{ $audit->event }} a payroll record (ID: {{ $audit->auditable_id }}).</span>
+                                    <div class="mt-1 text-xs">
+                                        @if ($audit->event === 'created' || $audit->event === 'updated')
+                                            <strong>Payroll Details:</strong><br>
+                                            @foreach ($audit->resolved_new_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                        @if ($audit->event === 'updated' || $audit->event === 'deleted')
+                                            <strong>Old values:</strong><br>
+                                            @foreach ($audit->resolved_old_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                @elseif ($audit->auditable_type === App\Models\CosSkPayrolls::class)
+                                    <span>User {{ $audit->user->name ?? 'System' }} {{ $audit->event }} a payroll record (ID: {{ $audit->auditable_id }}).</span>
+                                    <div class="mt-1 text-xs">
+                                        @if ($audit->event === 'created' || $audit->event === 'updated')
+                                            <strong>Payroll Details:</strong><br>
+                                            @foreach ($audit->resolved_new_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                        @if ($audit->event === 'updated' || $audit->event === 'deleted')
+                                            <strong>Old values:</strong><br>
+                                            @foreach ($audit->resolved_old_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                @elseif ($audit->auditable_type === App\Models\CosRegPayslip::class)
+                                    <span>User {{ $audit->user->name ?? 'System' }} {{ $audit->event }} a payroll record (ID: {{ $audit->auditable_id }}).</span>
+                                    <div class="mt-1 text-xs">
+                                        @if ($audit->event === 'created' || $audit->event === 'updated')
+                                            <strong>Payroll Details:</strong><br>
+                                            @foreach ($audit->resolved_new_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                        @if ($audit->event === 'updated' || $audit->event === 'deleted')
+                                            <strong>Old values:</strong><br>
+                                            @foreach ($audit->resolved_old_values as $key => $value)
+                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}<br>
+                                            @endforeach
+                                        @endif
+                                    </div>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
@@ -99,6 +210,10 @@
                     @endforeach
                 </tbody>
             </table>
+            
         </div>
+        <div class="mt-4">
+            {{ $audits->links() }}
+            </div>
     </div>
 </div>

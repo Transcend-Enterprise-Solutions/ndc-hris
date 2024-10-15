@@ -1,4 +1,4 @@
-<div class="w-full flex justify-center"
+<div class="w-full flex flex-col justify-center"
 x-data="{ 
     selectedTab: 'cos',
     selectedSubTab: 'payroll',
@@ -256,8 +256,10 @@ x-cloak>
                                                                         'nycempc',
                                                                         'other_deductions',
                                                                         'total_deduction',
-                                                                    ]))
+                                                                        ]))
                                                                         {{ currency_format($payroll->$column) }}
+                                                                    @elseif($column == 'employee_number')
+                                                                        {{ $payroll->$column ? 'D-' . substr($payroll->$column, 1) : '' }}
                                                                     @else
                                                                         {{ $payroll->$column ?? '' }}
                                                                     @endif
@@ -372,7 +374,7 @@ x-cloak>
                                                         {{ $payroll['name'] ?? '' }}
                                                     </td>
                                                     <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                        {{ $payroll['employee_number'] ?? '' }}
+                                                        {{ isset($payroll['employee_number']) ? 'D-' . substr($payroll['employee_number'], 1) : '' }}
                                                     </td>
                                                     <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                         {{ $payroll['position'] ?? '' }}
@@ -840,6 +842,11 @@ x-cloak>
             </div>
 
         </div>
+    </div>
+
+    {{-- Released Payrolls --}}
+    <div x-show="selectedTab === 'export'" class="mt-4">
+        @livewire('admin.payroll-component.cos-reg-recorded-payroll')
     </div>
 
     {{-- Add and Edit COS Payroll Modal --}}

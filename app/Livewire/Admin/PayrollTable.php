@@ -130,15 +130,13 @@ class PayrollTable extends Component
 
 
     public function mount(){
-        $this->unpayrolledEmployees = User::where('users.user_role', '=', 'emp')
-            ->join('user_data', 'user_data.user_id', 'users.id')
+        $this->unpayrolledEmployees = User::where('user_role', '=', 'emp')
             ->leftJoin('payrolls', 'payrolls.user_id', '=', 'users.id')
             ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', '=', 'users.id')
             ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', '=', 'users.id')
             ->whereNull('payrolls.id')
             ->whereNull('cos_sk_payrolls.id')
             ->whereNull('cos_reg_payrolls.id')
-            ->where('user_data.appointment', 'cos')
             ->select('users.*')
             ->get();
 
@@ -804,7 +802,9 @@ class PayrollTable extends Component
         $this->editCosPayroll = true;
         $this->userId = $userId;
         try {
-            $payroll = CosRegPayrolls::where('user_id', $userId)->first();
+            $payroll = CosRegPayrolls::where('cos_reg_payrolls.user_id', $userId)
+                        ->join('users', 'users.id', 'cos_reg_payrolls.user_id')
+                        ->first();
             $sg = explode('-', $payroll->sg_step);
             if ($payroll) {
                 $this->name = $payroll->name;

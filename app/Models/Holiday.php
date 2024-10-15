@@ -20,6 +20,4 @@ class Holiday extends Model implements Auditable
     protected $casts = [
         'holiday_date' => 'date',
     ];
-
-    // Optionally, you can add relationships or custom methods here
 }

@@ -184,6 +184,11 @@ class Registration extends Component
     
         DB::beginTransaction();
 
+        // Capitalize the first letter of each word for the names
+        $this->first_name = ucwords(strtolower($this->first_name));
+        $this->middle_name = ucwords(strtolower($this->middle_name));
+        $this->surname = ucwords(strtolower($this->surname));
+
         try {
             $this->emp_code = str_replace('-', '', $this->emp_code); // Remove hyphens
             $this->emp_code = str_replace('D', '1', $this->emp_code); // Replace 'D' with '1'
@@ -295,23 +300,26 @@ class Registration extends Component
     {
         if ($this->permanent_selectedProvince != null) {
             $provinceCode = PhilippineProvinces::where('province_description', $this->permanent_selectedProvince)
+                            // ->where('region_code', isset($regionCode['region_code']) ? $regionCode['region_code'] : '')
                             ->select('province_code')->first();
-            $provinceCode = $provinceCode->getAttributes();
-            $this->pcities = PhilippineCities::where('province_code', $provinceCode['province_code'])->get();
+            $provinceCode = $provinceCode ? $provinceCode->getAttributes() : [];
+            $this->pcities = PhilippineCities::where('province_code', isset($provinceCode['province_code']) ? $provinceCode['province_code'] : '')->get();
         }
 
         if ($this->residential_selectedProvince != null) {
             $provinceCode = PhilippineProvinces::where('province_description', $this->residential_selectedProvince)
+                            // ->where('region_code', isset($regionCode['region_code']) ? $regionCode['region_code'] : '')
                             ->select('province_code')->first();
-            $provinceCode = $provinceCode->getAttributes();
-            $this->rcities = PhilippineCities::where('province_code', $provinceCode['province_code'])->get();
+            $provinceCode = $provinceCode ? $provinceCode->getAttributes() : [];
+            $this->rcities = PhilippineCities::where('province_code', isset($provinceCode['province_code']) ? $provinceCode['province_code'] : '')->get();
         }
 
         if ($this->permanent_selectedCity != null) {
             $cityCode = PhilippineCities::where('city_municipality_description', $this->permanent_selectedCity)
+                            ->where('province_code', isset($provinceCode['province_code']) ? $provinceCode['province_code'] : '')
                             ->select('city_municipality_code')->first();
-            $cityCode = $cityCode->getAttributes();
-            $this->pbarangays = PhilippineBarangays::where('city_municipality_code', $cityCode['city_municipality_code'])->get();
+            $cityCode = $cityCode ? $cityCode->getAttributes() : [];
+            $this->pbarangays = PhilippineBarangays::where('city_municipality_code', isset($cityCode['city_municipality_code']) ? $cityCode['city_municipality_code'] : '')->get();
         }
 
         if ($this->residential_selectedCity != null) {

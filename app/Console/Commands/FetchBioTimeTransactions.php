@@ -65,5 +65,6 @@ class FetchBioTimeTransactions extends Command
         } while ($response['next'] !== null);
 
         $this->info('Transactions fetched and saved successfully.');
+        echo('Transactions fetched and saved successfully');
     }
 }

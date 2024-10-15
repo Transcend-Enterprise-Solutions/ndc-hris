@@ -32,6 +32,8 @@ Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
         return view('livewire.admin.role-management'); })->name('org-management');
     Route::get('/employee-management/employees', function () {
         return view('livewire.admin.employees'); })->name('/employee-management/employees');
+    Route::get('/employee-management/service-records', function () {
+        return view('livewire.admin.service-record'); })->name('/employee-management/service-records');
     Route::get('/employee-management/admin-doc-request', function () {
         return view('livewire.admin.admin-doc-request'); })->name('/employee-management/admin-doc-request');
     Route::get('/employee-management/emp-documents', function () {
@@ -41,7 +43,7 @@ Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
     Route::get('/report-generation', function () {
         return view('livewire.admin.report-generation'); })->name('report-generation');
     Route::get('/audit-logs', function () {
-        return view('livewire.log-index'); })->name('audit-log-viewer');
+        return view('livewire.log-index'); })->name('audit-logs');
 
 
 });

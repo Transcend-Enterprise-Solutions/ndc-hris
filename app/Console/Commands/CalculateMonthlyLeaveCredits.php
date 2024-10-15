@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\User;
 use App\Models\EmployeesDtr;
 use App\Models\LeaveCreditsCalculation;
-use App\Models\LeaveCredits; // Assuming this is the model for tracking leave balances
+use App\Models\LeaveCredits;
 use Carbon\Carbon;
 
 class CalculateMonthlyLeaveCredits extends Command
@@ -16,55 +16,54 @@ class CalculateMonthlyLeaveCredits extends Command
 
     public function handle()
     {
-        $users = User::all();
-        $currentYear = Carbon::now()->year;
+        // Get the just-ended month and year
+        $date = Carbon::now();
+        $month = $date->month;
+        $year = $date->year;
+
+        // Get users who have entries in EmployeesDtr for the specified month and year
+        $activeUserIds = EmployeesDtr::whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->pluck('user_id')
+            ->unique();
+
+        $users = User::whereIn('id', $activeUserIds)->get();
+
+        $this->info("Processing " . $users->count() . " active users for " . $date->format('F Y') . ".");
 
         foreach ($users as $user) {
-            for ($month = 1; $month <= 12; $month++) {
-                // Retrieve the user's current VL balance
-                $currentVlBalance = LeaveCredits::where('user_id', $user->id)->value('vl_claimable_credits');
+            $currentVlBalance = LeaveCredits::where('user_id', $user->id)->value('vl_claimable_credits');
 
-                // Calculate total late minutes
-                $totalLateMinutes = EmployeesDtr::where('user_id', $user->id)
-                    ->whereMonth('date', $month)
-                    ->whereYear('date', $currentYear)
-                    ->where('remarks', 'Late')
-                    ->get()
-                    ->sum(function ($dtr) {
-                        [$hours, $minutes] = explode(':', $dtr->late);
-                        return $hours * 60 + $minutes;
-                    });
+            $totalLateMinutes = EmployeesDtr::where('user_id', $user->id)
+                ->whereMonth('date', $month)
+                ->whereYear('date', $year)
+                ->where('remarks', 'Late/Undertime')
+                ->get()
+                ->sum(function ($dtr) {
+                    [$hours, $minutes] = explode(':', $dtr->late);
+                    return $hours * 60 + $minutes;
+                });
 
-                // Determine if we should deduct late/undertime from the credits earned
-                if ($currentVlBalance > 0) {
-                    // VL is not zero, so we do not deduct late/undertime
-                    $totalLateMinutes = 0;
-                }
-
-                // Convert total late minutes to HH:MM format
-                $totalLateTime = $this->convertMinutesToHoursAndMinutes($totalLateMinutes);
-
-                // Calculate total credits earned by dividing late time by 8 hours (480 minutes)
-                $totalCreditsEarned = $this->calculateTotalCreditsEarned($totalLateMinutes);
-
-                // Calculate leave credits earned based on total credits earned
-                $leaveCreditsEarned = $this->calculateLeaveCreditsEarned($totalCreditsEarned);
-
-                // Update or create leave credits calculation entry
-                LeaveCreditsCalculation::updateOrCreate(
-                    ['user_id' => $user->id, 'month' => $month, 'year' => $currentYear],
-                    [
-                        'late_time' => $totalLateTime,
-                        'total_credits_earned' => $totalCreditsEarned,
-                        'leave_credits_earned' => $leaveCreditsEarned,
-                    ]
-                );
+            if ($currentVlBalance > 0) {
+                $totalLateMinutes = 0;
             }
+
+            $totalLateTime = $this->convertMinutesToHoursAndMinutes($totalLateMinutes);
+            $totalCreditsEarned = $this->calculateTotalCreditsEarned($totalLateMinutes);
+            $leaveCreditsEarned = $this->calculateLeaveCreditsEarned($totalCreditsEarned);
+
+            LeaveCreditsCalculation::updateOrCreate(
+                ['user_id' => $user->id, 'month' => $month, 'year' => $year],
+                [
+                    'late_time' => $totalLateTime,
+                    'total_credits_earned' => $totalCreditsEarned,
+                    'leave_credits_earned' => $leaveCreditsEarned,
+                ]
+            );
         }
 
-        $this->info('Monthly leave credits calculated and updated successfully.');
+        $this->info("Monthly leave credits calculated and updated successfully for " . $date->format('F Y') . ".");
     }
-
     private function calculateTotalCreditsEarned($totalLateMinutes)
     {
         // Assuming 8 hours (480 minutes) equals 1 credit

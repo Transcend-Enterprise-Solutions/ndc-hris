@@ -113,7 +113,7 @@ class GeneralPayrollTable extends Component
     public $sg;
     public $step;
     public $rate_per_month;
-    public $personal_economic_relief_allowance = 0;
+    public $personal_economic_relief_allowance = 2000;
     public $gross_amount;
     public $additional_gsis_premium;
     public $lbp_salary_loan;
@@ -210,6 +210,8 @@ class GeneralPayrollTable extends Component
         "0.125" => 60
     ];
     public $absentLateUndertimeDeductionAmount = 0;
+    public $pageSize = 10; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
     
 
     public function mount(){
@@ -237,7 +239,7 @@ class GeneralPayrollTable extends Component
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                 ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
-                ->paginate(10);
+                ->paginate($this->pageSize);
 
 
         if($this->userId){
@@ -284,11 +286,11 @@ class GeneralPayrollTable extends Component
         $this->total_deduction = number_format((float)$this->total_deduction, 2, '.', '');
 
 
-        if($this->rate_per_month && $this->personal_economic_relief_allowance){
-            $this->gross_amount = $this->rate_per_month + $this->personal_economic_relief_allowance;
-        }
-
         $this->getRate();
+
+        if($this->rate_per_month){
+            $this->gross_amount = $this->rate_per_month + $this->personal_economic_relief_allowance ?: 0;
+        }
 
         $plantillaPayrollSignatories = User::join('signatories', 'signatories.user_id', 'users.id')
             ->join('positions', 'positions.id', 'users.position_id')
@@ -1259,7 +1261,7 @@ class GeneralPayrollTable extends Component
                     'pagibig_mpl' => $this->pagibig_mpl,
                     'pagibig_calamity_loan' => $this->pagibig_calamity_loan,
                     'pagibig_gs' => $this->pagibig_gs,
-                    'w_holding_tax' => $this->w_holding_tax,
+                    'w_holding_tax' => $this->w_holding_tax ?: 0,
                     'philhealth' => $this->philhealth,
                     'philhealth_es' => $this->philhealth_es,
                     'other_deductions' => $this->other_deductions,
@@ -1276,7 +1278,6 @@ class GeneralPayrollTable extends Component
                         'rate_per_month' => 'required|numeric',
                         'gross_amount' => 'required|numeric',
                         'pagibig_contribution' => 'required|numeric',
-                        'w_holding_tax' => 'required|numeric',
                         'philhealth' => 'required|numeric',
                         'total_deduction' => 'required|numeric',
                     ]);
@@ -1294,7 +1295,6 @@ class GeneralPayrollTable extends Component
                         'rate_per_month' => 'required|numeric',
                         'gross_amount' => 'required|numeric',
                         'pagibig_contribution' => 'required|numeric',
-                        'w_holding_tax' => 'required|numeric',
                         'philhealth' => 'required|numeric',
                         'total_deduction' => 'required|numeric',
                     ]);
@@ -1326,9 +1326,9 @@ class GeneralPayrollTable extends Component
 
     public function deleteData(){
         try {
-            $user = User::where('id', $this->deleteId)->first();
+            $user = Payrolls::where('user_id', $this->deleteId)->first();
             if ($user) {
-                $user->payrolls()->delete();
+                $user->delete();
                 $message = "Plantilla payroll deleted successfully!";
                 $this->resetVariables();
                 $this->dispatch('swal', [

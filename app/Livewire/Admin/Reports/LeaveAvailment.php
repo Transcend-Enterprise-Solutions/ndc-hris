@@ -22,10 +22,11 @@ class LeaveAvailment extends Component
     public function leaveAvailmentExport()
     {
         if (!$this->month) {
+            $this->addError('month', 'Please select a month before exporting.');
             return;
         }
     
-        return Excel::download(new LeaveAvailmentExport($this->month), 'LeaveAvailment.xlsx');
+        return Excel::download(new LeaveAvailmentExport($this->month), 'LeaveAvailment-' . $this->month . '.xlsx');
     }
 
     public function getFormattedMonth()
@@ -73,7 +74,10 @@ class LeaveAvailment extends Component
                 $query->whereIn('status', $this->statusesForSL);
             })->count();
 
-        $totalLeaveCount = LeaveApplication::count();
+        // $totalLeaveCount = LeaveApplication::count();
+        $totalLeaveCount = $this->month 
+            ? $this->getLeaveCountForMonth($this->month)
+            : LeaveApplication::count();
 
         return view('livewire.admin.reports.leave-availment', [
             'leaveCount' => $leaveCount,
@@ -81,5 +85,13 @@ class LeaveAvailment extends Component
             'vacationLeaveCount' => $vacationLeaveCount,
             'sickLeaveCount' => $sickLeaveCount,
         ]);
+    }
+
+    private function getLeaveCountForMonth($month)
+    {
+        list($year, $month) = explode('-', $month);
+        return LeaveApplication::whereYear('date_of_filing', $year)
+            ->whereMonth('date_of_filing', $month)
+            ->count();
     }
 }

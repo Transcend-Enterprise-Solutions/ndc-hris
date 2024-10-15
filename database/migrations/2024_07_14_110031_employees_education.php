@@ -22,6 +22,9 @@ return new class extends Migration
             $table->string('highest_level_unit_earned')->nullable();
             $table->string('year_graduated')->nullable();
             $table->string('award')->nullable();
+            $table->boolean('is_bachelor')->nullable();
+            $table->boolean('is_master')->nullable();
+            $table->boolean('is_doctor')->nullable();
             $table->timestamps();
         });
     }

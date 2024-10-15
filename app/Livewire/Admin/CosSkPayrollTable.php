@@ -128,19 +128,21 @@ class CosSkPayrollTable  extends Component
     public $other_deductions;
     public $unpayrolledEmployees;
     public $canExportPayslip = false;
+    public $pageSize = 10; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
 
     public function mount(){
-        $this->employees = User::where('users.user_role', '=', 'emp')
-            ->join('user_data', 'user_data.user_id', 'users.id')
+        $this->unpayrolledEmployees = User::where('user_role', '=', 'emp')
             ->leftJoin('payrolls', 'payrolls.user_id', '=', 'users.id')
             ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', '=', 'users.id')
             ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', '=', 'users.id')
             ->whereNull('payrolls.id')
             ->whereNull('cos_sk_payrolls.id')
             ->whereNull('cos_reg_payrolls.id')
-            ->where('user_data.appointment', 'cos')
             ->select('users.*')
             ->get();
+
+        $this->employees = User::where('users.user_role', '=', 'emp')->get();
         $this->salaryGrade = SalaryGrade::all();
     }
 
@@ -176,7 +178,7 @@ class CosSkPayrollTable  extends Component
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                 ->select('users.name', 'users.emp_code as employee_number', 'cos_sk_payrolls.*', 'positions.*', 'office_divisions.*')
-                ->paginate(5);
+                ->paginate($this->pageSize);
 
         if($this->userId){
             $user = User::where('id', $this->userId)->first();
@@ -803,7 +805,9 @@ class CosSkPayrollTable  extends Component
         $this->editCosPayroll = true;
         $this->userId = $userId;
         try {
-            $payroll = CosSkPayrolls::where('user_id', $userId)->first();
+            $payroll = CosSkPayrolls::where('cos_sk_payrolls.user_id', $userId)
+                    ->join('users', 'users.id', 'cos_sk_payrolls.user_id')
+                    ->first();
             $sg = explode('-', $payroll->sg_step);
             if ($payroll) {
                 $this->name = $payroll->name;

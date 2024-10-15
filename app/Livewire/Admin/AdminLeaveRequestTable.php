@@ -11,6 +11,8 @@ use App\Models\VacationLeaveDetails;
 use App\Models\SickLeaveDetails;
 use App\Models\LeaveApprovals;
 use App\Models\User;
+use App\Models\ESignature;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
 class AdminLeaveRequestTable extends Component
@@ -33,6 +35,9 @@ class AdminLeaveRequestTable extends Component
     public $showEndorserApprove = false;
     public $showEndorserDisapprove = false;
 
+    public $leaveApplicationDetails;
+    public $pdfContent;
+    public $showPDFPreview = false;
 
     protected $rules = [
         'status' => 'required_if:showApproveModal,true',
@@ -325,57 +330,104 @@ class AdminLeaveRequestTable extends Component
         }
     
         $leaveTypes = explode(',', $this->selectedApplication->type_of_leave);
+        $updatedLeaveTypes = [];
     
         foreach ($leaveTypes as $leaveType) {
             $leaveType = trim($leaveType);
+            $originalLeaveType = $leaveType;
 
             if ($leaveType === "Vacation Leave" || $leaveType === "Sick Leave") {
                 $totalDeducted = 0;
-    
-                // Deduct from SPL first
-                if ($leaveCredits->spl_claimable_credits > 0) {
-                    $deduct = min($days, $leaveCredits->spl_claimable_credits);
-                    $leaveCredits->spl_claimable_credits -= $deduct;
-                    $leaveCredits->spl_claimed_credits += $deduct;
-                    $totalDeducted += $deduct;
+                $deductedFrom = '';
+                
+                if ($leaveType === "Vacation Leave") {
+                    // Check if SPL has enough credits
+                    if ($leaveCredits->spl_claimable_credits >= $days) {
+                        // Deduct from SPL since it has enough credits
+                        $deduct = $days;
+                        $leaveCredits->spl_claimable_credits -= $deduct;
+                        $leaveCredits->spl_claimed_credits += $deduct;
+                        $totalDeducted += $deduct;
+                        $deductedFrom = 'SPL';
 
-                    // Also deduct the same amount from FL if available
-                    if ($leaveCredits->fl_claimable_credits > 0) {
-                        $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
-                        $leaveCredits->fl_claimable_credits -= $flDeduct;
-                        $leaveCredits->fl_claimed_credits += $flDeduct;
+                        // Also deduct the same amount from FL if available
+                        if ($leaveCredits->fl_claimable_credits > 0) {
+                            $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
+                            $leaveCredits->fl_claimable_credits -= $flDeduct;
+                            $leaveCredits->fl_claimed_credits += $flDeduct;
+                        }
+                    } 
+                    // If SPL doesn't have enough, check if SL has enough
+                    // else if ($leaveCredits->sl_claimable_credits >= $days) {
+                    //     // Deduct from SL since it has enough credits
+                    //     $deduct = $days;
+                    //     $leaveCredits->sl_claimable_credits -= $deduct;
+                    //     $leaveCredits->sl_claimed_credits += $deduct;
+                    //     $totalDeducted += $deduct;
+                    //     $deductedFrom = 'SL';
+
+                    //     // Also deduct the same amount from FL if available
+                    //     if ($leaveCredits->fl_claimable_credits > 0) {
+                    //         $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
+                    //         $leaveCredits->fl_claimable_credits -= $flDeduct;
+                    //         $leaveCredits->fl_claimed_credits += $flDeduct;
+                    //     }
+                    // }
+                    // If neither SPL nor SL has enough, try VL
+                    else if ($leaveCredits->vl_claimable_credits > 0) {
+                        $deduct = min($days, $leaveCredits->vl_claimable_credits);
+                        $leaveCredits->vl_claimable_credits -= $deduct;
+                        $leaveCredits->vl_claimed_credits += $deduct;
+                        $totalDeducted += $deduct;
+                        $deductedFrom = 'VL';
+
+                        // Also deduct the same amount from FL if available
+                        if ($leaveCredits->fl_claimable_credits > 0) {
+                            $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
+                            $leaveCredits->fl_claimable_credits -= $flDeduct;
+                            $leaveCredits->fl_claimed_credits += $flDeduct;
+                        }
                     }
-                }
-        
-                // If more days are needed, try deducting from SL next
-                if ($totalDeducted < $days && $leaveCredits->sl_claimable_credits > 0) {
-                    $remainingDays = $days - $totalDeducted;
-                    $deduct = min($remainingDays, $leaveCredits->sl_claimable_credits);
-                    $leaveCredits->sl_claimable_credits -= $deduct;
-                    $leaveCredits->sl_claimed_credits += $deduct;
-                    $totalDeducted += $deduct;
 
-                    // Also deduct the same amount from FL if available
-                    if ($leaveCredits->fl_claimable_credits > 0) {
-                        $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
-                        $leaveCredits->fl_claimable_credits -= $flDeduct;
-                        $leaveCredits->fl_claimed_credits += $flDeduct;
+                    if ($deductedFrom === 'SPL' || $deductedFrom === 'SL') {
+                        $leaveType = "Special Privilege Leave";
                     }
-                }
-        
-                // Finally, if still more days are needed, try deducting from VL
-                if ($totalDeducted < $days && $leaveCredits->vl_claimable_credits > 0) {
-                    $remainingDays = $days - $totalDeducted;
-                    $deduct = min($remainingDays, $leaveCredits->vl_claimable_credits);
-                    $leaveCredits->vl_claimable_credits -= $deduct;
-                    $leaveCredits->vl_claimed_credits += $deduct;
-                    $totalDeducted += $deduct;
 
-                    // Also deduct the same amount from FL if available
-                    if ($leaveCredits->fl_claimable_credits > 0) {
-                        $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
-                        $leaveCredits->fl_claimable_credits -= $flDeduct;
-                        $leaveCredits->fl_claimed_credits += $flDeduct;
+                } else {
+                    // For Sick Leave, check SPL first then move to SL if not enough
+                    if ($leaveCredits->spl_claimable_credits >= $days) {
+                        // Deduct from SPL since it has enough credits
+                        $deduct = $days;
+                        $leaveCredits->spl_claimable_credits -= $deduct;
+                        $leaveCredits->spl_claimed_credits += $deduct;
+                        $totalDeducted += $deduct;
+                        $deductedFrom = 'SPL';
+
+                        // Also deduct the same amount from FL if available
+                        if ($leaveCredits->fl_claimable_credits > 0) {
+                            $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
+                            $leaveCredits->fl_claimable_credits -= $flDeduct;
+                            $leaveCredits->fl_claimed_credits += $flDeduct;
+                        }
+                    }
+                    // If SPL doesn't have enough, move directly to SL
+                    else if ($leaveCredits->sl_claimable_credits > 0) {
+                        $deduct = min($days, $leaveCredits->sl_claimable_credits);
+                        $leaveCredits->sl_claimable_credits -= $deduct;
+                        $leaveCredits->sl_claimed_credits += $deduct;
+                        $totalDeducted += $deduct;
+                        $deductedFrom = 'SL';
+
+                        // Also deduct the same amount from FL if available
+                        if ($leaveCredits->fl_claimable_credits > 0) {
+                            $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
+                            $leaveCredits->fl_claimable_credits -= $flDeduct;
+                            $leaveCredits->fl_claimed_credits += $flDeduct;
+                        }
+                    }
+
+                    if ($deductedFrom === 'SPL') {
+                        $leaveType = "Special Privilege Leave";
                     }
                 }
     
@@ -401,13 +453,18 @@ class AdminLeaveRequestTable extends Component
                     $leaveCreditsCalculation->save();
                 }
     
-            } else{
+            } else {
 
+                $updatedLeaveTypes[] = $leaveType;
                 continue;
             }
 
-            break;
+            // break;
+            $updatedLeaveTypes[] = $leaveType;
         }
+
+        $this->selectedApplication->type_of_leave = implode(',', $updatedLeaveTypes);
+        $this->selectedApplication->save();
     }
     
     public function fetchNonEmployeeUsers()
@@ -517,6 +574,107 @@ class AdminLeaveRequestTable extends Component
         }
 
         return true;
+    }
+
+    public function closeLeaveDetails()
+    {
+        $this->showPDFPreview = false;
+        $this->pdfContent = null;
+    }
+
+    public function showPDF($leaveApplicationId)
+    {
+        $leaveApplication = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
+
+        $eSignature = ESignature::where('user_id', $leaveApplication->user_id)->first();
+
+        $signatureImagePath = null;
+        if ($eSignature && $eSignature->file_path) {
+            $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
+        }
+
+        $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
+
+        $otherLeave = '';
+        foreach ($selectedLeaveTypes as $leaveType) {
+            if (strpos($leaveType, 'Others: ') === 0) {
+                $otherLeave = str_replace('Others: ', '', $leaveType);
+                break;
+            }
+        }
+
+        $detailsOfLeave = $leaveApplication->details_of_leave ? array_map('trim', explode(',', $leaveApplication->details_of_leave)) : [];
+
+        $isDetailPresent = function($detail) use ($detailsOfLeave) {
+            foreach ($detailsOfLeave as $item) {
+                $parts = explode('=', $item, 2);
+                $key = trim($parts[0]);
+                if ($key === $detail) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        $getDetailValue = function($detail) use ($detailsOfLeave) {
+            foreach ($detailsOfLeave as $item) {
+                $parts = explode('=', $item, 2);
+                if (count($parts) === 2) {
+                    $key = trim($parts[0]);
+                    $value = trim($parts[1]);
+                    if ($key === $detail) {
+                        return $value;
+                    }
+                }
+            }
+            return '';
+        };
+
+        $daysWithPay = '';
+        $daysWithoutPay = '';
+        $otherRemarks = '';
+
+        if ($leaveApplication->status === 'Approved') {
+            if ($leaveApplication->remarks === 'With Pay') {
+                $daysWithPay = $leaveApplication->approved_days;
+            } elseif ($leaveApplication->remarks === 'Without Pay') {
+                $daysWithoutPay = $leaveApplication->approved_days;
+            } else {
+                $otherRemarks = $leaveApplication->remarks;
+            }
+        }
+
+        // Fetch the first approver from leave_approvals
+        $leaveApproval = LeaveApprovals::where('application_id', $leaveApplicationId)->first();
+        $firstApprover = $leaveApproval ? $leaveApproval->first_approver : null;
+        $firstApproverName = $firstApprover ? User::find($firstApprover)->name : 'N/A';
+        $secondApprover = $leaveApproval ? $leaveApproval->second_approver : null;
+        $secondApproverName = $secondApprover ? User::find($secondApprover)->name : 'N/A';
+        $thirdApprover = $leaveApproval ? $leaveApproval->third_approver : null;
+        $thirdApproverName = $thirdApprover ? User::find($thirdApprover)->name : 'N/A';
+
+        $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
+
+        $pdf = PDF::loadView('pdf.leave-application', [
+            'leaveApplication' => $leaveApplication,
+            'selectedLeaveTypes' => $selectedLeaveTypes,
+            'otherLeave' => $otherLeave,
+            'detailsOfLeave' => $detailsOfLeave,
+            'isDetailPresent' => $isDetailPresent,
+            'getDetailValue' => $getDetailValue,
+            'daysWithPay' => $daysWithPay,
+            'daysWithoutPay' => $daysWithoutPay,
+            'otherRemarks' => $otherRemarks,
+            'leaveCredits' => $leaveCredits,
+            'firstApproverName' => $firstApproverName,
+            'secondApproverName' => $secondApproverName,
+            'thirdApproverName' => $thirdApproverName,
+            'eSignature' => $eSignature,
+            'signatureImagePath' => $signatureImagePath,
+        ]);
+
+        $this->pdfContent = base64_encode($pdf->output());
+        $this->showPDFPreview = true;
     }
 
 }

@@ -150,8 +150,8 @@
 
     {{-- Header --}}
     <p class="s2" style="padding-top: 9pt; text-indent: 0pt; text-align: center;">Republic of the Philippines</p>
-    <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;">(Agency Name)</h2>
-    <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;"> (Agency Address)</h2>
+    {{-- <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;">(Agency Name)</h2> --}}
+    {{-- <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;"> (Agency Address)</h2> --}}
 
     <p style="padding-top: 4pt; text-indent: 0pt; text-align: left;"><br /></p>
 
@@ -176,10 +176,14 @@
                     colspan="3">
                     <p class="s5" style="padding-top: 1pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">2.
                         NAME :
-                        (First)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Middle)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Last)
+                        <span>(Last)</span>
+                        <span style="margin-left: 50px;">(First)</span>
+                        <span style="margin-left: 50px;">(Middle)</span>
                     </p>
                     <u
-                        style="margin-left: 25px; color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $leaveApplication->name }}</u>
+                        style="margin-left: 50px; color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $leaveApplication->user->userData->surname }},
+                        {{ $leaveApplication->user->userData->first_name }}
+                        {{ $leaveApplication->user->userData->middle_name }}</u>
                 </td>
             </tr>
             <tr style="height: 29pt;">
@@ -222,7 +226,7 @@
                         6.A TYPE OF LEAVE TO BE AVAILED OF
                     </p>
                     <div style="padding-left: 3px; display: grid;">
-                        @foreach (['Vacation Leave', 'Mandatory/Forced Leave', 'Sick Leave', 'Maternity Leave', 'Paternity Leave', 'Special Privilege Leave', 'Solo Parent Leave', 'Study Leave', '10-Day VAWC Leave', 'Rehabilitation Privilege', 'Special Leave Benefits for Women', 'Special Emergency (Calamity) Leave', 'Adoption Leave'] as $leaveType)
+                        @foreach (['Vacation Leave', 'Mandatory/Forced Leave', 'Sick Leave', 'Maternity Leave', 'Paternity Leave', 'Special Privilege Leave', 'Solo Parent Leave', 'Study Leave', '10-Day VAWC Leave', 'Rehabilitation Privilege', 'Special Leave Benefits for Women', 'Special Emergency (Calamity) Leave', 'Adoption Leave', 'CTO Leave'] as $leaveType)
                             <div style="display: block; width: 100%; margin-left: 5px;">
                                 <div style="display: inline-block; vertical-align: middle;">
                                     <input type="checkbox"
@@ -493,9 +497,29 @@
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="padding-top: 3pt;text-indent: 0pt;text-align: left;"><br /></p>
-                    {{-- <p class="s5" style="padding-left: 66pt;text-indent: 0pt;text-align: left;">(Signature of
-                        Applicant)</p> --}}
+                    {{-- <p style="padding-top: 0pt;text-indent: 0pt;text-align: left;"><br /></p> --}}
+                    <div style="position:relative;padding-top:30px;">
+                        @if ($signatureImagePath)
+                            <div style="position:absolute;top:0;left:0;width:100%;text-align:center;">
+                                <img src="{{ $signatureImagePath }}" alt="E-Signature"
+                                    style="width: 100px; height: auto;" />
+                            </div>
+                        @else
+                            {{-- <p style="text-align: center; color: red;">
+                                Please upload your e-sign
+                            </p> --}}
+                            <div style="position:absolute;top:0;left:0;width:100%;text-align:center;color: red;">
+                                Please upload your e-sign
+                            </div>
+                        @endif
+                        <p class="s5"
+                            style="padding-left: 1pt; text-indent: 0pt; text-align: center; z-index: 1;">
+                            {{ $leaveApplication->name }}</p>
+                        <p class="s5"
+                            style="padding-left: 1pt; text-indent: 0pt; text-align: center; border-top-style: solid; border-top-width: medium; width: 50%; margin: 0 auto;">
+                            (Signature of Applicant)
+                        </p>
+                    </div>
                 </td>
             </tr>
             <tr style="height:13pt">
@@ -616,18 +640,18 @@
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Claimable Credits
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Total Earned
                     </p>
                 </td>
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->vl_claimable_credits }}</p>
+                        {{ $leaveCredits->vl_total_credits }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->sl_claimable_credits }}</p>
+                        {{ $leaveCredits->sl_total_credits }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -657,7 +681,8 @@
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Claimed Credits
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Less this
+                        application
                     </p>
                 </td>
                 <td
@@ -698,17 +723,17 @@
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Total Credits</p>
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Balance</p>
                 </td>
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->vl_total_credits }}</p>
+                        {{ $leaveCredits->vl_claimable_credits }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->sl_total_credits }}</p>
+                        {{ $leaveCredits->sl_claimable_credits }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">

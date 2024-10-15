@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
 
-class CosRegPayrolls extends Model
+class CosRegPayrolls extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $table = 'cos_reg_payrolls';
 
@@ -37,5 +39,18 @@ class CosRegPayrolls extends Model
                 ->orWhere('cos_reg_payrolls.office_division', 'like', $term)
                 ->orWhere('cos_reg_payrolls.sg_step', 'like', $term);
         });
+    }
+    public function getAuditDescriptionForEvent(string $eventName): string
+    {
+        switch ($eventName) {
+            case 'created':
+                return "Created by user {$this->user->name}";
+            case 'updated':
+                return "Updated by user {$this->user->name}";
+            case 'deleted':
+                return "Deleted by user {$this->user->name}";
+            default:
+                return '';
+        }
     }
 }

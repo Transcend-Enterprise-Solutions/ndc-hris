@@ -7,6 +7,7 @@ use App\Models\DTRSchedule;
 use App\Models\User;
 use Carbon\Carbon;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\DB;
 
 class AdminScheduleTable extends Component
 {
@@ -35,7 +36,14 @@ class AdminScheduleTable extends Component
 
     public function mount()
     {
-        $this->employees = User::where('user_role', 'emp')->get();
+        $this->employees = User::where('user_role', 'emp')
+            ->leftJoin('user_data', 'users.id', '=', 'user_data.user_id')
+            ->select('users.*', 
+                DB::raw("CASE 
+                    WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
+                    ELSE users.emp_code 
+                END as display_emp_code"))
+            ->get();
     }
 
     public function render()
@@ -47,23 +55,37 @@ class AdminScheduleTable extends Component
 
 
     public function filterSchedules()
-    {   
-    $now = Carbon::now();
-    $orderedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-
-    return DTRSchedule::with('user')
-        ->when($this->selectedTab, function ($query) use ($now) {
-            switch ($this->selectedTab) {
-                case 'current':
-                    return $query->where('start_date', '<=', $now)->where('end_date', '>=', $now);
-                case 'incoming':
-                    return $query->where('start_date', '>', $now);
-                case 'expired':
-                    return $query->where('end_date', '<', $now);
-            }
-        })
-        ->orderByRaw("FIELD(DAYNAME(wfh_days), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')")
-        ->paginate($this->perPage);
+    {
+        $now = Carbon::now()->startOfDay();
+    
+        return DTRSchedule::with(['user' => function ($query) {
+                $query->leftJoin('user_data', 'users.id', '=', 'user_data.user_id')
+                    ->select('users.*', 'user_data.appointment');
+            }])
+            ->when($this->selectedTab, function ($query) use ($now) {
+                switch ($this->selectedTab) {
+                    case 'current':
+                        return $query->where('start_date', '<=', $now)
+                                     ->where('end_date', '>=', $now);
+                    case 'incoming':
+                        return $query->where('start_date', '>', $now);
+                    case 'expired':
+                        return $query->where('end_date', '<', $now);
+                }
+            })
+            ->when($this->selectedTab === 'expired', function ($query) {
+                return $query->orderBy('end_date', 'desc');
+            }, function ($query) {
+                return $query->orderBy('start_date', 'asc');
+            })
+            ->paginate($this->perPage);
+    }
+    public function getDisplayEmpCode($empCode, $appointment)
+    {
+        if ($appointment === 'cos' && strpos($empCode, '1') === 0) {
+            return 'D-' . substr($empCode, 1);
+        }
+        return $empCode;
     }
  
 
@@ -108,7 +130,13 @@ class AdminScheduleTable extends Component
     
         $wfhDaysString = !empty($this->wfh_days) ? implode(',', $this->wfh_days) : null;
     
-        $overlappingSchedule = DTRSchedule::where('emp_code', $this->emp_code)
+        // Use the original emp_code (starting with '1' for COS) for database operations
+        $originalEmpCode = $this->emp_code;
+        if (strpos($this->emp_code, 'D-') === 0) {
+            $originalEmpCode = '1' . substr($this->emp_code, 2);
+        }
+    
+        $overlappingSchedule = DTRSchedule::where('emp_code', $originalEmpCode)
             ->where(function ($query) {
                 $query->whereBetween('start_date', [$this->start_date, $this->end_date])
                     ->orWhereBetween('end_date', [$this->start_date, $this->end_date])
@@ -130,7 +158,7 @@ class AdminScheduleTable extends Component
         DTRSchedule::updateOrCreate(
             ['id' => $this->scheduleId],
             [
-                'emp_code' => $this->emp_code,
+                'emp_code' => $originalEmpCode,
                 'wfh_days' => $wfhDaysString,
                 'default_start_time' => $this->default_start_time,
                 'default_end_time' => $this->default_end_time,
@@ -151,7 +179,18 @@ class AdminScheduleTable extends Component
     {
         $schedule = DTRSchedule::findOrFail($id);
         $this->scheduleId = $id;
-        $this->emp_code = $schedule->emp_code;
+        
+        // Convert emp_code to display format (D- for COS)
+        $user = User::where('emp_code', $schedule->emp_code)
+            ->leftJoin('user_data', 'users.id', '=', 'user_data.user_id')
+            ->select('users.*', 
+                DB::raw("CASE 
+                    WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
+                    ELSE users.emp_code 
+                END as display_emp_code"))
+            ->first();
+        
+        $this->emp_code = $user->display_emp_code;
         $this->wfh_days = !empty($schedule->wfh_days) ? explode(',', $schedule->wfh_days) : [];
         $this->default_start_time = date('H:i', strtotime($schedule->default_start_time));
         $this->default_end_time = date('H:i', strtotime($schedule->default_end_time));

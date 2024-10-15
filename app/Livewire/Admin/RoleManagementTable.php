@@ -77,6 +77,8 @@ class RoleManagementTable extends Component
     public $unitId;
     public $file;
     public $divId;
+    public $pageSize = 10; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
 
     public $status = [
         'active' => true,
@@ -100,8 +102,8 @@ class RoleManagementTable extends Component
         if($this->office_division){
             $this->divsUnits = OfficeDivisionUnits::where('office_division_id' , $this->office_division)->get();
         }
-        if($this->officeDivisionId){
-            $this->divsUnits = OfficeDivisionUnits::where('office_division_id' , $this->officeDivisionId)->get();
+        if($this->divId){
+            $this->divsUnits = OfficeDivisionUnits::where('office_division_id' , $this->divId)->get();
         }
 
 
@@ -123,7 +125,18 @@ class RoleManagementTable extends Component
                     'office_divisions.office_division',
                     'office_division_units.unit'
                 )
-                ->paginate(10);
+                ->paginate($this->pageSize);
+
+        foreach($admins as $admin){
+            $empCode = explode('-', $admin->emp_code);
+            $appt = User::where('users.emp_code', $empCode[1])
+                        ->join('user_data', 'user_data.user_id', 'users.id')
+                        ->select('user_data.appointment')
+                        ->first();
+            if($appt){
+                $admin->appointment = $appt->appointment;
+            }
+        }
                 
             $empPos = User::where('user_role', 'emp')
                 ->join('user_data', 'user_data.user_id', 'users.id')
@@ -153,7 +166,7 @@ class RoleManagementTable extends Component
                 ->when($this->search3, function ($query) {
                     return $query->search(trim($this->search3));
                 })
-                ->paginate(10);
+                ->paginate($this->pageSize);
             
 
         $organizations = User::where('user_role', 'emp')
@@ -763,24 +776,24 @@ class RoleManagementTable extends Component
                         return;
                     }
 
-                    $payrollId = null;
-                    $payrolls = Payrolls::where('user_id', $user->id)->first();
-                    $cosRegPayrolls = CosRegPayrolls::where('user_id', $user->id)->first();
-                    $cosSkPayrolls = CosSkPayrolls::where('user_id', $user->id)->first();
+                    // $payrollId = null;
+                    // $payrolls = Payrolls::where('user_id', $user->id)->first();
+                    // $cosRegPayrolls = CosRegPayrolls::where('user_id', $user->id)->first();
+                    // $cosSkPayrolls = CosSkPayrolls::where('user_id', $user->id)->first();
 
-                    if($payrolls){
-                        $payrollId = $payrolls->user_id;
-                    }else if($cosRegPayrolls){
-                        $payrollId = $cosRegPayrolls->user_id;
-                    }else if($cosSkPayrolls){
-                        $payrollId = $cosSkPayrolls->user_id;
-                    }else{
-                        $this->dispatch('swal', [
-                            'title' => "This employee don't have a payroll yet!",
-                            'icon' => 'error'
-                        ]);
-                        return;
-                    }
+                    // if($payrolls){
+                    //     $payrollId = $payrolls->user_id;
+                    // }else if($cosRegPayrolls){
+                    //     $payrollId = $cosRegPayrolls->user_id;
+                    // }else if($cosSkPayrolls){
+                    //     $payrollId = $cosSkPayrolls->user_id;
+                    // }else{
+                    //     $this->dispatch('swal', [
+                    //         'title' => "This employee don't have a payroll yet!",
+                    //         'icon' => 'error'
+                    //     ]);
+                    //     return;
+                    // }
 
                     $admin = User::create([
                         'name' => $user->name,
