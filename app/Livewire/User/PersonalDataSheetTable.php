@@ -425,54 +425,58 @@ class PersonalDataSheetTable extends Component
 
     // Edit ---------------------------------------------------------------------------- //
 
-    public function toggleEditPersonalInfo(){
+    public function toggleEditPersonalInfo() {
         $this->personalInfo = true;
-        try{
-            $this->surname = $this->pds['userData']->surname ?: 'N/A';
-            $this->first_name = $this->pds['userData']->first_name ?: 'N/A';
-            $this->middle_name = $this->pds['userData']->middle_name ?: 'N/A';
-            $this->name_extension = $this->pds['userData']->name_extension ?: 'N/A';
-            $this->date_of_birth = $this->pds['userData']->date_of_birth ?: 'N/A';
-            $this->place_of_birth = $this->pds['userData']->place_of_birth ?: 'N/A';
-            $this->sex = $this->pds['userData']->sex ?: 'N/A';
-            $this->civil_status = $this->pds['userData']->civil_status ?: 'N/A';
-            $this->citizenship = $this->pds['userData']->citizenship ?: 'N/A';
-            $this->height = $this->pds['userData']->height ?: 'N/A';
-            $this->weight = $this->pds['userData']->weight ?: 'N/A';
-            $this->blood_type = $this->pds['userData']->blood_type ?: 'N/A';
-            $this->mobile_number = $this->pds['userData']->mobile_number ?: 'N/A';
-            $this->tel_number = $this->pds['userData']->tel_number ?: 'N/A';
-            $this->gsis = $this->pds['userData']->gsis ?: 'N/A';
-            $this->sss = $this->pds['userData']->sss ?: 'N/A';
-            $this->pagibig = $this->pds['userData']->pagibig ?: 'N/A';
-            $this->philhealth = $this->pds['userData']->philhealth ?: 'N/A';
-            $this->tin = $this->pds['userData']->tin ?: 'N/A';
-            $this->agency_employee_no = $this->pds['userData']->agency_employee_no ?: 'N/A';
-            $this->email = $this->pds['userData']->email ?: 'N/A';
-            $this->p_house_street = $this->pds['userData']->p_house_street ?: 'N/A';
-            $this->p_zipcode = $this->pds['userData']->permanent_selectedZipcode ?: 'N/A';
-            $this->p_province = $this->pds['userData']->permanent_selectedProvince ?: 'N/A';
-            $this->p_city = $this->pds['userData']->permanent_selectedCity ?: 'N/A';
-            $this->p_barangay = $this->pds['userData']->permanent_selectedBarangay ?: 'N/A';
-            $this->r_house_street = $this->pds['userData']->r_house_street ?: 'N/A';
-            $this->r_zipcode = $this->pds['userData']->residential_selectedZipcode ?: 'N/A';
-            $this->r_province = $this->pds['userData']->residential_selectedProvince ?: 'N/A';
-            $this->r_city = $this->pds['userData']->residential_selectedCity ?: 'N/A';
-            $this->r_barangay = $this->pds['userData']->residential_selectedBarangay ?: 'N/A';
+
+        try {
+            $this->surname = $this->pds['userData']->surname ?? 'N/A';
+            $this->first_name = $this->pds['userData']->first_name ?? 'N/A';
+            $this->middle_name = $this->pds['userData']->middle_name ?? 'N/A';
+            $this->name_extension = $this->pds['userData']->name_extension ?? 'N/A';
+            $this->date_of_birth = $this->pds['userData']->date_of_birth ?? 'N/A';
+            $this->place_of_birth = $this->pds['userData']->place_of_birth ?? 'N/A';
+            $this->sex = $this->pds['userData']->sex ?? 'N/A';
+            $this->civil_status = $this->pds['userData']->civil_status ?? 'N/A';
+            $this->citizenship = $this->pds['userData']->citizenship ?? 'N/A';
+            $this->height = $this->pds['userData']->height ?? 'N/A';
+            $this->weight = $this->pds['userData']->weight ?? 'N/A';
+            $this->blood_type = $this->pds['userData']->blood_type ?? 'N/A';
+            $this->mobile_number = $this->pds['userData']->mobile_number ?? 'N/A';
+            $this->tel_number = $this->pds['userData']->tel_number ?? 'N/A';
+            $this->gsis = $this->pds['userData']->gsis ?? 'N/A';
+            $this->sss = $this->pds['userData']->sss ?? 'N/A';
+            $this->pagibig = $this->pds['userData']->pagibig ?? 'N/A';
+            $this->philhealth = $this->pds['userData']->philhealth ?? 'N/A';
+            $this->tin = $this->pds['userData']->tin ?? 'N/A';
+            $this->agency_employee_no = $this->pds['userData']->agency_employee_no ?? 'N/A';
+            $this->email = $this->pds['userData']->email ?? 'N/A';
+            $this->p_house_street = $this->pds['userData']->p_house_street ?? 'N/A';
+            $this->p_zipcode = $this->pds['userData']->permanent_selectedZipcode ?? 'N/A';
+            $this->p_province = $this->pds['userData']->permanent_selectedProvince ?? 'N/A';
+            $this->p_city = $this->pds['userData']->permanent_selectedCity ?? 'N/A';
+            $this->p_barangay = $this->pds['userData']->permanent_selectedBarangay ?? 'N/A';
+            $this->r_house_street = $this->pds['userData']->r_house_street ?? 'N/A';
+            $this->r_zipcode = $this->pds['userData']->residential_selectedZipcode ?? 'N/A';
+            $this->r_province = $this->pds['userData']->residential_selectedProvince ?? 'N/A';
+            $this->r_city = $this->pds['userData']->residential_selectedCity ?? 'N/A';
+            $this->r_barangay = $this->pds['userData']->residential_selectedBarangay ?? 'N/A';
 
             $p_address_line1 = explode(',', $this->p_house_street);
             $r_address_line1 = explode(',', $this->r_house_street);
 
-            $this->p_house_number = $p_address_line1[0] ?: 'N/A';
-            $this->p_street = $p_address_line1[1] ?: 'N/A';
-            $this->p_subdivision = $p_address_line1[2] ?: 'N/A';
-            $this->r_house_number = $r_address_line1[0] ?: 'N/A';
-            $this->r_street = $r_address_line1[1] ?: 'N/A';
-            $this->r_subdivision = $r_address_line1[2] ?: 'N/A';
-            $this->dual_citizenship_type = $this->pds['userData']->dual_citizenship_type ?: 'N/A';
-            $this->dual_citizenship_country =$this->pds['userData']->dual_citizenship_country ?: 'N/A';
-            
-        }catch(Exception $e){
+            $this->p_house_number = $p_address_line1[0] ?? 'N/A';
+            $this->p_street = $p_address_line1[1] ?? 'N/A';
+            $this->p_subdivision = $p_address_line1[2] ?? 'N/A';
+
+            $this->r_house_number = $r_address_line1[0] ?? 'N/A';
+            $this->r_street = $r_address_line1[1] ?? 'N/A';
+            $this->r_subdivision = $r_address_line1[2] ?? 'N/A';
+
+            $this->dual_citizenship_type = $this->pds['userData']->dual_citizenship_type ?? 'N/A';
+            $this->dual_citizenship_country = $this->pds['userData']->dual_citizenship_country ?? 'N/A';
+
+        } catch (Exception $e) {
+
             throw $e;
         }
     }
