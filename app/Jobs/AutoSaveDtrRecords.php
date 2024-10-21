@@ -264,7 +264,7 @@ class AutoSaveDtrRecords implements ShouldQueue
                 $late = $late->addMinutes($lunchEnd->diffInMinutes($afternoonIn));
             }
         }
-        if ($morningOut && !$afternoonIn) {
+        if ($morningOut && !$afternoonIn && $afternoonOut) {
             $late->addHour();
         }
         // Calculate undertime

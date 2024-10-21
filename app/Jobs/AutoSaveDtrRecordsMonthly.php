@@ -262,7 +262,6 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
             if ($morningIn->gt($lateThreshold)) {
                 $late = $late->addMinutes($morningIn->diffInMinutes($lateThreshold));
             }
-            //greatest logic hahaha
             if (!$morningOut) {
                 $late->addHour();
             }
@@ -273,8 +272,7 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
                 $late = $late->addMinutes($lunchEnd->diffInMinutes($afternoonIn));
             }
         }
-        //greatest logic hahaha
-        if ($morningOut && !$afternoonIn) {
+        if ($morningOut && !$afternoonIn && $afternoonOut) {
             $late->addHour();
         }
         // Calculate undertime
