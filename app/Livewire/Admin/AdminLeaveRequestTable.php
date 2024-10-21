@@ -657,6 +657,20 @@ class AdminLeaveRequestTable extends Component
 
         $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
 
+        if (!$leaveCredits) {
+            $leaveCredits = new \stdClass();
+            $leaveCredits->vl_claimed_credits = 'N/A';
+            $leaveCredits->sl_claimed_credits = 'N/A';
+            $leaveCredits->vl_claimable_credits = 'N/A';
+            $leaveCredits->sl_claimable_credits = 'N/A';
+            $leaveCredits->vl_total_credits = 'N/A';
+            $leaveCredits->sl_total_credits = 'N/A';
+            // Add any other leave types you're using in your system
+        } else {
+            $leaveCredits->vl_claimed_credits = number_format($leaveCredits->vl_claimed_credits ?? 0, 3);
+            $leaveCredits->sl_claimed_credits = number_format($leaveCredits->sl_claimed_credits ?? 0, 3);
+        }
+
         $pdf = PDF::loadView('pdf.leave-application', [
             'leaveApplication' => $leaveApplication,
             'selectedLeaveTypes' => $selectedLeaveTypes,
