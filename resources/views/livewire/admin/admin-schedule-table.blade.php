@@ -6,11 +6,21 @@
 }" x-cloak>
     <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
         <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Employee Schedule</h1>
-
+        <div class="flex justify-between items-center mb-4">     
+            <button wire:click="openModal" class="px-4 py-2 bg-green-500 text-gray-100 rounded-md hover:bg-green-600 focus:outline-none dark:text-white">
+                Add Schedule
+            </button>
+        </div>
+        <div class="w-full sm:w-1/3 sm:mr-4">
+            <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+            <input type="text" id="search" wire:model.live="search"
+                class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                    dark:hover:bg-slate-600 dark:border-slate-600
+                    dark:text-gray-300 dark:bg-gray-800"
+                placeholder="Enter employee name">
+        </div>
         <!-- Tabs -->
-        <button wire:click="openModal" class="mb-4 px-4 py-2 bg-green-500 text-gray-100 rounded-md hover:bg-green-600 focus:outline-none dark:text-white">
-            Add Schedule
-        </button>
+        
         <div class="w-full mb-4">
             <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700" role="tablist">
                 <button wire:click="setTab('current')" :class="{'font-bold text-violet-700 border-b-2 border-violet-700': selectedTab === 'current', 'text-slate-700 font-medium dark:text-white': selectedTab !== 'current'}" class="h-min px-4 py-2 text-sm" role="tab">Current</button>
