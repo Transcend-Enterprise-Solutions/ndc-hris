@@ -58,7 +58,7 @@
                                     <td class="px-4 py-2 text-center">
                                         {{ number_format($leaveCredit->cto_claimable_credits ?? 0, 3) }}</td>
                                     <td class="px-4 py-2 text-center">
-                                        {{ \Carbon\Carbon::parse($leaveCredit->updated_at)->format('M d, Y') }}
+                                        {{ \Carbon\Carbon::today()->format('M d, Y') }}
                                     </td>
                                     <td class="px-4 py-2 text-center">
                                         <button wire:click="openEditCredits({{ $leaveCredit->user_id }})"
