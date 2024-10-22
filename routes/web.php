@@ -44,8 +44,6 @@ Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
         return view('livewire.admin.report-generation'); })->name('report-generation');
     Route::get('/audit-logs', function () {
         return view('livewire.log-index'); })->name('audit-logs');
-
-
 });
 
 /* Super Admin, HR, Supervisor, and Payroll account role */

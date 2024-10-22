@@ -1414,12 +1414,12 @@ class PersonalDataSheetTable extends Component
                             'sg_step' => $exp['sg_step'],
                             'status_of_appointment' => $exp['status_of_appointment'],
                             'gov_service' => $exp['gov_service'],
-                            'pera' => $exp['gov_service'] ? $exp['pera'] : null,
-                            'branch' => $exp['gov_service'] ? $exp['branch'] : null,
-                            'leave_absence_wo_pay' => $exp['gov_service'] ? $exp['leave_absence_wo_pay'] : null,
+                            'pera' => $exp['gov_service'] && $exp['pera'] ? $exp['pera'] : null,
+                            'branch' => $exp['gov_service'] && $exp['branch'] ? $exp['branch'] : null,
+                            'leave_absence_wo_pay' => $exp['gov_service'] && $exp['leave_absence_wo_pay'] ? $exp['leave_absence_wo_pay'] : null,
                             // 'separation_date' => $exp['separation_date'],
                             // 'separation_cause' => $exp['separation_cause'],
-                            'remarks' => $exp['gov_service'] ? $exp['remarks'] : null,
+                            'remarks' => $exp['gov_service'] && $exp['remarks'] ? $exp['remarks'] : null,
                         ]);
                     }
                     $this->editWorkExp = null;
