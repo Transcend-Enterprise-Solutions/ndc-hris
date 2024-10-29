@@ -15,8 +15,7 @@ class WfhAttendanceTable extends Component
 {
     use WithPagination;
     public $isWFHDay;
-    public $inputPassword = false;
-    public $password;
+    public $showConfirmation = false;
     public $punchState;
     public $errorMessage;
     public $verifyType;
@@ -54,31 +53,21 @@ class WfhAttendanceTable extends Component
     {
         $this->punchState = $state;
         $this->verifyType = $verifyType;
-        $this->inputPassword = true;
+        $this->showConfirmation = true;
     }
 
-    public function closeVerification()
+    public function closeConfirmation()
     {
-        $this->inputPassword = false;
-        $this->password = null;
+        $this->showConfirmation = false;
         $this->errorMessage = null;
     }
 
-    public function verifyPassword()
+    public function confirmYes()
     {
-        $user = Auth::user();
-
-        if (Hash::check($this->password, $user->password)) {
-            $this->inputPassword = false;
-            $this->password = '';
-            $this->errorMessage = null;
-            // $this->{$this->punchState}();
-            // $this->{$this->punchState}($this->verifyType);
-            $this->punch($this->punchState, $this->verifyType);
-        } else {
-            $this->errorMessage = 'Incorrect password. Please try again.';
-        }
+        $this->showConfirmation = false;
+        $this->punch($this->punchState, $this->verifyType);
     }
+
 
     public function punch($state, $verifyType)
     {

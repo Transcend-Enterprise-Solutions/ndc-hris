@@ -132,7 +132,7 @@
                     </div>
                 </div>
 
-                <x-modal id="passwordConfirmation" maxWidth="md" centered wire:model="inputPassword">
+                {{-- <x-modal id="passwordConfirmation" maxWidth="md" centered wire:model="inputPassword">
                     <div class="p-4">
                         <label for="password" class="block text-sm font-medium text-gray-700 dark:text-slate-100">Verify
                             Password</label>
@@ -148,6 +148,37 @@
                             class="btn bg-emerald-200 dark:bg-emerald-500 hover:bg-emerald-600 text-gray-800 dark:text-white whitespace-nowrap mt-4">Submit</button>
                         <button wire:click="closeVerification"
                             class="btn bg-gray-200 dark:bg-gray-600 hover:bg-gray-700 text-gray-800 dark:text-white whitespace-nowrap mt-4">Cancel</button>
+                    </div>
+                </x-modal> --}}
+                <x-modal id="punchConfirmation" maxWidth="md" centered wire:model="showConfirmation">
+                    <div class="p-4">
+                        <div class="flex items-center justify-between pb-4">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
+                                Punch Confirmation
+                            </h3>
+                            <button wire:click="closeConfirmation"
+                                class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-6">
+                            <p class="text-gray-700 dark:text-gray-300">
+                                Are you sure you want to punch {{ $verifyType }}?
+                            </p>
+
+                            <!-- Action Buttons -->
+                            <div class="mt-6 flex justify-end space-x-4">
+                                <button wire:click="confirmYes"
+                                    class="px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
+                                    Yes
+                                </button>
+                                <button wire:click="closeConfirmation"
+                                    class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-offset-gray-800">
+                                    No
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </x-modal>
 
