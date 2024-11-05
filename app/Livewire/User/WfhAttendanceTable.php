@@ -26,13 +26,45 @@ class WfhAttendanceTable extends Component
     public $afternoonOutDisabled = true;
     public $scheduleType = 'WFH'; // Default value
 
+    // public function checkWFHDay()
+    // {
+    //     $user = Auth::user();
+    //     $today = Carbon::now()->format('l');
+    //     $currentDate = Carbon::now()->format('Y-m-d');
+
+    //     $schedule = DTRSchedule::where('emp_code', $user->emp_code)->first();
+
+    //     if ($schedule) {
+    //         $wfhDays = explode(',', $schedule->wfh_days);
+    //         $startDate = Carbon::parse($schedule->start_date)->format('Y-m-d');
+    //         $endDate = Carbon::parse($schedule->end_date)->format('Y-m-d');
+
+    //         if (in_array($today, $wfhDays) && $currentDate >= $startDate && $currentDate <= $endDate) {
+    //             $this->scheduleType = 'WFH';
+    //         } else {
+    //             $this->scheduleType = 'Onsite';
+    //         }
+    //     } else {
+    //         $this->scheduleType = 'Onsite';
+    //     }
+    // }
     public function checkWFHDay()
     {
         $user = Auth::user();
         $today = Carbon::now()->format('l');
         $currentDate = Carbon::now()->format('Y-m-d');
+        $startOfMonth = Carbon::now()->startOfMonth()->format('Y-m-d');
 
-        $schedule = DTRSchedule::where('emp_code', $user->emp_code)->first();
+        // Get the most recent active schedule for the current month
+        $schedule = DTRSchedule::where('emp_code', $user->emp_code)
+            ->where(function ($query) use ($startOfMonth, $currentDate) {
+                $query->where('start_date', '>=', $startOfMonth)
+                    ->orWhere(function ($q) use ($currentDate) {
+                        $q->where('end_date', '>=', $currentDate);
+                    });
+            })
+            ->orderBy('start_date', 'desc')
+            ->first();
 
         if ($schedule) {
             $wfhDays = explode(',', $schedule->wfh_days);
