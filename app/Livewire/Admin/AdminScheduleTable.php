@@ -24,6 +24,9 @@ class AdminScheduleTable extends Component
     public $scheduleToDelete;
     public $selectedTab = 'current';
     public $perPage = 10;
+    public $search = ''; 
+
+    protected $queryString = ['search'];
 
     protected $rules = [
         'emp_code' => 'required|string',
@@ -52,16 +55,23 @@ class AdminScheduleTable extends Component
             'filteredSchedules' => $this->filterSchedules() 
         ]);
     }
-
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
 
     public function filterSchedules()
     {
         $now = Carbon::now()->startOfDay();
+        $search = '%' . $this->search . '%';
     
         return DTRSchedule::with(['user' => function ($query) {
                 $query->leftJoin('user_data', 'users.id', '=', 'user_data.user_id')
                     ->select('users.*', 'user_data.appointment');
             }])
+            ->whereHas('user', function($query) use ($search) {
+                $query->where('name', 'like', $search);
+            })
             ->when($this->selectedTab, function ($query) use ($now) {
                 switch ($this->selectedTab) {
                     case 'current':
