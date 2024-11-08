@@ -27,8 +27,8 @@ class DtrTable extends Component
     public $remarks;
     public $selectedDtrId;
     public $currentAttachment;
-    public $pageSize = 15; 
-    public $pageSizes = [10, 20, 30, 50, 100]; 
+    public $pageSize = 15;
+    public $pageSizes = [10, 20, 30, 50, 100];
 
     protected $queryString = [
         'searchTerm' => ['except' => ''],
@@ -71,10 +71,10 @@ class DtrTable extends Component
         $query = EmployeesDtr::query()->where('user_id', Auth::id());
 
         if ($this->searchTerm) {
-            $query->where(function($q) {
-                $q->where('date', 'like', '%'.$this->searchTerm.'%')
-                  ->orWhere('day_of_week', 'like', '%'.$this->searchTerm.'%')
-                  ->orWhere('location', 'like', '%'.$this->searchTerm.'%');
+            $query->where(function ($q) {
+                $q->where('date', 'like', '%' . $this->searchTerm . '%')
+                  ->orWhere('day_of_week', 'like', '%' . $this->searchTerm . '%')
+                  ->orWhere('location', 'like', '%' . $this->searchTerm . '%');
             });
         }
 
@@ -88,10 +88,14 @@ class DtrTable extends Component
 
         $query->orderBy($this->sortField, $this->sortDirection);
 
+        // Paginate without using map directly on the paginated data
         $dtrs = $query->paginate($this->pageSize);
 
+        // Use the `display_remarks` logic in the Blade view instead of `map()`
         return view('livewire.user.dtr-table', ['dtrs' => $dtrs]);
     }
+
+
 
     public function openModal($dtrId)
     {
@@ -122,20 +126,20 @@ class DtrTable extends Component
     {
         $dtr = EmployeesDtr::find($this->selectedDtrId);
         if ($dtr) {
-            $dtr->remarks = $this->remarks;
-            
+            $dtr->up_remarks = $this->remarks; // Save to up_remarks instead of remarks
+
             if ($this->attachment) {
                 // Delete old file if exists
                 if ($dtr->attachment) {
                     Storage::delete($dtr->attachment);
                 }
-                
+
                 $path = $this->attachment->store('public/upload/employee_document');
                 $dtr->attachment = $path;
                 $this->currentAttachment = $path;
                 $this->fileName = $this->attachment->getClientOriginalName();
             }
-            
+
             $dtr->save();
 
             $this->dispatch('swal', [
@@ -153,6 +157,7 @@ class DtrTable extends Component
             ]);
         }
     }
+
 
     public function downloadFile($dtrId)
     {
@@ -190,7 +195,10 @@ class DtrTable extends Component
             });
         }
 
-        $dtrs = $query->orderBy('date')->get();
+        $dtrs = $query->orderBy('date')->get()->map(function ($dtr) {
+            $dtr->display_remarks = $dtr->up_remarks ?? $dtr->remarks;
+            return $dtr;
+        });
 
         if ($dtrs->isEmpty()) {
             $this->dispatch('swal', [
@@ -205,7 +213,7 @@ class DtrTable extends Component
             $eSignaturePath = $this->eSignature->store('temp', 'public');
         }
 
-        // Create a collection with a single key-value pair
+        // Group the DTR data for PDF
         $groupedDtrs = collect([$user->name => $dtrs]);
 
         $pdf = Pdf::loadView('pdf.dtr', [
@@ -231,4 +239,5 @@ class DtrTable extends Component
             Storage::disk('public')->delete($eSignaturePath);
         }
     }
+
 }
