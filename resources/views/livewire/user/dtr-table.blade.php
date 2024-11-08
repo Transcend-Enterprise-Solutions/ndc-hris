@@ -34,7 +34,7 @@
             </div>
             <div x-data="{ showModal: false, signatoryName: '' }" x-cloak>
                 <!-- Trigger Button -->
-                <button @click="showModal = true" class="p-2 flex items-center justify-center">
+                {{-- <button @click="showModal = true" class="p-2 flex items-center justify-center">
                     <img src="{{ asset('images/icons8-export-pdf-60.png') }}" alt="Export to PDF" class="w-8 h-8" wire:loading.remove wire:target="exportToPdf">
                     <div wire:loading wire:target="exportToPdf">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-6 fill-red-600 motion-safe:animate-spin dark:fill-red-600">
@@ -42,7 +42,7 @@
                             <path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" />
                         </svg>
                     </div>
-                </button>
+                </button> --}}
 
                 <!-- Modal -->
                 <div x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">

@@ -96,7 +96,7 @@
                                                             {{ \Illuminate\Support\Str::limit($leaveApplication->list_of_dates, 10, '...') }}
                                                         </td>
                                                         <td class="px-4 py-2 text-center">
-                                                            @if ($leaveApplication->file_name)
+                                                            {{-- @if ($leaveApplication->file_name)
                                                                 @php
                                                                     $fileNames = explode(
                                                                         ',',
@@ -121,6 +121,32 @@
                                                                 @endforeach
                                                             @else
                                                                 No file
+                                                            @endif --}}
+                                                            @if ($leaveApplication->file_name && $leaveApplication->file_path)
+                                                                @php
+                                                                    $fileNames = explode(
+                                                                        ',',
+                                                                        $leaveApplication->file_name,
+                                                                    );
+                                                                    $filePaths = explode(
+                                                                        ',',
+                                                                        $leaveApplication->file_path,
+                                                                    );
+                                                                @endphp
+
+                                                                @foreach ($fileNames as $index => $fileName)
+                                                                    @if (isset($filePaths[$index]))
+                                                                        <div class="mb-1">
+                                                                            <button
+                                                                                wire:click="downloadFile('{{ $filePaths[$index] }}')"
+                                                                                class="text-blue-500 hover:underline bg-transparent border-none cursor-pointer p-0 m-0">
+                                                                                {{ Str::limit($fileName, 10) }}
+                                                                            </button>
+                                                                        </div>
+                                                                    @endif
+                                                                @endforeach
+                                                            @else
+                                                                <p>No file</p>
                                                             @endif
                                                         </td>
                                                         <td class="px-4 py-2 text-center">

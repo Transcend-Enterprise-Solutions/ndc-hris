@@ -55,7 +55,8 @@ class LeaveCreditsExport implements FromCollection, WithMapping, WithEvents
         $splClaimable = number_format($row->spl_claimable_credits ?? 0, 3, '.', '');
         $totalClaimable = number_format(($row->vl_claimable_credits ?? 0) + ($row->sl_claimable_credits ?? 0), 3, '.', '');
 
-        $formattedDate = Carbon::parse($row->updated_at)->format('M j, Y');
+        // $formattedDate = Carbon::parse($row->updated_at)->format('M j, Y');
+        $formattedDate = Carbon::today()->format('M j, Y');
 
         return [
             $user ? $user->name : 'N/A',

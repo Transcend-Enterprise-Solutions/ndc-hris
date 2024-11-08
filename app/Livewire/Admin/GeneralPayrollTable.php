@@ -9,6 +9,7 @@ use App\Models\CosRegPayrolls;
 use App\Models\CosSkPayrolls;
 use App\Models\EmployeesDtr;
 use App\Models\LeaveCredits;
+use App\Models\LeaveCreditsCalculation;
 use App\Models\OfficeDivisions;
 use App\Models\Payrolls;
 use App\Models\PayrollsLeaveCreditsDeduction;
@@ -530,14 +531,14 @@ class GeneralPayrollTable extends Component
                     $minutes = $late % 60; // Get the remaining minutes
                 
                     // Calculate credits based on hours and minutes
-                    $hourCredits = $hours * 0.125;
-                    $minuteCredits = isset($this->credits_per_minute[$minutes]) ? $this->credits_per_minute[$minutes] : 0;
+                    // $hourCredits = $hours * 0.125;
+                    // $minuteCredits = isset($this->credits_per_minute[$minutes]) ? $this->credits_per_minute[$minutes] : 0;
                 
                     // Sum the credits from hours and minutes
-                    $totalCredits = $hourCredits + $minuteCredits;
+                    // $totalCredits = $hourCredits + $minuteCredits;
                 
                     // Add to the total credits for the employee
-                    $payrollDTR[$employeeId]['total_credits'] += $totalCredits;
+                    // $payrollDTR[$employeeId]['total_credits'] += $totalCredits;
                 }
                 
                 if($record->remarks == "Absent"){
@@ -575,7 +576,11 @@ class GeneralPayrollTable extends Component
                     continue;
                 }
 
-                $totalCredits = $data['total_credits'];
+                $lateCredits = LeaveCreditsCalculation::where('month', Carbon::parse($startDate)->month)
+                                ->where('year',Carbon::parse($startDate)->year)
+                                ->first();
+                $totalCreditsInMinutes = $lateCredits ? $lateCredits->late_time : 0;
+                $totalCredits = $data['total_credits'] + ($totalCreditsInMinutes ?: 0);
                 $leaveCredits = LeaveCredits::where('user_id', $employeeId)->first();
 
                 $creditsDeduction = $totalCredits;
@@ -583,6 +588,7 @@ class GeneralPayrollTable extends Component
 
                 if ($leaveCredits) {
                     $leaveCredits->vl_claimable_credits -= $totalCredits;
+                    $leaveCredits->vl_claimed_credits += $totalCredits;
 
                     // Check if credits become negative then deduct the adsents and late/undertime to the salary
                     if ($leaveCredits->vl_claimable_credits < 0) {
