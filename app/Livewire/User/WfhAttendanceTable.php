@@ -106,6 +106,27 @@ class WfhAttendanceTable extends Component
         $user = Auth::user();
         $punchTime = Carbon::now();
 
+        // If attempting to punch Afternoon In, check the interval after Morning Out
+        if ($verifyType == 'Afternoon In') {
+            // Get the latest Morning Out punch
+            $lastMorningOut = TransactionWFH::where('emp_code', $user->emp_code)
+                ->where('verify_type_display', 'Morning Out')
+                ->latest('punch_time')
+                ->first();
+
+            if ($lastMorningOut) {
+                $timeSinceLastPunch = Carbon::parse($lastMorningOut->punch_time)->diffInMinutes($punchTime);
+                
+                if ($timeSinceLastPunch < 1) {
+                    $this->dispatch('swal', [
+                        'title' => 'You must wait at least 1 minute after Morning Out before punching Afternoon In.',
+                        'icon' => 'warning'
+                    ]);
+                    return;
+                }
+            }
+        }
+
         // Determine the correct punch_state based on verifyType
         $punchState = (strpos($verifyType, 'In') !== false) ? 0 : 1;
 
