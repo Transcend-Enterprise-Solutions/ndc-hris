@@ -33,10 +33,10 @@
                 <tbody>
                     <!-- Vacation Leave Credits -->
                     <tr class="whitespace-nowrap">
-                        <td class="px-4 py-2 text-center">{{ $vl_claimable_credits }}</td>
-                        <td class="px-4 py-2 text-center">{{ $sl_claimable_credits }}</td>
-                        <td class="px-4 py-2 text-center">{{ $spl_claimable_credits }}</td>
-                        <td class="px-4 py-2 text-center">{{ $updated_at }}</td>
+                        <td class="px-4 py-2 text-center">{{ number_format($vl_claimable_credits, 3) }}</td>
+                        <td class="px-4 py-2 text-center">{{ number_format($sl_claimable_credits, 3) }}</td>
+                        <td class="px-4 py-2 text-center">{{ number_format($spl_claimable_credits, 3) }}</td>
+                        <td class="px-4 py-2 text-center">{{ \Carbon\Carbon::today()->format('M d, Y') }}</td>
                     </tr>
                 </tbody>
             </table>

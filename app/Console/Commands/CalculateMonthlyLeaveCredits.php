@@ -27,7 +27,12 @@ class CalculateMonthlyLeaveCredits extends Command
             ->pluck('user_id')
             ->unique();
 
-        $users = User::whereIn('id', $activeUserIds)->get();
+        $users = User::join('user_data', 'users.id', '=', 'user_data.user_id')
+            ->whereIn('users.id', $activeUserIds)
+            ->where('user_data.appointment', '!=', 'cos')
+            ->select('users.*')  // Select only users table columns to avoid conflicts
+            ->get();
+        // $users = User::whereIn('id', $activeUserIds)->get();
 
         $this->info("Processing " . $users->count() . " active users for " . $date->format('F Y') . ".");
 

@@ -122,7 +122,7 @@
                             class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter claimable credits">
                         @error('vlClaimableCredits')
-                            <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -136,7 +136,7 @@
                             class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter claimable credits">
                         @error('slClaimableCredits')
-                            <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -151,7 +151,7 @@
                             class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter claimable credits">
                         @error('splClaimableCredits')
-                            <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -166,7 +166,7 @@
                             class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter claimable credits">
                         @error('ctoClaimableCredits')
-                            <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -215,7 +215,7 @@
                             class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter credits">
                         @error('vlClaimableCredits')
-                            <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -231,7 +231,7 @@
                             class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter credits">
                         @error('slClaimableCredits')
-                            <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -247,7 +247,7 @@
                             class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter credits">
                         @error('splClaimableCredits')
-                            <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -265,7 +265,7 @@
                             class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter credits">
                         @error('ctoClaimableCredits')
-                            <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                            <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -278,7 +278,7 @@
                                 class="w-full p-2 mt-1 border rounded-md text-gray-700 dark:text-gray-300 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Enter claimed credits">
                             @error('splClaimedCredits')
-                                <span class="text-red-500 text-xs mt-1">This field is required!</span>
+                                <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                             @enderror
                         </div> --}}
                 </div>

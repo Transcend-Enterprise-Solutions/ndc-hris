@@ -15,8 +15,7 @@ class WfhAttendanceTable extends Component
 {
     use WithPagination;
     public $isWFHDay;
-    public $inputPassword = false;
-    public $password;
+    public $showConfirmation = false;
     public $punchState;
     public $errorMessage;
     public $verifyType;
@@ -27,13 +26,45 @@ class WfhAttendanceTable extends Component
     public $afternoonOutDisabled = true;
     public $scheduleType = 'WFH'; // Default value
 
+    // public function checkWFHDay()
+    // {
+    //     $user = Auth::user();
+    //     $today = Carbon::now()->format('l');
+    //     $currentDate = Carbon::now()->format('Y-m-d');
+
+    //     $schedule = DTRSchedule::where('emp_code', $user->emp_code)->first();
+
+    //     if ($schedule) {
+    //         $wfhDays = explode(',', $schedule->wfh_days);
+    //         $startDate = Carbon::parse($schedule->start_date)->format('Y-m-d');
+    //         $endDate = Carbon::parse($schedule->end_date)->format('Y-m-d');
+
+    //         if (in_array($today, $wfhDays) && $currentDate >= $startDate && $currentDate <= $endDate) {
+    //             $this->scheduleType = 'WFH';
+    //         } else {
+    //             $this->scheduleType = 'Onsite';
+    //         }
+    //     } else {
+    //         $this->scheduleType = 'Onsite';
+    //     }
+    // }
     public function checkWFHDay()
     {
         $user = Auth::user();
         $today = Carbon::now()->format('l');
         $currentDate = Carbon::now()->format('Y-m-d');
+        $startOfMonth = Carbon::now()->startOfMonth()->format('Y-m-d');
 
-        $schedule = DTRSchedule::where('emp_code', $user->emp_code)->first();
+        // Get the most recent active schedule for the current month
+        $schedule = DTRSchedule::where('emp_code', $user->emp_code)
+            ->where(function ($query) use ($startOfMonth, $currentDate) {
+                $query->where('start_date', '>=', $startOfMonth)
+                    ->orWhere(function ($q) use ($currentDate) {
+                        $q->where('end_date', '>=', $currentDate);
+                    });
+            })
+            ->orderBy('start_date', 'desc')
+            ->first();
 
         if ($schedule) {
             $wfhDays = explode(',', $schedule->wfh_days);
@@ -54,36 +85,47 @@ class WfhAttendanceTable extends Component
     {
         $this->punchState = $state;
         $this->verifyType = $verifyType;
-        $this->inputPassword = true;
+        $this->showConfirmation = true;
     }
 
-    public function closeVerification()
+    public function closeConfirmation()
     {
-        $this->inputPassword = false;
-        $this->password = null;
+        $this->showConfirmation = false;
         $this->errorMessage = null;
     }
 
-    public function verifyPassword()
+    public function confirmYes()
     {
-        $user = Auth::user();
-
-        if (Hash::check($this->password, $user->password)) {
-            $this->inputPassword = false;
-            $this->password = '';
-            $this->errorMessage = null;
-            // $this->{$this->punchState}();
-            // $this->{$this->punchState}($this->verifyType);
-            $this->punch($this->punchState, $this->verifyType);
-        } else {
-            $this->errorMessage = 'Incorrect password. Please try again.';
-        }
+        $this->showConfirmation = false;
+        $this->punch($this->punchState, $this->verifyType);
     }
+
 
     public function punch($state, $verifyType)
     {
         $user = Auth::user();
         $punchTime = Carbon::now();
+
+        // If attempting to punch Afternoon In, check the interval after Morning Out
+        if ($verifyType == 'Afternoon In') {
+            // Get the latest Morning Out punch
+            $lastMorningOut = TransactionWFH::where('emp_code', $user->emp_code)
+                ->where('verify_type_display', 'Morning Out')
+                ->latest('punch_time')
+                ->first();
+
+            if ($lastMorningOut) {
+                $timeSinceLastPunch = Carbon::parse($lastMorningOut->punch_time)->diffInMinutes($punchTime);
+                
+                if ($timeSinceLastPunch < 1) {
+                    $this->dispatch('swal', [
+                        'title' => 'You must wait at least 1 minute after Morning Out before punching Afternoon In.',
+                        'icon' => 'warning'
+                    ]);
+                    return;
+                }
+            }
+        }
 
         // Determine the correct punch_state based on verifyType
         $punchState = (strpos($verifyType, 'In') !== false) ? 0 : 1;
