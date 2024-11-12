@@ -7,7 +7,7 @@
                 Vacation Leave Credits
             </h2>
             <p class="text-3xl font-semi-bold text-blue-600 dark:text-gray-200">
-                {{ $vlClaimableCredits }}
+                {{ number_format($vlClaimableCredits, 3) }}
             </p>
         </div>
     </div>
@@ -19,7 +19,7 @@
                 Forced Leave Credits
             </h2>
             <p class="text-3xl font-semi-bold text-blue-600 dark:text-gray-200">
-                {{ $flClaimableCredits }}
+                {{ number_format($flClaimableCredits, 3) }}
             </p>
         </div>
     </div>
@@ -31,7 +31,7 @@
                 Sick Leave Credits
             </h2>
             <p class="text-3xl font-semi-bold text-blue-600 dark:text-gray-200">
-                {{ $slClaimableCredits }}
+                {{ number_format($slClaimableCredits, 3) }}
             </p>
         </div>
     </div>
@@ -43,7 +43,7 @@
                 Special Privilege Leave Credits
             </h2>
             <p class="text-3xl font-semi-bold text-blue-600 dark:text-gray-200">
-                {{ $splClaimableCredits }}
+                {{ number_format($splClaimableCredits, 3) }}
             </p>
         </div>
     </div>
