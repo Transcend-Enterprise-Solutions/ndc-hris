@@ -236,10 +236,12 @@ class GeneralPayrollTable extends Component
         $payrolls = User::when($this->search, function ($query) {
                     return $query->search(trim($this->search));
                 })
+                ->join('user_data', 'user_data.user_id', 'users.id')
                 ->join('payrolls', 'payrolls.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
+                ->select('user_data.*', 'users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*')
+                ->orderBy('user_data.surname', 'ASC')
                 ->paginate($this->pageSize);
 
 

@@ -681,6 +681,8 @@
                                                                     'amount_due_second_half',
                                                                 ]))
                                                                 {{ currency_format($payroll->$column) }}
+                                                            @elseif($column == 'name')
+                                                                {{ $payroll->surname .", "  . $payroll->first_name . " " . $payroll->middle_name ?: '' . " " . $payroll->name_extension ?: ''}}
                                                             @else
                                                                 {{ $payroll->$column ?? '' }}
                                                             @endif

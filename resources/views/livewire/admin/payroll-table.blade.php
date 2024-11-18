@@ -260,6 +260,8 @@ x-cloak>
                                                                         {{ currency_format($payroll->$column) }}
                                                                     @elseif($column == 'employee_number')
                                                                         {{ $payroll->$column ? 'D-' . substr($payroll->$column, 1) : '' }}
+                                                                    @elseif($column == 'name')
+                                                                        {{ $payroll->surname .", "  . $payroll->first_name . " " . $payroll->middle_name ?: '' . " " . $payroll->name_extension ?: ''}}
                                                                     @else
                                                                         {{ $payroll->$column ?? '' }}
                                                                     @endif

@@ -627,13 +627,14 @@ class GeneralPayrollExport
     
             return $carry;
         }, []);
+       
     
         $formattedData = $data->map(function ($payroll, $index) {
             $this->rowNumber++;
             return [
                 0 => $this->rowNumber,
                 1 => $payroll->emp_code,
-                2 => $payroll->name,
+                2 => $payroll->surname . ", " . $payroll->first_name . " " . $payroll->middle_name ?: ''  . " " . $payroll->name_extension ?: '',
                 3 => $payroll->position,
                 4 => $payroll->sg_step,
                 5 => $payroll->rate_per_month,
@@ -675,7 +676,7 @@ class GeneralPayrollExport
             ];
         });
     
-        $this->totalPayroll = $totals['net_amount_received'];
+        $this->totalPayroll = isset($totals['net_amount_received']) ?: 0;
         $this->rowNumber = 0;
         return $formattedData;
     }
@@ -904,7 +905,7 @@ class GeneralPayrollExport
 
         $startRow++;
         $sheet->mergeCells("J{$startRow}:L{$startRow}");
-        $sheet->setCellValue("J{$startRow}", $formatCurrency($this->totalPayroll));
+        $sheet->setCellValue("J{$startRow}", $formatCurrency($grandTotal['net_amount_received']));
         $sheet->getStyle("J{$startRow}")->getFont()->setBold(true);
 
         // Signature A
@@ -976,7 +977,7 @@ class GeneralPayrollExport
 
         $startRow++;
         $sheet->mergeCells("B{$startRow}:C{$startRow}");
-        $sheet->setCellValue("B{$startRow}", $formatCurrency($this->totalPayroll));
+        $sheet->setCellValue("B{$startRow}", $formatCurrency($grandTotal['net_amount_received']));
         $sheet->mergeCells("J{$startRow}:Q{$startRow}");
         $sheet->setCellValue("J{$startRow}", "");
         $sheet->getStyle("B{$startRow}")->getFont()->setBold(true);
@@ -1088,10 +1089,12 @@ class GeneralPayrollExport
                                 ->joinSub($payrollAggregates, 'payroll_aggregates', function ($join) {
                                     $join->on('payrolls.user_id', '=', 'payroll_aggregates.user_id');
                                 })
-                                ->select('payrolls.*', 
+                                ->join('user_data', 'user_data.user_id', 'payrolls.user_id')
+                                ->select('payrolls.*', 'user_data.*',
                                         'payroll_aggregates.amount_due_first_half', 
                                         'payroll_aggregates.amount_due_second_half', 
-                                        'payroll_aggregates.net_amount_received');
+                                        'payroll_aggregates.net_amount_received')
+                                ->orderBy('user_data.surname', 'ASC');
             return $payrolls;
         } catch(Exception $e) {
             throw $e;

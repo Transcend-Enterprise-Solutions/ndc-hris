@@ -176,9 +176,10 @@ class CosSkPayrollTable  extends Component
                     return $query->search(trim($this->search2));
                 })
                 ->join('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
+                ->join('user_data', 'user_data.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                ->select('users.name', 'users.emp_code as employee_number', 'cos_sk_payrolls.*', 'positions.*', 'office_divisions.*')
+                ->select('user_data.*', 'users.name', 'users.emp_code as employee_number', 'cos_sk_payrolls.*', 'positions.*', 'office_divisions.*')
                 ->paginate($this->pageSize);
 
         if($this->userId){
