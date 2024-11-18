@@ -148,8 +148,9 @@ class PayrollTable extends Component
         $users = User::paginate(10);
         $payrolls = collect();
         if ($this->startDate && $this->endDate) {
-            $query = CosRegPayslip::where('start_date', $this->startDate)
-                ->where('end_date', $this->endDate)
+            $query = CosRegPayslip::where('cos_reg_payslip.start_date', $this->startDate)
+                ->join('users', 'users.id', 'cos_reg_payslip.user_id')
+                ->where('cos_reg_payslip.end_date', $this->endDate)
                 ->when($this->search, function ($query) {
                     return $query->search(trim($this->search));
                 });
