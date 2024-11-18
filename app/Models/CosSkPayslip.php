@@ -59,8 +59,8 @@ class CosSkPayslip extends Model implements AuditableContract
     public function scopeSearch($query, $term){
         $term = "%$term%";
         $query->where(function ($query) use ($term) {
-            $query->where('cos_sk_payslip.name', 'like', $term)
-                ->orWhere('cos_sk_payslip.emp_code', 'like', $term);
+            $query->where('users.name', 'like', $term)
+                ->orWhere('users.emp_code', 'like', $term);
         });
     }
 }
