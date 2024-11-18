@@ -38,9 +38,11 @@ class CosPayrollListExport implements FromCollection, WithEvents
 
         $query = User::query()
                 ->join($table, $table . '.user_id', 'users.id')
+                ->join('user_data', 'user_data.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id');
+                ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
+                ->orderBy('user_data.surname', 'ASC');;
 
         if (!empty($this->filters['search'])) {
             $query->where(function ($q) {
@@ -55,7 +57,7 @@ class CosPayrollListExport implements FromCollection, WithEvents
             $this->rowNumber++;
             return [
                 $this->rowNumber,
-                'name' => $payroll->name,
+                'name' => $payroll->surname . ", " . $payroll->first_name . " " . $payroll->middle_name ?: ''  . " " . $payroll->name_extension ?: '',
                 'employee_number' => ('D-' . substr($payroll->emp_code, 1)),
                 'position' => $payroll->position,
                 'office_division' => $payroll->office_division,
