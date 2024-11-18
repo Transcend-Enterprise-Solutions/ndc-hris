@@ -40,6 +40,7 @@ class CosRegPayrolls extends Model implements AuditableContract
                 ->orWhere('cos_reg_payrolls.sg_step', 'like', $term);
         });
     }
+    
     public function getAuditDescriptionForEvent(string $eventName): string
     {
         switch ($eventName) {

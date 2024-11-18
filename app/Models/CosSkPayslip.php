@@ -55,4 +55,15 @@ class CosSkPayslip extends Model implements AuditableContract
                 return '';
         }
     }
+    
+    public function scopeSearch($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('cos_sk_payslip.name', 'like', $term)
+                ->orWhere('cos_sk_payslip.employee_number', 'like', $term)
+                ->orWhere('cos_sk_payslip.position', 'like', $term)
+                ->orWhere('cos_sk_payslip.office_division', 'like', $term)
+                ->orWhere('cos_sk_payslip.sg_step', 'like', $term);
+        });
+    }
 }

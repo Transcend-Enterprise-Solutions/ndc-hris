@@ -76,7 +76,7 @@ class PayrollExport implements FromCollection, WithEvents
             $this->rowNumber++;
             return [
                 $this->rowNumber,
-                'name' => $payroll['name'],
+                'name' => $payroll['surname'] . ", " . $payroll['first_name'] . " " . $payroll['middle_name'] ?: '' . " " . $payroll['name_extension'] ?: '',
                 'position' => $payroll['position'],
                 'employee_number' => ('D-' . substr($payroll['employee_number'], 1)),
                 'salary_grade' => $payroll['salary_grade'],

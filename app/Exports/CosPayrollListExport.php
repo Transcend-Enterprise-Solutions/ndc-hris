@@ -45,7 +45,7 @@ class CosPayrollListExport implements FromCollection, WithEvents
         if (!empty($this->filters['search'])) {
             $query->where(function ($q) {
                 $q->where('name', 'LIKE', '%' . $this->filters['search'] . '%')
-                ->orWhere('employee_number', 'LIKE', '%' . $this->filters['search'] . '%')
+                // ->orWhere('employee_number', 'LIKE', '%' . $this->filters['search'] . '%')
                 ->orWhere('sg_step', 'LIKE', '%' . $this->filters['search'] . '%')
                 ->orWhere('position', 'LIKE', '%' . $this->filters['search'] . '%');
             });

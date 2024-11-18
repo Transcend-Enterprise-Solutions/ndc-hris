@@ -30,9 +30,11 @@ class PayrollListExport implements FromCollection, WithEvents
         };
 
         $query = User::query()
+                ->join('user_data', 'user_data.user_id', 'users.id')
                 ->join('payrolls', 'payrolls.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
-                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id');
+                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->orderBy('user_data.surname', 'ASC');
 
         if (!empty($this->filters['search'])) {
             $query->where(function ($q) {
@@ -47,7 +49,7 @@ class PayrollListExport implements FromCollection, WithEvents
             $this->rowNumber++;
             return [
                 $this->rowNumber,
-                'name' => $payroll->name,
+                'name' => $payroll->surname . ", " . $payroll->first_name . " " . $payroll->middle_name ?: ''  . " " . $payroll->name_extension ?: '',
                 'employee_number' => $payroll->emp_code,
                 'position' => $payroll->position,
                 'office_division' => $payroll->office_division,

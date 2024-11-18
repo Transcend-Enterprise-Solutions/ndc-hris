@@ -563,9 +563,15 @@ class GeneralPayrollExport
         $endDateSecondHalf = $carbonDate->copy()->endOfMonth()->toDateString();
     
         $query = User::join('payrolls', 'payrolls.user_id', 'users.id')
+            ->join('user_data', 'user_data.user_id', 'users.id')
             ->join('positions', 'positions.id', 'users.position_id')
             ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-            ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*');
+            ->select('users.name', 'users.emp_code', 'payrolls.*', 'positions.*', 'office_divisions.*',     
+                'user_data.first_name',
+                'user_data.surname',
+                'user_data.middle_name',
+                'user_data.name_extension',)
+            ->orderBy('user_data.surname', 'ASC');
 
         if (!empty($this->filters['search'])) {
             $query->where(function ($q) {
