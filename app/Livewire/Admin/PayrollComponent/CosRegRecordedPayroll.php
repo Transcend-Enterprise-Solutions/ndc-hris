@@ -84,13 +84,19 @@ class CosRegRecordedPayroll extends Component
             if ($sDate && $eDate) {
                 $payrollsAll = null;
                 $payrollsAll = User::join('positions', 'positions.id', 'users.position_id')
+                    ->join('user_data', 'user_data.user_id', 'users.id')
                     ->join('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
                     ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                    ->select('users.name', 
+                    ->select('users.name',
+                        'user_data.first_name',
+                        'user_data.surname',
+                        'user_data.middle_name',
+                        'user_data.name_extension', 
                         'users.emp_code', 
                         'cos_reg_payrolls.*', 
                         'positions.position', 
                         'office_divisions.office_division')
+                    ->orderBy('user_data.surname', 'ASC')
                     ->get();
 
                 $payrollDTR = $this->getDTRForPayroll($sDate, $eDate);
@@ -230,7 +236,7 @@ class CosRegRecordedPayroll extends Component
 
                     $payrolls->push([
                         'user_id' => $user->id,
-                        'name' => $payrollRecord->name,
+                        'name' => $payrollRecord->surname . ", " . $payrollRecord->first_name . " " . $payrollRecord->middle_name ?: ''  . " " . $payrollRecord->name_extension ?: '',
                         'sex' => $user->sex,
                         'civil_status' => $user->civil_status,
                         'employee_number' => $payrollRecord->emp_code,
