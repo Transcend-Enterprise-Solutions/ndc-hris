@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
@@ -22,8 +21,8 @@ class AdminDtrTable extends Component
     public $sortDirection = 'asc';
     public $signatoryName='';
     public $eSignaturePath='';
-    public $pageSize = 30; 
-    public $pageSizes = [10, 20, 30, 50, 100]; 
+    public $pageSize = 30;
+    public $pageSizes = [10, 20, 30, 50, 100];
 
     protected $queryString = [
         'searchTerm' => ['except' => ''],
@@ -31,7 +30,7 @@ class AdminDtrTable extends Component
         'endDate' => ['except' => ''],
         'sortField' => ['except' => 'date'],
         'sortDirection' => ['except' => 'asc'],
-        'pageSize' => ['except' => 30], 
+        'pageSize' => ['except' => 30],
     ];
 
     public function mount()
@@ -70,11 +69,13 @@ class AdminDtrTable extends Component
         $query = EmployeesDtr::query()
             ->join('users', 'employees_dtr.user_id', '=', 'users.id')
             ->join('user_data', 'users.id', '=', 'user_data.user_id')
-            ->select('employees_dtr.*', 'users.name as user_name', 
-                DB::raw("CASE 
+            ->select('employees_dtr.*', 'users.name as user_name',
+                DB::raw("CASE
                     WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
-                    ELSE users.emp_code 
-                END as emp_code"));
+                    ELSE users.emp_code
+                END as emp_code"),
+                DB::raw("COALESCE(employees_dtr.up_remarks, employees_dtr.remarks) as effective_remarks")
+            );
 
         if ($this->searchTerm) {
             $query->where(function($q) {
@@ -97,9 +98,9 @@ class AdminDtrTable extends Component
         } elseif ($this->sortField === 'user.name') {
             $query->orderBy('users.name', $this->sortDirection);
         } elseif ($this->sortField === 'emp_code') {
-            $query->orderByRaw("CASE 
+            $query->orderByRaw("CASE
                 WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
-                ELSE users.emp_code 
+                ELSE users.emp_code
             END " . $this->sortDirection);
         } else {
             $query->orderBy('employees_dtr.' . $this->sortField, $this->sortDirection);
@@ -118,11 +119,15 @@ class AdminDtrTable extends Component
         $query = EmployeesDtr::query()
             ->join('users', 'employees_dtr.user_id', '=', 'users.id')
             ->join('user_data', 'users.id', '=', 'user_data.user_id')
-            ->select('employees_dtr.*', 'users.name as user_name', 
-                DB::raw("CASE 
+            ->select(
+                'employees_dtr.*',
+                'users.name as user_name',
+                DB::raw("CASE
                     WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
-                    ELSE users.emp_code 
-                END as emp_code"))
+                    ELSE users.emp_code
+                END as emp_code"),
+                DB::raw("COALESCE(employees_dtr.up_remarks, employees_dtr.remarks) as effective_remarks")
+            )
             ->whereBetween('employees_dtr.date', [$this->startDate, $this->endDate]);
 
         // Apply the search term if it's set
@@ -137,6 +142,15 @@ class AdminDtrTable extends Component
                       ->orderBy('employees_dtr.date')
                       ->get()
                       ->groupBy('user_name');
+
+        // Transform the data to ensure effective_remarks is always available
+        $dtrs = $dtrs->map(function ($userDtrs) {
+            return $userDtrs->map(function ($dtr) {
+                // Make sure the effective_remarks attribute is accessible in the view
+                $dtr->effective_remarks = $dtr->effective_remarks ?? $dtr->remarks;
+                return $dtr;
+            });
+        });
 
         $pdf = Pdf::loadView('pdf.dtr', [
             'dtrs' => $dtrs,
@@ -155,6 +169,7 @@ class AdminDtrTable extends Component
             echo $pdf->output();
         }, 'dtr_report.pdf');
     }
+
     public function downloadFile($dtrId)
     {
         $dtr = EmployeesDtr::find($dtrId);
@@ -169,6 +184,4 @@ class AdminDtrTable extends Component
             ]);
         }
     }
-
-
 }

@@ -112,7 +112,7 @@
                                 <td>{{ $dtr->late }}</td>
                                 <td>{{ $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('D') : '--' }}</td>
                                 <td>{{ $dtr->location }}</td>
-                                <td>{{ $dtr->remarks }}</td>
+                                <td>{{ $dtr->effective_remarks }}</td>
                             </tr>
                         @endif
                     @endforeach
