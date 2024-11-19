@@ -116,16 +116,16 @@ class PDSExport
                 $p_house_street = explode(',', $this->pds['userData']->p_house_street ?: 'N/A');
                 $r_house_street = explode(',', $this->pds['userData']->r_house_street ?: 'N/A');
 
-                $sheet->setCellValue('I17', $r_house_street[0] ?: 'N/A');
-                $sheet->setCellValue('L17', $r_house_street[1] ?: 'N/A');
-                $sheet->setCellValue('I19', $r_house_street[2] ?: 'N/A');
+                $sheet->setCellValue('I17', isset($r_house_street[0]) ? $r_house_street[0] : 'N/A');
+                $sheet->setCellValue('L17', isset($r_house_street[1]) ? $r_house_street[1] : 'N/A');
+                $sheet->setCellValue('I19', isset($r_house_street[2]) ? $r_house_street[2] : 'N/A');
                 $sheet->setCellValue('L19', $this->pds['userData']->residential_selectedBarangay ?: 'N/A');
                 $sheet->setCellValue('I22', $this->pds['userData']->residential_selectedCity ?: 'N/A');
                 $sheet->setCellValue('L22', $this->pds['userData']->residential_selectedProvince ?: 'N/A');
                 $sheet->setCellValue('I24', $this->pds['userData']->residential_selectedZipcode ?: 'N/A');
-                $sheet->setCellValue('I25', $p_house_street[0] ?: 'N/A');
-                $sheet->setCellValue('L25', $p_house_street[1] ?: 'N/A');
-                $sheet->setCellValue('I27', $p_house_street[2] ?: 'N/A');
+                $sheet->setCellValue('I25', isset($p_house_street[0]) ? $p_house_street[0] : 'N/A');
+                $sheet->setCellValue('L25', isset($p_house_street[1]) ? $p_house_street[1] : 'N/A');
+                $sheet->setCellValue('I27', isset($p_house_street[2]) ? $p_house_street[2] : 'N/A');
                 $sheet->setCellValue('L27', $this->pds['userData']->permanent_selectedBarangay ?: 'N/A');
                 $sheet->setCellValue('I29', $this->pds['userData']->permanent_selectedCity ?: 'N/A');
                 $sheet->setCellValue('L29', $this->pds['userData']->permanent_selectedProvince ?: 'N/A');
