@@ -28,6 +28,8 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 
+use function PHPUnit\Framework\isEmpty;
+
 class GeneralPayrollTable extends Component
 {
     use WithPagination, WithFileUploads;
@@ -415,6 +417,16 @@ class GeneralPayrollTable extends Component
         $payrolls = collect();
         
         if ($this->startMonth) {
+            $payrollDTR = $this->getDTRForPayroll($this->startDateFirstHalf, $this->endDateSecondHalf);
+
+            if(!$payrollDTR){
+                $this->dispatch('swal', [
+                    'title' => 'No DTR Record for this month!',
+                    'icon' => 'error'
+                ]);
+                return;
+            }
+
             $startDate = Carbon::parse($this->startMonth);
             $payslip = PlantillaPayslip::whereMonth('start_date', $startDate->month)
                                     ->whereYear('start_date', $startDate->year)
@@ -495,11 +507,24 @@ class GeneralPayrollTable extends Component
     public function getDTRForPayroll($startDate, $endDate, $employeeId = null)
     {
         try {
-            $query = EmployeesDtr::whereBetween('date', [$startDate, $endDate]);
+            $dtrRecords = EmployeesDtr::whereBetween('date', [$startDate, $endDate])
+                        ->when($employeeId, function ($query) use ($employeeId) {
+                            return $query->where('user_id', $employeeId);
+                        })
+                        ->orderBy('date')
+                        ->get();
+            
             if ($employeeId) {
-                $query->where('user_id', $employeeId);
+                $payroll = User::find($employeeId)->payrolls;
+                
+                if (!$payroll) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'No payroll found for the selected employee and month.'
+                    ]);
+                }
             }
-            $dtrRecords = $query->orderBy('date')->get();
+
             $payrollDTR = [];
     
             foreach ($dtrRecords as $record) {
@@ -567,16 +592,16 @@ class GeneralPayrollTable extends Component
             }
 
             // Deduct credits from vl credits
-            foreach ($payrollDTR as $employeeId => $data) {
+            foreach ($payrollDTR as $empID => $data) {
 
                 // Check if the deduction has already been applied
-                $deduction = PayrollsLeaveCreditsDeduction::where('user_id', $employeeId)
+                $deduction = PayrollsLeaveCreditsDeduction::where('user_id', $empID)
                     ->whereMonth('month', Carbon::parse($startDate)->month)
                     ->whereYear('month', Carbon::parse($startDate)->year)
                     ->first();
 
                 if ($deduction && $deduction->status == 1) {
-                    $payrollDTR[$employeeId]['absent_late_undertime_deduction'] = number_format((float) $deduction->salary_deduction_amount, 2, '.', '');
+                    $payrollDTR[$empID]['absent_late_undertime_deduction'] = number_format((float) $deduction->salary_deduction_amount, 2, '.', '');
                     continue;
                 }
 
@@ -584,8 +609,9 @@ class GeneralPayrollTable extends Component
                                 ->where('year',Carbon::parse($startDate)->year)
                                 ->first();
                 $totalCreditsInMinutes = $lateCredits ? $lateCredits->late_time : 0;
-                $totalCredits = $data['total_credits'] + ($totalCreditsInMinutes ?: 0);
-                $leaveCredits = LeaveCredits::where('user_id', $employeeId)->first();
+                // $totalCredits = $data['total_credits'] + ($totalCreditsInMinutes ?: 0);
+                $totalCredits = (float)$data['total_credits'] + (float)($totalCreditsInMinutes ?: 0);
+                $leaveCredits = LeaveCredits::where('user_id', $empID)->first();
 
                 $creditsDeduction = $totalCredits;
                 $negativeCredits = 0;
@@ -622,21 +648,23 @@ class GeneralPayrollTable extends Component
                             }
                         }
 
-                        $payroll = User::find($employeeId)->payrolls; 
-                        $dailyRate = $payroll->rate_per_month / 22;
-                        $hourlyRate = $dailyRate / 8;
-                        $minutesRate = $hourlyRate / 60;
-
-                        $this->absentLateUndertimeDeductionAmount = ($creditsInDays * $dailyRate) + ($creditsInHours * $hourlyRate) + ($creditsInMinutes * $minutesRate);
-
-                        $leaveCredits->vl_claimable_credits = 0;
+                        $payroll = User::find($empID)->payrolls;
+                        if($payroll){
+                            $dailyRate = $payroll->rate_per_month / 22;
+                            $hourlyRate = $dailyRate / 8;
+                            $minutesRate = $hourlyRate / 60;
+    
+                            $this->absentLateUndertimeDeductionAmount = ($creditsInDays * $dailyRate) + ($creditsInHours * $hourlyRate) + ($creditsInMinutes * $minutesRate);
+    
+                            $leaveCredits->vl_claimable_credits = 0;
+                        }
                     }
 
                     $leaveCredits->save();
 
                     // Mark the vl credits deduction as applied
                     PayrollsLeaveCreditsDeduction::create([
-                        'user_id' => $employeeId,
+                        'user_id' => $empID,
                         'month' => $startDate,
                         'credits_deducted' => $creditsDeduction,
                         'salary_deduction_credits' => $negativeCredits,
@@ -645,7 +673,7 @@ class GeneralPayrollTable extends Component
                     ]);
                 }
 
-                $payrollDTR[$employeeId]['absent_late_undertime_deduction'] = number_format((float) $this->absentLateUndertimeDeductionAmount, 2, '.', '');
+                $payrollDTR[$empID]['absent_late_undertime_deduction'] = number_format((float) $this->absentLateUndertimeDeductionAmount, 2, '.', '');
             }
     
             return $payrollDTR;

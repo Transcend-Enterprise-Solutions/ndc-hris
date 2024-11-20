@@ -443,6 +443,11 @@ class PayrollTable extends Component
                     $absentDays = $dtrData['total_absent'];
                     $absentAmount = $absentDays * $dailySalaryRate;
 
+                    // Get the count of no-work no-pay days and its amount
+                    $noWorkNoPayDays = $dtrData['no_work'];
+                    $noWorkNoPayAmount = $noWorkNoPayDays * $dailySalaryRate;
+
+
                     $totalHoursRendered = $dtrData['total_hours'] / 60;
                     $totalDaysRendered = $totalHoursRendered / 8; 
                     
@@ -485,7 +490,7 @@ class PayrollTable extends Component
                     }
 
                     // Deducted Salary
-                    $grossSalaryLess = $grossSalary - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount - $absentAmount;
+                    $grossSalaryLess = $grossSalary - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount - $noWorkNoPayAmount;
 
 
                     $withholdingTax = $payrollRecord->withholding_tax;
