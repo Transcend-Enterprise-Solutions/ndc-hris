@@ -16,14 +16,14 @@
             </svg>
         </div> --}}
         @if (Auth::user()->profile_photo_path)
-            <img src="{{ route('profile-photo.file', ['filename' => basename(Auth::user()->profile_photo_path)]) }}" 
-                    alt="{{ Auth::user()->name }}" 
+            <img src="{{ route('profile-photo.file', ['filename' => basename(Auth::user()->profile_photo_path)]) }}"
+                    alt="{{ Auth::user()->name }}"
                     width="32" height="32"
                     class="w-8 h-8 rounded-full">
         @else
             <img class="w-8 h-8 rounded-full" src="{{ Auth::user()->profile_photo_url }}" width="32" height="32" alt="Tae" />
         @endif
-       
+
     </button>
     <div
         class="origin-top-right z-10 absolute top-full min-w-44 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 py-1.5 rounded shadow-lg overflow-hidden mt-1 {{$align === 'right' ? 'right-0' : 'left-0'}}"

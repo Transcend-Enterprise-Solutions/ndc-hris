@@ -435,7 +435,9 @@ class CosSkPayrollTable  extends Component
                         continue;
                     }
 
-                    $dailySalaryRate = $payrollRecord->rate_per_month / 22;
+                    $ratePerMonth = ($payrollRecord->rate_per_month * 0.20) + $payrollRecord->rate_per_month;
+
+                    $dailySalaryRate = $ratePerMonth / 22;
 
                     // Get the count of absences and its amount
                     $absentDays = $dtrData['total_absent'];

@@ -1400,7 +1400,7 @@
                                                 <div class="w-1/4"></div>
                                             </div>
                                             <div class="flex mt-6">
-                                                <div class="w-1/4 font-bold text-sm">{{ $preparedBy->name }}</div>
+                                                <div class="w-1/4 font-bold text-sm">{{ $preparedBy->name ?: 'XXXXXXXXXX' }}</div>
                                                 <div class="w-1/4"></div>
                                                 <div class="w-1/4 font-bold text-sm">
                                                     {{ $plantillaPayslipSigns['notedBy'] ? $plantillaPayslipSigns['notedBy']->name : 'XXXXXXXXXX' }}
