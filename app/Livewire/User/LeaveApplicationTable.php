@@ -477,19 +477,24 @@ class LeaveApplicationTable extends Component
         }, 'LeaveApplication' . $leaveApplicationId . '.pdf');
     }
 
+    // public function exportExcel()
+    // {
+    //     $leaveApplication = LeaveApplication::where('user_id', Auth::id())
+    //         ->latest('created_at')
+    //         ->first();
+
+    //     if (!$leaveApplication) {
+    //         session()->flash('error', 'No leave application found for the current user.');
+    //         return;
+    //     }
+
+    //     $export = new LeaveCardExport($leaveApplication->id, $this->startDate, $this->endDate);
+
+    //     return $export->export();
+    // }
     public function exportExcel()
     {
-        $leaveApplication = LeaveApplication::where('user_id', Auth::id())
-            ->latest('created_at')
-            ->first();
-
-        if (!$leaveApplication) {
-            session()->flash('error', 'No leave application found for the current user.');
-            return;
-        }
-
-        $export = new LeaveCardExport($leaveApplication->id, $this->startDate, $this->endDate);
-
+        $export = new LeaveCardExport(Auth::id(), $this->startDate, $this->endDate);
         return $export->export();
     }
 
