@@ -385,6 +385,7 @@ class CosSkPayrollTable  extends Component
                 // }
 
                 // Calculate total working days (Monday to Friday, excluding holidays)
+
                 $totalDays = 0;
                 $currentDate = $startDate->copy();
                 $this->weekdayRegularHolidays = 0;
@@ -443,6 +444,10 @@ class CosSkPayrollTable  extends Component
                     $absentDays = $dtrData['total_absent'];
                     $absentAmount = $absentDays * $dailySalaryRate;
 
+                    // Get the count of no-work no-pay days and its amount
+                    $noWorkNoPayDays = $dtrData['no_work'];
+                    $noWorkNoPayAmount = $noWorkNoPayDays * $dailySalaryRate;
+
                     $totalHoursRendered = $dtrData['total_hours'] / 60;
                     $totalDaysRendered = $totalHoursRendered / 8; 
                     
@@ -485,7 +490,7 @@ class CosSkPayrollTable  extends Component
                     }
 
                     // Deducted Salary
-                    $grossSalaryLess = $grossSalary - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount - $absentAmount;
+                    $grossSalaryLess = $grossSalary - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount - $noWorkNoPayAmount;
 
 
                     $withholdingTax = $payrollRecord->withholding_tax;
@@ -614,6 +619,7 @@ class CosSkPayrollTable  extends Component
                         'total_hours' => 0,
                         'total_late' => 0,
                         'total_absent' => 0,
+                        'no_work' => 0,
                         'total_overtime' => 0,
                         'daily_records' => []
                     ];
@@ -631,8 +637,13 @@ class CosSkPayrollTable  extends Component
                 if($record->remarks == "Late/Undertime"){
                     $payrollDTR[$employeeId]['total_late'] += $late;
                 }
-                if($record->remarks == "Absent"){
+
+                if($record->remarks == "Absent" && $record->up_remarks == null){
                     $payrollDTR[$employeeId]['total_absent']++;
+                }
+
+                if($record->remarks == "Absent" && ($record->up_remarks == "Holiday" || $record->up_remarks == "Leave")){
+                    $payrollDTR[$employeeId]['no_work']++;
                 }
 
                 $payrollDTR[$employeeId]['total_overtime'] += $overtime;

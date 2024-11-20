@@ -941,10 +941,10 @@ x-cloak>
                         @enderror
                     </div>
 
-                    <div class="col-span-full sm:col-span-1">
+                    {{-- <div class="col-span-full sm:col-span-1">
                         <label for="additional_premiums" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Additional Premiums</label>
                         <input type="number" step="0.01" id="additional_premiums" wire:model.live='additional_premiums' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                    </div>
+                    </div> --}}
 
                     <div class="col-span-full sm:col-span-1">
                         <label for="adjustment" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Adjustment</label>
@@ -966,7 +966,7 @@ x-cloak>
                         <input type="number" step="0.01" id="other_deductions" wire:model.live='other_deductions' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     </div>
 
-                    <div class="col-span-full sm:col-span-1">
+                    <div class="col-span-full">
                         <label for="total_deduction" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Total Deduction</label>
                         <input type="number" step="0.01" id="total_deduction" wire:model.live='total_deduction' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                     </div>
