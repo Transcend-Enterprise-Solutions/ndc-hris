@@ -514,6 +514,10 @@ class GeneralPayrollTable extends Component
                         ->orderBy('date')
                         ->get();
             
+            if(!$dtrRecords){
+                return null;
+            }
+            
             if ($employeeId) {
                 $payroll = User::find($employeeId)->payrolls;
                 
