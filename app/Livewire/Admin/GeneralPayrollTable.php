@@ -417,15 +417,6 @@ class GeneralPayrollTable extends Component
         $payrolls = collect();
         
         if ($this->startMonth) {
-            $payrollDTR = $this->getDTRForPayroll($this->startDateFirstHalf, $this->endDateSecondHalf);
-
-            if(!$payrollDTR){
-                $this->dispatch('swal', [
-                    'title' => 'No DTR Record for this month!',
-                    'icon' => 'error'
-                ]);
-                return;
-            }
 
             $startDate = Carbon::parse($this->startMonth);
             $payslip = PlantillaPayslip::whereMonth('start_date', $startDate->month)
@@ -444,6 +435,16 @@ class GeneralPayrollTable extends Component
             $this->endDateFirstHalf = $carbonDate->copy()->day(15)->toDateString();
             $this->startDateSecondHalf = $carbonDate->copy()->day(16)->toDateString();
             $this->endDateSecondHalf = $carbonDate->endOfMonth()->toDateString();
+
+            $payrollDTR = $this->getDTRForPayroll($this->startDateFirstHalf, $this->endDateSecondHalf);
+
+            if(!$payrollDTR){
+                $this->dispatch('swal', [
+                    'title' => 'No DTR Record for this month!',
+                    'icon' => 'error'
+                ]);
+                return;
+            }
     
             $payrolls = User::when($this->search, function ($query) {
                     return $query->search(trim($this->search));
@@ -479,9 +480,8 @@ class GeneralPayrollTable extends Component
                     return $payroll;
                 });
     
+            
             // Get DTR data including credits
-            $payrollDTR = $this->getDTRForPayroll($this->startDateFirstHalf, $this->endDateSecondHalf);
-    
             // Integrate DTR credits into payroll data
             $payrolls = $payrolls->map(function ($payroll) use ($payrollDTR) {
                 $userId = $payroll->user_id;
