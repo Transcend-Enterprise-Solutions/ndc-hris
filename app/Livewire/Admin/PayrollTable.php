@@ -390,24 +390,24 @@ class PayrollTable extends Component
                 $this->weekdayRegularHolidays = 0;
                 $this->weekdaySpecialHolidays = 0;
          
-                while ($currentDate <= $endDate) {
-                    if ($currentDate->isWeekday()) {
-                        $dateString = $currentDate->format('Y-m-d');
-                        if (!$holidays->has($dateString)) {
-                            $totalDays++;
-                        } else {
-                            // Check the type of holiday
-                            $holidayType = $holidays->get($dateString);
-                            if ($holidayType === 'Special') {
-                                $totalDays++;
-                                $this->weekdaySpecialHolidays++;
-                            } else {
-                                $this->weekdayRegularHolidays++;
-                            }
-                        }
-                    }
-                    $currentDate->addDay();
-                }
+                // while ($currentDate <= $endDate) {
+                //     if ($currentDate->isWeekday()) {
+                //         $dateString = $currentDate->format('Y-m-d');
+                //         if (!$holidays->has($dateString)) {
+                //             $totalDays++;
+                //         } else {
+                //             // Check the type of holiday
+                //             $holidayType = $holidays->get($dateString);
+                //             if ($holidayType === 'Special') {
+                //                 $totalDays++;
+                //                 $this->weekdaySpecialHolidays++;
+                //             } else {
+                //                 $this->weekdayRegularHolidays++;
+                //             }
+                //         }
+                //     }
+                //     $currentDate->addDay();
+                // }
 
                 $totalDeductions = 0;
                 $withholdingTax = 0;
@@ -438,14 +438,13 @@ class PayrollTable extends Component
                     $ratePerMonth = ($payrollRecord->rate_per_month * 0.20) + $payrollRecord->rate_per_month;
 
                     $dailySalaryRate = $ratePerMonth / 22;
+                    
+                    //Get total number of covered days
+                    $totalDays = $dtrData['total_days'];
 
                     // Get the count of absences and its amount
                     $absentDays = $dtrData['total_absent'];
                     $absentAmount = $absentDays * $dailySalaryRate;
-
-                    // Get the count of no-work no-pay days and its amount
-                    $noWorkNoPayDays = $dtrData['no_work'];
-                    $noWorkNoPayAmount = $noWorkNoPayDays * $dailySalaryRate;
 
 
                     $totalHoursRendered = $dtrData['total_hours'] / 60;
@@ -490,7 +489,7 @@ class PayrollTable extends Component
                     }
 
                     // Deducted Salary
-                    $grossSalaryLess = $grossSalary - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount - $noWorkNoPayAmount;
+                    $grossSalaryLess = $grossSalary - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount - $absentAmount;
 
 
                     $withholdingTax = $payrollRecord->withholding_tax;
@@ -623,7 +622,6 @@ class PayrollTable extends Component
                     ];
                 }
 
-                $payrollDTR[$employeeId]['total_days']++;
                 
                 // Convert time strings to integer minutes
                 $totalHours = $this->timeToMinutes($record->total_hours_rendered);
@@ -635,8 +633,17 @@ class PayrollTable extends Component
                 if($record->remarks == "Late/Undertime"){
                     $payrollDTR[$employeeId]['total_late'] += $late;
                 }
-                if($record->remarks == "Absent"){
+                
+                if($record->remarks == "Absent" && $record->up_remarks == null){
                     $payrollDTR[$employeeId]['total_absent']++;
+                }
+
+                // if(($record->remarks == "Absent" && $record->up_remarks == null)  || ($record->up_remarks == "Holiday")){
+                //     $payrollDTR[$employeeId]['no_work']++;
+                // }
+                
+                if($record->remarks == "Present" || ($record->remarks == "Absent" && $record->up_remarks != "Holiday" && $record->up_remarks != null) || $record->remarks == "Incomplete" || $record->remarks == "Late/Undertime"){
+                    $payrollDTR[$employeeId]['total_days']++;
                 }
 
                 $payrollDTR[$employeeId]['total_overtime'] += $overtime;

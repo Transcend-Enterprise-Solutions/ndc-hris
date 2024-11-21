@@ -440,13 +440,12 @@ class CosSkPayrollTable  extends Component
 
                     $dailySalaryRate = $ratePerMonth / 22;
 
+                    //Get total number of covered days
+                    $totalDays = $dtrData['total_days'];
+
                     // Get the count of absences and its amount
                     $absentDays = $dtrData['total_absent'];
                     $absentAmount = $absentDays * $dailySalaryRate;
-
-                    // Get the count of no-work no-pay days and its amount
-                    $noWorkNoPayDays = $dtrData['no_work'];
-                    $noWorkNoPayAmount = $noWorkNoPayDays * $dailySalaryRate;
 
                     $totalHoursRendered = $dtrData['total_hours'] / 60;
                     $totalDaysRendered = $totalHoursRendered / 8; 
@@ -468,29 +467,29 @@ class CosSkPayrollTable  extends Component
                     $specialHolidayCount = 0;
 
                     // Iterate through all days in the pay period
-                    $currentDate = $startDate->copy();
-                    while ($currentDate <= $endDate) {
-                        $dateString = $currentDate->format('Y-m-d');
-                        $holidayType = $holidays->get($dateString);
-                        $record = $dtrData['daily_records'][$dateString] ?? null;
+                    // $currentDate = $startDate->copy();
+                    // while ($currentDate <= $endDate) {
+                    //     $dateString = $currentDate->format('Y-m-d');
+                    //     $holidayType = $holidays->get($dateString);
+                    //     $record = $dtrData['daily_records'][$dateString] ?? null;
 
-                        if ($currentDate->isWeekday()) {
-                            if ($holidayType === 'Regular') {
-                                $regularHolidayCount++;
-                            } elseif ($holidayType === 'Special') {
-                                $specialHolidayCount++;
-                            }
-                        }
+                    //     if ($currentDate->isWeekday()) {
+                    //         if ($holidayType === 'Regular') {
+                    //             $regularHolidayCount++;
+                    //         } elseif ($holidayType === 'Special') {
+                    //             $specialHolidayCount++;
+                    //         }
+                    //     }
 
-                        if ($record) {
-                            $totalHoursRendered += $record['total_hours'];
-                        }
+                    //     if ($record) {
+                    //         $totalHoursRendered += $record['total_hours'];
+                    //     }
 
-                        $currentDate->addDay();
-                    }
+                    //     $currentDate->addDay();
+                    // }
 
                     // Deducted Salary
-                    $grossSalaryLess = $grossSalary - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount - $noWorkNoPayAmount;
+                    $grossSalaryLess = $grossSalary - $lateUndertimeHoursAmount - $lateUndertimeMinsAmount - $absentAmount;
 
 
                     $withholdingTax = $payrollRecord->withholding_tax;
@@ -619,7 +618,6 @@ class CosSkPayrollTable  extends Component
                         'total_hours' => 0,
                         'total_late' => 0,
                         'total_absent' => 0,
-                        'no_work' => 0,
                         'total_overtime' => 0,
                         'daily_records' => []
                     ];
@@ -642,8 +640,8 @@ class CosSkPayrollTable  extends Component
                     $payrollDTR[$employeeId]['total_absent']++;
                 }
 
-                if($record->remarks == "Absent" && ($record->up_remarks == "Holiday" || $record->up_remarks == "Leave")){
-                    $payrollDTR[$employeeId]['no_work']++;
+                if($record->remarks == "Present" || ($record->remarks == "Absent" && $record->up_remarks != "Holiday") || $record->remarks == "Incomplete" || $record->remarks == "Late/Undertime"){
+                    $payrollDTR[$employeeId]['total_days']++;
                 }
 
                 $payrollDTR[$employeeId]['total_overtime'] += $overtime;
