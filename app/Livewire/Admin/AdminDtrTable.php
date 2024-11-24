@@ -22,7 +22,7 @@ class AdminDtrTable extends Component
     public $sortDirection = 'asc';
     public $signatoryName = '';
     public $eSignaturePath = '';
-    public $pageSize = 30;
+    public $pageSize = 10;
     public $pageSizes = [10, 20, 30, 50, 100];
 
     public $selectedDivision = null;
