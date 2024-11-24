@@ -113,7 +113,7 @@
         @endif
 
         <!-- Table -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto text-sm">
             <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                 <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                     <tr class="whitespace-nowrap">
@@ -237,7 +237,7 @@
     <div class="w-full mt-8 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
         <div class="mb-4">
             <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 text-center">DTR Signatory</h3>
-            <div class="mt-4 overflow-x-auto">
+            <div class="mt-4 overflow-x-auto text-sm">
                 <table class="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow">
                     <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                         <tr class="whitespace-nowrap">
