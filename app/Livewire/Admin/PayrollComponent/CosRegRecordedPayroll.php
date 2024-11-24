@@ -307,7 +307,8 @@ class CosRegRecordedPayroll extends Component
                 if($record->remarks == "Late/Undertime"){
                     $payrollDTR[$employeeId]['total_late'] += $late;
                 }
-                if($record->remarks == "Absent"){
+                
+                if($record->remarks == "Absent" && $record->up_remarks == null){
                     $payrollDTR[$employeeId]['total_absent']++;
                 }
 
