@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\EmployeesDtr;
+use App\Models\OfficeDivisions;
 use Barryvdh\DomPDF\PDF as DomPDFPDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -19,10 +20,15 @@ class AdminDtrTable extends Component
     public $endDate;
     public $sortField = 'date';
     public $sortDirection = 'asc';
-    public $signatoryName='';
-    public $eSignaturePath='';
+    public $signatoryName = '';
+    public $eSignaturePath = '';
     public $pageSize = 30;
     public $pageSizes = [10, 20, 30, 50, 100];
+
+    public $selectedDivision = null;
+    public $signName = '';
+    public $signPos = '';
+    public $showSignatoryModal = false;
 
     protected $queryString = [
         'searchTerm' => ['except' => ''],
@@ -32,6 +38,40 @@ class AdminDtrTable extends Component
         'sortDirection' => ['except' => 'asc'],
         'pageSize' => ['except' => 30],
     ];
+
+    public function openSignatoryModal($divisionId)
+    {
+        $this->selectedDivision = $divisionId;
+        $division = OfficeDivisions::find($divisionId);
+
+        if ($division) {
+            $this->signName = $division->sign_name;
+            $this->signPos = $division->sign_pos;
+        }
+
+        $this->showSignatoryModal = true;
+    }
+
+    public function saveSignatory()
+    {
+        $this->validate([
+            'signName' => 'required',
+            'signPos' => 'required',
+            'selectedDivision' => 'required'
+        ]);
+
+        $division = OfficeDivisions::find($this->selectedDivision);
+        $division->update([
+            'sign_name' => $this->signName,
+            'sign_pos' => $this->signPos
+        ]);
+
+        $this->showSignatoryModal = false;
+        $this->dispatch('swal', [
+            'title' => 'Signatory Updated Successfully!',
+            'icon' => 'success'
+        ]);
+    }
 
     public function mount()
     {
@@ -107,21 +147,25 @@ class AdminDtrTable extends Component
         }
 
         $dtrs = $query->paginate($this->pageSize);
+        $officeDivisions = OfficeDivisions::all();
 
         return view('livewire.admin.admin-dtr-table', [
             'dtrs' => $dtrs,
+            'officeDivisions' => $officeDivisions
         ]);
     }
 
-    public function exportToPdf($signatoryName)
+    public function exportToPdf()
     {
-        $this->signatoryName = $signatoryName;
         $query = EmployeesDtr::query()
             ->join('users', 'employees_dtr.user_id', '=', 'users.id')
             ->join('user_data', 'users.id', '=', 'user_data.user_id')
+            ->leftJoin('office_divisions', 'users.office_division_id', '=', 'office_divisions.id')  // Fixed join
             ->select(
                 'employees_dtr.*',
                 'users.name as user_name',
+                'office_divisions.sign_name',
+                'office_divisions.sign_pos',
                 DB::raw("CASE
                     WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
                     ELSE users.emp_code
@@ -157,7 +201,6 @@ class AdminDtrTable extends Component
             'startDate' => $this->startDate,
             'eSignaturePath' => $this->eSignaturePath,
             'endDate' => $this->endDate,
-            'signatoryName' => $this->signatoryName,
         ]);
 
         $this->dispatch('swal', [
