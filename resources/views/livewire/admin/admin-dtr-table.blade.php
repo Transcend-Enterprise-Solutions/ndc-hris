@@ -59,9 +59,12 @@
                         {{-- <h2 class="text-lg font-semibold mb-4 text-left text-gray-900 dark:text-gray-100">Enter Signatory Name</h2>
                         <input type="text" x-model="signatoryName" placeholder="Signatory Name"
                             class="w-full mb-4 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-700 dark:text-gray-300 dark:border-slate-600"> --}}
-                        <div class="flex flex-col sm:flex-row justify-end mt-5">
+                        <div class="flex flex-col justify-mt-5">
+                            <h2 class="text-lg font-semibold mb-5 text-left text-gray-900 dark:text-gray-100">Confirm Action</h2>
+                            <div class="flex justify-end">
                             <button @click="showModal = false" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mb-2 sm:mb-0 sm:mr-2 dark:bg-gray-600 dark:text-gray-200">Cancel</button>
                             <button @click="showModal = false; $wire.exportToPdf(signatoryName)" class="bg-blue-500 text-white px-4 py-2 rounded-md">Generate PDF</button>
+                            </div>
                         </div>
                     </div>
                 </div>
