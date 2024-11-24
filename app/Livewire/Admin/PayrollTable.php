@@ -454,7 +454,6 @@ class PayrollTable extends Component
                     $grossSalary = $dailySalaryRate * $totalDays;
                     
 
-
                     $lateUndertimeHours = floor($dtrData['total_late'] / 60);
                     $lateUndertimeMins = $dtrData['total_late'] % 60;
                     $lateUndertimeHoursAmount = $lateUndertimeHours * ($dailySalaryRate / 8);
@@ -637,11 +636,8 @@ class PayrollTable extends Component
                 if($record->remarks == "Absent" && $record->up_remarks == null){
                     $payrollDTR[$employeeId]['total_absent']++;
                 }
-
-                // if(($record->remarks == "Absent" && $record->up_remarks == null)  || ($record->up_remarks == "Holiday")){
-                //     $payrollDTR[$employeeId]['no_work']++;
-                // }
                 
+                // Get No. of Days Covered
                 if($record->remarks == "Present" || ($record->remarks == "Absent" && $record->up_remarks != "Holiday" && $record->up_remarks != null) || $record->remarks == "Incomplete" || $record->remarks == "Late/Undertime"){
                     $payrollDTR[$employeeId]['total_days']++;
                 }

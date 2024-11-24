@@ -14,6 +14,9 @@ class PlantillaRecordedPayroll extends Component
     public $pageSize = 30; 
     public $pageSizes = [10, 20, 30, 50, 100]; 
     public $recordMonth;
+    public $delete;
+    public $start_Date;
+    public $end_Date;
 
     public function render()
     {
@@ -62,5 +65,40 @@ class PlantillaRecordedPayroll extends Component
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    public function toggleDelete($startDate, $endDate){
+        $this->delete = true;
+        $this->start_Date = $startDate;
+        $this->end_Date = $endDate;
+    }
+
+    public function deletePayroll(){
+        try{
+            $payslips = PlantillaPayslip::where('start_date', Carbon::parse($this->start_Date))
+                                    ->where('end_date', Carbon::parse($this->end_Date))
+                                    ->get();
+            if($payslips){
+                $payslips->each->delete();
+
+                $this->resetVariables();
+                $this->dispatch('swal', [
+                    'title' => "Payroll deleted successfully",
+                    'icon' => 'success'
+                ]);
+            }else{
+                $this->resetVariables();
+                $this->dispatch('swal', [
+                    'title' => "Payroll deletion was unsuccessful",
+                    'icon' => 'error'
+                ]);
+            }
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+
+    public function resetVariables(){
+        $this->delete = null;
     }
 }

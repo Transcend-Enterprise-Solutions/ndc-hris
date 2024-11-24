@@ -436,7 +436,7 @@ x-cloak>
                                                         {{ currency_format($payroll['net_amount_due'] ?? 0) }}
                                                     </td>
                                                     <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-gray-100 dark:bg-gray-800">
-                                                        <div class="relative">
+                                                        <div class="relative" style="z-index: 2">
                                                             <button wire:click="viewPayroll({{ $payroll['user_id'] }})" 
                                                             class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                             -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
@@ -444,15 +444,17 @@ x-cloak>
                                                                 <i class="fas fa-eye ml-3"></i>
                                                             </button>
                                                         </div>
-                                                        <button wire:click="exportPayslip({{ $payroll['user_id'] }})" class="relative z-10 peer inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 {{ $canExportPayslip ? '' : 'hidden' }}
-                                                            text-sm font-medium tracking-wide text-gray-800 dark:text-white  hover:text-gray-300 focus:outline-nones" title="Export Payroll">
-                                                            <div wire:loading wire:target="exportPayslip({{ $payroll['user_id'] }})">
-                                                                <div class="ml-2 spinner-border small text-primary" role="status">
+                                                        @if($canExportPayslip)
+                                                            <button wire:click="exportPayslip({{ $payroll['user_id'] }})" class="relative z-10 peer inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 
+                                                                text-sm font-medium tracking-wide text-gray-800 dark:text-white  hover:text-gray-300 focus:outline-nones" title="Export Payroll">
+                                                                <div wire:loading wire:target="exportPayslip({{ $payroll['user_id'] }})">
+                                                                    <div class="ml-2 spinner-border small text-primary" role="status">
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <i class="fas fa-file-export ml-3" wire:loading.remove wire:target="exportPayslip({{ $payroll['user_id'] }})"></i>
-                                                        </button>
-                                                        <div class="relative">
+                                                                <i class="fas fa-file-export ml-3" wire:loading.remove wire:target="exportPayslip({{ $payroll['user_id'] }})"></i>
+                                                            </button>
+                                                        @endif
+                                                        <div class="relative" style="z-index: 1">
                                                             <button wire:click="exportIndivPayroll({{ $payroll['user_id'] }})" 
                                                                 class="peer inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 
                                                                 text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"

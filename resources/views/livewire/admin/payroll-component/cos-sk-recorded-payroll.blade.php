@@ -49,12 +49,12 @@
                                                         title="Export Payroll">
                                                         <img class="flex dark:hidden ml-3 mt-4"
                                                             src="/images/icons8-xls-export-dark.png"
-                                                            width="22" alt=""
+                                                            width="16" alt=""
                                                             wire:target="exportExcel('{{ $payroll->start_date }}', '{{ $payroll->end_date }}')"
                                                             wire:loading.remove>
                                                         <img class="hidden dark:block ml-3 mt-4"
                                                             src="/images/icons8-xls-export-light.png"
-                                                            width="22" alt=""
+                                                            width="16" alt=""
                                                             wire:target="exportExcel('{{ $payroll->start_date }}', '{{ $payroll->end_date }}')"
                                                             wire:loading.remove>
                                                         <div wire:loading
@@ -63,6 +63,13 @@
                                                                 role="status">
                                                             </div>
                                                         </div>
+                                                    </button>
+                                                </div>
+                                                <div class="relative text-xs">
+                                                    <button wire:click="toggleDelete('{{ $payroll->start_date }}', '{{ $payroll->end_date }}')" 
+                                                        class="text-xs text-red-600 hover:text-red-900 dark:text-red-600 
+                                                        dark:hover:text-red-900" title="Delete">
+                                                        <i class="fas fa-trash"></i>
                                                     </button>
                                                 </div>
                                             </td>
@@ -85,4 +92,36 @@
 
         </div>
     </div>
+
+    {{-- Delete Modal --}}
+    <x-modal id="deleteModal" maxWidth="md" wire:model="delete" centered>
+        <div class="p-4">
+            <div class="mb-4 text-slate-900 dark:text-gray-100 font-bold">
+                Confirm Deletion
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">
+                Are you sure you want to delete this payroll?
+            </label>
+            <form wire:submit.prevent='deletePayroll'>
+                <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
+                    <button class="mr-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        <div wire:loading wire:target="deletePayroll" style="margin-bottom: 5px;">
+                            <div class="spinner-border small text-primary" role="status">
+                            </div>
+                        </div>
+                        Delete
+                    </button>
+                    <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                        Cancel
+                    </p>
+                </div>
+            </form>
+
+        </div>
+    </x-modal>
+
 </div>

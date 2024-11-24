@@ -640,6 +640,7 @@ class CosSkPayrollTable  extends Component
                     $payrollDTR[$employeeId]['total_absent']++;
                 }
 
+                // Get No. of Days Covered
                 if($record->remarks == "Present" || ($record->remarks == "Absent" && $record->up_remarks != "Holiday") || $record->remarks == "Incomplete" || $record->remarks == "Late/Undertime"){
                     $payrollDTR[$employeeId]['total_days']++;
                 }

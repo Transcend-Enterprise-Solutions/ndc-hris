@@ -21,6 +21,9 @@ class CosRegRecordedPayroll extends Component
     public $recordMonth;
     public $weekdayRegularHolidays = 0;
     public $weekdaySpecialHolidays = 0;
+    public $delete;
+    public $start_Date;
+    public $end_Date;
 
 
     public function render()
@@ -122,36 +125,30 @@ class CosRegRecordedPayroll extends Component
                 $this->weekdayRegularHolidays = 0;
                 $this->weekdaySpecialHolidays = 0;
          
-                while ($currentDate <= $endDate) {
-                    if ($currentDate->isWeekday()) {
-                        $dateString = $currentDate->format('Y-m-d');
-                        if (!$holidays->has($dateString)) {
-                            $totalDays++;
-                        } else {
-                            // Check the type of holiday
-                            $holidayType = $holidays->get($dateString);
-                            if ($holidayType === 'Special') {
-                                $totalDays++;
-                                $this->weekdaySpecialHolidays++;
-                            } else {
-                                $this->weekdayRegularHolidays++;
-                            }
-                        }
-                    }
-                    $currentDate->addDay();
-                }
+                // while ($currentDate <= $endDate) {
+                //     if ($currentDate->isWeekday()) {
+                //         $dateString = $currentDate->format('Y-m-d');
+                //         if (!$holidays->has($dateString)) {
+                //             $totalDays++;
+                //         } else {
+                //             // Check the type of holiday
+                //             $holidayType = $holidays->get($dateString);
+                //             if ($holidayType === 'Special') {
+                //                 $totalDays++;
+                //                 $this->weekdaySpecialHolidays++;
+                //             } else {
+                //                 $this->weekdayRegularHolidays++;
+                //             }
+                //         }
+                //     }
+                //     $currentDate->addDay();
+                // }
 
                 $totalDeductions = 0;
                 $withholdingTax = 0;
                 $deductionBalance = 0;
                 $nycempc = 0;
                 $netAmountDue = 0;
-
-                $admin = Auth::user();
-                $preparedBy = User::where('users.id', $admin->id)
-                    ->join('positions', 'positions.id', 'users.position_id')
-                    ->join('signatories', 'signatories.user_id', 'users.id')
-                    ->first();
 
                 foreach ($payrollsAll as $payrollRecord) {
                     $userId = $payrollRecord->user_id;
@@ -167,7 +164,12 @@ class CosRegRecordedPayroll extends Component
                         continue;
                     }
 
-                    $dailySalaryRate = $payrollRecord->rate_per_month / 22;
+                    $ratePerMonth = ($payrollRecord->rate_per_month * 0.20) + $payrollRecord->rate_per_month;
+
+                    $dailySalaryRate = $ratePerMonth / 22;
+
+                    //Get total number of covered days
+                    $totalDays = $dtrData['total_days'];
 
                     // Get the count of absences and its amount
                     $absentDays = $dtrData['total_absent'];
@@ -294,7 +296,6 @@ class CosRegRecordedPayroll extends Component
                     ];
                 }
 
-                $payrollDTR[$employeeId]['total_days']++;
                 
                 // Convert time strings to integer minutes
                 $totalHours = $this->timeToMinutes($record->total_hours_rendered);
@@ -308,6 +309,11 @@ class CosRegRecordedPayroll extends Component
                 }
                 if($record->remarks == "Absent"){
                     $payrollDTR[$employeeId]['total_absent']++;
+                }
+
+                // Get No. of Days Covered
+                if($record->remarks == "Present" || ($record->remarks == "Absent" && $record->up_remarks != "Holiday" && $record->up_remarks != null) || $record->remarks == "Incomplete" || $record->remarks == "Late/Undertime"){
+                    $payrollDTR[$employeeId]['total_days']++;
                 }
 
                 $payrollDTR[$employeeId]['total_overtime'] += $overtime;
@@ -346,5 +352,40 @@ class CosRegRecordedPayroll extends Component
             $dateString = $holiday->holiday_date->format('Y-m-d');
             return [$dateString => $holiday->type];
         });
+    }
+
+    public function toggleDelete($startDate, $endDate){
+        $this->delete = true;
+        $this->start_Date = $startDate;
+        $this->end_Date = $endDate;
+    }
+
+    public function deletePayroll(){
+        try{
+            $payslips = CosRegPayslip::where('start_date', Carbon::parse($this->start_Date))
+                                    ->where('end_date', Carbon::parse($this->end_Date))
+                                    ->get();
+            if($payslips){
+                $payslips->each->delete();
+
+                $this->resetVariables();
+                $this->dispatch('swal', [
+                    'title' => "Payroll deleted successfully",
+                    'icon' => 'success'
+                ]);
+            }else{
+                $this->resetVariables();
+                $this->dispatch('swal', [
+                    'title' => "Payroll deletion was unsuccessful",
+                    'icon' => 'error'
+                ]);
+            }
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+
+    public function resetVariables(){
+        $this->delete = null;
     }
 }
