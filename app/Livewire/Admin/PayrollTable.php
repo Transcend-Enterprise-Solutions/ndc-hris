@@ -133,12 +133,14 @@ class PayrollTable extends Component
 
     public function mount(){
         $this->unpayrolledEmployees = User::where('user_role', '=', 'emp')
+            ->join('user_data', 'user_data.user_id', 'users.id')
             ->leftJoin('payrolls', 'payrolls.user_id', '=', 'users.id')
             ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', '=', 'users.id')
             ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', '=', 'users.id')
             ->whereNull('payrolls.id')
             ->whereNull('cos_sk_payrolls.id')
             ->whereNull('cos_reg_payrolls.id')
+            ->where('user_data.appointment', '!=', 'plantilla')
             ->select('users.*')
             ->get();
 
