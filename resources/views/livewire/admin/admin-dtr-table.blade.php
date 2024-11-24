@@ -233,27 +233,39 @@
     </div>
     <div class="w-full mt-8 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
         <div class="mb-4">
-            <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Office Divisions</h3>
-            <div class="mt-4">
+            <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 text-center">DTR Signatory</h3>
+            <div class="mt-4 overflow-x-auto">
                 <table class="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow">
-                    <thead>
-                        <tr>
-                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300">Office Division</th>
-                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300">Signatory Name</th>
-                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300">Signatory Position</th>
-                            <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 dark:text-gray-300">Actions</th>
+                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                        <tr class="whitespace-nowrap">
+                            <th class="px-4 py-2 text-center">
+                                <div class="flex items-center justify-center">
+                                    <span class="ml-2">Office Division</span>
+                                </div>
+                            </th>
+                            <th class="px-4 py-2 text-center">
+                                <div class="flex items-center justify-center">
+                                    <span class="ml-2">Signatory Name</span>
+                                </div>
+                            </th>
+                            <th class="px-4 py-2 text-center">
+                                <div class="flex items-center justify-center">
+                                    <span class="ml-2">Signatory Position</span>
+                                </div>
+                            </th>
+                            <th class="px-4 py-2 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($officeDivisions as $division)
-                            <tr class="border-b dark:border-gray-700">
-                                <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-200">{{ $division->office_division }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ $division->sign_name ?? 'N/A' }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ $division->sign_pos ?? 'N/A' }}</td>
-                                <td class="px-6 py-4 text-center">
+                            <tr class="whitespace-nowrap">
+                                <td class="px-4 py-2 text-center">{{ $division->office_division }}</td>
+                                <td class="px-4 py-2 text-center">{{ $division->sign_name ?? 'N/A' }}</td>
+                                <td class="px-4 py-2 text-center">{{ $division->sign_pos ?? 'N/A' }}</td>
+                                <td class="px-4 py-2 text-center">
                                     <button wire:click="openSignatoryModal({{ $division->id }})"
                                             class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-300">
-                                        Edit Signatory
+                                        Edit
                                     </button>
                                 </td>
                             </tr>
@@ -263,4 +275,5 @@
             </div>
         </div>
     </div>
+
 </div>
