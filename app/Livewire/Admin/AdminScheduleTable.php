@@ -16,7 +16,7 @@ class AdminScheduleTable extends Component
     public $schedules;
     public $employees;
     public $scheduleId;
-    public $emp_code, $wfh_days = [], $default_start_time = '07:00', $default_end_time = '18:30';
+    public $thisEmployeeName, $emp_code, $wfh_days = [], $default_start_time = '07:00', $default_end_time = '18:30';
     public $start_date, $end_date;
     public $isModalOpen = false;
     public $isEditMode = false;
@@ -201,6 +201,7 @@ class AdminScheduleTable extends Component
             ->first();
         
         $this->emp_code = $user->display_emp_code;
+        $this->thisEmployeeName = $user->name;
         $this->wfh_days = !empty($schedule->wfh_days) ? explode(',', $schedule->wfh_days) : [];
         $this->default_start_time = date('H:i', strtotime($schedule->default_start_time));
         $this->default_end_time = date('H:i', strtotime($schedule->default_end_time));
