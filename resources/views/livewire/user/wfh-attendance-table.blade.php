@@ -7,8 +7,12 @@
                         <div>
                             Current Location: {{ $latitude }}, {{ $longitude }}
                         </div>
+                    @else
+                        <div>
+                            No Location
+                        </div>
                     @endif
-                    
+
                     <div id="clock" class="text-lg font-semibold mb-4 text-gray-900 dark:text-white h-10 text-center">
                         <!-- Time will be displayed here -->
                     </div>
