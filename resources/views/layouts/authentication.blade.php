@@ -84,7 +84,7 @@
 <body class="font-inter antialiased bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400">
 
     <main class="bg-white main-container">
-        <div class="relative flex overflow-hidden justify-center lg:justify-between">
+        <div class="relative flex overflow-hidden justify-center lg:justify-between" style="z-index: 99">
 
             <!-- Content -->
             <div class="sm:w-full md:w-full lg:w-1/2">
