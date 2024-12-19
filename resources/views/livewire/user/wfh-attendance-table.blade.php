@@ -3,6 +3,12 @@
         <div class="flex justify-center w-full">
             <div class="w-full bg-white rounded-2xl p-3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
                 <div class="w-full flex flex-col justify-center items-center">
+                    @if($latitude && $longitude)
+                        <div>
+                            Current Location: {{ $latitude }}, {{ $longitude }}
+                        </div>
+                    @endif
+                    
                     <div id="clock" class="text-lg font-semibold mb-4 text-gray-900 dark:text-white h-10 text-center">
                         <!-- Time will be displayed here -->
                     </div>

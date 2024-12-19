@@ -26,6 +26,20 @@ class WfhAttendanceTable extends Component
     public $afternoonOutDisabled = true;
     public $scheduleType = 'WFH'; // Default value
 
+    public $latitude;
+    public $longitude;
+
+    protected $listeners = ['locationUpdated' => 'handleLocationUpdate'];
+
+    public function handleLocationUpdate($locationData)
+    {
+        $this->latitude = $locationData['latitude'];
+        $this->longitude = $locationData['longitude'];
+        
+        // For testing
+        dd("Latitude: " . $this->latitude, "Longitude: " . $this->longitude);
+    }
+
     // public function checkWFHDay()
     // {
     //     $user = Auth::user();
@@ -48,6 +62,8 @@ class WfhAttendanceTable extends Component
     //         $this->scheduleType = 'Onsite';
     //     }
     // }
+
+
     public function checkWFHDay()
     {
         $user = Auth::user();
@@ -192,7 +208,7 @@ class WfhAttendanceTable extends Component
 
     public function resetVariables()
     {
-        $this->password = null;
+        // $this->password = null;
         $this->errorMessage = null;
     }
 
