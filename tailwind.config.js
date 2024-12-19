@@ -67,6 +67,9 @@ export default {
             zIndex: {
                 60: '60',
             },
+            colors: {
+                customBlue: '#115d8e',
+            },
         },
     },
 

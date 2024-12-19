@@ -11,9 +11,9 @@
         <div class="flex justify-left mb-10 ml-1" style="width: 200px; height: 32px;">
             <!-- Logo -->
             <a class="flex items-center" href="{{ route('dashboard') }}">
-                <img class="size-10 mx-auto" src="/images/hris-logo.png" alt="hris logo">
+                <img class="size-10 mx-auto" src="/images/ndc_logo.png" alt="hris logo">
                 <span
-                    class="text-black dark:text-white ml-2 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">NYC
+                    class="text-black dark:text-white ml-2 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">NDC
                     - HRIS</span>
             </a>
         </div>
