@@ -36,7 +36,6 @@
             display: none !important;
         }
     </style>
-    @livewireStyles
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.store('darkMode', localStorage.getItem('dark-mode') === 'true');
@@ -73,13 +72,12 @@
 
     </div>
 
-    @livewireScripts
-
     <script>
         document.addEventListener('livewire:navigating', () => {
             Alpine.store('darkMode', localStorage.getItem('dark-mode') === 'true');
         });
     </script>
-</body>
 
+@livewireScripts
+</body>
 </html>

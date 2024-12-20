@@ -5,7 +5,7 @@
                 <div class="w-full flex flex-col justify-center items-center">
                     <div>
                         {{-- Debug information --}}
-                        <div style="display: none;">
+                        <div>
                             Debug Info:
                             Latitude exists: {{ isset($latitude) ? 'yes' : 'no' }}
                             Longitude exists: {{ isset($longitude) ? 'yes' : 'no' }}
@@ -29,7 +29,7 @@
                         class="px-4 py-2 bg-blue-500 text-white rounded"
                     >
                         Request Location Update
-                    </button>
+                    </button>--
 
                     <div id="clock" class="text-lg font-semibold mb-4 text-gray-900 dark:text-white h-10 text-center">
                         <!-- Time will be displayed here -->
