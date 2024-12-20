@@ -18,21 +18,20 @@
                     <div wire:ignore>
                         <div id="map" style="height: 400px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
                     </div>
-                    
-                    <div>
+
+                    <div class="text-sm">
                         {{-- Location Debug information --}}
                         <div>
                             Location Info: <br>
-                            Latitude value: {{ $latitude ?? 'null' }} <br>
-                            Longitude value: {{ $longitude ?? 'null' }} <br><br>
+                            Latitude value: {{ $latitude ?? '...' }} <br>
+                            Longitude value: {{ $longitude ?? '...' }} <br><br>
                         </div>
                     </div>
                 </div>
                 <div class="w-full flex flex-col justify-center items-center">
 
-                    <div id="clock" class="text-md font-semibold mb-2 text-gray-900 dark:text-white h-10 text-center">
-                        <!-- Time will be displayed here -->
-                    </div>
+                    <x-date-clock-counter />
+
                     <div
                         class="flex flex-col sm:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-12">
                         <div
@@ -201,24 +200,15 @@
 <script>
     let map;
     let marker;
-
+    
+    // Initialize map first
     function initMap() {
         // Default to a central location if no coordinates yet
         const defaultLocation = { lat: 14.5995, lng: 120.9842 }; // Manila coordinates
         
-        // Parse the PHP variables safely
-        const lat = {{ $latitude !== null ? $latitude : 'null' }};
-        const lng = {{ $longitude !== null ? $longitude : 'null' }};
-        
-        const location = {
-            lat: typeof lat === 'number' ? lat : defaultLocation.lat,
-            lng: typeof lng === 'number' ? lng : defaultLocation.lng
-        };
-
-        // Initialize map
         map = new google.maps.Map(document.getElementById("map"), {
             zoom: 15,
-            center: location,
+            center: defaultLocation,
             mapTypeControl: false,
             streetViewControl: false,
             fullscreenControl: true,
@@ -231,44 +221,23 @@
                 }
             ]
         });
-
-        // Add initial marker if we have valid coordinates
-        if (typeof lat === 'number' && typeof lng === 'number') {
-            marker = new google.maps.Marker({
-                position: location,
-                map: map,
-                title: 'Your Location',
-                animation: google.maps.Animation.DROP
-            });
-        }
     }
-
-    // Initialize map when page loads
-    document.addEventListener('DOMContentLoaded', initMap);
-
-    // Reinitialize map when Livewire updates the component
-    document.addEventListener('livewire:navigated', initMap);
-
-    // Listen for Livewire location updates
-    Livewire.on('locationUpdated', (data) => {
-        console.log('Location update received:', data); // Debug log
+    
+    // Function to update map with new coordinates
+    function updateMap() {
+        const lat = @this.latitude;
+        const lng = @this.longitude;
         
-        if (data.locationData && data.locationData.latitude && data.locationData.longitude) {
-            const newLocation = {
-                lat: parseFloat(data.locationData.latitude),
-                lng: parseFloat(data.locationData.longitude)
-            };
-
-            console.log('New location:', newLocation); // Debug log
-
-            // Make sure map is initialized
+        if (lat && lng) {
             if (!map) {
                 initMap();
             }
 
+            const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
+            
             // Update map center
             map.setCenter(newLocation);
-
+        
             // Update or create marker
             if (marker) {
                 marker.setPosition(newLocation);
@@ -280,49 +249,12 @@
                     animation: google.maps.Animation.DROP
                 });
             }
-
-            // Add or update accuracy circle
-            if (window.accuracyCircle) {
-                window.accuracyCircle.setCenter(newLocation);
-            } else {
-                window.accuracyCircle = new google.maps.Circle({
-                    strokeColor: '#4285F4',
-                    strokeOpacity: 0.2,
-                    strokeWeight: 2,
-                    fillColor: '#4285F4',
-                    fillOpacity: 0.1,
-                    map: map,
-                    center: newLocation,
-                    radius: 50
-                });
-            }
         }
-    });
-
-    // Handle Livewire updates
-    document.addEventListener('livewire:update', () => {
-        if (map) {
-            google.maps.event.trigger(map, 'resize');
-        }
-    });
-</script>
-
-<script>
-    function updateClock() {
-        const now = new Date();
-        const options = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true
-        };
-        const timeString = now.toLocaleString('en-US', options);
-        document.getElementById('clock').textContent = timeString;
     }
-    updateClock();
-    setInterval(updateClock, 1000);
+    
+    // Initialize map when page loads
+    document.addEventListener('DOMContentLoaded', initMap);
+    
+    // Check every 5 seconds
+    setInterval(updateMap , 5000); 
 </script>

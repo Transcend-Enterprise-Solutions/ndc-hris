@@ -30,22 +30,14 @@ class WfhAttendanceTable extends Component
     public $longitude = null;
 
     #[On('locationUpdated')] 
-    public function handleLocationUpdate($locationData = null)
+    public function handleLocationUpdate($locationData)
     {
-         if (is_string($locationData)) {
+        if (is_string($locationData)) {
             $locationData = json_decode($locationData, true);
         }
         
         $this->latitude = $locationData['latitude'] ?? null;
         $this->longitude = $locationData['longitude'] ?? null;
-
-        // Dispatch event to update map
-        $this->dispatch('locationUpdated', [
-            'locationData' => [
-                'latitude' => $this->latitude,
-                'longitude' => $this->longitude
-            ]
-        ]);
     }
 
     public function checkWFHDay()
