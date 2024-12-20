@@ -30,6 +30,8 @@
 
 
 
+                <!-- Info button -->
+                <x-refresh-page align="right" />
 
                 <!-- Info button -->
                 <x-dropdown-help align="right" />
