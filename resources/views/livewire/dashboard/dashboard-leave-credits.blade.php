@@ -3,7 +3,7 @@
     <div
         class="p-6 flex-1 bg-gradient-to-br from-indigo-100 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-md">
         <div>
-            <h2 class="text-md sm:text-2xl mb-2 text-gray-900 dark:text-gray-100">
+            <h2 class="text-md mb-2 text-gray-900 dark:text-gray-100">
                 Vacation Leave Credits
             </h2>
             <p class="text-3xl font-bold text-blue-600 dark:text-gray-200">
@@ -15,7 +15,7 @@
     <div
         class="p-6 flex-1 bg-gradient-to-br from-indigo-100 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-md">
         <div>
-            <h2 class="text-md sm:text-2xl mb-2 text-gray-900 dark:text-gray-100">
+            <h2 class="text-md mb-2 text-gray-900 dark:text-gray-100">
                 Forced Leave Credits
             </h2>
             <p class="text-3xl font-bold text-blue-600 dark:text-gray-200">
@@ -27,7 +27,7 @@
     <div
         class="p-6 flex-1 bg-gradient-to-br from-indigo-100 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-md">
         <div>
-            <h2 class="text-md sm:text-2xl mb-2 text-gray-900 dark:text-gray-100">
+            <h2 class="text-md mb-2 text-gray-900 dark:text-gray-100">
                 Sick Leave Credits
             </h2>
             <p class="text-3xl font-bold text-blue-600 dark:text-gray-200">
@@ -39,7 +39,7 @@
     <div
         class="p-6 flex-1 bg-gradient-to-br from-indigo-100 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-md">
         <div>
-            <h2 class="text-md sm:text-2xl mb-2 text-gray-900 dark:text-gray-100">
+            <h2 class="text-md mb-2 text-gray-900 dark:text-gray-100">
                 Special Privilege Leave Credits
             </h2>
             <p class="text-3xl font-bold text-blue-600 dark:text-gray-200">
