@@ -4,24 +4,18 @@
             <div class="w-full bg-white rounded-2xl p-3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
                 <div class="w-full flex flex-col justify-center items-center">
                     <div>
-                        {{-- Debug information --}}
-                        <div>
-                            Debug Info: <br>
-                            Latitude exists: {{ isset($latitude) ? 'yes' : 'no' }} <br>
-                            Longitude exists: {{ isset($longitude) ? 'yes' : 'no' }} <br>
-                            Latitude value: {{ $latitude ?? 'null' }} <br>
-                            Longitude value: {{ $longitude ?? 'null' }}
-                        </div>
-                    
-                        @if($latitude && $longitude)
-                            <div>
-                                Current Location: {{ $latitude }}, {{ $longitude }}
+                        <div id="map" style="height: 400px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
+                        
+                        {{-- Keep debug info but hide it by default --}}
+                        <details class="mt-4">
+                            <summary class="cursor-pointer text-sm text-gray-600">Show Debug Info</summary>
+                            <div class="p-4 bg-gray-50 rounded-lg mt-2">
+                                <p>Latitude exists: {{ isset($latitude) ? 'yes' : 'no' }}</p>
+                                <p>Longitude exists: {{ isset($longitude) ? 'yes' : 'no' }}</p>
+                                <p>Latitude value: {{ $latitude ?? 'null' }}</p>
+                                <p>Longitude value: {{ $longitude ?? 'null' }}</p>
                             </div>
-                        @else
-                            <div>
-                                No Location (Waiting for location data...) <br><br>
-                            </div>
-                        @endif
+                        </details>
                     </div>
 
                     <div id="clock" class="text-lg font-semibold mb-4 text-gray-900 dark:text-white h-10 text-center">
@@ -208,6 +202,101 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+<script>
+    let map;
+    let marker;
+    
+    function initMap() {
+        // Default to a central location if no coordinates yet
+        const defaultLocation = { lat: 14.5995, lng: 120.9842 }; // Manila coordinates
+        const location = {
+            lat: {{ $latitude ?? 'null' }},
+            lng: {{ $longitude ?? 'null' }}
+        };
+
+        map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 15,
+            center: location.lat && location.lng ? location : defaultLocation,
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: true,
+            zoomControl: true,
+            styles: [
+                {
+                    featureType: "poi",
+                    elementType: "labels",
+                    stylers: [{ visibility: "off" }]
+                }
+            ]
+        });
+
+        if (location.lat && location.lng) {
+            marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                title: 'Your Location',
+                animation: google.maps.Animation.DROP
+            });
+
+            // Add accuracy circle
+            new google.maps.Circle({
+                strokeColor: '#4285F4',
+                strokeOpacity: 0.2,
+                strokeWeight: 2,
+                fillColor: '#4285F4',
+                fillOpacity: 0.1,
+                map: map,
+                center: location,
+                radius: 50 // You can adjust this or use actual accuracy from location data
+            });
+        }
+    }
+
+    // Initialize map when page loads
+    document.addEventListener('DOMContentLoaded', initMap);
+
+    // Listen for Livewire location updates
+    Livewire.on('locationUpdated', (data) => {
+        if (data.locationData) {
+            const newLocation = {
+                lat: parseFloat(data.locationData.latitude),
+                lng: parseFloat(data.locationData.longitude)
+            };
+
+            // Update map center
+            map.setCenter(newLocation);
+
+            // Update or create marker
+            if (marker) {
+                marker.setPosition(newLocation);
+            } else {
+                marker = new google.maps.Marker({
+                    position: newLocation,
+                    map: map,
+                    title: 'Your Location',
+                    animation: google.maps.Animation.DROP
+                });
+            }
+        }
+    });
+</script>
+@endpush
+
+@push('styles')
+<style>
+    #map {
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    #map:hover {
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+</style>
+@endpush
 
 <script>
     function updateClock() {

@@ -4,13 +4,12 @@ namespace App\Livewire\User;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Models\DTRSchedule;
 use App\Models\EmployeesDtr;
 use App\Models\TransactionWFH;
-use Illuminate\Support\Facades\Log;
 use Livewire\WithPagination;
+use Livewire\Attributes\On;
 
 class WfhAttendanceTable extends Component
 {
@@ -30,49 +29,22 @@ class WfhAttendanceTable extends Component
     public $latitude = null;
     public $longitude = null;
 
-    protected $listeners = ['locationUpdated' => 'handleLocationUpdate'];
-
-    public function handleLocationUpdate($locationData)
+    #[On('locationUpdated')] 
+    public function handleLocationUpdate($locationData = null)
     {
-        // Ensure $locationData is an array or convert it if it's JSON
-        if (is_string($locationData)) {
+         if (is_string($locationData)) {
             $locationData = json_decode($locationData, true);
         }
         
         $this->latitude = $locationData['latitude'] ?? null;
         $this->longitude = $locationData['longitude'] ?? null;
-        
-        // Optional: Add logging to debug the received data
-        logger()->info('Location Update Received', [
-            'data' => $locationData,
+
+        // Emit event for JavaScript to update map
+        $this->dispatch('locationUpdated', ['locationData' => [
             'latitude' => $this->latitude,
             'longitude' => $this->longitude
-        ]);
+        ]]);
     }
-
-    // public function checkWFHDay()
-    // {
-    //     $user = Auth::user();
-    //     $today = Carbon::now()->format('l');
-    //     $currentDate = Carbon::now()->format('Y-m-d');
-
-    //     $schedule = DTRSchedule::where('emp_code', $user->emp_code)->first();
-
-    //     if ($schedule) {
-    //         $wfhDays = explode(',', $schedule->wfh_days);
-    //         $startDate = Carbon::parse($schedule->start_date)->format('Y-m-d');
-    //         $endDate = Carbon::parse($schedule->end_date)->format('Y-m-d');
-
-    //         if (in_array($today, $wfhDays) && $currentDate >= $startDate && $currentDate <= $endDate) {
-    //             $this->scheduleType = 'WFH';
-    //         } else {
-    //             $this->scheduleType = 'Onsite';
-    //         }
-    //     } else {
-    //         $this->scheduleType = 'Onsite';
-    //     }
-    // }
-
 
     public function checkWFHDay()
     {
@@ -125,7 +97,6 @@ class WfhAttendanceTable extends Component
         $this->showConfirmation = false;
         $this->punch($this->punchState, $this->verifyType);
     }
-
 
     public function punch($state, $verifyType)
     {
@@ -194,7 +165,6 @@ class WfhAttendanceTable extends Component
             'icon' => 'success'
         ]);
     }
-
 
     public function morningIn()
     {
@@ -271,7 +241,6 @@ class WfhAttendanceTable extends Component
         }
     }
          
-
     public function render()
     {
         $this->checkWFHDay();
