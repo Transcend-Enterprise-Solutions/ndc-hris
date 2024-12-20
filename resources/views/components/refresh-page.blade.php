@@ -5,7 +5,7 @@
         aria-label="Refresh"
     >
         <i
-            class="bi bi-arrow-clockwise text-slate-500 dark:text-slate-400"
+            class="bi bi-arrow-clockwise text-xl text-slate-500 dark:text-slate-400"
             :class="{ 'animate-spin-fast': isRefreshing }"
         ></i>
     </button>

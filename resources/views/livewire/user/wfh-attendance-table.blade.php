@@ -199,18 +199,24 @@
 <script>
     let map;
     let marker;
-    
+
     function initMap() {
         // Default to a central location if no coordinates yet
         const defaultLocation = { lat: 14.5995, lng: 120.9842 }; // Manila coordinates
+        
+        // Parse the PHP variables safely
+        const lat = {{ $latitude !== null ? $latitude : 'null' }};
+        const lng = {{ $longitude !== null ? $longitude : 'null' }};
+        
         const location = {
-            lat: {{ $latitude ?? 'null' }},
-            lng: {{ $longitude ?? 'null' }}
+            lat: typeof lat === 'number' ? lat : defaultLocation.lat,
+            lng: typeof lng === 'number' ? lng : defaultLocation.lng
         };
 
+        // Initialize map
         map = new google.maps.Map(document.getElementById("map"), {
             zoom: 15,
-            center: location.lat && location.lng ? location : defaultLocation,
+            center: location,
             mapTypeControl: false,
             streetViewControl: false,
             fullscreenControl: true,
@@ -224,24 +230,13 @@
             ]
         });
 
-        if (location.lat && location.lng) {
+        // Add initial marker if we have valid coordinates
+        if (typeof lat === 'number' && typeof lng === 'number') {
             marker = new google.maps.Marker({
                 position: location,
                 map: map,
                 title: 'Your Location',
                 animation: google.maps.Animation.DROP
-            });
-
-            // Add accuracy circle
-            new google.maps.Circle({
-                strokeColor: '#4285F4',
-                strokeOpacity: 0.2,
-                strokeWeight: 2,
-                fillColor: '#4285F4',
-                fillOpacity: 0.1,
-                map: map,
-                center: location,
-                radius: 50 // You can adjust this or use actual accuracy from location data
             });
         }
     }
@@ -249,13 +244,25 @@
     // Initialize map when page loads
     document.addEventListener('DOMContentLoaded', initMap);
 
+    // Reinitialize map when Livewire updates the component
+    document.addEventListener('livewire:navigated', initMap);
+
     // Listen for Livewire location updates
     Livewire.on('locationUpdated', (data) => {
-        if (data.locationData) {
+        console.log('Location update received:', data); // Debug log
+        
+        if (data.locationData && data.locationData.latitude && data.locationData.longitude) {
             const newLocation = {
                 lat: parseFloat(data.locationData.latitude),
                 lng: parseFloat(data.locationData.longitude)
             };
+
+            console.log('New location:', newLocation); // Debug log
+
+            // Make sure map is initialized
+            if (!map) {
+                initMap();
+            }
 
             // Update map center
             map.setCenter(newLocation);
@@ -271,6 +278,29 @@
                     animation: google.maps.Animation.DROP
                 });
             }
+
+            // Add or update accuracy circle
+            if (window.accuracyCircle) {
+                window.accuracyCircle.setCenter(newLocation);
+            } else {
+                window.accuracyCircle = new google.maps.Circle({
+                    strokeColor: '#4285F4',
+                    strokeOpacity: 0.2,
+                    strokeWeight: 2,
+                    fillColor: '#4285F4',
+                    fillOpacity: 0.1,
+                    map: map,
+                    center: newLocation,
+                    radius: 50
+                });
+            }
+        }
+    });
+
+    // Handle Livewire updates
+    document.addEventListener('livewire:update', () => {
+        if (map) {
+            google.maps.event.trigger(map, 'resize');
         }
     });
 </script>
