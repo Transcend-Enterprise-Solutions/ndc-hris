@@ -15,7 +15,9 @@
         <div class="flex justify-center w-full">
             <div class="w-full bg-white rounded-2xl p-3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
                 <div>
-                    <div id="map" style="height: 400px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
+                    <div wire:ignore>
+                        <div id="map" style="height: 400px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
+                    </div>
                     
                     <div>
                         {{-- Location Debug information --}}
