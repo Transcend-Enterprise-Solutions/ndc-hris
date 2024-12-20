@@ -1,24 +1,34 @@
 <div x-data="{ open: false }" class="w-full">
+
+    <style>
+        #map {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        #map:hover {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+    </style>
+
     <div class="w-full flex justify-center">
         <div class="flex justify-center w-full">
             <div class="w-full bg-white rounded-2xl p-3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
-                <div class="w-full flex flex-col justify-center items-center">
+                <div>
+                    <div id="map" style="height: 400px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
+                    
                     <div>
-                        <div id="map" style="height: 400px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
-                        
-                        {{-- Keep debug info but hide it by default --}}
-                        <details class="mt-4">
-                            <summary class="cursor-pointer text-sm text-gray-600">Show Debug Info</summary>
-                            <div class="p-4 bg-gray-50 rounded-lg mt-2">
-                                <p>Latitude exists: {{ isset($latitude) ? 'yes' : 'no' }}</p>
-                                <p>Longitude exists: {{ isset($longitude) ? 'yes' : 'no' }}</p>
-                                <p>Latitude value: {{ $latitude ?? 'null' }}</p>
-                                <p>Longitude value: {{ $longitude ?? 'null' }}</p>
-                            </div>
-                        </details>
+                        {{-- Location Debug information --}}
+                        <div>
+                            Location Info: <br>
+                            Latitude value: {{ $latitude ?? 'null' }} <br>
+                            Longitude value: {{ $longitude ?? 'null' }} <br><br>
+                        </div>
                     </div>
+                </div>
+                <div class="w-full flex flex-col justify-center items-center">
 
-                    <div id="clock" class="text-lg font-semibold mb-4 text-gray-900 dark:text-white h-10 text-center">
+                    <div id="clock" class="text-md font-semibold mb-2 text-gray-900 dark:text-white h-10 text-center">
                         <!-- Time will be displayed here -->
                     </div>
                     <div
@@ -147,24 +157,6 @@
                     </div>
                 </div>
 
-                {{-- <x-modal id="passwordConfirmation" maxWidth="md" centered wire:model="inputPassword">
-                    <div class="p-4">
-                        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-slate-100">Verify
-                            Password</label>
-                        <input type="password" wire:model="password"
-                            class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
-                            placeholder="Enter your password" wire:keydown.enter="verifyPassword">
-
-                        @if ($errorMessage)
-                            <div class="mt-2 text-red-600 text-sm font-medium">{{ $errorMessage }}</div>
-                        @endif
-
-                        <button wire:click="verifyPassword"
-                            class="btn bg-emerald-200 dark:bg-emerald-500 hover:bg-emerald-600 text-gray-800 dark:text-white whitespace-nowrap mt-4">Submit</button>
-                        <button wire:click="closeVerification"
-                            class="btn bg-gray-200 dark:bg-gray-600 hover:bg-gray-700 text-gray-800 dark:text-white whitespace-nowrap mt-4">Cancel</button>
-                    </div>
-                </x-modal> --}}
                 <x-modal id="punchConfirmation" maxWidth="md" centered wire:model="showConfirmation">
                     <div class="p-4">
                         <div class="flex items-center justify-between pb-4">
@@ -203,8 +195,7 @@
     </div>
 </div>
 
-@push('scripts')
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs"></script>
 <script>
     let map;
     let marker;
@@ -283,20 +274,6 @@
         }
     });
 </script>
-@endpush
-
-@push('styles')
-<style>
-    #map {
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        transition: all 0.3s ease;
-    }
-    
-    #map:hover {
-        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    }
-</style>
-@endpush
 
 <script>
     function updateClock() {

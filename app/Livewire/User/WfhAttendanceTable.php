@@ -38,12 +38,6 @@ class WfhAttendanceTable extends Component
         
         $this->latitude = $locationData['latitude'] ?? null;
         $this->longitude = $locationData['longitude'] ?? null;
-
-        // Emit event for JavaScript to update map
-        $this->dispatch('locationUpdated', ['locationData' => [
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude
-        ]]);
     }
 
     public function checkWFHDay()
