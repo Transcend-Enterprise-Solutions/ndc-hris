@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Models\DTRSchedule;
 use App\Models\EmployeesDtr;
 use App\Models\TransactionWFH;
+use Illuminate\Support\Facades\Log;
 use Livewire\WithPagination;
 
 class WfhAttendanceTable extends Component
@@ -26,18 +27,20 @@ class WfhAttendanceTable extends Component
     public $afternoonOutDisabled = true;
     public $scheduleType = 'WFH'; // Default value
 
-    public $latitude;
-    public $longitude;
+    public $latitude = null;
+    public $longitude = null;
 
     protected $listeners = ['locationUpdated' => 'handleLocationUpdate'];
 
     public function handleLocationUpdate($locationData)
     {
+        Log::info('Location Update Received in Livewire', $locationData);
+        
         $this->latitude = $locationData['latitude'];
         $this->longitude = $locationData['longitude'];
         
-        // For testing
-        dd("Latitude: " . $this->latitude, "Longitude: " . $this->longitude);
+        // Force a re-render
+        $this->emit('locationProcessed');
     }
 
     // public function checkWFHDay()
