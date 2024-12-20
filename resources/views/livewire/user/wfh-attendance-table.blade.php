@@ -3,15 +3,33 @@
         <div class="flex justify-center w-full">
             <div class="w-full bg-white rounded-2xl p-3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
                 <div class="w-full flex flex-col justify-center items-center">
-                    @if($latitude && $longitude)
-                        <div>
-                            Current Location: {{ $latitude }}, {{ $longitude }}
+                    <div>
+                        {{-- Debug information --}}
+                        <div style="display: none;">
+                            Debug Info:
+                            Latitude exists: {{ isset($latitude) ? 'yes' : 'no' }}
+                            Longitude exists: {{ isset($longitude) ? 'yes' : 'no' }}
+                            Latitude value: {{ $latitude ?? 'null' }}
+                            Longitude value: {{ $longitude ?? 'null' }}
                         </div>
-                    @else
-                        <div>
-                            No Location
-                        </div>
-                    @endif
+                    
+                        @if($latitude && $longitude)
+                            <div>
+                                Current Location: {{ $latitude }}, {{ $longitude }}
+                            </div>
+                        @else
+                            <div>
+                                No Location (Waiting for location data...)
+                            </div>
+                        @endif
+                    </div>
+
+                    <button 
+                        wire:click="$emit('requestLocation')" 
+                        class="px-4 py-2 bg-blue-500 text-white rounded"
+                    >
+                        Request Location Update
+                    </button>
 
                     <div id="clock" class="text-lg font-semibold mb-4 text-gray-900 dark:text-white h-10 text-center">
                         <!-- Time will be displayed here -->
