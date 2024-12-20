@@ -6,10 +6,10 @@
                     <div>
                         {{-- Debug information --}}
                         <div>
-                            Debug Info:
-                            Latitude exists: {{ isset($latitude) ? 'yes' : 'no' }}
-                            Longitude exists: {{ isset($longitude) ? 'yes' : 'no' }}
-                            Latitude value: {{ $latitude ?? 'null' }}
+                            Debug Info: <br>
+                            Latitude exists: {{ isset($latitude) ? 'yes' : 'no' }} <br>
+                            Longitude exists: {{ isset($longitude) ? 'yes' : 'no' }} <br>
+                            Latitude value: {{ $latitude ?? 'null' }} <br>
                             Longitude value: {{ $longitude ?? 'null' }}
                         </div>
                     
@@ -19,17 +19,10 @@
                             </div>
                         @else
                             <div>
-                                No Location (Waiting for location data...)
+                                No Location (Waiting for location data...) <br><br>
                             </div>
                         @endif
                     </div>
-
-                    <button 
-                        wire:click="$emit('requestLocation')" 
-                        class="px-4 py-2 bg-blue-500 text-white rounded"
-                    >
-                        Request Location Update
-                    </button>--
 
                     <div id="clock" class="text-lg font-semibold mb-4 text-gray-900 dark:text-white h-10 text-center">
                         <!-- Time will be displayed here -->

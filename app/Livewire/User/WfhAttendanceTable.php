@@ -34,13 +34,20 @@ class WfhAttendanceTable extends Component
 
     public function handleLocationUpdate($locationData)
     {
-        Log::info('Location Update Received in Livewire', $locationData);
+        // Ensure $locationData is an array or convert it if it's JSON
+        if (is_string($locationData)) {
+            $locationData = json_decode($locationData, true);
+        }
         
-        $this->latitude = $locationData['latitude'];
-        $this->longitude = $locationData['longitude'];
+        $this->latitude = $locationData['latitude'] ?? null;
+        $this->longitude = $locationData['longitude'] ?? null;
         
-        // Force a re-render
-        $this->emit('locationProcessed');
+        // Optional: Add logging to debug the received data
+        logger()->info('Location Update Received', [
+            'data' => $locationData,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude
+        ]);
     }
 
     // public function checkWFHDay()
