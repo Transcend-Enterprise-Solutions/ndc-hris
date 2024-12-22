@@ -308,7 +308,7 @@ class WfhAttendanceTable extends Component
                     $wfhLoc->update([
                         'latitude' => $this->latitude,
                         'longitude' => $this->longitude,
-                        'status' => 0,
+                        'status' => 1,
                     ]);
                     $this->resetVariables();
                     $this->dispatch('swal', [
@@ -320,7 +320,7 @@ class WfhAttendanceTable extends Component
                         'user_id' => $user->id,
                         'latitude' => $this->latitude,
                         'longitude' => $this->longitude,
-                        'status' => 0,
+                        'status' => 1,
                     ]);
                     $this->resetVariables();
                     $this->dispatch('swal', [

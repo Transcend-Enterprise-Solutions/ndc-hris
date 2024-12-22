@@ -34,10 +34,10 @@
                                 Lat: {{ $registeredLatitude ?? '...' }} <br>
                                 Lng: {{ $registeredLongitude ?? '...' }} <br><br>
                             </div>
-                            <div class="w-1/2 {{ $isWithinRadius ? 'text-green-500' : 'text-red-500' }}">
+                            <div class="w-1/2">
                                 Currect Location: <br>
-                                Lat: {{ $latitude ?? '...' }} <br>
-                                Lng: {{ $longitude ?? '...' }} <br><br>
+                                Lat: <span class="{{ $isWithinRadius ? 'text-green-500' : 'text-red-500' }}">{{ $latitude ?? '...' }}</span> <br>
+                                Lng: <span class="{{ $isWithinRadius ? 'text-green-500' : 'text-red-500' }}">{{ $longitude ?? '...' }}</span> <br><br>
                             </div>
                         </div>
                     </div>
@@ -110,6 +110,14 @@
                                         <p class="mt-2 text-white font-bold">WFH is not available today</p>
                                     </div>
                                 </div>
+                            @elseif($scheduleType === 'WFH' && !$isWithinRadius)
+                            <div
+                                class="absolute inset-0 flex justify-center items-center bg-gray-700 bg-opacity-75">
+                                <div class="text-center">
+                                    <i class="bi bi-person-lock text-white" style="font-size: 5rem;"></i>
+                                    <p class="mt-2 text-white font-bold">You are outside the allowed location for WFH attendance</p>
+                                </div>
+                            </div>
                             @endif
                         </div>
 
