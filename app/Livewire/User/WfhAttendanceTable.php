@@ -245,7 +245,10 @@ class WfhAttendanceTable extends Component
 
     public function mount(){
         $userId = Auth::user()->id;
-        $this->hasWFHLocation = WfhLocation::findOrFail($userId);
+        $wfhLocation = WfhLocation::findOrFail($userId);
+        if($wfhLocation){
+            $this->hasWFHLocation = true;
+        }
     }
          
     public function render()
