@@ -14,20 +14,32 @@
     <div class="w-full flex justify-center">
         <div class="flex justify-center w-full">
             <div class="w-full bg-white rounded-2xl p-3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
-                <div>
-                    <div wire:ignore>
-                        <div id="map" style="height: 400px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
-                    </div>
+                @if ($hasWFHLocation)
+                    <div>
+                        <div wire:ignore>
+                            <div id="map" style="height: 400px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
+                        </div>
 
-                    <div class="text-sm">
-                        {{-- Location Debug information --}}
-                        <div>
-                            Location Info: <br>
-                            Latitude value: {{ $latitude ?? '...' }} <br>
-                            Longitude value: {{ $longitude ?? '...' }} <br><br>
+                        <div class="text-sm">
+                            {{-- Location Debug information --}}
+                            <div>
+                                Location Info: <br>
+                                Latitude value: {{ $latitude ?? '...' }} <br>
+                                Longitude value: {{ $longitude ?? '...' }} <br><br>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @else
+                    <div class="flex justify-center">
+                        <button wire:click="toggleEditLocation" 
+                            class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span
+                                class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
+                                Register Location
+                            </span>
+                        </button>
+                    </div>
+                @endif
                 <div class="w-full flex flex-col justify-center items-center">
 
                     <x-date-clock-counter />
@@ -38,7 +50,7 @@
                             class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700 relative">
                             <h5
                                 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">
-                                NYC WFH ATTENDANCE</h5>
+                                NDC WFH ATTENDANCE</h5>
                             <div class="grid grid-cols-1 gap-4 p-4">
 
                                 <div class="flex justify-center">
@@ -154,7 +166,6 @@
                             </div>
                         </div>
 
-
                     </div>
                 </div>
 
@@ -190,10 +201,44 @@
                     </div>
                 </x-modal>
 
-
             </div>
         </div>
     </div>
+
+    {{-- Add WFH Location Modal --}}
+    <x-modal id="registerLocation" maxWidth="2xl" wire:model="editLocation" centered>
+        <div class="p-4">
+            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
+                Register WFH Location
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div wire:ignore>
+                <div id="map" style="height: 400px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
+            </div>
+
+            <div class="text-sm">
+                {{-- Location Debug information --}}
+                <div>
+                    Location Info: <br>
+                    Latitude value: {{ $latitude ?? '...' }} <br>
+                    Longitude value: {{ $longitude ?? '...' }} <br><br>
+                </div>
+            </div>
+
+            <div class="mt-4 flex justify-end col-span-2">
+                <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" wire:click='saveLocation'>
+                    Save
+                </button>
+                <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                    Cancel
+                </p>
+            </div>
+
+        </div>
+    </x-modal>
 </div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs"></script>
@@ -257,17 +302,4 @@
     
     // Check every 5 seconds
     setInterval(updateMap , 5000); 
-</script>
-
-<script>
-    // Send message containing the rout info to React Native
-    function sendRouteToApp() {
-        const currentPath = window.location.pathname;
-        window.ReactNativeWebView?.postMessage(JSON.stringify({
-            type: 'routeInfo',
-            route: currentPath
-        }));
-    }
-    document.addEventListener('DOMContentLoaded', sendRouteToApp);
-    document.addEventListener('livewire:navigated', sendRouteToApp);
 </script>

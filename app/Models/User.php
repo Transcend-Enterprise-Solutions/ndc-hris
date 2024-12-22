@@ -185,6 +185,11 @@ class User extends Authenticatable
         return $this->hasOne(LeaveCredits::class);
     }
 
+    public function wfhLocations()
+    {
+        return $this->hasOne(WfhLocation::class);
+    }
+
     public function signatories()
     {
         return $this->hasMany(Signatories::class);

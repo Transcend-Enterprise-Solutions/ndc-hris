@@ -36,6 +36,7 @@
             display: none !important;
         }
     </style>
+    @livewireStyles
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.store('darkMode', localStorage.getItem('dark-mode') === 'true');
@@ -76,6 +77,20 @@
         document.addEventListener('livewire:navigating', () => {
             Alpine.store('darkMode', localStorage.getItem('dark-mode') === 'true');
         });
+    </script>
+
+    <script>
+        function sendRouteToApp() {
+            const currentPath = window.location.pathname;
+            window.ReactNativeWebView?.postMessage(JSON.stringify({
+                type: 'routeInfo',
+                route: currentPath
+            }));
+        }
+
+        document.addEventListener('DOMContentLoaded', sendRouteToApp);
+        document.addEventListener('livewire:navigated', sendRouteToApp);
+        window.addEventListener('popstate', sendRouteToApp);
     </script>
 
 @livewireScripts

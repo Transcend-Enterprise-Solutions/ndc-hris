@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\DTRSchedule;
 use App\Models\EmployeesDtr;
 use App\Models\TransactionWFH;
+use App\Models\WfhLocation;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
 
@@ -19,6 +20,8 @@ class WfhAttendanceTable extends Component
     public $punchState;
     public $errorMessage;
     public $verifyType;
+    public $editLocation;
+    public $hasWFHLocation;
 
     public $morningInDisabled = false;
     public $morningOutDisabled = true;
@@ -184,6 +187,7 @@ class WfhAttendanceTable extends Component
     {
         // $this->password = null;
         $this->errorMessage = null;
+        $this->editLocation = null;
     }
 
     public function resetButtonStatesIfNeeded()
@@ -233,6 +237,15 @@ class WfhAttendanceTable extends Component
                 }
             }
         }
+    }
+
+    public function toggleEditLocation(){
+        $this->editLocation = true;
+    }
+
+    public function mount(){
+        $userId = Auth::user()->id;
+        $this->hasWFHLocation = WfhLocation::findOrFail($userId);
     }
          
     public function render()

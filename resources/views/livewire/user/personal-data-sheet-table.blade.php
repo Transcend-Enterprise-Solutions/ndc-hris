@@ -58,7 +58,7 @@
 
             <!-- Export to Excel -->
             <div
-                class="w-full flex flex-col sm:flex-row sm:justify-end sm:space-x-4 relative inline-block text-left mb-6 sm:mb-0">
+                class="w-full flex flex-col sm:flex-row sm:justify-end sm:space-x-4 relative text-left mb-6 sm:mb-0">
                 <button wire:click="exportPDS"
                     class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
                     justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
