@@ -288,7 +288,6 @@ class WfhAttendanceTable extends Component
         $wfhLocation = WfhLocation::where('user_id', $userId)->first();
         if($wfhLocation){
             $this->hasWFHLocation = true;
-        }else{
             $this->registeredLatitude = floatval($wfhLocation->latitude);
             $this->registeredLongitude = floatval($wfhLocation->longitude);
         }

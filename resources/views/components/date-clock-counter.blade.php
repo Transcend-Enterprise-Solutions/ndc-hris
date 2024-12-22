@@ -1,4 +1,4 @@
-<div id="clock" class="text-md font-semibold mb-2 text-gray-900 dark:text-white h-10 text-center">
+<div id="clock" class="text-sm font-semibold mb-2 text-gray-900 dark:text-white h-10 text-left">
     <!-- Time will be displayed here -->
 </div>
 
