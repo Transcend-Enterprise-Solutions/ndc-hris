@@ -30,7 +30,7 @@
                         </div>
                     </div>
                 @else
-                    <div class="flex justify-center">
+                    <div class="flex justify-center mb-6">
                         <button wire:click="toggleEditLocation" 
                             class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full">
                             Register Location
@@ -203,7 +203,7 @@
     </div>
 
     {{-- Add WFH Location Modal --}}
-    <x-modal id="registerLocation" maxWidth="2xl" wire:model="editLocation" centered>
+    <x-modal id="registerLocation" maxWidth="4xl" wire:model="editLocation" centered>
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
                 Register WFH Location
@@ -213,7 +213,7 @@
             </div>
 
             <div wire:ignore>
-                <div id="map" style="height: 400px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
+                <div id="map" style="height: 300px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
             </div>
 
             <div class="text-sm">
