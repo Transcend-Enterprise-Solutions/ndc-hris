@@ -30,8 +30,12 @@ class WfhAttendanceTable extends Component
     public $afternoonOutDisabled = true;
     public $scheduleType = 'WFH'; // Default value
 
+    public $registeredLatitude;
+    public $registeredLongitude;
+
     public $latitude = null;
     public $longitude = null;
+
 
     #[On('locationUpdated')] 
     public function handleLocationUpdate($locationData)
@@ -284,6 +288,9 @@ class WfhAttendanceTable extends Component
         $wfhLocation = WfhLocation::where('user_id', $userId)->first();
         if($wfhLocation){
             $this->hasWFHLocation = true;
+        }else{
+            $this->registeredLatitude = floatval($wfhLocation->latitude);
+            $this->registeredLongitude = floatval($wfhLocation->longitude);
         }
     }
          

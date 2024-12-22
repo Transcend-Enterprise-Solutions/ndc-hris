@@ -20,12 +20,17 @@
                             <div id="map" style="height: 400px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
                         </div>
 
-                        <div class="text-sm">
+                        <div class="text-sm flex">
                             {{-- Location Debug information --}}
-                            <div>
-                                Location Info: <br>
-                                Latitude value: {{ $latitude ?? '...' }} <br>
-                                Longitude value: {{ $longitude ?? '...' }} <br><br>
+                            <div class="w-1/2">
+                                WFH Location: <br>
+                                Lat: {{ $registeredLatitude ?? '...' }} <br>
+                                Lng: {{ $registeredLongitude ?? '...' }} <br><br>
+                            </div>
+                            <div class="w-1/2">
+                                Currect Location: <br>
+                                Lat: {{ $latitude ?? '...' }} <br>
+                                Lng: {{ $longitude ?? '...' }} <br><br>
                             </div>
                         </div>
                     </div>
@@ -220,8 +225,8 @@
                 {{-- Location Debug information --}}
                 <div>
                     Location Info: <br>
-                    Latitude value: {{ $latitude ?? '...' }} <br>
-                    Longitude value: {{ $longitude ?? '...' }} <br><br>
+                    Lat: {{ $latitude ?? '...' }} <br>
+                    Lng: {{ $longitude ?? '...' }} <br><br>
                 </div>
             </div>
 
