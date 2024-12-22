@@ -203,10 +203,10 @@
     </div>
 
     {{-- Add WFH Location Modal --}}
-    <x-modal id="registerLocation" maxWidth="4xl" wire:model="editLocation" centered>
+    <x-modal id="registerLocation" maxWidth="2xl" wire:model="editLocation" centered>
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                Register WFH Location
+                WFH Location
                 <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
                     <i class="fas fa-times"></i>
                 </button>
