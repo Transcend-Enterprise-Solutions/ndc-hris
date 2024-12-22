@@ -9,6 +9,7 @@ use App\Models\DTRSchedule;
 use App\Models\EmployeesDtr;
 use App\Models\TransactionWFH;
 use App\Models\WfhLocation;
+use Exception;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
 
@@ -241,6 +242,41 @@ class WfhAttendanceTable extends Component
 
     public function toggleEditLocation(){
         $this->editLocation = true;
+    }
+
+    public function saveLocation(){
+        try{
+            if($this->latitude && $this->longitude){
+                $user = Auth::user();
+                $wfhLoc = WfhLocation::where('user_id', $user->id)->first();
+                if($wfhLoc){
+                    $wfhLoc->update([
+                        'latitude' => $this->latitude,
+                        'longitude' => $this->longitude,
+                        'status' => 0,
+                    ]);
+                    $this->resetVariables();
+                    $this->dispatch('swal', [
+                        'title' => "WFH location updated successfully!",
+                        'icon' => 'success'
+                    ]);
+                }else{
+                    WfhLocation::create([
+                        'user_id' => $user->id,
+                        'latitude' => $this->latitude,
+                        'longitude' => $this->longitude,
+                        'status' => 0,
+                    ]);
+                    $this->resetVariables();
+                    $this->dispatch('swal', [
+                        'title' => "WFH location added successfully!",
+                        'icon' => 'success'
+                    ]);
+                }
+            }
+        }catch(Exception $e){
+            throw $e;
+        }
     }
 
     public function mount(){
