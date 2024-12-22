@@ -24,17 +24,17 @@
                             <i class="bi bi-three-dots-vertical"></i>
                         </div>
                         <div wire:ignore>
-                            <div id="map" style="height: 250px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
+                            <div id="map" style="height: 250px; width: 100%; border-radius: 8px; margin: 0;"></div>
                         </div>
 
-                        <div class="text-sm flex">
+                        <div class="text-sm flex mt-2">
                             {{-- Location Debug information --}}
                             <div class="w-1/2">
                                 WFH Location: <br>
                                 Lat: {{ $registeredLatitude ?? '...' }} <br>
                                 Lng: {{ $registeredLongitude ?? '...' }} <br><br>
                             </div>
-                            <div class="w-1/2">
+                            <div class="w-1/2 {{ $isWithinRadius ? 'text-green-500' : 'text-red-500' }}">
                                 Currect Location: <br>
                                 Lat: {{ $latitude ?? '...' }} <br>
                                 Lng: {{ $longitude ?? '...' }} <br><br>

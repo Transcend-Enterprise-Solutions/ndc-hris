@@ -36,6 +36,7 @@ class WfhAttendanceTable extends Component
     public $latitude = null;
     public $longitude = null;
     public $formattedTime = null;
+    public $isWithinRadius;
 
 
     #[On('locationUpdated')] 
@@ -47,7 +48,55 @@ class WfhAttendanceTable extends Component
         
         $this->latitude = $locationData['latitude'] ?? null;
         $this->longitude = $locationData['longitude'] ?? null;
-        $this->formattedTime = $locationData['formattedTime'] ?? null; 
+        $this->formattedTime = $locationData['formattedTime'] ?? null;
+        
+        // Check if within allowed radius and update UI accordingly
+        $this->isWithinRadius = $this->isWithinAllowedRadius();
+    }
+
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        // Radius of the Earth in meters
+        $R = 6371000;
+
+        $lat1 = deg2rad($lat1);
+        $lon1 = deg2rad($lon1);
+        $lat2 = deg2rad($lat2);
+        $lon2 = deg2rad($lon2);
+
+        // Differences in coordinates
+        $dLat = $lat2 - $lat1;
+        $dLon = $lon2 - $lon1;
+
+        // Haversine formula
+        $a = sin($dLat/2) * sin($dLat/2) +
+            cos($lat1) * cos($lat2) * 
+            sin($dLon/2) * sin($dLon/2);
+        
+        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+        
+        // Distance in meters
+        $distance = $R * $c;
+        
+        return $distance;
+    }
+
+    // Method to check if current location is within radius
+    private function isWithinAllowedRadius()
+    {
+        if (!$this->hasWFHLocation || !$this->latitude || !$this->longitude) {
+            return false;
+        }
+
+        $distance = $this->calculateDistance(
+            $this->registeredLatitude,
+            $this->registeredLongitude,
+            $this->latitude,
+            $this->longitude
+        );
+
+        // Check if within 10 meters
+        return $distance <= 10;
     }
 
     public function checkWFHDay()
