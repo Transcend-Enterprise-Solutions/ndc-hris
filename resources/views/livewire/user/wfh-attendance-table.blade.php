@@ -258,3 +258,16 @@
     // Check every 5 seconds
     setInterval(updateMap , 5000); 
 </script>
+
+<script>
+    // Send message containing the rout info to React Native
+    function sendRouteToApp() {
+        const currentPath = window.location.pathname;
+        window.ReactNativeWebView?.postMessage(JSON.stringify({
+            type: 'routeInfo',
+            route: currentPath
+        }));
+    }
+    document.addEventListener('DOMContentLoaded', sendRouteToApp);
+    document.addEventListener('livewire:navigated', sendRouteToApp);
+</script>
