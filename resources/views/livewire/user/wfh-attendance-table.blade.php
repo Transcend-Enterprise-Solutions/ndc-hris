@@ -17,11 +17,14 @@
                 @if ($hasWFHLocation)
                     <div>
                         <div class="flex justify-between">
-                            <x-date-clock-counter />
+                            {{-- <x-date-clock-counter /> --}}
+                            <div class="text-sm font-semibold mb-2 text-gray-900 dark:text-white h-10 text-left">
+                                {{ $formattedTime ?? '...' }}
+                            </div>
                             <i class="bi bi-three-dots-vertical"></i>
                         </div>
                         <div wire:ignore>
-                            <div id="map" style="height: 400px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
+                            <div id="map" style="height: 250px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
                         </div>
 
                         <div class="text-sm flex">
@@ -39,7 +42,7 @@
                         </div>
                     </div>
                 @else
-                    <div class="flex justify-center mb-6">
+                    <div class="flex justify-center mb-4">
                         <button wire:click="toggleEditLocation" 
                             class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full">
                             Register Location

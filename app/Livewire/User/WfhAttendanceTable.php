@@ -35,6 +35,7 @@ class WfhAttendanceTable extends Component
 
     public $latitude = null;
     public $longitude = null;
+    public $formattedTime = null;
 
 
     #[On('locationUpdated')] 
@@ -46,6 +47,7 @@ class WfhAttendanceTable extends Component
         
         $this->latitude = $locationData['latitude'] ?? null;
         $this->longitude = $locationData['longitude'] ?? null;
+        $this->formattedTime = $locationData['formattedTime'] ?? null; 
     }
 
     public function checkWFHDay()
