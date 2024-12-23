@@ -50,11 +50,11 @@
                                 <i class="bi bi-three-dots-vertical cursor-pointer" @click="open = !open"></i>
                                 <div x-show="open" @click.away="open = false"
                                     class="absolute top-4 right-4 z-20 p-3 border border-gray-400 text-sm
-                                    bg-white rounded-lg shadow-2xl dark:bg-gray-700" style="width: 400px">
-                                    {{ $locReqGranted ? 'Your request to change WFH location has been approved' : 'Request to change WFH location' }}
-                                    <button wire:click="sendChangeLocRequest" {{ $locReqGranted && $hasRequested  ? 'disabled' : '' }}
-                                        class="mt-4 px-4 py-2 text-white rounded w-full {{ $locReqGranted && $hasRequested  ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600' }}">
-                                        {{ $locReqGranted && $hasRequested ? 'Request Sent' : 'Send Request' }}
+                                    bg-white rounded-lg shadow-2xl dark:bg-gray-700" style="width: 250px">
+                                    <span>{{ $locReqGranted ? 'Your request to change WFH location has been approved' : 'Request to change WFH location' }}</span>
+                                    <button wire:click="sendChangeLocRequest" {{ $hasRequested  ? 'disabled' : '' }}
+                                        class="mt-4 px-4 py-2 text-white rounded w-full {{ $hasRequested  ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600' }}">
+                                        {{ $hasRequested ? 'Request Sent' : 'Send Request' }}
                                         <div wire:loading wire:target="sendChangeLocRequest" style="margin-left: 5px">
                                             <div class="spinner-border small text-primary" role="status">
                                             </div>
@@ -63,6 +63,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div wire:ignore>
                             <div id="map" style="height: 250px; width: 100%; border-radius: 8px; margin: 0;"></div>
                         </div>
@@ -89,6 +90,7 @@
                         </button>
                     </div>
                 @endif
+                
                 @if($locReqGranted)
                     <div class="flex justify-center mb-4">
                         <button wire:click="toggleEditLocation" 

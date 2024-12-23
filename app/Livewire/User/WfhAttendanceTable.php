@@ -344,6 +344,12 @@ class WfhAttendanceTable extends Component
                 'user_id' => $user->id,
                 'status' => 0,
             ]);
+            $wfhLoc = WfhLocation::where('user_id', $user->id)->first();
+            if($wfhLoc){
+                $wfhLoc->update([
+                    'status' => 0,
+                ]);
+            }
             $this->locReqGranted = false;
         }catch(Exception $e){
             throw $e;
