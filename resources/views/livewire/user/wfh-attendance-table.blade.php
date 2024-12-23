@@ -9,6 +9,31 @@
         #map:hover {
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
+
+        @-webkit-keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner-border {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            vertical-align: text-bottom;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            -webkit-animation: spinner-border .75s linear infinite;
+            animation: spinner-border .75s linear infinite;
+            color: white;
+        }
     </style>
 
     <div class="w-full flex justify-center">
@@ -21,7 +46,22 @@
                             <div class="text-sm font-semibold mb-2 text-gray-900 dark:text-white h-10 text-left">
                                 {{ $formattedTime ?? '...' }}
                             </div>
-                            <i class="bi bi-three-dots-vertical"></i>
+                            <div class="relative">
+                                <i class="bi bi-three-dots-vertical cursor-pointer" @click="open = !open"></i>
+                                <div x-show="open" @click.away="open = false"
+                                    class="absolute top-4 right-4 z-20 p-3 border border-gray-400 text-sm
+                                    bg-white rounded-lg shadow-2xl dark:bg-gray-700" style="width: 400px">
+                                    {{ $locReqGranted ? 'Your request to change WFH location has been approved' : 'Request to change WFH location' }}
+                                    <button wire:click="sendChangeLocRequest" {{ $locReqGranted && $hasRequested  ? 'disabled' : '' }}
+                                        class="mt-4 px-4 py-2 text-white rounded w-full {{ $locReqGranted && $hasRequested  ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600' }}">
+                                        {{ $locReqGranted && $hasRequested ? 'Request Sent' : 'Send Request' }}
+                                        <div wire:loading wire:target="sendChangeLocRequest" style="margin-left: 5px">
+                                            <div class="spinner-border small text-primary" role="status">
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <div wire:ignore>
                             <div id="map" style="height: 250px; width: 100%; border-radius: 8px; margin: 0;"></div>
@@ -49,6 +89,15 @@
                         </button>
                     </div>
                 @endif
+                @if($locReqGranted)
+                    <div class="flex justify-center mb-4">
+                        <button wire:click="toggleEditLocation" 
+                            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full">
+                            Register Location
+                        </button>
+                    </div>
+                @endif
+
                 <div class="w-full flex flex-col justify-center items-center">
                     <div
                         class="flex flex-col sm:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-12">

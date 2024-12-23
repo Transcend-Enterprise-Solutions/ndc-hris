@@ -189,6 +189,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(WfhLocation::class);
     }
+    public function wfhLocationRequests()
+    {
+        return $this->hasMany(WfhLocationRequests::class);
+    }
 
     public function signatories()
     {

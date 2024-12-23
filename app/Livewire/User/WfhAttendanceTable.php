@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Models\WfhLocationRequests;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -37,6 +38,8 @@ class WfhAttendanceTable extends Component
     public $longitude = null;
     public $formattedTime = null;
     public $isWithinRadius;
+    public $locReqGranted;
+    public $hasRequested;
 
 
     #[On('locationUpdated')] 
@@ -334,6 +337,19 @@ class WfhAttendanceTable extends Component
         }
     }
 
+    public function sendChangeLocRequest(){
+        try{
+            $user = Auth::user();
+            WfhLocationRequests::create([
+                'user_id' => $user->id,
+                'status' => 0,
+            ]);
+            $this->locReqGranted = false;
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+
     public function mount(){
         $userId = Auth::user()->id;
         $wfhLocation = WfhLocation::where('user_id', $userId)->first();
@@ -341,6 +357,12 @@ class WfhAttendanceTable extends Component
             $this->hasWFHLocation = true;
             $this->registeredLatitude = floatval($wfhLocation->latitude);
             $this->registeredLongitude = floatval($wfhLocation->longitude);
+            $this->hasRequested = $wfhLocation->status ? false : true;
+        }
+
+        $wfhLocationRequest = WfhLocationRequests::where('user_id', $userId)->first();
+        if($wfhLocationRequest){
+            $this->locReqGranted = $wfhLocationRequest->status ? true : false;
         }
     }
          
