@@ -342,6 +342,8 @@ class WfhAttendanceTable extends Component
             $user = Auth::user();
             WfhLocationRequests::create([
                 'user_id' => $user->id,
+                'curr_lat' => $this->registeredLatitude,
+                'curr_lng' => $this->registeredLongitude,
                 'status' => 0,
             ]);
             $wfhLoc = WfhLocation::where('user_id', $user->id)->first();

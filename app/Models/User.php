@@ -274,6 +274,14 @@ class User extends Authenticatable
         });
     }
 
+    public function scopeSearch2($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('users.emp_code', 'like', $term)
+                ->orWhere('users.name', 'like', $term);
+        });
+    }
+
     public function adminAccount(){
         return $this->hasOne(User::class, 'name', 'name')->where('user_role', '!=', 'emp');
     }

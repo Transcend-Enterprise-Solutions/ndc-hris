@@ -15,6 +15,8 @@ class WfhLocationRequests extends Model
         'user_id',
         'message',
         'attachment',
+        'curr_lat',
+        'curr_lng',
         'status',
         'approver',
     ];
