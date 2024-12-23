@@ -3,7 +3,7 @@
     isEditMode: @entangle('isEditMode'),
     confirmingHolidayDeletion: @entangle('confirmingHolidayDeletion')
 }" x-cloak>
-    <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
+    <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md text-sm">
         <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Holidays</h1>
 
         <!-- Modal -->
@@ -61,15 +61,21 @@
             </div>
         </div>
 
-        <div class="mt-8 overflow-x-auto">
-            <button wire:click="openModal" class="mb-4 px-4 py-2 bg-green-500 text-gray-100 rounded-md hover:bg-green-600 focus:outline-none dark:text-white">
-                Add Holiday
-            </button>
+        <div class="mt-8 overflow-x-auto text-sm">
+            <div class="w-full flex flex-col sm:flex-row sm:justify-start sm:space-x-4 mb-4">
+                <div class="w-auto">
+                    <button wire:click="openModal" class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
+                        hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
+                        dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
+                        Add Holiday
+                    </button>
+                </div>
+            </div>
 
             <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                 <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                     <tr class="whitespace-nowrap">
-                        <th class="px-4 py-2 text-center">Holiday Name</th>
+                        <th class="px-4 py-2 text-left">Holiday Name</th>
                         <th class="px-4 py-2 text-center">Date</th>
                         <th class="px-4 py-2 text-center">Type</th>
                         <th class="px-4 py-2 text-center">Actions</th>
@@ -78,7 +84,7 @@
                 <tbody>
                     @foreach ($holidays as $holiday)
                         <tr class="border-b dark:border-gray-600 whitespace-nowrap">
-                            <td class="px-4 py-2 text-center">{{ $holiday->description }}</td>
+                            <td class="px-4 py-2 text-left">{{ $holiday->description }}</td>
                             <td class="px-4 py-2 text-center">{{ $holiday->holiday_date->format('Y-m-d') }}</td>
                             <td class="px-4 py-2 text-center">{{ $holiday->type }}</td>
                             <td class="px-4 py-2 text-center">

@@ -98,8 +98,8 @@ class WfhAttendanceTable extends Component
             $this->longitude
         );
 
-        // Check if within 10 meters
-        return $distance <= 10;
+        // Check if within 20 meters
+        return $distance <= 20;
     }
 
     public function checkWFHDay()
@@ -351,6 +351,7 @@ class WfhAttendanceTable extends Component
                 ]);
             }
             $this->locReqGranted = false;
+            $this->hasRequested = true;
         }catch(Exception $e){
             throw $e;
         }
@@ -366,7 +367,9 @@ class WfhAttendanceTable extends Component
             $this->hasRequested = $wfhLocation->status ? false : true;
         }
 
-        $wfhLocationRequest = WfhLocationRequests::where('user_id', $userId)->first();
+        $wfhLocationRequest = WfhLocationRequests::where('user_id', $userId)
+                ->where('status', 0)                    
+                ->first();
         if($wfhLocationRequest){
             $this->locReqGranted = $wfhLocationRequest->status ? true : false;
         }

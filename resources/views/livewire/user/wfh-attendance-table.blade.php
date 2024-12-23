@@ -51,7 +51,7 @@
                                 <div x-show="open" @click.away="open = false"
                                     class="absolute top-4 right-4 z-20 p-3 border border-gray-400 text-sm
                                     bg-white rounded-lg shadow-2xl dark:bg-gray-700" style="width: 250px">
-                                    <span>{{ $locReqGranted ? 'Your request to change WFH location has been approved' : 'Request to change WFH location' }}</span>
+                                    <span>{{ $locReqGranted && $hasRequested ? 'Your request to change WFH location has been approved' : 'Request to change WFH location' }}</span>
                                     <button wire:click="sendChangeLocRequest" {{ $hasRequested  ? 'disabled' : '' }}
                                         class="mt-4 px-4 py-2 text-white rounded w-full {{ $hasRequested  ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600' }}">
                                         {{ $hasRequested ? 'Request Sent' : 'Send Request' }}
@@ -91,7 +91,7 @@
                     </div>
                 @endif
                 
-                @if($locReqGranted)
+                @if($locReqGranted && $hasRequested)
                     <div class="flex justify-center mb-4">
                         <button wire:click="toggleEditLocation" 
                             class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full">

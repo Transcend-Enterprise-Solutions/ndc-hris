@@ -40,6 +40,8 @@ Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
         return view('livewire.admin.emp-documents'); })->name('/employee-management/emp-documents');
     Route::get('/employee-management/admin-schedule', function () {
         return view('livewire.admin.admin-schedule'); })->name('/employee-management/admin-schedule');
+    Route::get('/employee-management/wfh-management', function () {
+        return view('livewire.admin.wfh-management'); })->name('/employee-management/wfh-management');
     Route::get('/report-generation', function () {
         return view('livewire.admin.report-generation'); })->name('report-generation');
     Route::get('/audit-logs', function () {
