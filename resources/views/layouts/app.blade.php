@@ -26,10 +26,10 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/alpine.min.js" defer></script>
 
     <!-- Scripts -->
-    <script defer src="build/assets/app-BXAyOSJJ.js"></script>
+    <script defer src="build/assets/app-DEoBNXZR.js"></script>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="build/assets/app-C9Ru6Ovw.css">
+    <link rel="stylesheet" href="build/assets/app-kJkzIgp8.css">
 
     <style>
         [x-cloak] {

@@ -6,6 +6,15 @@ x-data="{
 x-cloak>
 
     <style>
+         #map {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        #map:hover {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        
         .scrollbar-thin1::-webkit-scrollbar {
                         width: 5px;
                     }

@@ -16,12 +16,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
     <!-- Scripts -->
-    <script defer src="build/assets/app-BXAyOSJJ.js"></script>
+    <script defer src="build/assets/app-DEoBNXZR.js"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="build/assets/app-C9Ru6Ovw.css">
+    <link rel="stylesheet" href="build/assets/app-kJkzIgp8.css">
 
     @livewireStyles
     <style>
