@@ -276,7 +276,7 @@
                 </x-modal>
 
                 {{-- Add WFH Location Modal --}}
-                <x-modal id="registerLocation" maxWidth="md" centered wire:model="editLocation">
+                <x-modal id="registerLocation" maxWidth="md" centered wire:model="editLocation" x-data @open-modal.window="initMap2()">
                     <div class="p-4">
                         <div class="rounded-lg mb-4  dark:text-gray-50 text-slate-900 font-bold">
                             WFH Location
@@ -316,13 +316,11 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs"></script>
 <script>
-    let map;
-    let map2;
-    let marker;
-    let marker2;
+    let map, map2;
+    let marker, marker2;
+    const defaultLocation = { lat: 14.5995, lng: 120.9842 }; // Manila coordinates
     
     function initMap() {
-        const defaultLocation = { lat: 14.5995, lng: 120.9842 }; // Manila coordinates
         map = new google.maps.Map(document.getElementById("map"), {
             zoom: 15,
             center: defaultLocation,
@@ -338,39 +336,54 @@
                 }
             ]
         });
+    }
 
-        map2 = new google.maps.Map(document.getElementById("map2"), {
-            zoom: 15,
-            center: defaultLocation,
-            mapTypeControl: false,
-            streetViewControl: false,
-            fullscreenControl: true,
-            zoomControl: true,
-            styles: [
-                {
-                    featureType: "poi",
-                    elementType: "labels",
-                    stylers: [{ visibility: "off" }]
-                }
-            ]
-        });
+    function initMap2() {
+        if (!map2) {
+            map2 = new google.maps.Map(document.getElementById("map2"), {
+                zoom: 15,
+                center: defaultLocation,
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: true,
+                zoomControl: true,
+                styles: [
+                    {
+                        featureType: "poi",
+                        elementType: "labels",
+                        stylers: [{ visibility: "off" }],
+                    },
+                ],
+            });
+        }
+
+        // Add marker
+        const lat = @this.latitude;
+        const lng = @this.longitude;
+        const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
+        map2.setCenter(newLocation);
+        if (!marker2) {
+            marker2 = new google.maps.Marker({
+                position: newLocation,
+                map2: map2,
+                title: 'Your Location',
+                animation: google.maps.Animation.DROP,
+            });
+        } else {
+            marker2.setPosition(newLocation);
+        }
     }
     
     // Function to update map with new coordinates
     function updateMap() {
         const lat = @this.latitude;
         const lng = @this.longitude;
-        if (lat && lng) {
-            if (!map) {
-                initMap();
-            }
-            if (!map2) {
-                initMap();
-            }
 
+        if (lat && lng) {
             const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
+
+            if (!map) {initMap();}
             map.setCenter(newLocation);
-            map2.setCenter(newLocation);
             if (marker) {
                 marker.setPosition(newLocation);
             } else {
@@ -382,16 +395,7 @@
                 });
             }
 
-            if (marker2) {
-                marker2.setPosition(newLocation);
-            } else {
-                marker2 = new google.maps.Marker({
-                    position: newLocation,
-                    map2: map2,
-                    title: 'Your Location',
-                    animation: google.maps.Animation.DROP
-                });
-            }
+            initMap2();
         }
     }
     
@@ -400,5 +404,11 @@
     
     // Check every 5 seconds
     setInterval(updateMap , 5000); 
+
+    document.addEventListener('DOMContentLoaded', () => {
+        Livewire.on('modalOpened', () => {
+            initMap2();
+        });
+    });
 </script>
 
