@@ -251,7 +251,7 @@ x-cloak>
                                         </div>
                                         <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700" x-show="selectedSubTab === 'headcount'">
                                             @forelse ($organizations as $division => $users)
-                                                <div class="block lg:flex w-full bg-white dark:bg-gray-600 mb-5" style="max-height: 300px">
+                                                <div class="block lg:flex w-full bg-white dark:bg-gray-600 mb-5 overflow-y-hidden" style="max-height: 500px">
                                                     <div class="pb-4 flex flex-col gap-2 sm:w-1/5 bg-gray-50 dark:bg-gray-800 relative">
                                                         <h2 class="text-wrap text-sm pb-2 h-min px-4 pt-2 font-bold dark:text-gray-300">
                                                             <i class="bi bi-building mr-2 text-emerald-500 dark:text-emerald-300"></i>
@@ -370,7 +370,7 @@ x-cloak>
                                                 <!-- Office/Division Header -->
                                                 <div class="flex justify-between items-center w-full py-1.5 bg-gray-50 dark:bg-gray-800 px-4">
                                                     <div class="flex items-end">
-                                                        <i class="bi bi-building mr-2 text-emerald-500 dark:text-emerald-300 mr-2"></i>
+                                                        <i class="bi bi-building mr-2 text-emerald-500 dark:text-emerald-300"></i>
                                                         <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-300">{{ $officeDivision->office_division }}</h3>
                                                     </div>
                                                 </div>
@@ -786,7 +786,7 @@ x-cloak>
                                                 <!-- Office/Division Header -->
                                                 <div class="flex justify-between items-center w-full py-1.5 bg-gray-50 dark:bg-gray-800 px-4">
                                                     <div class="flex items-end">
-                                                        <i class="bi bi-building mr-2 text-emerald-500 dark:text-emerald-300 mr-2"></i>
+                                                        <i class="bi bi-building mr-2 text-emerald-500 dark:text-emerald-300"></i>
                                                         <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-300">{{ $officeDivision->office_division }}</h3>
                                                     </div>
                                                     <div class="relative px-2">
