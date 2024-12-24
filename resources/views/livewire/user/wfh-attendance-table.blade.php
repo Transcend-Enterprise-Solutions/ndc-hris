@@ -1,12 +1,12 @@
 <div x-data="{ open: false }" class="w-full">
 
     <style>
-        #map {
+        .map {
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             transition: all 0.3s ease;
         }
         
-        #map:hover {
+        .map:hover {
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
@@ -65,7 +65,7 @@
                         </div>
 
                         <div wire:ignore>
-                            <div id="map" style="height: 250px; width: 100%; border-radius: 8px; margin: 0;"></div>
+                            <div class="map" style="height: 250px; width: 100%; border-radius: 8px; margin: 0;"></div>
                         </div>
 
                         <div class="text-sm flex mt-2">
@@ -162,13 +162,13 @@
                                     </div>
                                 </div>
                             @elseif($scheduleType === 'WFH' && !$isWithinRadius)
-                            <div
-                                class="absolute inset-0 flex justify-center items-center bg-gray-700 bg-opacity-75">
-                                <div class="text-center">
-                                    <i class="bi bi-person-lock text-white" style="font-size: 5rem;"></i>
-                                    <p class="mt-2 text-white font-bold">You are outside the allowed location for WFH attendance</p>
+                                <div
+                                    class="absolute inset-0 flex justify-center items-center bg-gray-700 bg-opacity-75">
+                                    <div class="text-center">
+                                        <i class="bi bi-person-lock text-white" style="font-size: 5rem;"></i>
+                                        <p class="mt-2 text-white font-bold">You are outside the allowed location for WFH attendance</p>
+                                    </div>
                                 </div>
-                            </div>
                             @endif
                         </div>
 
@@ -266,105 +266,110 @@
                     </div>
                 </x-modal>
 
+                {{-- Add WFH Location Modal --}}
+                <x-modal id="registerLocation" maxWidth="md" centered wire:model="editLocation">
+                    <div class="p-4">
+                        <div class="rounded-lg mb-4  dark:text-gray-50 text-slate-900 font-bold">
+                            WFH Location
+                            <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div wire:ignore class="w-full">
+                            <div class="map" style="height: 300px; width: 280px; border-radius: 8px; margin: 20px 0;"></div>
+                        </div>
+
+                        <div class="text-sm">
+                            <div>
+                                Location Info: <br>
+                                Lat: {{ $latitude ?? '...' }} <br>
+                                Lng: {{ $longitude ?? '...' }} <br><br>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 flex justify-end col-span-2">
+                            <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" wire:click='saveLocation'>
+                                Save
+                            </button>
+                            <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                                Cancel
+                            </p>
+                        </div>
+                    </div>
+                </x-modal>
+
             </div>
         </div>
     </div>
 
-    {{-- Add WFH Location Modal --}}
-    <x-modal id="registerLocation" maxWidth="2xl" wire:model="editLocation" centered>
-        <div class="p-4 w-full">
-            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                WFH Location
-                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <div wire:ignore>
-                <div id="map" style="height: 300px; width: 100%; border-radius: 8px; margin: 20px 0;"></div>
-            </div>
-
-            <div class="text-sm">
-                {{-- Location Debug information --}}
-                <div>
-                    Location Info: <br>
-                    Lat: {{ $latitude ?? '...' }} <br>
-                    Lng: {{ $longitude ?? '...' }} <br><br>
-                </div>
-            </div>
-
-            <div class="mt-4 flex justify-end col-span-2">
-                <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" wire:click='saveLocation'>
-                    Save
-                </button>
-                <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
-                    Cancel
-                </p>
-            </div>
-
-        </div>
-    </x-modal>
 </div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs"></script>
 <script>
-    let map;
-    let marker;
-    
-    // Initialize map first
-    function initMap() {
-        // Default to a central location if no coordinates yet
+    let maps = [];
+    let markers = [];
+
+    function initMaps() {
         const defaultLocation = { lat: 14.5995, lng: 120.9842 }; // Manila coordinates
-        
-        map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 15,
-            center: defaultLocation,
-            mapTypeControl: false,
-            streetViewControl: false,
-            fullscreenControl: true,
-            zoomControl: true,
-            styles: [
-                {
-                    featureType: "poi",
-                    elementType: "labels",
-                    stylers: [{ visibility: "off" }]
-                }
-            ]
+        const mapElements = document.querySelectorAll(".map");
+
+        mapElements.forEach((mapElement, index) => {
+            const map = new google.maps.Map(mapElement, {
+                zoom: 15,
+                center: defaultLocation,
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: true,
+                zoomControl: true,
+                styles: [
+                    {
+                        featureType: "poi",
+                        elementType: "labels",
+                        stylers: [{ visibility: "off" }]
+                    }
+                ]
+            });
+
+            maps[index] = map;
+            markers[index] = null;
         });
     }
-    
-    // Function to update map with new coordinates
-    function updateMap() {
-        const lat = @this.latitude;
-        const lng = @this.longitude;
-        
-        if (lat && lng) {
-            if (!map) {
-                initMap();
-            }
 
-            const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
-            
-            // Update map center
-            map.setCenter(newLocation);
-        
-            // Update or create marker
-            if (marker) {
-                marker.setPosition(newLocation);
-            } else {
-                marker = new google.maps.Marker({
-                    position: newLocation,
-                    map: map,
-                    title: 'Your Location',
-                    animation: google.maps.Animation.DROP
-                });
+    // Function to update map with new coordinates
+    function updateMaps() {
+        const latitudes = @this.latitudes;
+        const longitudes = @this.longitudes;
+
+        maps.forEach((map, index) => {
+            const lat = latitudes[index];
+            const lng = longitudes[index];
+
+            if (lat && lng) {
+                const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
+
+                // Update map center
+                map.setCenter(newLocation);
+
+                // Update or create marker
+                if (markers[index]) {
+                    markers[index].setPosition(newLocation);
+                } else {
+                    markers[index] = new google.maps.Marker({
+                        position: newLocation,
+                        map: map,
+                        title: 'Your Location',
+                        animation: google.maps.Animation.DROP
+                    });
+                }
             }
-        }
+        });
     }
-    
-    // Initialize map when page loads
-    document.addEventListener('DOMContentLoaded', initMap);
-    
+
+    // Initialize maps when the page loads
+    document.addEventListener('DOMContentLoaded', initMaps);
+
     // Check every 5 seconds
-    setInterval(updateMap , 5000); 
+    setInterval(updateMaps, 5000);
 </script>
+
