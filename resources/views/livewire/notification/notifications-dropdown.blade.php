@@ -54,21 +54,44 @@
                     <li class="border-b border-slate-200 dark:border-slate-700 last:border-0">
                         <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
                             <div class="flex justify-between items-start">
-                                <a wire:navigate href="{{ route('/employee-management/admin-doc-request') }}" class="flex-grow">
-                                    <span class="block text-sm mb-1">
-                                        📣 <span class="font-medium text-slate-800 dark:text-slate-100">
-                                            New document {{ $notification->type }}
+                                @if($notification->type === 'locrequest' && !$notification->read)
+                                    <a wire:navigate href="{{ route('/employee-management/wfh-management', 
+                                            [
+                                                'tab' => 'requests',
+                                            ]
+                                            ) }}" 
+                                            class="flex-grow">
+                                        <span class="block text-sm mb-1">
+                                            <i class="fas fa-map-marker-alt text-red-500"></i>
+                                             <span class="font-medium text-slate-800 dark:text-slate-100">
+                                                WFH change location request
+                                            </span>
                                         </span>
-                                    </span>
-                                    <!-- Display the name and document type -->
-                                    <span class="block text-xs text-slate-600 dark:text-slate-300">
-                                        {{ $notification->docRequest->user->name }} requested {{ $this->getDocumentTypeLabel($notification->docRequest->document_type) }}
-                                    </span>
-                                    <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
-                                        {{ $notification->created_at->diffForHumans() }}
-                                    </span>
-                                </a>
-                                <div x-data="{ open: false }" class="relative inline-block">
+                                        <!-- Display the name and document type -->
+                                        <span class="block text-xs text-slate-600 dark:text-slate-300">
+                                            {{ $this->getLocRequestMessage() }}     
+                                        </span>
+                                        <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
+                                            {{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}
+                                        </span>
+                                    </a>
+                                @elseif($notification->type === 'request' && !$notification->read)
+                                    <a wire:navigate href="{{ route('/employee-management/admin-doc-request') }}" class="flex-grow">
+                                        <span class="block text-sm mb-1">
+                                            📣 <span class="font-medium text-slate-800 dark:text-slate-100">
+                                                New document {{ $notification->type }}
+                                            </span>
+                                        </span>
+                                        <!-- Display the name and document type -->
+                                        <span class="block text-xs text-slate-600 dark:text-slate-300">
+                                            {{ $notification->docRequest->user->name }} requested {{ $this->getDocumentTypeLabel($notification->docRequest->document_type) }}
+                                        </span>
+                                        <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
+                                            {{ $notification->created_at->diffForHumans() }}
+                                        </span>
+                                    </a>
+                                @endif
+                                <div x-data="{ open: false }" class="relative inline-block {{ $notification->read ? 'hidden' : '' }}">
                                     <!-- Three dots icon button -->
                                     <button @click="open = !open" @click.away="open = false"
                                             class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
@@ -90,6 +113,10 @@
                             </div>
                         </div>
                     </li>
+
+                    @if($unreadCount == 0)
+                        <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
+                    @endif
                 @empty
                     <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
                 @endforelse
@@ -98,17 +125,50 @@
                     <li class="border-b border-slate-200 dark:border-slate-700 last:border-0">
                         <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
                             <div class="flex justify-between items-start">
-                                <a wire:navigate href="{{ route('/my-records/doc-request') }}" class="flex-grow">
-                                    <span class="block text-sm mb-1">
-                                        📣 <span class="font-medium text-slate-800 dark:text-slate-100">
-                                            {{ $group['count'] }} New Document Request {{ $type }}
+                                @if($type === 'request' && !$group['read'])
+                                    <a wire:navigate href="{{ route('/my-records/doc-request') }}" class="flex-grow">
+                                        <span class="block text-sm mb-1">
+                                            📣 <span class="font-medium text-slate-800 dark:text-slate-100">
+                                                {{ $group['count'] }} New Document Request {{ $type }}
+                                            </span>
                                         </span>
-                                    </span>
-                                    <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
-                                        {{ $group['latest']->created_at->diffForHumans() }}
-                                    </span>
-                                </a>
-                                <div x-data="{ open: false }" class="relative inline-block">
+                                        <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
+                                            {{ $group['latest']->created_at->diffForHumans() }}
+                                        </span>
+                                    </a>
+                                @elseif($type === 'approvedlocrequest' && !$group['read'])
+                                    <a wire:navigate href="{{ route('home') }}" class="flex-grow">
+                                        <span class="block text-sm mb-1">
+                                            📣 <span class="font-medium text-slate-800 dark:text-slate-100">
+                                                WFH change location request
+                                            </span>
+                                        </span>
+                                        <span class="block text-xs text-slate-600 dark:text-slate-300">
+                                            Your request to change WFH location has been <span class="text-green-500 uppercase">approved</span> <br>
+                                            You can now register your new WFH location
+                                        </span>
+                                        <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
+                                            {{ $group['latest']->created_at->diffForHumans() }}
+                                        </span>
+                                    </a>
+                                @elseif($type === 'disapprovedlocrequest' && !$group['read'])
+                                    <a wire:navigate href="{{ route('home') }}" class="flex-grow">
+                                        <span class="block text-sm mb-1">
+                                            📣 <span class="font-medium text-slate-800 dark:text-slate-100">
+                                                WFH change location request
+                                            </span>
+                                        </span>
+                                        <span class="block text-xs text-slate-600 dark:text-slate-300">
+                                            Your request to change WFH location was <span class="text-red-500 uppercase">disapproved</span> <br>
+                                            Contact your supervisor for more info
+                                        </span>
+                                        <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
+                                            {{ $group['latest']->created_at->diffForHumans() }}
+                                        </span>
+                                    </a>
+                                @endif
+
+                                <div x-data="{ open: false }" class="relative inline-block  {{ $group['read'] ? 'hidden' : '' }}">
                                     <!-- Three dots icon button -->
                                     <button @click="open = !open" @click.away="open = false"
                                             class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
@@ -130,6 +190,10 @@
                             </div>
                         </div>
                     </li>
+
+                    @if($unreadCount == 0)
+                        <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
+                    @endif
                 @empty
                     <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
                 @endforelse

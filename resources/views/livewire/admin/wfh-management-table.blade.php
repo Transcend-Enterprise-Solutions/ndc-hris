@@ -1,6 +1,6 @@
 <div class="w-full flex flex-col justify-center"
 x-data="{ 
-    selectedTab: 'employees',
+    selectedTab: '{{ request()->query('tab', 'employees') }}',
 }" 
 x-cloak>
 

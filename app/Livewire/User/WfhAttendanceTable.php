@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\DTRSchedule;
 use App\Models\EmployeesDtr;
+use App\Models\Notification;
 use App\Models\TransactionWFH;
 use App\Models\WfhLocation;
 use Exception;
@@ -352,6 +353,15 @@ class WfhAttendanceTable extends Component
                     'status' => 0,
                 ]);
             }
+
+            // Create a notification entry
+            Notification::create([
+                'user_id' => $user->id,
+                'type' => 'locrequest',
+                'notif' => 'location',
+                'read' => 0,
+            ]);
+
             $this->locReqGranted = false;
             $this->hasRequested = true;
         }catch(Exception $e){
@@ -370,10 +380,11 @@ class WfhAttendanceTable extends Component
         }
 
         $wfhLocationRequest = WfhLocationRequests::where('user_id', $userId)
-                ->where('status', 0)                    
+                ->where('status', 1)
+                ->orderBy('created_at', 'desc')
                 ->first();
         if($wfhLocationRequest){
-            $this->locReqGranted = $wfhLocationRequest->status ? true : false;
+            $this->locReqGranted = true;
         }
     }
          

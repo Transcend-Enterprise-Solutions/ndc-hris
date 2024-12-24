@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\Notification;
 use App\Models\WfhLocation;
 use App\Models\WfhLocationRequests;
 use Livewire\Component;
@@ -114,6 +115,21 @@ class WfhManagementTable extends Component
                     'approver' => Auth::user()->name,
                 ]);
 
+                // Mark as read notification entry
+                $query = Notification::where('read', false)
+                                ->where('type', 'locrequest')
+                                ->where('user_id', $this->confirmId)
+                                ->first();
+                $query->update(['read' => true]);
+
+                // Create a notification entry for employee
+                Notification::create([
+                    'user_id' => $this->confirmId,
+                    'type' => 'approvedlocrequest',
+                    'notif' => 'location',
+                    'read' => 0,
+                ]);
+
                 $this->dispatch('swal', [
                     'title' => 'Change WFH request successfully approved',
                     'icon' => 'success'
@@ -139,6 +155,21 @@ class WfhManagementTable extends Component
                 $this->dispatch('swal', [
                     'title' => 'Change WFH request successfully disapproved',
                     'icon' => 'success'
+                ]);
+
+                // Mark as read notification entry
+                $query = Notification::where('read', false)
+                                ->where('type', 'locrequest')
+                                ->where('user_id', $this->confirmId)
+                                ->first();
+                $query->update(['read' => true]);
+
+                // Create a notification entry for employee
+                Notification::create([
+                    'user_id' => $this->confirmId,
+                    'type' => 'disapprovedlocrequest',
+                    'notif' => 'location',
+                    'read' => 0,
                 ]);
             }else{
                 $this->dispatch('swal', [
