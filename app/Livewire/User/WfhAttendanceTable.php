@@ -248,6 +248,7 @@ class WfhAttendanceTable extends Component
         // $this->password = null;
         $this->errorMessage = null;
         $this->editLocation = null;
+        $this->showConfirmation = null;
     }
 
     public function resetButtonStatesIfNeeded()
@@ -314,7 +315,6 @@ class WfhAttendanceTable extends Component
                         'longitude' => $this->longitude,
                         'status' => 1,
                     ]);
-                    $this->resetVariables();
                     $this->dispatch('swal', [
                         'title' => "WFH location updated successfully!",
                         'icon' => 'success'
@@ -326,13 +326,13 @@ class WfhAttendanceTable extends Component
                         'longitude' => $this->longitude,
                         'status' => 1,
                     ]);
-                    $this->resetVariables();
                     $this->dispatch('swal', [
                         'title' => "WFH location added successfully!",
                         'icon' => 'success'
                     ]);
                 }
             }
+            $this->resetVariables();
         }catch(Exception $e){
             throw $e;
         }

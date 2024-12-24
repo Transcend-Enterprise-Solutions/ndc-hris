@@ -10,6 +10,15 @@
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
+        .map2 {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .map2:hover {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
         @-webkit-keyframes spinner-border {
             to {
                 transform: rotate(360deg);
@@ -65,7 +74,7 @@
                         </div>
 
                         <div wire:ignore>
-                            <div class="map" style="height: 250px; width: 100%; border-radius: 8px; margin: 0;"></div>
+                            <div id="map" style="height: 250px; width: 100%; border-radius: 8px; margin: 0;"></div>
                         </div>
 
                         <div class="text-sm flex mt-2">
@@ -277,7 +286,7 @@
                         </div>
 
                         <div wire:ignore class="w-full">
-                            <div class="map" style="height: 300px; width: 280px; border-radius: 8px; margin: 20px 0;"></div>
+                            <div id="map2" style="height: 300px; width: 280px; border-radius: 8px; margin: 20px 0;"></div>
                         </div>
 
                         <div class="text-sm">
@@ -307,69 +316,89 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs"></script>
 <script>
-    let maps = [];
-    let markers = [];
-
-    function initMaps() {
+    let map;
+    let map2;
+    let marker;
+    let marker2;
+    
+    function initMap() {
         const defaultLocation = { lat: 14.5995, lng: 120.9842 }; // Manila coordinates
-        const mapElements = document.querySelectorAll(".map");
-
-        mapElements.forEach((mapElement, index) => {
-            const map = new google.maps.Map(mapElement, {
-                zoom: 15,
-                center: defaultLocation,
-                mapTypeControl: false,
-                streetViewControl: false,
-                fullscreenControl: true,
-                zoomControl: true,
-                styles: [
-                    {
-                        featureType: "poi",
-                        elementType: "labels",
-                        stylers: [{ visibility: "off" }]
-                    }
-                ]
-            });
-
-            maps[index] = map;
-            markers[index] = null;
-        });
-    }
-
-    // Function to update map with new coordinates
-    function updateMaps() {
-        const latitudes = @this.latitudes;
-        const longitudes = @this.longitudes;
-
-        maps.forEach((map, index) => {
-            const lat = latitudes[index];
-            const lng = longitudes[index];
-
-            if (lat && lng) {
-                const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
-
-                // Update map center
-                map.setCenter(newLocation);
-
-                // Update or create marker
-                if (markers[index]) {
-                    markers[index].setPosition(newLocation);
-                } else {
-                    markers[index] = new google.maps.Marker({
-                        position: newLocation,
-                        map: map,
-                        title: 'Your Location',
-                        animation: google.maps.Animation.DROP
-                    });
+        map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 15,
+            center: defaultLocation,
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: true,
+            zoomControl: true,
+            styles: [
+                {
+                    featureType: "poi",
+                    elementType: "labels",
+                    stylers: [{ visibility: "off" }]
                 }
-            }
+            ]
+        });
+
+        map2 = new google.maps.Map(document.getElementById("map2"), {
+            zoom: 15,
+            center: defaultLocation,
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: true,
+            zoomControl: true,
+            styles: [
+                {
+                    featureType: "poi",
+                    elementType: "labels",
+                    stylers: [{ visibility: "off" }]
+                }
+            ]
         });
     }
+    
+    // Function to update map with new coordinates
+    function updateMap() {
+        const lat = @this.latitude;
+        const lng = @this.longitude;
+        if (lat && lng) {
+            if (!map) {
+                initMap();
+            }
+            if (!map2) {
+                initMap();
+            }
 
-    // Initialize maps when the page loads
-    document.addEventListener('DOMContentLoaded', initMaps);
+            const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
+            map.setCenter(newLocation);
+            map2.setCenter(newLocation);
+            if (marker) {
+                marker.setPosition(newLocation);
+            } else {
+                marker = new google.maps.Marker({
+                    position: newLocation,
+                    map: map,
+                    title: 'Your Location',
+                    animation: google.maps.Animation.DROP
+                });
+            }
 
+            if (marker2) {
+                marker2.setPosition(newLocation);
+            } else {
+                marker2 = new google.maps.Marker({
+                    position: newLocation,
+                    map2: map2,
+                    title: 'Your Location',
+                    animation: google.maps.Animation.DROP
+                });
+            }
+        }
+    }
+    
+    // Initialize map when page loads
+    document.addEventListener('DOMContentLoaded', initMap);
+    
     // Check every 5 seconds
-    setInterval(updateMaps, 5000);
+    setInterval(updateMap , 5000); 
 </script>
 
