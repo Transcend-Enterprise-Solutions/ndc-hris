@@ -102,7 +102,9 @@ class WfhManagementTable extends Component
     public function approveEmployeeLocation(){
         try{
             $wfhLoc = WfhLocation::where('user_id', $this->confirmId)->first();
-            $wfhLocReq = WfhLocationRequests::where('user_id', $this->confirmId)->first();
+            $wfhLocReq = WfhLocationRequests::where('user_id', $this->confirmId)
+                        ->where('status', 0)
+                        ->first();
             if($wfhLoc && $wfhLocReq){
                 $wfhLoc->update([
                     'latitude' => null,
@@ -148,7 +150,9 @@ class WfhManagementTable extends Component
 
     public function disapproveEmployeeLocation(){
         try{
-            $wfhLocReq = WfhLocationRequests::where('user_id', $this->confirmId)->first();
+            $wfhLocReq = WfhLocationRequests::where('user_id', $this->confirmId)
+                        ->where('status', 0)
+                        ->first();
             if($wfhLocReq){
                 $wfhLocReq->delete();
 

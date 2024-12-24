@@ -301,7 +301,6 @@ class WfhAttendanceTable extends Component
     }
 
     public function toggleEditLocation(){
-        $this->dispatchBrowserEvent('modalOpened');
         $this->editLocation = true;
     }
 

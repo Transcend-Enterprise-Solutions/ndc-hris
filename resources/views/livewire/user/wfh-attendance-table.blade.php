@@ -365,7 +365,7 @@
         if (!marker2) {
             marker2 = new google.maps.Marker({
                 position: newLocation,
-                map2: map2,
+                map: map2,
                 title: 'Your Location',
                 animation: google.maps.Animation.DROP,
             });
@@ -404,11 +404,5 @@
     
     // Check every 5 seconds
     setInterval(updateMap , 5000); 
-
-    document.addEventListener('DOMContentLoaded', () => {
-        Livewire.on('modalOpened', () => {
-            initMap2();
-        });
-    });
 </script>
 
