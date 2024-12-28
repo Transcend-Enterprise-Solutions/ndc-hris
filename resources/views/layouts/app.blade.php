@@ -80,17 +80,53 @@
     </script>
 
     <script>
-        function sendRouteToApp() {
+        function initLocationHandling() {
             const currentPath = window.location.pathname;
-            window.ReactNativeWebView?.postMessage(JSON.stringify({
-                type: 'routeInfo',
-                route: currentPath
-            }));
+
+            if (window.ReactNativeWebView) {
+                // Running in React Native web view
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                    type: 'routeInfo',
+                    route: currentPath
+                }));
+            } else {
+                if(currentPath == '/home'){
+                    getLocationForBrowser();
+                }
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', sendRouteToApp);
-        document.addEventListener('livewire:navigated', sendRouteToApp);
-        window.addEventListener('popstate', sendRouteToApp);
+        function getLocationForBrowser() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        sendLocationToApp(position.coords.latitude, position.coords.longitude);
+                    },
+                    (error) => {
+                        console.error('Error getting location:', error);
+                        alert('Unable to retrieve location. Please enable location services.');
+                    },
+                    { enableHighAccuracy: true }
+                );
+            } else {
+                console.error('Geolocation is not supported by this browser.');
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
+
+        function sendLocationToApp(latitude, longitude) {
+            const locationData = {
+                latitude: latitude,
+                longitude: longitude,
+                formattedTime: new Date().toLocaleTimeString(),
+            };
+
+            Livewire.dispatch('locationUpdated', locationData);
+        }
+
+        document.addEventListener('DOMContentLoaded', initLocationHandling);
+        document.addEventListener('livewire:navigated', initLocationHandling);
+        window.addEventListener('popstate', initLocationHandling);
     </script>
 
 @livewireScripts

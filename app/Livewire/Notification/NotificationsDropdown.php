@@ -50,7 +50,7 @@ class NotificationsDropdown extends Component
                         'ids' => $group->pluck('id')->toArray(),
                     ];
                 });
-            $this->unreadCount = $notifications->where('read', 0)->count();
+                $this->unreadCount = $this->notifications->where('read', 0)->count();
         }
     }
 
