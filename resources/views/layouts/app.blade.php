@@ -104,7 +104,7 @@
                     },
                     (error) => {
                         console.error('Error getting location:', error);
-                        alert('Unable to retrieve location. Please enable location services.');
+                        alert('Unable to retrieve location. Please enable location services in your browser settings and try again.');
                     },
                     { enableHighAccuracy: true }
                 );
@@ -121,7 +121,7 @@
                 formattedTime: new Date().toLocaleTimeString(),
             };
 
-            Livewire.dispatch('locationUpdated', locationData);
+            Livewire.dispatch('locationUpdated', { locationData });
         }
 
         document.addEventListener('DOMContentLoaded', initLocationHandling);

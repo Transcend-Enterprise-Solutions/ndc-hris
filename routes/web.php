@@ -97,6 +97,8 @@ Route::middleware(['auth', 'checkrole:emp'])->group(function () {
     //     return view('livewire.user.wfh-attendance'); })->name('/daily-time-record/wfh-attendance');
     Route::get('/daily-time-record/dtr', function () {
         return view('livewire.user.dtr'); })->name('/daily-time-record/dtr');
+    Route::get('/daily-time-record/official-business', function () {
+        return view('livewire.user.official-business'); })->name('/daily-time-record/official-business');
     Route::get('/daily-time-record/my-schedule', function () {
         return view('livewire.user.my-schedule'); })->name('/daily-time-record/my-schedule');
     // Route::get('/daily-time-record/my-payroll', function () {

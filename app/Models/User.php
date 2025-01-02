@@ -244,6 +244,11 @@ class User extends Authenticatable
         return $this->hasMany(MonthlyCredits::class);
     }
 
+    public function officialBusiness()
+    {
+        return $this->hasMany(OfficialBusiness::class);
+    }
+
     /**
      * The attributes that should be cast.
      *
