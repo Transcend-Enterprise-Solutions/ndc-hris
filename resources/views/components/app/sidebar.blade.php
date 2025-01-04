@@ -409,6 +409,14 @@
                                                 Document Request</span>
                                         </a>
                                     </li>
+                                    <li class="mb-1 last:mb-0">
+                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if (Route::is('/my-records/my-virtual-id')) {{ '!text-blue-500' }} @endif"
+                                            href="{{ route('/my-records/my-virtual-id') }}" wire:navigate>
+                                            <span class="text-sm font-medium transition-opacity duration-300"
+                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                                My Virtual ID</span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </li>
