@@ -22,7 +22,7 @@
                     <div class="mt-4 mb-4 flex flex-col justify-center items-center text-black">
                         <img src="{{ $profilePhotoPath ? asset('storage/' . $profilePhotoPath) : asset('default-avatar.png') }}"
                             alt="Profile Photo" class="w-32 h-32 border-2 border-white shadow-md object-cover mx-auto">
-                        <p>{{ $position }}</p>
+                        <p class="text-xs mt-1">{{ $position }}</p>
                     </div>
 
                     <div class="flex flex-col items-center text-black">
