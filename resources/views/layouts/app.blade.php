@@ -82,7 +82,6 @@
     <script>
         function initLocationHandling() {
             const currentPath = window.location.pathname;
-
             if (window.ReactNativeWebView) {
                 // Running in React Native web view
                 window.ReactNativeWebView.postMessage(JSON.stringify({
@@ -90,7 +89,7 @@
                     route: currentPath
                 }));
             } else {
-                if(currentPath == '/home'){
+                if(currentPath == '/home' || currentPath == '/daily-time-record/official-business'){
                     getLocationForBrowser();
                 }
             }

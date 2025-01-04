@@ -7,6 +7,8 @@ use App\Models\OfficialBusiness;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Livewire\Attributes\On;
+
 
 class OfficialBusinessTable extends Component
 {
@@ -26,6 +28,9 @@ class OfficialBusinessTable extends Component
     public $registeredLatitude;
     public $registeredLongitude;
     public $isWithinRadius;
+    public $latitude = null;
+    public $longitude = null;
+    public $formattedTime = null;
 
 
     public function render(){
@@ -57,6 +62,62 @@ class OfficialBusinessTable extends Component
             'ongoingObs' => $ongoingObs,
             'completedObs' => $completedObs,
         ]);
+    }
+
+    #[On('locationUpdated')] 
+    public function handleLocationUpdate($locationData)
+    {
+        if (is_string($locationData)) {
+            $locationData = json_decode($locationData, true);
+        }
+        
+        $this->latitude = $locationData['latitude'] ?? null;
+        $this->longitude = $locationData['longitude'] ?? null;
+        $this->formattedTime = $locationData['formattedTime'] ?? null;
+        
+        // Check if within allowed radius and update UI accordingly
+        $this->isWithinRadius = $this->isWithinAllowedRadius();
+    }
+
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        // Radius of the Earth in meters
+        $R = 6371000;
+
+        $lat1 = deg2rad($lat1);
+        $lon1 = deg2rad($lon1);
+        $lat2 = deg2rad($lat2);
+        $lon2 = deg2rad($lon2);
+
+        // Differences in coordinates
+        $dLat = $lat2 - $lat1;
+        $dLon = $lon2 - $lon1;
+
+        // Haversine formula
+        $a = sin($dLat/2) * sin($dLat/2) +
+            cos($lat1) * cos($lat2) * 
+            sin($dLon/2) * sin($dLon/2);
+        
+        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+        
+        // Distance in meters
+        $distance = $R * $c;
+        
+        return $distance;
+    }
+
+    private function isWithinAllowedRadius(){
+        if (!$this->latitude || !$this->longitude) {
+            return false;
+        }
+
+        $distance = $this->calculateDistance(
+            $this->registeredLatitude,
+            $this->registeredLongitude,
+            $this->latitude,
+            $this->longitude
+        );
+        return $distance <= 30;
     }
 
     public function toggleAddOB(){

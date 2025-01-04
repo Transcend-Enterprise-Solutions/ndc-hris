@@ -90,11 +90,14 @@
                             }
                         </style>
 
-                        <p class="py-2">Official Business: {{ $obs->company }}</p>
+                        <p class="py-2">Official Business Today: {{ $obs->company }}</p>
+                        <p class="py-2">Current Location: lat - {{ $obs->lat }} | lng - {{ $obs->lng }}</p>
+                        <p class="py-2">OB Location: lat - {{ $latitude }} | lng - {{ $longitude }}</p>
+
                         <div class="flex flex-col sm:flex-row justify-center items-center w-full overflow-hidden">
                             <div class="block shadow dark:bg-gray-900 relative obs">
                                 <div wire:ignore style="height: 240px; width: 100%;">
-                                    <div id="map" style="height: 100%; width: 100%; margin: 0;"></div>
+                                    <div id="map2" style="height: 100%; width: 100%; margin: 0;"></div>
                                 </div>
                             </div>
 
@@ -578,11 +581,10 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs&libraries=places"></script>
 <script>
-    let map, marker, searchBox;
+    let map, map2, marker, marker2, searchBox;
 
     function initMap() {
         const defaultLocation = { lat: 14.5995, lng: 120.9842 }; // Manila coordinates
-
         map = new google.maps.Map(document.getElementById("map"), {
             zoom: 15,
             center: defaultLocation,
@@ -598,8 +600,6 @@
                 }
             ]
         });
-
-        // Marker initialization
         marker = new google.maps.Marker({
             position: defaultLocation,
             map: map,
@@ -615,84 +615,76 @@
             updateLivewireLocation(lat, lng);
         });
 
-        // Initialize the search box
         const input = document.getElementById("locationSearch");
         searchBox = new google.maps.places.SearchBox(input);
 
-        // Bias the search results to the current map bounds
         map.addListener("bounds_changed", () => {
             searchBox.setBounds(map.getBounds());
         });
 
-        // Listen for the search box selection
         searchBox.addListener("places_changed", () => {
             const places = searchBox.getPlaces();
 
             if (places.length === 0) return;
-
-            // Get the location of the selected place
             const place = places[0];
             if (!place.geometry || !place.geometry.location) return;
 
             const location = place.geometry.location;
             const lat = location.lat();
             const lng = location.lng();
-
-            // Update map and marker
             map.setCenter(location);
             marker.setPosition(location);
-
-            // Update Livewire variables
             updateLivewireLocation(lat, lng);
         });
     }
-
-    // Function to update Livewire variables
     function updateLivewireLocation(lat, lng) {
         @this.set('registeredLatitude', lat);
         @this.set('registeredLongitude', lng);
     }
-
-    // Initialize map on page load
     document.addEventListener('DOMContentLoaded', initMap);
 
 
+    // Map 2 ---------------------------------------------------------------- //
     function initMap2() {
-        if(@this.ongoingObs){
-            const defaultLocation = { lat: 14.5995, lng: 120.9842 }; // Manila coordinates
-            if (!map2) {
-                map2 = new google.maps.Map(document.getElementById("map2"), {
-                    zoom: 15,
-                    center: defaultLocation,
-                    mapTypeControl: false,
-                    streetViewControl: false,
-                    fullscreenControl: true,
-                    zoomControl: true,
-                    styles: [
-                        {
-                            featureType: "poi",
-                            elementType: "labels",
-                            stylers: [{ visibility: "off" }],
-                        },
-                    ],
-                });
-            }
-    
-            // Add marker
-            const lat = @this.latitude;
-            const lng = @this.longitude;
-            const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
-            map2.setCenter(newLocation);
-            if (!marker2) {
-                marker2 = new google.maps.Marker({
-                    position: newLocation,
-                    map: map2,
-                    title: 'Your Location',
-                    animation: google.maps.Animation.DROP,
-                });
-            } else {
-                marker2.setPosition(newLocation);
-            }
+        const defaultLocation = { lat: 14.5995, lng: 120.9842 };
+        if (!map2) {
+            map2 = new google.maps.Map(document.getElementById("map2"), {
+                zoom: 15,
+                center: defaultLocation,
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: true,
+                zoomControl: true,
+                styles: [
+                    {
+                        featureType: "poi",
+                        elementType: "labels",
+                        stylers: [{ visibility: "off" }],
+                    },
+                ],
+            });
+        }
+
+        // Add marker
+        const lat = @this.latitude;
+        const lng = @this.longitude;
+        const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
+
+        console.log(newLocation);
+        map2.setCenter(newLocation);
+        if (!marker2) {
+            marker2 = new google.maps.Marker({
+                position: newLocation,
+                map: map2,
+                title: 'Your Location',
+                animation: google.maps.Animation.DROP,
+            });
+        } else {
+            marker2.setPosition(newLocation);
         }
     }
+    document.addEventListener('DOMContentLoaded', initMap2);
+
+    // Check every 5 seconds
+    setInterval(initMap2 , 5000);
 </script>
