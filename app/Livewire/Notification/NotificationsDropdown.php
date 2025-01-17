@@ -5,12 +5,14 @@ use App\Models\WfhLocationRequests;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Notification as NotificationModel;
+use App\Models\OfficialBusiness;
 
 class NotificationsDropdown extends Component
 {
     public $notifications;
     public $unreadCount;
     public $locRequestCount;
+    public $obRequestCount;
 
     public function mount()
     {
@@ -27,9 +29,11 @@ class NotificationsDropdown extends Component
         if ($user->user_role === 'sa') {
             // 'sa' users see only notifications
             $this->locRequestCount = WfhLocationRequests::where('status', 0)->count();
+            $this->obRequestCount = OfficialBusiness::where('status', 0)->count();
 
             $this->notifications = $query->where('type', 'request')
                                         ->orWhere('type', 'locrequest')    
+                                        ->orWhere('type', 'obrequest')    
                                         ->get();
             $this->unreadCount = $this->notifications->where('read', 0)->count();
         } else {
@@ -62,7 +66,8 @@ class NotificationsDropdown extends Component
 
         if ($user->user_role === 'sa') {
             $query->where('type', 'request')
-            ->orWhere('type', 'locrequest');
+            ->orWhere('type', 'locrequest')
+            ->orWhere('type', 'obrequest');
         } else {
             $query->where('user_id', $user->id);
         }
@@ -78,7 +83,8 @@ class NotificationsDropdown extends Component
 
         if ($user->user_role === 'sa') {
             $query->where('type', 'request')
-            ->orWhere('type', 'locrequest');
+            ->orWhere('type', 'locrequest')
+            ->orWhere('type', 'obrequest');
         } else {
             $query->where('user_id', $user->id);
         }
@@ -104,6 +110,14 @@ class NotificationsDropdown extends Component
             return '1 new WFH location request pending for approval';
         }
         return ($this->locRequestCount) . ' pending WFH location request approval';
+    }
+
+    // Add method to get notification message for OB Request
+    private function getOBRequestMessage(){
+        if ($this->obRequestCount === 1) {
+            return '1 new OB location request pending for approval';
+        }
+        return ($this->obRequestCount) . ' pending OB request approval';
     }
 
     public function render()

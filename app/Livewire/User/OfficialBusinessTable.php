@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Models\Notification;
 use App\Models\OfficeDivisions;
 use App\Models\OfficialBusiness;
 use Carbon\Carbon;
@@ -231,6 +232,14 @@ class OfficialBusinessTable extends Component
                     'time_start' => $this->startTime,  
                     'time_end' => $this->endTime,  
                     'purpose' => $this->purpose,  
+                ]);
+
+                // Create a notification entry
+                Notification::create([
+                    'user_id' => $user->id,
+                    'type' => 'obrequest',
+                    'notif' => 'obrequest',
+                    'read' => 0,
                 ]);
             }else{
                 $ob = OfficialBusiness::where('id', $this->editId)->first();

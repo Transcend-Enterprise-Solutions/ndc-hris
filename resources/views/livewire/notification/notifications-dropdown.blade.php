@@ -49,9 +49,9 @@
         </div>
         <!-- Dropdown items -->
         <ul class="max-h-64 overflow-y-auto" x-auto-animate>
-            @if (Auth::user()->user_role === 'sa')
+            @if (Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
                 @forelse ($notifications as $notification)
-                    <li class="border-b border-slate-200 dark:border-slate-700 last:border-0">
+                    <li class="">
                         <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
                             <div class="flex justify-between items-start">
                                 @if($notification->type === 'locrequest' && !$notification->read)
@@ -70,6 +70,27 @@
                                         <!-- Display the name and document type -->
                                         <span class="block text-xs text-slate-600 dark:text-slate-300">
                                             {{ $this->getLocRequestMessage() }}     
+                                        </span>
+                                        <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
+                                            {{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}
+                                        </span>
+                                    </a>
+                                @elseif($notification->type === 'obrequest' && !$notification->read)
+                                    <a wire:navigate href="{{ route('/employee-management/admin-official-business', 
+                                            [
+                                                'tab' => 'requests',
+                                            ]
+                                            ) }}" 
+                                            class="flex-grow">
+                                        <span class="block text-sm mb-1">
+                                            <i class="fas fa-clipboard text-blue-500"></i>
+                                             <span class="font-medium text-slate-800 dark:text-slate-100">
+                                                Official Business Request
+                                            </span>
+                                        </span>
+                                        <!-- Display the name and document type -->
+                                        <span class="block text-xs text-slate-600 dark:text-slate-300">
+                                            {{ $this->getOBRequestMessage() }}     
                                         </span>
                                         <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
                                             {{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}
@@ -120,7 +141,7 @@
                 @empty
                     <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
                 @endforelse
-            @else
+            @elseif(Auth::user()->user_role === 'emp')
                 @forelse ($groupedNotifications as $type => $group)
                     <li class="border-b border-slate-200 dark:border-slate-700 last:border-0">
                         <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
