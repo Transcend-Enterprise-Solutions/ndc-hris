@@ -69,116 +69,132 @@
             </div>
 
             @if($ongoingObs)
-                @foreach ($ongoingObs as $obs)
-                    <div class="w-full flex flex-col justify-center items-center mb-6 bg-gray-300 dark:bg-slate-900 border border-gray-300 dark:border-slate-900 shadow-xl" x-data="{ showDialog: false }">
-                        <style>
-                            .obs{
-                                height: 240px;
-                                width: 66%;
-                            }
+                <div class="w-full flex flex-col justify-center items-center mb-6 bg-gray-300 dark:bg-slate-900 border border-gray-300 dark:border-slate-900 shadow-xl" x-data="{ showDialog: false }">
+                    <style>
+                        .obs{
+                            height: 280px;
+                            width: 66%;
+                        }
 
+                        .obs2{
+                            height: 280px;
+                            width: 34%;
+                        }
+
+                        @media (max-width: 768px){
+                            .obs,
                             .obs2{
-                                height: 240px;
-                                width: 34%;
+                                width: 100%;
                             }
+                        }
+                    </style>
 
-                            @media (max-width: 768px){
-                                .obs,
-                                .obs2{
-                                    width: 100%;
-                                }
-                            }
-                        </style>
-
-                        <p class="py-2">Official Business Today: {{ $obs->company }}</p>
-                        <p class="py-2">Current Location: lat - {{ $obs->lat }} | lng - {{ $obs->lng }}</p>
-                        <p class="py-2">OB Location: lat - {{ $latitude }} | lng - {{ $longitude }}</p>
-
-                        <div class="flex flex-col sm:flex-row justify-center items-center w-full overflow-hidden">
-                            <div class="block shadow dark:bg-gray-900 relative obs">
-                                <div wire:ignore style="height: 240px; width: 100%;">
-                                    <div id="map2" style="height: 100%; width: 100%; margin: 0;"></div>
+                    <div class="flex flex-col sm:flex-row justify-center items-center w-full overflow-hidden">
+                        <div class="block shadow dark:bg-gray-900 relative obs">
+                            <div class="w-full p-2">
+                                <div class="flex w-full">
+                                    <p class=""><span class="{{ $obStatus == 'ONGOING' ? 'text-green-500' : 'text-orange-500' }}">{{ $obStatus }}</span> Official Business: {{ $ongoingObs->company }}</p>
+                                </div>
+                                <div class="flex w-full">
+                                    <div class="flex">
+                                        <p class="">Current Location: </p><img src="{{ asset('/images/blue-dot.png') }}" alt="map icon" style="width: 25px; height: 25px; margin-bottom:-3px;" />
+                                    </div>
+                                    <div class="flex">
+                                        <p class="">OB Location: </p><img src="{{ asset('/images/red-dot.png') }}" alt="map icon" style="width: 25px; height: 25px; margin-bottom:-3px;" />
+                                    </div>
                                 </div>
                             </div>
-
-                            <div class="block p-6 shadow dark:bg-gray-900 relative obs2">
-                                <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white text-center">OB ATTENDANCE</h5>
-                                <div class="grid grid-cols-1 gap-2 p-4">
-                                    <div class="flex justify-center">
-                                        <button wire:click="confirmPunch('morningIn', 'Morning In')"
-                                            class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
-                                            <span
-                                                class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
-                                                Time In
-                                            </span>
-                                        </button>
-                                    </div>
-                                    <div class="flex justify-center">
-                                        <button wire:click="confirmPunch('morningOut', 'Morning Out')"
-                                            class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
-                                            <span
-                                                class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
-                                                Time Out
-                                            </span>
-                                        </button>
-                                    </div>
-
-                                    @if($isWithinRadius)
-                                        <div class="flex justify-center">
-                                            <p class="text-blue-500 underline" @click="showDialog = true">OB Details</p>
-                                        </div>
-                                    @endif
-                                </div>
-
-                                @if(!$isWithinRadius)
-                                    <div
-                                        class="absolute inset-0 flex justify-center items-center bg-gray-200 dark:bg-slate-700 bg-opacity-90 dark:bg-opacity-90">
-                                        <div class="text-center">
-                                            <i class="bi bi-person-lock" style="font-size: 3rem;"></i>
-                                            <p class="font-bold mb-4">You have not arrived at <br>
-                                                the OB location.</p>
-                                            <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">OB Details</p>
-                                        </div>
-                                    </div>
-                                @endif
-
-                                <div 
-                                    x-show="showDialog" 
-                                    x-transition:enter="transition ease-out duration-300 transform"
-                                    x-transition:enter-start="translate-y-full opacity-0"
-                                    x-transition:enter-end="translate-y-0 opacity-100"
-                                    x-transition:leave="transition ease-in duration-200 transform"
-                                    x-transition:leave-start="translate-y-0 opacity-100"
-                                    x-transition:leave-end="translate-y-full opacity-0"
-                                    x-cloak 
-                                    class="absolute inset-0 bg-gray-200 dark:bg-slate-700 overflow-hidden">
-                                    <div class="p-6 scrollbar-thin1" style="height: 100%; overflow-y:scroll">
-                                        <div>
-                                            <button @click="showDialog = false" class="float-right focus:outline-none">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </div>
-                                        <h5 class="text-xl font-bold mb-4 text-center text-gray-700 dark:text-gray-50">OB Details</h5>
-                                        <p class="">Company: <span class="text-gray-700 dark:text-gray-100">{{ $obs->company }}</span></p>
-                                        <p class="">Address: <span class="text-gray-700 dark:text-gray-100">{{ $obs->address }}</span></p>
-                                        <p class="">Date: <span class="text-gray-700 dark:text-gray-100">{{ $obs->date }}</span></p>
-                                        <p class="">Stary Time: <span class="text-gray-700 dark:text-gray-100">{{ $obs->time_start }}</span></p>
-                                        <p class="">End Time: <span class="text-gray-700 dark:text-gray-100">{{ $obs->time_end }}</span></p>
-                                        <p class="">Purpose: <span class="text-gray-700 dark:text-gray-100">{{ $obs->purpose }}</span></p>
-                                        <div class="w-full flex justify-center mt-6">
-                                            <button 
-                                                class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600"
-                                                @click="showDialog = false">
-                                                Attendance
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
+                            <div wire:ignore style="height: 240px; width: 100%;">
+                                <div id="map2" style="height: 100%; width: 100%; margin: 0;"></div>
                             </div>
                         </div>
+
+                        <div class="block p-6 shadow dark:bg-gray-900 relative obs2">
+                            <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white text-center">OB ATTENDANCE</h5>
+                            <div class="grid grid-cols-1 gap-2 p-4">
+                                <div class="flex justify-center">
+                                    <button wire:click="confirmPunch('morningIn', 'Morning In')"
+                                        class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <span
+                                            class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
+                                            Time In
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="flex justify-center">
+                                    <button wire:click="confirmPunch('morningOut', 'Morning Out')"
+                                        class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <span
+                                            class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
+                                            Time Out
+                                        </span>
+                                    </button>
+                                </div>
+
+                                @if($isWithinRadius)
+                                    <div class="flex justify-center">
+                                        <p class="text-blue-500 underline" @click="showDialog = true">OB Details</p>
+                                    </div>
+                                @endif
+                            </div>
+
+                            @if(!$isWithinRadius && $isTodayIsOb)
+                                <div
+                                    class="absolute inset-0 flex justify-center items-center bg-gray-200 dark:bg-slate-700 bg-opacity-90 dark:bg-opacity-90">
+                                    <div class="text-center">
+                                        <i class="bi bi-person-lock" style="font-size: 3rem;"></i>
+                                        <p class="font-bold mb-4">You have not arrived at <br>
+                                            the OB location.</p>
+                                        <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p>
+                                    </div>
+                                </div>
+                            @elseif(!$isTodayIsOb)
+                                <div
+                                    class="absolute inset-0 flex justify-center items-center bg-gray-200 dark:bg-slate-700 bg-opacity-90 dark:bg-opacity-90">
+                                    <div class="text-center">
+                                        <i class="bi bi-person-lock" style="font-size: 3rem;"></i>
+                                        <p class="font-bold mb-4">Attendance will be available on <br>{{ \Carbon\Carbon::parse($ongoingObs->date)->format('F d, Y') }}</p>
+                                        <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div 
+                                x-show="showDialog" 
+                                x-transition:enter="transition ease-out duration-300 transform"
+                                x-transition:enter-start="translate-y-full opacity-0"
+                                x-transition:enter-end="translate-y-0 opacity-100"
+                                x-transition:leave="transition ease-in duration-200 transform"
+                                x-transition:leave-start="translate-y-0 opacity-100"
+                                x-transition:leave-end="translate-y-full opacity-0"
+                                x-cloak 
+                                class="absolute inset-0 bg-gray-200 dark:bg-slate-700 overflow-hidden">
+                                <div class="p-6 scrollbar-thin1" style="height: 100%; overflow-y:scroll">
+                                    <div>
+                                        <button @click="showDialog = false" class="float-right focus:outline-none">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <h5 class="text-xl font-bold mb-4 text-center text-gray-700 dark:text-gray-50">OB Details</h5>
+                                    <p class="">Company: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->company }}</span></p>
+                                    <p class="">Address: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->address }}</span></p>
+                                    <p class="">Date: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->date }}</span></p>
+                                    <p class="">Stary Time: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->time_start }}</span></p>
+                                    <p class="">End Time: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->time_end }}</span></p>
+                                    <p class="">Purpose: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->purpose }}</span></p>
+                                    <div class="w-full flex justify-center mt-6">
+                                        <button 
+                                            class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600"
+                                            @click="showDialog = false">
+                                            Attendance
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
-                @endforeach
+                </div>
             @endif
 
 
@@ -191,7 +207,7 @@
                             dark:text-gray-300 dark:bg-gray-800"
                         placeholder="Enter reference number or company">
                 </div>
-                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'ongoing'">
+                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'unattended'">
                     <label for="search2" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
                     <input type="text" id="search2" wire:model.live="search2"
                         class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
@@ -227,12 +243,17 @@
                     <button @click="selectedTab = 'completed'"
                         :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'completed', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'completed' }"
                         class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
-                        Completed
+                        Attended
                     </button>
                     <button @click="selectedTab = 'upcoming'"
                         :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'upcoming', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'upcoming' }"
                         class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
                         Upcoming
+                    </button>
+                    <button @click="selectedTab = 'unattended'"
+                        :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'unattended', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'unattended' }"
+                        class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
+                        Not Attended
                     </button>
                 </div>
 
@@ -253,13 +274,13 @@
                                                 Address
                                             </th>
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Geolocation
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                 Date
                                             </th>
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Time
+                                                Time Schedule
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                Time In/Out
                                             </th>
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                 Purpose
@@ -285,15 +306,15 @@
                                                     {{ $obs->address }}
                                                 </td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    Lat: {{ $obs->lat }} <br>
-                                                    Lng: {{ $obs->lng }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                     {{ $obs->date }}
                                                 </td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                     Start: {{ $obs->time_start }} <br>
                                                     End: {{ $obs->time_end }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    In: {{ $obs->time_in }} <br>
+                                                    Out: {{ $obs->time_out }}
                                                 </td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                     <div 
@@ -304,9 +325,12 @@
                                                     </div>                                                
                                                 </td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    @if($obs->status)
+                                                    @if($obs->status == 1)
                                                         <span
                                                             class="text-xs text-white bg-green-500 rounded-lg py-1.5 px-4">Approved</span>
+                                                    @elseif($obs->status == 2)
+                                                        <span
+                                                        class="text-xs text-white bg-red-500 rounded-lg py-1.5 px-4">Disapproved</span>
                                                     @else
                                                         <span
                                                             class="text-xs text-white bg-orange-500 rounded-lg py-1.5 px-4">Pending</span>
@@ -314,16 +338,11 @@
                                                 </td>
                                                 <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                     <div class="relative">
-                                                        <button wire:click="toggleEditOB" 
+                                                        <button wire:click="viewThisOB({{ $obs->id }})" 
                                                             class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                             -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                            focus:outline-none" title="Edit">
-                                                            <i class="fas fa-pencil-alt ml-3"></i>
-                                                        </button>
-                                                        <button wire:click="toggleDeleteOB" 
-                                                            class=" text-red-600 hover:text-red-900 dark:text-red-600 
-                                                            dark:hover:text-red-900" title="Delete">
-                                                            <i class="fas fa-trash"></i>
+                                                            focus:outline-none" title="View">
+                                                            <i class="fas fa-eye ml-3"></i>
                                                         </button>
                                                     </div>
                                                 </td>
@@ -336,6 +355,9 @@
                                         No records!
                                     </div> 
                                 @endif
+                            </div>
+                            <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                {{ $completedObs->links() }}
                             </div>
                         </div>
                         <div x-show="selectedTab === 'upcoming'">
@@ -404,9 +426,12 @@
                                                     </div>
                                                 </td>
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    @if($obs->status)
+                                                    @if($obs->status == 1)
                                                         <span
                                                             class="text-xs text-white bg-green-500 rounded-lg py-1.5 px-4">Approved</span>
+                                                    @elseif($obs->status == 2)
+                                                        <span
+                                                        class="text-xs text-white bg-red-500 rounded-lg py-1.5 px-4">Disapproved</span>
                                                     @else
                                                         <span
                                                             class="text-xs text-white bg-orange-500 rounded-lg py-1.5 px-4">Pending</span>
@@ -414,13 +439,13 @@
                                                 </td>
                                                 <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                     <div class="relative">
-                                                        <button wire:click="toggleEditOB" 
+                                                        <button wire:click="toggleEditOB({{ $obs->id }})" 
                                                             class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                             -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
                                                             focus:outline-none" title="Edit">
                                                             <i class="fas fa-pencil-alt ml-3"></i>
                                                         </button>
-                                                        <button wire:click="toggleDeleteOB" 
+                                                        <button wire:click="toggleDeleteOB({{ $obs->id }})" 
                                                             class=" text-red-600 hover:text-red-900 dark:text-red-600 
                                                             dark:hover:text-red-900" title="Delete">
                                                             <i class="fas fa-trash"></i>
@@ -436,6 +461,110 @@
                                         No records!
                                     </div> 
                                 @endif
+                            </div>
+                            <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                {{ $upcomingObs->links() }}
+                            </div>
+                        </div>
+                        <div x-show="selectedTab === 'unattended'">
+                            <div class="overflow-x-auto">
+                                <table class="w-full min-w-full">
+                                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                        <tr class="whitespace-nowrap">
+                                            <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
+                                                Reference No.
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                Company
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                Address
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                Geolocation
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                Date
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                Time
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                Purpose
+                                            </th>
+                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                Status
+                                            </th>
+                                            <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                        @foreach ($unattendedObs as $obs)
+                                            <tr class="text-neutral-800 dark:text-neutral-200">
+                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                    {{ $obs->reference_number }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ $obs->company }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ $obs->address }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    Lat: {{ $obs->lat }} <br>
+                                                    Lng: {{ $obs->lng }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    {{ $obs->date }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    Start: {{ $obs->time_start }} <br>
+                                                    End: {{ $obs->time_end }}
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    <div 
+                                                        class="truncate max-w-xs"
+                                                        style="max-width: 20ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                                    >
+                                                        {{ $obs->purpose }}
+                                                    </div>
+                                                </td>
+                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                    @if($obs->status == 1)
+                                                        <span
+                                                            class="text-xs text-white bg-green-500 rounded-lg py-1.5 px-4">Approved</span>
+                                                    @elseif($obs->status == 2)
+                                                        <span
+                                                        class="text-xs text-white bg-red-500 rounded-lg py-1.5 px-4">Disapproved</span>
+                                                    @else
+                                                        <span
+                                                            class="text-xs text-white bg-orange-500 rounded-lg py-1.5 px-4">Pending</span>
+                                                    @endif
+                                                </td>
+                                                <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                    <div class="relative">
+                                                        <button wire:click="viewUnattendedOB({{ $obs->id }})" 
+                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                            focus:outline-none" title="Edit">
+                                                            <i class="fas fa-eye ml-3"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                @if ($unattendedObs->isEmpty())
+                                    <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                        No records!
+                                    </div> 
+                                @endif
+                            </div>
+                            <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                {{ $unattendedObs->links() }}
                             </div>
                         </div>
                     </div>
@@ -459,42 +588,42 @@
             <div class="grid grid-cols-2 gap-4">
                 <div class="col-span-2">
                     <label for="company" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Company <span class="text-red-500">*</span></label>
-                    <input type="text" id="company" wire:model='company' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    <input type="text" id="company" wire:model.live='company' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     @error('company') 
                         <span class="text-red-500 text-sm">The company is required!</span> 
                     @enderror
                 </div>
                 <div class="col-span-2">
                     <label for="address" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Address <span class="text-red-500">*</span></label>
-                    <input type="text" id="address" wire:model='address' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    <input type="text" id="address" wire:model.live='address' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     @error('address') 
                         <span class="text-red-500 text-sm">The address is required!</span> 
                     @enderror
                 </div>
                 <div class="col-span-2">
                     <label for="date" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date <span class="text-red-500">*</span></label>
-                    <input type="date" id="date" wire:model='date' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    <input type="date" id="date" wire:model.live='date' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     @error('date') 
                         <span class="text-red-500 text-sm">The date is required!</span> 
                     @enderror
                 </div>
                 <div class="col-span-2 sm:col-span-1">
                     <label for="startTime" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Start Time <span class="text-red-500">*</span></label>
-                    <input type="time" id="startTime" wire:model='startTime' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    <input type="time" id="startTime" wire:model.live='startTime' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     @error('startTime') 
                         <span class="text-red-500 text-sm">The start time is required!</span> 
                     @enderror
                 </div>
                 <div class="col-span-2 sm:col-span-1">
                     <label for="endTime" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Time <span class="text-red-500">*</span></label>
-                    <input type="time" id="endTime" wire:model='endTime' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                    <input type="time" id="endTime" wire:model.live='endTime' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     @error('endTime') 
                         <span class="text-red-500 text-sm">The end time is required!</span> 
                     @enderror
                 </div>
                 <div class="col-span-2">
                     <label for="purpose" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Purpose <span class="text-red-500">*</span></label>
-                    <textarea type="text" id="purpose" cols="30" rows="4" wire:model='purpose' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"></textarea>
+                    <textarea type="text" id="purpose" cols="30" rows="4" wire:model.live='purpose' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"></textarea>
                     @error('purpose') 
                         <span class="text-red-500 text-sm">The purpose is required!</span> 
                     @enderror
@@ -545,6 +674,76 @@
         </div>
     </x-modal>
 
+     {{-- View OB Modal --}}
+     <x-modal id="obModal" maxWidth="2xl" wire:model="viewOB">
+        <div class="p-4">
+            <div class="rounded-lg mb-4 p-4 dark:text-gray-50 text-slate-900 font-bold text-lg">
+                Official Business: {{ $company}}
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="col-span-2">
+                    <label for="company" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Company</label>
+                    <input type="text" id="company" wire:model='company' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+                <div class="col-span-2">
+                    <label for="address" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Address</label>
+                    <input type="text" id="address" wire:model='address' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+                <div class="col-span-2">
+                    <label for="date" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date</label>
+                    <input type="date" id="date" wire:model='date' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="startTime" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Start Time</label>
+                    <input type="time" id="startTime" wire:model='startTime' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="endTime" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Time</label>
+                    <input type="time" id="endTime" wire:model='endTime' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+                <div class="col-span-2">
+                    <label for="purpose" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Purpose</label>
+                    <textarea type="text" id="purpose" cols="30" rows="4" wire:model='purpose' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly></textarea>
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="approvedBy" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved By</label>
+                    <input type="text" id="approvedBy" wire:model='approvedBy' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="approvedDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved Date</label>
+                    <input type="text" id="approvedDate" wire:model='approvedDate' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+            </div>
+   
+            <div class="mt-4  mb-1">
+                <label for="purpose" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Geolocation</label>
+            </div>
+            <div class="flex-col justify-center w-full bg-gray-200 dark:bg-slate-700 border border-gray-300 mb-2" style="border-radius: 8px;">
+                <div wire:ignore class="w-full">
+                    <div id="map3" style="height: 250px; width: 100%; margin: 0;"></div>
+                </div>
+
+                <div class="text-sm flex mt-2 px-4">
+                    <div class="w-1/2 mb-2">
+                        Lat: <span class="text-gray-800 dark:text-gray-50">{{ $registeredLatitude ?? '...' }}</span> <br>
+                        Lng: <span class="text-gray-800 dark:text-gray-50">{{ $registeredLongitude ?? '...' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end col-span-2">
+                <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                    Close
+                </p>
+            </div>
+          
+        </div>
+    </x-modal>
+
     {{-- Delete Modal --}}
     <x-modal id="deleteModal" maxWidth="md" wire:model="deleteId" centered>
         <div class="p-4">
@@ -581,7 +780,7 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs&libraries=places"></script>
 <script>
-    let map, map2, marker, marker2, searchBox;
+    let map, map2, map3, marker, marker3, currentMarker, destinationMarker, searchBox;
 
     function initMap() {
         const defaultLocation = { lat: 14.5995, lng: 120.9842 }; // Manila coordinates
@@ -641,16 +840,17 @@
         @this.set('registeredLatitude', lat);
         @this.set('registeredLongitude', lng);
     }
-    document.addEventListener('DOMContentLoaded', initMap);
 
 
     // Map 2 ---------------------------------------------------------------- //
     function initMap2() {
-        const defaultLocation = { lat: 14.5995, lng: 120.9842 };
+        const destination = { lat: {{ $ongoingObs ? $ongoingObs->lat : 0.00 }}, lng: {{ $ongoingObs ? $ongoingObs->lng : 0.00 }} };
+        const lat = @this.latitude;
+        const lng = @this.longitude;
+        const currentLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
+
         if (!map2) {
             map2 = new google.maps.Map(document.getElementById("map2"), {
-                zoom: 15,
-                center: defaultLocation,
                 mapTypeControl: false,
                 streetViewControl: false,
                 fullscreenControl: true,
@@ -665,26 +865,83 @@
             });
         }
 
-        // Add marker
-        const lat = @this.latitude;
-        const lng = @this.longitude;
-        const newLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
+        currentMarker = new google.maps.Marker({
+            position: currentLocation,
+            map: map2,
+            title: 'Your Location',
+            icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        });
 
-        console.log(newLocation);
-        map2.setCenter(newLocation);
-        if (!marker2) {
-            marker2 = new google.maps.Marker({
-                position: newLocation,
-                map: map2,
-                title: 'Your Location',
-                animation: google.maps.Animation.DROP,
+        destinationMarker = new google.maps.Marker({
+            position: destination,
+            map: map2,
+            title: 'OB Location',
+            icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+        });
+
+        const bounds = new google.maps.LatLngBounds();
+    
+        bounds.extend(currentLocation);
+        bounds.extend(destination);
+        
+        map2.fitBounds(bounds);
+        
+        const padding = {
+            top: 50,
+            right: 50,
+            bottom: 50,
+            left: 50
+        };
+        map2.fitBounds(bounds, padding);
+    }
+
+    // Map 3 ---------------------------------------------------------------- //
+    function initMap3() {
+        let lat, lng;
+        if (@this.registeredLatitude && @this.registeredLongitude) {
+            lat = parseFloat(@this.registeredLatitude);
+            lng = parseFloat(@this.registeredLongitude);
+        } else {
+            lat = 14.5995;
+            lng = 120.9842;
+        }
+        const obLocation = { lat, lng };
+
+        if (!map3) {
+            map3 = new google.maps.Map(document.getElementById("map3"), {
+                zoom: 15,
+                center: obLocation,
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: true,
+                zoomControl: true,
+                styles: [
+                    {
+                        featureType: "poi",
+                        elementType: "labels",
+                        stylers: [{ visibility: "off" }]
+                    }
+                ]
+            });
+        }
+
+        map3.setCenter(obLocation);
+        if (!marker3) {
+            marker3 = new google.maps.Marker({
+                position: obLocation,
+                map: map3,
+                draggable: false,
+                title: 'Your OB Location',
+                animation: google.maps.Animation.DROP
             });
         } else {
-            marker2.setPosition(newLocation);
+            marker3.setPosition(obLocation);
         }
     }
-    document.addEventListener('DOMContentLoaded', initMap2);
 
-    // Check every 5 seconds
+    document.addEventListener('DOMContentLoaded', initMap);
+    document.addEventListener('DOMContentLoaded', initMap2);
+    document.addEventListener('DOMContentLoaded', initMap3);
     setInterval(initMap2 , 5000);
+    setInterval(initMap3 , 5000);
 </script>

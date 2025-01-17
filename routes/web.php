@@ -66,6 +66,8 @@ Route::middleware(['auth', 'checkrole:sa,hr,sv'])->group(function () {
         return view('livewire.admin.admin-leave-credits'); })->name('/leave-management/admin-leave-credits');
     Route::get('/leave-management/admin-leave-monetization', function () {
         return view('livewire.admin.admin-leave-monetization'); })->name('/leave-management/admin-leave-monetization');
+    Route::get('/employee-management/admin-official-business', function () {
+        return view('livewire.admin.admin-official-business'); })->name('/employee-management/admin-official-business');
 });
 
 /* Super Admin, HR, and Payroll account role */

@@ -4,7 +4,13 @@ x-data="{
 }" 
 x-cloak>
 
+    <div id="wfh-details"></div>
+
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
          #map {
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             transition: all 0.3s ease;
@@ -184,16 +190,18 @@ x-cloak>
                                                             {{ $employee->longitude ?? 'None' }}
                                                         </td>
                                                         <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                            <div class="relative">
-                                                                <button wire:click="viewEmployeeLocation({{ $employee->user_id }})" 
-                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                                    -mr-2 text-sm font-medium tracking-wide  
-                                                                    {{ $employee->latitude && $employee->longitude ? 'text-blue-500 hover:text-blue-600' : 'opacity-30' }} 
-                                                                    focus:outline-none" title="View"
-                                                                    {{ $employee->latitude && $employee->longitude ? '' : 'disabled' }}>
-                                                                    <i class="bi bi-eye-fill"></i>
-                                                                </button>
-                                                            </div>
+                                                            <a href="#wfh-details">
+                                                                <div class="relative">
+                                                                    <button wire:click="viewEmployeeLocation({{ $employee->user_id }})" 
+                                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                        -mr-2 text-sm font-medium tracking-wide  
+                                                                        {{ $employee->latitude && $employee->longitude ? 'text-blue-500 hover:text-blue-600' : 'opacity-30' }} 
+                                                                        focus:outline-none" title="View"
+                                                                        {{ $employee->latitude && $employee->longitude ? '' : 'disabled' }}>
+                                                                        <i class="bi bi-eye-fill"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </a>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -260,19 +268,21 @@ x-cloak>
                                                         </td>
                                                         <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                             @if($employee->status)
-                                                                <div class="relative">
-                                                                    @php
-                                                                        $thisName = trim($employee->surname . ', ' . $employee->first_name . ' ' . 
-                                                                            ($employee->middle_name ? $employee->middle_name . ' ' : '') . 
-                                                                            ($employee->name_extension ?? ''));
-                                                                    @endphp
-                                                                    <button wire:click="viewPreviousEmployeeLocation('{{ $employee->curr_lat }}', '{{ $employee->curr_lng }}', '{{ $thisName }}')" 
-                                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                                        -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600
-                                                                        focus:outline-none" title="View">
-                                                                        <i class="bi bi-eye-fill"></i>
-                                                                    </button>
-                                                                </div>
+                                                                <a href="#wfh-details">
+                                                                    <div class="relative">
+                                                                        @php
+                                                                            $thisName = trim($employee->surname . ', ' . $employee->first_name . ' ' . 
+                                                                                ($employee->middle_name ? $employee->middle_name . ' ' : '') . 
+                                                                                ($employee->name_extension ?? ''));
+                                                                        @endphp
+                                                                        <button wire:click="viewPreviousEmployeeLocation('{{ $employee->curr_lat }}', '{{ $employee->curr_lng }}', '{{ $thisName }}')" 
+                                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600
+                                                                            focus:outline-none" title="View">
+                                                                            <i class="bi bi-eye-fill"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </a>
                                                             @else
                                                                 <div class="relative">
                                                                     <button wire:click="toogleConfirmModal({{ $employee->user_id }}, 'approve')" 

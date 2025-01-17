@@ -23,10 +23,14 @@ return new class extends Migration
             $table->date('date')->nullable();
             $table->time('time_start')->nullable();
             $table->time('time_end')->nullable();
+            $table->time('time_in')->nullable();
+            $table->time('time_out')->nullable();
             $table->string('purpose')->nullable();
             $table->boolean('status')->default(0)->nullable();
             $table->string('approver')->nullable();
             $table->date('date_approved')->nullable();
+            $table->string('disapprover')->nullable();
+            $table->date('date_disapproved')->nullable();
             $table->timestamps();
         });
     }

@@ -21,10 +21,14 @@ class OfficialBusiness extends Model
         'date',  
         'time_start',  
         'time_end',  
+        'time_in',  
+        'time_out',  
         'purpose',  
         'status',  
         'approver',  
         'date_approved',  
+        'disapprover',  
+        'date_disapproved',  
     ];
 
     public function user(){
