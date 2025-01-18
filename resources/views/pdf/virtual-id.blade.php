@@ -66,11 +66,11 @@
 
         <!-- Virtual ID Card Back -->
         <table
-            style="width: 70%; height: 200px; max-width: 400px; margin: 20px auto; background-color: #e2e8f0; border-radius: 10px; text-align: center; padding: 20px; border-collapse: collapse; background-image: url('images/Vector.png'); background-size: cover; background-position: center;">
+            style="width: 70%; height: 230px; max-width: 400px; margin: 20px auto; background-color: #e2e8f0; border-radius: 10px; text-align: center; padding: 20px; border-collapse: collapse; background-image: url('images/Vector.png'); background-size: cover; background-position: center;">
             <tr>
                 <!-- Terms and Conditions -->
                 <td
-                    style="width: 70%; vertical-align: top; padding: 10px; font-size: 10px; color: #000; text-align: left;">
+                    style="width: 70%; vertical-align: top; padding: 10px; font-size: 14px; color: #000; text-align: left;">
                     <h3 style="font-weight: bold; margin-bottom: 10px;">TERMS AND CONDITIONS:</h3>
                     <ul style="list-style-type: disc; padding-left: 20px; margin: 0;">
                         <li>This ID is valid for official purposes only.</li>
@@ -83,7 +83,7 @@
                 <td style="width: 30%; text-align: center; vertical-align: middle;">
                     <div
                         style="width: 100px; height: 100px; display: inline-block; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                        <img src="data:image/png;base64,{{ $qrCode }}" width="100" height="100" />
+                        <img src="data:image/png;base64,{{ $qrCode }}" width="120" height="120" />
                     </div>
                 </td>
 

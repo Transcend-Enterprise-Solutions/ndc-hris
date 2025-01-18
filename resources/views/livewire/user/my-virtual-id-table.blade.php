@@ -49,15 +49,15 @@
             </div>
 
             <!-- Virtual ID Card Back -->
-            <div class="flex flex-col justify-center items-center p-4 w-full max-w-lg h-48 bg-slate-200 dark:bg-slate-200 rounded-lg bg-cover bg-center md:h-54 md:max-w-lg sm:h-72 sm:max-w-sm"
+            <div class="flex flex-col p-4 w-full max-w-lg h-48 bg-slate-200 dark:bg-slate-200 rounded-lg bg-cover bg-center md:h-54 md:max-w-lg sm:h-72 sm:max-w-sm"
                 style="background-image: url('/images/Vector.png');">
                 <!-- QR Code Display -->
-                <div class="flex justify-center items-center ml-4">
+                <div class="flex justify-center items-center ml-4 sm:mt-4">
                     <div class="flex justify-center items-start text-black">
                         <!-- Terms and Conditions -->
                         <div class="text-black text-left w-full text-[10px] sm:text-sm">
-                            <h3 class="font-bold mb-2">TERMS AND CONDITIONS:</h3>
-                            <ul class="list-disc pl-4">
+                            <h3 class="font-bold mb-2 ">TERMS AND CONDITIONS:</h3>
+                            <ul class="list-disc pl-4 leading-5">
                                 <li>This ID is valid for official purposes only.</li>
                                 <li>Any misuse of this ID is subject to legal consequences.</li>
                                 <li>Please contact support for any issues.</li>

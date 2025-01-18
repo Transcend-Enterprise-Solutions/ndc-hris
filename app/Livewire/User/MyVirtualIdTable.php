@@ -82,7 +82,7 @@ class MyVirtualIdTable extends Component
 
         return response()->streamDownload(
             fn () => print($pdf->output()),
-            "virtual-id.pdf"
+            "MyVirtualID.pdf"
         );
     }
 
