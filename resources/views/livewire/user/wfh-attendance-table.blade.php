@@ -72,7 +72,7 @@
                             <div class="flex justify-between px-4 pt-4">
                                 {{-- <x-date-clock-counter /> --}}
                                 <div class="text-sm font-semibold text-gray-900 dark:text-white h-10 text-left">
-                                    <i class="bi bi-clock"></i> {{ $formattedTime ?? '...' }}
+                                    <i class="bi bi-clock"></i> {{ $formattedTime2 ?: $formattedTime }}
                                 </div>
                                 <div class="relative">
                                     <i class="bi bi-three-dots-vertical cursor-pointer" @click="open = !open"></i>
@@ -652,14 +652,13 @@
     setInterval(updateMap , 5000);
     
     function sendTimeToApp(latitude, longitude) {
-        const time = new Date().toLocaleTimeString();
-        Livewire.dispatch('timeUpdate', { time });
+        if (!window.ReactNativeWebView) {
+            const time = new Date().toLocaleTimeString();
+            Livewire.dispatch('timeUpdate', { time });
+        }
     }
 
-    if (!window.ReactNativeWebView) {
-        setInterval(sendTimeToApp , 1000); 
-    }
-
+    setInterval(sendTimeToApp , 1000); 
 
     function viewWFHLocHistoryMap() {
         const lat = @this.registeredLatitude;

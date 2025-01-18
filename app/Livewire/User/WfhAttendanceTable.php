@@ -65,6 +65,7 @@ class WfhAttendanceTable extends Component
         $this->latitude = $locationData['latitude'] ?? null;
         $this->longitude = $locationData['longitude'] ?? null;
         $this->formattedTime = $locationData['formattedTime'] ?? null;
+        $this->formattedTime2 = $locationData['formattedTime2'] ?? null;
         
         // Check if within allowed radius and update UI accordingly
         $this->isWithinRadius = $this->isWithinAllowedRadius();
