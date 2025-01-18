@@ -39,6 +39,7 @@ class WfhAttendanceTable extends Component
     public $latitude = null;
     public $longitude = null;
     public $formattedTime = null;
+    public $formattedTime2 = null;
     public $isWithinRadius;
     public $locReqGranted = true;
     public $hasRequested;
@@ -71,7 +72,7 @@ class WfhAttendanceTable extends Component
 
     #[On('timeUpdate')] 
     public function handleTimeUpdate($time){
-        $this->formattedTime = $time ?? null;
+        $this->formattedTime2 = $time ?? null;
     }
 
     private function calculateDistance($lat1, $lon1, $lat2, $lon2)

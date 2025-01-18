@@ -655,7 +655,10 @@
         const time = new Date().toLocaleTimeString();
         Livewire.dispatch('timeUpdate', { time });
     }
-    setInterval(sendTimeToApp , 1000); 
+
+    if (!window.ReactNativeWebView) {
+        setInterval(sendTimeToApp , 1000); 
+    }
 
 
     function viewWFHLocHistoryMap() {

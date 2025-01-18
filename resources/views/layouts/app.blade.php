@@ -117,7 +117,7 @@
             const locationData = {
                 latitude: latitude,
                 longitude: longitude,
-                // formattedTime: new Date().toLocaleTimeString(),
+                formattedTime: new Date().toLocaleTimeString(),
             };
 
             Livewire.dispatch('locationUpdated', { locationData });
