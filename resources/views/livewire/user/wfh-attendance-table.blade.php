@@ -653,7 +653,15 @@
     
     function sendTimeToApp(latitude, longitude) {
         if (!window.ReactNativeWebView) {
-            const time = new Date().toLocaleTimeString();
+            const date = new Date();
+            const time = date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                hour12: true
+            });
             Livewire.dispatch('timeUpdate', { time });
         }
     }
