@@ -128,7 +128,7 @@
                             x-transition:leave-end="translate-y-full opacity-0"
                             x-cloak 
                             class="absolute inset-0 bg-gray-50 dark:bg-slate-700 overflow-hidden w-full h-full z-50 flex">
-                            <div class="p-6 overflow-hidden relative">
+                            <div class="p-6 overflow-hidden relative w-full">
                                 <button @click="showWFHLocHistory = false" 
                                         class="px-3 text-white rounded-md absolute
                                         text-sm bg-gray-500 hover:bg-gray-600  
@@ -147,8 +147,8 @@
                                     </div>
                                 </div>
 
-                                <div class="border dark:border-gray-600 scrollbar-thin1" style="height: 280px; overflow-y:scroll;">
-                                    <div class="overflow-x-auto">
+                                <div class="border dark:border-gray-600 scrollbar-thin1 w-full" style="height: 280px; overflow-y:scroll;">
+                                    <div class="overflow-x-auto w-full">
                                         <table class="w-full min-w-full">
                                             <thead class="bg-gray-100 dark:bg-gray-600">
                                                 <tr class="whitespace-nowrap">
