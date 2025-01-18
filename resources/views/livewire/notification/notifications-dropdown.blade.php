@@ -165,13 +165,12 @@
                             </div>
                         </li>
                     @endif      
-
-                    @if($unreadCount == 0)
-                        <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
-                    @endif
                 @empty
                     <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
                 @endforelse
+                @if($unreadCount == 0)
+                    <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
+                @endif
             @elseif(Auth::user()->user_role === 'emp')
                 @forelse ($groupedNotifications as $type => $group)
                     @if($type === 'request' && !$group['read'])
@@ -214,15 +213,17 @@
                         <li>
                             <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
                                 <div class="flex justify-between items-start">
-                                    <a wire:navigate href="{{ route('home') }}" class="flex-grow">
+                                    <a wire:navigate href="{{ route('home', [
+                                                'showWFHLocHistory' => true,
+                                            ])
+                                            }}" class="flex-grow">
                                         <span class="block text-sm mb-1">
                                             📣 <span class="font-medium text-slate-800 dark:text-slate-100">
                                                 WFH change location request
                                             </span>
                                         </span>
                                         <span class="block text-xs text-slate-600 dark:text-slate-300">
-                                            Your request to change WFH location has been <span class="text-green-500 uppercase">approved</span> <br>
-                                            You can now register your new WFH location
+                                            Your request to change WFH location has been <span class="text-green-500 uppercase">approved</span>
                                         </span>
                                         <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
                                             {{ $group['latest']->created_at->diffForHumans() }}
@@ -254,7 +255,10 @@
                         <li>
                             <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
                                 <div class="flex justify-between items-start">
-                                    <a wire:navigate href="{{ route('home') }}" class="flex-grow">
+                                    <a wire:navigate href="{{ route('home', [
+                                            'showWFHLocHistory' => true,
+                                        ])
+                                        }}" class="flex-grow">
                                         <span class="block text-sm mb-1">
                                             📣 <span class="font-medium text-slate-800 dark:text-slate-100">
                                                 WFH change location request
@@ -291,12 +295,12 @@
                             </div>
                         </li>
                     @endif
-                    @if($unreadCount == 0)
-                        <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
-                    @endif
                 @empty
                     <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
                 @endforelse
+                @if($unreadCount == 0)
+                    <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
+                @endif
             @endif
         </ul>
     </div>

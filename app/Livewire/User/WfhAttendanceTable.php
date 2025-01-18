@@ -25,7 +25,8 @@ class WfhAttendanceTable extends Component
     public $verifyType;
     public $editLocation;
     public $hasWFHLocation;
-
+    public $address;
+    public $search;
     public $morningInDisabled = false;
     public $morningOutDisabled = true;
     public $afternoonInDisabled = true;
@@ -39,8 +40,18 @@ class WfhAttendanceTable extends Component
     public $longitude = null;
     public $formattedTime = null;
     public $isWithinRadius;
-    public $locReqGranted;
+    public $locReqGranted = true;
     public $hasRequested;
+    public $approvedBy;
+    public $approvedDate;
+    public $disapprovedBy;
+    public $disapprovedDate;
+    public $newLat;
+    public $newLng;
+    public $editLocMessage;
+    public $pageSize = 10; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
+    public $approveOnly;
 
 
     #[On('locationUpdated')] 
@@ -56,6 +67,11 @@ class WfhAttendanceTable extends Component
         
         // Check if within allowed radius and update UI accordingly
         $this->isWithinRadius = $this->isWithinAllowedRadius();
+    }
+
+    #[On('timeUpdate')] 
+    public function handleTimeUpdate($time){
+        $this->formattedTime = $time ?? null;
     }
 
     private function calculateDistance($lat1, $lon1, $lat2, $lon2)
@@ -243,12 +259,18 @@ class WfhAttendanceTable extends Component
         $this->punch(1, 'Afternoon Out');
     }
 
-    public function resetVariables()
-    {
+    public function resetVariables(){
         // $this->password = null;
         $this->errorMessage = null;
         $this->editLocation = null;
         $this->showConfirmation = null;
+        $this->newLat = null;
+        $this->newLng = null;
+        $this->editLocMessage = null;
+        $this->approvedBy = null;
+        $this->approvedDate = null;
+        $this->disapprovedBy = null;
+        $this->disapprovedDate = null;
     }
 
     public function resetButtonStatesIfNeeded()
@@ -300,37 +322,71 @@ class WfhAttendanceTable extends Component
         }
     }
 
-    public function toggleEditLocation(){
+    public function toggleEditLocation($type){
+        if($type == 'request'){
+            $this->editLocMessage = 'Change';
+        }else{
+            $this->editLocMessage = 'Register';
+        }
         $this->editLocation = true;
+        $this->dispatch('init-map2');
     }
 
     public function saveLocation(){
         try{
-            if($this->latitude && $this->longitude){
-                $user = Auth::user();
-                $wfhLoc = WfhLocation::where('user_id', $user->id)->first();
-                if($wfhLoc){
-                    $wfhLoc->update([
-                        'latitude' => $this->latitude,
-                        'longitude' => $this->longitude,
-                        'status' => 1,
-                    ]);
-                    $this->dispatch('swal', [
-                        'title' => "WFH location updated successfully!",
-                        'icon' => 'success'
-                    ]);
-                }else{
-                    WfhLocation::create([
-                        'user_id' => $user->id,
-                        'latitude' => $this->latitude,
-                        'longitude' => $this->longitude,
-                        'status' => 1,
-                    ]);
-                    $this->dispatch('swal', [
-                        'title' => "WFH location added successfully!",
-                        'icon' => 'success'
-                    ]);
-                }
+            $this->validate([
+                'address' => 'required',
+                'newLat' => 'required',
+                'newLng' => 'required',
+            ]);
+
+            $user = Auth::user();
+            $wfhLoc = WfhLocation::where('user_id', $user->id)->first();
+            
+            if($this->editLocMessage == 'Change'){
+                WfhLocationRequests::create([
+                    'user_id' => $user->id,
+                    'address' => $this->address,
+                    'curr_lat' => $this->newLat,
+                    'curr_lng' => $this->newLng,
+                    'status' => 0,
+                ]);
+                $this->dispatch('swal', [
+                    'title' => "New WFH location requested successfully!",
+                    'icon' => 'success'
+                ]);
+                $this->locReqGranted = false;
+
+                // Create a notification entry
+                Notification::create([
+                    'user_id' => $user->id,
+                    'type' => 'locrequest',
+                    'notif' => 'locrequest',
+                    'read' => 0,
+                ]);
+            }else{
+                $wfhReq = WfhLocationRequests::create([
+                    'user_id' => $user->id,
+                    'address' => $this->address,
+                    'curr_lat' => $this->newLat,
+                    'curr_lng' => $this->newLng,
+                    'status' => 1,
+                    'approver' => 'First-time Registration',
+                    'date_approved' => now(),
+                ]);
+
+                WfhLocation::create([
+                    'user_id' => $user->id,
+                    'address' => $this->address,
+                    'latitude' => $this->newLat,
+                    'longitude' => $this->newLng,
+                    'wfh_loc_req_id' => $wfhReq->id,
+                ]);
+                $this->dispatch('swal', [
+                    'title' => "WFH location added successfully!",
+                    'icon' => 'success'
+                ]);
+                $this->hasWFHLocation = true;
             }
             $this->resetVariables();
         }catch(Exception $e){
@@ -338,32 +394,9 @@ class WfhAttendanceTable extends Component
         }
     }
 
-    public function sendChangeLocRequest(){
+    public function showLocReqHistory(){
         try{
-            $user = Auth::user();
-            WfhLocationRequests::create([
-                'user_id' => $user->id,
-                'curr_lat' => $this->registeredLatitude,
-                'curr_lng' => $this->registeredLongitude,
-                'status' => 0,
-            ]);
-            $wfhLoc = WfhLocation::where('user_id', $user->id)->first();
-            if($wfhLoc){
-                $wfhLoc->update([
-                    'status' => 0,
-                ]);
-            }
-
-            // Create a notification entry
-            Notification::create([
-                'user_id' => $user->id,
-                'type' => 'locrequest',
-                'notif' => 'location',
-                'read' => 0,
-            ]);
-
-            $this->locReqGranted = false;
-            $this->hasRequested = true;
+            
         }catch(Exception $e){
             throw $e;
         }
@@ -380,11 +413,41 @@ class WfhAttendanceTable extends Component
         }
 
         $wfhLocationRequest = WfhLocationRequests::where('user_id', $userId)
-                ->where('status', 1)
+                ->where('status', 0)
                 ->orderBy('created_at', 'desc')
                 ->first();
         if($wfhLocationRequest){
-            $this->locReqGranted = true;
+            $this->locReqGranted = false;
+        }
+    }
+
+    public function viewWFHLocHistory($id){
+        try{
+            $wfhLocRequest = WfhLocationRequests::where('wfh_location_requests.id', $id)
+                ->join('users', 'users.id', 'wfh_location_requests.user_id')
+                ->select([
+                    'wfh_location_requests.*',
+                    'users.name'
+                ])
+                ->first();
+            
+            if($wfhLocRequest->status == 2){
+                $this->approveOnly = true;
+            }else{
+                $this->approveOnly = false;
+
+            }
+            $this->registeredLatitude = floatval($wfhLocRequest->curr_lat);
+            $this->registeredLongitude = floatval($wfhLocRequest->curr_lng);
+            $this->address = $wfhLocRequest->address;
+            $this->approvedBy = $wfhLocRequest->approver;
+            $this->approvedDate = $wfhLocRequest->date_approved;
+            $this->disapprovedBy = $wfhLocRequest->disapprover;
+            $this->disapprovedDate = $wfhLocRequest->date_disapproved;
+
+            $this->dispatch('showWFHLocHistory');
+        }catch(Exception $e){
+            throw $e;
         }
     }
          
@@ -408,10 +471,19 @@ class WfhAttendanceTable extends Component
         $groupedTransactions = ($this->scheduleType === 'WFH')
             ? $transactions->groupBy('verify_type_display')
             : $transactions;
+
+        $userId = Auth::user()->id;
+        $history = WfhLocationRequests::where('user_id', $userId)
+            ->when($this->search, function ($query) {
+                return $query->search(trim($this->search));
+            })
+            ->orderBy('created_at', 'ASC')
+            ->paginate($this->pageSize);
     
         return view('livewire.user.wfh-attendance-table', [
             'groupedTransactions' => $groupedTransactions,
             'scheduleType' => $this->scheduleType,
+            'history' => $history,
         ]);
     }
 }

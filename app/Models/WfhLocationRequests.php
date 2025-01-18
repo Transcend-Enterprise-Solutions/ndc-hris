@@ -15,14 +15,25 @@ class WfhLocationRequests extends Model
         'user_id',
         'message',
         'attachment',
+        'address',
         'curr_lat',
         'curr_lng',
         'status',
         'approver',
+        'date_approved',
+        'disapprover',
+        'date_disapproved',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function scopeSearch($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('address', 'like', $term);
+        });
     }
 }

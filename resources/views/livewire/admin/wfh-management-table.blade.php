@@ -104,13 +104,47 @@ x-cloak>
                 <div wire:ignore class="w-full">
                     <div id="map" style="height: 250px; width: 100%; border-radius: 8px 8px 0 0; margin: 0;"></div>
                 </div>
-                <div class="text-sm flex mt-2 px-4">
-                    <div class="w-1/2 mb-2">
-                        WFH Location: <span class="text-gray-800 dark:text-gray-50">{{ $employeeName ?? '...' }}</span><br>
-                        Lat: <span class="text-gray-800 dark:text-gray-50">{{ $registeredLatitude ?? '...' }}</span> <br>
-                        Lng: <span class="text-gray-800 dark:text-gray-50">{{ $registeredLongitude ?? '...' }}</span>
+
+                <div class="text-sm grid grid-cols-2 mt-2 px-4 mb-2">
+                    <div class="col-span-2 sm:col-span-1">
+                        Employee: <span class="text-gray-800 dark:text-gray-50">{{ $employeeName ?? '...' }}</span><br>
+                        Address: <span class="text-gray-800 dark:text-gray-50">{{ $address ?? '...' }}</span>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <span class="{{ $approveOnly ? 'hidden' : '' }}">
+                            Approved By: <span class="text-gray-800 dark:text-gray-50">{{ $approvedBy ?? '...' }}</span><br>
+                            Date Approved: <span class="text-gray-800 dark:text-gray-50">{{ $approvedDate ?? '...' }}</span>
+                        </span>
+                        <span class="{{ $approveOnly ? '' : 'hidden' }}">
+                            Disapproved By: <span class="text-gray-800 dark:text-gray-50">{{ $disapprovedBy ?? '...' }}</span><br>
+                            Date Disapproved: <span class="text-gray-800 dark:text-gray-50">{{ $disapprovedDate ?? '...' }}</span>
+                        </span>
                     </div>
                 </div>
+
+                @if($thisWFHLocId)
+                    <div class="relative mt-1 flex gap-4 w-full mb-4 justify-center items-center">
+                        <button wire:click="toogleConfirmModal({{ $thisWFHLocId }}, 'approve')" 
+                            class="px-3 py-1 text-white rounded-md 
+                            text-sm bg-green-500 hover:bg-green-600  
+                            focus:outline-none" title="Approve">
+                            Approve
+                        </button>
+                        <button wire:click="toogleConfirmModal({{ $thisWFHLocId }}, 'disapprove')" 
+                            class="px-3 py-1 text-white rounded-md 
+                            text-sm bg-red-500 hover:bg-red-600  
+                            focus:outline-none" title="Disapprove">
+                            Disapprove
+                        </button>
+                        <button wire:click="resetVariables" 
+                            class="px-3 py-1 text-white rounded-md 
+                            text-sm bg-gray-500 hover:bg-gray-600  
+                            focus:outline-none" title="Cancel">
+                            Cancel
+                        </button>
+                    </div>
+                @endif
+
             </div>
 
             <div class="w-full sm:w-1/3 sm:mr-4 mb-4" x-show="selectedTab === 'employees'">
@@ -131,6 +165,15 @@ x-cloak>
                     placeholder="Enter employee name or ID">
             </div>
 
+            <div class="w-full sm:w-1/3 sm:mr-4 mb-4" x-show="selectedTab === 'history'">
+                <label for="search3" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                <input type="text" id="search3" wire:model.live="search3"
+                    class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                        dark:hover:bg-slate-600 dark:border-slate-600
+                        dark:text-gray-300 dark:bg-gray-800"
+                    placeholder="Enter employee name or ID">
+            </div>
+
              <!-- Table -->
              <div class="flex flex-col">
                 <div class="flex gap-2 overflow-x-auto -mb-2">
@@ -143,6 +186,11 @@ x-cloak>
                             :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'requests', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'requests' }" 
                             class="h-min px-4 pt-2 pb-4 text-sm">
                         Location Request
+                    </button>
+                    <button @click="selectedTab = 'history'" 
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'history', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'history' }" 
+                            class="h-min px-4 pt-2 pb-4 text-sm">
+                        Request History
                     </button>
                 </div>
                 <div class="-my-2 overflow-x-auto">
@@ -160,10 +208,10 @@ x-cloak>
                                                     Employee No.
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                    Latitude
+                                                    Address
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                    Longitude
+                                                    Geolocation
                                                 </th>
                                                 <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
                                                     Action
@@ -183,21 +231,19 @@ x-cloak>
                                                                 {{ $employee->emp_code ? 'D-' . substr($employee->emp_code, 1) : '' }}
                                                             @endif
                                                         </td>
-                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $employee->latitude ? '' : 'opacity-30' }}">
-                                                            {{ $employee->latitude ?? 'None' }}
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                            {{ $employee->address }}
                                                         </td>
-                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $employee->longitude ? '' : 'opacity-30' }}">
-                                                            {{ $employee->longitude ?? 'None' }}
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                            Lat: {{ $employee->curr_lat ?? 'None' }} <br>
+                                                            Lng: {{ $employee->curr_lng ?? 'None' }}
                                                         </td>
                                                         <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                             <a href="#wfh-details">
                                                                 <div class="relative">
-                                                                    <button wire:click="viewEmployeeLocation({{ $employee->user_id }})" 
+                                                                    <button wire:click="viewPreviousEmployeeLocation({{ $employee->id }})" 
                                                                         class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                                        -mr-2 text-sm font-medium tracking-wide  
-                                                                        {{ $employee->latitude && $employee->longitude ? 'text-blue-500 hover:text-blue-600' : 'opacity-30' }} 
-                                                                        focus:outline-none" title="View"
-                                                                        {{ $employee->latitude && $employee->longitude ? '' : 'disabled' }}>
+                                                                        -mr-2 text-sm font-medium tracking-wide focus:outline-none text-blue-500" title="View">
                                                                         <i class="bi bi-eye-fill"></i>
                                                                     </button>
                                                                 </div>
@@ -226,7 +272,10 @@ x-cloak>
                                                     Name
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                    Previous Location
+                                                    Address
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Geolocation
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Request Attachment
@@ -249,6 +298,9 @@ x-cloak>
                                                             @else
                                                                 {{ $employee->emp_code ? 'D-' . substr($employee->emp_code, 1) : '' }}
                                                             @endif
+                                                        </td>
+                                                        <td class="px-5 py-4 text-center text-sm font-medium text-nowrap">
+                                                            {{ $employee->address ?? 'None' }}
                                                         </td>
                                                         <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                             Lat: {{ $employee->curr_lat ?? 'None' }} <br>
@@ -275,7 +327,7 @@ x-cloak>
                                                                                 ($employee->middle_name ? $employee->middle_name . ' ' : '') . 
                                                                                 ($employee->name_extension ?? ''));
                                                                         @endphp
-                                                                        <button wire:click="viewPreviousEmployeeLocation('{{ $employee->curr_lat }}', '{{ $employee->curr_lng }}', '{{ $thisName }}')" 
+                                                                        <button wire:click="viewPreviousEmployeeLocation({{ $employee->id }})" 
                                                                             class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                                             -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600
                                                                             focus:outline-none" title="View">
@@ -284,6 +336,16 @@ x-cloak>
                                                                     </div>
                                                                 </a>
                                                             @else
+                                                                <div class="relative">
+                                                                    <a href="#wfh-details">
+                                                                        <button wire:click="viewPreviousEmployeeLocation({{ $employee->id }})" 
+                                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600
+                                                                            focus:outline-none" title="View">
+                                                                            <i class="bi bi-eye-fill"></i>
+                                                                        </button>
+                                                                    </a>
+                                                                </div>
                                                                 <div class="relative">
                                                                     <button wire:click="toogleConfirmModal({{ $employee->user_id }}, 'approve')" 
                                                                         class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
@@ -308,12 +370,104 @@ x-cloak>
                                     </table>
                                     @if ($locRequesters->isEmpty())
                                         <div class="p-4 text-center text-gray-500 dark:text-gray-300">
-                                            No records!
+                                            No requests!
                                         </div> 
                                     @endif
                                 </div>
                                 <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
                                     {{ $locRequesters->links() }}
+                                </div>
+                             </div>
+                             <div x-show="selectedTab === 'history'">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full min-w-full">
+                                        <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                            <tr class="whitespace-nowrap">
+                                                <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
+                                                    Date
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Status
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
+                                                    Name
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Address
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Geoocation
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Request Attachment
+                                                </th>
+                                                <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                    Action
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                                @foreach($history as $employee)
+                                                    <tr class="text-neutral-800 dark:text-neutral-200">
+                                                        <td class="px-5 py-4 text-left text-sm font-medium text-nowrap">
+                                                            {{ \Carbon\Carbon::parse($employee->date_approved)->format('F d, Y') }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-center text-sm font-medium text-nowrap">
+                                                            @if($employee->status == 1)
+                                                                <span
+                                                                    class="text-xs text-white bg-green-500 rounded-lg py-1.5 px-4">Approved</span>
+                                                            @elseif($employee->status == 2)
+                                                                <span
+                                                                class="text-xs text-white bg-red-500 rounded-lg py-1.5 px-4">Disapproved</span>
+                                                            @endif
+                                                        </td>
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                            {{ $employee->surname }}, {{ $employee->first_name }} {{ $employee->middle_name ?? '' }} {{ $employee->name_extension ?? '' }}<br>
+                                                            @if($employee->appointment === 'plantilla')
+                                                                {{ $employee->emp_code }}
+                                                            @else
+                                                                {{ $employee->emp_code ? 'D-' . substr($employee->emp_code, 1) : '' }}
+                                                            @endif
+                                                        </td>
+                                                        <td class="px-5 py-4 text-center text-sm font-medium text-nowrap">
+                                                            {{ $employee->address ?? 'None' }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                            Lat: {{ $employee->curr_lat ?? 'None' }} <br>
+                                                            Lng: {{ $employee->curr_lng ?? 'None' }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap {{ $employee->attachment ? '' : 'opacity-30' }}">
+                                                            {{ $employee->attachment ?? 'None' }}
+                                                        </td>
+                                                        <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                            <a href="#wfh-details">
+                                                                <div class="relative">
+                                                                    @php
+                                                                        $thisName = trim($employee->surname . ', ' . $employee->first_name . ' ' . 
+                                                                            ($employee->middle_name ? $employee->middle_name . ' ' : '') . 
+                                                                            ($employee->name_extension ?? ''));
+                                                                    @endphp
+                                                                    <button wire:click="viewPreviousEmployeeLocation({{ $employee->id }})" 
+                                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                        -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600
+                                                                        focus:outline-none" title="View">
+                                                                        <i class="bi bi-eye-fill"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                        </tbody>
+                                    </table>
+                                    @if ($history->isEmpty())
+                                        <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                            No records!
+                                        </div> 
+                                    @endif
+                                </div>
+                                <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                    {{ $history->links() }}
                                 </div>
                              </div>
                         </div>

@@ -369,7 +369,7 @@ x-cloak>
                                     </table>
                                     @if ($obRequests->isEmpty())
                                         <div class="p-4 text-center text-gray-500 dark:text-gray-300">
-                                            No records!
+                                            No requests!
                                         </div> 
                                     @endif
                                 </div>

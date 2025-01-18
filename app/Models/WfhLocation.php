@@ -13,9 +13,10 @@ class WfhLocation extends Model
 
     protected $fillable = [
         'user_id',
+        'address',
         'latitude',
         'longitude',
-        'status',
+        'wfh_loc_req_id',
     ];
 
     public function user()

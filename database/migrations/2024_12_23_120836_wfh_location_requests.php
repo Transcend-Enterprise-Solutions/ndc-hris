@@ -17,10 +17,14 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('message')->nullable();
             $table->string('attachment')->nullable();
+            $table->string('address')->nullable();
             $table->string('curr_lat')->nullable();
             $table->string('curr_lng')->nullable();
             $table->boolean('status')->nullable();
             $table->string('approver')->nullable();
+            $table->date('date_approved')->nullable();
+            $table->string('disapprover')->nullable();
+            $table->date('date_disapproved')->nullable();
             $table->timestamps();
         });
     }
