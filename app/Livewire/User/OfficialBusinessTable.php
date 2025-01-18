@@ -152,7 +152,7 @@ class OfficialBusinessTable extends Component
             $this->latitude,
             $this->longitude
         );
-        return $distance <= 50;
+        return $distance <= 500;
     }
 
     public function toggleAddOB(){

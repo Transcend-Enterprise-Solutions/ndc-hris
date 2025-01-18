@@ -782,7 +782,7 @@ class PersonalDataSheetTable extends Component
                     'citizenship' => 'required',
                     'height' => 'required|numeric|min:0|max:300',
                     'weight' => 'required|numeric|min:0|max:500',
-                    'blood_type' => 'required|string|in:A,B,AB,O',
+                    'blood_type' => 'required|string|in:A , B, AB, O, O-, O+, A-, A+, B-, B+, AB-, AB+',
                     'mobile_number' => 'required|string|max:15',
                     'gsis' => 'required|string|max:50',
                     'sss' => 'required|string|max:50',

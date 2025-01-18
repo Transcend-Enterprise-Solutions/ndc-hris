@@ -242,17 +242,17 @@
                 <div class="flex gap-2 overflow-x-auto -mb-2" class="relative">
                     <button @click="selectedTab = 'completed'"
                         :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'completed', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'completed' }"
-                        class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
+                        class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
                         Attended
                     </button>
                     <button @click="selectedTab = 'upcoming'"
                         :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'upcoming', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'upcoming' }"
-                        class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
+                        class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
                         Upcoming
                     </button>
                     <button @click="selectedTab = 'unattended'"
                         :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'unattended', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'unattended' }"
-                        class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
+                        class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
                         Not Attended
                     </button>
                 </div>
@@ -450,6 +450,12 @@
                                                             dark:hover:text-red-900" title="Delete">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
+                                                        <button wire:click="viewThisOB({{ $obs->id }})" 
+                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                            focus:outline-none" title="View">
+                                                            <i class="fas fa-eye ml-3"></i>
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -545,10 +551,10 @@
                                                 </td>
                                                 <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                     <div class="relative">
-                                                        <button wire:click="viewUnattendedOB({{ $obs->id }})" 
+                                                        <button wire:click="viewThisOB({{ $obs->id }})" 
                                                             class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                             -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                            focus:outline-none" title="Edit">
+                                                            focus:outline-none" title="View">
                                                             <i class="fas fa-eye ml-3"></i>
                                                         </button>
                                                     </div>
