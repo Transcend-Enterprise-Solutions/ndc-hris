@@ -66,6 +66,8 @@
             <div class="w-full bg-white rounded-2xl p-3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
                 @if ($hasWFHLocation)
                     <div class="flex-col mb-4 justify-center w-full bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-gray-800 overflow-hidden relative" style="border-radius: 8px;">
+                        
+                        {{-- WFH Location Modal ---------------------------------------------------------------------------------}}
                         <div>
                             <div class="flex justify-between px-4 pt-4">
                                 {{-- <x-date-clock-counter /> --}}
