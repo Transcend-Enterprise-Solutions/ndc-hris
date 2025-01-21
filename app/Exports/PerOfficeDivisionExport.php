@@ -87,7 +87,7 @@ class PerOfficeDivisionExport implements FromCollection, WithEvents
         $sheet->setCellValue('A1', "");
 
         $sheet->mergeCells('A2:L2');
-        $sheet->setCellValue('A2', "NATIONAL YOUTH COMMISSION");
+        $sheet->setCellValue('A2', "NATIONAL DEVELOPMENT COMPANY");
         $sheet->mergeCells('A3:L3');
 
         $statuses = $this->filters['statuses'][0] === 'All' ? 'All' : implode(' | ', $this->filters['statuses']);

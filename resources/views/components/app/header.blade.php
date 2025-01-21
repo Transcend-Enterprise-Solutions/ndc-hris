@@ -1,4 +1,4 @@
-<header class="sticky top-0 bg-gray-100/80 dark:bg-[#182235]/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700 shadow-b" style="z-index: 9999">
+<header class="sticky top-0 bg-gray-100/80 dark:bg-[#182235]/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700 shadow-b" style="z-index: 9998">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16 -mb-px">
 

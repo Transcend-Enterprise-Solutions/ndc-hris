@@ -329,7 +329,7 @@ class GeneralPayrollExport
 
         $this->currentRow ++;
         $sheet->mergeCells("A{$this->currentRow}:AF{$this->currentRow}");
-        $sheet->setCellValue("A{$this->currentRow}", "NATIONAL YOUTH COMMISSION");
+        $sheet->setCellValue("A{$this->currentRow}", "NATIONAL DEVELOPMENT COMPANY");
         $sheet->getStyle("A{$this->currentRow}:AF{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle("A{$this->currentRow}")->getFont()->setBold(true);
         
@@ -347,7 +347,7 @@ class GeneralPayrollExport
         $sheet->mergeCells("A{$this->currentRow}:B{$this->currentRow}");
         $sheet->setCellValue("A{$this->currentRow}", "Entity Name : ");
         $sheet->mergeCells("C{$this->currentRow}:j{$this->currentRow}");
-        $sheet->setCellValue("C{$this->currentRow}", " NATIONAL YOUTH COMMISSION ");
+        $sheet->setCellValue("C{$this->currentRow}", " NATIONAL DEVELOPMENT COMPANY ");
         $sheet->getStyle("C{$this->currentRow}:J{$this->currentRow}")->applyFromArray([
             'font' => [
                 'underline' => true,

@@ -21,8 +21,8 @@ $maxWidth = [
     x-on:keydown.escape.window="show = false; $wire.call('resetVariables')"
     x-show="show"
     id="{{ $id }}"
-    class="jetstream-modal fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50 {{ $centered ? 'flex items-center justify-center' : '' }}"
-    style="display: none;"
+    class="jetstream-modal fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 {{ $centered ? 'flex items-center justify-center' : '' }}"
+    style="display: none;z-index: 9999;"
 >
     <div x-show="show" class="fixed inset-0 transform transition-all" x-on:click="show = false; $wire.call('resetVariables')" x-transition:enter="ease-out duration-300"
                     x-transition:enter-start="opacity-0"

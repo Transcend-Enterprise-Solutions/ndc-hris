@@ -295,7 +295,7 @@ class PayrollExport implements FromCollection, WithEvents
         $sheet->setCellValue('A2', "For the Period of " . strtoupper($payrollFor));
 
         $sheet->mergeCells('A3:C3');
-        $sheet->setCellValue('A3', "Entity Name : NATIONAL YOUTH COMMISSION");
+        $sheet->setCellValue('A3', "Entity Name : NATIONAL DEVELOPMENT COMPANY");
         
         $sheet->mergeCells('A4:C4');
         $sheet->setCellValue('A4', "Fund Cluster : ___________________________");

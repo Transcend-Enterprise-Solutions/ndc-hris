@@ -117,7 +117,7 @@
                                             </li>
                                             <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/admin-official-business')) {{ '!text-blue-500' }} @endif"
-                                                    href="{{ route('/employee-management/admin-official-business') }}" wire:navigate>
+                                                    href="{{ route('/employee-management/admin-official-business') }}">
                                                     <span class="text-sm font-medium transition-opacity duration-300"
                                                         :class="sidebarExpanded ? 'opacity-100 lg:inline' :
                                                             'opacity-0 lg:hidden'">
@@ -139,7 +139,7 @@
                                             </li>
                                             <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/wfh-management')) {{ '!text-blue-500' }} @endif"
-                                                    href="{{ route('/employee-management/wfh-management') }}"wire:navigate>
+                                                    href="{{ route('/employee-management/wfh-management') }}">
                                                     <span class="text-sm font-medium transition-opacity duration-300"
                                                         :class="sidebarExpanded ? 'opacity-100 lg:inline' :
                                                             'opacity-0 lg:hidden'">
@@ -357,7 +357,7 @@
                             x-data="{ open: {{ in_array(Request::segment(1), ['home']) ? 1 : 0 }} }">
                             <a class="block text-gray-800 dark:text-gray-100 truncate transition
                             @if (Route::is('home')) {{ '!text-blue-500' }} @endif"
-                                href="{{ route('home') }}" wire:navigate>
+                                href="{{ route('home') }}">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center">
                                         <i class="bi bi-house-fill text-slate-400 dark:text-slate-300 mr-3"></i>
@@ -476,7 +476,7 @@
                                     </li>
                                     <li class="mb-1 last:mb-0">
                                         <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/daily-time-record/official-business')) {{ '!text-blue-500' }} @endif"
-                                            href="{{ route('/daily-time-record/official-business') }}"wire:navigate>
+                                            href="{{ route('/daily-time-record/official-business') }}">
                                             <span class="text-sm font-medium transition-opacity duration-300"
                                                 :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
                                                 Official Business

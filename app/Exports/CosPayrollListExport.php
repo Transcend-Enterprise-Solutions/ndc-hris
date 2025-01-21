@@ -126,7 +126,7 @@ class CosPayrollListExport implements FromCollection, WithEvents
         $sheet->setCellValue('A1', "");
 
         $sheet->mergeCells('A2:H2');
-        $sheet->setCellValue('A2', "NATIONAL YOUTH COMMISSION");
+        $sheet->setCellValue('A2', "NATIONAL DEVELOPMENT COMPANY");
         $sheet->mergeCells('A3:H3');
         $sheet->setCellValue('A3', "COS " . $this->filters['type'] .  " Payroll List");
 

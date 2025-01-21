@@ -162,7 +162,7 @@ class PayrollListExport implements FromCollection, WithEvents
         $sheet->setCellValue('A1', "");
 
         $sheet->mergeCells('A2:AC2');
-        $sheet->setCellValue('A2', "NATIONAL YOUTH COMMISSION");
+        $sheet->setCellValue('A2', "NATIONAL DEVELOPMENT COMPANY");
         $sheet->mergeCells('A3:AC3');
         $sheet->setCellValue('A3', "Plantilla Payroll List");
 

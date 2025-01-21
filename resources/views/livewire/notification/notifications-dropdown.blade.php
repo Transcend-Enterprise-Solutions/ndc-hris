@@ -3,6 +3,20 @@
 ])
 
 <div x-data="{ open: false }" class="relative" wire:poll.10s='refreshNotifications'>
+    <style>
+        .notif-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .notif-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #1a1a1a4b;
+            border-radius: 0 !important;
+        }
+        .notif-scrollbar::-webkit-scrollbar-track {
+            background-color: #ffffff23;
+            border-radius: 0 !important;
+        }
+    </style>
+
     <!-- Button for triggering the dropdown -->
     <button
         class="relative w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600/80 rounded-full"
@@ -48,14 +62,56 @@
             @endif
         </div>
         <!-- Dropdown items -->
-        <ul class="max-h-64 overflow-y-auto" x-auto-animate>
+        <ul class="max-h-64 overflow-y-auto notif-scrollbar" x-auto-animate>
             @if (Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
                 @forelse ($notifications as $notification)
+                    <li>
+                        <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
+                            <div class="flex justify-between items-start">
+                                <a wire:navigate href="{{ route('/employee-management/admin-doc-request') }}" class="flex-grow">
+                                    <span class="block text-sm mb-1">
+                                        📣 <span class="font-medium text-slate-800 dark:text-slate-100">
+                                            New document {{ $notification->type }}
+                                        </span>
+                                    </span>
+                                    <!-- Display the name and document type -->
+                                    <span class="block text-xs text-slate-600 dark:text-slate-300">
+                                        {{ $notification->docRequest->user->name }} requested {{ $this->getDocumentTypeLabel($notification->docRequest->document_type) }}
+                                    </span>
+                                    <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
+                                        {{ $notification->created_at->diffForHumans() }}
+                                    </span>
+                                </a>
+                                <div x-data="{ open: false }" class="relative inline-block">
+                                    <!-- Three dots icon button -->
+                                    <button @click="open = !open" @click.away="open = false"
+                                            class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M12 6.75c.69 0 1.25-.56 1.25-1.25S12.69 4.25 12 4.25 10.75 4.81 10.75 5.5 11.31 6.75 12 6.75zM12 13.25c.69 0 1.25-.56 1.25-1.25s-.56-1.25-1.25-1.25-1.25.56-1.25 1.25.56 1.25 1.25 1.25zM12 19.75c.69 0 1.25-.56 1.25-1.25s-.56-1.25-1.25-1.25-1.25.56-1.25 1.25.56 1.25 1.25 1.25z"/>
+                                        </svg>
+                                    </button>
+                                    <!-- Dropdown for "Mark as read" -->
+                                    <div x-show="open" x-transition
+                                        class="absolute right-0 z-10 mt-2 w-36 bg-white dark:bg-gray-800 shadow-lg rounded-md">
+                                        <button class="block w-full px-4 py-2 text-left text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                                                wire:click="markGroupAsRead('{{ $notification->type }}')">
+                                            Mark as read
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                @empty
+                @endforelse
+                @foreach ($mapReqNotifications as $notification)
                     @if($notification->type === 'locrequest' && !$notification->read)
                         <li>
                             <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
                                 <div class="flex justify-between items-start">
-                                    <a wire:navigate href="{{ route('/employee-management/wfh-management', 
+                                    <a href="{{ route('/employee-management/wfh-management', 
                                             [
                                                 'tab' => 'requests',
                                             ]
@@ -75,6 +131,25 @@
                                             {{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}
                                         </span>
                                     </a>
+                                    <div x-data="{ open: false }" class="relative inline-block {{ $notification->read ? 'hidden' : '' }}">
+                                        <!-- Three dots icon button -->
+                                        <button @click="open = !open" @click.away="open = false"
+                                                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M12 6.75c.69 0 1.25-.56 1.25-1.25S12.69 4.25 12 4.25 10.75 4.81 10.75 5.5 11.31 6.75 12 6.75zM12 13.25c.69 0 1.25-.56 1.25-1.25s-.56-1.25-1.25-1.25-1.25.56-1.25 1.25.56 1.25 1.25 1.25zM12 19.75c.69 0 1.25-.56 1.25-1.25s-.56-1.25-1.25-1.25-1.25.56-1.25 1.25.56 1.25 1.25 1.25z"/>
+                                            </svg>
+                                        </button>
+                                        <!-- Dropdown for "Mark as read" -->
+                                        <div x-show="open" x-transition
+                                            class="absolute right-0 z-10 mt-2 w-36 bg-white dark:bg-gray-800 shadow-lg rounded-md">
+                                            <button class="block w-full px-4 py-2 text-left text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                                                    wire:click="markGroupAsRead('{{ $notification->type }}')">
+                                                Mark as read
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </li>
@@ -82,7 +157,7 @@
                         <li>
                             <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
                                 <div class="flex justify-between items-start">
-                                    <a wire:navigate href="{{ route('/employee-management/admin-official-business', 
+                                    <a href="{{ route('/employee-management/admin-official-business', 
                                             [
                                                 'tab' => 'requests',
                                             ]
@@ -124,50 +199,9 @@
                                 </div>
                             </div>
                         </li>
-                    @elseif($notification->type === 'request' && !$notification->read)
-                        <li>
-                            <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
-                                <div class="flex justify-between items-start">
-                                    <a wire:navigate href="{{ route('/employee-management/admin-doc-request') }}" class="flex-grow">
-                                        <span class="block text-sm mb-1">
-                                            📣 <span class="font-medium text-slate-800 dark:text-slate-100">
-                                                New document {{ $notification->type }}
-                                            </span>
-                                        </span>
-                                        <!-- Display the name and document type -->
-                                        <span class="block text-xs text-slate-600 dark:text-slate-300">
-                                            {{ $notification->docRequest->user->name }} requested {{ $this->getDocumentTypeLabel($notification->docRequest->document_type) }}
-                                        </span>
-                                        <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
-                                            {{ $notification->created_at->diffForHumans() }}
-                                        </span>
-                                    </a>
-                                    <div x-data="{ open: false }" class="relative inline-block {{ $notification->read ? 'hidden' : '' }}">
-                                        <!-- Three dots icon button -->
-                                        <button @click="open = !open" @click.away="open = false"
-                                                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M12 6.75c.69 0 1.25-.56 1.25-1.25S12.69 4.25 12 4.25 10.75 4.81 10.75 5.5 11.31 6.75 12 6.75zM12 13.25c.69 0 1.25-.56 1.25-1.25s-.56-1.25-1.25-1.25-1.25.56-1.25 1.25.56 1.25 1.25 1.25zM12 19.75c.69 0 1.25-.56 1.25-1.25s-.56-1.25-1.25-1.25-1.25.56-1.25 1.25.56 1.25 1.25 1.25z"/>
-                                            </svg>
-                                        </button>
-                                        <!-- Dropdown for "Mark as read" -->
-                                        <div x-show="open" x-transition
-                                            class="absolute right-0 z-10 mt-2 w-36 bg-white dark:bg-gray-800 shadow-lg rounded-md">
-                                            <button class="block w-full px-4 py-2 text-left text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
-                                                    wire:click="markGroupAsRead('{{ $notification->type }}')">
-                                                Mark as read
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
                     @endif      
-                @empty
-                    <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
-                @endforelse
+                @endforeach
+                
                 @if($unreadCount == 0)
                     <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
                 @endif
@@ -213,7 +247,7 @@
                         <li>
                             <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
                                 <div class="flex justify-between items-start">
-                                    <a wire:navigate href="{{ route('home', [
+                                    <a href="{{ route('home', [
                                                 'showWFHLocHistory' => true,
                                             ])
                                             }}" class="flex-grow">
@@ -255,7 +289,7 @@
                         <li>
                             <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
                                 <div class="flex justify-between items-start">
-                                    <a wire:navigate href="{{ route('home', [
+                                    <a href="{{ route('home', [
                                             'showWFHLocHistory' => true,
                                         ])
                                         }}" class="flex-grow">
@@ -296,7 +330,6 @@
                         </li>
                     @endif
                 @empty
-                    <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>
                 @endforelse
                 @if($unreadCount == 0)
                     <li class="py-2 px-4 text-sm text-slate-500 dark:text-slate-400">No new notifications</li>

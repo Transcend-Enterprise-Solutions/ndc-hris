@@ -10,6 +10,7 @@ use App\Models\OfficialBusiness;
 class NotificationsDropdown extends Component
 {
     public $notifications;
+    public $mapReqNotifications;
     public $unreadCount;
     public $locRequestCount;
     public $obRequestCount;
@@ -22,27 +23,35 @@ class NotificationsDropdown extends Component
     public function refreshNotifications()
     {
         $user = Auth::user();
-        $query = NotificationModel::with('docRequest')
-            ->where('read', 0)
-            ->latest();
-
         if ($user->user_role === 'sa') {
-            // 'sa' users see only notifications
             $this->locRequestCount = WfhLocationRequests::where('status', 0)->count();
             $this->obRequestCount = OfficialBusiness::where('status', 0)->count();
 
-            $this->notifications = $query->where('type', 'request')
-                                        ->orWhere('type', 'locrequest')    
-                                        ->orWhere('type', 'obrequest')    
+            $this->mapReqNotifications = NotificationModel::where('read', 0)
+                                        ->whereIn('type', ['locrequest', 'obrequest'])
+                                        ->selectRaw('type, count(*) as unread_count')
+                                        ->groupBy('type')
+                                        ->latest()
                                         ->get();
-            $this->unreadCount = $this->notifications->where('read', 0)->count();
+
+            $this->notifications = NotificationModel::with('docRequest')
+                                        ->where('read', 0)
+                                        ->where('type', 'request')
+                                        ->latest()
+                                        ->get();
+                                    
+            $this->unreadCount = NotificationModel::where('read', 0)
+                                        ->whereIn('type', ['request', 'locrequest', 'obrequest'])
+                                        ->get()->count();
         } else {
-            // Non-'sa' users see only their own notifications, excluding 'request' type
-            $notifications = $query->where('user_id', $user->id)
-                ->where('type',  'completed')
-                ->orWhere('type',  'approvedlocrequest')
-                ->orWhere('type',  'disapprovedlocrequest')
-                ->get();
+            $notifications = NotificationModel::with('docRequest')
+                                        ->where('read', 0)
+                                        ->where('user_id', $user->id)
+                                        ->where('type',  'completed')
+                                        ->orWhere('type',  'approvedlocrequest')
+                                        ->orWhere('type',  'disapprovedlocrequest')
+                                        ->latest()
+                                        ->get();
 
             $this->notifications = $notifications->groupBy('type')
                 ->map(function ($group) {
@@ -54,7 +63,7 @@ class NotificationsDropdown extends Component
                         'ids' => $group->pluck('id')->toArray(),
                     ];
                 });
-                $this->unreadCount = $this->notifications->where('read', 0)->count();
+            $this->unreadCount = $this->notifications->where('read', 0)->count();
         }
     }
 
@@ -104,7 +113,6 @@ class NotificationsDropdown extends Component
         return $documentTypes[$documentType] ?? $documentType;
     }
 
-    // Add method to get notification message for Loc Request
     private function getLocRequestMessage(){
         if ($this->locRequestCount === 1) {
             return '1 new WFH location request pending for approval';
@@ -112,7 +120,6 @@ class NotificationsDropdown extends Component
         return ($this->locRequestCount) . ' pending WFH location request approval';
     }
 
-    // Add method to get notification message for OB Request
     private function getOBRequestMessage(){
         if ($this->obRequestCount === 1) {
             return '1 new OB location request pending for approval';
@@ -125,6 +132,7 @@ class NotificationsDropdown extends Component
         if (Auth::user()->user_role === 'sa') {
             return view('livewire.notification.notifications-dropdown', [
                 'notifications' => $this->notifications,
+                'mapReqNotifications' => $this->mapReqNotifications,
                 'unreadCount' => $this->unreadCount,
             ]);
         } else {

@@ -120,10 +120,11 @@ class AdminOfficialBusinessTable extends Component
                     'title' => 'Official Business approved successfully',
                     'icon' => 'success'
                 ]);
+
                 // Mark as read notification entry
                 $query = Notification::where('read', false)
-                                ->where('type', 'locrequest')
-                                ->where('user_id', $this->confirmId)
+                                ->where('type', 'obrequest')
+                                ->where('user_id', $ob->user_id)
                                 ->first();
                 $query->update(['read' => true]);
             }else{
@@ -152,10 +153,11 @@ class AdminOfficialBusinessTable extends Component
                     'title' => 'Official Business disapproved successfully',
                     'icon' => 'success'
                 ]);
+
                 // Mark as read notification entry
                 $query = Notification::where('read', false)
-                                ->where('type', 'locrequest')
-                                ->where('user_id', $this->confirmId)
+                                ->where('type', 'obrequest')
+                                ->where('user_id', $ob->user_id)
                                 ->first();
                 $query->update(['read' => true]);
             }else{

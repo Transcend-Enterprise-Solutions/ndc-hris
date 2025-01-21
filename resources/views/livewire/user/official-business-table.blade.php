@@ -138,20 +138,22 @@
                             <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white text-center">OB ATTENDANCE</h5>
                             <div class="grid grid-cols-1 gap-2 p-4">
                                 <div class="flex justify-center">
-                                    <button wire:click="confirmPunch('morningIn', 'Morning In')"
+                                    <button wire:click="confirmPunch({{ $ongoingObs->id }}, 'timeIn', 'Time In')"
+                                        {{ $hasObTimeIn ? 'disabled' : '' }}
                                         class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
                                         <span
                                             class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
-                                            Time In
+                                            Time In{{ $hasObTimeIn ? (': ' . $hasObTimeIn) : '' }}
                                         </span>
                                     </button>
                                 </div>
                                 <div class="flex justify-center">
-                                    <button wire:click="confirmPunch('morningOut', 'Morning Out')"
+                                    <button wire:click="confirmPunch({{ $ongoingObs->id }}, 'timeOut', 'Time Out')"
+                                        {{ $hasObTimeIn && !$hasObTimeOut ? '' : 'disabled' }}
                                         class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
                                         <span
                                             class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
-                                            Time Out
+                                            Time Out{{ $hasObTimeOut ? (': ' . $hasObTimeOut) : '' }}
                                         </span>
                                     </button>
                                 </div>
@@ -806,12 +808,45 @@
         </div>
     </x-modal>
 
+    {{-- Confirmation Modal --}}
+    <x-modal id="punchConfirmation" maxWidth="md" centered wire:model="showConfirmation">
+        <div class="p-4">
+            <div class="flex items-center justify-between pb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
+                    Punch Confirmation
+                </h3>
+                <button @click="show = false"
+                    class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <p class="text-gray-700 dark:text-gray-300">
+                    Are you sure you want to punch {{ $verifyType }}?
+                </p>
+
+                <!-- Action Buttons -->
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button wire:click="recordObAttendance"
+                        class="px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
+                        Yes
+                    </button>
+                    <button @click="show = false"
+                        class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-offset-gray-800">
+                        No
+                    </button>
+                </div>
+            </div>
+        </div>
+    </x-modal>
+
 </div>
 
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs&libraries=places"></script>
 <script>
-    let map, map2, map3, marker, marker3, currentMarker, destinationMarker, searchBox;
+    let map, map2, map3, marker, marker3, currentMarker, destinationMarker, searchBox, radiusCircle;
 
     function initMap() {
         const defaultLocation = { lat: 14.5995, lng: 120.9842 }; // Manila coordinates
@@ -869,7 +904,7 @@
     }
     function updateLivewireLocation(lat, lng) {
         @this.set('newLatitude', lat);
-        @this.set('newLatitude', lng);
+        @this.set('newLongitude', lng);
     }
 
 
@@ -946,12 +981,30 @@
             icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
         });
 
+         // Remove existing circle if it exists
+        if (radiusCircle) {
+            radiusCircle.setMap(null);
+        }
+
+        // Add the 500-meter radius circle
+        radiusCircle = new google.maps.Circle({
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.5,
+            strokeWeight: 1,
+            fillColor: "#FF0000",
+            fillOpacity: 0.1,
+            map: map2,
+            center: destination,
+            radius: 300
+        });
+
         const bounds = new google.maps.LatLngBounds();
     
         bounds.extend(currentLocation);
         bounds.extend(destination);
         
         map2.fitBounds(bounds);
+        bounds.union(radiusCircle.getBounds());
         
         const padding = {
             top: 50,

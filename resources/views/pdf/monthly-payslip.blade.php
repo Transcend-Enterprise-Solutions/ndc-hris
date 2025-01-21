@@ -44,7 +44,7 @@
          {{-- Header --}}
         <div style="display:flex; margin-bottom: 30px;">
             <center style="display:flex;">
-                <img src="images/nyc-logo.png" width="35" style="margin-bottom: 2px">
+                <img src="images/ndc-_logo.png" width="35" style="margin-bottom: 2px">
                 <img src="images/bagong-pilipinas-logo.png" width="35" style="margin-bottom: 5px">
                 <img src="images/payslip-header.png" width="200">
             </center>

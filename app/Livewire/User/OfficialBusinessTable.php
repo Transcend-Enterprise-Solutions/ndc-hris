@@ -40,16 +40,23 @@ class OfficialBusinessTable extends Component
     public $viewOB;
     public $approvedBy;
     public $approvedDate;
+    public $showConfirmation = false;
+    public $punchState;
+    public $punchObId;
+    public $verifyType;
+    public $hasObTimeIn;
+    public $hasObTimeOut;
     public $pageSize = 10; 
     public $pageSizes = [10, 20, 30, 50, 100]; 
 
 
     public function render(){
+        $user = Auth::user();
         $ongoingObs = OfficialBusiness::where('date', '=', now()->toDateString())
             ->where('time_start', '<=', now()->toTimeString())
             ->where('time_end', '>=', now()->toTimeString())
-            ->where('time_in', '=', null)
             ->where('time_out', '=', null)
+            ->where('user_id', $user->id)
             ->first();
 
         $upcomingObs = OfficialBusiness::where(function ($query) {
@@ -59,6 +66,8 @@ class OfficialBusinessTable extends Component
                         ->where('time_start', '>', now()->toTimeString());
                 });
             })
+            ->where('user_id', $user->id)
+            ->where('time_out', '=', null)
             ->orderBy('date', 'asc')
             ->orderBy('time_start', 'asc')
             ->paginate($this->pageSize);
@@ -80,11 +89,13 @@ class OfficialBusinessTable extends Component
         // }
 
         $completedObs = OfficialBusiness::where('time_in', '!=', null)
+            ->where('user_id', $user->id)
             ->where('time_out', '!=', null)
             ->paginate($this->pageSize);
 
 
         $unattendedObs = OfficialBusiness::where('time_in', '=', null)
+            ->where('user_id', $user->id)
             ->where('time_out', '=', null)
             ->where('date', '<', now()->toDateString())
             ->paginate($this->pageSize);
@@ -93,8 +104,14 @@ class OfficialBusinessTable extends Component
             if (now()->isSameDay(Carbon::parse($ongoingObs->date))) {
                 $this->isTodayIsOb = true;
             }
-        }
 
+            if($ongoingObs->time_in){
+                $this->hasObTimeIn = $ongoingObs->time_in;
+            }
+            if($ongoingObs->time_out){
+                $this->hasObTimeOut = $ongoingObs->time_out;
+            }
+        }
 
         return view('livewire.user.official-business-table', [
             'upcomingObs' => $upcomingObs,
@@ -157,7 +174,7 @@ class OfficialBusinessTable extends Component
             $this->latitude,
             $this->longitude
         );
-        return $distance <= 500;
+        return $distance <= 300;
     }
 
     public function toggleAddOB(){
@@ -292,6 +309,42 @@ class OfficialBusinessTable extends Component
         }
     }
 
+    public function confirmPunch($id, $state, $verifyType){
+        $this->punchObId = $id;
+        $this->punchState = $state;
+        $this->verifyType = $verifyType;
+        $this->showConfirmation = true;
+    }
+
+    public function recordObAttendance(){
+        try{
+            $ob = OfficialBusiness::where('id', $this->punchObId)->first();
+            if($ob){
+                if($this->punchState == 'timeIn'){
+                    $ob->update([
+                        'time_in' => now()->toTimeString(),
+                    ]);
+                }else{
+                    $ob->update([
+                        'time_out' => now()->toTimeString(),
+                    ]);
+                }
+                $this->dispatch('swal', [
+                    'title' => 'Official Business attendance recorded successfully',
+                    'icon' => 'success'
+                ]);
+            }else{
+                $this->dispatch('swal', [
+                    'title' => 'Official Business attendance recording was unsuccessful',
+                    'icon' => 'error'
+                ]);
+            }
+            $this->resetVariables();
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+
     public function resetVariables(){
         $this->editOB = null;
         $this->addOB = null;
@@ -308,5 +361,8 @@ class OfficialBusinessTable extends Component
         $this->viewOB = null;
         $this->newLatitude = null;
         $this->newLongitude = null;
+        $this->punchState = null;
+        $this->verifyType = null;
+        $this->showConfirmation = null;
     }
 }

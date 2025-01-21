@@ -93,7 +93,7 @@ class AttendanceExport implements FromCollection, WithEvents
         $sheet->setCellValue('A1', "");
 
         $sheet->mergeCells('A2:O2');
-        $sheet->setCellValue('A2', "NATIONAL YOUTH COMMISSION");
+        $sheet->setCellValue('A2', "NATIONAL DEVELOPMENT COMPANY");
         $sheet->mergeCells('A3:O3');
         $sheet->setCellValue('A3', "Attendance for " . $formatDate($this->filters['date']));
 

@@ -61,7 +61,7 @@ class EmployeesExport implements FromCollection, WithEvents
         $sheet->setCellValue('A1', "");
 
         $sheet->mergeCells("A2:{$lastColumn}2");
-        $sheet->setCellValue('A2', "NATIONAL YOUTH COMMISSION");
+        $sheet->setCellValue('A2', "NATIONAL DEVELOPMENT COMPANY");
         
         $sheet->mergeCells("A3:{$lastColumn}3");
         $sheet->setCellValue('A3', "Employee List");

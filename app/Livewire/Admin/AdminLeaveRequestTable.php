@@ -550,7 +550,6 @@ class AdminLeaveRequestTable extends Component
         ]);
     }
     
-
     public function resetVariables()
     {
         $this->status = null;
@@ -712,6 +711,5 @@ class AdminLeaveRequestTable extends Component
             'icon' => 'error'
         ]);
     }
-
 }
 
