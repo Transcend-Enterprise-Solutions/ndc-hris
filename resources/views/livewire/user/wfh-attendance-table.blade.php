@@ -350,7 +350,7 @@
                                     class="absolute inset-0 flex justify-center items-center bg-gray-700 bg-opacity-75 rounded-lg">
                                     <div class="text-center">
                                         <i class="bi bi-person-lock text-white" style="font-size: 5rem;"></i>
-                                        <p class="mt-2 text-white font-bold">You are outside the allowed location for WFH attendance</p>
+                                        <p class="mt-2 text-white font-bold">You are outside the allowed<br>location for WFH attendance</p>
                                     </div>
                                 </div>
                             @endif

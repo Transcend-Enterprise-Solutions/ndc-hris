@@ -68,6 +68,9 @@ class OfficialBusinessTable extends Component
             $this->obStatus = 'ONGOING';
         }
 
+        $this->registeredLatitude = $ongoingObs ? $ongoingObs->lat : null;
+        $this->registeredLongitude = $ongoingObs ? $ongoingObs->lng : null;
+
         // if ($ongoingObs && $upcomingObs->contains('id', $ongoingObs->id)) {
         //     $upcomingObs = $upcomingObs->filter(function ($ob) use ($ongoingObs) {
         //         return $ob->id !== $ongoingObs->id;
