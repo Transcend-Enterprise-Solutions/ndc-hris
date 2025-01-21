@@ -58,6 +58,27 @@
            animation: spinner-border .75s linear infinite;
            color: rgb(0, 255, 42);
        }
+
+       .dot-anim{
+            background: rgb(168, 168, 255);
+            width: 18px;
+            height: 18px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: dot 2s ease-in-out infinite;
+       }
+
+       @keyframes dot{
+            0%{
+                transform: translate(-50%, -50%) scale(0.8);
+            }50%{
+                transform: translate(-50%, -50%) scale(1.2);
+            }100%{
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+       }
    </style>
 
     <div class="flex justify-center w-full">
@@ -96,8 +117,12 @@
                                     <p class=""><span class="{{ $obStatus == 'ONGOING' ? 'text-green-500' : 'text-orange-500' }}">{{ $obStatus }}</span> Official Business: {{ $ongoingObs->company }}</p>
                                 </div>
                                 <div class="flex w-full">
-                                    <div class="flex">
-                                        <p class="">Current Location: </p><img src="{{ asset('/images/blue-dot.png') }}" alt="map icon" style="width: 25px; height: 25px; margin-bottom:-3px;" />
+                                    <div class="flex items-center">
+                                        <p class="mr-2">Current Location: </p>
+                                        <div class="relative flex items-center justify-center mr-3" style="height: 18px; width: 18px;">
+                                            <div class="bg-blue-500 rounded-full border border-white z-10" style="height: 12px; width: 12px;"></div>
+                                            <div class="bg-blue-500 rounded-full dot-anim opacity-40"></div>
+                                        </div>
                                     </div>
                                     <div class="flex">
                                         <p class="">OB Location: </p><img src="{{ asset('/images/red-dot.png') }}" alt="map icon" style="width: 25px; height: 25px; margin-bottom:-3px;" />
@@ -849,6 +874,38 @@
 
 
     // Map 2 ---------------------------------------------------------------- //
+    const createAnimatedMarkerIcon = () => {
+        const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 40 40">
+                <circle cx="0" cy="0" r="8" fill="#4286f4c7">
+                    <animate
+                        attributeName="r"
+                        values="8;16;8"
+                        dur="2s"
+                        repeatCount="indefinite"
+                        begin="0s"
+                    />
+                    <animate
+                        attributeName="fill-opacity"
+                        values="0.3;0.1;0.3"
+                        dur="2s"
+                        repeatCount="indefinite"
+                        begin="0s"
+                    />
+                </circle>
+                <!-- Main circle -->
+                <circle cx="0" cy="0" r="8" fill="#4285F4" fill-opacity="0.7" stroke="white" stroke-width="1" />
+            </svg>
+        `;
+    
+        return {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+            scaledSize: new google.maps.Size(40, 40),
+            anchor: new google.maps.Point(20, 20),
+            origin: new google.maps.Point(0, 0)
+        };
+    };
+
     function initMap2() {
         const destination = { lat: {{ $ongoingObs ? $ongoingObs->lat : 0.00 }}, lng: {{ $ongoingObs ? $ongoingObs->lng : 0.00 }} };
         const lat = @this.latitude;
@@ -871,12 +928,16 @@
             });
         }
 
-        currentMarker = new google.maps.Marker({
-            position: currentLocation,
-            map: map2,
-            title: 'Your Location',
-            icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-        });
+        if (currentMarker) {
+            currentMarker.setPosition(currentLocation);
+        } else {
+            currentMarker = new google.maps.Marker({
+                position: currentLocation,
+                map: map2,
+                title: 'Your Location',
+                icon: createAnimatedMarkerIcon()
+            });
+        }
 
         destinationMarker = new google.maps.Marker({
             position: destination,
