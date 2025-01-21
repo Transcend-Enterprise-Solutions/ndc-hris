@@ -29,6 +29,8 @@ class OfficialBusinessTable extends Component
     public $purpose;
     public $registeredLatitude = null;
     public $registeredLongitude = null;
+    public $newLatitude = null;
+    public $newLongitude = null;
     public $isWithinRadius;
     public $isTodayIsOb;
     public $latitude = null;
@@ -217,7 +219,7 @@ class OfficialBusinessTable extends Component
                 'startTime' => 'required',
                 'endTime' => 'required',
                 'purpose' => 'required',
-                'registeredLatitude' => 'required',
+                'newLatitude' => 'required',
             ]);
 
             if($this->addOB){
@@ -229,8 +231,8 @@ class OfficialBusinessTable extends Component
                     'reference_number' => $referenceNumber,
                     'company' => $this->company,
                     'address' => $this->address,
-                    'lat' => $this->registeredLatitude,        
-                    'lng' => $this->registeredLongitude,        
+                    'lat' => $this->newLatitude,        
+                    'lng' => $this->newLongitude,        
                     'date' => $this->date,  
                     'time_start' => $this->startTime,  
                     'time_end' => $this->endTime,  
@@ -250,8 +252,8 @@ class OfficialBusinessTable extends Component
                     $ob->update([
                         'company' => $this->company,
                         'address' => $this->address,
-                        'lat' => $this->registeredLatitude,        
-                        'lng' => $this->registeredLongitude,        
+                        'lat' => $this->newLatitude,        
+                        'lng' => $this->newLongitude,        
                         'date' => $this->date,  
                         'time_start' => $this->startTime,  
                         'time_end' => $this->endTime,  
@@ -304,5 +306,7 @@ class OfficialBusinessTable extends Component
         $this->endTime = null;  
         $this->purpose = null;
         $this->viewOB = null;
+        $this->newLatitude = null;
+        $this->newLongitude = null;
     }
 }

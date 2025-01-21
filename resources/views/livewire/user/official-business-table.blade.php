@@ -679,11 +679,11 @@
 
                 <div class="text-sm flex mt-2 px-4">
                     <div class="w-1/2 mb-2">
-                        Lat: <span class="text-gray-800 dark:text-gray-50">{{ $registeredLatitude ?? '...' }}</span> <br>
-                        Lng: <span class="text-gray-800 dark:text-gray-50">{{ $registeredLongitude ?? '...' }}</span>
+                        Lat: <span class="text-gray-800 dark:text-gray-50">{{ $newLatitude ?? '...' }}</span> <br>
+                        Lng: <span class="text-gray-800 dark:text-gray-50">{{ $newLongitude ?? '...' }}</span>
                     </div>
                 </div>
-                @error('registeredLatitude') 
+                @error('newLatitude') 
                     <span class="text-red-500 text-sm">The geolocation is required!</span> 
                 @enderror
             </div>
@@ -868,8 +868,8 @@
         });
     }
     function updateLivewireLocation(lat, lng) {
-        @this.set('registeredLatitude', lat);
-        @this.set('registeredLongitude', lng);
+        @this.set('newLatitude', lat);
+        @this.set('newLatitude', lng);
     }
 
 
