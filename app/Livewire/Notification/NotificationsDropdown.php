@@ -10,10 +10,13 @@ use App\Models\OfficialBusiness;
 class NotificationsDropdown extends Component
 {
     public $notifications;
-    public $mapReqNotifications;
     public $unreadCount;
     public $locRequestCount;
+    public $docRequestCount;
     public $obRequestCount;
+    public $latestDocNotifDate;
+    public $latestLocNotifDate;
+    public $latestObNotifDate;
 
     public function mount()
     {
@@ -26,17 +29,22 @@ class NotificationsDropdown extends Component
         if ($user->user_role === 'sa') {
             $this->locRequestCount = WfhLocationRequests::where('status', 0)->count();
             $this->obRequestCount = OfficialBusiness::where('status', 0)->count();
+            $this->docRequestCount = NotificationModel::where('read', 0)->where('type', 'request')->get()->count();
 
-            $this->mapReqNotifications = NotificationModel::where('read', 0)
-                                        ->whereIn('type', ['locrequest', 'obrequest'])
+            $this->latestDocNotifDate = NotificationModel::where('read', 0)->where('type', 'request')->latest()->first();
+            $this->latestLocNotifDate = NotificationModel::where('read', 0)->where('type', 'locrequest')->latest()->first();
+            $this->latestObNotifDate = NotificationModel::where('read', 0)->where('type', 'obrequest')->latest()->first();
+
+            // $this->notifications = NotificationModel::with('docRequest')
+            //                             ->where('read', 0)
+            //                             ->where('type', 'request')
+            //                             ->latest()
+            //                             ->get();
+
+            $this->notifications = NotificationModel::where('read', 0)
+                                        ->whereIn('type', ['request', 'locrequest', 'obrequest'])
                                         ->selectRaw('type, count(*) as unread_count')
                                         ->groupBy('type')
-                                        ->latest()
-                                        ->get();
-
-            $this->notifications = NotificationModel::with('docRequest')
-                                        ->where('read', 0)
-                                        ->where('type', 'request')
                                         ->latest()
                                         ->get();
                                     
@@ -113,26 +121,31 @@ class NotificationsDropdown extends Component
         return $documentTypes[$documentType] ?? $documentType;
     }
 
+    private function getDocRequestMessage(){
+        if ($this->docRequestCount === 1) {
+            return '1 new document request pending for approval';
+        }
+        return ($this->docRequestCount) . ' pending document request for approval';
+    }
+
     private function getLocRequestMessage(){
         if ($this->locRequestCount === 1) {
             return '1 new WFH location request pending for approval';
         }
-        return ($this->locRequestCount) . ' pending WFH location request approval';
+        return ($this->locRequestCount) . ' pending WFH location request for approval';
     }
 
     private function getOBRequestMessage(){
         if ($this->obRequestCount === 1) {
             return '1 new OB location request pending for approval';
         }
-        return ($this->obRequestCount) . ' pending OB request approval';
+        return ($this->obRequestCount) . ' pending OB request for approval';
     }
 
-    public function render()
-    {
+    public function render(){
         if (Auth::user()->user_role === 'sa') {
             return view('livewire.notification.notifications-dropdown', [
                 'notifications' => $this->notifications,
-                'mapReqNotifications' => $this->mapReqNotifications,
                 'unreadCount' => $this->unreadCount,
             ]);
         } else {

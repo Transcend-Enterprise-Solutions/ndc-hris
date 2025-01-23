@@ -82,40 +82,6 @@ class GeneralPayrollExport
         }
     }
 
-    // public function registerEvents(): array{
-    //     return [
-    //         AfterSheet::class => function(AfterSheet $event) {
-    //             $sheet = $event->sheet;
-    //             // Set column widths
-    //             $sheet->getColumnDimension('A')->setWidth(4);
-    //             $sheet->getColumnDimension('B')->setWidth(12);
-    //             $sheet->getColumnDimension('C')->setWidth(30);
-    //             $sheet->getColumnDimension('D')->setWidth(20);
-    //             $sheet->getColumnDimension('E')->setWidth(8);
-    //             $sheet->getColumnDimension('F')->setWidth(15);
-    //             $sheet->getColumnDimension('G')->setWidth(13);
-    //             $sheet->getColumnDimension('H')->setWidth(15);
-    //             for ($col = 'I'; $col <= 'Z'; $col++) {
-    //                 $sheet->getColumnDimension($col)->setWidth(13);
-    //             }
-    //             $sheet->getColumnDimension('AA')->setWidth(13);
-    //             $sheet->getColumnDimension('AB')->setWidth(13);
-    //             for ($col = 'AC'; $col <= 'AF'; $col++) {
-    //                 $sheet->getColumnDimension($col)->setWidth(15);
-    //             }
-    //             $sheet->getStyle("A:AF")->applyFromArray([
-    //                 'font' => [
-    //                     'bold' => true,
-    //                     'name' => 'Cambria',
-    //                 ],
-    //             ]);
-
-    //             $this->formatAllMonths($sheet);
-    //         },
-    //     ];
-    // }
-
-
     private function formatAllMonths($sheet, $isWorkingSheet = null){
         if(!$isWorkingSheet){
             $sheet->getColumnDimension('A')->setWidth(4);

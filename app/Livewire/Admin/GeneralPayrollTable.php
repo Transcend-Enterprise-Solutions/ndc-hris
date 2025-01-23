@@ -510,9 +510,11 @@ class GeneralPayrollTable extends Component
     {
         try {
             $dtrRecords = EmployeesDtr::whereBetween('date', [$startDate, $endDate])
+                        ->join('payrolls', 'payrolls.user_id', 'employees_dtr.user_id')
                         ->when($employeeId, function ($query) use ($employeeId) {
                             return $query->where('user_id', $employeeId);
                         })
+                        ->select('employees_dtr.*')
                         ->orderBy('date')
                         ->get();
             
@@ -1101,6 +1103,7 @@ class GeneralPayrollTable extends Component
         
                         return $payroll;
                     });
+
                 $payrollDTR = $this->getDTRForPayroll($startDate, $endDate);
                 $payrolls = $payrolls->map(function ($payroll) use ($payrollDTR) {
                     $userId = $payroll->user_id;
@@ -1586,6 +1589,8 @@ class GeneralPayrollTable extends Component
         $filters = [
             'search' => $this->search,
         ];
+
+
         $fileName = 'Plantilla Payroll List.xlsx';
         return Excel::download(new PayrollListExport($filters), $fileName);
     }
