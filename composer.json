@@ -23,6 +23,7 @@
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",
         "simplesoftwareio/simple-qrcode": "^4.2",
+        "smalot/pdfparser": "^2.11",
         "woenel/prpcmblmts": "^1.0"
     },
     "require-dev": {

@@ -244,7 +244,7 @@
             </div>
         </div>
 
-        <x-modal id="approveLeave" maxWidth="md" wire:model="showApproveModal">
+        <x-modal id="approveLeave" maxWidth="md" centered wire:model="showApproveModal">
             <div class="p-4">
                 <form wire:submit.prevent="updateStatus">
                     <div class="mb-4">
@@ -346,7 +346,7 @@
             </div>
         </x-modal>
 
-        <x-modal id="disapproveLeave" maxWidth="md" wire:model="showDisapproveModal">
+        <x-modal id="disapproveLeave" maxWidth="md" centered wire:model="showDisapproveModal">
             <div class="p-4">
                 <form wire:submit.prevent="disapproveLeave">
                     <div class="mb-4">
