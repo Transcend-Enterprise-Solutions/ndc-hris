@@ -22,8 +22,8 @@ return new class extends Migration
             $table->string('office_unit')->nullable();
             $table->string('supervisor')->nullable();
             $table->string('agency_org')->nullable();
-            $table->string('list_accomp_cont')->nullable();
-            $table->string('sum_of_duties')->nullable();
+            $table->text('list_accomp_cont')->nullable();
+            $table->text('sum_of_duties')->nullable();
             $table->timestamps();
         });
     }
