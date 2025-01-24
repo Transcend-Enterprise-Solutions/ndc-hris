@@ -130,6 +130,11 @@ class User extends Authenticatable
         return $this->hasMany(CharReferences::class);
     }
 
+    public function workExperienceSheet()
+    {
+        return $this->hasMany(WorkExperienceSheetTable::class);
+    }
+
     public function employeeDocuments()
     {
         return $this->hasMany(EmployeeDocument::class);

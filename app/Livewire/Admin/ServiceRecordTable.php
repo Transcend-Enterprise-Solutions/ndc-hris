@@ -99,8 +99,11 @@ class ServiceRecordTable extends Component
                 ->get();
     }
 
-    public function exportRecord($id){
+    public function exportRecord($id = null){
         try{
+            if(!$id){
+                $id = $this->recordId;
+            }
             $user = User::findOrFail($id);
             $record = WorkExperience::where('user_id', $id)
                     ->orderBy('start_date', 'DESC')

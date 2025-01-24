@@ -89,6 +89,8 @@ Route::middleware(['auth', 'checkrole:emp'])->group(function () {
     // My Records Tabs ------------------------------------------------------------------------ //
     Route::get('/my-records/personal-data-sheet', function () {
         return view('livewire.user.personal-data-sheet'); })->name('/my-records/personal-data-sheet');
+    Route::get('/my-records/work-experience-sheet', function () {
+        return view('livewire.user.work-experience-sheet'); })->name('/my-records/work-experience-sheet');
     Route::get('/my-records/my-documents', function () {
         return view('livewire.user.my-documents'); })->name('/my-records/my-documents');
     Route::get('/my-records/doc-request', function () {

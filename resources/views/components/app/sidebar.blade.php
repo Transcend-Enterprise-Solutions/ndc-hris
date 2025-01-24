@@ -404,6 +404,14 @@
                                         </a>
                                     </li>
                                     <li class="mb-1 last:mb-0">
+                                        <a class="block text-black dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if (Route::is('/my-records/work-experience-sheet')) {{ '!text-blue-500' }} @endif"
+                                            href="{{ route('/my-records/work-experience-sheet') }}">
+                                            <span class="text-sm font-medium transition-opacity duration-300"
+                                                :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                                Work Experience Sheet</span>
+                                        </a>
+                                    </li>
+                                    <li class="mb-1 last:mb-0">
                                         <a class="block text-black dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-500 transition duration-150 truncate @if (Route::is('/my-records/my-documents')) {{ '!text-blue-500' }} @endif"
                                             href="{{ route('/my-records/my-documents') }}" wire:navigate>
                                             <span class="text-sm font-medium transition-opacity duration-300"
