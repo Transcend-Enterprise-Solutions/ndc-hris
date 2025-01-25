@@ -22,7 +22,8 @@ use App\Models\ESignature;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
-use App\Exports\LeaveCardExport; 
+use App\Exports\LeaveCardExport;
+use App\Exports\LeaveLedgerExport;
 use Carbon\Carbon;
 
 class LeaveApplicationTable extends Component
@@ -71,6 +72,7 @@ class LeaveApplicationTable extends Component
         'salary' => 'required|string|max:255',
         'type_of_leave' => 'required|array|min:1',
         'files.*' => 'file|mimes:jpeg,png,jpg,pdf|max:2048',
+        'number_of_days' => 'required|numeric|min:1'
     ];
 
     public function openLeaveForm()
@@ -148,18 +150,18 @@ class LeaveApplicationTable extends Component
         }
     }
 
-    public function addDate()
-    {
-        $this->validate([
-            'new_date' => 'required|date',
-        ]);
+    // public function addDate()
+    // {
+    //     $this->validate([
+    //         'new_date' => 'required|date',
+    //     ]);
 
-        if (!in_array($this->new_date, $this->list_of_dates)) {
-            $this->list_of_dates[] = $this->new_date;
-        }
+    //     if (!in_array($this->new_date, $this->list_of_dates)) {
+    //         $this->list_of_dates[] = $this->new_date;
+    //     }
 
-        $this->new_date = '';
-    }
+    //     $this->new_date = '';
+    // }
 
     public function submitLeaveApplication()
     {
@@ -350,12 +352,33 @@ class LeaveApplicationTable extends Component
         }
     }
 
+    public function addDate()
+    {
+        $this->validate([
+            'new_date' => 'required|date',
+        ]);
+        
+        if (!in_array($this->new_date, $this->list_of_dates)) {
+            $this->list_of_dates[] = $this->new_date;
+            $this->number_of_days = count($this->list_of_dates); // Auto-update days
+        }
+        
+        $this->new_date = '';
+    }
+
     public function removeDate($index)
     {
         unset($this->list_of_dates[$index]);
-
         $this->list_of_dates = array_values($this->list_of_dates);
+        $this->number_of_days = count($this->list_of_dates); // Auto-update days after removal
     }
+
+    // public function removeDate($index)
+    // {
+    //     unset($this->list_of_dates[$index]);
+
+    //     $this->list_of_dates = array_values($this->list_of_dates);
+    // }
 
     public function resetForm()
     {
@@ -381,19 +404,113 @@ class LeaveApplicationTable extends Component
         ]);
     }
 
+    // public function exportPDF($leaveApplicationId)
+    // {
+    //     $leaveApplication = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
+
+    //     $eSignature = ESignature::where('user_id', $leaveApplication->user_id)->first();
+
+    //     $signatureImagePath = null;
+    //     if ($eSignature && $eSignature->file_path) {
+    //         $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
+    //     }
+
+    //     $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
+
+    //     $otherLeave = '';
+    //     foreach ($selectedLeaveTypes as $leaveType) {
+    //         if (strpos($leaveType, 'Others: ') === 0) {
+    //             $otherLeave = str_replace('Others: ', '', $leaveType);
+    //             break;
+    //         }
+    //     }
+
+    //     $detailsOfLeave = $leaveApplication->details_of_leave ? array_map('trim', explode(',', $leaveApplication->details_of_leave)) : [];
+
+    //     $isDetailPresent = function($detail) use ($detailsOfLeave) {
+    //         foreach ($detailsOfLeave as $item) {
+    //             $parts = explode('=', $item, 2);
+    //             $key = trim($parts[0]);
+    //             if ($key === $detail) {
+    //                 return true;
+    //             }
+    //         }
+    //         return false;
+    //     };
+
+    //     $getDetailValue = function($detail) use ($detailsOfLeave) {
+    //         foreach ($detailsOfLeave as $item) {
+    //             $parts = explode('=', $item, 2);
+    //             if (count($parts) === 2) {
+    //                 $key = trim($parts[0]);
+    //                 $value = trim($parts[1]);
+    //                 if ($key === $detail) {
+    //                     return $value;
+    //                 }
+    //             }
+    //         }
+    //         return '';
+    //     };
+
+    //     $daysWithPay = '';
+    //     $daysWithoutPay = '';
+    //     $otherRemarks = '';
+
+    //     if ($leaveApplication->status === 'Approved') {
+    //         if ($leaveApplication->remarks === 'With Pay') {
+    //             $daysWithPay = $leaveApplication->approved_days;
+    //         } elseif ($leaveApplication->remarks === 'Without Pay') {
+    //             $daysWithoutPay = $leaveApplication->approved_days;
+    //         } else {
+    //             $otherRemarks = $leaveApplication->remarks;
+    //         }
+    //     }
+
+    //     // Fetch the first approver from leave_approvals
+    //     $leaveApproval = LeaveApprovals::where('application_id', $leaveApplicationId)->first();
+    //     $firstApprover = $leaveApproval ? $leaveApproval->first_approver : null;
+    //     $firstApproverName = $firstApprover ? User::find($firstApprover)->name : 'N/A';
+    //     $secondApprover = $leaveApproval ? $leaveApproval->second_approver : null;
+    //     $secondApproverName = $secondApprover ? User::find($secondApprover)->name : 'N/A';
+    //     $thirdApprover = $leaveApproval ? $leaveApproval->third_approver : null;
+    //     $thirdApproverName = $thirdApprover ? User::find($thirdApprover)->name : 'N/A';
+
+    //     $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
+
+    //     $pdf = PDF::loadView('pdf.leave-application', [
+    //         'leaveApplication' => $leaveApplication,
+    //         'selectedLeaveTypes' => $selectedLeaveTypes,
+    //         'otherLeave' => $otherLeave,
+    //         'detailsOfLeave' => $detailsOfLeave,
+    //         'isDetailPresent' => $isDetailPresent,
+    //         'getDetailValue' => $getDetailValue,
+    //         'daysWithPay' => $daysWithPay,
+    //         'daysWithoutPay' => $daysWithoutPay,
+    //         'otherRemarks' => $otherRemarks,
+    //         'leaveCredits' => $leaveCredits,
+    //         'firstApproverName' => $firstApproverName,
+    //         'secondApproverName' => $secondApproverName,
+    //         'thirdApproverName' => $thirdApproverName,
+    //         'eSignature' => $eSignature,
+    //         'signatureImagePath' => $signatureImagePath,
+    //     ]);
+
+    //     return response()->streamDownload(function() use ($pdf) {
+    //         echo $pdf->output();
+    //     }, 'LeaveApplication' . $leaveApplicationId . '.pdf');
+    // }
     public function exportPDF($leaveApplicationId)
     {
         $leaveApplication = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
-
+    
         $eSignature = ESignature::where('user_id', $leaveApplication->user_id)->first();
-
+    
         $signatureImagePath = null;
         if ($eSignature && $eSignature->file_path) {
             $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
         }
-
+    
         $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
-
         $otherLeave = '';
         foreach ($selectedLeaveTypes as $leaveType) {
             if (strpos($leaveType, 'Others: ') === 0) {
@@ -401,9 +518,9 @@ class LeaveApplicationTable extends Component
                 break;
             }
         }
-
+    
         $detailsOfLeave = $leaveApplication->details_of_leave ? array_map('trim', explode(',', $leaveApplication->details_of_leave)) : [];
-
+    
         $isDetailPresent = function($detail) use ($detailsOfLeave) {
             foreach ($detailsOfLeave as $item) {
                 $parts = explode('=', $item, 2);
@@ -414,7 +531,7 @@ class LeaveApplicationTable extends Component
             }
             return false;
         };
-
+    
         $getDetailValue = function($detail) use ($detailsOfLeave) {
             foreach ($detailsOfLeave as $item) {
                 $parts = explode('=', $item, 2);
@@ -428,11 +545,11 @@ class LeaveApplicationTable extends Component
             }
             return '';
         };
-
+    
         $daysWithPay = '';
         $daysWithoutPay = '';
         $otherRemarks = '';
-
+    
         if ($leaveApplication->status === 'Approved') {
             if ($leaveApplication->remarks === 'With Pay') {
                 $daysWithPay = $leaveApplication->approved_days;
@@ -442,18 +559,101 @@ class LeaveApplicationTable extends Component
                 $otherRemarks = $leaveApplication->remarks;
             }
         }
-
-        // Fetch the first approver from leave_approvals
+    
+        // // Fetch the first approver from leave_approvals
+        // $leaveApproval = LeaveApprovals::where('application_id', $leaveApplicationId)->first();
+        // $firstApprover = $leaveApproval ? $leaveApproval->first_approver : null;
+        // $firstApproverName = $firstApprover ? User::find($firstApprover)->name : 'N/A';
+        // $secondApprover = $leaveApproval ? $leaveApproval->second_approver : null;
+        // $secondApproverName = $secondApprover ? User::find($secondApprover)->name : 'N/A';
+        // $thirdApprover = $leaveApproval ? $leaveApproval->third_approver : null;
+        // $thirdApproverName = $thirdApprover ? User::find($thirdApprover)->name : 'N/A';
+    
+        // $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
+        // Fetch the approvers from leave_approvals
         $leaveApproval = LeaveApprovals::where('application_id', $leaveApplicationId)->first();
-        $firstApprover = $leaveApproval ? $leaveApproval->first_approver : null;
-        $firstApproverName = $firstApprover ? User::find($firstApprover)->name : 'N/A';
-        $secondApprover = $leaveApproval ? $leaveApproval->second_approver : null;
-        $secondApproverName = $secondApprover ? User::find($secondApprover)->name : 'N/A';
-        $thirdApprover = $leaveApproval ? $leaveApproval->third_approver : null;
-        $thirdApproverName = $thirdApprover ? User::find($thirdApprover)->name : 'N/A';
+        
+        // Initialize approver signatures
+        $firstApproverSignature = null;
+        $secondApproverSignature = null;
+        $thirdApproverSignature = null;
+
+        if ($leaveApproval && $leaveApproval->first_approver) {
+            $firstApprover = User::find($leaveApproval->first_approver);
+            $firstApproverName = $firstApprover ? $firstApprover->name : 'N/A';
+            
+            // Get emp_code without prefix
+            $empCode = preg_replace('/^[^-]+-/', '', $firstApprover->emp_code);
+            
+            // Find corresponding emp user with the same emp_code
+            $empUser = User::where('emp_code', $empCode)
+                          ->where('user_role', 'emp')
+                          ->first();
+                          
+            if ($empUser) {
+                $empSignature = ESignature::where('user_id', $empUser->id)->first();
+                if ($empSignature && $empSignature->file_path) {
+                    $firstApproverSignature = Storage::disk('public')->path($empSignature->file_path);
+                }
+            }
+        } else {
+            $firstApproverName = 'N/A';
+        }
+
+        // Process second approver
+        if ($leaveApproval && $leaveApproval->second_approver) {
+            $secondApprover = User::find($leaveApproval->second_approver);
+            $secondApproverName = $secondApprover ? $secondApprover->name : 'N/A';
+            
+            // Get emp_code without prefix
+            $empCode = preg_replace('/^[^-]+-/', '', $secondApprover->emp_code);
+            
+            // Find corresponding emp user with the same emp_code
+            $empUser = User::where('emp_code', $empCode)
+                        ->where('user_role', 'emp')
+                        ->first();
+                        
+            if ($empUser) {
+                $empSignature = ESignature::where('user_id', $empUser->id)->first();
+                if ($empSignature && $empSignature->file_path) {
+                    $secondApproverSignature = Storage::disk('public')->path($empSignature->file_path);
+                }
+            }
+        } else {
+            $secondApproverName = 'N/A';
+        }
+
+        // Process third approver
+        if ($leaveApproval && $leaveApproval->third_approver) {
+            $thirdApprover = User::find($leaveApproval->third_approver);
+            $thirdApproverName = $thirdApprover ? $thirdApprover->name : 'N/A';
+            
+            // Get emp_code without prefix
+            $empCode = preg_replace('/^[^-]+-/', '', $thirdApprover->emp_code);
+            
+            // Find corresponding emp user with the same emp_code
+            $empUser = User::where('emp_code', $empCode)
+                        ->where('user_role', 'emp')
+                        ->first();
+                        
+            if ($empUser) {
+                $empSignature = ESignature::where('user_id', $empUser->id)->first();
+                if ($empSignature && $empSignature->file_path) {
+                    $thirdApproverSignature = Storage::disk('public')->path($empSignature->file_path);
+                }
+            }
+        } else {
+            $thirdApproverName = 'N/A';
+        }
 
         $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
-
+    
+        // Step 1: Generate the first page (leave-application.php) and save it as a temporary PDF file
+        $firstPagePath = storage_path('app/temp/first-page.pdf');
+        if (!file_exists(dirname($firstPagePath))) {
+            mkdir(dirname($firstPagePath), 0755, true);
+        }
+    
         $pdf = PDF::loadView('pdf.leave-application', [
             'leaveApplication' => $leaveApplication,
             'selectedLeaveTypes' => $selectedLeaveTypes,
@@ -470,11 +670,37 @@ class LeaveApplicationTable extends Component
             'thirdApproverName' => $thirdApproverName,
             'eSignature' => $eSignature,
             'signatureImagePath' => $signatureImagePath,
+            'firstApproverSignature' => $firstApproverSignature,
+            'secondApproverSignature' => $secondApproverSignature,
+            'thirdApproverSignature' => $thirdApproverSignature,
         ]);
-
-        return response()->streamDownload(function() use ($pdf) {
-            echo $pdf->output();
-        }, 'LeaveApplication' . $leaveApplicationId . '.pdf');
+    
+        $pdf->save($firstPagePath);
+    
+        // Step 2: Path to your second-page template
+        $secondPageTemplatePath = public_path('storage/pdf_template/secondpage.pdf');
+    
+        // Step 3: Combine the first and second pages using FPDI
+        $outputPdfPath = storage_path('app/temp/combined-output.pdf');
+        $fpdi = new \setasign\Fpdi\Fpdi();
+    
+        // Add the first page
+        $fpdi->setSourceFile($firstPagePath);
+        $firstPageId = $fpdi->importPage(1);
+        $fpdi->addPage();
+        $fpdi->useTemplate($firstPageId);
+    
+        // Add the second page
+        $fpdi->setSourceFile($secondPageTemplatePath);
+        $secondPageId = $fpdi->importPage(1);
+        $fpdi->addPage();
+        $fpdi->useTemplate($secondPageId);
+    
+        // Save the final combined PDF
+        $fpdi->output($outputPdfPath, 'F');
+    
+        // Step 4: Stream the combined PDF as a download
+        return response()->download($outputPdfPath, 'LeaveApplication' . $leaveApplicationId . '.pdf')->deleteFileAfterSend(true);
     }
 
     // public function exportExcel()
@@ -492,9 +718,14 @@ class LeaveApplicationTable extends Component
 
     //     return $export->export();
     // }
+    // public function exportExcel()
+    // {
+    //     $export = new LeaveCardExport(Auth::id(), $this->startDate, $this->endDate);
+    //     return $export->export();
+    // }
     public function exportExcel()
     {
-        $export = new LeaveCardExport(Auth::id(), $this->startDate, $this->endDate);
+        $export = new LeaveLedgerExport(Auth::id(), $this->startDate, $this->endDate);
         return $export->export();
     }
 
@@ -548,16 +779,17 @@ class LeaveApplicationTable extends Component
     public function showPDF($leaveApplicationId)
     {
         $leaveApplication = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
-
+    
+        // Get the original applicant's e-signature
         $eSignature = ESignature::where('user_id', $leaveApplication->user_id)->first();
-
+    
         $signatureImagePath = null;
         if ($eSignature && $eSignature->file_path) {
             $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
         }
-
+    
         $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
-
+    
         $otherLeave = '';
         foreach ($selectedLeaveTypes as $leaveType) {
             if (strpos($leaveType, 'Others: ') === 0) {
@@ -565,9 +797,9 @@ class LeaveApplicationTable extends Component
                 break;
             }
         }
-
+    
         $detailsOfLeave = $leaveApplication->details_of_leave ? array_map('trim', explode(',', $leaveApplication->details_of_leave)) : [];
-
+    
         $isDetailPresent = function($detail) use ($detailsOfLeave) {
             foreach ($detailsOfLeave as $item) {
                 $parts = explode('=', $item, 2);
@@ -578,7 +810,7 @@ class LeaveApplicationTable extends Component
             }
             return false;
         };
-
+    
         $getDetailValue = function($detail) use ($detailsOfLeave) {
             foreach ($detailsOfLeave as $item) {
                 $parts = explode('=', $item, 2);
@@ -592,11 +824,11 @@ class LeaveApplicationTable extends Component
             }
             return '';
         };
-
+    
         $daysWithPay = '';
         $daysWithoutPay = '';
         $otherRemarks = '';
-
+    
         if ($leaveApplication->status === 'Approved') {
             if ($leaveApplication->remarks === 'With Pay') {
                 $daysWithPay = $leaveApplication->approved_days;
@@ -606,19 +838,85 @@ class LeaveApplicationTable extends Component
                 $otherRemarks = $leaveApplication->remarks;
             }
         }
-
-        // Fetch the first approver from leave_approvals
+    
+        // Fetch approvers from leave_approvals
         $leaveApproval = LeaveApprovals::where('application_id', $leaveApplicationId)->first();
-        $firstApprover = $leaveApproval ? $leaveApproval->first_approver : null;
-        $firstApproverName = $firstApprover ? User::find($firstApprover)->name : 'N/A';
-        $secondApprover = $leaveApproval ? $leaveApproval->second_approver : null;
-        $secondApproverName = $secondApprover ? User::find($secondApprover)->name : 'N/A';
-        $thirdApprover = $leaveApproval ? $leaveApproval->third_approver : null;
-        $thirdApproverName = $thirdApprover ? User::find($thirdApprover)->name : 'N/A';
-
+        
+        // Process first approver
+        $firstApproverSignature = null;
+        if ($leaveApproval && $leaveApproval->first_approver) {
+            $firstApprover = User::find($leaveApproval->first_approver);
+            $firstApproverName = $firstApprover ? $firstApprover->name : 'N/A';
+            
+            // Get emp_code without prefix
+            $empCode = preg_replace('/^[^-]+-/', '', $firstApprover->emp_code);
+            
+            // Find corresponding emp user with the same emp_code
+            $empUser = User::where('emp_code', $empCode)
+                          ->where('user_role', 'emp')
+                          ->first();
+                          
+            if ($empUser) {
+                $empSignature = ESignature::where('user_id', $empUser->id)->first();
+                if ($empSignature && $empSignature->file_path) {
+                    $firstApproverSignature = Storage::disk('public')->path($empSignature->file_path);
+                }
+            }
+        } else {
+            $firstApproverName = 'N/A';
+        }
+    
+        // Process second approver
+        $secondApproverSignature = null;
+        if ($leaveApproval && $leaveApproval->second_approver) {
+            $secondApprover = User::find($leaveApproval->second_approver);
+            $secondApproverName = $secondApprover ? $secondApprover->name : 'N/A';
+            
+            // Get emp_code without prefix
+            $empCode = preg_replace('/^[^-]+-/', '', $secondApprover->emp_code);
+            
+            // Find corresponding emp user with the same emp_code
+            $empUser = User::where('emp_code', $empCode)
+                          ->where('user_role', 'emp')
+                          ->first();
+                          
+            if ($empUser) {
+                $empSignature = ESignature::where('user_id', $empUser->id)->first();
+                if ($empSignature && $empSignature->file_path) {
+                    $secondApproverSignature = Storage::disk('public')->path($empSignature->file_path);
+                }
+            }
+        } else {
+            $secondApproverName = 'N/A';
+        }
+    
+        // Process third approver
+        $thirdApproverSignature = null;
+        if ($leaveApproval && $leaveApproval->third_approver) {
+            $thirdApprover = User::find($leaveApproval->third_approver);
+            $thirdApproverName = $thirdApprover ? $thirdApprover->name : 'N/A';
+            
+            // Get emp_code without prefix
+            $empCode = preg_replace('/^[^-]+-/', '', $thirdApprover->emp_code);
+            
+            // Find corresponding emp user with the same emp_code
+            $empUser = User::where('emp_code', $empCode)
+                          ->where('user_role', 'emp')
+                          ->first();
+                          
+            if ($empUser) {
+                $empSignature = ESignature::where('user_id', $empUser->id)->first();
+                if ($empSignature && $empSignature->file_path) {
+                    $thirdApproverSignature = Storage::disk('public')->path($empSignature->file_path);
+                }
+            }
+        } else {
+            $thirdApproverName = 'N/A';
+        }
+    
         $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
-
-        $pdf = PDF::loadView('pdf.leave-application', [
+    
+        $firstPagePDF = PDF::loadView('pdf.leave-application', [
             'leaveApplication' => $leaveApplication,
             'selectedLeaveTypes' => $selectedLeaveTypes,
             'otherLeave' => $otherLeave,
@@ -634,9 +932,44 @@ class LeaveApplicationTable extends Component
             'thirdApproverName' => $thirdApproverName,
             'eSignature' => $eSignature,
             'signatureImagePath' => $signatureImagePath,
+            'firstApproverSignature' => $firstApproverSignature,
+            'secondApproverSignature' => $secondApproverSignature,
+            'thirdApproverSignature' => $thirdApproverSignature,
         ]);
+    
+        // Save the first page PDF to a temporary file
+        $tempFirstPagePath = storage_path('app/temp_first_page.pdf');
+        file_put_contents($tempFirstPagePath, $firstPagePDF->output());
 
-        $this->pdfContent = base64_encode($pdf->output());
+        // Path to the second page template
+        $secondPageTemplatePath = public_path('storage/pdf_template/secondpage.pdf');
+        if (!file_exists($secondPageTemplatePath)) {
+            throw new \Exception('Second page template not found at: ' . $secondPageTemplatePath);
+        }
+
+        // Create a multi-page PDF using FPDI
+        $pdf = new \setasign\Fpdi\Fpdi();
+
+        // Add the first page
+        $pdf->AddPage();
+        $pdf->setSourceFile($tempFirstPagePath);
+        $tplId = $pdf->importPage(1);
+        $pdf->useTemplate($tplId);
+
+        // Add the second page
+        $pdf->AddPage();
+        $pdf->setSourceFile($secondPageTemplatePath);
+        $tplId = $pdf->importPage(1);
+        $pdf->useTemplate($tplId);
+
+        // Clean up temporary file
+        unlink($tempFirstPagePath);
+
+        // Define a user-friendly filename
+        $fileName = 'Leave_Application_' . $leaveApplication->id . '.pdf';
+
+        // Output the final PDF with the specified filename
+        $this->pdfContent = base64_encode($pdf->Output($fileName, 'S'));
         $this->showPDFPreview = true;
     }
 

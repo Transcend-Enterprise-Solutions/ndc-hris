@@ -604,7 +604,7 @@
                         </fieldset>
 
                         {{-- C. --}}
-                        <fieldset
+                        {{-- <fieldset
                             class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
                             <legend class="text-gray-700 dark:text-slate-100">C. Number of Working Days Applied for
                             </legend>
@@ -618,16 +618,7 @@
                                     @enderror
                                 </div>
 
-                                @if (in_array('Vacation Leave', $type_of_leave) ||
-                                        in_array('Sick Leave', $type_of_leave) ||
-                                        in_array('Paternity Leave', $type_of_leave) ||
-                                        in_array('Special Privilege Leave', $type_of_leave) ||
-                                        in_array('Mandatory/Forced Leave', $type_of_leave) ||
-                                        in_array('Solo Parent Leave', $type_of_leave) ||
-                                        in_array('10-Day VAWC Leave', $type_of_leave) ||
-                                        in_array('Special Emergency (Calamity) Leave', $type_of_leave) ||
-                                        in_array('Adoption Leave', $type_of_leave) ||
-                                        in_array('CTO Leave', $type_of_leave))
+                                @if (in_array('Vacation Leave', $type_of_leave) || in_array('Sick Leave', $type_of_leave) || in_array('Paternity Leave', $type_of_leave) || in_array('Special Privilege Leave', $type_of_leave) || in_array('Mandatory/Forced Leave', $type_of_leave) || in_array('Solo Parent Leave', $type_of_leave) || in_array('10-Day VAWC Leave', $type_of_leave) || in_array('Special Emergency (Calamity) Leave', $type_of_leave) || in_array('Adoption Leave', $type_of_leave) || in_array('CTO Leave', $type_of_leave))
                                     <div class="gap-2 columns-1 mt-2">
                                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-100">List
                                             of
@@ -662,7 +653,6 @@
                                     @enderror
                                 </div>
 
-                                {{-- @if (in_array('Study Leave', $type_of_leave) || in_array('Maternity Leave', $type_of_leave) || in_array('Rehabilitation Privilege', $type_of_leave) || in_array('Special Leave Benefits for Women', $type_of_leave)) --}}
                                 <fieldset
                                     class="border border-red-400 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0 mt-2">
                                     <div class="gap-2 columns-1">
@@ -690,8 +680,91 @@
                                         </div>
                                     </div>
                                 </fieldset>
-                                {{-- @endif --}}
 
+                            </div>
+                        </fieldset> --}}
+                        <fieldset
+                            class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
+                            <legend class="text-gray-700 dark:text-slate-100">C. Number of Working Days Applied for
+                            </legend>
+                            <div class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700">
+                                <div class="gap-2 columns-1">
+                                    <label class="text-sm text-gray-700 dark:text-slate-100">Days</label>
+                                    <input type="number" id="number_of_days" wire:model="number_of_days" readonly
+                                        class="mt-1 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full bg-gray-100">
+                                    @error('number_of_days')
+                                        <span class="text-red-500 text-sm">This field is required!</span>
+                                    @enderror
+                                </div>
+
+                                @if (in_array('Vacation Leave', $type_of_leave) ||
+                                        in_array('Sick Leave', $type_of_leave) ||
+                                        in_array('Paternity Leave', $type_of_leave) ||
+                                        in_array('Special Privilege Leave', $type_of_leave) ||
+                                        in_array('Mandatory/Forced Leave', $type_of_leave) ||
+                                        in_array('Solo Parent Leave', $type_of_leave) ||
+                                        in_array('10-Day VAWC Leave', $type_of_leave) ||
+                                        in_array('Special Emergency (Calamity) Leave', $type_of_leave) ||
+                                        in_array('Adoption Leave', $type_of_leave) ||
+                                        in_array('CTO Leave', $type_of_leave))
+                                    <div class="gap-2 columns-1 mt-2">
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-100">List
+                                            of Dates</label>
+                                        <div class="gap-2 columns-2">
+                                            <input type="date" wire:model="new_date"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                            <button wire:click="addDate"><i
+                                                    class="bi bi-plus-square dark:text-slate-50 text-slate-900 hover:text-slate-400"
+                                                    style="font-size: 2rem;"></i></button>
+                                        </div>
+                                        @error('list_of_dates')
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                @endif
+                                <div class="gap-2 columns-1 mt-2">
+                                    <ul>
+                                        @foreach ($list_of_dates as $index => $date)
+                                            <li class="dark:text-slate-50 text-slate-900 flex items-center">
+                                                <i class="bi bi-check-lg pr-4 text-green-600"></i>{{ $date }}
+                                                <button wire:click="removeDate({{ $index }})"
+                                                    class="ml-4 text-red-600">
+                                                    <i class="bi bi-x"></i>
+                                                </button>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+
+                                    @error('new_date')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <fieldset
+                                    class="border border-red-400 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0 mt-2">
+                                    <div class="gap-2 columns-1">
+                                        <h6
+                                            class="mt-2 mb-2 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
+                                            In case of Study Leave, Maternity Leave, Special Leave Benefits for Women,
+                                            and Rehabilitation Leave:</h6>
+
+                                        <div class="gap-2 columns-1 mt-2">
+                                            <label
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-100">Start
+                                                date</label>
+                                            <input type="date" id="start_date" wire:model="start_date"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                        </div>
+
+                                        <div class="gap-2 columns-1 mt-2">
+                                            <label
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-100 mt-2">End
+                                                date</label>
+                                            <input type="date" id="end_date" wire:model="end_date"
+                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                        </div>
+                                    </div>
+                                </fieldset>
                             </div>
                         </fieldset>
 

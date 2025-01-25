@@ -4,7 +4,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>5adf2989-8ef5-4c6f-8de4-516de56668c0</title>
+    <title>Leave Application</title>
     <meta name="author" content="Art Audea" />
 
     <style type="text/css">
@@ -84,7 +84,7 @@
             font-style: normal;
             font-weight: bold;
             text-decoration: none;
-            font-size: 13.5pt;
+            font-size: 12pt;
         }
 
         .s5 {
@@ -149,9 +149,28 @@
     <p style="text-indent: 0pt;text-align: left;" />
 
     {{-- Header --}}
-    <p class="s2" style="padding-top: 9pt; text-indent: 0pt; text-align: center;">Republic of the Philippines</p>
-    {{-- <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;">(Agency Name)</h2> --}}
-    {{-- <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;"> (Agency Address)</h2> --}}
+    {{-- <p class="s2" style="padding-top: 9pt; text-indent: 0pt; text-align: center;">Republic of the Philippines</p>
+    <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;">NATIONAL DEVELOPMENT COMPANY</h2>
+    <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;"> (Agency Address)</h2> --}}
+
+    <div style="text-align: center;">
+        <div style="display: inline-block; vertical-align: middle; text-align: center;">
+            <img src="images/ndc_logo.png" alt="NDC Logo"
+                style="height: 40px; display: inline-block; vertical-align: middle;">
+        </div>
+        <div
+            style="display: inline-block; vertical-align: middle; text-align: left; margin-left: 30px; margin-right: 30px;">
+            <p class="s2" style="text-align: center; margin: 0;">Republic of the Philippines</p>
+            <h2 style="text-align: center; line-height: 110%; margin: 0;">NATIONAL DEVELOPMENT COMPANY</h2>
+            <h2 style="text-align: center; line-height: 110%; margin: 0;">7/F NDC Building, 116 Tordesillas St. Salcedo
+                Village, Makati City
+            </h2>
+        </div>
+        <div style="display: inline-block; vertical-align: middle; text-align: center;">
+            <img src="images/bagong-pilipinas-logo.png" alt="Bagong Pilipinas Logo"
+                style="height: 40px; display: inline-block; vertical-align: middle;">
+        </div>
+    </div>
 
     <p style="padding-top: 4pt; text-indent: 0pt; text-align: left;"><br /></p>
 
@@ -297,7 +316,8 @@
 
                     <div style="display: block; width: 100%;">
                         <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
-                            <span class="s5" style="font-style: italic !important; font-weight: bold !important;">In
+                            <span class="s5"
+                                style="font-style: italic !important; font-weight: bold !important;">In
                                 case of Sick Leave:</span>
                         </div>
                     </div>
@@ -646,12 +666,12 @@
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->vl_total_credits }}</p>
+                        {{ $leaveCredits->vl_total_credits ?? 'N/A' }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->sl_total_credits }}</p>
+                        {{ $leaveCredits->sl_total_credits ?? 'N/A' }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -688,12 +708,12 @@
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->vl_claimed_credits }}</p>
+                        {{ $leaveCredits->vl_claimed_credits ?? 'N/A' }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->sl_claimed_credits }}</p>
+                        {{ $leaveCredits->sl_claimed_credits ?? 'N/A' }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -728,12 +748,12 @@
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->vl_claimable_credits }}</p>
+                        {{ $leaveCredits->vl_claimable_credits ?? 'N/A' }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->sl_claimable_credits }}</p>
+                        {{ $leaveCredits->sl_claimable_credits ?? 'N/A' }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -742,17 +762,20 @@
             </tr>
 
             <tr style="height:22pt">
-                <td style="width:256pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                <td style="width:256pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;position:relative"
                     colspan="5" rowspan="2">
                     <p style="padding-top: 10pt;text-indent: 0pt;text-align: left;"><br /></p>
                     <p style="padding-left: 18pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
+                    @if ($thirdApproverSignature)
+                        <img src="{{ $thirdApproverSignature }}"
+                            style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); max-width: 100px; max-height: 40px; display: block;">
+                    @endif
                     <p class="s5" style="padding-left: 1pt; text-indent: 0pt; text-align: center; ">
                         {{ $thirdApproverName }}</p>
                     <p class="s5"
                         style="padding-left: 1pt; text-indent: 0pt; text-align: center; border-top-style: solid; border-top-width: medium; width: 50%; margin: 0 auto;">
                         (Authorized Officer)
                     </p>
-
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -764,7 +787,11 @@
             </tr>
             <tr style="height:14pt">
                 <td
-                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    style="width:212pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;position:relative">
+                    @if ($secondApproverSignature)
+                        <img src="{{ $secondApproverSignature }}"
+                            style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); max-width: 100px; max-height: 40px; display: block;">
+                    @endif
                     <p class="s5" style="padding-left: 1pt; text-indent: 0pt; text-align: center;">
                         {{ $secondApproverName }}</p>
                     <p class="s5"
@@ -873,11 +900,16 @@
                 <td style="width:146pt;border-bottom-style:solid;border-bottom-width:1pt" colspan="2">
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
-                <td style="width:303pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                <td style="width:303pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;position:relative"
                     colspan="3">
+
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                     <p style="text-indent: 0pt;text-align: left;" />
                     <p style="text-indent: 0pt;line-height: 1pt;text-align: left;" />
+                    @if ($firstApproverSignature)
+                        <img src="{{ $firstApproverSignature }}"
+                            style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); max-width: 100px; max-height: 40px; display: block;">
+                    @endif
                     <p class="s10"
                         style="text-indent: 0pt;line-height: 7pt;text-align: center; margin-bottom: 1pt;">
                         {{ $firstApproverName }}</p>
