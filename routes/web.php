@@ -34,6 +34,8 @@ Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
         return view('livewire.admin.employees'); })->name('/employee-management/employees');
     Route::get('/employee-management/service-records', function () {
         return view('livewire.admin.service-record'); })->name('/employee-management/service-records');
+    Route::get('/employee-management/wes-management', function () {
+        return view('livewire.admin.w-e-s-management'); })->name('/employee-management/wes-management');
     Route::get('/employee-management/admin-doc-request', function () {
         return view('livewire.admin.admin-doc-request'); })->name('/employee-management/admin-doc-request');
     Route::get('/employee-management/emp-documents', function () {
@@ -99,16 +101,12 @@ Route::middleware(['auth', 'checkrole:emp'])->group(function () {
         return view('livewire.user.my-virtual-id'); })->name('/my-records/my-virtual-id');
 
     // Daily Time Records Tabs ---------------------------------------------------------------- //
-    // Route::get('/daily-time-record/wfh-attendance', function () {
-    //     return view('livewire.user.wfh-attendance'); })->name('/daily-time-record/wfh-attendance');
     Route::get('/daily-time-record/dtr', function () {
         return view('livewire.user.dtr'); })->name('/daily-time-record/dtr');
     Route::get('/daily-time-record/official-business', function () {
         return view('livewire.user.official-business'); })->name('/daily-time-record/official-business');
     Route::get('/daily-time-record/my-schedule', function () {
         return view('livewire.user.my-schedule'); })->name('/daily-time-record/my-schedule');
-    // Route::get('/daily-time-record/my-payroll', function () {
-    //     return view('livewire.user.user-payroll'); })->name('/daily-time-record/my-payroll');
     Route::get('/daily-time-record/payslip', function () {
         return view('livewire.user.payslip'); })->name('/daily-time-record/payslip');
 

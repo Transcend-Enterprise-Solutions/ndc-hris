@@ -236,7 +236,7 @@ class OfficialBusinessTable extends Component
                 'startTime' => 'required',
                 'endTime' => 'required',
                 'purpose' => 'required',
-                'newLatitude' => 'required',
+                // 'newLatitude' => 'required',
             ]);
 
             if($this->addOB){
@@ -248,8 +248,8 @@ class OfficialBusinessTable extends Component
                     'reference_number' => $referenceNumber,
                     'company' => $this->company,
                     'address' => $this->address,
-                    'lat' => $this->newLatitude,        
-                    'lng' => $this->newLongitude,        
+                    // 'lat' => $this->newLatitude,        
+                    // 'lng' => $this->newLongitude,        
                     'date' => $this->date,  
                     'time_start' => $this->startTime,  
                     'time_end' => $this->endTime,  
@@ -269,8 +269,8 @@ class OfficialBusinessTable extends Component
                     $ob->update([
                         'company' => $this->company,
                         'address' => $this->address,
-                        'lat' => $this->newLatitude,        
-                        'lng' => $this->newLongitude,        
+                        // 'lat' => $this->newLatitude,        
+                        // 'lng' => $this->newLongitude,        
                         'date' => $this->date,  
                         'time_start' => $this->startTime,  
                         'time_end' => $this->endTime,  

@@ -64,13 +64,11 @@
     <div class="w-full flex justify-center">
         <div class="flex justify-center w-full">
             <div class="w-full bg-white rounded-2xl p-3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
-                @if ($hasWFHLocation)
+                {{-- @if ($hasWFHLocation)
                     <div class="flex-col mb-4 justify-center w-full bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-gray-800 overflow-hidden relative" style="border-radius: 8px;">
                         
-                        {{-- WFH Location Modal ---------------------------------------------------------------------------------}}
                         <div>
                             <div class="flex justify-between px-4 pt-4">
-                                {{-- <x-date-clock-counter /> --}}
                                 <div class="text-sm font-semibold text-gray-900 dark:text-white h-10 text-left">
                                     <i class="bi bi-clock"></i> {{ $formattedTime2 ?: $formattedTime }}
                                 </div>
@@ -103,7 +101,6 @@
                             </div>
 
                             <div class="text-sm flex p-4">
-                                {{-- Location Debug information --}}
                                 <div class="w-1/2">
                                    <span class="font-bold">WFH Location</span> <br>
                                     Lat: <span class="text-gray-800 dark:text-white">{{ $registeredLatitude ?? '...' }}</span> <br>
@@ -117,7 +114,6 @@
                             </div>
                         </div>
 
-                        {{-- WFH Location History Modal ---------------------------------------------------------------------------------}}
                         <div 
                             x-show="showWFHLocHistory" 
                             x-transition:enter="transition ease-out duration-300 transform"
@@ -231,7 +227,6 @@
                             </div>
                         </div>
 
-                        {{-- View WFH Location History Modal ---------------------------------------------------------------------------------}}
                         <div 
                             x-show="viewWFHLocHistory" 
                             x-transition:enter="transition ease-out duration-300 transform"
@@ -283,7 +278,7 @@
                             Register WFH Location
                         </button>
                     </div>
-                @endif
+                @endif --}}
 
                 <div class="w-full flex flex-col justify-center items-center">
                     <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-12">
@@ -346,13 +341,13 @@
                                     </div>
                                 </div>
                             @elseif($scheduleType === 'WFH' && !$isWithinRadius)
-                                <div
+                                {{-- <div
                                     class="absolute inset-0 flex justify-center items-center bg-gray-700 bg-opacity-75 rounded-lg">
                                     <div class="text-center">
                                         <i class="bi bi-person-lock text-white" style="font-size: 5rem;"></i>
                                         <p class="mt-2 text-white font-bold">You are outside the allowed<br>location for WFH attendance</p>
                                     </div>
-                                </div>
+                                </div> --}}
                             @endif
                         </div>
 
@@ -454,7 +449,7 @@
     </div>
     
     {{-- Add WFH Location Modal --}}
-    <x-modal id="registerLocation" maxWidth="md" wire:model="editLocation" x-data @open-modal.window="initMap2()">
+    {{-- <x-modal id="registerLocation" maxWidth="md" wire:model="editLocation" x-data @open-modal.window="initMap2()">
         <div class="p-4">
             <div class="rounded-lg mb-4  dark:text-gray-50 text-slate-900 font-bold">
                 {{ $editLocMessage }} WFH Location
@@ -513,12 +508,12 @@
                 </p>
             </div>
         </div>
-    </x-modal>
+    </x-modal> --}}
 
 
 </div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs&libraries=places"></script>
+{{-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs&libraries=places"></script>
 <script>
     let map, map2, map3, searchBox;
     let marker, marker2, marker3;
@@ -620,7 +615,6 @@
         }
     }
 
-
     function updateMap() {
         const lat = @this.latitude;
         const lng = @this.longitude;
@@ -712,5 +706,5 @@
             viewWFHLocHistoryMap();
         });
     });
-</script>
+</script> --}}
 

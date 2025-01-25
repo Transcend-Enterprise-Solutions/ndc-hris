@@ -178,6 +178,16 @@
                                                     </span>
                                                 </a>
                                             </li>
+                                            <li class="mb-1 last:mb-0">
+                                                <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/wes-management')) {{ '!text-blue-500' }} @endif"
+                                                    href="{{ route('/employee-management/wes-management') }}">
+                                                    <span class="text-sm font-medium transition-opacity duration-300"
+                                                        :class="sidebarExpanded ? 'opacity-100 lg:inline' :
+                                                            'opacity-0 lg:hidden'">
+                                                        Work Experience Sheet
+                                                    </span>
+                                                </a>
+                                            </li>
                                         @endif
                                     </ul>
                                 </div>

@@ -132,7 +132,7 @@ class User extends Authenticatable
 
     public function workExperienceSheet()
     {
-        return $this->hasMany(WorkExperienceSheetTable::class);
+        return $this->hasMany(WorkExperienceSheetTable::class, 'user_id');
     }
 
     public function employeeDocuments()
@@ -300,6 +300,14 @@ class User extends Authenticatable
                 ->orWhere('user_data.middle_name', 'like', $term)
                 ->orWhere('user_data.name_extension', 'like', $term)
                 ->orWhere('user_data.surname', 'like', $term);
+        });
+    }
+
+    public function scopeSearch4($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('users.name', 'like', $term)
+                ->orWhere('users.emp_code', 'like', $term);
         });
     }
 

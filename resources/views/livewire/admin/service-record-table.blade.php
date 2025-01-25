@@ -152,6 +152,11 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                                @if ($users->isEmpty())
+                                    <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                        No records!
+                                    </div> 
+                                @endif
                             </div>
                             <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
                                 {{ $users->links() }}

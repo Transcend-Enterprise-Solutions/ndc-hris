@@ -79,11 +79,10 @@
         });
     </script>
 
-    <script>
+    {{-- <script>
         function initLocationHandling() {
             const currentPath = window.location.pathname;
             if (window.ReactNativeWebView) {
-                // Running in React Native web view
                 window.ReactNativeWebView.postMessage(JSON.stringify({
                     type: 'routeInfo',
                     route: currentPath
@@ -126,7 +125,7 @@
         document.addEventListener('DOMContentLoaded', initLocationHandling);
         document.addEventListener('livewire:navigated', initLocationHandling);
         window.addEventListener('popstate', initLocationHandling);
-    </script>
+    </script> --}}
 
 @livewireScripts
 </body>

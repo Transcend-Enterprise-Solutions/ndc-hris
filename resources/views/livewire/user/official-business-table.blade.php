@@ -93,12 +93,12 @@
                 <div class="w-full flex flex-col justify-center items-center mb-6 bg-gray-300 dark:bg-slate-900 border border-gray-300 dark:border-slate-900 shadow-xl" x-data="{ showDialog: false }">
                     <style>
                         .obs{
-                            height: 280px;
+                            height: 200px;
                             width: 66%;
                         }
 
                         .obs2{
-                            height: 280px;
+                            height: 200px;
                             width: 34%;
                         }
 
@@ -112,11 +112,11 @@
 
                     <div class="flex flex-col sm:flex-row justify-center items-center w-full overflow-hidden">
                         <div class="block shadow dark:bg-gray-900 relative obs">
-                            <div class="w-full p-2">
+                            <div class="w-full p-4">
                                 <div class="flex w-full">
                                     <p class=""><span class="{{ $obStatus == 'ONGOING' ? 'text-green-500' : 'text-orange-500' }}">{{ $obStatus }}</span> Official Business: {{ $ongoingObs->company }}</p>
                                 </div>
-                                <div class="flex w-full">
+                                {{-- <div class="flex w-full">
                                     <div class="flex items-center">
                                         <p class="mr-2">Current Location: </p>
                                         <div class="relative flex items-center justify-center mr-3" style="height: 18px; width: 18px;">
@@ -127,15 +127,23 @@
                                     <div class="flex">
                                         <p class="">OB Location: </p><img src="{{ asset('/images/red-dot.png') }}" alt="map icon" style="width: 25px; height: 25px; margin-bottom:-3px;" />
                                     </div>
-                                </div>
+                                </div> --}}
+                                    <div>
+                                        <p class="">Company: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->company }}</span></p>
+                                        <p class="">Address: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->address }}</span></p>
+                                        <p class="">Date: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->date }}</span></p>
+                                        <p class="">Stary Time: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->time_start }}</span></p>
+                                        <p class="">End Time: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->time_end }}</span></p>
+                                        <p class="">Purpose: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->purpose }}</span></p>
+                                    </div>
                             </div>
-                            <div wire:ignore style="height: 240px; width: 100%;">
+                            {{-- <div wire:ignore style="height: 240px; width: 100%;">
                                 <div id="map2" style="height: 100%; width: 100%; margin: 0;"></div>
-                            </div>
+                            </div> --}}
                         </div>
 
                         <div class="block p-6 shadow dark:bg-gray-900 relative obs2">
-                            <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white text-center">OB ATTENDANCE</h5>
+                            <h5 class="text-lg font-bold tracking-tight text-gray-900 dark:text-white text-center">OB ATTENDANCE</h5>
                             <div class="grid grid-cols-1 gap-2 p-4">
                                 <div class="flex justify-center">
                                     <button wire:click="confirmPunch({{ $ongoingObs->id }}, 'timeIn', 'Time In')"
@@ -159,14 +167,14 @@
                                 </div>
 
                                 @if($isWithinRadius)
-                                    <div class="flex justify-center">
+                                    {{-- <div class="flex justify-center">
                                         <p class="text-blue-500 underline" @click="showDialog = true">OB Details</p>
-                                    </div>
+                                    </div> --}}
                                 @endif
                             </div>
 
                             @if(!$isWithinRadius && $isTodayIsOb)
-                                <div
+                                {{-- <div
                                     class="absolute inset-0 flex justify-center items-center bg-gray-200 dark:bg-slate-700 bg-opacity-90 dark:bg-opacity-90">
                                     <div class="text-center">
                                         <i class="bi bi-person-lock" style="font-size: 3rem;"></i>
@@ -174,14 +182,14 @@
                                             the OB location.</p>
                                         <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p>
                                     </div>
-                                </div>
+                                </div> --}}
                             @elseif(!$isTodayIsOb)
                                 <div
                                     class="absolute inset-0 flex justify-center items-center bg-gray-200 dark:bg-slate-700 bg-opacity-90 dark:bg-opacity-90">
                                     <div class="text-center">
                                         <i class="bi bi-person-lock" style="font-size: 3rem;"></i>
                                         <p class="font-bold mb-4">Attendance will be available on <br>{{ \Carbon\Carbon::parse($ongoingObs->date)->format('F d, Y') }}</p>
-                                        <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p>
+                                        {{-- <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p> --}}
                                     </div>
                                 </div>
                             @endif
@@ -401,9 +409,9 @@
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                 Address
                                             </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                            {{-- <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                 Geolocation
-                                            </th>
+                                            </th> --}}
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                 Date
                                             </th>
@@ -433,10 +441,10 @@
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                     {{ $obs->address }}
                                                 </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                {{-- <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                     Lat: {{ $obs->lat }} <br>
                                                     Lng: {{ $obs->lng }}
-                                                </td>
+                                                </td> --}}
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                     {{ $obs->date }}
                                                 </td>
@@ -513,9 +521,9 @@
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                 Address
                                             </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                            {{-- <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                 Geolocation
-                                            </th>
+                                            </th> --}}
                                             <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                 Date
                                             </th>
@@ -545,10 +553,10 @@
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                     {{ $obs->address }}
                                                 </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                {{-- <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                     Lat: {{ $obs->lat }} <br>
                                                     Lng: {{ $obs->lng }}
-                                                </td>
+                                                </td> --}}
                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                     {{ $obs->date }}
                                                 </td>
@@ -664,7 +672,7 @@
             </div>
 
             
-            <div class="mt-4  mb-1">
+            {{-- <div class="mt-4  mb-1">
                 <label for="purpose" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Geolocation <span class="text-red-500">*</span></label>
             </div>
             <div class="flex-col justify-center w-full bg-gray-200 dark:bg-slate-700 border border-gray-300 mb-2" style="border-radius: 8px;">
@@ -688,7 +696,7 @@
                 @error('newLatitude') 
                     <span class="text-red-500 text-sm">The geolocation is required!</span> 
                 @enderror
-            </div>
+            </div> --}}
 
              {{-- Save and Cancel buttons --}}
              <div class="mt-6 flex justify-end col-span-2">
@@ -752,7 +760,7 @@
                 </div>
             </div>
    
-            <div class="mt-4  mb-1">
+            {{-- <div class="mt-4  mb-1">
                 <label for="purpose" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Geolocation</label>
             </div>
             <div class="flex-col justify-center w-full bg-gray-200 dark:bg-slate-700 border border-gray-300 mb-2" style="border-radius: 8px;">
@@ -766,7 +774,7 @@
                         Lng: <span class="text-gray-800 dark:text-gray-50">{{ $registeredLongitude ?? '...' }}</span>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="mt-6 flex justify-end col-span-2">
                 <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
@@ -844,12 +852,13 @@
 </div>
 
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs&libraries=places"></script>
+{{-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs&libraries=places"></script>
+
 <script>
     let map, map2, map3, marker, marker3, currentMarker, destinationMarker, searchBox, radiusCircle;
 
     function initMap() {
-        const defaultLocation = { lat: 14.5995, lng: 120.9842 }; // Manila coordinates
+        const defaultLocation = { lat: 14.5995, lng: 120.9842 };
         map = new google.maps.Map(document.getElementById("map"), {
             zoom: 15,
             center: defaultLocation,
@@ -873,7 +882,6 @@
             animation: google.maps.Animation.DROP
         });
 
-        // Listen for marker drag events
         google.maps.event.addListener(marker, 'dragend', function(event) {
             const lat = event.latLng.lat();
             const lng = event.latLng.lng();
@@ -908,7 +916,6 @@
     }
 
 
-    // Map 2 ---------------------------------------------------------------- //
     const createAnimatedMarkerIcon = () => {
         const svg = `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 40 40">
@@ -981,12 +988,10 @@
             icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
         });
 
-         // Remove existing circle if it exists
         if (radiusCircle) {
             radiusCircle.setMap(null);
         }
 
-        // Add the 500-meter radius circle
         radiusCircle = new google.maps.Circle({
             strokeColor: "#FF0000",
             strokeOpacity: 0.5,
@@ -1015,7 +1020,6 @@
         map2.fitBounds(bounds, padding);
     }
 
-    // Map 3 ---------------------------------------------------------------- //
     function initMap3() {
         let lat, lng;
         if (@this.registeredLatitude && @this.registeredLongitude) {
@@ -1064,4 +1068,4 @@
     document.addEventListener('DOMContentLoaded', initMap3);
     setInterval(initMap2 , 5000);
     setInterval(initMap3 , 5000);
-</script>
+</script> --}}
