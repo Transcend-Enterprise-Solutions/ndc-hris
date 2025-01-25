@@ -84,7 +84,7 @@
             font-style: normal;
             font-weight: bold;
             text-decoration: none;
-            font-size: 13.5pt;
+            font-size: 12pt;
         }
 
         .s5 {
@@ -149,9 +149,28 @@
     <p style="text-indent: 0pt;text-align: left;" />
 
     {{-- Header --}}
-    <p class="s2" style="padding-top: 9pt; text-indent: 0pt; text-align: center;">Republic of the Philippines</p>
-    {{-- <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;">(Agency Name)</h2> --}}
-    {{-- <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;"> (Agency Address)</h2> --}}
+    {{-- <p class="s2" style="padding-top: 9pt; text-indent: 0pt; text-align: center;">Republic of the Philippines</p>
+    <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;">NATIONAL DEVELOPMENT COMPANY</h2>
+    <h2 style="text-indent: 0pt; line-height: 110%; text-align: center;"> (Agency Address)</h2> --}}
+
+    <div style="text-align: center;">
+        <div style="display: inline-block; vertical-align: middle; text-align: center;">
+            <img src="images/ndc_logo.png" alt="NDC Logo"
+                style="height: 40px; display: inline-block; vertical-align: middle;">
+        </div>
+        <div
+            style="display: inline-block; vertical-align: middle; text-align: left; margin-left: 30px; margin-right: 30px;">
+            <p class="s2" style="text-align: center; margin: 0;">Republic of the Philippines</p>
+            <h2 style="text-align: center; line-height: 110%; margin: 0;">NATIONAL DEVELOPMENT COMPANY</h2>
+            <h2 style="text-align: center; line-height: 110%; margin: 0;">7/F NDC Building, 116 Tordesillas St. Salcedo
+                Village, Makati City
+            </h2>
+        </div>
+        <div style="display: inline-block; vertical-align: middle; text-align: center;">
+            <img src="images/bagong-pilipinas-logo.png" alt="Bagong Pilipinas Logo"
+                style="height: 40px; display: inline-block; vertical-align: middle;">
+        </div>
+    </div>
 
     <p style="padding-top: 4pt; text-indent: 0pt; text-align: left;"><br /></p>
 
@@ -297,7 +316,8 @@
 
                     <div style="display: block; width: 100%;">
                         <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
-                            <span class="s5" style="font-style: italic !important; font-weight: bold !important;">In
+                            <span class="s5"
+                                style="font-style: italic !important; font-weight: bold !important;">In
                                 case of Sick Leave:</span>
                         </div>
                     </div>
