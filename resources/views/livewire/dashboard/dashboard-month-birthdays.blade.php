@@ -11,7 +11,7 @@
 
     <div id="confetti-container" class="w-full rounded-lg overflow-hidden relative">
         <div class="p-6 w-full flex-col items-center justify-center">
-            <p class="text-center text-2xl font-semibold text-gray-800 dark:text-gray-50">Birthday's this Month</p>
+            <p class="text-center text-2xl font-semibold text-gray-800 dark:text-gray-50">Birthdays this Month</p>
             @if($birthdayEmployees)
                 @foreach ($birthdayEmployees as $emp)
                     <div class="flex flex-col sm:flex-row justify-between w-full items-center py-2 {{ $loop->last ? '' : 'border-b border-slate-500/30' }}">
