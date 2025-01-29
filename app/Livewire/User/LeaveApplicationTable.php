@@ -54,8 +54,10 @@ class LeaveApplicationTable extends Component
     public $list_of_dates = [];
     public $new_date;
     
-    public $startDate;
-    public $endDate;
+    // public $startDate;
+    // public $endDate;
+    public $selectedYear;
+    public $isDisabled = false;
 
     public $leaveApplicationDetails;
     public $pdfContent;
@@ -723,11 +725,11 @@ class LeaveApplicationTable extends Component
     //     $export = new LeaveCardExport(Auth::id(), $this->startDate, $this->endDate);
     //     return $export->export();
     // }
-    public function exportExcel()
-    {
-        $export = new LeaveLedgerExport(Auth::id(), $this->startDate, $this->endDate);
-        return $export->export();
-    }
+    // public function exportExcel()
+    // {
+    //     $export = new LeaveLedgerExport(Auth::id(), $this->startDate, $this->endDate);
+    //     return $export->export();
+    // }
 
     public function render()
     {
@@ -973,4 +975,21 @@ class LeaveApplicationTable extends Component
         $this->showPDFPreview = true;
     }
 
+    public function mount()
+    {
+        // Set default year to current year
+        $this->selectedYear = date('Y');
+    }
+
+    public function updatedSelectedYear()
+    {
+        // Add any validation or processing when year changes
+        $this->isDisabled = false;
+    }
+
+    public function exportExcel()
+    {
+        $export = new LeaveCardExport(Auth::id(), $this->selectedYear);
+        return $export->export();
+    }
 }

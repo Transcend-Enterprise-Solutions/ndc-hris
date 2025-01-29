@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\LeaveApplication;
 use App\Models\LeaveCredits;
 use App\Models\LeaveCreditsCalculation;
+use App\Models\OfficeDivisions;
 use App\Models\Positions;
 use App\Models\UserData;
 use App\Models\OfficeDivisionUnits;
@@ -19,226 +20,351 @@ use Illuminate\Support\Facades\Auth;
 class LeaveCardExport
 {
     protected $leaveApplicationId;
-    protected $startDate;
-    protected $endDate;
+    protected $year;
 
-    public function __construct($leaveApplicationId, $startDate, $endDate)
+    public function __construct($leaveApplicationId, $year)
     {
         $this->leaveApplicationId = $leaveApplicationId;
-        $this->startDate = $startDate;
-        $this->endDate = $endDate;
+        $this->year = (int)$year;
     }
 
     private function setBoldLabelWithValue($sheet, $cell, $label, $value)
     {
         $richText = new RichText();
-        $boldPart = $richText->createTextRun($label);
-        $boldPart->getFont()->setBold(true);
-        $richText->createText($value);
+    
+        $boldLabel = $richText->createTextRun($label);
+        $boldLabel->getFont()->setBold(true)->setName('Arial');
+        $boldValue = $richText->createTextRun($value);
+        $boldValue->getFont()->setBold(true)->setName('Arial');
         $sheet->setCellValue($cell, $richText);
+    }
+
+    private function getMonthlyLeaveDetails($userId, $month, $leaveType)
+    {
+        // Get all approved leaves with pay for the specified type
+        $leaves = LeaveApplication::where('user_id', $userId)
+            ->where('type_of_leave', $leaveType)
+            ->where('status', 'Approved')
+            ->where('remarks', 'With Pay')
+            ->whereNotNull('approved_dates')
+            ->get();
+
+        if ($leaves->isEmpty()) {
+            return [
+                'dates' => '',
+                'total_days' => 0
+            ];
+        }
+
+        $dates = [];
+        $totalDays = 0;
+
+        foreach ($leaves as $leave) {
+            $approvedDatesString = trim($leave->approved_dates, '[]"');
+            $approvedDates = array_map('trim', explode(',', $approvedDatesString));
+
+            foreach ($approvedDates as $date) {
+                $date = trim($date, '"\'');
+                
+                try {
+                    $leaveDate = Carbon::parse($date);
+                    
+                    if ($leaveDate->year == $this->year && $leaveDate->month == $month) {
+                        $dates[] = $leaveDate->format('d');
+                        $totalDays += 1;
+                    }
+                } catch (\Exception $e) {
+                    continue;
+                }
+            }
+        }
+
+        if (empty($dates)) {
+            return [
+                'dates' => '',
+                'total_days' => 0
+            ];
+        }
+
+        sort($dates, SORT_NUMERIC);
+        $monthName = Carbon::create()->month($month)->format('M');
+        $datesString = count($dates) > 0 ? $monthName . '. ' . implode(', ', $dates) : '';
+
+        return [
+            'dates' => $datesString,
+            'total_days' => $totalDays
+        ];
+    }
+
+    private $lateTimeMatrix = [
+        1 => 0.002, 2 => 0.004, 3 => 0.006, 4 => 0.008, 5 => 0.010,
+        6 => 0.012, 7 => 0.015, 8 => 0.017, 9 => 0.019, 10 => 0.021,
+        11 => 0.023, 12 => 0.025, 13 => 0.027, 14 => 0.029, 15 => 0.031,
+        16 => 0.033, 17 => 0.035, 18 => 0.037, 19 => 0.040, 20 => 0.042,
+        21 => 0.044, 22 => 0.046, 23 => 0.048, 24 => 0.050, 25 => 0.052,
+        26 => 0.054, 27 => 0.056, 28 => 0.058, 29 => 0.060, 30 => 0.062,
+        31 => 0.065, 32 => 0.067, 33 => 0.069, 34 => 0.071, 35 => 0.073,
+        36 => 0.075, 37 => 0.077, 38 => 0.079, 39 => 0.081, 40 => 0.083,
+        41 => 0.085, 42 => 0.087, 43 => 0.090, 44 => 0.092, 45 => 0.094,
+        46 => 0.096, 47 => 0.098, 48 => 0.100, 49 => 0.102, 50 => 0.104,
+        51 => 0.106, 52 => 0.108, 53 => 0.110, 54 => 0.112, 55 => 0.115,
+        56 => 0.117, 57 => 0.119, 58 => 0.121, 59 => 0.123, 60 => 0.125
+    ];
+
+    private function getMonthlyLateDetails($userId, $month)
+    {
+        $lateRecord = LeaveCreditsCalculation::where('user_id', $userId)
+            ->where('month', (string)$month)
+            ->where('year', (string)$this->year)
+            ->first();
+
+        if (!$lateRecord || !$lateRecord->late_time) {
+            return null;
+        }
+
+        // Parse the time string (HH:mm format)
+        list($hours, $minutes) = explode(':', $lateRecord->late_time);
+        $hours = (int)$hours;
+        $minutes = (int)$minutes;
+
+        // Calculate total deduction
+        $deduction = 0;
+        
+        // Add hours deduction (0.125 per hour)
+        if ($hours > 0) {
+            $deduction += ($hours * 0.125);
+        }
+
+        // Add minutes deduction from matrix
+        if ($minutes > 0) {
+            $deduction += $this->lateTimeMatrix[$minutes];
+        }
+
+        return [
+            'time' => $lateRecord->late_time,
+            'deduction' => round($deduction, 3)
+        ];
+    }
+
+    private function getMonthlyEarnedCredits($userId, $month)
+    {
+        $creditRecord = LeaveCreditsCalculation::where('user_id', $userId)
+            ->where('month', (string)$month)
+            ->where('year', (string)$this->year)
+            ->first();
+
+        return $creditRecord ? $creditRecord->leave_credits_earned : null;
+    }
+
+    private function formatLeaveDetails($leaveDetails, $leaveType, $month)
+    {
+        if (empty($leaveDetails['dates'])) {
+            return '';
+        }
+
+        $monthName = Carbon::create()->month($month)->format('M');
+        $dates = explode(', ', substr($leaveDetails['dates'], strlen($monthName . '. ')));
+        return $leaveType . ' - ' . $monthName . '. ' . implode(', ', $dates);
     }
 
     public function export(): StreamedResponse
     {
-        // Get the user directly instead of through leave application
         $user = Auth::user();
-
-        // Fetching user data (this part remains unchanged)
+        
+        // Fetching user data
         $position = Positions::find($user->position_id)->position ?? 'N/A';
-        $civilStatus = UserData::where('user_id', $user->id)->value('civil_status') ?? 'N/A';
-        $gsis = UserData::where('user_id', $user->id)->value('gsis') ?? 'N/A';
-        $tin = UserData::where('user_id', $user->id)->value('tin') ?? 'N/A';
-        $officeDivisionId = $user->unit_id;
-        $unit = OfficeDivisionUnits::where('id', $officeDivisionId)->value('unit') ?? 'N/A';
-        $appointment = UserData::where('user_id', $user->id)->value('appointment') ?? 'N/A';
+        $department = OfficeDivisions::find($user->office_division_id)->office_division ?? 'N/A';
         $dateHired = UserData::where('user_id', $user->id)->value('date_hired');
 
         if ($dateHired) {
-            $formattedDateHired = \Carbon\Carbon::createFromFormat('Y-m-d', $dateHired)->format('m/d/Y');
+            $formattedDateHired = Carbon::createFromFormat('Y-m-d', $dateHired)->format('m/d/Y');
         } else {
             $formattedDateHired = 'N/A';
         }
 
-        $appointmentMap = [
-            'plantilla' => 'Plantilla',
-            'cos' => 'Contract of Service',
-            'ct' => 'Co-Terminus',
-            'pa' => 'Presidential Appointee',
-        ];
-
-        $appointmentType = explode(',', $appointment)[0];
-        $appointmentDisplay = $appointmentMap[$appointmentType] ?? 'N/A';
-
-        $startDateCarbon = Carbon::createFromFormat('Y-m', $this->startDate)->startOfMonth();
-        $endDateCarbon = Carbon::createFromFormat('Y-m', $this->endDate)->endOfMonth();
-        
-        $balanceData = $this->calculateBalanceBroughtForward($user->id, $startDateCarbon, $endDateCarbon);
-
-        $templatePath = storage_path('app/public/leave_template/LEAVE-CARD.xlsx');
+        $templatePath = storage_path('app/public/leave_template/LeaveLedgerTemplate.xlsx');
         $spreadsheet = IOFactory::load($templatePath);
         $sheet = $spreadsheet->getActiveSheet();
 
+        $richText = new RichText();
+        $yearText = $richText->createTextRun("FOR THE YEAR " . $this->year);
+        $yearText->getFont()->setBold(true);
+        $yearText->getFont()->setName('Arial');
+        $sheet->setCellValue('K5', $richText);
+
         // Fill in the basic user information
-        $this->setBoldLabelWithValue($sheet, 'A3', 'Name: ', $user->name);
-        $this->setBoldLabelWithValue($sheet, 'A4', 'Position: ', $position);
-        $this->setBoldLabelWithValue($sheet, 'L3', 'Civil Status: ', $civilStatus);
-        $this->setBoldLabelWithValue($sheet, 'R3', 'GSIS Policy No: ', $gsis);
-        $this->setBoldLabelWithValue($sheet, 'R4', 'TIN No: ', $tin);
-        $this->setBoldLabelWithValue($sheet, 'L5', 'Unit: ', $unit);
-        $this->setBoldLabelWithValue($sheet, 'A5', 'Status: ', $appointmentDisplay);
-        $this->setBoldLabelWithValue($sheet, 'L4', 'Entrance to Duty: ', $formattedDateHired);
+        $this->setBoldLabelWithValue($sheet, 'B7', 'NAME: ', $user->name ?? 'N/A');
+        $this->setBoldLabelWithValue($sheet, 'B8', 'DATE APPOINTED: ', $formattedDateHired ?? 'N/A');
+        $this->setBoldLabelWithValue($sheet, 'N7', 'POSITION: ', $position ?? 'N/A');
+        $this->setBoldLabelWithValue($sheet, 'N8', 'DEPARTMENT: ', $department ?? 'N/A');
 
-        $startDate = Carbon::createFromFormat('Y-m', $this->startDate)->startOfMonth();
-        $endDate = Carbon::createFromFormat('Y-m', $this->endDate)->endOfMonth();
+        $previousYear = $this->year - 1;
+        $previousDecBalance = MonthlyCredits::where('user_id', $user->id)
+            ->where('year', $previousYear)
+            ->where('month', 12)
+            ->first();
 
-        $rowIndex = 11;
-        $currentBalance = $balanceData['vl'];
-        $currentBalanceSl = $balanceData['sl'];    
+        // Set the "Leave balance as of" text in D15
+        $richText = new RichText();
+        $balanceText = $richText->createTextRun("Leave balance as of Dec {$previousYear}");
+        $balanceText->getFont()->setBold(true);
+        $balanceText->getFont()->setName('Arial');
+        $sheet->setCellValue('D15', $richText);
 
-        $sheet->setCellValue('K' . $rowIndex, 'Balance Brought Forward');
-        $sheet->setCellValue('N' . $rowIndex, $currentBalance);
-        $sheet->setCellValue('R' . $rowIndex, $currentBalanceSl);
+        // Set the balances
+        if ($previousDecBalance) {
+            $sheet->setCellValue('L15', $previousDecBalance->vl_latest_credits);
+            $sheet->setCellValue('P15', $previousDecBalance->sl_latest_credits);
+        } else {
+            $sheet->setCellValue('L15', 0);
+            $sheet->setCellValue('P15', 0);
+        }
 
-        $rowIndex++;
+        // Get current balance from L15
+        $currentVLBalance  = floatval($sheet->getCell('L15')->getValue());
+        $currentSLBalance = floatval($sheet->getCell('P15')->getValue());
 
-        $firstDataFound = false;
-        for ($date = $startDate; $date->lessThanOrEqualTo($endDate); $date->addMonth()) {
-            $month = intval($date->format('n'));
-            $year = $date->format('Y');
+        // Array of months
+        $months = [
+            1 => 'JANUARY',
+            2 => 'FEBRUARY',
+            3 => 'MARCH',
+            4 => 'APRIL',
+            5 => 'MAY',
+            6 => 'JUNE',
+            7 => 'JULY',
+            8 => 'AUGUST',
+            9 => 'SEPTEMBER',
+            10 => 'OCTOBER',
+            11 => 'NOVEMBER',
+            12 => 'DECEMBER'
+        ];
+
+        // Set month label and process January (Row 17)
+        // $sheet->setCellValue('B17', 'JANUARY');
+        // $januaryLeaves = $this->getMonthlyLeaveDetails($user->id, 1);
         
-            // Get leave credits calculation
-            $leaveCredits = LeaveCreditsCalculation::where('user_id', $user->id)
-                ->where('month', $month)
-                ->where('year', $year)
-                ->value('leave_credits_earned') ?? 0;
-
-            $monthlyCredit = MonthlyCredits::where('user_id', $user->id)
-                ->where('month', $month)
-                ->where('year', $year)
-                ->first();
+        // if (!empty($januaryLeaves['dates'])) {
+        //     $sheet->setCellValue('D17', $januaryLeaves['dates']);
+        // }
         
-            $sheet->setCellValue('K' . $rowIndex, $date->format('F Y')); 
+        // if ($januaryLeaves['total_days'] > 0) {
+        //     $sheet->setCellValue('K17', $januaryLeaves['total_days']);
+        //     $newBalance = $currentBalance - $januaryLeaves['total_days'];
+        //     $sheet->setCellValue('L17', $newBalance);
+        // } else {
+        //     $sheet->setCellValue('L17', $currentBalance); // Maintain previous balance if no leaves
+        // }
 
-            // Process leave credits
-            if (!$firstDataFound && $leaveCredits > 0) {
-                $firstDataFound = true;
-                $sheet->setCellValue('N11', $currentBalance);
-                $sheet->setCellValue('R11', $currentBalanceSl);
-            }
+        // Process January (Row 17)
+        $currentRow = 17;
+        $sheet->setCellValue('B' . $currentRow, 'JAUNARY');
         
-            if ($firstDataFound) {
-                $sheet->setCellValue('L' . $rowIndex, $leaveCredits);
-                $sheet->setCellValue('P' . $rowIndex, $leaveCredits);
-                $currentBalance += $leaveCredits;
-                $sheet->setCellValue('N' . $rowIndex, $currentBalance);
-                $currentBalanceSl += $leaveCredits;
-                $sheet->setCellValue('R' . $rowIndex, $currentBalanceSl);
-            } else {
-                $sheet->setCellValue('L' . $rowIndex, 0);
-                $sheet->setCellValue('P' . $rowIndex, 0);
-                $sheet->setCellValue('N' . $rowIndex, 0);
-                $sheet->setCellValue('R' . $rowIndex, 0);
-            }
+        // Process all months
+        for ($month = 1; $month <= 12; $month++) {
+            $monthName = $months[$month];
+            $hasEntries = false;
 
-            // Get late time
-            $lateTime = LeaveCreditsCalculation::where('user_id', $user->id)
-                ->where('month', $month)
-                ->where('year', $year)
-                ->value('late_time');
-
-            // Only process approved leaves if they exist
-            $totalVLDays = 0;
-            $totalSickLeaveDays = 0;
+            // First row: Process leaves (VL and SL)
+            $vlLeaves = $this->getMonthlyLeaveDetails($user->id, $month, 'Vacation Leave');
+            $slLeaves = $this->getMonthlyLeaveDetails($user->id, $month, 'Sick Leave');
             
-            $approvedLeaves = LeaveApplication::where('user_id', $user->id)
-                ->where('status', 'Approved')
-                ->where('remarks', 'With Pay')
-                ->get();
-            
-            if ($approvedLeaves->isNotEmpty()) {
-                foreach ($approvedLeaves as $leave) {
-                    $approvedDates = explode(',', $leave->date_of_filing);
-                    $leaveTypes = explode(',', $leave->type_of_leave);
+            if (!empty($vlLeaves['dates']) || !empty($slLeaves['dates'])) {
+                $sheet->setCellValue('B' . $currentRow, $monthName);
+                
+                // Format the dates string with VL/SL indicators
+                $datesString = '';
+                
+                if (!empty($vlLeaves['dates'])) {
+                    $datesString = $this->formatLeaveDetails($vlLeaves, 'VL', $month);
+                }
+                
+                if (!empty($slLeaves['dates'])) {
+                    $slDatesString = $this->formatLeaveDetails($slLeaves, 'SL', $month);
+                    if (!empty($datesString)) {
+                        $datesString .= ' & ' . $slDatesString;
+                    } else {
+                        $datesString = $slDatesString;
+                    }
+                }
+                
+                $sheet->setCellValue('D' . $currentRow, $datesString);
+                
+                // Handle VL balance with per-row excess
+                if ($vlLeaves['total_days'] > 0) {
+                    $sheet->setCellValue('K' . $currentRow, $vlLeaves['total_days']);
+                    $newVLBalance = $currentVLBalance - $vlLeaves['total_days'];
                     
-                    if (in_array('Vacation Leave', $leaveTypes)) {
-                        foreach ($approvedDates as $approvedDate) {
-                            $approvedDate = Carbon::parse($approvedDate)->startOfDay();
-                            
-                            if ($approvedDate->between(
-                                Carbon::createFromDate($year, $month, 1)->startOfMonth(),
-                                Carbon::createFromDate($year, $month, 1)->endOfMonth()
-                            )) {
-                                $totalVLDays += $leave->approved_days;
-                            }
-                        }
+                    if ($newVLBalance < 0) {
+                        $sheet->setCellValue('M' . $currentRow, round(abs($newVLBalance), 3));
+                        $currentVLBalance = 0;
+                    } else {
+                        $currentVLBalance = $newVLBalance;
                     }
-
-                    if (in_array('Sick Leave', $leaveTypes)) {
-                        foreach ($approvedDates as $approvedDate) {
-                            $approvedDate = Carbon::parse($approvedDate)->startOfDay();
-                            
-                            if ($approvedDate->between(
-                                Carbon::createFromDate($year, $month, 1)->startOfMonth(),
-                                Carbon::createFromDate($year, $month, 1)->endOfMonth()
-                            )) {
-                                $totalSickLeaveDays += $leave->approved_days;
-                            }
-                        }
-                    }
+                    
+                    $sheet->setCellValue('L' . $currentRow, round($currentVLBalance, 3));
                 }
+                
+                // Handle SL balance with per-row excess
+                if ($slLeaves['total_days'] > 0) {
+                    $sheet->setCellValue('O' . $currentRow, $slLeaves['total_days']);
+                    $newSLBalance = $currentSLBalance - $slLeaves['total_days'];
+                    
+                    if ($newSLBalance < 0) {
+                        $sheet->setCellValue('Q' . $currentRow, round(abs($newSLBalance), 3));
+                        $currentSLBalance = 0;
+                    } else {
+                        $currentSLBalance = $newSLBalance;
+                    }
+                    
+                    $sheet->setCellValue('P' . $currentRow, round($currentSLBalance, 3));
+                }
+                
+                $currentRow++;
+                $hasEntries = true;
             }
 
-            $rowIndex++;
-
-            // Only add leave information if there are actual leaves
-            if ($totalVLDays > 0 || $totalSickLeaveDays > 0) {
-                $sheet->setCellValue('K' . $rowIndex, 'Total Leave');
+            // Second row: Process undertime/lates (VL only)
+            $monthLates = $this->getMonthlyLateDetails($user->id, $month);
+            if ($monthLates) {
+                $sheet->setCellValue('B' . $currentRow, $monthName);
+                $sheet->setCellValue('D' . $currentRow, 'Undertime/Late');
+                $sheet->setCellValue('K' . $currentRow, $monthLates['deduction']);
                 
-                if ($totalVLDays > 0) {
-                    $sheet->setCellValue('A' . $rowIndex, $totalVLDays);
-                    $sheet->setCellValue('M' . $rowIndex, $totalVLDays);
-                    $currentBalance -= $totalVLDays;
-                    $sheet->setCellValue('N' . $rowIndex, $currentBalance);
+                $newVLBalance = $currentVLBalance - $monthLates['deduction'];
+                if ($newVLBalance < 0) {
+                    $sheet->setCellValue('M' . $currentRow, round(abs($newVLBalance), 3));
+                    $currentVLBalance = 0;
+                } else {
+                    $currentVLBalance = $newVLBalance;
                 }
                 
-                if ($totalSickLeaveDays > 0) {
-                    $sheet->setCellValue('B' . $rowIndex, $totalSickLeaveDays);
-                    $sheet->setCellValue('Q' . $rowIndex, $totalSickLeaveDays);
-                    $currentBalanceSl -= $totalSickLeaveDays;
-                    $sheet->setCellValue('R' . $rowIndex, $currentBalanceSl);
-                }
-                
-                $rowIndex++;
+                $sheet->setCellValue('L' . $currentRow, round($currentVLBalance, 3));
+                $currentRow++;
+                $hasEntries = true;
             }
 
-            // Process late time if it exists
-            if ($lateTime && $lateTime !== '00:00') {
-                $sheet->setCellValue('K' . $rowIndex, 'Lates/Undertime');
+            // Third row: Process earned credits (affects both VL and SL)
+            $earnedCredits = $this->getMonthlyEarnedCredits($user->id, $month);
+            if ($earnedCredits !== null) {
+                $sheet->setCellValue('B' . $currentRow, $monthName);
                 
-                list($hours, $minutes) = explode(':', $lateTime);
-                $totalMinutes = (intval($hours) * 60) + intval($minutes);
+                // Add earned credits to both VL and SL
+                $sheet->setCellValue('J' . $currentRow, $earnedCredits); // VL earned
+                $currentVLBalance += $earnedCredits;
+                $sheet->setCellValue('L' . $currentRow, round($currentVLBalance, 3));
                 
-                $days = floor($totalMinutes / (8 * 60));
-                $remainingMinutes = $totalMinutes % (8 * 60);
-                $hours = floor($remainingMinutes / 60);
-                $minutes = $remainingMinutes % 60;
-        
-                if ($days > 0) {
-                    $sheet->setCellValue('C' . $rowIndex, $days);
-                }
-                if ($hours > 0) {
-                    $sheet->setCellValue('D' . $rowIndex, $hours);
-                }
-                if ($minutes > 0) {
-                    $sheet->setCellValue('E' . $rowIndex, $minutes);
-                }
-        
-                $lateTimeDays = $totalMinutes / (8 * 60);
-                $sheet->setCellValue('M' . $rowIndex, $lateTimeDays);
-                $currentBalance -= $lateTimeDays;
-                $sheet->setCellValue('N' . $rowIndex, $currentBalance);
-        
-                $rowIndex++;
+                $sheet->setCellValue('N' . $currentRow, $earnedCredits); // SL earned
+                $currentSLBalance += $earnedCredits;
+                $sheet->setCellValue('P' . $currentRow, round($currentSLBalance, 3));
+                
+                $currentRow++;
+                $hasEntries = true;
+            }
+
+            // Add a blank row between months if there were any entries
+            if ($hasEntries && $month < 12) {
+                $currentRow++;
             }
         }
 
@@ -247,25 +373,25 @@ class LeaveCardExport
             $writer->save('php://output');
         }, 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="LeaveCard.xlsx"',
+            'Content-Disposition' => 'attachment; filename="LeaveLedger_' . $this->year . '.xlsx"',
         ]);
     }
 
-    private function calculateBalanceBroughtForward($userId, Carbon $startDate, Carbon $endDate)
+    private function calculateBalanceBroughtForward($userId, Carbon $startDate)
     {
-        for ($currentDate = $startDate->copy(); $currentDate->lte($endDate); $currentDate->addMonth()) {
-            $monthlyCredit = MonthlyCredits::where('user_id', $userId)
-                ->where('month', $currentDate->month)
-                ->where('year', $currentDate->year)
-                ->first();
+        // Get previous year's December balance
+        $previousYear = $this->year - 1;
+        $previousDecBalance = MonthlyCredits::where('user_id', $userId)
+            ->where('year', $previousYear)
+            ->where('month', 12)
+            ->first();
 
-            if ($monthlyCredit && ($monthlyCredit->vl_latest_credits > 0 || $monthlyCredit->sl_latest_credits > 0)) {
-                return [
-                    'vl' => $monthlyCredit->vl_latest_credits,
-                    'sl' => $monthlyCredit->sl_latest_credits,
-                    'found_date' => $currentDate->format('Y-m-d')
-                ];
-            }
+        if ($previousDecBalance) {
+            return [
+                'vl' => $previousDecBalance->vl_latest_credits,
+                'sl' => $previousDecBalance->sl_latest_credits,
+                'found_date' => $startDate->format('Y-m-d')
+            ];
         }
 
         return [
