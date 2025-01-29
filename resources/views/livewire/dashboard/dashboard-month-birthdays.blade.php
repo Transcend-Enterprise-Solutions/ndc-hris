@@ -12,17 +12,19 @@
     <div id="confetti-container" class="w-full rounded-lg overflow-hidden relative">
         <div class="p-6 w-full flex-col items-center justify-center">
             <p class="text-center text-2xl font-semibold text-gray-800 dark:text-gray-50">Birthday's this Month</p>
-            @foreach ($birthdayEmployees as $emp)
-                <div class="flex flex-col sm:flex-row justify-between w-full items-center py-2 {{ $loop->last ? '' : 'border-b border-slate-500/30' }}">
-                    <div>
-                        <p class="text-gray-700 dark:text-gray-200 text-sm">{{ $emp->surname . ', ' . $emp->first_name }} <span class="opacity-70">- {{ $emp->age }} yrs. old </span></p>
+            @if($birthdayEmployees)
+                @foreach ($birthdayEmployees as $emp)
+                    <div class="flex flex-col sm:flex-row justify-between w-full items-center py-2 {{ $loop->last ? '' : 'border-b border-slate-500/30' }}">
+                        <div>
+                            <p class="text-gray-700 dark:text-gray-200 text-sm">{{ $emp->surname . ', ' . $emp->first_name }} <span class="opacity-70">- {{ $emp->age }} yrs. old </span></p>
+                        </div>
+                        <div class="flex gap-4">
+                            <p class="text-sm">{{ Carbon\Carbon::parse($emp->date_of_birth)->format('F d, Y') }}</p>
+                            <span class="inline-block animate-wiggle">🎂</span>
+                        </div>
                     </div>
-                    <div class="flex gap-4">
-                        <p class="text-sm">{{ Carbon\Carbon::parse($emp->date_of_birth)->format('F d, Y') }}</p>
-                        <span class="inline-block animate-wiggle">🎂</span>
-                    </div>
-                </div>
-            @endforeach
+                @endforeach
+            @endif
         </div>
         <canvas id="confetti-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
     </div>
