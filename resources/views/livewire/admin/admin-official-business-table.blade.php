@@ -100,7 +100,7 @@ x-cloak>
                 <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Official Business Management</h1>
             </div>
 
-            <div class="flex-col justify-center w-full bg-gray-200 dark:bg-slate-700 border border-gray-300 dark:border-gray-800 mb-3" style="border-radius: 8px;">
+            {{-- <div class="flex-col justify-center w-full bg-gray-200 dark:bg-slate-700 border border-gray-300 dark:border-gray-800 mb-3" style="border-radius: 8px;">
                 <div wire:ignore class="w-full">
                     <div id="map" style="height: 250px; width: 100%; border-radius: 8px 8px 0 0; margin: 0;"></div>
                 </div>
@@ -148,7 +148,7 @@ x-cloak>
                         </button>
                     </div>
                 @endif
-            </div>
+            </div> --}}
 
             <div class="w-full sm:w-1/3 sm:mr-4 mb-4" x-show="selectedTab === 'ob'">
                 <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
@@ -511,6 +511,90 @@ x-cloak>
             </div>
 
         </div>
+    </x-modal>
+
+    {{-- View OB Modal --}}
+    <x-modal id="obModal" maxWidth="2xl" wire:model="viewOB">
+    <div class="p-4">
+        <div class="rounded-lg mb-4 p-4 dark:text-gray-50 text-slate-900 font-bold text-lg">
+            Official Business: {{ $company}}
+            <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="col-span-2">
+                <label for="company" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Company</label>
+                <input type="text" id="company" wire:model='company' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+            </div>
+            <div class="col-span-2">
+                <label for="address" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Address</label>
+                <input type="text" id="address" wire:model='address' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+            </div>
+            <div class="col-span-2">
+                <label for="obDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date</label>
+                <input type="obDate" id="obDate" wire:model='obDate' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+                <label for="obStartTime" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Start Time</label>
+                <input type="time" id="obStartTime" wire:model='obStartTime' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+                <label for="obEndTime" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Time</label>
+                <input type="time" id="obEndTime" wire:model='obEndTime' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+            </div>
+            <div class="col-span-2">
+                <label for="obPurpose" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Purpose</label>
+                <textarea type="text" id="obPurpose" cols="30" rows="4" wire:model='obPurpose' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly></textarea>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+                <label for="approvedBy" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved By</label>
+                <input type="text" id="approvedBy" wire:model='approvedBy' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+                <label for="approvedDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved Date</label>
+                <input type="text" id="approvedDate" wire:model='approvedDate' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+            </div>
+        </div>
+
+        {{-- <div class="mt-4  mb-1">
+            <label for="purpose" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Geolocation</label>
+        </div>
+        <div class="flex-col justify-center w-full bg-gray-200 dark:bg-slate-700 border border-gray-300 mb-2" style="border-radius: 8px;">
+            <div wire:ignore class="w-full">
+                <div id="map3" style="height: 250px; width: 100%; margin: 0;"></div>
+            </div>
+
+            <div class="text-sm flex mt-2 px-4">
+                <div class="w-1/2 mb-2">
+                    Lat: <span class="text-gray-800 dark:text-gray-50">{{ $registeredLatitude ?? '...' }}</span> <br>
+                    Lng: <span class="text-gray-800 dark:text-gray-50">{{ $registeredLongitude ?? '...' }}</span>
+                </div>
+            </div>
+        </div> --}}
+
+        <div class="mt-6 flex justify-end col-span-2 gap-4">
+            @if($thisObId)
+                <button wire:click="toogleConfirmModal({{ $thisObId }}, 'approve')" 
+                    class="px-3 py-1 text-white rounded-md 
+                    text-sm bg-green-500 hover:bg-green-600  
+                    focus:outline-none" title="Approve">
+                    Approve
+                </button>
+                <button wire:click="toogleConfirmModal({{ $thisObId }}, 'disapprove')" 
+                    class="px-3 py-1 text-white rounded-md 
+                    text-sm bg-red-500 hover:bg-red-600  
+                    focus:outline-none {{ $approveOnly ? 'hidden' : '' }}" title="Disapprove">
+                    Disapprove
+                </button>
+            @endif
+            <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                Close
+            </p>
+        </div>
+        
+    </div>
     </x-modal>
 
 

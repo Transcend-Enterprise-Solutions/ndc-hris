@@ -32,7 +32,7 @@
                             x-data="{ open: {{ in_array(Request::segment(1), ['dashboard']) ? 1 : 0 }} }">
                             <a class="block text-gray-800 dark:text-gray-100 truncate transition
                             @if (Route::is('dashboard')) {{ '!text-blue-500' }} @endif"
-                                href="{{ route('dashboard') }}" wire:navigate>
+                                href="{{ route('dashboard') }}">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center">
                                         <i class="bi bi-speedometer2 text-slate-400 dark:text-slate-300 mr-3"></i>
@@ -137,7 +137,7 @@
                                                     </span>
                                                 </a>
                                             </li>
-                                            <li class="mb-1 last:mb-0">
+                                            {{-- <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/wfh-management')) {{ '!text-blue-500' }} @endif"
                                                     href="{{ route('/employee-management/wfh-management') }}">
                                                     <span class="text-sm font-medium transition-opacity duration-300"
@@ -146,7 +146,7 @@
                                                         WFH Management
                                                     </span>
                                                 </a>
-                                            </li>
+                                            </li> --}}
                                             <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/admin-doc-request')) {{ '!text-blue-500' }} @endif"
                                                     href="{{ route('/employee-management/admin-doc-request') }}"

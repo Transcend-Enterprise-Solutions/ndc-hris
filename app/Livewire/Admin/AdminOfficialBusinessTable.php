@@ -39,6 +39,7 @@ class AdminOfficialBusinessTable extends Component
     public $confirmMessage;
     public $pageSize = 10; 
     public $pageSizes = [10, 20, 30, 50, 100]; 
+    public $viewOB;
 
     public function render()
     {
@@ -173,6 +174,7 @@ class AdminOfficialBusinessTable extends Component
     }
 
     public function viewThisOB($id, $tab){
+        $this->viewOB = true;
         if($tab == 'request'){
             $this->thisObId = $id;
             $this->approveOnly = null;
@@ -201,11 +203,11 @@ class AdminOfficialBusinessTable extends Component
                 $this->obTimeIn = $ob->time_in;
                 $this->obTimeOut = $ob->time_out;
                 $this->obPurpose = $ob->purpose;
-                $this->approvedBy = $ob->approver;
-                $this->approvedDate = $ob->date_approved;
-                $this->disapprovedBy = $ob->disapprover;
-                $this->disapprovedDate = $ob->date_disapproved;
-                $this->dispatch('location-updated');
+                $this->approvedBy = $ob->approver ?: 'N/A';
+                $this->approvedDate = $ob->date_approved ?: 'N/A';
+                $this->disapprovedBy = $ob->disapprover ?: 'N/A';
+                $this->disapprovedDate = $ob->date_disapproved ?: 'N/A';
+                // $this->dispatch('location-updated');
             }
         }catch(Exception $e){
             throw $e;
@@ -229,5 +231,6 @@ class AdminOfficialBusinessTable extends Component
         $this->approvedBy = null;
         $this->approvedDate = null;
         $this->approveOnly = null;
+        $this->viewOB = null;
     }
 }

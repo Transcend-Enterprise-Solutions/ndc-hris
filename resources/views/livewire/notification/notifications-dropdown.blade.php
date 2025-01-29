@@ -110,7 +110,7 @@
                         <li>
                             <div class="block py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-700/20">
                                 <div class="flex justify-between items-start">
-                                    <a href="{{ route('/employee-management/wfh-management', 
+                                    {{-- <a href="{{ route('/employee-management/wfh-management', 
                                             [
                                                 'tab' => 'requests',
                                             ]
@@ -129,7 +129,7 @@
                                         <span class="block text-xs font-medium text-slate-400 dark:text-slate-500">
                                             {{ \Carbon\Carbon::parse($latestLocNotifDate ? $latestLocNotifDate->created_at : '' )->diffForHumans() }}
                                         </span>
-                                    </a>
+                                    </a> --}}
                                     <div x-data="{ open: false }" class="relative inline-block {{ $notification->read ? 'hidden' : '' }}">
                                         <!-- Three dots icon button -->
                                         <button @click="open = !open" @click.away="open = false"
