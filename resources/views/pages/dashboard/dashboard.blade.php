@@ -34,6 +34,16 @@
         <!-- Cards -->
         <div class="grid grid-cols-12 gap-6">
 
+            <!-- This months's Birthdays -->
+            @php
+                $birthdayEmployees = App\Models\UserData::whereMonth('date_of_birth', now()->month)
+                ->get();
+            @endphp
+            
+            @if($birthdayEmployees)
+                <x-dashboard.dashboard-card-06 />
+            @endif
+
             <!-- Total Employees -->
             <x-dashboard.dashboard-card-01 />
 
@@ -48,9 +58,6 @@
 
             <!-- Line chart (Real Time Value) -->
             <x-dashboard.dashboard-card-05 />
-
-            <!-- Doughnut chart (Top Countries) -->
-            {{-- <x-dashboard.dashboard-card-06 /> --}}
 
             <!-- Table (Top Channels) -->
             {{-- <x-dashboard.dashboard-card-07 /> --}}

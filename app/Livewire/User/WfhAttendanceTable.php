@@ -11,6 +11,7 @@ use App\Models\EmployeesDtr;
 use App\Models\Notification;
 use App\Models\TransactionWFH;
 use App\Models\WfhLocation;
+use DateTime;
 use Exception;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
@@ -53,6 +54,7 @@ class WfhAttendanceTable extends Component
     public $pageSize = 10; 
     public $pageSizes = [10, 20, 30, 50, 100]; 
     public $approveOnly;
+    public $isMyBirthday;
 
 
     #[On('locationUpdated')] 
@@ -404,25 +406,6 @@ class WfhAttendanceTable extends Component
         }
     }
 
-    public function mount(){
-        $userId = Auth::user()->id;
-        $wfhLocation = WfhLocation::where('user_id', $userId)->first();
-        if($wfhLocation){
-            $this->hasWFHLocation = true;
-            $this->registeredLatitude = floatval($wfhLocation->latitude);
-            $this->registeredLongitude = floatval($wfhLocation->longitude);
-            $this->hasRequested = $wfhLocation->status ? false : true;
-        }
-
-        $wfhLocationRequest = WfhLocationRequests::where('user_id', $userId)
-                ->where('status', 0)
-                ->orderBy('created_at', 'desc')
-                ->first();
-        if($wfhLocationRequest){
-            $this->locReqGranted = false;
-        }
-    }
-
     public function viewWFHLocHistory($id){
         try{
             $wfhLocRequest = WfhLocationRequests::where('wfh_location_requests.id', $id)
@@ -451,6 +434,29 @@ class WfhAttendanceTable extends Component
         }catch(Exception $e){
             throw $e;
         }
+    }
+
+    public function mount(){
+        $user = Auth::user();
+        $wfhLocation = WfhLocation::where('user_id', $user->id)->first();
+        if($wfhLocation){
+            $this->hasWFHLocation = true;
+            $this->registeredLatitude = floatval($wfhLocation->latitude);
+            $this->registeredLongitude = floatval($wfhLocation->longitude);
+            $this->hasRequested = $wfhLocation->status ? false : true;
+        }
+
+        $wfhLocationRequest = WfhLocationRequests::where('user_id', $user->id)
+                ->where('status', 0)
+                ->orderBy('created_at', 'desc')
+                ->first();
+        if($wfhLocationRequest){
+            $this->locReqGranted = false;
+        }
+
+        $birthday = new DateTime($user->userData->date_of_birth);
+        $today = new DateTime();
+        $this->isMyBirthday = ($birthday->format('m-d') === $today->format('m-d'));
     }
          
     public function render()
