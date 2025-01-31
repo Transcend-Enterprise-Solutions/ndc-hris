@@ -61,7 +61,6 @@
                                                         <td class="px-4 py-2 text-center">
                                                             {{ $leaveApplication->date_of_filing }}</td>
                                                         <td class="px-4 py-2 text-center">
-                                                            {{-- {{ $leaveApplication->type_of_leave }} --}}
                                                             @php
                                                                 $typeOfLeave = $leaveApplication->type_of_leave;
                                                                 $truncatedTypeOfLeave = \Illuminate\Support\Str::limit(
@@ -76,7 +75,6 @@
                                                             </span>
                                                         </td>
                                                         <td class="px-4 py-2 text-center">
-                                                            {{-- {{ $leaveApplication->details_of_leave }} --}}
                                                             @php
                                                                 $detailsOfLeave = $leaveApplication->details_of_leave;
                                                                 $truncatedDetailsOfLeave = \Illuminate\Support\Str::limit(
@@ -96,32 +94,6 @@
                                                             {{ \Illuminate\Support\Str::limit($leaveApplication->list_of_dates, 10, '...') }}
                                                         </td>
                                                         <td class="px-4 py-2 text-center">
-                                                            {{-- @if ($leaveApplication->file_name)
-                                                                @php
-                                                                    $fileNames = explode(
-                                                                        ',',
-                                                                        $leaveApplication->file_name,
-                                                                    );
-                                                                    $filePaths = explode(
-                                                                        ',',
-                                                                        $leaveApplication->file_path,
-                                                                    );
-                                                                @endphp
-
-                                                                @foreach ($fileNames as $index => $fileName)
-                                                                    @if (isset($filePaths[$index]))
-                                                                        <div class="mb-1">
-                                                                            <a href="{{ Storage::url($filePaths[$index]) }}"
-                                                                                download
-                                                                                class="text-blue-500 hover:underline">
-                                                                                {{ strlen($fileName) > 10 ? substr($fileName, 0, 10) . '...' : $fileName }}
-                                                                            </a>
-                                                                        </div>
-                                                                    @endif
-                                                                @endforeach
-                                                            @else
-                                                                No file
-                                                            @endif --}}
                                                             @if ($leaveApplication->file_name && $leaveApplication->file_path)
                                                                 @php
                                                                     $fileNames = explode(
@@ -173,52 +145,27 @@
                                                         </td>
                                                         <td
                                                             class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                            @if ($leaveApplication->isHR)
-                                                                <!-- HR buttons (enabled until status is Approved by HR) -->
-                                                                <button
-                                                                    @click="$wire.openApproveModal({{ $leaveApplication->id }})"
-                                                                    class="text-blue-500 {{ !$leaveApplication->isPending ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                                    :disabled="{{ !$leaveApplication->isPending ? 'true' : 'false' }}">
-                                                                    <i class="bi bi-check-lg" title="Approve"></i>
-                                                                </button>
-                                                                <button
-                                                                    @click="$wire.openDisapproveModal({{ $leaveApplication->id }})"
-                                                                    class="text-red-500 {{ !$leaveApplication->isPending ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                                    :disabled="{{ !$leaveApplication->isPending ? 'true' : 'false' }}">
-                                                                    <i class="bi bi-x" title="Disapprove"></i>
-                                                                </button>
-                                                            @elseif ($leaveApplication->stage == 1)
-                                                                <!-- Endorser 1 buttons -->
-                                                                @if ($leaveApplication->isEndorser1)
+                                                            @if ($leaveApplication->actionsVisible)
+                                                                @if ($leaveApplication->isHR)
                                                                     <button
-                                                                        @click="$wire.openEndorserApproveModal({{ $leaveApplication->id }})"
-                                                                        class="mx-4 text-blue-500 {{ $leaveApplication->isEndorser1Approved ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                                        :disabled="{{ $leaveApplication->isEndorser1Approved ? 'true' : 'false' }}">
+                                                                        @click="$wire.openApproveModal({{ $leaveApplication->id }})"
+                                                                        class="text-blue-500">
                                                                         <i class="bi bi-check-lg" title="Approve"></i>
                                                                     </button>
-                                                                @endif
-
-                                                                <!-- Endorser 2 buttons -->
-                                                                @if ($leaveApplication->isEndorser2)
                                                                     <button
-                                                                        @click="$wire.openEndorserApproveModal({{ $leaveApplication->id }})"
-                                                                        class="mx-4 text-blue-500 {{ !$leaveApplication->isEndorser1Approved || $leaveApplication->isEndorser2Approved ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                                        :disabled="{{ !$leaveApplication->isEndorser1Approved || $leaveApplication->isEndorser2Approved ? 'true' : 'false' }}">
-                                                                        <i class="bi bi-check-lg"
-                                                                            title="Please wait for your turn to approve this"></i>
+                                                                        @click="$wire.openDisapproveModal({{ $leaveApplication->id }})"
+                                                                        class="text-red-500">
+                                                                        <i class="bi bi-x" title="Disapprove"></i>
                                                                     </button>
-                                                                @endif
-                                                            @elseif ($leaveApplication->stage == 2)
-                                                                <!-- Endorser 2 buttons -->
-                                                                @if ($leaveApplication->isEndorser2)
+                                                                @elseif($leaveApplication->isEndorser)
                                                                     <button
                                                                         @click="$wire.openEndorserApproveModal({{ $leaveApplication->id }})"
-                                                                        class="mx-4 text-blue-500 {{ $leaveApplication->isEndorser2Approved ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                                        :disabled="{{ $leaveApplication->isEndorser2Approved ? 'true' : 'false' }}">
+                                                                        class="mx-4 text-blue-500">
                                                                         <i class="bi bi-check-lg" title="Approve"></i>
                                                                     </button>
                                                                 @endif
                                                             @endif
+
                                                             <button wire:click="showPDF({{ $leaveApplication->id }})"
                                                                 class="text-blue-500 hover:text-blue-600">
                                                                 <i class="bi bi-eye" title="Show Details"></i>
@@ -229,8 +176,12 @@
                                                     </tr>
                                                 @endforeach
                                             </tbody>
-
                                         </table>
+                                        @if ($leaveApplications->isEmpty())
+                                            <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                                No pending leave request!
+                                            </div>
+                                        @endif
                                     </div>
                                     <div
                                         class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
@@ -275,13 +226,24 @@
                     @endif
 
                     @if ($status === 'With Pay' || $status === 'Without Pay')
-                        <div class="mb-4">
+                        {{-- <div class="mb-4">
                             <label for="days"
                                 class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number
                                 of Days</label>
                             <input type="number" wire:model="days" id="days"
                                 class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700"
                                 min="1">
+                            @error('days')
+                                <span class="text-red-500">{{ $message }}</span>
+                            @enderror
+                        </div> --}}
+                        <div class="mb-4">
+                            <label for="days"
+                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number of
+                                Days</label>
+                            <input type="number" wire:model="days" id="days"
+                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700 bg-gray-100"
+                                readonly>
                             @error('days')
                                 <span class="text-red-500">{{ $message }}</span>
                             @enderror
@@ -295,7 +257,7 @@
                             <ul class="list-disc">
                                 @foreach ($listOfDates as $date)
                                     <li class="flex items-center text-gray-700 dark:text-gray-300">
-                                        <input type="checkbox" wire:model="selectedDates"
+                                        <input type="checkbox" wire:model.live="selectedDates"
                                             value="{{ $date }}" class="mr-2">
                                         <span>{{ $date }}</span>
                                     </li>

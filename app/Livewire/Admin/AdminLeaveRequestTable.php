@@ -49,12 +49,20 @@ class AdminLeaveRequestTable extends Component
         'disapproveReason' => 'required_if:showDisapproveModal,true'
     ];
 
+    public function updatedSelectedDates($value)
+    {
+        $this->days = count($this->selectedDates);
+    }
+    
     public function openApproveModal($applicationId)
     {
         $this->selectedApplication = LeaveApplication::find($applicationId);
         $this->listOfDates = explode(',', $this->selectedApplication->list_of_dates);
-        $this->reset(['status', 'otherReason', 'days']);
-
+        $this->selectedDates = []; // Reset selected dates
+        $this->days = 0; // Reset days
+        $this->status = ''; // Reset status
+        $this->otherReason = ''; // Reset other reason
+    
         // Check if the logged-in user is one of the endorsers
         if (Auth::id() == $this->selectedApplication->endorser1_id || Auth::id() == $this->selectedApplication->endorser2_id) {
             if (Auth::id() == $this->selectedApplication->endorser1_id) {
@@ -65,7 +73,7 @@ class AdminLeaveRequestTable extends Component
         } else {
             $this->showApproveModal = true;
         }
-
+    
         $this->fetchNonEmployeeUsers();
     }
 
@@ -505,6 +513,120 @@ class AdminLeaveRequestTable extends Component
         }
     }
 
+    // public function render()
+    // {
+    //     $this->fetchNonEmployeeUsers();
+        
+    //     $loggedInUserId = auth()->id();
+    //     $userRole = auth()->user()->user_role;
+        
+    //     $leaveApplications = LeaveApplication::where('status', '!=', 'Disapproved')
+    //         ->orderBy('created_at', 'desc')
+    //         ->select('id', 'name', 'date_of_filing', 'type_of_leave', 'details_of_leave', 'number_of_days', 'list_of_dates', 'approved_dates', 'file_name', 'file_path', 'status', 'remarks', 'approved_days', 'endorser1_id', 'endorser2_id', 'stage')
+    //         ->paginate(10)
+    //         ->through(function ($leaveApplication) use ($loggedInUserId, $userRole) {
+    //             $leaveApplication->isApprovedByHR = $leaveApplication->status === 'Approved by HR';
+    //             $leaveApplication->isPending = $leaveApplication->status === 'Pending';
+    //             $leaveApplication->isHR = $userRole === 'hr' || $userRole === 'sa';
+    //             $leaveApplication->isEndorser1 = $loggedInUserId === $leaveApplication->endorser1_id;
+    //             $leaveApplication->isEndorser2 = $loggedInUserId === $leaveApplication->endorser2_id;
+    //             $leaveApplication->isEndorser = $leaveApplication->isEndorser1 || $leaveApplication->isEndorser2;
+    
+    //             // Actions visibility logic
+    //             if ($leaveApplication->stage == 0) {
+    //                 $leaveApplication->actionsVisible = $leaveApplication->isHR;
+    //             } elseif ($leaveApplication->stage == 1) {
+    //                 $leaveApplication->actionsVisible = $leaveApplication->isEndorser1;
+    //                 $leaveApplication->isEndorser1Approved = $leaveApplication->isEndorser1 && $leaveApplication->status === 'Approved by Supervisor';
+    //                 $leaveApplication->isEndorser2Approved = $leaveApplication->isEndorser2 && $leaveApplication->status === 'Approved';
+    //             } elseif ($leaveApplication->stage == 2) {
+    //                 $leaveApplication->actionsVisible = $leaveApplication->isEndorser2;
+    //                 $leaveApplication->isEndorser2Approved = $leaveApplication->isEndorser2 && $leaveApplication->status === 'Approved';
+    //             }
+    
+    //             return $leaveApplication;
+    //         });
+        
+    //     $vacationLeaveDetails = VacationLeaveDetails::orderBy('created_at', 'desc')->paginate(10);
+    //     $sickLeaveDetails = SickLeaveDetails::orderBy('created_at', 'desc')->paginate(10);
+        
+    //     return view('livewire.admin.admin-leave-request-table', [
+    //         'leaveApplications' => $leaveApplications,
+    //         'vacationLeaveDetails' => $vacationLeaveDetails,
+    //         'sickLeaveDetails' => $sickLeaveDetails,
+    //         'filteredEndorser2Users' => $this->filteredEndorser2Users,
+    //     ]);
+    // }
+    // public function render()
+    // {
+    //     $this->fetchNonEmployeeUsers();
+        
+    //     $loggedInUserId = auth()->id();
+    //     $userRole = auth()->user()->user_role;
+        
+    //     // Start with base query
+    //     $query = LeaveApplication::query()
+    //         ->orderBy('created_at', 'desc')
+    //         ->select('id', 'name', 'date_of_filing', 'type_of_leave', 'details_of_leave', 
+    //                 'number_of_days', 'list_of_dates', 'approved_dates', 'file_name', 'file_path', 
+    //                 'status', 'remarks', 'approved_days', 'endorser1_id', 'endorser2_id', 'stage');
+    
+    //     // Filter to show only requests that need action
+    //     if ($userRole === 'hr' || $userRole === 'sa') {
+    //         // HR only sees requests that need their approval (Status is Pending)
+    //         $query->where('status', 'Pending');
+    //     } else {
+    //         // For endorsers, only show requests they need to act on
+    //         $query->where(function($q) use ($loggedInUserId) {
+    //             $q->where(function($q1) use ($loggedInUserId) {
+    //                 // For Endorser1: Show only their pending stage 1 requests
+    //                 $q1->where('endorser1_id', $loggedInUserId)
+    //                    ->where('stage', 1)
+    //                    ->where('status', 'Pending');
+    //             })->orWhere(function($q2) use ($loggedInUserId) {
+    //                 // For Endorser2: Show only their requests that are approved by Endorser1
+    //                 $q2->where('endorser2_id', $loggedInUserId)
+    //                    ->where('stage', 2)
+    //                    ->where('status', 'Approved by Supervisor');
+    //             });
+    //         });
+    //     }
+    
+    //     $leaveApplications = $query->paginate(10)
+    //         ->through(function ($leaveApplication) use ($loggedInUserId, $userRole) {
+    //             $leaveApplication->isApprovedByHR = $leaveApplication->status === 'Approved by HR';
+    //             $leaveApplication->isPending = $leaveApplication->status === 'Pending';
+    //             $leaveApplication->isHR = $userRole === 'hr' || $userRole === 'sa';
+    //             $leaveApplication->isEndorser1 = $loggedInUserId === $leaveApplication->endorser1_id;
+    //             $leaveApplication->isEndorser2 = $loggedInUserId === $leaveApplication->endorser2_id;
+    //             $leaveApplication->isEndorser = $leaveApplication->isEndorser1 || $leaveApplication->isEndorser2;
+        
+    //             // Set approval states
+    //             $leaveApplication->isEndorser1Approved = $leaveApplication->status === 'Approved by Supervisor';
+    //             $leaveApplication->isEndorser2Approved = $leaveApplication->status === 'Approved';
+                
+    //             // Actions visibility
+    //             if ($leaveApplication->stage == 0) {
+    //                 $leaveApplication->actionsVisible = $leaveApplication->isHR;
+    //             } elseif ($leaveApplication->stage == 1) {
+    //                 $leaveApplication->actionsVisible = $leaveApplication->isEndorser1;
+    //             } elseif ($leaveApplication->stage == 2) {
+    //                 $leaveApplication->actionsVisible = $leaveApplication->isEndorser2;
+    //             }
+        
+    //             return $leaveApplication;
+    //         });
+        
+    //     $vacationLeaveDetails = VacationLeaveDetails::orderBy('created_at', 'desc')->paginate(10);
+    //     $sickLeaveDetails = SickLeaveDetails::orderBy('created_at', 'desc')->paginate(10);
+        
+    //     return view('livewire.admin.admin-leave-request-table', [
+    //         'leaveApplications' => $leaveApplications,
+    //         'vacationLeaveDetails' => $vacationLeaveDetails,
+    //         'sickLeaveDetails' => $sickLeaveDetails,
+    //         'filteredEndorser2Users' => $this->filteredEndorser2Users,
+    //     ]);
+    // }
     public function render()
     {
         $this->fetchNonEmployeeUsers();
@@ -512,10 +634,35 @@ class AdminLeaveRequestTable extends Component
         $loggedInUserId = auth()->id();
         $userRole = auth()->user()->user_role;
         
-        $leaveApplications = LeaveApplication::where('status', '!=', 'Disapproved')
+        // Start with base query
+        $query = LeaveApplication::query()
             ->orderBy('created_at', 'desc')
-            ->select('id', 'name', 'date_of_filing', 'type_of_leave', 'details_of_leave', 'number_of_days', 'list_of_dates', 'approved_dates', 'file_name', 'file_path', 'status', 'remarks', 'approved_days', 'endorser1_id', 'endorser2_id', 'stage')
-            ->paginate(10)
+            ->select('id', 'name', 'date_of_filing', 'type_of_leave', 'details_of_leave', 
+                    'number_of_days', 'list_of_dates', 'approved_dates', 'file_name', 'file_path', 
+                    'status', 'remarks', 'approved_days', 'endorser1_id', 'endorser2_id', 'stage');
+
+        // Filter based on role and correct status/stage combination
+        if ($userRole === 'hr' || $userRole === 'sa') {
+            // HR/SA sees only pending requests
+            $query->where('status', 'Pending');
+        } else {
+            // For endorsers, show only requests they need to act on
+            $query->where(function($q) use ($loggedInUserId) {
+                $q->where(function($q1) use ($loggedInUserId) {
+                    // Endorser1: Show requests that are 'Approved by HR' and in stage 1
+                    $q1->where('endorser1_id', $loggedInUserId)
+                    ->where('stage', 1)
+                    ->where('status', 'Approved by HR');
+                })->orWhere(function($q2) use ($loggedInUserId) {
+                    // Endorser2: Show requests that are 'Approved by Supervisor' and in stage 2
+                    $q2->where('endorser2_id', $loggedInUserId)
+                    ->where('stage', 2)
+                    ->where('status', 'Approved by Supervisor');
+                });
+            });
+        }
+
+        $leaveApplications = $query->paginate(10)
             ->through(function ($leaveApplication) use ($loggedInUserId, $userRole) {
                 $leaveApplication->isApprovedByHR = $leaveApplication->status === 'Approved by HR';
                 $leaveApplication->isPending = $leaveApplication->status === 'Pending';
@@ -523,29 +670,29 @@ class AdminLeaveRequestTable extends Component
                 $leaveApplication->isEndorser1 = $loggedInUserId === $leaveApplication->endorser1_id;
                 $leaveApplication->isEndorser2 = $loggedInUserId === $leaveApplication->endorser2_id;
                 $leaveApplication->isEndorser = $leaveApplication->isEndorser1 || $leaveApplication->isEndorser2;
-    
-                // Actions visibility logic
-                if ($leaveApplication->stage == 0) {
-                    $leaveApplication->actionsVisible = $leaveApplication->isHR;
-                } elseif ($leaveApplication->stage == 1) {
-                    $leaveApplication->actionsVisible = $leaveApplication->isEndorser1;
-                    $leaveApplication->isEndorser1Approved = $leaveApplication->isEndorser1 && $leaveApplication->status === 'Approved by Supervisor';
-                    $leaveApplication->isEndorser2Approved = $leaveApplication->isEndorser2 && $leaveApplication->status === 'Approved';
-                } elseif ($leaveApplication->stage == 2) {
-                    $leaveApplication->actionsVisible = $leaveApplication->isEndorser2;
-                    $leaveApplication->isEndorser2Approved = $leaveApplication->isEndorser2 && $leaveApplication->status === 'Approved';
+        
+                // Set approval states based on correct status progression
+                $leaveApplication->isEndorser1Approved = $leaveApplication->status === 'Approved by Supervisor';
+                $leaveApplication->isEndorser2Approved = $leaveApplication->status === 'Approved';
+                
+                // Set visibility based on role and status
+                if ($leaveApplication->isHR) {
+                    $leaveApplication->actionsVisible = $leaveApplication->status === 'Pending';
+                } elseif ($leaveApplication->isEndorser1) {
+                    $leaveApplication->actionsVisible = $leaveApplication->status === 'Approved by HR' && 
+                                                    $leaveApplication->stage === 1;
+                } elseif ($leaveApplication->isEndorser2) {
+                    $leaveApplication->actionsVisible = $leaveApplication->status === 'Approved by Supervisor' && 
+                                                    $leaveApplication->stage === 2;
                 }
-    
+        
                 return $leaveApplication;
             });
         
-        $vacationLeaveDetails = VacationLeaveDetails::orderBy('created_at', 'desc')->paginate(10);
-        $sickLeaveDetails = SickLeaveDetails::orderBy('created_at', 'desc')->paginate(10);
-        
         return view('livewire.admin.admin-leave-request-table', [
             'leaveApplications' => $leaveApplications,
-            'vacationLeaveDetails' => $vacationLeaveDetails,
-            'sickLeaveDetails' => $sickLeaveDetails,
+            'vacationLeaveDetails' => VacationLeaveDetails::orderBy('created_at', 'desc')->paginate(10),
+            'sickLeaveDetails' => SickLeaveDetails::orderBy('created_at', 'desc')->paginate(10),
             'filteredEndorser2Users' => $this->filteredEndorser2Users,
         ]);
     }
