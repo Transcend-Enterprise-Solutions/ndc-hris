@@ -111,7 +111,9 @@
                                 <td>{{ $dtr->total_hours_rendered }}</td>
                                 <td>{{ $dtr->late }}</td>
                                 <td>{{ $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('D') : '--' }}</td>
-                                <td>{{ $dtr->location }}</td>
+                                <td>
+                                    {{ $dtr->location === 'Onsite' ? '' : $dtr->location }}
+                                </td>
                                 <td>{{ $dtr->effective_remarks }}</td>
                             </tr>
                         @endif
