@@ -60,112 +60,127 @@
 
     <div class="flex justify-center w-full">
         <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
-            <div class="pb-4 mb-3 pt-4 sm:pt-0">
-                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Service Records</h1>
-            </div>
 
-            <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
-                
-                <div class="w-full sm:w-1/3 sm:mr-4">
-                    <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
-                    <input type="text" id="search" wire:model.live="search"
-                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
-                            dark:hover:bg-slate-600 dark:border-slate-600
-                            dark:text-gray-300 dark:bg-gray-800"
-                        placeholder="Enter employee name or ID">
+            @if($showServiceRecord)
+                <div class="mb-8 flex flex-col sm:flex-row items-center justify-between relative">
+                    <p class="text-md">Employee: <span class="text-gray-800 dark:text-gray-50">{{ $employeeName }}</span></p>
+                    <button wire:click="closeWorkExpSheet"
+                        class="text-black dark:text-white whitespace-nowrap mx-2">
+                        <i class="bi bi-x-circle" title="Close"></i>
+                    </button>
                 </div>
 
-            </div>
+                <div class="mt-2" style="overflow: hidden;">
+                    <iframe id="pdfIframe" src="data:application/pdf;base64,{{ $pdfContent }}"
+                        style="width: 100%; max-height: 80vh; min-height: 500px;" frameborder="0"></iframe>
+                </div>
+            @else
+                <div class="pb-4 mb-3 pt-4 sm:pt-0">
+                    <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Service Records</h1>
+                </div>
+
+                <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
+                    
+                    <div class="w-full sm:w-1/3 sm:mr-4">
+                        <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                        <input type="text" id="search" wire:model.live="search"
+                            class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                                dark:hover:bg-slate-600 dark:border-slate-600
+                                dark:text-gray-300 dark:bg-gray-800"
+                            placeholder="Enter employee name or ID">
+                    </div>
+
+                </div>
 
 
-            <!-- Table -->
-            <div class="flex flex-col">
-                <div class="-my-2 overflow-x-auto">
-                    <div class="inline-block w-full py-2 align-middle">
-                        <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
-                            <div class="overflow-x-auto">
-                                <table class="w-full min-w-full">
-                                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
-                                        <tr class="whitespace-nowrap">
-                                            <th scope="col"
-                                                class="px-5 py-3 text-sm font-medium text-left uppercase">
-                                                Name
-                                            </th>
-                                            <th scope="col"
-                                                class="px-5 py-3 text-sm font-medium text-center uppercase">
-                                                Employee Number
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-sm font-medium uppercase text-center">
-                                                Years in Government Service
-                                            </th>
-                                            <th class="px-5 py-3 text-gray-100 text-sm font-medium text-right sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
-                                                Action
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
-                                        @foreach ($users as $user)
-                                            <tr class="text-sm whitespace-nowrap">
-                                                <td class="px-4 py-2 text-left">
-                                                    {{ $user->name }}
-                                                </td>
-                                                <td class="px-4 py-2 text-center">
-                                                    @if($user->appointment == 'cos')
-                                                        {{ $user->emp_code ? 'D-' . substr($user->emp_code, 1) : '' }}
-                                                    @else
-                                                        {{ $user->emp_code }}
-                                                    @endif
-                                                </td>
-                                                <td class="px-4 py-2 text-center">
-                                                    {{ $user->formatted_gov_service }}
-                                                </td>
-                                                <td
-                                                    class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                    <button wire:click="toggleViewRecord({{ $user->id }})"
-                                                        class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 focus:outline-none">
-                                                        <i class="fas fa-eye" title="Show Details"></i>
-                                                    </button>
-
-                                                    <div class="relative mt-2" style="margin-right: -2px;">
-                                                        <button
-                                                            wire:click="exportRecord({{ $user->id }})"
-                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2
-                                                            text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
-                                                            title="Export Service Record" wire:target="exportRecord({{ $user->id }})"
-                                                            wire:loading.remove>
-                                                            <img class="flex dark:hidden ml-3"
-                                                                src="/images/icons8-xls-export-dark.png"
-                                                                width="18" height="18" alt="">
-                                                            <img class="hidden dark:block ml-3"
-                                                                src="/images/icons8-xls-export-light.png"
-                                                                width="18" height="18" alt="">
+                <!-- Table -->
+                <div class="flex flex-col">
+                    <div class="-my-2 overflow-x-auto">
+                        <div class="inline-block w-full py-2 align-middle">
+                            <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full min-w-full">
+                                        <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                            <tr class="whitespace-nowrap">
+                                                <th scope="col"
+                                                    class="px-5 py-3 text-sm font-medium text-left uppercase">
+                                                    Name
+                                                </th>
+                                                <th scope="col"
+                                                    class="px-5 py-3 text-sm font-medium text-center uppercase">
+                                                    Employee Number
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-sm font-medium uppercase text-center">
+                                                    Years in Government Service
+                                                </th>
+                                                <th class="px-5 py-3 text-gray-100 text-sm font-medium text-right sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                    Action
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                            @foreach ($users as $user)
+                                                <tr class="text-sm whitespace-nowrap">
+                                                    <td class="px-4 py-2 text-left">
+                                                        {{ $user->name }}
+                                                    </td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        @if($user->appointment == 'cos')
+                                                            {{ $user->emp_code ? 'D-' . substr($user->emp_code, 1) : '' }}
+                                                        @else
+                                                            {{ $user->emp_code }}
+                                                        @endif
+                                                    </td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        {{ $user->formatted_gov_service }}
+                                                    </td>
+                                                    <td
+                                                        class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                        <button wire:click="toggleViewRecord({{ $user->id }})"
+                                                            class="inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 focus:outline-none">
+                                                            <i class="fas fa-eye" title="Show Details"></i>
                                                         </button>
-                                                        <div wire:loading  class="w-full flex justify-end items-center" style="padding-right: 10px; margin-top: -5px"
-                                                            wire:target="exportRecord({{ $user->id }})">
-                                                            <div class="spinner-border small text-primary"
-                                                                role="status">
+
+                                                        <div class="relative mt-2" style="margin-right: -2px;">
+                                                            <button
+                                                                wire:click="exportRecord({{ $user->id }})"
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2
+                                                                text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
+                                                                title="Export Service Record" wire:target="exportRecord({{ $user->id }})"
+                                                                wire:loading.remove>
+                                                                <img class="flex dark:hidden ml-3"
+                                                                    src="/images/icons8-xls-export-dark.png"
+                                                                    width="18" height="18" alt="">
+                                                                <img class="hidden dark:block ml-3"
+                                                                    src="/images/icons8-xls-export-light.png"
+                                                                    width="18" height="18" alt="">
+                                                            </button>
+                                                            <div wire:loading  class="w-full flex justify-end items-center" style="padding-right: 10px; margin-top: -5px"
+                                                                wire:target="exportRecord({{ $user->id }})">
+                                                                <div class="spinner-border small text-primary"
+                                                                    role="status">
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                @if ($users->isEmpty())
-                                    <div class="p-4 text-center text-gray-500 dark:text-gray-300">
-                                        No records!
-                                    </div> 
-                                @endif
-                            </div>
-                            <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
-                                {{ $users->links() }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    @if ($users->isEmpty())
+                                        <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                            No records!
+                                        </div> 
+                                    @endif
+                                </div>
+                                <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                    {{ $users->links() }}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
+            @endif
 
         </div>
     </div>
@@ -293,6 +308,22 @@
         </div>
     </x-modal>
 
-
-
 </div>
+
+<script>
+    function resizeIframe() {
+        const iframe = document.getElementById('pdfIframe');
+        const pdfDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+        if (pdfDocument) {
+            // Set the iframe height based on the content
+            iframe.style.height = pdfDocument.body.scrollHeight + 'px';
+        }
+    }
+
+    // Adjust iframe size when the PDF is loaded
+    document.getElementById('pdfIframe').onload = resizeIframe;
+
+    // Optional: Adjust iframe size when the window is resized
+    window.onresize = resizeIframe;
+</script>

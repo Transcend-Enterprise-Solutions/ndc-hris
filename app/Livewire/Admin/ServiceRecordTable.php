@@ -9,7 +9,9 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\ESignature;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceRecordTable extends Component
 {
@@ -19,6 +21,9 @@ class ServiceRecordTable extends Component
     public $recordId;
     public $thisRecord;
     public $serviceRecord;
+    public $showServiceRecord = true;
+    public $employeeName;
+    public $pdfContent;
 
     public function render()
     {
@@ -44,6 +49,8 @@ class ServiceRecordTable extends Component
                 return $query->search(trim($this->search));
             })
             ->paginate(10);
+        
+        $this->showPDF(userId: 79);
 
         foreach ($users as $user) {
             $totalMonths = $user->total_months_gov_service;
@@ -124,6 +131,38 @@ class ServiceRecordTable extends Component
         }catch(Exception $e){
             throw $e;
         }
+    }
+
+    public function showPDF($userId){
+        $this->showServiceRecord = true;
+        $eSignature = ESignature::where('user_id', $userId)->first();
+        $signatureImagePath = null;
+        if ($eSignature && $eSignature->file_path) {
+            $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
+        }
+
+
+        $this->employeeName = User::where('id', $userId)->first()->name;
+
+        $sigXPos = 110;
+        $sigYPos = -50;
+        $sigSize = 100;
+
+        $pdf = PDF::loadView('pdf.service-record', [
+            'myWorkExperiences' => null,
+            'signatureImagePath' => null,
+            'sigXPos' => $sigXPos,
+            'sigYPos' => $sigYPos,
+            'sigSize' => $sigSize,
+        ]);
+
+        $this->pdfContent = base64_encode($pdf->output());
+    }
+
+    public function closeWorkExpSheet(){
+        $this->showServiceRecord = null;
+        $this->pdfContent = null;
+        $this->employeeName = null;
     }
 
     public function resetVariables(){

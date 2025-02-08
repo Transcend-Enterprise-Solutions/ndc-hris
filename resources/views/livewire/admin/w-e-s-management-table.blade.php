@@ -158,16 +158,6 @@
 </div>
 
 <script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('leaveType', () => ({
-            vacationLeave: false,
-            specialPrivilegeLeave: false,
-            sickLeave: false,
-            specialLeaveBenefitsForWomen: false,
-            studyLeave: false,
-        }));
-    });
-
     function resizeIframe() {
         const iframe = document.getElementById('pdfIframe');
         const pdfDocument = iframe.contentDocument || iframe.contentWindow.document;
