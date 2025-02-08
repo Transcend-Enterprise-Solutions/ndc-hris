@@ -168,7 +168,9 @@
                             <td class="px-4 py-2 text-center">{{ $dtr->user_name }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->date }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->day_of_week }}</td>
-                            <td class="px-4 py-2 text-center">{{ $dtr->location }}</td>
+                            <td class="px-4 py-2 text-center">
+                                {{ $dtr->location === 'Onsite' ? '' : $dtr->location }}
+                            </td>
                             <td class="px-4 py-2 text-center">{{ $dtr->morning_in ?? '--:--' }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->morning_out ?? '--:--' }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->afternoon_in ?? '--:--' }}</td>
