@@ -61,7 +61,7 @@
     <div class="flex justify-center w-full">
         <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
 
-            @if($showServiceRecord)
+            {{-- @if($showServiceRecord)
                 <div class="mb-8 flex flex-col sm:flex-row items-center justify-between relative">
                     <p class="text-md">Employee: <span class="text-gray-800 dark:text-gray-50">{{ $employeeName }}</span></p>
                     <button wire:click="closeWorkExpSheet"
@@ -74,7 +74,11 @@
                     <iframe id="pdfIframe" src="data:application/pdf;base64,{{ $pdfContent }}"
                         style="width: 100%; max-height: 80vh; min-height: 500px;" frameborder="0"></iframe>
                 </div>
-            @else
+            @else --}}
+
+
+
+
                 <div class="pb-4 mb-3 pt-4 sm:pt-0">
                     <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Service Records</h1>
                 </div>
@@ -180,7 +184,11 @@
                         </div>
                     </div>
                 </div>
-            @endif
+
+
+
+
+            {{-- @endif --}}
 
         </div>
     </div>
@@ -210,9 +218,9 @@
                                 <span class="w-full text-center border-t border-gray-400">To</span>
                             </div>
                         </div>
-                        <div class="col-span-5 flex flex-col justify-center" style="margin-left: -1px;">
+                        <div class="col-span-3 flex flex-col justify-center" style="margin-left: -1px;">
                             <div class="w-full text-center border border-gray-400">RECORD OF APPOINTMENT</div> 
-                            <div class="w-full grid grid-cols-5 gap-0">
+                            <div class="w-full grid grid-cols-3 gap-0">
                                 <div class="col-span-2 text-center flex items-center justify-center border-r border-b border-gray-400">
                                     Designation
                                 </div>
@@ -220,25 +228,27 @@
                                     Status <br>
                                     of Appt.
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-span-1 flex flex-col justify-center" style="margin-left: -1px;">
+                            <div class="w-full text-center border border-gray-400">&nbsp;</div> 
+                            <div class="w-full grid grid-cols-1 gap-0">
                                 <div class="col-span-1 text-center border-r border-b border-gray-400">
                                     Basic <br>
                                     Salary
                                 </div>
-                                <div class="col-span-1 text-center border-r border-b border-gray-400">
-                                    Longevity <br>
-                                    Pay/Allow.
-                                </div>
                             </div>
                         </div>
-                        <div class="col-span-1 flex justify-center text-center border-r border-b border-t border-gray-400">
-                            OFFICE <br>
-                            Place of <br>
-                            Assignment
-                        </div>
-                        <div class="col-span-1 flex justify-center text-center border-r border-b border-t border-gray-400">
-                            Branch <br>
-                            of <br>
-                            Service
+                        <div class="col-span-3 flex flex-col justify-center" style="margin-left: -1px;">
+                            <div class="w-full text-center border border-gray-400">OFFICE INTITY/DIVISON</div> 
+                            <div class="w-full grid grid-cols-3 gap-0">
+                                <div class="col-span-2 text-center flex items-center justify-center border-r border-b border-gray-400">
+                                    Station/Place<br>of Assignment
+                                </div>
+                                <div class="col-span-1 text-center border-r flex justify-center items-center border-b border-gray-400">
+                                    <span>Branch</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-span-1 flex justify-center text-center border-r border-b border-t border-gray-400">
                             LEAVE <br>
@@ -249,6 +259,14 @@
                             <div class="w-full text-center">REMARKS</div>
                         </div>
                     </div>
+                    @php
+                         $formatCurrency = function($value) {
+                            if($value == 0 || $value == null){
+                                return "-";
+                            }
+                            return '₱ ' . number_format((float)$value, 2, '.', ',');
+                        };
+                    @endphp
                     @if($serviceRecord)
                         @foreach ($serviceRecord as $record)
                             <div class="grid grid-cols-12 gap-0 text-xs border-b border-gray-400" style="width: 1000px">
@@ -259,33 +277,30 @@
                                         <span class="w-full text-center">{{ $record->end_date ? \Carbon\Carbon::parse($record->end_date)->format('m/d/y') : $record->toPresent }}</span>
                                     </div>
                                 </div>
-                                <div class="col-span-5 flex flex-col justify-center" style="margin-left: -1px;">
-                                    <div class="w-full grid grid-cols-5 gap-0">
+                                <div class="col-span-3 flex flex-col justify-center" style="margin-left: -1px;">
+                                    <div class="w-full grid grid-cols-3 gap-0">
                                         <div class="col-span-2 text-center flex items-center justify-center border-r border-gray-400 py-2">
-                                            {{ $record->position }}
+                                            {{ $record->position ?: '-do-' }}
                                         </div>
                                         <div class="col-span-1 text-center flex items-center justify-center  border-r border-gray-400 py-2">
-                                            {{ $record->status_of_appointment }}
-                                        </div>
-                                        <div class="col-span-1 text-center flex items-center justify-center  border-r border-gray-400 py-2">
-                                            {{ $record->monthly_salary }}
-                                        </div>
-                                        <div class="col-span-1 text-center flex items-center justify-center  border-r border-gray-400 py-2">
-                                            {{ $record->pera }}
+                                            {{ $record->status_of_appointment ?: '-do-' }}
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-span-1 text-center flex items-center justify-center border-r border-gray-400 py-2">
-                                    {{ $record->place_of_assignment }}
-                                </div>
-                                <div class="col-span-1 text-center flex items-center justify-center border-r border-gray-400 py-2">
-                                    {{ $record->branch }}
-                                </div>
-                                <div class="col-span-1 text-center flex items-center justify-center border-r border-gray-400 py-2">
-                                    {{ $record->leave_absence_wo_pay }}
+                                <div class="col-span-1 text-center flex items-center justify-center  border-r border-gray-400 py-2">
+                                    {{ $record->monthly_salary ? $formatCurrency($record->monthly_salary): '-do-' }}
                                 </div>
                                 <div class="col-span-2 text-center flex items-center justify-center border-r border-gray-400 py-2">
-                                    {{ $record->remarks }}
+                                    {{ $record->department ?: '-do-' }}
+                                </div>
+                                <div class="col-span-1 text-center flex items-center justify-center border-r border-gray-400 py-2">
+                                    {{ $record->branch ?: '-do-' }}
+                                </div>
+                                <div class="col-span-1 text-center flex items-center justify-center border-r border-gray-400 py-2">
+                                    {{ $record->leave_absence_wo_pay ?: '-do-' }}
+                                </div>
+                                <div class="col-span-2 text-center flex items-center justify-center border-r border-gray-400 py-2">
+                                    {{ $record->remarks ?: '-do-' }}
                                 </div>
                             </div>
                         @endforeach

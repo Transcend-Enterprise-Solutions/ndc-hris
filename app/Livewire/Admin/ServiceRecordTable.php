@@ -11,6 +11,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\ESignature;
+use App\Models\UserData;
 use Illuminate\Support\Facades\Storage;
 
 class ServiceRecordTable extends Component
@@ -50,7 +51,7 @@ class ServiceRecordTable extends Component
             })
             ->paginate(10);
         
-        $this->showPDF(userId: 79);
+        // $this->showPDF(userId: 79);
 
         foreach ($users as $user) {
             $totalMonths = $user->total_months_gov_service;
@@ -133,32 +134,39 @@ class ServiceRecordTable extends Component
         }
     }
 
-    public function showPDF($userId){
-        $this->showServiceRecord = true;
-        $eSignature = ESignature::where('user_id', $userId)->first();
-        $signatureImagePath = null;
-        if ($eSignature && $eSignature->file_path) {
-            $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
-        }
+    // public function showPDF($userId){
+    //     $this->showServiceRecord = true;
+    //     $eSignature = ESignature::where('user_id', $userId)->first();
+    //     $signatureImagePath = null;
+    //     if ($eSignature && $eSignature->file_path) {
+    //         $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
+    //     }
 
 
-        $this->employeeName = User::where('id', $userId)->first()->name;
+    //     $this->employeeName = User::where('id', $userId)->first()->name;
+    //     $userData = UserData::where('user_id', 79)->first();
 
-        $sigXPos = 110;
-        $sigYPos = -50;
-        $sigSize = 100;
+    //     $sigXPos = 110;
+    //     $sigYPos = -50;
+    //     $sigSize = 100;
 
-        $pdf = PDF::loadView('pdf.service-record', [
-            'myWorkExperiences' => null,
-            'signatureImagePath' => null,
-            'sigXPos' => $sigXPos,
-            'sigYPos' => $sigYPos,
-            'sigSize' => $sigSize,
-        ]);
+    //     $record = WorkExperience::where('user_id', 79)
+    //             ->orderBy('start_date', 'DESC')
+    //             ->get();
 
-        $this->pdfContent = base64_encode($pdf->output());
-    }
+    //     $pdf = PDF::loadView('pdf.service-record', [
+    //         'myWorkExperiences' => $record,
+    //         'signatureImagePath' => null,
+    //         'userData' => $userData,
+    //         'sigXPos' => $sigXPos,
+    //         'sigYPos' => $sigYPos,
+    //         'sigSize' => $sigSize,
+    //     ]);
 
+    //     $this->pdfContent = base64_encode($pdf->output());
+    // }
+
+    
     public function closeWorkExpSheet(){
         $this->showServiceRecord = null;
         $this->pdfContent = null;
