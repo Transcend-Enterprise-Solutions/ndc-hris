@@ -576,7 +576,7 @@
                                             </span>
                                         </a>
                                     </li>
-                                    {{-- <li class="mb-1 last:mb-0">
+                                    <li class="mb-1 last:mb-0">
                                         <a class="block text-black dark:text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/filing-and-approval/leave-monetization')) {{ '!text-blue-500' }} @endif"
                                             href="{{ route('/filing-and-approval/leave-monetization') }}"
                                             wire:navigate>
@@ -585,7 +585,7 @@
                                                 Leave Monetization
                                             </span>
                                         </a>
-                                    </li> --}}
+                                    </li>
                                 </ul>
                             </div>
                         </li>

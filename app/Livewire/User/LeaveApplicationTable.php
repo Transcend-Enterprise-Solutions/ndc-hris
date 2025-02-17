@@ -65,8 +65,10 @@ class LeaveApplicationTable extends Component
 
     public $activeTab = 'pending';
 
-    public $pageSize = 10; 
-    public $pageSizes = [10, 20, 30, 50, 100]; 
+    public $showDropdown = false;
+
+    public $pageSize = 5; 
+    public $pageSizes = [5, 10, 20, 30, 50, 100]; 
 
     protected $rules = [
         'office_or_department' => 'required|string|max:255',
@@ -76,6 +78,16 @@ class LeaveApplicationTable extends Component
         'files.*' => 'file|mimes:jpeg,png,jpg,pdf|max:2048',
         'number_of_days' => 'required|numeric|min:1'
     ];
+
+    public function toggleDropdown()
+    {
+        $this->showDropdown = !$this->showDropdown;
+    }
+    
+    public function closeDropdown()
+    {
+        $this->showDropdown = false;
+    }
 
     public function openLeaveForm()
     {
@@ -141,7 +153,6 @@ class LeaveApplicationTable extends Component
         }
     }
 
-
     public function resetOtherFields($field)
     {
         $fields = ['philippines', 'abroad', 'inHospital', 'outPatient', 'specialIllnessForWomen'];
@@ -151,19 +162,6 @@ class LeaveApplicationTable extends Component
             }
         }
     }
-
-    // public function addDate()
-    // {
-    //     $this->validate([
-    //         'new_date' => 'required|date',
-    //     ]);
-
-    //     if (!in_array($this->new_date, $this->list_of_dates)) {
-    //         $this->list_of_dates[] = $this->new_date;
-    //     }
-
-    //     $this->new_date = '';
-    // }
 
     public function submitLeaveApplication()
     {
@@ -176,11 +174,6 @@ class LeaveApplicationTable extends Component
             'number_of_days' => 'required',
             'commutation' => 'required',
         ];
-
-        // Check if list_of_dates is present in the form
-        // if ($this->list_of_dates !== null) {
-        //     $rules['list_of_dates'] = 'required|min:1';
-        // }
 
         $leaveTypesRequiringDates = [
             'Vacation Leave',
@@ -277,17 +270,26 @@ class LeaveApplicationTable extends Component
         $leaveDetailsString = implode(', ', $leaveDetails);
         $filePathsString = implode(',', $filePaths);
 
+        // $datesString = '';
+
+        // if ($this->start_date && $this->end_date) {
+        //     $datesString = $this->start_date . ' - ' . $this->end_date;
+        // }
+
+        // if (!empty($this->list_of_dates)) {
+        //     if (!empty($datesString)) {
+        //         $datesString .= ', ';
+        //     }
+        //     $datesString .= implode(',', $this->list_of_dates);
+        // }
         $datesString = '';
 
         if ($this->start_date && $this->end_date) {
+            // For range-based leaves, store only the range
             $datesString = $this->start_date . ' - ' . $this->end_date;
-        }
-
-        if (!empty($this->list_of_dates)) {
-            if (!empty($datesString)) {
-                $datesString .= ', ';
-            }
-            $datesString .= implode(',', $this->list_of_dates);
+        } else if (!empty($this->list_of_dates)) {
+            // For individual dates, store them as comma-separated
+            $datesString = implode(',', $this->list_of_dates);
         }
 
         // $currentMonth = now()->month;
@@ -354,15 +356,95 @@ class LeaveApplicationTable extends Component
         }
     }
 
+    // public function addDate()
+    // {
+    //     $this->validate([
+    //         'new_date' => 'required|date',
+    //     ]);
+        
+    //     if (!in_array($this->new_date, $this->list_of_dates)) {
+    //         $this->list_of_dates[] = $this->new_date;
+    //         $this->number_of_days = count($this->list_of_dates); // Auto-update days
+    //     }
+        
+    //     $this->new_date = '';
+    // }
+
+    // public function removeDate($index)
+    // {
+    //     unset($this->list_of_dates[$index]);
+    //     $this->list_of_dates = array_values($this->list_of_dates);
+    //     $this->number_of_days = count($this->list_of_dates); // Auto-update days after removal
+    // }
+    public function updatedStartDate($value)
+    {
+        if ($this->start_date && $this->end_date) {
+            $this->calculateWorkingDays();
+        }
+    }
+    
+    public function updatedEndDate($value)
+    {
+        if ($this->start_date && $this->end_date) {
+            $this->calculateWorkingDays();
+        }
+    }
+    
+    protected function calculateWorkingDays()
+    {
+        if (!$this->start_date || !$this->end_date) {
+            return;
+        }
+    
+        $start = Carbon::parse($this->start_date);
+        $end = Carbon::parse($this->end_date);
+    
+        // Validate that end date is not before start date
+        if ($end->lt($start)) {
+            $this->addError('end_date', 'End date cannot be before start date');
+            return;
+        }
+    
+        $workingDays = 0;
+        $current = $start->copy();
+    
+        while ($current->lte($end)) {
+            // Check if current day is not a weekend (Saturday = 6, Sunday = 0)
+            if (!$current->isWeekend()) {
+                // Here you could also check for holidays if you have a holiday list
+                $workingDays++;
+            }
+            $current->addDay();
+        }
+    
+        $this->number_of_days = $workingDays;
+        
+        // Instead of storing all dates, just store the range
+        $this->list_of_dates = [$this->start_date . ' - ' . $this->end_date];
+    }
+
     public function addDate()
     {
         $this->validate([
             'new_date' => 'required|date',
         ]);
         
+        // Clear any previous calculations from date range
+        if ($this->start_date && $this->end_date) {
+            $this->start_date = null;
+            $this->end_date = null;
+        }
+        
         if (!in_array($this->new_date, $this->list_of_dates)) {
+            // Check if the date is not a weekend
+            $date = Carbon::parse($this->new_date);
+            if ($date->isWeekend()) {
+                $this->addError('new_date', 'Weekends cannot be selected as leave days');
+                return;
+            }
+            
             $this->list_of_dates[] = $this->new_date;
-            $this->number_of_days = count($this->list_of_dates); // Auto-update days
+            $this->number_of_days = count($this->list_of_dates);
         }
         
         $this->new_date = '';
@@ -370,17 +452,16 @@ class LeaveApplicationTable extends Component
 
     public function removeDate($index)
     {
+        // Clear any previous calculations from date range
+        if ($this->start_date && $this->end_date) {
+            $this->start_date = null;
+            $this->end_date = null;
+        }
+        
         unset($this->list_of_dates[$index]);
         $this->list_of_dates = array_values($this->list_of_dates);
-        $this->number_of_days = count($this->list_of_dates); // Auto-update days after removal
+        $this->number_of_days = count($this->list_of_dates);
     }
-
-    // public function removeDate($index)
-    // {
-    //     unset($this->list_of_dates[$index]);
-
-    //     $this->list_of_dates = array_values($this->list_of_dates);
-    // }
 
     public function resetForm()
     {
@@ -406,101 +487,6 @@ class LeaveApplicationTable extends Component
         ]);
     }
 
-    // public function exportPDF($leaveApplicationId)
-    // {
-    //     $leaveApplication = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
-
-    //     $eSignature = ESignature::where('user_id', $leaveApplication->user_id)->first();
-
-    //     $signatureImagePath = null;
-    //     if ($eSignature && $eSignature->file_path) {
-    //         $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
-    //     }
-
-    //     $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
-
-    //     $otherLeave = '';
-    //     foreach ($selectedLeaveTypes as $leaveType) {
-    //         if (strpos($leaveType, 'Others: ') === 0) {
-    //             $otherLeave = str_replace('Others: ', '', $leaveType);
-    //             break;
-    //         }
-    //     }
-
-    //     $detailsOfLeave = $leaveApplication->details_of_leave ? array_map('trim', explode(',', $leaveApplication->details_of_leave)) : [];
-
-    //     $isDetailPresent = function($detail) use ($detailsOfLeave) {
-    //         foreach ($detailsOfLeave as $item) {
-    //             $parts = explode('=', $item, 2);
-    //             $key = trim($parts[0]);
-    //             if ($key === $detail) {
-    //                 return true;
-    //             }
-    //         }
-    //         return false;
-    //     };
-
-    //     $getDetailValue = function($detail) use ($detailsOfLeave) {
-    //         foreach ($detailsOfLeave as $item) {
-    //             $parts = explode('=', $item, 2);
-    //             if (count($parts) === 2) {
-    //                 $key = trim($parts[0]);
-    //                 $value = trim($parts[1]);
-    //                 if ($key === $detail) {
-    //                     return $value;
-    //                 }
-    //             }
-    //         }
-    //         return '';
-    //     };
-
-    //     $daysWithPay = '';
-    //     $daysWithoutPay = '';
-    //     $otherRemarks = '';
-
-    //     if ($leaveApplication->status === 'Approved') {
-    //         if ($leaveApplication->remarks === 'With Pay') {
-    //             $daysWithPay = $leaveApplication->approved_days;
-    //         } elseif ($leaveApplication->remarks === 'Without Pay') {
-    //             $daysWithoutPay = $leaveApplication->approved_days;
-    //         } else {
-    //             $otherRemarks = $leaveApplication->remarks;
-    //         }
-    //     }
-
-    //     // Fetch the first approver from leave_approvals
-    //     $leaveApproval = LeaveApprovals::where('application_id', $leaveApplicationId)->first();
-    //     $firstApprover = $leaveApproval ? $leaveApproval->first_approver : null;
-    //     $firstApproverName = $firstApprover ? User::find($firstApprover)->name : 'N/A';
-    //     $secondApprover = $leaveApproval ? $leaveApproval->second_approver : null;
-    //     $secondApproverName = $secondApprover ? User::find($secondApprover)->name : 'N/A';
-    //     $thirdApprover = $leaveApproval ? $leaveApproval->third_approver : null;
-    //     $thirdApproverName = $thirdApprover ? User::find($thirdApprover)->name : 'N/A';
-
-    //     $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
-
-    //     $pdf = PDF::loadView('pdf.leave-application', [
-    //         'leaveApplication' => $leaveApplication,
-    //         'selectedLeaveTypes' => $selectedLeaveTypes,
-    //         'otherLeave' => $otherLeave,
-    //         'detailsOfLeave' => $detailsOfLeave,
-    //         'isDetailPresent' => $isDetailPresent,
-    //         'getDetailValue' => $getDetailValue,
-    //         'daysWithPay' => $daysWithPay,
-    //         'daysWithoutPay' => $daysWithoutPay,
-    //         'otherRemarks' => $otherRemarks,
-    //         'leaveCredits' => $leaveCredits,
-    //         'firstApproverName' => $firstApproverName,
-    //         'secondApproverName' => $secondApproverName,
-    //         'thirdApproverName' => $thirdApproverName,
-    //         'eSignature' => $eSignature,
-    //         'signatureImagePath' => $signatureImagePath,
-    //     ]);
-
-    //     return response()->streamDownload(function() use ($pdf) {
-    //         echo $pdf->output();
-    //     }, 'LeaveApplication' . $leaveApplicationId . '.pdf');
-    // }
     public function exportPDF($leaveApplicationId)
     {
         $leaveApplication = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
@@ -705,42 +691,15 @@ class LeaveApplicationTable extends Component
         return response()->download($outputPdfPath, 'LeaveApplication' . $leaveApplicationId . '.pdf')->deleteFileAfterSend(true);
     }
 
-    // public function exportExcel()
-    // {
-    //     $leaveApplication = LeaveApplication::where('user_id', Auth::id())
-    //         ->latest('created_at')
-    //         ->first();
-
-    //     if (!$leaveApplication) {
-    //         session()->flash('error', 'No leave application found for the current user.');
-    //         return;
-    //     }
-
-    //     $export = new LeaveCardExport($leaveApplication->id, $this->startDate, $this->endDate);
-
-    //     return $export->export();
-    // }
-    // public function exportExcel()
-    // {
-    //     $export = new LeaveCardExport(Auth::id(), $this->startDate, $this->endDate);
-    //     return $export->export();
-    // }
-    // public function exportExcel()
-    // {
-    //     $export = new LeaveLedgerExport(Auth::id(), $this->startDate, $this->endDate);
-    //     return $export->export();
-    // }
-
     public function render()
     {
         $userId = Auth::id();
-        // $leaveApplications = LeaveApplication::where('user_id', $userId)
-        //     ->with('vacationLeaveDetails', 'sickLeaveDetails')
-        //     ->orderBy('created_at', 'desc')
-        //     ->paginate(10);
 
+        // Fetch leave applications based on status
         $pendingApplications = $this->getApplications(['Pending']);
-        $approvedApplications = $this->getApplications(['Approved by HR', 'Approved by Supervisor', 'Approved']);
+        $approvedApplications = $this->getApplications(['Approved']); // Fully approved applications
+        $approvedByHRApplications = $this->getApplications(['Approved by HR']);
+        $approvedBySupervisorApplications = $this->getApplications(['Approved by Supervisor']);
         $disapprovedApplications = $this->getApplications(['Disapproved']);
 
         $leaveCredits = LeaveCredits::where('user_id', $userId)->first();
@@ -748,8 +707,9 @@ class LeaveApplicationTable extends Component
         return view('livewire.user.leave-application-table', [
             'pendingApplications' => $pendingApplications,
             'approvedApplications' => $approvedApplications,
+            'approvedByHRApplications' => $approvedByHRApplications,
+            'approvedBySupervisorApplications' => $approvedBySupervisorApplications,
             'disapprovedApplications' => $disapprovedApplications,
-            // 'leaveApplications' => $leaveApplications,
         ]);
     }
 
@@ -979,6 +939,9 @@ class LeaveApplicationTable extends Component
     {
         // Set default year to current year
         $this->selectedYear = date('Y');
+
+        $this->list_of_dates = [];
+        $this->number_of_days = 0;
     }
 
     public function updatedSelectedYear()

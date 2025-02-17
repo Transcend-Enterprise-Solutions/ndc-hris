@@ -251,6 +251,30 @@ class Registration extends Component
                 'appointment' => $this->appointment,
                 'item_number' => $this->itemNumber,
             ]);
+
+            $user->leaveCredits()->create([
+                'user_id' => $user->id,
+                'vl_total_credits' => 0,
+                'sl_total_credits' => 0,
+                'spl_total_credits' => 0,
+                'vl_claimable_credits' => 0,
+                'sl_claimable_credits' => 0,
+                'spl_claimable_credits' => 0,
+                'vl_claimed_credits' => 0,
+                'sl_claimed_credits' => 0,
+                'spl_claimed_credits' => 0,
+                'cto_total_credits' => 0,
+                'cto_claimable_credits' => 0,
+                'cto_claimed_credits' => 0,
+                'fl_claimable_credits' => 0,
+                'fl_claimed_credits' => 0,
+                // These fields remain null
+                'vlbalance_brought_forward' => null,
+                'slbalance_brought_forward' => null,
+                'date_forwarded' => null,
+                'credits_transferred' => 0,
+                'credits_inputted' => 0,
+            ]);
     
             // Commit the transaction if both user and user data are created successfully
             DB::commit();
