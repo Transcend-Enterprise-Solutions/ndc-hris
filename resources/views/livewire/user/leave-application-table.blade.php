@@ -64,33 +64,67 @@
         {{-- Leave Application Table --}}
         <div class="w-full flex justify-center">
             <div class="flex justify-center w-full">
-                <div class="w-full bg-white rounded-2xl p3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
-                    <div class="pb-4 pt-4 sm:pt-1">
-                        <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Leave Application</h1>
+                <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
+                    <div class="pb-4 pt-4 sm:pt-1 flex items-center justify-between relative">
+                        <!-- Title -->
+                        <div class="w-full text-center">
+                            <h1 class="text-lg font-bold text-slate-800 dark:text-white">Leave Application</h1>
+                        </div>
+
+                        <!-- Three Dots Button -->
+                        <div class="relative">
+                            <!-- Button to toggle dropdown -->
+                            <button wire:click="toggleDropdown"
+                                class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-600 focus:outline-none">
+                                <i class="bi bi-three-dots-vertical text-slate-800 dark:text-white"></i>
+                            </button>
+
+                            <!-- Dropdown Menu (Hidden by default) -->
+                            <div wire:click.away="closeDropdown"
+                                class="absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-white dark:bg-slate-700 ring-1 ring-black ring-opacity-5 z-50 {{ $showDropdown ? 'block' : 'hidden' }}">
+                                <div class="py-1">
+                                    <!-- Request Button -->
+                                    <button
+                                        class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600">
+                                        Request Mandatory Leave Form
+                                    </button>
+                                    <!-- Export Button -->
+                                    <button
+                                        class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600">
+                                        <span class="text-green-600 text-lg"><i class="bi bi-filetype-xlsx"></i></span>
+                                        Export
+                                        Mandatory Leave Form
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- @php
                         $isDisabled = empty($startDate) || empty($endDate);
                     @endphp --}}
 
-                    <div class="flex flex-col md:flex-row items-center justify-between">
-                        <!-- Apply for Leave Button -->
-                        <div class="flex items-center mb-4 md:mb-0">
-                            <button wire:click="openLeaveForm"
-                                class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
-                                Apply For Leave
-                            </button>
+                    <div class="flex flex-col justify-between items-center sm:flex-row">
+                        <div class="flex flex-col md:flex-row items-center w-60">
+                            <!-- Apply for Leave Button -->
+                            <div class="flex items-center mb-4 md:mb-0 w-full">
+                                <button wire:click="openLeaveForm"
+                                    class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
+                                    Apply For Leave
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Year Selection and Export Button -->
-                        <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex justify-center items-center gap-4 w-64">
                             <!-- Year Selection -->
-                            <div class="flex flex-col md:mb-0">
+                            <div class="flex flex-col">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">
                                     Select Year:
                                 </label>
                                 <select wire:model.live="selectedYear"
-                                    class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md dark:hover:bg-slate-600 dark:border-slate-600 dark:text-gray-300 dark:bg-gray-800">
+                                    class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 
+                rounded-md dark:hover:bg-slate-600 dark:border-slate-600 dark:text-gray-300 dark:bg-gray-800">
                                     @for ($year = now()->year; $year >= 2020; $year--)
                                         <option value="{{ $year }}">{{ $year }}</option>
                                     @endfor
@@ -98,36 +132,31 @@
                             </div>
 
                             <!-- Export Button -->
-                            <div class="flex items-end">
-                                <div class="flex flex-col md:mb-0">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">
-                                        Generate Leave Card
-                                    </label>
-                                    <button wire:click="exportExcel"
-                                        class="sm:mt-0 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                           justify-center px-4 py-1.5 text-sm font-medium tracking-wide
-                           text-neutral-800 dark:text-neutral-200 transition-colors duration-200
-                           rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none 
-                           {{ $isDisabled ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer' }}"
-                                        type="button" title="Export Leave Card" {{ $isDisabled ? 'disabled' : '' }}>
-                                        <img class="flex dark:hidden" src="/images/export-excel.png" width="22"
-                                            alt="exportExcel" wire:target="exportExcel" wire:loading.remove>
-                                        <img class="hidden dark:block" src="/images/export-excel-dark.png"
-                                            width="22" alt="exportExcel" wire:target="exportExcel"
-                                            wire:loading.remove>
-                                        <div wire:loading wire:target="exportExcel">
-                                            <div class="spinner-border small text-primary" role="status"></div>
-                                        </div>
-                                    </button>
-                                </div>
+                            <div class="flex flex-col">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">
+                                    Generate Leave Card
+                                </label>
+                                <button wire:click="exportExcel"
+                                    class="inline-flex items-center justify-center px-4 py-1.5 text-sm font-medium tracking-wide
+                text-neutral-800 dark:text-neutral-200 transition-colors duration-200 rounded-lg border border-gray-400 
+                hover:bg-gray-300 dark:hover:bg-slate-600 dark:border-slate-600 focus:outline-none 
+                {{ $isDisabled ? 'opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer' }}"
+                                    type="button" title="Export Leave Card" {{ $isDisabled ? 'disabled' : '' }}>
+                                    <img class="flex dark:hidden" src="/images/export-excel.png" width="22"
+                                        alt="exportExcel" wire:target="exportExcel" wire:loading.remove>
+                                    <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22"
+                                        alt="exportExcel" wire:target="exportExcel" wire:loading.remove>
+                                    <div wire:loading wire:target="exportExcel">
+                                        <div class="spinner-border small text-primary" role="status"></div>
+                                    </div>
+                                </button>
                             </div>
                         </div>
                     </div>
 
-
                     <div x-data="{ activeTab: @entangle('activeTab') }" class="flex flex-col">
                         <!-- Tabs for Status -->
-                        <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700">
+                        <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700 mt-4">
                             <button @click="$wire.setActiveTab('pending')"
                                 :class="{
                                     'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': $wire
@@ -137,6 +166,26 @@
                                 }"
                                 class="h-min px-4 py-2 text-sm mb-4">
                                 Pending
+                            </button>
+                            <button @click="$wire.setActiveTab('approvedByHR')"
+                                :class="{
+                                    'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': $wire
+                                        .activeTab === 'approvedByHR',
+                                    'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': $wire
+                                        .activeTab !== 'approvedByHR'
+                                }"
+                                class="h-min px-4 py-2 text-sm mb-4 whitespace-nowrap">
+                                Approved by HR
+                            </button>
+                            <button @click="$wire.setActiveTab('approvedBySupervisor')"
+                                :class="{
+                                    'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': $wire
+                                        .activeTab === 'approvedBySupervisor',
+                                    'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': $wire
+                                        .activeTab !== 'approvedBySupervisor'
+                                }"
+                                class="h-min px-4 py-2 text-sm mb-4 whitespace-nowrap">
+                                Approved by Supervisor
                             </button>
                             <button @click="$wire.setActiveTab('approved')"
                                 :class="{
@@ -193,9 +242,9 @@
                                                 Approved Date/s
                                             </th>
                                         @endif
-                                        <th scope="col"
+                                        {{-- <th scope="col"
                                             class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                            Status</th>
+                                            Status</th> --}}
                                         <th
                                             class="px-5 py-3 text-gray-100 text-sm font-medium text-center sticky top-0 right-0 z-10 bg-gray-600 dark:bg-gray-600 uppercase">
                                             Actions</th>
@@ -203,7 +252,8 @@
                                 </thead>
                                 <tbody>
                                     <!-- Filtering based on selected tab -->
-                                    @foreach ($activeTab === 'pending' ? $pendingApplications : ($activeTab === 'approved' ? $approvedApplications : $disapprovedApplications) as $leaveApplication)
+                                    {{-- @foreach ($activeTab === 'pending' ? $pendingApplications : ($activeTab === 'approved' ? $approvedApplications : $disapprovedApplications) as $leaveApplication) --}}
+                                    @foreach ($activeTab === 'pending' ? $pendingApplications : ($activeTab === 'approvedByHR' ? $approvedByHRApplications : ($activeTab === 'approvedBySupervisor' ? $approvedBySupervisorApplications : ($activeTab === 'approved' ? $approvedApplications : $disapprovedApplications))) as $leaveApplication)
                                         <tr class="whitespace-nowrap">
                                             <td class="px-4 py-2 text-center">
                                                 {{ $leaveApplication->date_of_filing }}</td>
@@ -249,7 +299,7 @@
                                                     {{ \Illuminate\Support\Str::limit($leaveApplication->approved_dates, 10, '...') ?? 'N/A' }}
                                                 </td>
                                             @endif
-                                            <td class="px-4 py-2 text-center">
+                                            {{-- <td class="px-4 py-2 text-center">
                                                 <span
                                                     class="inline-block px-3 py-1 text-sm font-semibold 
                                                 {{ in_array($leaveApplication->status, ['Approved by HR', 'Approved by Supervisor', 'Approved'])
@@ -259,7 +309,7 @@
                                                         : 'text-yellow-800 bg-yellow-200') }} rounded-full">
                                                     {{ $leaveApplication->status }}
                                                 </span>
-                                            </td>
+                                            </td> --}}
                                             <td
                                                 class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                 {{-- @if (in_array($leaveApplication->status, ['Approved by HR', 'Approved by Supervisor', 'Approved', 'Disapproved'])) --}}
@@ -286,6 +336,10 @@
                         <div class="p-5 border-t border-neutral-500 dark:border-neutral-200">
                             @if ($activeTab === 'pending')
                                 {{ $pendingApplications->links() }}
+                            @elseif ($activeTab === 'approvedByHR')
+                                {{ $approvedByHRApplications->links() }}
+                            @elseif ($activeTab === 'approvedBySupervisor')
+                                {{ $approvedBySupervisorApplications->links() }}
                             @elseif ($activeTab === 'approved')
                                 {{ $approvedApplications->links() }}
                             @else
@@ -301,9 +355,28 @@
             <x-modal id="applyForLeave" maxWidth="5xl" wire:model="applyForLeave">
                 <div class="p-4">
                     <div
-                        class="bg-slate-800 rounded-t-lg dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                        Basic Information
+                        class="bg-slate-800 rounded-t-lg dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold flex justify-between items-center">
+                        <span>Basic Information</span>
+                        <div class="relative group">
+                            <i class="bi bi-info-circle cursor-pointer"></i>
+                            <div
+                                class="absolute right-0 w-64 bg-gray-700 text-white text-sm p-3 rounded border border-slate-50 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300 z-50">
+                                <strong>📌 Instructions:</strong><br><br>
+                                <strong>Basic Information:</strong> This section is automatically filled with your
+                                details.<br><br>
+                                <strong>Details of Application:</strong><br>
+                                - In <strong>Part A</strong>, select one leave type.<br>
+                                - In <strong>Part B</strong>, choose one option that applies to your leave.<br>
+                                - In <strong>Part C</strong>, select your leave dates. If you're sure, click "Add" to
+                                confirm, or close it to make changes. The total days will be calculated
+                                automatically.<br>
+                                - In <strong>Part D</strong>, you must select one required option.<br><br>
+                                <strong>Upload File:</strong> This step is optional. You may attach supporting documents
+                                if needed.
+                            </div>
+                        </div>
                     </div>
+
 
                     <div class="border p-4">
                         <form>

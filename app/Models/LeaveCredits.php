@@ -13,7 +13,9 @@ class LeaveCredits extends Model
 
     protected $fillable = [
         'user_id',
-        'total_credits',
+        'vl_total_credits',
+        'sl_total_credits',
+        'spl_total_credits',
 
         'vl_claimable_credits',
         'sl_claimable_credits',
