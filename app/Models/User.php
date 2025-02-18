@@ -254,6 +254,11 @@ class User extends Authenticatable
         return $this->hasMany(OfficialBusiness::class);
     }
 
+    public function mandatoryFormRequest()
+    {
+        return $this->hasMany(MandatoryFormRequest::class);
+    }
+
     /**
      * The attributes that should be cast.
      *

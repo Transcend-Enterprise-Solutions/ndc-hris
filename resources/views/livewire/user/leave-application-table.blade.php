@@ -82,18 +82,24 @@
                             <!-- Dropdown Menu (Hidden by default) -->
                             <div wire:click.away="closeDropdown"
                                 class="absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-white dark:bg-slate-700 ring-1 ring-black ring-opacity-5 z-50 {{ $showDropdown ? 'block' : 'hidden' }}">
-                                <div class="py-1">
+                                <div class="p-2">
                                     <!-- Request Button -->
-                                    <button
-                                        class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600">
-                                        Request Mandatory Leave Form
+                                    <button wire:click="requestForm"
+                                        class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md
+                           transition-all">
+                                        @if ($requestSent)
+                                            Request Sent <i class="bi bi-check2-circle text-green-500"></i>
+                                        @else
+                                            Request Mandatory Leave Form
+                                        @endif
                                     </button>
-                                    <!-- Export Button -->
-                                    <button
-                                        class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600">
-                                        <span class="text-green-600 text-lg"><i class="bi bi-filetype-xlsx"></i></span>
-                                        Export
-                                        Mandatory Leave Form
+
+                                    <!-- Export Button (Disabled until approved) -->
+                                    <button wire:click="exportMandatoryLeaveForm"
+                                        class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md
+    transition-all {{ !$requestApproved ? 'cursor-not-allowed opacity-50' : '' }}"
+                                        @if (!$requestApproved) disabled @endif>
+                                        Export Mandatory Leave Form
                                     </button>
                                 </div>
                             </div>
