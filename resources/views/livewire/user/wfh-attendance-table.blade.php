@@ -1,5 +1,5 @@
-<div x-data="{ 
-    open: false, 
+<div x-data="{
+    open: false,
     showWFHLocHistory: '{{ request()->query('showWFHLocHistory', false) }}',
     viewWFHLocHistory: false,
 }" class="w-full">
@@ -9,7 +9,7 @@
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             transition: all 0.3s ease;
         }
-        
+
         #map:hover {
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
@@ -18,7 +18,7 @@
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             transition: all 0.3s ease;
         }
-        
+
         #map2:hover {
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
@@ -64,8 +64,8 @@
     <div class="w-full flex justify-center">
         <div class="flex justify-center w-full">
             <div class="w-full bg-white rounded-2xl p-3 sm:p-8 shadow dark:bg-gray-800 overflow-x-visible">
-                
-                @if($isMyBirthday)
+
+                @if ($isMyBirthday)
                     <x-birthday />
                 @endif
 
@@ -175,13 +175,13 @@
                                                 </tr>
                                             </thead>
                                             <tbody class="divide-y divide-neutral-300 dark:divide-gray-600">
-                                                @foreach($history as $employee)
+                                                @foreach ($history as $employee)
                                                     <tr class="text-neutral-800 dark:text-neutral-200">
                                                         <td class="px-5 py-4 text-left text-sm font-medium text-nowrap">
                                                             {{ \Carbon\Carbon::parse($employee->date_approved)->format('F d, Y') }}
                                                         </td>
                                                         <td class="px-5 py-4 text-center text-sm font-medium text-nowrap">
-                                                            @if($employee->status == 1)
+                                                            @if ($employee->status == 1)
                                                                 <span
                                                                     class="text-xs text-white bg-green-500 rounded-lg py-1.5 px-4">Approved</span>
                                                             @elseif($employee->status == 2)
@@ -287,9 +287,14 @@
                 @endif --}}
 
                 <div class="w-full flex flex-col justify-center items-center">
-                    <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-12">
+                    <div id="clock" class="text-lg font-semibold mb-4 text-gray-900 dark:text-white h-10 text-center">
+                        <!-- Time will be displayed here -->
+                    </div>
+                    <div
+                        class="flex flex-col sm:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-12">
 
-                        <div class="block max-w-sm p-6 border border-gray-200 rounded-lg shadow bg-gray-50 dark:bg-slate-700 dark:border-gray-700 relative">
+                        <div
+                            class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700 relative">
                             <h5
                                 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">
                                 NDC WFH ATTENDANCE</h5>
@@ -301,11 +306,11 @@
                                         class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
                                         <span
                                             class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
-                                            Morning In
+                                            Time In
                                         </span>
                                     </button>
                                 </div>
-                                <div class="flex justify-center">
+                                {{-- <div class="flex justify-center">
                                     <button wire:click="confirmPunch('morningOut', 'Morning Out')"
                                         @if ($morningOutDisabled) disabled @endif
                                         class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -324,14 +329,14 @@
                                             Afternoon In
                                         </span>
                                     </button>
-                                </div>
+                                </div> --}}
                                 <div class="flex justify-center">
                                     <button wire:click="confirmPunch('afternoonOut', 'Afternoon Out')"
                                         @if ($afternoonOutDisabled) disabled @endif
                                         class="relative inline-flex items-center justify-center p-0.5 mb-2 mx-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
                                         <span
                                             class="relative px-10 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
-                                            Afternoon Out
+                                            Time Out
                                         </span>
                                     </button>
                                 </div>
@@ -357,7 +362,8 @@
                             @endif
                         </div>
 
-                        <div class="block max-w-sm p-6 border border-gray-200 rounded-lg shadow bg-gray-50 dark:bg-slate-700 dark:border-gray-700 relative">
+                        <div
+                            class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700 relative">
                             <h3
                                 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-center">
                                 {{ $scheduleType === 'WFH' ? 'WFH Punch Time' : 'Onsite Punch Time' }}
@@ -371,10 +377,11 @@
                                 <h4 class="text-xl font-semibold text-gray-900 dark:text-white text-center border-b">
                                     {{ $today }}
                                 </h4>
-
+                                {{-- 'Morning Out',
+                                    'Afternoon In', --}}
                                 <div class="mt-2 text-center">
                                     @if ($scheduleType === 'WFH')
-                                        @foreach (['Morning In', 'Morning Out', 'Afternoon In', 'Afternoon Out'] as $type)
+                                        @foreach (['Morning In', 'Afternoon Out'] as $type)
                                             <div class="mb-2 text-center">
                                                 <strong>{{ $type }}</strong>
                                                 <div>
@@ -391,11 +398,11 @@
                                     @else
                                         {{-- Onsite punch times from EmployeesDTR --}}
                                         <div class="mb-2 text-center">
-                                            <strong>Morning In</strong>
+                                            <strong>Time In</strong>
                                             <div>{{ $groupedTransactions->morning_in ?? 'No punch time recorded' }}
                                             </div>
                                         </div>
-                                        <div class="mb-2 text-center">
+                                        {{-- <div class="mb-2 text-center">
                                             <strong>Morning Out</strong>
                                             <div>{{ $groupedTransactions->morning_out ?? 'No punch time recorded' }}
                                             </div>
@@ -404,9 +411,9 @@
                                             <strong>Afternoon In</strong>
                                             <div>{{ $groupedTransactions->afternoon_in ?? 'No punch time recorded' }}
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="mb-2 text-center">
-                                            <strong>Afternoon Out</strong>
+                                            <strong>Time Out</strong>
                                             <div>{{ $groupedTransactions->afternoon_out ?? 'No punch time recorded' }}
                                             </div>
                                         </div>
@@ -449,11 +456,11 @@
                         </div>
                     </div>
                 </x-modal>
-  
+
             </div>
         </div>
     </div>
-    
+
     {{-- Add WFH Location Modal --}}
     {{-- <x-modal id="registerLocation" maxWidth="md" wire:model="editLocation" x-data @open-modal.window="initMap2()">
         <div class="p-4">
@@ -713,4 +720,22 @@
         });
     });
 </script> --}}
-
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        };
+        const timeString = now.toLocaleString('en-US', options);
+        document.getElementById('clock').textContent = timeString;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+</script>

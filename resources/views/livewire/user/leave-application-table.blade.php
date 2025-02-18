@@ -98,7 +98,7 @@
                                     <button wire:click="exportMandatoryLeaveForm"
                                         class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md
     transition-all {{ !$requestApproved ? 'cursor-not-allowed opacity-50' : '' }}"
-                                        @if (!$requestApproved) disabled @endif>
+                                        @if (!$requestApproved) disabled title="Not yet approved. Please wait for it" @endif>
                                         Export Mandatory Leave Form
                                     </button>
                                 </div>
