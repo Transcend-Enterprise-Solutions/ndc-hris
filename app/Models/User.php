@@ -254,6 +254,11 @@ class User extends Authenticatable
         return $this->hasMany(OfficialBusiness::class);
     }
 
+    public function monthlyIncomeTax()
+    {
+        return $this->hasMany(MonthlyIncomeTax::class);
+    }
+
     /**
      * The attributes that should be cast.
      *
