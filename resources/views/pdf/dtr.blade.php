@@ -88,13 +88,14 @@
                 <thead>
                     <tr>
                         <th>Date</th>
+                        <th>Day</th>
                         <th>AM In</th>
                         <th>AM Out</th>
                         <th>PM In</th>
                         <th>PM Out</th>
                         <th>Total Hours</th>
                         <th>Late/Undertime</th>
-                        <th>Day</th>
+                        <th>Overtime</th>
                         <th>Arrangement</th>
                         <th>Remarks</th>
                     </tr>
@@ -104,13 +105,14 @@
                         @if($dtr)
                             <tr>
                                 <td>{{ $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('d') : '--' }}</td>
+                                <td>{{ $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('D') : '--' }}</td>
                                 <td>{{ $dtr->morning_in ?? '--:--' }}</td>
                                 <td>{{ $dtr->morning_out ?? '--:--' }}</td>
                                 <td>{{ $dtr->afternoon_in ?? '--:--' }}</td>
                                 <td>{{ $dtr->afternoon_out ?? '--:--' }}</td>
                                 <td>{{ $dtr->total_hours_rendered }}</td>
                                 <td>{{ $dtr->late }}</td>
-                                <td>{{ $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('D') : '--' }}</td>
+                                <td>{{ $dtr->overtime ?? '--:--' }}</td>
                                 <td>
                                     {{ $dtr->location === 'Onsite' ? '' : $dtr->location }}
                                 </td>
@@ -135,15 +137,10 @@
                         Employee
                     </div>
                 </div>
-                {{-- <strong style="text-decoration: underline;">{{ $employeeName }}</strong> --}}
                 <br><br><br>
 
                 Verified and found correct as to the prescribed office hours.
                 <div style="position: relative; margin-top: 10px; min-height: 60px;">
-                    {{-- @if($eSignaturePath)
-                        <img src="{{ storage_path('app/public/' . $eSignaturePath) }}"
-                             style="width: 90px; height: auto; position: absolute; top: -5px; left: 0; z-index: 1;">
-                    @endif --}}
                     <div style="position: relative; z-index: 2; padding-top: 20px;">
                         <strong style="text-decoration: underline; z-index: 2;">
                             {{ $employeeDtrs->first()->sign_name ?? '' }}
