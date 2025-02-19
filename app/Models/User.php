@@ -254,9 +254,16 @@ class User extends Authenticatable
         return $this->hasMany(OfficialBusiness::class);
     }
 
+
     public function monthlyIncomeTax()
     {
         return $this->hasMany(MonthlyIncomeTax::class);
+    }
+    
+    public function mandatoryFormRequest()
+    {
+        return $this->hasMany(MandatoryFormRequest::class);
+
     }
 
     /**

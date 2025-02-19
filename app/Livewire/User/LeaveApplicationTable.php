@@ -25,6 +25,9 @@ use Illuminate\Support\Str;
 use App\Exports\LeaveCardExport;
 use App\Exports\LeaveLedgerExport;
 use Carbon\Carbon;
+use App\Models\MandatoryFormRequest;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class LeaveApplicationTable extends Component
 {
@@ -66,6 +69,8 @@ class LeaveApplicationTable extends Component
     public $activeTab = 'pending';
 
     public $showDropdown = false;
+    public $requestSent = false;
+    public $requestApproved = false;
 
     public $pageSize = 5; 
     public $pageSizes = [5, 10, 20, 30, 50, 100]; 
@@ -695,6 +700,13 @@ class LeaveApplicationTable extends Component
     {
         $userId = Auth::id();
 
+        $request = MandatoryFormRequest::where('user_id', $userId)
+            ->orderBy('date_requested', 'desc')
+            ->first();
+
+        $this->requestSent = $request !== null;
+        $this->requestApproved = $request && $request->status === 'approved';
+
         // Fetch leave applications based on status
         $pendingApplications = $this->getApplications(['Pending']);
         $approvedApplications = $this->getApplications(['Approved']); // Fully approved applications
@@ -954,5 +966,162 @@ class LeaveApplicationTable extends Component
     {
         $export = new LeaveCardExport(Auth::id(), $this->selectedYear);
         return $export->export();
+    }
+
+    public function requestForm()
+    {
+        $userId = Auth::id();
+
+        // Check if the user has already requested today
+        $existingRequest = MandatoryFormRequest::where('user_id', $userId)
+            ->whereDate('date_requested', now()->toDateString())
+            ->first();
+
+        if (!$existingRequest) {
+            // Create a new record in 'mandatory_form_request'
+            MandatoryFormRequest::create([
+                'user_id' => $userId,
+                'status' => 'pending',
+                'date_requested' => now(),
+            ]);
+        }
+    }
+
+    public function exportMandatoryLeaveForm()
+    {
+        try {
+            // Get the currently logged in user and their data
+            $user = Auth::user();
+            $userData = UserData::where('user_id', $user->id)->first();
+            
+            if (!$userData) {
+                $this->dispatch('swal', [
+                    'title' => "Error!",
+                    'text' => "User data not found.",
+                    'icon' => 'error'
+                ]);
+                return;
+            }
+            
+            // Get office division
+            $officeDivision = OfficeDivisions::find($user->office_division_id);
+            $office = $officeDivision ? $officeDivision->office_division : 'N/A';
+            
+            // Find all approved Mandatory/Forced Leave applications for the user
+            $leaveApplications = LeaveApplication::where('user_id', $user->id)
+                ->where('type_of_leave', 'like', '%Mandatory/Forced Leave%')
+                ->where('status', 'Approved')
+                ->where('remarks', 'With Pay')
+                ->get();
+                
+            if ($leaveApplications->isEmpty()) {
+                $this->dispatch('swal', [
+                    'title' => "No Records Found",
+                    'text' => "You don't have any approved Mandatory/Forced Leave applications.",
+                    'icon' => 'info'
+                ]);
+                return;
+            }
+
+            // Find the mandatory form request for this user
+            $mandatoryFormRequest = MandatoryFormRequest::where('user_id', $user->id)
+                ->where('status', 'approved')
+                ->latest()
+                ->first();
+        
+            // Get the name of the approver
+            $approverName = null;
+            if ($mandatoryFormRequest && $mandatoryFormRequest->approved_by) {
+                $approver = User::find($mandatoryFormRequest->approved_by);
+                if ($approver) {
+                    $approverName = $approver->name;
+                }
+            }
+            
+            // Load the template file
+            $templatePath = storage_path('app/public/leave_template/Mandatory Leave Form.xls');
+            $spreadsheet = IOFactory::load($templatePath);
+            $worksheet = $spreadsheet->getActiveSheet();
+            
+            // Get the current year
+            $year = Carbon::now()->format('Y');
+            
+            // Map data to specific cells
+            $worksheet->setCellValue('A8', "FOR CALENDAR YEAR " . $year);
+            $worksheet->setCellValue('B11', $user->name);
+            $worksheet->setCellValue('B12', $office);
+            
+            // Collect all approved dates
+            $allDates = [];
+            foreach ($leaveApplications as $leave) {
+                $dates = explode(',', $leave->approved_dates);
+                foreach ($dates as $date) {
+                    if (trim($date) !== '') {
+                        // Check if it's a date range
+                        if (strpos($date, ' - ') !== false) {
+                            list($startDate, $endDate) = explode(' - ', $date);
+                            $start = Carbon::parse($startDate);
+                            $end = Carbon::parse($endDate);
+                            
+                            // Add all weekdays in the range
+                            for ($current = $start; $current->lte($end); $current->addDay()) {
+                                if (!$current->isWeekend()) {
+                                    $allDates[] = $current->format('Y-m-d');
+                                }
+                            }
+                        } else {
+                            $allDates[] = $date;
+                        }
+                    }
+                }
+            }
+            
+            // Sort dates and remove duplicates
+            $allDates = array_unique($allDates);
+            sort($allDates);
+            
+            // Add dates to the worksheet
+            foreach ($allDates as $index => $date) {
+                $formattedDate = ($index + 1) . ". " . Carbon::parse($date)->format('F d, Y');
+                $cellRow = 16 + $index; // Assuming dates start at row 16
+                $worksheet->setCellValue("A{$cellRow}", $formattedDate);
+                
+                // If we have more than 10 dates, we need to add rows
+                if ($index >= 10) {
+                    $worksheet->insertNewRowBefore($cellRow + 1, 1);
+                }
+            }
+            
+            // Add user name in C24 with bold formatting (or adjust row if needed due to added rows)
+            $signatureRow = 24 + max(0, count($allDates) - 10); // Adjust signature row if rows were added
+            $worksheet->setCellValue("C{$signatureRow}", $approverName ?: 'Not available');
+            $worksheet->getStyle("C{$signatureRow}")->getFont()->setBold(true);
+            
+            // Generate unique filename
+            $fileName = 'MandatoryLeaveForm' . $year . '.xlsx';
+            
+            // Create response
+            $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+            
+            $response = new StreamedResponse(
+                function () use ($writer) {
+                    $writer->save('php://output');
+                }
+            );
+            
+            $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            $response->headers->set('Content-Disposition', 'attachment;filename="' . $fileName . '"');
+            $response->headers->set('Cache-Control', 'max-age=0');
+            
+            return $response;
+            
+        } catch (\Exception $e) {
+            $this->dispatch('swal', [
+                'title' => "Error!",
+                'text' => "An error occurred while generating the Excel file: " . $e->getMessage(),
+                'icon' => 'error'
+            ]);
+            return null;
+        }
     }
 }
