@@ -21,7 +21,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="build/assets/app-D1PKttJq.css">
+    <link rel="stylesheet" href="build/assets/app-CXLG3pI-.css">
 
     @livewireStyles
     <style>

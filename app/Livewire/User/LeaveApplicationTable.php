@@ -671,7 +671,7 @@ class LeaveApplicationTable extends Component
         $pdf->save($firstPagePath);
     
         // Step 2: Path to your second-page template
-        $secondPageTemplatePath = public_path('storage/pdf_template/secondpage.pdf');
+        $secondPageTemplatePath = storage_path('app/public/pdf_template/secondpage.pdf');
     
         // Step 3: Combine the first and second pages using FPDI
         $outputPdfPath = storage_path('app/temp/combined-output.pdf');
@@ -916,7 +916,7 @@ class LeaveApplicationTable extends Component
         file_put_contents($tempFirstPagePath, $firstPagePDF->output());
 
         // Path to the second page template
-        $secondPageTemplatePath = public_path('storage/pdf_template/secondpage.pdf');
+        $secondPageTemplatePath = storage_path('app/public/pdf_template/secondpage.pdf');
         if (!file_exists($secondPageTemplatePath)) {
             throw new \Exception('Second page template not found at: ' . $secondPageTemplatePath);
         }
