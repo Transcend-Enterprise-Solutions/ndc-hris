@@ -29,7 +29,7 @@
                                                         Details of Leave</th>
                                                     <th scope="col"
                                                         class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                                        Number of days</th>
+                                                        Number of day/s</th>
                                                     <th scope="col"
                                                         class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
                                                         List of Date</th>
@@ -37,61 +37,34 @@
                                                         class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
                                                         Uploaded File</th>
                                                     <th scope="col"
-                                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                                        Remarks</th>
-                                                    <th scope="col"
-                                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                                        Approved Day/s</th>
-                                                    <th scope="col"
-                                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                                        Approved Date/s</th>
-                                                    <th scope="col"
-                                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                                        Status</th>
-                                                    <th scope="col"
                                                         class="px-5 py-3 text-gray-100 text-sm font-medium text-right sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
                                                         Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($leaveApplications as $leaveApplication)
-                                                    <tr class="whitespace-nowrap">
+                                                    <tr
+                                                        class="whitespace-nowrap border-b border-gray-400 dark:text-neutral-200">
                                                         <td class="px-4 py-2 text-center">{{ $leaveApplication->name }}
                                                         </td>
                                                         <td class="px-4 py-2 text-center">
                                                             {{ $leaveApplication->date_of_filing }}</td>
                                                         <td class="px-4 py-2 text-center">
-                                                            @php
-                                                                $typeOfLeave = $leaveApplication->type_of_leave;
-                                                                $truncatedTypeOfLeave = \Illuminate\Support\Str::limit(
-                                                                    $typeOfLeave,
-                                                                    10,
-                                                                    '...',
-                                                                );
-                                                            @endphp
-                                                            <span
-                                                                @if (strlen($typeOfLeave) > 10) title="{{ $typeOfLeave }}" @endif>
-                                                                {{ $truncatedTypeOfLeave }}
-                                                            </span>
-                                                        </td>
+                                                            {{ $leaveApplication->type_of_leave }}</td>
                                                         <td class="px-4 py-2 text-center">
-                                                            @php
-                                                                $detailsOfLeave = $leaveApplication->details_of_leave;
-                                                                $truncatedDetailsOfLeave = \Illuminate\Support\Str::limit(
-                                                                    $detailsOfLeave,
-                                                                    10,
-                                                                    '...',
-                                                                );
-                                                            @endphp
-                                                            <span
-                                                                @if (strlen($detailsOfLeave) > 10) title="{{ $detailsOfLeave }}" @endif>
-                                                                {{ $truncatedDetailsOfLeave }}
-                                                            </span>
-                                                        </td>
+                                                            {{ $leaveApplication->details_of_leave ?? 'N/A' }}</td>
                                                         <td class="px-4 py-2 text-center">
                                                             {{ $leaveApplication->number_of_days }}</td>
                                                         <td class="px-4 py-2 text-center">
-                                                            {{ \Illuminate\Support\Str::limit($leaveApplication->list_of_dates, 10, '...') }}
+                                                            @if (Str::contains($leaveApplication->list_of_dates, ' - '))
+                                                                {{ $leaveApplication->list_of_dates }}
+                                                            @else
+                                                                <div class="flex flex-col">
+                                                                    @foreach (explode(',', $leaveApplication->list_of_dates) as $date)
+                                                                        <span>{{ trim($date) }}</span>
+                                                                    @endforeach
+                                                                </div>
+                                                            @endif
                                                         </td>
                                                         <td class="px-4 py-2 text-center">
                                                             @if ($leaveApplication->file_name && $leaveApplication->file_path)
@@ -121,58 +94,24 @@
                                                                 <p>No file</p>
                                                             @endif
                                                         </td>
-                                                        <td class="px-4 py-2 text-center">
-                                                            {{ $leaveApplication->remarks ?? 'N/A' }}
-                                                        </td>
-                                                        <td class="px-4 py-2 text-center">
-                                                            {{ $leaveApplication->approved_days ?? 'N/A' }}
-                                                        </td>
-                                                        <td class="px-4 py-2 text-center">
-                                                            {{ \Illuminate\Support\Str::limit($leaveApplication->approved_dates, 10, '...') ?? 'N/A' }}
-                                                        </td>
-                                                        <td class="px-4 py-2 text-center">
-                                                            <span
-                                                                class="inline-block px-3 py-1 text-sm font-semibold
-                                                            {{ $leaveApplication->status === 'Approved'
-                                                                ? 'text-green-800 bg-green-200'
-                                                                : ($leaveApplication->status === 'Disapproved'
-                                                                    ? 'text-red-800 bg-red-200'
-                                                                    : ($leaveApplication->status === 'Pending'
-                                                                        ? 'text-yellow-800 bg-yellow-200'
-                                                                        : '')) }} rounded-lg">
-                                                                {{ $leaveApplication->status }}
-                                                            </span>
-                                                        </td>
                                                         <td
                                                             class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                            @if ($leaveApplication->actionsVisible)
-                                                                @if ($leaveApplication->isHR)
-                                                                    <button
-                                                                        @click="$wire.openApproveModal({{ $leaveApplication->id }})"
-                                                                        class="text-blue-500">
-                                                                        <i class="bi bi-check-lg" title="Approve"></i>
-                                                                    </button>
-                                                                    <button
-                                                                        @click="$wire.openDisapproveModal({{ $leaveApplication->id }})"
-                                                                        class="text-red-500">
-                                                                        <i class="bi bi-x" title="Disapprove"></i>
-                                                                    </button>
-                                                                @elseif($leaveApplication->isEndorser)
-                                                                    <button
-                                                                        @click="$wire.openEndorserApproveModal({{ $leaveApplication->id }})"
-                                                                        class="mx-4 text-blue-500">
-                                                                        <i class="bi bi-check-lg" title="Approve"></i>
-                                                                    </button>
-                                                                @endif
-                                                            @endif
+                                                            <button
+                                                                @click="$wire.openApproveModal({{ $leaveApplication->id }})"
+                                                                class="text-blue-500">
+                                                                <i class="bi bi-check-lg" title="Approve"></i>
+                                                            </button>
+                                                            <button
+                                                                @click="$wire.openDisapproveModal({{ $leaveApplication->id }})"
+                                                                class="text-red-500">
+                                                                <i class="bi bi-x" title="Disapprove"></i>
+                                                            </button>
 
                                                             <button wire:click="showPDF({{ $leaveApplication->id }})"
                                                                 class="text-blue-500 hover:text-blue-600">
                                                                 <i class="bi bi-eye" title="Show Details"></i>
                                                             </button>
                                                         </td>
-
-
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -226,17 +165,6 @@
                     @endif
 
                     @if ($status === 'With Pay' || $status === 'Without Pay')
-                        {{-- <div class="mb-4">
-                            <label for="days"
-                                class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number
-                                of Days</label>
-                            <input type="number" wire:model="days" id="days"
-                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700"
-                                min="1">
-                            @error('days')
-                                <span class="text-red-500">{{ $message }}</span>
-                            @enderror
-                        </div> --}}
                         <div class="mb-4">
                             <label for="days"
                                 class="block text-sm font-medium text-gray-700 dark:text-slate-400">Number of
@@ -266,39 +194,6 @@
                         </div>
                     @endif
 
-                    {{-- New Section for Endorsers --}}
-                    <div class="mb-4">
-                        <label for="endorser1" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
-                            Second Approver
-                        </label>
-                        <select wire:model.live="endorser1" id="endorser1"
-                            class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
-                            <option value="">Select a supervisor</option>
-                            @foreach ($nonEmployeeUsers as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('endorser1')
-                            <span class="text-red-500">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="endorser2" class="block text-sm font-medium text-gray-700 dark:text-slate-400">
-                            Last Approver
-                        </label>
-                        <select wire:model.live="endorser2" id="endorser2"
-                            class="mt-1 p-2 block w-full shadow-sm sm:text-sm rounded-md dark:text-gray-300 dark:bg-gray-700">
-                            <option value="">Select a supervisor</option>
-                            @foreach ($filteredEndorser2Users as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('endorser2')
-                            <span class="text-red-500">{{ $message }}</span>
-                        @enderror
-                    </div>
-
                     <div class="flex justify-end">
                         <button type="button" @click="$wire.closeApproveModal()"
                             class="mr-2 bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
@@ -325,66 +220,6 @@
                         <button type="button" @click="$wire.closeDisapproveModal()"
                             class="mr-2 bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
                         <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Disapprove</button>
-                    </div>
-                </form>
-            </div>
-        </x-modal>
-
-        <!-- Endorser Approve Modal -->
-        <x-modal maxWidth="lg" wire:model="showEndorserApprove" centered>
-            <div class="p-6">
-                <!-- Modal Header -->
-                <div class="flex items-center justify-between pb-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
-                        Are you sure you want to approve this request?
-                    </h3>
-                    <button wire:click="closeEndorserApproveModal"
-                        class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
-
-                <form class="space-y-6" wire:submit.prevent="endorserApproveLeave">
-                    <!-- Action Buttons -->
-                    <div class="mt-6 flex justify-end space-x-4">
-                        <button type="submit"
-                            class="px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
-                            Yes
-                        </button>
-                        <button type="button" wire:click="closeEndorserApproveModal"
-                            class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-offset-gray-800">
-                            No
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </x-modal>
-
-        <!-- Endorser Disapprove Modal -->
-        <x-modal maxWidth="lg" wire:model="showEndorserDisapprove" centered>
-            <div class="p-6">
-                <!-- Modal Header -->
-                <div class="flex items-center justify-between pb-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
-                        Are you sure you want to disapprove this request?
-                    </h3>
-                    <button wire:click="closeEndorserDisapproveModal"
-                        class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
-
-                <form class="space-y-6" wire:submit.prevent="endorserDisapproveLeave">
-                    <!-- Action Buttons -->
-                    <div class="mt-6 flex justify-end space-x-4">
-                        <button type="submit"
-                            class="px-4 py-2 rounded-md bg-red-500 hover:bg-red-600 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:focus:ring-offset-gray-800">
-                            Yes
-                        </button>
-                        <button type="button" wire:click="closeEndorserDisapproveModal"
-                            class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-offset-gray-800">
-                            No
-                        </button>
                     </div>
                 </form>
             </div>

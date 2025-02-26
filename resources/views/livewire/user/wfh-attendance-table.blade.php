@@ -380,10 +380,55 @@
                                 {{-- 'Morning Out',
                                     'Afternoon In', --}}
                                 <div class="mt-2 text-center">
-                                    @if ($scheduleType === 'WFH')
+                                    {{-- @if ($scheduleType === 'WFH')
                                         @foreach (['Morning In', 'Afternoon Out'] as $type)
                                             <div class="mb-2 text-center">
                                                 <strong>{{ $type }}</strong>
+                                                <div>
+                                                    @forelse ($groupedTransactions[$type] ?? [] as $transaction)
+                                                        <div class="text-gray-700 dark:text-gray-300">
+                                                            {{ \Carbon\Carbon::parse($transaction->punch_time)->format('H:i:s') }}
+                                                        </div>
+                                                    @empty
+                                                        <div class="text-gray-400">No punch time recorded</div>
+                                                    @endforelse
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @else --}}
+                                    {{-- Onsite punch times from EmployeesDTR --}}
+                                    {{-- <div class="mb-2 text-center">
+                                            <strong>Time In</strong>
+                                            <div>{{ $groupedTransactions->morning_in ?? 'No punch time recorded' }}
+                                            </div>
+                                        </div> --}}
+                                    {{-- <div class="mb-2 text-center">
+                                            <strong>Morning Out</strong>
+                                            <div>{{ $groupedTransactions->morning_out ?? 'No punch time recorded' }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-2 text-center">
+                                            <strong>Afternoon In</strong>
+                                            <div>{{ $groupedTransactions->afternoon_in ?? 'No punch time recorded' }}
+                                            </div>
+                                        </div> --}}
+                                    {{-- <div class="mb-2 text-center">
+                                            <strong>Time Out</strong>
+                                            <div>{{ $groupedTransactions->afternoon_out ?? 'No punch time recorded' }}
+                                            </div>
+                                        </div>
+                                    @endif --}}
+                                    @if ($scheduleType === 'WFH')
+                                        @php
+                                            $displayLabels = [
+                                                'Morning In' => 'Time In',
+                                                'Afternoon Out' => 'Time Out',
+                                            ];
+                                        @endphp
+
+                                        @foreach (['Morning In', 'Afternoon Out'] as $type)
+                                            <div class="mb-2 text-center">
+                                                <strong>{{ $displayLabels[$type] }}</strong>
                                                 <div>
                                                     @forelse ($groupedTransactions[$type] ?? [] as $transaction)
                                                         <div class="text-gray-700 dark:text-gray-300">
@@ -402,16 +447,6 @@
                                             <div>{{ $groupedTransactions->morning_in ?? 'No punch time recorded' }}
                                             </div>
                                         </div>
-                                        {{-- <div class="mb-2 text-center">
-                                            <strong>Morning Out</strong>
-                                            <div>{{ $groupedTransactions->morning_out ?? 'No punch time recorded' }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-2 text-center">
-                                            <strong>Afternoon In</strong>
-                                            <div>{{ $groupedTransactions->afternoon_in ?? 'No punch time recorded' }}
-                                            </div>
-                                        </div> --}}
                                         <div class="mb-2 text-center">
                                             <strong>Time Out</strong>
                                             <div>{{ $groupedTransactions->afternoon_out ?? 'No punch time recorded' }}

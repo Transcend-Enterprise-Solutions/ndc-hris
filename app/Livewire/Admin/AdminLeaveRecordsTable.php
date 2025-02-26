@@ -14,6 +14,8 @@ class AdminLeaveRecordsTable extends Component
 
     public $search = '';
     public $activeTab = 'pending';
+    public $pageSize = 5; 
+    public $pageSizes = [5, 10, 20, 30, 50, 100]; 
 
     public function updatingSearch()
     {
@@ -25,13 +27,6 @@ class AdminLeaveRecordsTable extends Component
         $this->activeTab = $tab;
         $this->resetPage();
     }
-
-    // public function exportExcel($leaveApplicationId)
-    // {
-    //     // Create an instance of the export class and call the export method
-    //     $export = new LeaveCardExport($leaveApplicationId);
-    //     return $export->export();
-    // }
 
     public function render()
     {
@@ -49,7 +44,7 @@ class AdminLeaveRecordsTable extends Component
                 return $query->where('status', 'Disapproved');
             })
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate($this->pageSize);
 
         return view('livewire.admin.admin-leave-records-table', [
             'leaveApplications' => $leaveApplications,

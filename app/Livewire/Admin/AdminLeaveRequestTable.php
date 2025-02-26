@@ -9,7 +9,6 @@ use Livewire\WithPagination;
 use App\Models\LeaveApplication;
 use App\Models\VacationLeaveDetails;
 use App\Models\SickLeaveDetails;
-use App\Models\LeaveApprovals;
 use App\Models\User;
 use App\Models\ESignature;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -32,10 +31,6 @@ class AdminLeaveRequestTable extends Component
     public $listOfDates = [];
     public $selectedDates = [];
     public $nonEmployeeUsers = [];
-    public $endorser1;
-    public $endorser2;
-    public $showEndorserApprove = false;
-    public $showEndorserDisapprove = false;
 
     public $leaveApplicationDetails;
     public $pdfContent;
@@ -48,258 +43,39 @@ class AdminLeaveRequestTable extends Component
         'status' => 'required_if:showApproveModal,true',
         'otherReason' => 'required_if:status,Other|string',
         'days' => 'required_if:status,With Pay,Without Pay|numeric|min:1',
-        // 'approvedStartDate' => 'required_if:status,With Pay|date',
-        // 'approvedEndDate' => 'required_if:status,With Pay|date|after_or_equal:approvedStartDate',
         'disapproveReason' => 'required_if:showDisapproveModal,true'
     ];
-
-    // public function updatedSelectedDates($value)
-    // {
-    //     $this->days = count($this->selectedDates);
-    // }
     
     public function openApproveModal($applicationId)
     {
         $this->selectedApplication = LeaveApplication::find($applicationId);
         $this->listOfDates = explode(',', $this->selectedApplication->list_of_dates);
-        $this->selectedDates = []; // Reset selected dates
-        $this->days = 0; // Reset days
-        $this->status = ''; // Reset status
-        $this->otherReason = ''; // Reset other reason
-    
-        // Check if the logged-in user is one of the endorsers
-        if (Auth::id() == $this->selectedApplication->endorser1_id || Auth::id() == $this->selectedApplication->endorser2_id) {
-            if (Auth::id() == $this->selectedApplication->endorser1_id) {
-                $this->showEndorserApprove = true;
-            } else {
-                $this->showApproveModal = true;
-            }
-        } else {
-            $this->showApproveModal = true;
-        }
-    
-        $this->fetchNonEmployeeUsers();
+        $this->selectedDates = [];
+        $this->days = 0;
+        $this->status = '';
+        $this->otherReason = '';
+        $this->showApproveModal = true;
     }
 
     public function openDisapproveModal($applicationId)
     {
         $this->selectedApplication = LeaveApplication::find($applicationId);
         $this->reset(['disapproveReason']);
-        
-        if (Auth::id() == $this->selectedApplication->endorser1_id || Auth::id() == $this->selectedApplication->endorser2_id) {
-            if (Auth::id() == $this->selectedApplication->endorser1_id) {
-                $this->showEndorserDisapprove = true;
-            } else {
-                $this->showDisapproveModal = true;
-            }
-        } else {
-            $this->showDisapproveModal = true;
-        }
+        $this->showDisapproveModal = true;
     }
 
     public function closeApproveModal()
     {
         $this->showApproveModal = false;
-        $this->showEndorserApprove = false;
         $this->resetVariables();
     }
     
     public function closeDisapproveModal()
     {
         $this->showDisapproveModal = false;
-        $this->showEndorserDisapprove = false;
-        $this->resetVariables();
-    }
-
-    public function endorserApproveLeave()
-    {
-        $application = LeaveApplication::find($this->selectedApplication->id);
-        
-        if (Auth::id() == $application->endorser1_id) {
-            $application->status = 'Approved by Supervisor';
-            $application->stage = 2;
-            $application->save();
-
-            LeaveApprovals::updateOrCreate(
-                ['application_id' => $application->id],
-                ['second_approver' => Auth::id(), 'stage' => 2]
-            );
-            // Move to endorser2 if endorser1 has approved
-            if ($application->endorser2_id) {
-
-                $this->dispatch('swal', [
-                    'title' => "Leave application approved by Supervisor. Wait for the final approval!",
-                    'icon' => 'success'
-                ]);
-            }
-            // else {
-            //     // No endorser2, so HR completes the approval
-            //     $application->status = 'Approved'; // Final approval status
-            //     $application->stage = 3;
-            //     $application->save();
-
-            //     LeaveApprovals::updateOrCreate(
-            //         ['application_id' => $application->id],
-            //         ['third_approver' => Auth::id(), 'stage' => 3]
-            //     );
-
-            //     $this->dispatch('swal', [
-            //         'title' => "Leave application approved by Endorser1 and finalized.",
-            //         'icon' => 'success'
-            //     ]);
-            // }
-        } elseif (Auth::id() == $application->endorser2_id) {
-            $application->status = 'Approved';
-            $application->stage = 3;
-            $application->save();
-
-            LeaveApprovals::updateOrCreate(
-                ['application_id' => $application->id],
-                ['third_approver' => Auth::id(), 'stage' => 3]
-            );
-
-            if ($application->remarks === 'With Pay') {
-                $this->updateLeaveDetails($application->approved_days, $application->remarks);
-            }
-
-            $this->dispatch('swal', [
-                'title' => "Leave application approved successfully!",
-                'icon' => 'success'
-            ]);
-        }
-
-        $this->closeEndorserApproveModal();
-    }
-
-    public function endorserDisapproveLeave()
-    {
-        $application = LeaveApplication::find($this->selectedApplication->id);
-        
-        // Check if the logged-in user is endorser1 and update the status accordingly
-        if (Auth::id() == $application->endorser1_id) {
-            $application->status = 'Disapproved by Endorser1';
-            $application->stage = 4; // Stage for disapproved
-        } elseif (Auth::id() == $application->endorser2_id) {
-            $application->status = 'Disapproved by Endorser2';
-            $application->stage = 4; // Stage for disapproved
-        }
-
-        $application->disapprove_reason = $this->disapproveReason;
-        $application->save();
-
-        LeaveApprovals::where('application_id', $application->id)
-            ->update(['stage' => 4]);
-
-        $this->dispatch('swal', [
-            'title' => "Leave application disapproved.",
-            'icon' => 'success'
-        ]);
-
-        $this->closeEndorserDisapproveModal();
-    }
-
-    public function openEndorserApproveModal($applicationId)
-    {
-        $this->selectedApplication = LeaveApplication::find($applicationId);
-        $this->reset(['status', 'otherReason', 'days']);
-        $this->showEndorserApprove = true;
-    }
-
-    public function openEndorserDisapproveModal($applicationId)
-    {
-        $this->selectedApplication = LeaveApplication::find($applicationId);
-        $this->reset(['disapproveReason']);
-        $this->showEndorserDisapprove = true;
-    }
-
-    public function closeEndorserApproveModal()
-    {
-        $this->showEndorserApprove = false;
-        $this->resetVariables();
-    }
-
-    public function closeEndorserDisapproveModal()
-    {
-        $this->showEndorserDisapprove = false;
         $this->resetVariables();
     }
     
-    // public function updateStatus()
-    // {
-    //     $this->validate([
-    //         'status' => 'required',
-    //         'days' => 'required|numeric|min:1',
-    //     ]);
-    
-    //     if ($this->selectedApplication) {
-    //         if ($this->status === 'Other') {
-    //             $this->validate(['otherReason' => 'required|string']);
-    //             $this->selectedApplication->status = "Approved by HR";
-    //             $this->selectedApplication->remarks = $this->otherReason;
-    //             $this->selectedApplication->approved_days = 0;
-    //             $this->selectedApplication->stage = 1;
-
-    //             LeaveApprovals::updateOrCreate(
-    //                 ['application_id' => $this->selectedApplication->id],
-    //                 ['first_approver' => Auth::id(), 'stage' => 1]
-    //             );
-    //         } else {
-    //             $this->selectedApplication->status = 'Approved by HR';
-    //             $this->selectedApplication->approved_days = $this->days;
-    //             $this->selectedApplication->remarks = $this->status;
-    //             $this->selectedApplication->stage = 1;
-
-    //             LeaveApprovals::updateOrCreate(
-    //                 ['application_id' => $this->selectedApplication->id],
-    //                 ['first_approver' => Auth::id(), 'stage' => 1]
-    //             );
-    
-    //             // if ($this->status === 'With Pay') {
-    //             //     $this->updateLeaveDetails($this->days, $this->status);
-                    
-    //             //     if ($this->getErrorBag()->has('days')) {
-    //             //         // There was an error in updateLeaveDetails, so we return without saving
-    //             //         return;
-    //             //     }
-    //             // }
-    //             if ($this->status === 'With Pay') {
-    //                 if (!$this->checkLeaveCredits($this->days)) {
-    //                     return;
-    //                 }
-    //             }
-    
-    //             $allApprovedDates = [];
-    //             foreach ($this->selectedDates as $date) {
-    //                 if (strpos($date, ' - ') !== false) {
-    //                     $range = explode(' - ', $date);
-    //                     $allApprovedDates = array_merge($allApprovedDates, $range);
-    //                 } else {
-    //                     $allApprovedDates[] = $date;
-    //                 }
-    //             }
-    //             $this->selectedApplication->approved_dates = implode(',', $allApprovedDates);
-    //         }
-    
-    //         $this->selectedApplication->endorser1_id = $this->endorser1;
-    //         $this->selectedApplication->endorser2_id = $this->endorser2;
-    //         $this->selectedApplication->save();
-
-    //         LeaveApprovals::updateOrCreate(
-    //             ['application_id' => $this->selectedApplication->id],
-    //             [
-    //                 'first_approver' => Auth::id(),
-    //                 'stage' => 1
-    //             ]
-    //         );
-    
-    //         $this->dispatch('swal', [
-    //             'title' => "Leave application {$this->status} successfully!",
-    //             'icon' => 'success'
-    //         ]);
-    
-    //         $this->closeApproveModal();
-    //     }
-    // }
     public function calculateWeekdaysInRange($startDate, $endDate)
     {
         $start = Carbon::parse($startDate);
@@ -307,7 +83,6 @@ class AdminLeaveRequestTable extends Component
         $weekdays = 0;
         
         for ($date = $start; $date->lte($end); $date->addDay()) {
-            // Skip weekends (Saturday = 6, Sunday = 0)
             if (!$date->isWeekend()) {
                 $weekdays++;
             }
@@ -322,11 +97,9 @@ class AdminLeaveRequestTable extends Component
         
         foreach ($this->selectedDates as $date) {
             if (strpos($date, ' - ') !== false) {
-                // Handle date range
                 list($startDate, $endDate) = explode(' - ', $date);
                 $totalDays += $this->calculateWeekdaysInRange($startDate, $endDate);
             } else {
-                // Single date, check if it's a weekday
                 $carbonDate = Carbon::parse($date);
                 if (!$carbonDate->isWeekend()) {
                     $totalDays++;
@@ -347,31 +120,24 @@ class AdminLeaveRequestTable extends Component
         if ($this->selectedApplication) {
             if ($this->status === 'Other') {
                 $this->validate(['otherReason' => 'required|string']);
-                $this->selectedApplication->status = "Approved by HR";
+                $this->selectedApplication->status = "Approved";
                 $this->selectedApplication->remarks = $this->otherReason;
                 $this->selectedApplication->approved_days = 0;
-                $this->selectedApplication->stage = 1;
-
-                LeaveApprovals::updateOrCreate(
-                    ['application_id' => $this->selectedApplication->id],
-                    ['first_approver' => Auth::id(), 'stage' => 1]
-                );
             } else {
-                $this->selectedApplication->status = 'Approved by HR';
+                $this->selectedApplication->status = 'Approved';
                 $this->selectedApplication->approved_days = $this->days;
                 $this->selectedApplication->remarks = $this->status;
-                $this->selectedApplication->stage = 1;
 
                 if ($this->status === 'With Pay') {
                     if (!$this->checkLeaveCredits($this->days)) {
                         return;
                     }
+                    $this->updateLeaveDetails($this->days, $this->status);
                 }
 
                 $allApprovedDates = [];
                 foreach ($this->selectedDates as $date) {
                     if (strpos($date, ' - ') !== false) {
-                        // For date ranges, store both the start and end dates
                         $allApprovedDates[] = $date;
                     } else {
                         $allApprovedDates[] = $date;
@@ -380,17 +146,7 @@ class AdminLeaveRequestTable extends Component
                 $this->selectedApplication->approved_dates = implode(',', $allApprovedDates);
             }
 
-            $this->selectedApplication->endorser1_id = $this->endorser1;
-            $this->selectedApplication->endorser2_id = $this->endorser2;
             $this->selectedApplication->save();
-
-            LeaveApprovals::updateOrCreate(
-                ['application_id' => $this->selectedApplication->id],
-                [
-                    'first_approver' => Auth::id(),
-                    'stage' => 1
-                ]
-            );
 
             $this->dispatch('swal', [
                 'title' => "Leave application {$this->status} successfully!",
@@ -401,36 +157,6 @@ class AdminLeaveRequestTable extends Component
         }
     }
 
-    // protected function checkLeaveCredits($days)
-    // {
-    //     $user_id = $this->selectedApplication->user_id;
-    //     $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
-    
-    //     if (!$leaveCredits) {
-    //         $this->addError('days', "Leave credits not found for this user.");
-    //         return false;
-    //     }
-    
-    //     $leaveTypes = explode(',', $this->selectedApplication->type_of_leave);
-    //     foreach ($leaveTypes as $leaveType) {
-    //         $leaveType = trim($leaveType);
-    
-    //         if ($leaveType === "Mandatory/Forced Leave") {
-    //             if ($leaveCredits->fl_claimable_credits < $days || $leaveCredits->vl_claimable_credits < $days) {
-    //                 $this->addError('days', "Insufficient Forced Leave Credits. Available FL: {$leaveCredits->fl_claimable_credits}");
-    //                 return false;
-    //             }
-    //         } else {
-    //             $totalCredits = $leaveCredits->spl_claimable_credits + $leaveCredits->sl_claimable_credits + $leaveCredits->vl_claimable_credits;
-    //             if ($totalCredits < $days) {
-    //                 $this->addError('days', "Insufficient leave credits. Available credits: {$totalCredits}");
-    //                 return false;
-    //             }
-    //         }
-    //     }
-    
-    //     return true;
-    // }
     protected function checkLeaveCredits($days)
     {
         $user_id = $this->selectedApplication->user_id;
@@ -448,27 +174,27 @@ class AdminLeaveRequestTable extends Component
             // Check for Mandatory/Forced Leave
             if ($leaveType === "Mandatory/Forced Leave") {
                 if ($leaveCredits->fl_claimable_credits < $days || $leaveCredits->vl_claimable_credits < $days) {
-                    $this->addError('days', "Insufficient Forced Leave Credits. Available FL: {$leaveCredits->fl_claimable_credits}");
+                    $this->addError('days', "Insufficient Forced Leave Credits. Available FL: " . number_format($leaveCredits->fl_claimable_credits ?? 0.000, 3));
                     return false;
                 }
             }
 
             // Check individual leave types
-            elseif ($leaveType === "Vacation Leave (With Pay)") {
+            elseif ($leaveType === "Vacation Leave") {
                 if ($leaveCredits->vl_claimable_credits < $days) {
-                    $this->addError('days', "Insufficient Vacation Leave Credits. Available VL: {$leaveCredits->vl_claimable_credits}");
+                    $this->addError('days', "Insufficient Vacation Leave Credits. Available VL: " . number_format($leaveCredits->vl_claimable_credits ?? 0.000, 3));
                     return false;
                 }
             }
-            elseif ($leaveType === "Sick Leave (With Pay)") {
+            elseif ($leaveType === "Sick Leave") {
                 if ($leaveCredits->sl_claimable_credits < $days) {
-                    $this->addError('days', "Insufficient Sick Leave Credits. Available SL: {$leaveCredits->sl_claimable_credits}");
+                    $this->addError('days', "Insufficient Sick Leave Credits. Available SL: " . number_format($leaveCredits->sl_claimable_credits ?? 0.000, 3));
                     return false;
                 }
             }
-            elseif ($leaveType === "Special Privilege Leave (With Pay)") {
+            elseif ($leaveType === "Special Privilege Leave") {
                 if ($leaveCredits->spl_claimable_credits < $days) {
-                    $this->addError('days', "Insufficient Special Privilege Leave Credits. Available SPL: {$leaveCredits->spl_claimable_credits}");
+                    $this->addError('days', "Insufficient Special Privilege Leave Credits. Available SPL: " . number_format($leaveCredits->spl_claimable_credits ?? 0.000, 3));
                     return false;
                 }
             }
@@ -477,170 +203,23 @@ class AdminLeaveRequestTable extends Component
         return true;
     }
     
-    // protected function updateLeaveDetails($days, $status)
-    // {
-    //     $user_id = $this->selectedApplication->user_id;
-    //     $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
-    
-    //     if (!$leaveCredits) {
-    //         $this->addError('days', "Leave credits not found for this user.");
-    //         return;
-    //     }
-    
-    //     $leaveTypes = explode(',', $this->selectedApplication->type_of_leave);
-    //     $updatedLeaveTypes = [];
-    
-    //     foreach ($leaveTypes as $leaveType) {
-    //         $leaveType = trim($leaveType);
-    //         $originalLeaveType = $leaveType;
-
-    //         if ($leaveType === "Vacation Leave" || $leaveType === "Sick Leave") {
-    //             $totalDeducted = 0;
-    //             $deductedFrom = '';
-                
-    //             if ($leaveType === "Vacation Leave") {
-    //                 // Check if SPL has enough credits
-    //                 if ($leaveCredits->spl_claimable_credits >= $days) {
-    //                     // Deduct from SPL since it has enough credits
-    //                     $deduct = $days;
-    //                     $leaveCredits->spl_claimable_credits -= $deduct;
-    //                     $leaveCredits->spl_claimed_credits += $deduct;
-    //                     $totalDeducted += $deduct;
-    //                     $deductedFrom = 'SPL';
-
-    //                     // Also deduct the same amount from FL if available
-    //                     if ($leaveCredits->fl_claimable_credits > 0) {
-    //                         $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
-    //                         $leaveCredits->fl_claimable_credits -= $flDeduct;
-    //                         $leaveCredits->fl_claimed_credits += $flDeduct;
-    //                     }
-    //                 } 
-    //                 // If SPL doesn't have enough, check if SL has enough
-    //                 // else if ($leaveCredits->sl_claimable_credits >= $days) {
-    //                 //     // Deduct from SL since it has enough credits
-    //                 //     $deduct = $days;
-    //                 //     $leaveCredits->sl_claimable_credits -= $deduct;
-    //                 //     $leaveCredits->sl_claimed_credits += $deduct;
-    //                 //     $totalDeducted += $deduct;
-    //                 //     $deductedFrom = 'SL';
-
-    //                 //     // Also deduct the same amount from FL if available
-    //                 //     if ($leaveCredits->fl_claimable_credits > 0) {
-    //                 //         $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
-    //                 //         $leaveCredits->fl_claimable_credits -= $flDeduct;
-    //                 //         $leaveCredits->fl_claimed_credits += $flDeduct;
-    //                 //     }
-    //                 // }
-    //                 // If neither SPL nor SL has enough, try VL
-    //                 else if ($leaveCredits->vl_claimable_credits > 0) {
-    //                     $deduct = min($days, $leaveCredits->vl_claimable_credits);
-    //                     $leaveCredits->vl_claimable_credits -= $deduct;
-    //                     $leaveCredits->vl_claimed_credits += $deduct;
-    //                     $totalDeducted += $deduct;
-    //                     $deductedFrom = 'VL';
-
-    //                     // Also deduct the same amount from FL if available
-    //                     if ($leaveCredits->fl_claimable_credits > 0) {
-    //                         $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
-    //                         $leaveCredits->fl_claimable_credits -= $flDeduct;
-    //                         $leaveCredits->fl_claimed_credits += $flDeduct;
-    //                     }
-    //                 }
-
-    //                 if ($deductedFrom === 'SPL' || $deductedFrom === 'SL') {
-    //                     $leaveType = "Special Privilege Leave";
-    //                 }
-
-    //             } else {
-    //                 // For Sick Leave, check SPL first then move to SL if not enough
-    //                 if ($leaveCredits->spl_claimable_credits >= $days) {
-    //                     // Deduct from SPL since it has enough credits
-    //                     $deduct = $days;
-    //                     $leaveCredits->spl_claimable_credits -= $deduct;
-    //                     $leaveCredits->spl_claimed_credits += $deduct;
-    //                     $totalDeducted += $deduct;
-    //                     $deductedFrom = 'SPL';
-
-    //                     // Also deduct the same amount from FL if available
-    //                     if ($leaveCredits->fl_claimable_credits > 0) {
-    //                         $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
-    //                         $leaveCredits->fl_claimable_credits -= $flDeduct;
-    //                         $leaveCredits->fl_claimed_credits += $flDeduct;
-    //                     }
-    //                 }
-    //                 // If SPL doesn't have enough, move directly to SL
-    //                 else if ($leaveCredits->sl_claimable_credits > 0) {
-    //                     $deduct = min($days, $leaveCredits->sl_claimable_credits);
-    //                     $leaveCredits->sl_claimable_credits -= $deduct;
-    //                     $leaveCredits->sl_claimed_credits += $deduct;
-    //                     $totalDeducted += $deduct;
-    //                     $deductedFrom = 'SL';
-
-    //                     // Also deduct the same amount from FL if available
-    //                     if ($leaveCredits->fl_claimable_credits > 0) {
-    //                         $flDeduct = min($deduct, $leaveCredits->fl_claimable_credits);
-    //                         $leaveCredits->fl_claimable_credits -= $flDeduct;
-    //                         $leaveCredits->fl_claimed_credits += $flDeduct;
-    //                     }
-    //                 }
-
-    //                 if ($deductedFrom === 'SPL') {
-    //                     $leaveType = "Special Privilege Leave";
-    //                 }
-    //             }
-    
-    //             // If the total deducted days are still less than requested, show an error
-    //             if ($totalDeducted < $days) {
-    //                 $this->addError('days', "Insufficient leave credits. Available SPL: {$leaveCredits->spl_claimable_credits}, SL: {$leaveCredits->sl_claimable_credits}, VL: {$leaveCredits->vl_claimable_credits}, FL: {$leaveCredits->fl_claimable_credits}");
-    //                 return;
-    //             }
-        
-    //             $leaveCredits->save();
-        
-    //             // Updating LeaveCreditsCalculation
-    //             $month = date('m', strtotime($this->selectedApplication->start_date));
-    //             $year = date('Y', strtotime($this->selectedApplication->start_date));
-        
-    //             $leaveCreditsCalculation = LeaveCreditsCalculation::where('user_id', $user_id)
-    //                 ->where('month', $month)
-    //                 ->where('year', $year)
-    //                 ->first();
-    
-    //             if ($leaveCreditsCalculation) {
-    //                 $leaveCreditsCalculation->leave_credits_earned -= $totalDeducted;
-    //                 $leaveCreditsCalculation->save();
-    //             }
-    
-    //         } else {
-
-    //             $updatedLeaveTypes[] = $leaveType;
-    //             continue;
-    //         }
-
-    //         // break;
-    //         $updatedLeaveTypes[] = $leaveType;
-    //     }
-
-    //     $this->selectedApplication->type_of_leave = implode(',', $updatedLeaveTypes);
-    //     $this->selectedApplication->save();
-    // }
     protected function updateLeaveDetails($days, $status)
     {
         $user_id = $this->selectedApplication->user_id;
         $leaveCredits = LeaveCredits::where('user_id', $user_id)->first();
-
+    
         if (!$leaveCredits) {
             $this->addError('days', "Leave credits not found for this user.");
             return;
         }
-
+    
         $leaveTypes = explode(',', $this->selectedApplication->type_of_leave);
         $updatedLeaveTypes = [];
-
+    
         foreach ($leaveTypes as $leaveType) {
             $leaveType = trim($leaveType);
             $originalLeaveType = $leaveType;
-
+    
             if ($leaveType === "Mandatory/Forced Leave") {
                 // For Mandatory Leave, deduct from both FL and VL
                 if ($leaveCredits->fl_claimable_credits >= $days && $leaveCredits->vl_claimable_credits >= $days) {
@@ -657,82 +236,54 @@ class AdminLeaveRequestTable extends Component
                 }
             } 
             else if ($leaveType === "Vacation Leave") {
-                $totalDeducted = 0;
-                $deductedFrom = '';
-                
-                // Check if SPL has enough credits
-                if ($leaveCredits->spl_claimable_credits >= $days) {
-                    // Deduct from SPL since it has enough credits
-                    $deduct = $days;
-                    $leaveCredits->spl_claimable_credits -= $deduct;
-                    $leaveCredits->spl_claimed_credits += $deduct;
-                    $totalDeducted += $deduct;
-                    $deductedFrom = 'SPL';
-                    $leaveType = "Special Privilege Leave";
-                }
-                // If SPL doesn't have enough, try VL
-                else if ($leaveCredits->vl_claimable_credits > 0) {
-                    $deduct = min($days, $leaveCredits->vl_claimable_credits);
-                    $leaveCredits->vl_claimable_credits -= $deduct;
-                    $leaveCredits->vl_claimed_credits += $deduct;
-                    $totalDeducted += $deduct;
-                    $deductedFrom = 'VL';
-                }
-
-                // If the total deducted days are still less than requested, show an error
-                if ($totalDeducted < $days) {
-                    $this->addError('days', "Insufficient leave credits. Available SPL: {$leaveCredits->spl_claimable_credits}, VL: {$leaveCredits->vl_claimable_credits}");
+                // Directly check and deduct from VL credits
+                if ($leaveCredits->vl_claimable_credits >= $days) {
+                    $leaveCredits->vl_claimable_credits -= $days;
+                    $leaveCredits->vl_claimed_credits += $days;
+                } else {
+                    $this->addError('days', "Insufficient Vacation Leave credits. Available VL: {$leaveCredits->vl_claimable_credits}");
                     return;
                 }
             }
             else if ($leaveType === "Sick Leave") {
-                $totalDeducted = 0;
-                $deductedFrom = '';
-                
-                // For Sick Leave, check SPL first then move to SL if not enough
-                if ($leaveCredits->spl_claimable_credits >= $days) {
-                    // Deduct from SPL since it has enough credits
-                    $deduct = $days;
-                    $leaveCredits->spl_claimable_credits -= $deduct;
-                    $leaveCredits->spl_claimed_credits += $deduct;
-                    $totalDeducted += $deduct;
-                    $deductedFrom = 'SPL';
-                    $leaveType = "Special Privilege Leave";
-                }
-                // If SPL doesn't have enough, move directly to SL
-                else if ($leaveCredits->sl_claimable_credits > 0) {
-                    $deduct = min($days, $leaveCredits->sl_claimable_credits);
-                    $leaveCredits->sl_claimable_credits -= $deduct;
-                    $leaveCredits->sl_claimed_credits += $deduct;
-                    $totalDeducted += $deduct;
-                    $deductedFrom = 'SL';
-                }
-
-                if ($totalDeducted < $days) {
-                    $this->addError('days', "Insufficient leave credits. Available SPL: {$leaveCredits->spl_claimable_credits}, SL: {$leaveCredits->sl_claimable_credits}");
+                // Directly check and deduct from SL credits
+                if ($leaveCredits->sl_claimable_credits >= $days) {
+                    $leaveCredits->sl_claimable_credits -= $days;
+                    $leaveCredits->sl_claimed_credits += $days;
+                } else {
+                    $this->addError('days', "Insufficient Sick Leave credits. Available SL: {$leaveCredits->sl_claimable_credits}");
                     return;
                 }
             }
-
+            else if ($leaveType === "Special Privilege Leave") {
+                if ($leaveCredits->spl_claimable_credits >= $days) {
+                    $leaveCredits->spl_claimable_credits -= $days;
+                    $leaveCredits->spl_claimed_credits += $days;
+                } else {
+                    $this->addError('days', "Insufficient Special Privilege Leave credits. Available SPL: {$leaveCredits->spl_claimable_credits}");
+                    return;
+                }
+            }
+    
             $updatedLeaveTypes[] = $leaveType;
         }
-
+    
         $leaveCredits->save();
-
+    
         // Updating LeaveCreditsCalculation
         $month = date('m', strtotime($this->selectedApplication->start_date));
         $year = date('Y', strtotime($this->selectedApplication->start_date));
-
+    
         $leaveCreditsCalculation = LeaveCreditsCalculation::where('user_id', $user_id)
             ->where('month', $month)
             ->where('year', $year)
             ->first();
-
+    
         if ($leaveCreditsCalculation) {
             $leaveCreditsCalculation->leave_credits_earned -= $days;
             $leaveCreditsCalculation->save();
         }
-
+    
         $this->selectedApplication->type_of_leave = implode(',', $updatedLeaveTypes);
         $this->selectedApplication->save();
     }
@@ -743,14 +294,6 @@ class AdminLeaveRequestTable extends Component
                                       ->where('user_role', '!=', 'hr')
                                       ->where('user_role', '!=', 'sa')
                                       ->get();
-    }
-
-    public function getFilteredEndorser2UsersProperty()
-    {
-        // Filter out the selected endorser1 from the list of users for endorser2
-        return $this->nonEmployeeUsers->filter(function ($user) {
-            return $user->id != $this->endorser1;
-        });
     }
 
     public function disapproveLeave()
@@ -776,63 +319,21 @@ class AdminLeaveRequestTable extends Component
 
     public function render()
     {
-        $this->fetchNonEmployeeUsers();
-        
-        $loggedInUserId = auth()->id();
-        $userRole = auth()->user()->user_role;
-        
-        // Start with base query
         $query = LeaveApplication::query()
             ->orderBy('created_at', 'desc')
             ->select('id', 'name', 'date_of_filing', 'type_of_leave', 'details_of_leave', 
                     'number_of_days', 'list_of_dates', 'approved_dates', 'file_name', 'file_path', 
-                    'status', 'remarks', 'approved_days', 'endorser1_id', 'endorser2_id', 'stage');
+                    'status', 'remarks', 'approved_days');
 
-        // Filter based on role and correct status/stage combination
-        if ($userRole === 'hr' || $userRole === 'sa') {
-            // HR/SA sees only pending requests
+        // Only show pending requests for HR/SA
+        if (auth()->user()->user_role === 'hr' || auth()->user()->user_role === 'sa') {
             $query->where('status', 'Pending');
-        } else {
-            // For endorsers, show only requests they need to act on
-            $query->where(function($q) use ($loggedInUserId) {
-                $q->where(function($q1) use ($loggedInUserId) {
-                    // Endorser1: Show requests that are 'Approved by HR' and in stage 1
-                    $q1->where('endorser1_id', $loggedInUserId)
-                    ->where('stage', 1)
-                    ->where('status', 'Approved by HR');
-                })->orWhere(function($q2) use ($loggedInUserId) {
-                    // Endorser2: Show requests that are 'Approved by Supervisor' and in stage 2
-                    $q2->where('endorser2_id', $loggedInUserId)
-                    ->where('stage', 2)
-                    ->where('status', 'Approved by Supervisor');
-                });
-            });
         }
 
         $leaveApplications = $query->paginate($this->pageSize)
-            ->through(function ($leaveApplication) use ($loggedInUserId, $userRole) {
-                $leaveApplication->isApprovedByHR = $leaveApplication->status === 'Approved by HR';
-                $leaveApplication->isPending = $leaveApplication->status === 'Pending';
-                $leaveApplication->isHR = $userRole === 'hr' || $userRole === 'sa';
-                $leaveApplication->isEndorser1 = $loggedInUserId === $leaveApplication->endorser1_id;
-                $leaveApplication->isEndorser2 = $loggedInUserId === $leaveApplication->endorser2_id;
-                $leaveApplication->isEndorser = $leaveApplication->isEndorser1 || $leaveApplication->isEndorser2;
-        
-                // Set approval states based on correct status progression
-                $leaveApplication->isEndorser1Approved = $leaveApplication->status === 'Approved by Supervisor';
-                $leaveApplication->isEndorser2Approved = $leaveApplication->status === 'Approved';
-                
-                // Set visibility based on role and status
-                if ($leaveApplication->isHR) {
-                    $leaveApplication->actionsVisible = $leaveApplication->status === 'Pending';
-                } elseif ($leaveApplication->isEndorser1) {
-                    $leaveApplication->actionsVisible = $leaveApplication->status === 'Approved by HR' && 
-                                                    $leaveApplication->stage === 1;
-                } elseif ($leaveApplication->isEndorser2) {
-                    $leaveApplication->actionsVisible = $leaveApplication->status === 'Approved by Supervisor' && 
-                                                    $leaveApplication->stage === 2;
-                }
-        
+            ->through(function ($leaveApplication) {
+                $leaveApplication->actionsVisible = $leaveApplication->status === 'Pending' &&
+                    (auth()->user()->user_role === 'hr' || auth()->user()->user_role === 'sa');
                 return $leaveApplication;
             });
         
@@ -840,7 +341,6 @@ class AdminLeaveRequestTable extends Component
             'leaveApplications' => $leaveApplications,
             'vacationLeaveDetails' => VacationLeaveDetails::orderBy('created_at', 'desc')->paginate(10),
             'sickLeaveDetails' => SickLeaveDetails::orderBy('created_at', 'desc')->paginate(10),
-            'filteredEndorser2Users' => $this->filteredEndorser2Users,
         ]);
     }
     
@@ -851,8 +351,6 @@ class AdminLeaveRequestTable extends Component
         $this->days = null;
         $this->listOfDates = [];
         $this->disapproveReason = null;
-        $this->endorser1 = null;
-        $this->endorser2 = null;
     }
 
     public function validateLeaveBalance($days)
@@ -882,14 +380,6 @@ class AdminLeaveRequestTable extends Component
     public function showPDF($leaveApplicationId)
     {
         $leaveApplication = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
-    
-        // Get the original applicant's e-signature
-        $eSignature = ESignature::where('user_id', $leaveApplication->user_id)->first();
-    
-        $signatureImagePath = null;
-        if ($eSignature && $eSignature->file_path) {
-            $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
-        }
     
         $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
     
@@ -942,81 +432,6 @@ class AdminLeaveRequestTable extends Component
             }
         }
     
-        // Fetch approvers from leave_approvals
-        $leaveApproval = LeaveApprovals::where('application_id', $leaveApplicationId)->first();
-        
-        // Process first approver
-        $firstApproverSignature = null;
-        if ($leaveApproval && $leaveApproval->first_approver) {
-            $firstApprover = User::find($leaveApproval->first_approver);
-            $firstApproverName = $firstApprover ? $firstApprover->name : 'N/A';
-            
-            // Get emp_code without prefix
-            $empCode = preg_replace('/^[^-]+-/', '', $firstApprover->emp_code);
-            
-            // Find corresponding emp user with the same emp_code
-            $empUser = User::where('emp_code', $empCode)
-                          ->where('user_role', 'emp')
-                          ->first();
-                          
-            if ($empUser) {
-                $empSignature = ESignature::where('user_id', $empUser->id)->first();
-                if ($empSignature && $empSignature->file_path) {
-                    $firstApproverSignature = Storage::disk('public')->path($empSignature->file_path);
-                }
-            }
-        } else {
-            $firstApproverName = 'N/A';
-        }
-    
-        // Process second approver
-        $secondApproverSignature = null;
-        if ($leaveApproval && $leaveApproval->second_approver) {
-            $secondApprover = User::find($leaveApproval->second_approver);
-            $secondApproverName = $secondApprover ? $secondApprover->name : 'N/A';
-            
-            // Get emp_code without prefix
-            $empCode = preg_replace('/^[^-]+-/', '', $secondApprover->emp_code);
-            
-            // Find corresponding emp user with the same emp_code
-            $empUser = User::where('emp_code', $empCode)
-                          ->where('user_role', 'emp')
-                          ->first();
-                          
-            if ($empUser) {
-                $empSignature = ESignature::where('user_id', $empUser->id)->first();
-                if ($empSignature && $empSignature->file_path) {
-                    $secondApproverSignature = Storage::disk('public')->path($empSignature->file_path);
-                }
-            }
-        } else {
-            $secondApproverName = 'N/A';
-        }
-    
-        // Process third approver
-        $thirdApproverSignature = null;
-        if ($leaveApproval && $leaveApproval->third_approver) {
-            $thirdApprover = User::find($leaveApproval->third_approver);
-            $thirdApproverName = $thirdApprover ? $thirdApprover->name : 'N/A';
-            
-            // Get emp_code without prefix
-            $empCode = preg_replace('/^[^-]+-/', '', $thirdApprover->emp_code);
-            
-            // Find corresponding emp user with the same emp_code
-            $empUser = User::where('emp_code', $empCode)
-                          ->where('user_role', 'emp')
-                          ->first();
-                          
-            if ($empUser) {
-                $empSignature = ESignature::where('user_id', $empUser->id)->first();
-                if ($empSignature && $empSignature->file_path) {
-                    $thirdApproverSignature = Storage::disk('public')->path($empSignature->file_path);
-                }
-            }
-        } else {
-            $thirdApproverName = 'N/A';
-        }
-    
         $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
     
         $firstPagePDF = PDF::loadView('pdf.leave-application', [
@@ -1029,48 +444,40 @@ class AdminLeaveRequestTable extends Component
             'daysWithPay' => $daysWithPay,
             'daysWithoutPay' => $daysWithoutPay,
             'otherRemarks' => $otherRemarks,
-            'leaveCredits' => $leaveCredits,
-            'firstApproverName' => $firstApproverName,
-            'secondApproverName' => $secondApproverName,
-            'thirdApproverName' => $thirdApproverName,
-            'eSignature' => $eSignature,
-            'signatureImagePath' => $signatureImagePath,
-            'firstApproverSignature' => $firstApproverSignature,
-            'secondApproverSignature' => $secondApproverSignature,
-            'thirdApproverSignature' => $thirdApproverSignature,
+            'leaveCredits' => $leaveCredits
         ]);
     
         // Save the first page PDF to a temporary file
         $tempFirstPagePath = storage_path('app/temp_first_page.pdf');
         file_put_contents($tempFirstPagePath, $firstPagePDF->output());
-
+    
         // Path to the second page template
         $secondPageTemplatePath = public_path('storage/pdf_template/secondpage.pdf');
         if (!file_exists($secondPageTemplatePath)) {
             throw new \Exception('Second page template not found at: ' . $secondPageTemplatePath);
         }
-
+    
         // Create a multi-page PDF using FPDI
         $pdf = new \setasign\Fpdi\Fpdi();
-
+    
         // Add the first page
         $pdf->AddPage();
         $pdf->setSourceFile($tempFirstPagePath);
         $tplId = $pdf->importPage(1);
         $pdf->useTemplate($tplId);
-
+    
         // Add the second page
         $pdf->AddPage();
         $pdf->setSourceFile($secondPageTemplatePath);
         $tplId = $pdf->importPage(1);
         $pdf->useTemplate($tplId);
-
+    
         // Clean up temporary file
         unlink($tempFirstPagePath);
-
+    
         // Define a user-friendly filename
         $fileName = 'Leave_Application_' . $leaveApplication->id . '.pdf';
-
+    
         // Output the final PDF with the specified filename
         $this->pdfContent = base64_encode($pdf->Output($fileName, 'S'));
         $this->showPDFPreview = true;

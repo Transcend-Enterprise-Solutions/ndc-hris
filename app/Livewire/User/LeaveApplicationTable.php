@@ -57,8 +57,6 @@ class LeaveApplicationTable extends Component
     public $list_of_dates = [];
     public $new_date;
     
-    // public $startDate;
-    // public $endDate;
     public $selectedYear;
     public $isDisabled = false;
 
@@ -174,12 +172,43 @@ class LeaveApplicationTable extends Component
             'office_or_department' => 'required',
             'position' => 'required',
             'salary' => 'required',
-            'type_of_leave' => 'required|array|min:1',
-            'details_of_leave' => 'required',
+            'type_of_leave' => 'required|string',
             'number_of_days' => 'required',
             'commutation' => 'required',
         ];
-
+    
+        // Leave types that require details
+        $leaveTypesRequiringDetails = [
+            'Vacation Leave',
+            'Special Privilege Leave',
+            'Sick Leave',
+            'Special Leave Benefits for Women',
+            'Study Leave',
+            'Others'
+        ];
+    
+        // Add validation rule for details_of_leave if the selected type requires it
+        if (in_array($this->type_of_leave, $leaveTypesRequiringDetails)) {
+            $rules['details_of_leave'] = 'required|string';
+            
+            // Add specific validation for additional fields based on details selected
+            if ($this->details_of_leave === 'Within the Philippines') {
+                $rules['philippines'] = 'required|string';
+            }
+            if ($this->details_of_leave === 'Abroad') {
+                $rules['abroad'] = 'required|string';
+            }
+            if ($this->details_of_leave === 'In Hospital') {
+                $rules['inHospital'] = 'required|string';
+            }
+            if ($this->details_of_leave === 'Out Patient') {
+                $rules['outPatient'] = 'required|string';
+            }
+            if ($this->details_of_leave === 'Women Special Illness') {
+                $rules['specialIllnessForWomen'] = 'required|string';
+            }
+        }
+    
         $leaveTypesRequiringDates = [
             'Vacation Leave',
             'Sick Leave',
@@ -192,56 +221,56 @@ class LeaveApplicationTable extends Component
             'Adoption Leave',
             'CTO Leave',
         ];
-
-        if (!empty(array_intersect($this->type_of_leave, $leaveTypesRequiringDates))) {
+    
+        if (in_array($this->type_of_leave, $leaveTypesRequiringDates)) {
             $rules['list_of_dates'] = 'required|array|min:1';
         }
-
+    
         // Require file upload if CTO Leave is selected
-        if (in_array('CTO Leave', $this->type_of_leave)) {
+        if ($this->type_of_leave === 'CTO Leave') {
             $rules['files'] = 'required|array|min:1';
             $rules['files.*'] = 'file|mimes:jpeg,png,jpg,pdf|max:2048';
         }
-
+    
         $this->validate($rules);
-
+    
         // New validation for Vacation Leave and Mandatory/Forced Leave
         $now = now();
         $fiveDaysFromNow = $now->copy()->addDays(5)->startOfDay();
-
-        if (in_array('Vacation Leave', $this->type_of_leave) || in_array('Mandatory/Forced Leave', $this->type_of_leave)) {
+    
+        if ($this->type_of_leave === 'Vacation Leave' || $this->type_of_leave === 'Mandatory/Forced Leave') {
             // Validation for dates at least 5 days from now
             $invalidDates = collect($this->list_of_dates)->filter(function ($date) use ($fiveDaysFromNow) {
                 return Carbon::parse($date)->startOfDay()->lt($fiveDaysFromNow);
             });
-
+    
             if ($invalidDates->isNotEmpty()) {
                 $this->addError('list_of_dates', 'For Vacation Leave or Mandatory/Forced Leave, all leave dates must be at least 5 days from now.');
                 return;
             }
-
+    
             // Validation for future dates
             $invalidPastDates = collect($this->list_of_dates)->filter(function ($date) use ($now) {
                 return Carbon::parse($date)->startOfDay()->lte($now->startOfDay());
             });
-
+    
             if ($invalidPastDates->isNotEmpty()) {
                 $this->addError('list_of_dates', 'For Vacation Leave or Mandatory/Forced Leave, all dates must be in the future.');
                 return;
             }
         }
-
-        if (in_array('Others', $this->type_of_leave)) {
-            $this->type_of_leave = array_filter($this->type_of_leave, function ($leave) {
-                return $leave !== 'Others';
-            });
-
-            $this->type_of_leave[] = $this->other_leave;
+    
+        // Handle "Others" type of leave
+        if ($this->type_of_leave === 'Others') {
+            $this->validate([
+                'other_leave' => 'required|string'
+            ]);
+            $this->type_of_leave = $this->other_leave;
         }
-
+    
         $filePaths = [];
         $fileNames = [];
-
+    
         // Handle file uploads
         if ($this->files) {
             foreach ($this->files as $file) {
@@ -251,56 +280,36 @@ class LeaveApplicationTable extends Component
                 $fileNames[] = $originalFilename;
             }
         }
+    
+        $leaveDetails = null;
 
-        $leaveDetails = [];
-        foreach ($this->details_of_leave as $leaveType) {
-            if ($leaveType === 'Within the Philippines') {
-                $leaveDetails[] = $leaveType . ' = ' . $this->philippines;
-            } elseif ($leaveType === 'Abroad') {
-                $leaveDetails[] = $leaveType . ' = ' . $this->abroad;
-            } elseif ($leaveType === 'In Hospital') {
-                $leaveDetails[] = $leaveType . ' = ' . $this->inHospital;
-            } elseif ($leaveType === 'Out Patient') {
-                $leaveDetails[] = $leaveType . ' = ' . $this->outPatient;
-            } elseif ($leaveType === 'Women Special Illness') {
-                $leaveDetails[] = $leaveType . ' = ' . $this->specialIllnessForWomen;
-            } elseif ($leaveType === 'Completion of Masters Degree' ||
-                      $leaveType === 'BAR/Board Examination Review' ||
-                      $leaveType === 'Monetization of Leave Credits' ||
-                      $leaveType === 'Terminal Leave') {
-                $leaveDetails[] = $leaveType;
+        // Only process details if the leave type requires it
+        if (in_array($this->type_of_leave, $leaveTypesRequiringDetails)) {
+            $leaveDetails = $this->details_of_leave;
+            
+            // Add additional details if needed based on the selection
+            if ($this->details_of_leave === 'Within the Philippines') {
+                $leaveDetails .= ' = ' . $this->philippines;
+            } elseif ($this->details_of_leave === 'Abroad') {
+                $leaveDetails .= ' = ' . $this->abroad;
+            } elseif ($this->details_of_leave === 'In Hospital') {
+                $leaveDetails .= ' = ' . $this->inHospital;
+            } elseif ($this->details_of_leave === 'Out Patient') {
+                $leaveDetails .= ' = ' . $this->outPatient;
+            } elseif ($this->details_of_leave === 'Women Special Illness') {
+                $leaveDetails .= ' = ' . $this->specialIllnessForWomen;
             }
         }
-
-        $leaveDetailsString = implode(', ', $leaveDetails);
-        $filePathsString = implode(',', $filePaths);
-
-        // $datesString = '';
-
-        // if ($this->start_date && $this->end_date) {
-        //     $datesString = $this->start_date . ' - ' . $this->end_date;
-        // }
-
-        // if (!empty($this->list_of_dates)) {
-        //     if (!empty($datesString)) {
-        //         $datesString .= ', ';
-        //     }
-        //     $datesString .= implode(',', $this->list_of_dates);
-        // }
+    
         $datesString = '';
-
         if ($this->start_date && $this->end_date) {
-            // For range-based leaves, store only the range
             $datesString = $this->start_date . ' - ' . $this->end_date;
         } else if (!empty($this->list_of_dates)) {
-            // For individual dates, store them as comma-separated
             $datesString = implode(',', $this->list_of_dates);
         }
-
-        // $currentMonth = now()->month;
-        // $currentYear = now()->year;
+    
         $userId = Auth::id();
-
+    
         $leaveApplication = LeaveApplication::create([
             'user_id' => $userId,
             'name' => $this->name,
@@ -309,22 +318,23 @@ class LeaveApplicationTable extends Component
             'position' => $this->position,
             'salary' => $this->salary,
             'number_of_days' => $this->number_of_days,
-            'type_of_leave' => implode(',', $this->type_of_leave),
-            'details_of_leave' => $leaveDetailsString,
+            'type_of_leave' => $this->type_of_leave,
+            'details_of_leave' => $leaveDetails,
             'commutation' => $this->commutation,
             'status' => 'Pending',
             'file_path' => implode(',', $filePaths),
             'file_name' => implode(',', $fileNames),
             'list_of_dates' => $datesString,
         ]);
-
+    
         // Insert into leave_approvals
         LeaveApprovals::create([
             'user_id' => $userId,
             'application_id' => $leaveApplication->id,
             'stage' => 0
         ]);
-
+    
+        // Create specific leave details if needed
         if ($this->type_of_leave === 'Vacation Leave') {
             VacationLeaveDetails::create([
                 'application_id' => $leaveApplication->id,
@@ -333,7 +343,7 @@ class LeaveApplicationTable extends Component
                 'status' => 'Pending',
             ]);
         }
-
+    
         if ($this->type_of_leave === 'Sick Leave') {
             SickLeaveDetails::create([
                 'application_id' => $leaveApplication->id,
@@ -342,13 +352,12 @@ class LeaveApplicationTable extends Component
                 'status' => 'Pending',
             ]);
         }
-
+    
         $this->dispatch('swal', [
             'title' => "Leave application sent successfully!",
             'icon' => 'success'
         ]);
-
-
+    
         $this->resetForm();
         $this->closeLeaveForm();
     }
@@ -361,26 +370,6 @@ class LeaveApplicationTable extends Component
         }
     }
 
-    // public function addDate()
-    // {
-    //     $this->validate([
-    //         'new_date' => 'required|date',
-    //     ]);
-        
-    //     if (!in_array($this->new_date, $this->list_of_dates)) {
-    //         $this->list_of_dates[] = $this->new_date;
-    //         $this->number_of_days = count($this->list_of_dates); // Auto-update days
-    //     }
-        
-    //     $this->new_date = '';
-    // }
-
-    // public function removeDate($index)
-    // {
-    //     unset($this->list_of_dates[$index]);
-    //     $this->list_of_dates = array_values($this->list_of_dates);
-    //     $this->number_of_days = count($this->list_of_dates); // Auto-update days after removal
-    // }
     public function updatedStartDate($value)
     {
         if ($this->start_date && $this->end_date) {
@@ -707,41 +696,30 @@ class LeaveApplicationTable extends Component
         $this->requestSent = $request !== null;
         $this->requestApproved = $request && $request->status === 'approved';
 
-        // Fetch leave applications based on status
-        $pendingApplications = $this->getApplications(['Pending']);
-        $approvedApplications = $this->getApplications(['Approved']); // Fully approved applications
-        $approvedByHRApplications = $this->getApplications(['Approved by HR']);
-        $approvedBySupervisorApplications = $this->getApplications(['Approved by Supervisor']);
-        $disapprovedApplications = $this->getApplications(['Disapproved']);
-
         $leaveCredits = LeaveCredits::where('user_id', $userId)->first();
 
-        return view('livewire.user.leave-application-table', [
-            'pendingApplications' => $pendingApplications,
-            'approvedApplications' => $approvedApplications,
-            'approvedByHRApplications' => $approvedByHRApplications,
-            'approvedBySupervisorApplications' => $approvedBySupervisorApplications,
-            'disapprovedApplications' => $disapprovedApplications,
-        ]);
-    }
-
-    private function getApplications($statuses)
-    {
-        return LeaveApplication::where('user_id', Auth::id())
-            ->whereIn('status', $statuses)
-            ->with('vacationLeaveDetails', 'sickLeaveDetails')
+        $leaveApplications = LeaveApplication::query()
+            ->when($this->activeTab === 'pending', function ($query) {
+                return $query->where('status', 'Pending');
+            })
+            ->when($this->activeTab === 'approved', function ($query) {
+                return $query->where('status', 'Approved');
+            })
+            ->when($this->activeTab === 'disapproved', function ($query) {
+                return $query->where('status', 'Disapproved');
+            })
             ->orderBy('created_at', 'desc')
-            ->paginate($this->pageSize, ['*'], $this->getPaginationPageName($statuses[0]));
-    }
+            ->paginate($this->pageSize);
 
-    private function getPaginationPageName($status)
-    {
-        return strtolower(str_replace(' ', '_', $status)) . '_page';
+        return view('livewire.user.leave-application-table', [
+            'leaveApplications' => $leaveApplications,
+        ]);
     }
 
     public function setActiveTab($tab)
     {
         $this->activeTab = $tab;
+        $this->resetPage();
     }
 
     public function closeLeaveDetails()

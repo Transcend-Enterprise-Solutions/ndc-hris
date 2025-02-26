@@ -106,10 +106,6 @@
                         </div>
                     </div>
 
-                    {{-- @php
-                        $isDisabled = empty($startDate) || empty($endDate);
-                    @endphp --}}
-
                     <div class="flex flex-col justify-between items-center sm:flex-row">
                         <div class="flex flex-col md:flex-row items-center w-60">
                             <!-- Apply for Leave Button -->
@@ -162,195 +158,136 @@
 
                     <div x-data="{ activeTab: @entangle('activeTab') }" class="flex flex-col">
                         <!-- Tabs for Status -->
-                        <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700 mt-4">
+                        <div class="flex gap-2 overflow-x-auto -mb-2 mt-2">
                             <button @click="$wire.setActiveTab('pending')"
-                                :class="{
-                                    'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': $wire
-                                        .activeTab === 'pending',
-                                    'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': $wire
-                                        .activeTab !== 'pending'
-                                }"
-                                class="h-min px-4 py-2 text-sm mb-4">
-                                Pending
-                            </button>
-                            <button @click="$wire.setActiveTab('approvedByHR')"
-                                :class="{
-                                    'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': $wire
-                                        .activeTab === 'approvedByHR',
-                                    'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': $wire
-                                        .activeTab !== 'approvedByHR'
-                                }"
-                                class="h-min px-4 py-2 text-sm mb-4 whitespace-nowrap">
-                                Approved by HR
-                            </button>
-                            <button @click="$wire.setActiveTab('approvedBySupervisor')"
-                                :class="{
-                                    'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': $wire
-                                        .activeTab === 'approvedBySupervisor',
-                                    'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': $wire
-                                        .activeTab !== 'approvedBySupervisor'
-                                }"
-                                class="h-min px-4 py-2 text-sm mb-4 whitespace-nowrap">
-                                Approved by Supervisor
-                            </button>
+                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': activeTab === 'pending', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': activeTab !== 'pending' }"
+                                class="h-min px-4 pt-2 pb-4 text-sm" role="tab">Pending</button>
                             <button @click="$wire.setActiveTab('approved')"
-                                :class="{
-                                    'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': $wire
-                                        .activeTab === 'approved',
-                                    'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': $wire
-                                        .activeTab !== 'approved'
-                                }"
-                                class="h-min px-4 py-2 text-sm mb-4">
-                                Approved
-                            </button>
+                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': activeTab === 'approved', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': activeTab !== 'approved' }"
+                                class="h-min px-4 pt-2 pb-4 text-sm" role="tab">Approved</button>
                             <button @click="$wire.setActiveTab('disapproved')"
-                                :class="{
-                                    'font-bold text-violet-700 border-b-2 border-violet-700 dark:border-blue-600 dark:text-blue-600': $wire
-                                        .activeTab === 'disapproved',
-                                    'text-slate-700 font-bold dark:text-slate-300 dark:hover:border-b-slate-300 dark:hover:text-white hover:border-b-2 hover:border-b-slate-800 hover:text-black': $wire
-                                        .activeTab !== 'disapproved'
-                                }"
-                                class="h-min px-4 py-2 text-sm mb-4">
-                                Disapproved
-                            </button>
+                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': activeTab === 'disapproved', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': activeTab !== 'disapproved' }"
+                                class="h-min px-4 pt-2 pb-4 text-sm" role="tab">Disapproved</button>
                         </div>
+
 
                         <!-- Table for Leave Applications -->
                         <div class="overflow-x-auto">
-                            <table class="min-w-full bg-white dark:bg-gray-800">
-                                <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
-                                    <tr class="whitespace-nowrap">
-                                        <th scope="col"
-                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                            Date of Filing</th>
-                                        <th scope="col"
-                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                            Type of Leave</th>
-                                        <th scope="col"
-                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                            Details of Leave</th>
-                                        @if ($activeTab === 'pending')
-                                            <th scope="col"
-                                                class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                                Requested Day/s
-                                            </th>
-                                            <th scope="col"
-                                                class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                                Requested Date/s
-                                            </th>
-                                        @else
-                                            <th scope="col"
-                                                class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                                Approved Day/s
-                                            </th>
-                                            <th scope="col"
-                                                class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                                Approved Date/s
-                                            </th>
-                                        @endif
-                                        {{-- <th scope="col"
-                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                            Status</th> --}}
-                                        <th
-                                            class="px-5 py-3 text-gray-100 text-sm font-medium text-center sticky top-0 right-0 z-10 bg-gray-600 dark:bg-gray-600 uppercase">
-                                            Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Filtering based on selected tab -->
-                                    {{-- @foreach ($activeTab === 'pending' ? $pendingApplications : ($activeTab === 'approved' ? $approvedApplications : $disapprovedApplications) as $leaveApplication) --}}
-                                    @foreach ($activeTab === 'pending' ? $pendingApplications : ($activeTab === 'approvedByHR' ? $approvedByHRApplications : ($activeTab === 'approvedBySupervisor' ? $approvedBySupervisorApplications : ($activeTab === 'approved' ? $approvedApplications : $disapprovedApplications))) as $leaveApplication)
-                                        <tr class="whitespace-nowrap">
-                                            <td class="px-4 py-2 text-center">
-                                                {{ $leaveApplication->date_of_filing }}</td>
-                                            <td class="px-4 py-2 text-center">
-                                                @php
-                                                    $typeOfLeave = $leaveApplication->type_of_leave;
-                                                    $truncatedTypeOfLeave = \Illuminate\Support\Str::limit(
-                                                        $typeOfLeave,
-                                                        10,
-                                                        '...',
-                                                    );
-                                                @endphp
-                                                <span
-                                                    @if (strlen($typeOfLeave) > 10) title="{{ $typeOfLeave }}" @endif>
-                                                    {{ $truncatedTypeOfLeave }}
-                                                </span>
-                                            </td>
-                                            <td class="px-4 py-2 text-center">
-                                                @php
-                                                    $detailsOfLeave = $leaveApplication->details_of_leave;
-                                                    $truncatedDetailsOfLeave = \Illuminate\Support\Str::limit(
-                                                        $detailsOfLeave,
-                                                        10,
-                                                        '...',
-                                                    );
-                                                @endphp
-                                                <span
-                                                    @if (strlen($detailsOfLeave) > 10) title="{{ $detailsOfLeave }}" @endif>
-                                                    {{ $truncatedDetailsOfLeave }}
-                                                </span>
-                                            </td>
-                                            @if ($activeTab === 'pending')
-                                                <td class="px-4 py-2 text-center">
-                                                    {{ $leaveApplication->number_of_days }}
-                                                </td>
-                                                <td class="px-4 py-2 text-center">
-                                                    {{ \Illuminate\Support\Str::limit($leaveApplication->list_of_dates, 10, '...') }}
-                                                </td>
-                                            @else
-                                                <td class="px-4 py-2 text-center">
-                                                    {{ $leaveApplication->approved_days ?? 'N/A' }}</td>
-                                                <td class="px-4 py-2 text-center">
-                                                    {{ \Illuminate\Support\Str::limit($leaveApplication->approved_dates, 10, '...') ?? 'N/A' }}
-                                                </td>
-                                            @endif
-                                            {{-- <td class="px-4 py-2 text-center">
-                                                <span
-                                                    class="inline-block px-3 py-1 text-sm font-semibold 
-                                                {{ in_array($leaveApplication->status, ['Approved by HR', 'Approved by Supervisor', 'Approved'])
-                                                    ? 'text-green-800 bg-green-200'
-                                                    : ($leaveApplication->status === 'Disapproved'
-                                                        ? 'text-red-800 bg-red-200'
-                                                        : 'text-yellow-800 bg-yellow-200') }} rounded-full">
-                                                    {{ $leaveApplication->status }}
-                                                </span>
-                                            </td> --}}
-                                            <td
-                                                class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                {{-- @if (in_array($leaveApplication->status, ['Approved by HR', 'Approved by Supervisor', 'Approved', 'Disapproved'])) --}}
-                                                <div class="relative">
-                                                    <button type="button"
-                                                        wire:click.prevent="exportPDF({{ $leaveApplication->id }})"
-                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                            <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full min-w-full">
+                                        <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                            <tr class="whitespace-nowrap">
+                                                <th scope="col" class="px-4 py-2 text-center">
+                                                    Date of Filing</th>
+                                                <th scope="col" class="px-4 py-2 text-center">
+                                                    Type of Leave</th>
+                                                <th scope="col" class="px-4 py-2 text-center">
+                                                    Details of Leave</th>
+                                                @if ($activeTab === 'pending')
+                                                    <th scope="col" class="px-4 py-2 text-center">
+                                                        Requested Day/s
+                                                    </th>
+                                                    <th scope="col" class="px-4 py-2 text-center">
+                                                        Requested Date/s
+                                                    </th>
+                                                @elseif ($activeTab === 'disapproved')
+                                                    <th scope="col" class="px-4 py-2 text-center">
+                                                        Disapproved Day/s
+                                                    </th>
+                                                    <th scope="col" class="px-4 py-2 text-center">
+                                                        Disapproved Date/s
+                                                    </th>
+                                                @else
+                                                    <th scope="col" class="px-4 py-2 text-center">
+                                                        Approved Day/s
+                                                    </th>
+                                                    <th scope="col" class="px-4 py-2 text-center">
+                                                        Approved Date/s
+                                                    </th>
+                                                @endif
+                                                <th
+                                                    class="px-5 py-3 text-gray-100 text-sm font-medium text-center sticky top-0 right-0 z-10 bg-gray-600 dark:bg-gray-600 uppercase">
+                                                    Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if ($leaveApplications->count() > 0)
+                                                @foreach ($leaveApplications as $leaveApplication)
+                                                    <tr class="whitespace-nowrap">
+                                                        <td class="px-4 py-2 text-center">
+                                                            {{ $leaveApplication->date_of_filing }}</td>
+                                                        <td class="px-4 py-2 text-center">
+                                                            {{ $leaveApplication->type_of_leave }}</td>
+                                                        <td class="px-4 py-2 text-center">
+                                                            {{ $leaveApplication->details_of_leave ?? 'N/A' }}</td>
+                                                        @if ($activeTab === 'pending' || $activeTab === 'disapproved')
+                                                            <td class="px-4 py-2 text-center">
+                                                                {{ $leaveApplication->number_of_days }}
+                                                            </td>
+                                                            <td class="px-4 py-2 text-center">
+                                                                @if (Str::contains($leaveApplication->list_of_dates, ' - '))
+                                                                    {{ $leaveApplication->list_of_dates }}
+                                                                @else
+                                                                    <div class="flex flex-col">
+                                                                        @foreach (explode(',', $leaveApplication->list_of_dates) as $date)
+                                                                            <span>{{ trim($date) }}</span>
+                                                                        @endforeach
+                                                                    </div>
+                                                                @endif
+                                                            </td>
+                                                        @else
+                                                            <td class="px-4 py-2 text-center">
+                                                                {{ $leaveApplication->approved_days ?? 'N/A' }}
+                                                            </td>
+                                                            <td class="px-4 py-2 text-center">
+                                                                @if (Str::contains($leaveApplication->approved_dates, ' - '))
+                                                                    {{ $leaveApplication->approved_dates }}
+                                                                @else
+                                                                    <div class="flex flex-col">
+                                                                        @foreach (explode(',', $leaveApplication->approved_dates) as $date)
+                                                                            <span>{{ trim($date) }}</span>
+                                                                        @endforeach
+                                                                    </div>
+                                                                @endif
+                                                            </td>
+                                                        @endif
+
+                                                        <td
+                                                            class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                            <div class="relative">
+                                                                <button type="button"
+                                                                    wire:click.prevent="exportPDF({{ $leaveApplication->id }})"
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                                 -mr-2 text-sm font-medium tracking-wide text-red-500 hover:text-red-600 
                                                                 focus:outline-none">
-                                                        <i class="bi bi-file-earmark-arrow-down"
-                                                            title="Export in PDF"></i>
-                                                    </button>
-                                                    <button wire:click="showPDF({{ $leaveApplication->id }})"
-                                                        class="text-blue-500 hover:text-blue-600">
-                                                        <i class="bi bi-eye" title="Show Details"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                                                    <i class="bi bi-file-earmark-arrow-down"
+                                                                        title="Export in PDF"></i>
+                                                                </button>
+                                                                <button
+                                                                    wire:click="showPDF({{ $leaveApplication->id }})"
+                                                                    class="text-blue-500 hover:text-blue-600">
+                                                                    <i class="bi bi-eye" title="Show Details"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @else
+                                                <tr>
+                                                    <td colspan="5" class="px-4 py-2 text-center">
+                                                        No {{ $activeTab }} leave request.
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                        <div class="p-5 border-t border-neutral-500 dark:border-neutral-200">
-                            @if ($activeTab === 'pending')
-                                {{ $pendingApplications->links() }}
-                            @elseif ($activeTab === 'approvedByHR')
-                                {{ $approvedByHRApplications->links() }}
-                            @elseif ($activeTab === 'approvedBySupervisor')
-                                {{ $approvedBySupervisorApplications->links() }}
-                            @elseif ($activeTab === 'approved')
-                                {{ $approvedApplications->links() }}
-                            @else
-                                {{ $disapprovedApplications->links() }}
-                            @endif
+                        <div
+                            class="p-5 border-t rounded-b-lg border-gray-200 dark:border-slate-600 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                            {{ $leaveApplications->links() }}
                         </div>
 
                     </div>
@@ -453,77 +390,76 @@
                                 <span class="text-red-500 text-sm">Please choose one!</span>
                             @enderror
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="Vacation Leave" wire:model.live="type_of_leave">
+                                <input type="radio" value="Vacation Leave" wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Vacation Leave</label>
                             </div>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="Mandatory/Forced Leave"
-                                    wire:model.live="type_of_leave">
+                                <input type="radio" value="Mandatory/Forced Leave" wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Mandatory/Forced Leave</label>
                             </div>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="Sick Leave" wire:model.live="type_of_leave">
+                                <input type="radio" value="Sick Leave" wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Sick Leave</label>
                             </div>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="Maternity Leave" wire:model.live="type_of_leave">
+                                <input type="radio" value="Maternity Leave" wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Maternity Leave</label>
                             </div>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="Paternity Leave" wire:model.live="type_of_leave">
+                                <input type="radio" value="Paternity Leave" wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Paternity Leave</label>
                             </div>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="Special Privilege Leave"
+                                <input type="radio" value="Special Privilege Leave"
                                     wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Special Privilege
                                     Leave</label>
                             </div>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="Solo Parent Leave" wire:model.live="type_of_leave">
+                                <input type="radio" value="Solo Parent Leave" wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Solo Parent Leave</label>
                             </div>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="Study Leave" wire:model.live="type_of_leave">
+                                <input type="radio" value="Study Leave" wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Study Leave</label>
                             </div>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="10-Day VAWC Leave" wire:model.live="type_of_leave">
+                                <input type="radio" value="10-Day VAWC Leave" wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">10-Day VAWC Leave</label>
                             </div>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="Rehabilitation Privilege"
+                                <input type="radio" value="Rehabilitation Privilege"
                                     wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Rehabilitation
                                     Privilege</label>
                             </div>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="Special Leave Benefits for Women"
+                                <input type="radio" value="Special Leave Benefits for Women"
                                     wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Special Leave Benefits for
                                     Women</label>
                             </div>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="Special Emergency (Calamity) Leave"
+                                <input type="radio" value="Special Emergency (Calamity) Leave"
                                     wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Special Emergency (Calamity)
                                     Leave</label>
                             </div>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="Adoption Leave" wire:model.live="type_of_leave">
+                                <input type="radio" value="Adoption Leave" wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Adoption Leave</label>
                             </div>
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="CTO Leave" wire:model.live="type_of_leave">
+                                <input type="radio" value="CTO Leave" wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">CTO Leave</label>
                             </div>
 
                             <div class="gap-2 columns-1">
-                                <input type="checkbox" value="Others" wire:model.live="type_of_leave">
+                                <input type="radio" value="Others" wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Others (Please
                                     specify):</label>
 
-                                @if (in_array('Others', $type_of_leave))
+                                @if ($type_of_leave === 'Others')
                                     <input type="text" id="other_leave" wire:model="other_leave"
                                         placeholder="Please specify"
                                         class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
@@ -541,50 +477,51 @@
                                 <span class="text-red-500 text-sm">Please choose one!</span>
                             @enderror
 
-                            <div
-                                class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto">
-                                <h6
-                                    class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
-                                    Other purpose:
-                                </h6>
-                                <div class="gap-2 columns-1">
-                                    <input type="checkbox" class="ml-1" value="Monetization of Leave Credits"
-                                        wire:model="details_of_leave">
-                                    <label class="text-md text-gray-700 dark:text-slate-100">Monetization of Leave
-                                        Credits</label>
+                            @if ($type_of_leave === 'Others')
+                                <div
+                                    class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto">
+                                    <h6
+                                        class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
+                                        Other purpose:
+                                    </h6>
+                                    <div class="gap-2 columns-1">
+                                        <input type="checkbox" class="ml-1" value="Monetization of Leave Credits"
+                                            wire:model="details_of_leave">
+                                        <label class="text-md text-gray-700 dark:text-slate-100">Monetization of Leave
+                                            Credits</label>
+                                    </div>
+                                    <div class="gap-2 columns-1 mt-4">
+                                        <input type="checkbox" class="ml-1" value="Terminal Leave"
+                                            wire:model="details_of_leave">
+                                        <label class="text-md text-gray-700 dark:text-slate-100">Terminal Leave</label>
+                                    </div>
                                 </div>
-                                <div class="gap-2 columns-1 mt-4">
-                                    <input type="checkbox" class="ml-1" value="Terminal Leave"
-                                        wire:model="details_of_leave">
-                                    <label class="text-md text-gray-700 dark:text-slate-100">Terminal Leave</label>
-                                </div>
-                            </div>
+                            @endif
 
-                            @if (in_array('Vacation Leave', $type_of_leave) || in_array('Special Privilege Leave', $type_of_leave))
+                            @if ($type_of_leave === 'Vacation Leave' || $type_of_leave === 'Special Privilege Leave')
                                 <div
                                     class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
                                     <h6
                                         class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
-                                        In
-                                        case of Vacation/Special Privilege Leave:</h6>
+                                        In case of Vacation/Special Privilege Leave:</h6>
                                     <div class="grid grid-cols-1 gap-4">
                                         <div class="gap-2 columns-1">
-                                            <input type="checkbox" class="ml-1" value="Within the Philippines"
+                                            <input type="radio" class="ml-1" value="Within the Philippines"
                                                 wire:model.live="details_of_leave">
                                             <label class="text-md text-gray-700 dark:text-slate-100">Within the
                                                 Philippines</label>
-                                            @if (in_array('Within the Philippines', $details_of_leave))
+                                            @if ($details_of_leave === 'Within the Philippines')
                                                 <input type="text" id="within_the_ph" wire:model="philippines"
                                                     placeholder="Please specify"
                                                     class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                             @endif
                                         </div>
                                         <div class="gap-2 columns-1">
-                                            <input type="checkbox" class="ml-1" value="Abroad"
+                                            <input type="radio" class="ml-1" value="Abroad"
                                                 wire:model.live="details_of_leave">
                                             <label class="text-md text-gray-700 dark:text-slate-100">Abroad
                                                 (Specify)</label>
-                                            @if (in_array('Abroad', $details_of_leave))
+                                            @if ($details_of_leave === 'Abroad')
                                                 <input type="text" id="abroad_value" wire:model="abroad"
                                                     placeholder="Please specify"
                                                     class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
@@ -594,7 +531,7 @@
                                 </div>
                             @endif
 
-                            @if (in_array('Sick Leave', $type_of_leave))
+                            @if ($type_of_leave === 'Sick Leave')
                                 <div
                                     class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
                                     <h6
@@ -603,24 +540,22 @@
                                         case of Sick Leave:</h6>
                                     <div class="grid grid-cols-1 gap-4">
                                         <div class="gap-2 columns-1">
-                                            <input type="checkbox" class="ml-1" value="In Hospital"
+                                            <input type="radio" class="ml-1" value="In Hospital"
                                                 wire:model.live="details_of_leave">
                                             <label class="text-md text-gray-700 dark:text-slate-100">In Hospital
-                                                (Special
-                                                Illness)</label>
-                                            @if (in_array('In Hospital', $details_of_leave))
+                                                (Special Illness)</label>
+                                            @if ($details_of_leave === 'In Hospital')
                                                 <input type="text" id="in_hospital" wire:model="inHospital"
                                                     placeholder="Please specify"
                                                     class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                             @endif
                                         </div>
                                         <div class="gap-2 columns-1">
-                                            <input type="checkbox" class="ml-1" value="Out Patient"
+                                            <input type="radio" class="ml-1" value="Out Patient"
                                                 wire:model.live="details_of_leave">
                                             <label class="text-md text-gray-700 dark:text-slate-100">Out Patient
-                                                (Special
-                                                Illness)</label>
-                                            @if (in_array('Out Patient', $details_of_leave))
+                                                (Special Illness)</label>
+                                            @if ($details_of_leave === 'Out Patient')
                                                 <input type="text" id="out_patient" wire:model="outPatient"
                                                     placeholder="Please specify"
                                                     class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
@@ -630,19 +565,18 @@
                                 </div>
                             @endif
 
-                            @if (in_array('Special Leave Benefits for Women', $type_of_leave))
+                            @if ($type_of_leave === 'Special Leave Benefits for Women')
                                 <div
                                     class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
                                     <h6
                                         class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
-                                        In
-                                        case of Special Leave Benefits for Women:</h6>
+                                        In case of Special Leave Benefits for Women:</h6>
                                     <div class="gap-2 columns-1">
-                                        <input type="checkbox" class="ml-1" value="Women Special Illness"
+                                        <input type="radio" class="ml-1" value="Women Special Illness"
                                             wire:model.live="details_of_leave">
                                         <label class="text-md text-gray-700 dark:text-slate-100">(Special
                                             Illness)</label>
-                                        @if (in_array('Women Special Illness', $details_of_leave))
+                                        @if ($details_of_leave === 'Women Special Illness')
                                             <input type="text" id="women_leave"
                                                 wire:model="specialIllnessForWomen" placeholder="Please specify"
                                                 class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
@@ -651,21 +585,20 @@
                                 </div>
                             @endif
 
-                            @if (in_array('Study Leave', $type_of_leave))
+                            @if ($type_of_leave === 'Study Leave')
                                 <div
                                     class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto mt-4">
                                     <h6
                                         class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
-                                        In
-                                        case of Study Leave:</h6>
+                                        In case of Study Leave:</h6>
                                     <div class="gap-2 columns-1">
-                                        <input type="checkbox" class="ml-1" value="Completion of Masters Degree"
+                                        <input type="radio" class="ml-1" value="Completion of Masters Degree"
                                             wire:model="details_of_leave">
                                         <label class="text-md text-gray-700 dark:text-slate-100">Completion of Master's
                                             Degree</label>
                                     </div>
                                     <div class="gap-2 columns-1 mt-4">
-                                        <input type="checkbox" class="ml-1" value="BAR/Board Examination Review"
+                                        <input type="radio" class="ml-1" value="BAR/Board Examination Review"
                                             wire:model="details_of_leave">
                                         <label class="text-md text-gray-700 dark:text-slate-100">BAR/Board Examination
                                             Review</label>
@@ -675,85 +608,6 @@
                         </fieldset>
 
                         {{-- C. --}}
-                        {{-- <fieldset
-                            class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
-                            <legend class="text-gray-700 dark:text-slate-100">C. Number of Working Days Applied for
-                            </legend>
-                            <div class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700">
-                                <div class="gap-2 columns-1">
-                                    <label class="text-sm text-gray-700 dark:text-slate-100">Days</label>
-                                    <input type="number" id="number_of_days" wire:model="number_of_days"
-                                        class="mt-1 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
-                                    @error('number_of_days')
-                                        <span class="text-red-500 text-sm">This field is required!</span>
-                                    @enderror
-                                </div>
-
-                                @if (in_array('Vacation Leave', $type_of_leave) || in_array('Sick Leave', $type_of_leave) || in_array('Paternity Leave', $type_of_leave) || in_array('Special Privilege Leave', $type_of_leave) || in_array('Mandatory/Forced Leave', $type_of_leave) || in_array('Solo Parent Leave', $type_of_leave) || in_array('10-Day VAWC Leave', $type_of_leave) || in_array('Special Emergency (Calamity) Leave', $type_of_leave) || in_array('Adoption Leave', $type_of_leave) || in_array('CTO Leave', $type_of_leave))
-                                    <div class="gap-2 columns-1 mt-2">
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-slate-100">List
-                                            of
-                                            Dates</label>
-                                        <div class="gap-2 columns-2">
-                                            <input type="date" wire:model="new_date"
-                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
-                                            <button><i
-                                                    class="bi bi-plus-square dark:text-slate-50 text-slate-900 hover:text-slate-400"
-                                                    wire:click="addDate" style="font-size: 2rem;"></i></button>
-                                        </div>
-                                        @error('list_of_dates')
-                                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                @endif
-                                <div class="gap-2 columns-1 mt-2">
-                                    <ul>
-                                        @foreach ($list_of_dates as $index => $date)
-                                            <li class="dark:text-slate-50 text-slate-900 flex items-center">
-                                                <i class="bi bi-check-lg pr-4 text-green-600"></i>{{ $date }}
-                                                <button wire:click="removeDate({{ $index }})"
-                                                    class="ml-4 text-red-600">
-                                                    <i class="bi bi-x"></i>
-                                                </button>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-
-                                    @error('new_date')
-                                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                                    @enderror
-                                </div>
-
-                                <fieldset
-                                    class="border border-red-400 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0 mt-2">
-                                    <div class="gap-2 columns-1">
-                                        <h6
-                                            class="mt-2 mb-2 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
-                                            In case of Study Leave, Maternity Leave, Special Leave Benefits for Women,
-                                            and
-                                            Rehabilitation
-                                            Leave:</h6>
-
-                                        <div class="gap-2 columns-1 mt-2">
-                                            <label
-                                                class="block text-sm font-medium text-gray-700 dark:text-slate-100">Start
-                                                date</label>
-                                            <input type="date" id="start_date" wire:model="start_date"
-                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
-                                        </div>
-
-                                        <div class="gap-2 columns-1 mt-2">
-                                            <label
-                                                class="block text-sm font-medium text-gray-700 dark:text-slate-100 mt-2">End
-                                                date</label>
-                                            <input type="date" id="end_date" wire:model="end_date"
-                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
-                                        </div>
-                                    </div>
-                                </fieldset>
-
-                            </div>
-                        </fieldset> --}}
                         <fieldset
                             class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0">
                             <legend class="text-gray-700 dark:text-slate-100">C. Number of Working Days Applied for
@@ -768,25 +622,33 @@
                                     @enderror
                                 </div>
 
-                                @if (in_array('Vacation Leave', $type_of_leave) ||
-                                        in_array('Sick Leave', $type_of_leave) ||
-                                        in_array('Paternity Leave', $type_of_leave) ||
-                                        in_array('Special Privilege Leave', $type_of_leave) ||
-                                        in_array('Mandatory/Forced Leave', $type_of_leave) ||
-                                        in_array('Solo Parent Leave', $type_of_leave) ||
-                                        in_array('10-Day VAWC Leave', $type_of_leave) ||
-                                        in_array('Special Emergency (Calamity) Leave', $type_of_leave) ||
-                                        in_array('Adoption Leave', $type_of_leave) ||
-                                        in_array('CTO Leave', $type_of_leave))
-                                    <div class="gap-2 columns-1 mt-2">
+                                @if (
+                                    $type_of_leave === 'Vacation Leave' ||
+                                        $type_of_leave === 'Mandatory/Forced Leave' ||
+                                        $type_of_leave === 'Sick Leave' ||
+                                        $type_of_leave === 'Paternity Leave' ||
+                                        $type_of_leave === 'Special Privilege Leave' ||
+                                        $type_of_leave === 'Solo Parent Leave' ||
+                                        $type_of_leave === '10-Day VAWC Leave' ||
+                                        $type_of_leave === 'Special Emergency (Calamity) Leave' ||
+                                        $type_of_leave === 'Adoption Leave' ||
+                                        $type_of_leave === 'CTO Leave' ||
+                                        $type_of_leave === 'Others')
+                                    <div class="mb-4 mt-2">
                                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-100">List
                                             of Dates</label>
-                                        <div class="gap-2 columns-2">
+                                        <div class="mt-1 flex">
                                             <input type="date" wire:model="new_date"
-                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
-                                            <button wire:click="addDate"><i
-                                                    class="bi bi-plus-square dark:text-slate-50 text-slate-900 hover:text-slate-400"
-                                                    style="font-size: 2rem;"></i></button>
+                                                class="block w-full rounded-l-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm sm:text-sm"
+                                                min="{{ date('Y-m-d') }}">
+                                            <button wire:click="addDate"
+                                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-green-600 hover:bg-green-700 focus:outline-none">
+                                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M12 4v16m8-8H4" />
+                                                </svg>
+                                            </button>
                                         </div>
                                         @error('list_of_dates')
                                             <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -811,31 +673,38 @@
                                     @enderror
                                 </div>
 
-                                <fieldset
-                                    class="border border-red-400 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0 mt-2">
-                                    <div class="gap-2 columns-1">
-                                        <h6
-                                            class="mt-2 mb-2 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
-                                            In case of Study Leave, Maternity Leave, Special Leave Benefits for Women,
-                                            and Rehabilitation Leave:</h6>
+                                @if (
+                                    $type_of_leave === 'Maternity Leave' ||
+                                        $type_of_leave === 'Study Leave' ||
+                                        $type_of_leave === 'Rehabilitation Privilege' ||
+                                        $type_of_leave === 'Special Leave Benefits for Women')
+                                    <fieldset
+                                        class="border border-red-400 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0 mt-2">
+                                        <div class="gap-2 columns-1">
+                                            <h6
+                                                class="mt-2 mb-2 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
+                                                In case of Study Leave, Maternity Leave, Special Leave Benefits for
+                                                Women,
+                                                and Rehabilitation Leave:</h6>
 
-                                        <div class="gap-2 columns-1 mt-2">
-                                            <label
-                                                class="block text-sm font-medium text-gray-700 dark:text-slate-100">Start
-                                                date</label>
-                                            <input type="date" id="start_date" wire:model="start_date"
-                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
-                                        </div>
+                                            <div class="gap-2 columns-1 mt-2">
+                                                <label
+                                                    class="block text-sm font-medium text-gray-700 dark:text-slate-100">Start
+                                                    date</label>
+                                                <input type="date" id="start_date" wire:model.live="start_date"
+                                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                            </div>
 
-                                        <div class="gap-2 columns-1 mt-2">
-                                            <label
-                                                class="block text-sm font-medium text-gray-700 dark:text-slate-100 mt-2">End
-                                                date</label>
-                                            <input type="date" id="end_date" wire:model="end_date"
-                                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                            <div class="gap-2 columns-1 mt-2">
+                                                <label
+                                                    class="block text-sm font-medium text-gray-700 dark:text-slate-100 mt-2">End
+                                                    date</label>
+                                                <input type="date" id="end_date" wire:model.live="end_date"
+                                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                            </div>
                                         </div>
-                                    </div>
-                                </fieldset>
+                                    </fieldset>
+                                @endif
                             </div>
                         </fieldset>
 
