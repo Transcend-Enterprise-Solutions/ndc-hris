@@ -117,6 +117,7 @@ class AdminDtrTable extends Component
                 DB::raw("COALESCE(employees_dtr.up_remarks, employees_dtr.remarks) as effective_remarks")
             );
 
+        // Apply search filter
         if ($this->searchTerm) {
             $query->where(function($q) {
                 $q->where('users.emp_code', 'like', '%'.$this->searchTerm.'%')
@@ -124,6 +125,12 @@ class AdminDtrTable extends Component
             });
         }
 
+        // Apply office division filter
+        if ($this->selectedDivision) {
+            $query->where('users.office_division_id', $this->selectedDivision);
+        }
+
+        // Apply date filters
         if ($this->startDate) {
             $query->where('employees_dtr.date', '>=', $this->startDate);
         }
@@ -132,6 +139,7 @@ class AdminDtrTable extends Component
             $query->where('employees_dtr.date', '<=', $this->endDate);
         }
 
+        // Apply sorting
         if ($this->sortField === 'date') {
             $query->orderBy('employees_dtr.date', $this->sortDirection)
                   ->orderBy('users.name', 'asc');
@@ -160,7 +168,7 @@ class AdminDtrTable extends Component
         $query = EmployeesDtr::query()
             ->join('users', 'employees_dtr.user_id', '=', 'users.id')
             ->join('user_data', 'users.id', '=', 'user_data.user_id')
-            ->leftJoin('office_divisions', 'users.office_division_id', '=', 'office_divisions.id')  // Fixed join
+            ->leftJoin('office_divisions', 'users.office_division_id', '=', 'office_divisions.id')
             ->select(
                 'employees_dtr.*',
                 'users.name as user_name',
@@ -174,12 +182,17 @@ class AdminDtrTable extends Component
             )
             ->whereBetween('employees_dtr.date', [$this->startDate, $this->endDate]);
 
-        // Apply the search term if it's set
+        // Apply search filter
         if ($this->searchTerm) {
             $query->where(function($q) {
                 $q->where('users.emp_code', 'like', '%'.$this->searchTerm.'%')
                   ->orWhere('users.name', 'like', '%'.$this->searchTerm.'%');
             });
+        }
+
+        // Apply office division filter
+        if ($this->selectedDivision) {
+            $query->where('users.office_division_id', $this->selectedDivision);
         }
 
         $dtrs = $query->orderBy('users.name')
@@ -196,11 +209,20 @@ class AdminDtrTable extends Component
             });
         });
 
+        // Get division name for PDF title if division is selected
+        $divisionName = '';
+        if ($this->selectedDivision) {
+            $division = OfficeDivisions::find($this->selectedDivision);
+            if ($division) {
+                $divisionName = $division->office_division;
+            }
+        }
         $pdf = Pdf::loadView('pdf.dtr', [
             'dtrs' => $dtrs,
             'startDate' => $this->startDate,
-            'eSignaturePath' => $this->eSignaturePath,
             'endDate' => $this->endDate,
+            'eSignaturePath' => $this->eSignaturePath,
+            'divisionName' => $divisionName
         ]);
 
         $this->dispatch('swal', [
