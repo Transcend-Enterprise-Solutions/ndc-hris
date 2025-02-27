@@ -89,7 +89,7 @@
                 </h1>
             </div>
 
-            @if($ongoingObs)
+            {{-- @if($ongoingObs)
                 <div class="w-full flex flex-col justify-center items-center mb-6 bg-gray-300 dark:bg-slate-900 border border-gray-300 dark:border-slate-900 shadow-xl" x-data="{ showDialog: false }">
                     <style>
                         .obs{
@@ -116,7 +116,7 @@
                                 <div class="flex w-full">
                                     <p class=""><span class="{{ $obStatus == 'ONGOING' ? 'text-green-500' : 'text-orange-500' }}">{{ $obStatus }}</span> Official Business: {{ $ongoingObs->company }}</p>
                                 </div>
-                                {{-- <div class="flex w-full">
+                                <div class="flex w-full">
                                     <div class="flex items-center">
                                         <p class="mr-2">Current Location: </p>
                                         <div class="relative flex items-center justify-center mr-3" style="height: 18px; width: 18px;">
@@ -127,7 +127,7 @@
                                     <div class="flex">
                                         <p class="">OB Location: </p><img src="{{ asset('/images/red-dot.png') }}" alt="map icon" style="width: 25px; height: 25px; margin-bottom:-3px;" />
                                     </div>
-                                </div> --}}
+                                </div>
                                     <div>
                                         <p class="">Company: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->company }}</span></p>
                                         <p class="">Address: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->address }}</span></p>
@@ -137,9 +137,9 @@
                                         <p class="">Purpose: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->purpose }}</span></p>
                                     </div>
                             </div>
-                            {{-- <div wire:ignore style="height: 240px; width: 100%;">
+                            <div wire:ignore style="height: 240px; width: 100%;">
                                 <div id="map2" style="height: 100%; width: 100%; margin: 0;"></div>
-                            </div> --}}
+                            </div>
                         </div>
 
                         <div class="block p-6 shadow dark:bg-gray-900 relative obs2">
@@ -167,14 +167,14 @@
                                 </div>
 
                                 @if($isWithinRadius)
-                                    {{-- <div class="flex justify-center">
+                                    <div class="flex justify-center">
                                         <p class="text-blue-500 underline" @click="showDialog = true">OB Details</p>
-                                    </div> --}}
+                                    </div>
                                 @endif
                             </div>
 
                             @if(!$isWithinRadius && $isTodayIsOb)
-                                {{-- <div
+                                <div
                                     class="absolute inset-0 flex justify-center items-center bg-gray-200 dark:bg-slate-700 bg-opacity-90 dark:bg-opacity-90">
                                     <div class="text-center">
                                         <i class="bi bi-person-lock" style="font-size: 3rem;"></i>
@@ -182,14 +182,14 @@
                                             the OB location.</p>
                                         <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p>
                                     </div>
-                                </div> --}}
+                                </div>
                             @elseif(!$isTodayIsOb)
                                 <div
                                     class="absolute inset-0 flex justify-center items-center bg-gray-200 dark:bg-slate-700 bg-opacity-90 dark:bg-opacity-90">
                                     <div class="text-center">
                                         <i class="bi bi-person-lock" style="font-size: 3rem;"></i>
                                         <p class="font-bold mb-4">Attendance will be available on <br>{{ \Carbon\Carbon::parse($ongoingObs->date)->format('F d, Y') }}</p>
-                                        {{-- <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p> --}}
+                                        <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p>
                                     </div>
                                 </div>
                             @endif
@@ -230,7 +230,7 @@
                         </div>
                     </div>
                 </div>
-            @endif
+            @endif --}}
 
 
             <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
