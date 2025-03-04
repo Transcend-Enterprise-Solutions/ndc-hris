@@ -188,7 +188,7 @@
                                                     </span>
                                                 </a>
                                             </li>
-                                            {{-- <li class="mb-1 last:mb-0">
+                                            <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/bir2316')) {{ '!text-blue-500' }} @endif"
                                                     href="{{ route('/employee-management/bir2316') }}">
                                                     <span class="text-sm font-medium transition-opacity duration-300"
@@ -197,7 +197,7 @@
                                                         BIR 2316
                                                     </span>
                                                 </a>
-                                            </li> --}}
+                                            </li>
                                         @endif
                                     </ul>
                                 </div>
@@ -346,6 +346,24 @@
                             </li>
                         @endif
                         @if (Auth::user()->user_role === 'sa')
+                            <!-- configuration -->
+                            <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
+                            @if (in_array(Request::segment(1), ['configuration'])) {{ 'bg-gray-200 dark:bg-slate-900' }} @endif"
+                                x-data="{ open: {{ in_array(Request::segment(1), ['configuration']) ? 1 : 0 }} }">
+                                <a class="block text-gray-800 dark:text-gray-100 truncate transition 
+                                @if (Route::is('configuration')) {{ '!text-blue-500' }} @endif"
+                                    href="{{ route('configuration') }}" wire:navigate>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <i class="bi bi-gear text-slate-400 mr-3"></i>
+                                            <span
+                                                class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                                Configuration
+                                            </span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
                             <!-- logs -->
                             <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] 
                             @if (in_array(Request::segment(1), ['audit-logs'])) {{ 'bg-gray-200 dark:bg-slate-900' }} @endif"

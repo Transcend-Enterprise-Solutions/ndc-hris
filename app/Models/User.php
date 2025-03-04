@@ -55,6 +55,16 @@ class User extends Authenticatable
         return $this->hasOne(UserData::class);
     }
 
+    public function officeDivision()
+    {
+        return $this->belongsTo(OfficeDivisions::class, 'office_division_id', 'id');
+    }    
+
+    public function officeDivisionUnit()
+    {
+        return $this->belongsTo(OfficeDivisionUnits::class, 'unit_id', 'id');
+    }    
+
     public function admin()
     {
         return $this->hasOne(Admin::class);

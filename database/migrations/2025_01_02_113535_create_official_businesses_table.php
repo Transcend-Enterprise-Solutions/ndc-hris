@@ -27,9 +27,13 @@ return new class extends Migration
             $table->time('time_out')->nullable();
             $table->string('purpose')->nullable();
             $table->boolean('status')->default(0)->nullable();
-            $table->string('approver')->nullable();
+            $table->unsignedBigInteger('sup_approver')->nullable();
+            $table->date('date_sup_approved')->nullable();
+            $table->unsignedBigInteger('sup_disapprover')->nullable();
+            $table->date('date_sup_disapproved')->nullable();
+            $table->unsignedBigInteger('approver')->nullable();
             $table->date('date_approved')->nullable();
-            $table->string('disapprover')->nullable();
+            $table->unsignedBigInteger('disapprover')->nullable();
             $table->date('date_disapproved')->nullable();
             $table->timestamps();
         });

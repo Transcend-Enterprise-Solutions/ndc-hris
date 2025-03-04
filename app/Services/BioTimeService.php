@@ -4,17 +4,35 @@ namespace App\Services;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use App\Models\AuditLog;
+use App\Models\BiometricConnection;
 
 class BioTimeService
 {
     protected $client;
-    protected $authUrl = 'http://45.64.120.27:8082/jwt-api-token-auth/';
-    protected $username = 'admin123';
-    protected $password = 'admin123';
+    protected $authUrl;
+    protected $username;
+    protected $password;
     protected $token;
+    protected $hostPort;
 
     public function __construct()
     {
+        // Fetch the credentials from the database
+        $bioCon = BiometricConnection::first();
+        if ($bioCon) {
+            $host = explode('/', $bioCon->auth_url);
+
+            $this->username = $bioCon->username;
+            $this->password = $bioCon->password;
+            $this->authUrl = $bioCon->auth_url;
+            $this->hostPort = $host[2];
+
+        } else {
+            $this->username = null;
+            $this->password = null;
+            $this->authUrl = null;
+        }
+
         $this->client = new Client([
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -62,7 +80,7 @@ class BioTimeService
         }
 
         try {
-            $response = $this->client->get('http://45.64.120.27:8082/iclock/api/transactions/', [
+            $response = $this->client->get('http://' . $this->hostPort . '/iclock/api/transactions/', [
                 'headers' => [
                     'Authorization' => 'JWT ' . $this->token,
                 ],

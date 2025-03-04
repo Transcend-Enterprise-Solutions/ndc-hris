@@ -5,6 +5,7 @@ namespace App\Livewire\User;
 use App\Models\Notification;
 use App\Models\OfficeDivisions;
 use App\Models\OfficialBusiness;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -239,6 +240,26 @@ class OfficialBusinessTable extends Component
                 // 'newLatitude' => 'required',
             ]);
 
+            $supervisor = User::where('user_role', 'sv')
+                    ->where('office_division_id', $user->office_division_id)
+                    ->orderByRaw("CASE 
+                        WHEN unit_id IS NOT NULL AND unit_id = ? THEN 1
+                        WHEN unit_id IS NULL THEN 2
+                        ELSE 3
+                    END", [$user->unit_id])
+                    ->first();
+        
+            if(!$supervisor){
+                $this->resetVariables();
+                $this->dispatch('swal', [
+                    'title' => 'No assigned supervisor for your division or unit. Please contact the administrator for assistance.',
+                    'icon' => 'error'
+                ]);
+                return;
+            }
+
+        
+
             if($this->addOB){
                  // Generate a 12-digit random reference number
                 $referenceNumber = str_pad(random_int(0, 999999999999), 12, '0', STR_PAD_LEFT);
@@ -254,6 +275,8 @@ class OfficialBusinessTable extends Component
                     'time_start' => $this->startTime,  
                     'time_end' => $this->endTime,  
                     'purpose' => $this->purpose,  
+                    'sup_approver' => $supervisor->id,  
+                    'sup_disapprover' => $supervisor->id,  
                 ]);
 
                 // Create a notification entry

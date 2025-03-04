@@ -43,6 +43,8 @@ class AdminOfficialBusinessTable extends Component
 
     public function render()
     {
+        $userRole = Auth::user()->user_role;
+
         $obs = User::join('official_businesses', 'official_businesses.user_id', 'users.id')
                     ->join('user_data', 'user_data.user_id', 'official_businesses.user_id')
                     ->where('official_businesses.status', 1)
@@ -90,6 +92,15 @@ class AdminOfficialBusinessTable extends Component
                     ])
                     ->orderBy('date', 'ASC')
                     ->paginate($this->pageSize);
+
+        if($userRole != 'sv'){
+            $obs->where('official_businesses.date_sup_approved', '!=', null)
+                ->where('official_businesses.date_sup_disapproved', '!=', null);
+            $obRequests->where('official_businesses.date_sup_approved', '!=', null)
+                ->where('official_businesses.date_sup_disapproved', '!=', null);
+            $disapprovedObs->where('official_businesses.date_sup_approved', '!=', null)
+                ->where('official_businesses.date_sup_disapproved', '!=', null);
+        }
 
         return view('livewire.admin.admin-official-business-table', [
             'obs' => $obs,

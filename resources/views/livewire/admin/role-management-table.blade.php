@@ -549,7 +549,7 @@ x-cloak>
 
                                             @endforeach
                                         </div>
-                                     </div>
+                                    </div>
                                     <div x-show="selectedTab === 'role'">
                                         <div class="overflow-x-auto">
                                             <table class="w-full min-w-full">
@@ -642,7 +642,7 @@ x-cloak>
                                         <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
                                             {{ $admins->links() }}
                                         </div>
-                                     </div>
+                                    </div>
                                     <div x-show="selectedTab === 'pos'">
                                         <div class="overflow-x-auto">
                                             <table class="w-full min-w-full">
@@ -679,7 +679,7 @@ x-cloak>
                                                         @if($pos->position != "Super Admin")
                                                             <tr class="text-neutral-800 dark:text-neutral-200">
                                                                 <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                                    {{ $pos->name }}
+                                                                    {{ $pos->surname }}, {{ $pos->first_name }}{{ $pos->middle_name ? ' ' . $pos->middle_name : '' }}{{ $pos->name_extension ? ' ' . $pos->name_extension : '' }}
                                                                 </td>
                                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                                     @if($pos->appointment == 'cos')
@@ -703,7 +703,7 @@ x-cloak>
                                                                     @elseif($pos->appointment == "ct")
                                                                         Co-Terminus
                                                                     @elseif($pos->appointment == 'cos')
-                                                                        {{ $pos->appointment }} {{ $pos->appointment_type ? '- ' . $pos->appointment_type : '' }}
+                                                                        {{ $pos->appointment }}
                                                                     @else
                                                                         {{ $pos->appointment }}
                                                                     @endif
@@ -756,8 +756,7 @@ x-cloak>
                                         <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
                                             {{ $empPos->links() }}
                                         </div>
-                                     </div>
-
+                                    </div>
                                     <div x-show="selectedTab === 'settings'">
                                         <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
                                             <table class="w-full min-w-full">
@@ -885,7 +884,7 @@ x-cloak>
 
                                             @endforeach
                                         </div>
-                                     </div>
+                                    </div>
                                     <div x-show="selectedTab === 'sgstep'">
                                         <div class="overflow-x-auto">
                                             <table class="w-full min-w-full">
@@ -987,7 +986,7 @@ x-cloak>
                                                 </div>
                                             </div>
                                         </div>
-                                     </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

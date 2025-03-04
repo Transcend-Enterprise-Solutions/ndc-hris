@@ -24,6 +24,13 @@ Route::get('/register', function () {
     return view('registeraccount'); })->name('register');
 
 
+/* Super Admin account role */
+Route::middleware(['auth', 'checkrole:sa'])->group(function () {
+    Route::get('/configuration', function () {
+        return view('livewire.admin.configuration'); })->name('configuration');
+    Route::get('/audit-logs', function () {
+        return view('livewire.log-index'); })->name('audit-logs');
+});
 
 
 /* Super Admin and HR account role */
@@ -48,8 +55,6 @@ Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
     //     return view('livewire.admin.wfh-management'); })->name('/employee-management/wfh-management');
     Route::get('/report-generation', function () {
         return view('livewire.admin.report-generation'); })->name('report-generation');
-    Route::get('/audit-logs', function () {
-        return view('livewire.log-index'); })->name('audit-logs');
 });
 
 /* Super Admin, HR, Supervisor, and Payroll account role */

@@ -138,35 +138,32 @@ class RoleManagementTable extends Component
             }
         }
                 
-            $empPos = User::where('user_role', 'emp')
-                ->join('user_data', 'user_data.user_id', 'users.id')
-                ->join('positions', 'positions.id', 'users.position_id')
-                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
-                ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
-                ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
-                ->where('users.active_status', '!=', 4)
-                ->select(
-                    'users.id', 
-                    'users.name', 
-                    'users.emp_code', 
-                    'users.active_status', 
-                    'positions.position', 
-                    'user_data.appointment',
-                    'office_divisions.office_division',
-                    'office_division_units.unit',
-                    DB::raw('
-                        CASE 
-                            WHEN cos_reg_payrolls.id IS NOT NULL THEN "REG"
-                            WHEN cos_sk_payrolls.id IS NOT NULL THEN "SK"
-                            ELSE ""
-                        END as appointment_type'
-                    )
-                )
-                ->when($this->search3, function ($query) {
-                    return $query->search(trim($this->search3));
-                })
-                ->paginate($this->pageSize);
+
+        $empPos = User::where('user_role', 'emp')
+            ->join('user_data', 'user_data.user_id', 'users.id')
+            ->join('positions', 'positions.id', 'users.position_id')
+            ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+            ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
+            ->where('users.active_status', '!=', 4)
+            ->select(
+                'users.id', 
+                'users.name', 
+                'users.emp_code', 
+                'users.active_status', 
+                'positions.position', 
+                'user_data.appointment',
+                'user_data.surname', 
+                'user_data.first_name', 
+                'user_data.middle_name', 
+                'user_data.name_extension',
+                'office_divisions.office_division',
+                'office_division_units.unit',
+            )
+            ->when($this->search3, function ($query) {
+                return $query->search(trim($this->search3));
+            })
+            ->orderBy('user_data.surname', 'ASC')
+            ->paginate($this->pageSize);
             
 
         $organizations = User::where('user_role', 'emp')
@@ -181,7 +178,7 @@ class RoleManagementTable extends Component
                     'users.emp_code', 
                     'users.active_status', 
                     'positions.position', 
-                    'user_data.appointment', 
+                    'user_data.appointment',  
                     'office_divisions.office_division',
                     DB::raw('
                         CASE 
