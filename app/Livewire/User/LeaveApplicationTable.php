@@ -56,7 +56,7 @@ class LeaveApplicationTable extends Component
     public $end_date;
     public $list_of_dates = [];
     public $new_date;
-    
+
     // public $startDate;
     // public $endDate;
     public $selectedYear;
@@ -72,8 +72,8 @@ class LeaveApplicationTable extends Component
     public $requestSent = false;
     public $requestApproved = false;
 
-    public $pageSize = 5; 
-    public $pageSizes = [5, 10, 20, 30, 50, 100]; 
+    public $pageSize = 5;
+    public $pageSizes = [5, 10, 20, 30, 50, 100];
 
     protected $rules = [
         'office_or_department' => 'required|string|max:255',
@@ -88,7 +88,7 @@ class LeaveApplicationTable extends Component
     {
         $this->showDropdown = !$this->showDropdown;
     }
-    
+
     public function closeDropdown()
     {
         $this->showDropdown = false;
@@ -366,12 +366,12 @@ class LeaveApplicationTable extends Component
     //     $this->validate([
     //         'new_date' => 'required|date',
     //     ]);
-        
+
     //     if (!in_array($this->new_date, $this->list_of_dates)) {
     //         $this->list_of_dates[] = $this->new_date;
     //         $this->number_of_days = count($this->list_of_dates); // Auto-update days
     //     }
-        
+
     //     $this->new_date = '';
     // }
 
@@ -387,32 +387,32 @@ class LeaveApplicationTable extends Component
             $this->calculateWorkingDays();
         }
     }
-    
+
     public function updatedEndDate($value)
     {
         if ($this->start_date && $this->end_date) {
             $this->calculateWorkingDays();
         }
     }
-    
+
     protected function calculateWorkingDays()
     {
         if (!$this->start_date || !$this->end_date) {
             return;
         }
-    
+
         $start = Carbon::parse($this->start_date);
         $end = Carbon::parse($this->end_date);
-    
+
         // Validate that end date is not before start date
         if ($end->lt($start)) {
             $this->addError('end_date', 'End date cannot be before start date');
             return;
         }
-    
+
         $workingDays = 0;
         $current = $start->copy();
-    
+
         while ($current->lte($end)) {
             // Check if current day is not a weekend (Saturday = 6, Sunday = 0)
             if (!$current->isWeekend()) {
@@ -421,9 +421,9 @@ class LeaveApplicationTable extends Component
             }
             $current->addDay();
         }
-    
+
         $this->number_of_days = $workingDays;
-        
+
         // Instead of storing all dates, just store the range
         $this->list_of_dates = [$this->start_date . ' - ' . $this->end_date];
     }
@@ -433,13 +433,13 @@ class LeaveApplicationTable extends Component
         $this->validate([
             'new_date' => 'required|date',
         ]);
-        
+
         // Clear any previous calculations from date range
         if ($this->start_date && $this->end_date) {
             $this->start_date = null;
             $this->end_date = null;
         }
-        
+
         if (!in_array($this->new_date, $this->list_of_dates)) {
             // Check if the date is not a weekend
             $date = Carbon::parse($this->new_date);
@@ -447,11 +447,11 @@ class LeaveApplicationTable extends Component
                 $this->addError('new_date', 'Weekends cannot be selected as leave days');
                 return;
             }
-            
+
             $this->list_of_dates[] = $this->new_date;
             $this->number_of_days = count($this->list_of_dates);
         }
-        
+
         $this->new_date = '';
     }
 
@@ -462,7 +462,7 @@ class LeaveApplicationTable extends Component
             $this->start_date = null;
             $this->end_date = null;
         }
-        
+
         unset($this->list_of_dates[$index]);
         $this->list_of_dates = array_values($this->list_of_dates);
         $this->number_of_days = count($this->list_of_dates);
@@ -495,14 +495,14 @@ class LeaveApplicationTable extends Component
     public function exportPDF($leaveApplicationId)
     {
         $leaveApplication = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
-    
+
         $eSignature = ESignature::where('user_id', $leaveApplication->user_id)->first();
-    
+
         $signatureImagePath = null;
         if ($eSignature && $eSignature->file_path) {
             $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
         }
-    
+
         $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
         $otherLeave = '';
         foreach ($selectedLeaveTypes as $leaveType) {
@@ -511,9 +511,9 @@ class LeaveApplicationTable extends Component
                 break;
             }
         }
-    
+
         $detailsOfLeave = $leaveApplication->details_of_leave ? array_map('trim', explode(',', $leaveApplication->details_of_leave)) : [];
-    
+
         $isDetailPresent = function($detail) use ($detailsOfLeave) {
             foreach ($detailsOfLeave as $item) {
                 $parts = explode('=', $item, 2);
@@ -524,7 +524,7 @@ class LeaveApplicationTable extends Component
             }
             return false;
         };
-    
+
         $getDetailValue = function($detail) use ($detailsOfLeave) {
             foreach ($detailsOfLeave as $item) {
                 $parts = explode('=', $item, 2);
@@ -538,11 +538,11 @@ class LeaveApplicationTable extends Component
             }
             return '';
         };
-    
+
         $daysWithPay = '';
         $daysWithoutPay = '';
         $otherRemarks = '';
-    
+
         if ($leaveApplication->status === 'Approved') {
             if ($leaveApplication->remarks === 'With Pay') {
                 $daysWithPay = $leaveApplication->approved_days;
@@ -552,7 +552,7 @@ class LeaveApplicationTable extends Component
                 $otherRemarks = $leaveApplication->remarks;
             }
         }
-    
+
         // // Fetch the first approver from leave_approvals
         // $leaveApproval = LeaveApprovals::where('application_id', $leaveApplicationId)->first();
         // $firstApprover = $leaveApproval ? $leaveApproval->first_approver : null;
@@ -561,11 +561,11 @@ class LeaveApplicationTable extends Component
         // $secondApproverName = $secondApprover ? User::find($secondApprover)->name : 'N/A';
         // $thirdApprover = $leaveApproval ? $leaveApproval->third_approver : null;
         // $thirdApproverName = $thirdApprover ? User::find($thirdApprover)->name : 'N/A';
-    
+
         // $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
         // Fetch the approvers from leave_approvals
         $leaveApproval = LeaveApprovals::where('application_id', $leaveApplicationId)->first();
-        
+
         // Initialize approver signatures
         $firstApproverSignature = null;
         $secondApproverSignature = null;
@@ -574,15 +574,15 @@ class LeaveApplicationTable extends Component
         if ($leaveApproval && $leaveApproval->first_approver) {
             $firstApprover = User::find($leaveApproval->first_approver);
             $firstApproverName = $firstApprover ? $firstApprover->name : 'N/A';
-            
+
             // Get emp_code without prefix
             $empCode = preg_replace('/^[^-]+-/', '', $firstApprover->emp_code);
-            
+
             // Find corresponding emp user with the same emp_code
             $empUser = User::where('emp_code', $empCode)
                           ->where('user_role', 'emp')
                           ->first();
-                          
+
             if ($empUser) {
                 $empSignature = ESignature::where('user_id', $empUser->id)->first();
                 if ($empSignature && $empSignature->file_path) {
@@ -597,15 +597,15 @@ class LeaveApplicationTable extends Component
         if ($leaveApproval && $leaveApproval->second_approver) {
             $secondApprover = User::find($leaveApproval->second_approver);
             $secondApproverName = $secondApprover ? $secondApprover->name : 'N/A';
-            
+
             // Get emp_code without prefix
             $empCode = preg_replace('/^[^-]+-/', '', $secondApprover->emp_code);
-            
+
             // Find corresponding emp user with the same emp_code
             $empUser = User::where('emp_code', $empCode)
                         ->where('user_role', 'emp')
                         ->first();
-                        
+
             if ($empUser) {
                 $empSignature = ESignature::where('user_id', $empUser->id)->first();
                 if ($empSignature && $empSignature->file_path) {
@@ -620,15 +620,15 @@ class LeaveApplicationTable extends Component
         if ($leaveApproval && $leaveApproval->third_approver) {
             $thirdApprover = User::find($leaveApproval->third_approver);
             $thirdApproverName = $thirdApprover ? $thirdApprover->name : 'N/A';
-            
+
             // Get emp_code without prefix
             $empCode = preg_replace('/^[^-]+-/', '', $thirdApprover->emp_code);
-            
+
             // Find corresponding emp user with the same emp_code
             $empUser = User::where('emp_code', $empCode)
                         ->where('user_role', 'emp')
                         ->first();
-                        
+
             if ($empUser) {
                 $empSignature = ESignature::where('user_id', $empUser->id)->first();
                 if ($empSignature && $empSignature->file_path) {
@@ -640,13 +640,13 @@ class LeaveApplicationTable extends Component
         }
 
         $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
-    
+
         // Step 1: Generate the first page (leave-application.php) and save it as a temporary PDF file
         $firstPagePath = storage_path('app/temp/first-page.pdf');
         if (!file_exists(dirname($firstPagePath))) {
             mkdir(dirname($firstPagePath), 0755, true);
         }
-    
+
         $pdf = PDF::loadView('pdf.leave-application', [
             'leaveApplication' => $leaveApplication,
             'selectedLeaveTypes' => $selectedLeaveTypes,
@@ -667,31 +667,31 @@ class LeaveApplicationTable extends Component
             'secondApproverSignature' => $secondApproverSignature,
             'thirdApproverSignature' => $thirdApproverSignature,
         ]);
-    
+
         $pdf->save($firstPagePath);
-    
+
         // Step 2: Path to your second-page template
         $secondPageTemplatePath = storage_path('app/public/pdf_template/secondpage.pdf');
-    
+
         // Step 3: Combine the first and second pages using FPDI
         $outputPdfPath = storage_path('app/temp/combined-output.pdf');
         $fpdi = new \setasign\Fpdi\Fpdi();
-    
+
         // Add the first page
         $fpdi->setSourceFile($firstPagePath);
         $firstPageId = $fpdi->importPage(1);
         $fpdi->addPage();
         $fpdi->useTemplate($firstPageId);
-    
+
         // Add the second page
         $fpdi->setSourceFile($secondPageTemplatePath);
         $secondPageId = $fpdi->importPage(1);
         $fpdi->addPage();
         $fpdi->useTemplate($secondPageId);
-    
+
         // Save the final combined PDF
         $fpdi->output($outputPdfPath, 'F');
-    
+
         // Step 4: Stream the combined PDF as a download
         return response()->download($outputPdfPath, 'LeaveApplication' . $leaveApplicationId . '.pdf')->deleteFileAfterSend(true);
     }
@@ -753,17 +753,17 @@ class LeaveApplicationTable extends Component
     public function showPDF($leaveApplicationId)
     {
         $leaveApplication = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
-    
+
         // Get the original applicant's e-signature
         $eSignature = ESignature::where('user_id', $leaveApplication->user_id)->first();
-    
+
         $signatureImagePath = null;
         if ($eSignature && $eSignature->file_path) {
             $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
         }
-    
+
         $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
-    
+
         $otherLeave = '';
         foreach ($selectedLeaveTypes as $leaveType) {
             if (strpos($leaveType, 'Others: ') === 0) {
@@ -771,9 +771,9 @@ class LeaveApplicationTable extends Component
                 break;
             }
         }
-    
+
         $detailsOfLeave = $leaveApplication->details_of_leave ? array_map('trim', explode(',', $leaveApplication->details_of_leave)) : [];
-    
+
         $isDetailPresent = function($detail) use ($detailsOfLeave) {
             foreach ($detailsOfLeave as $item) {
                 $parts = explode('=', $item, 2);
@@ -784,7 +784,7 @@ class LeaveApplicationTable extends Component
             }
             return false;
         };
-    
+
         $getDetailValue = function($detail) use ($detailsOfLeave) {
             foreach ($detailsOfLeave as $item) {
                 $parts = explode('=', $item, 2);
@@ -798,11 +798,11 @@ class LeaveApplicationTable extends Component
             }
             return '';
         };
-    
+
         $daysWithPay = '';
         $daysWithoutPay = '';
         $otherRemarks = '';
-    
+
         if ($leaveApplication->status === 'Approved') {
             if ($leaveApplication->remarks === 'With Pay') {
                 $daysWithPay = $leaveApplication->approved_days;
@@ -812,24 +812,24 @@ class LeaveApplicationTable extends Component
                 $otherRemarks = $leaveApplication->remarks;
             }
         }
-    
+
         // Fetch approvers from leave_approvals
         $leaveApproval = LeaveApprovals::where('application_id', $leaveApplicationId)->first();
-        
+
         // Process first approver
         $firstApproverSignature = null;
         if ($leaveApproval && $leaveApproval->first_approver) {
             $firstApprover = User::find($leaveApproval->first_approver);
             $firstApproverName = $firstApprover ? $firstApprover->name : 'N/A';
-            
+
             // Get emp_code without prefix
             $empCode = preg_replace('/^[^-]+-/', '', $firstApprover->emp_code);
-            
+
             // Find corresponding emp user with the same emp_code
             $empUser = User::where('emp_code', $empCode)
                           ->where('user_role', 'emp')
                           ->first();
-                          
+
             if ($empUser) {
                 $empSignature = ESignature::where('user_id', $empUser->id)->first();
                 if ($empSignature && $empSignature->file_path) {
@@ -839,21 +839,21 @@ class LeaveApplicationTable extends Component
         } else {
             $firstApproverName = 'N/A';
         }
-    
+
         // Process second approver
         $secondApproverSignature = null;
         if ($leaveApproval && $leaveApproval->second_approver) {
             $secondApprover = User::find($leaveApproval->second_approver);
             $secondApproverName = $secondApprover ? $secondApprover->name : 'N/A';
-            
+
             // Get emp_code without prefix
             $empCode = preg_replace('/^[^-]+-/', '', $secondApprover->emp_code);
-            
+
             // Find corresponding emp user with the same emp_code
             $empUser = User::where('emp_code', $empCode)
                           ->where('user_role', 'emp')
                           ->first();
-                          
+
             if ($empUser) {
                 $empSignature = ESignature::where('user_id', $empUser->id)->first();
                 if ($empSignature && $empSignature->file_path) {
@@ -863,21 +863,21 @@ class LeaveApplicationTable extends Component
         } else {
             $secondApproverName = 'N/A';
         }
-    
+
         // Process third approver
         $thirdApproverSignature = null;
         if ($leaveApproval && $leaveApproval->third_approver) {
             $thirdApprover = User::find($leaveApproval->third_approver);
             $thirdApproverName = $thirdApprover ? $thirdApprover->name : 'N/A';
-            
+
             // Get emp_code without prefix
             $empCode = preg_replace('/^[^-]+-/', '', $thirdApprover->emp_code);
-            
+
             // Find corresponding emp user with the same emp_code
             $empUser = User::where('emp_code', $empCode)
                           ->where('user_role', 'emp')
                           ->first();
-                          
+
             if ($empUser) {
                 $empSignature = ESignature::where('user_id', $empUser->id)->first();
                 if ($empSignature && $empSignature->file_path) {
@@ -887,9 +887,9 @@ class LeaveApplicationTable extends Component
         } else {
             $thirdApproverName = 'N/A';
         }
-    
+
         $leaveCredits = LeaveCredits::where('user_id', $leaveApplication->user_id)->first();
-    
+
         $firstPagePDF = PDF::loadView('pdf.leave-application', [
             'leaveApplication' => $leaveApplication,
             'selectedLeaveTypes' => $selectedLeaveTypes,
@@ -910,7 +910,7 @@ class LeaveApplicationTable extends Component
             'secondApproverSignature' => $secondApproverSignature,
             'thirdApproverSignature' => $thirdApproverSignature,
         ]);
-    
+
         // Save the first page PDF to a temporary file
         $tempFirstPagePath = storage_path('app/temp_first_page.pdf');
         file_put_contents($tempFirstPagePath, $firstPagePDF->output());
@@ -993,7 +993,7 @@ class LeaveApplicationTable extends Component
             // Get the currently logged in user and their data
             $user = Auth::user();
             $userData = UserData::where('user_id', $user->id)->first();
-            
+
             if (!$userData) {
                 $this->dispatch('swal', [
                     'title' => "Error!",
@@ -1002,18 +1002,18 @@ class LeaveApplicationTable extends Component
                 ]);
                 return;
             }
-            
+
             // Get office division
             $officeDivision = OfficeDivisions::find($user->office_division_id);
             $office = $officeDivision ? $officeDivision->office_division : 'N/A';
-            
+
             // Find all approved Mandatory/Forced Leave applications for the user
             $leaveApplications = LeaveApplication::where('user_id', $user->id)
                 ->where('type_of_leave', 'like', '%Mandatory/Forced Leave%')
                 ->where('status', 'Approved')
                 ->where('remarks', 'With Pay')
                 ->get();
-                
+
             if ($leaveApplications->isEmpty()) {
                 $this->dispatch('swal', [
                     'title' => "No Records Found",
@@ -1028,7 +1028,7 @@ class LeaveApplicationTable extends Component
                 ->where('status', 'approved')
                 ->latest()
                 ->first();
-        
+
             // Get the name of the approver
             $approverName = null;
             if ($mandatoryFormRequest && $mandatoryFormRequest->approved_by) {
@@ -1037,20 +1037,20 @@ class LeaveApplicationTable extends Component
                     $approverName = $approver->name;
                 }
             }
-            
+
             // Load the template file
             $templatePath = storage_path('app/public/leave_template/Mandatory Leave Form.xls');
             $spreadsheet = IOFactory::load($templatePath);
             $worksheet = $spreadsheet->getActiveSheet();
-            
+
             // Get the current year
             $year = Carbon::now()->format('Y');
-            
+
             // Map data to specific cells
             $worksheet->setCellValue('A8', "FOR CALENDAR YEAR " . $year);
             $worksheet->setCellValue('B11', $user->name);
             $worksheet->setCellValue('B12', $office);
-            
+
             // Collect all approved dates
             $allDates = [];
             foreach ($leaveApplications as $leave) {
@@ -1062,7 +1062,7 @@ class LeaveApplicationTable extends Component
                             list($startDate, $endDate) = explode(' - ', $date);
                             $start = Carbon::parse($startDate);
                             $end = Carbon::parse($endDate);
-                            
+
                             // Add all weekdays in the range
                             for ($current = $start; $current->lte($end); $current->addDay()) {
                                 if (!$current->isWeekend()) {
@@ -1075,46 +1075,46 @@ class LeaveApplicationTable extends Component
                     }
                 }
             }
-            
+
             // Sort dates and remove duplicates
             $allDates = array_unique($allDates);
             sort($allDates);
-            
+
             // Add dates to the worksheet
             foreach ($allDates as $index => $date) {
                 $formattedDate = ($index + 1) . ". " . Carbon::parse($date)->format('F d, Y');
                 $cellRow = 16 + $index; // Assuming dates start at row 16
                 $worksheet->setCellValue("A{$cellRow}", $formattedDate);
-                
+
                 // If we have more than 10 dates, we need to add rows
                 if ($index >= 10) {
                     $worksheet->insertNewRowBefore($cellRow + 1, 1);
                 }
             }
-            
+
             // Add user name in C24 with bold formatting (or adjust row if needed due to added rows)
             $signatureRow = 24 + max(0, count($allDates) - 10); // Adjust signature row if rows were added
             $worksheet->setCellValue("C{$signatureRow}", $approverName ?: 'Not available');
             $worksheet->getStyle("C{$signatureRow}")->getFont()->setBold(true);
-            
+
             // Generate unique filename
             $fileName = 'MandatoryLeaveForm' . $year . '.xlsx';
-            
+
             // Create response
             $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-            
+
             $response = new StreamedResponse(
                 function () use ($writer) {
                     $writer->save('php://output');
                 }
             );
-            
+
             $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             $response->headers->set('Content-Disposition', 'attachment;filename="' . $fileName . '"');
             $response->headers->set('Cache-Control', 'max-age=0');
-            
+
             return $response;
-            
+
         } catch (\Exception $e) {
             $this->dispatch('swal', [
                 'title' => "Error!",
