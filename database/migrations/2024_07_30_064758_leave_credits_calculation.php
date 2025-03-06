@@ -18,7 +18,8 @@ return new class extends Migration {
                 $table->string('month')->nullable();
                 $table->string('year')->nullable();
                 $table->string('late_time')->nullable();
-                $table->decimal('total_credits_earned', 10, 3)->nullable();
+                $table->decimal('late_in_credits', 10, 3)->nullable();
+                $table->decimal('latest_vl_credits', 10, 3)->nullable();
                 $table->decimal('leave_credits_earned', 10, 3)->nullable();
                 $table->timestamps();
             });

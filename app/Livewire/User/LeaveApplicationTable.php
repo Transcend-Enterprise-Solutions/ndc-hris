@@ -699,6 +699,7 @@ class LeaveApplicationTable extends Component
         $leaveCredits = LeaveCredits::where('user_id', $userId)->first();
 
         $leaveApplications = LeaveApplication::query()
+            ->where('user_id', $userId)
             ->when($this->activeTab === 'pending', function ($query) {
                 return $query->where('status', 'Pending');
             })

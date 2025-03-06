@@ -128,12 +128,12 @@ class AdminLeaveRequestTable extends Component
                 $this->selectedApplication->approved_days = $this->days;
                 $this->selectedApplication->remarks = $this->status;
 
-                if ($this->status === 'With Pay') {
-                    if (!$this->checkLeaveCredits($this->days)) {
-                        return;
-                    }
-                    $this->updateLeaveDetails($this->days, $this->status);
-                }
+                // if ($this->status === 'With Pay') {
+                //     if (!$this->checkLeaveCredits($this->days)) {
+                //         return;
+                //     }
+                //     $this->updateLeaveDetails($this->days, $this->status);
+                // }
 
                 $allApprovedDates = [];
                 foreach ($this->selectedDates as $date) {
@@ -353,23 +353,23 @@ class AdminLeaveRequestTable extends Component
         $this->disapproveReason = null;
     }
 
-    public function validateLeaveBalance($days)
-    {
-        $leaveCredits = LeaveCredits::where('user_id', $this->selectedApplication->user_id)->first();
+    // public function validateLeaveBalance($days)
+    // {
+    //     $leaveCredits = LeaveCredits::where('user_id', $this->selectedApplication->user_id)->first();
 
-        $totalClaimableCredits = ($leaveCredits->vl_claimable_credits ?? 0) +
-                                ($leaveCredits->sl_claimable_credits ?? 0) +
-                                ($leaveCredits->spl_claimable_credits ?? 0);
+    //     $totalClaimableCredits = ($leaveCredits->vl_claimable_credits ?? 0) +
+    //                             ($leaveCredits->sl_claimable_credits ?? 0) +
+    //                             ($leaveCredits->spl_claimable_credits ?? 0);
 
-        $this->balance = $totalClaimableCredits;
+    //     $this->balance = $totalClaimableCredits;
 
-        if ($this->status === 'With Pay' && ($totalClaimableCredits < $days || $totalClaimableCredits < 1)) {
-            $this->addError('days', "Insufficient leave credits. Total available credits: {$totalClaimableCredits}");
-            return false;
-        }
+    //     if ($this->status === 'With Pay' && ($totalClaimableCredits < $days || $totalClaimableCredits < 1)) {
+    //         $this->addError('days', "Insufficient leave credits. Total available credits: {$totalClaimableCredits}");
+    //         return false;
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
     public function closeLeaveDetails()
     {
