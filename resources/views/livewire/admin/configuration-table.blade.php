@@ -40,12 +40,12 @@
         }
     </style>
 
-    <div class="flex justify-center w-full">
-        <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
+    <div class="flex flex-col items-center justify-center w-full">
+        <div class="pb-4 mb-3 pt-4 sm:pt-0">
+            <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Configuration</h1>
+        </div>
 
-            <div class="pb-4 mb-3 pt-4 sm:pt-0">
-                <h1 class="text-lg font-bold text-center text-slate-800 dark:text-white">Configuration</h1>
-            </div>
+        <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
 
             <div class="mb-6 flex flex-col items-start gap-4 flex-wrap">
                 <p class="text-gray-700 dark:text-gray-100">Biometrics Connection - <span class="text-xs {{ $conStatus ?  'text-green-500' : 'text-red-500' }}">{{ $conStatus ? 'Connected' : 'Not Connected' }}</span></p>

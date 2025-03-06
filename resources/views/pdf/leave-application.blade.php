@@ -452,12 +452,13 @@
                     <div style="display: block; width: 100%; margin-left: 5px;">
                         <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
                             <u
-                                style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $leaveApplication->number_of_days }}</u>
+                                style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $leaveApplication->number_of_days }}
+                                Day/s</u>
                         </div>
                     </div>
 
                     <p class="s5"
-                        style="padding-top: 2pt; padding-left: 1pt; text-indent: 0pt; text-align: left; margin-left: 15px;">
+                        style="padding-top: 4pt; text-indent: 0pt; text-align: left; margin-left: 13px; font-weight: bold;">
                         INCLUSIVE DATES
                     </p>
 
@@ -465,7 +466,29 @@
                         <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
                             <u
                                 style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">
-                                {{ $leaveApplication->list_of_dates }}
+                                {{-- {{ $leaveApplication->list_of_dates }} --}}
+                                @php
+                                    use Carbon\Carbon;
+
+                                    $formattedDates = '';
+
+                                    if (str_contains($leaveApplication->list_of_dates, ' - ')) {
+                                        // Handle date range
+                                        [$startDate, $endDate] = explode(' - ', $leaveApplication->list_of_dates);
+                                        $formattedDates =
+                                            Carbon::parse(trim($startDate))->format('M d, Y') .
+                                            ' - ' .
+                                            Carbon::parse(trim($endDate))->format('M d, Y');
+                                    } else {
+                                        // Handle comma-separated list of dates
+                                        $formattedDates = collect(explode(',', $leaveApplication->list_of_dates))
+                                            ->map(fn($date) => Carbon::parse(trim($date))->format('M d, Y'))
+                                            ->implode(', ');
+                                    }
+                                @endphp
+
+                                {{ $formattedDates }}
+
                             </u>
                         </div>
                     </div>
@@ -519,22 +542,6 @@
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     {{-- <p style="padding-top: 0pt;text-indent: 0pt;text-align: left;"><br /></p> --}}
                     <div style="position:relative;padding-top:30px;">
-                        @if ($signatureImagePath)
-                            <div style="position:absolute;top:0;left:0;width:100%;text-align:center;">
-                                <img src="{{ $signatureImagePath }}" alt="E-Signature"
-                                    style="width: 100px; height: auto;" />
-                            </div>
-                        @else
-                            {{-- <p style="text-align: center; color: red;">
-                                Please upload your e-sign
-                            </p> --}}
-                            <div style="position:absolute;top:0;left:0;width:100%;text-align:center;color: red;">
-                                Please upload your e-sign
-                            </div>
-                        @endif
-                        <p class="s5"
-                            style="padding-left: 1pt; text-indent: 0pt; text-align: center; z-index: 1;">
-                            {{ $leaveApplication->name }}</p>
                         <p class="s5"
                             style="padding-left: 1pt; text-indent: 0pt; text-align: center; border-top-style: solid; border-top-width: medium; width: 50%; margin: 0 auto;">
                             (Signature of Applicant)
@@ -666,12 +673,12 @@
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->vl_total_credits ?? 'N/A' }}</p>
+                        {{ $leaveCredits->vl_claimed_credits ?? 'N/A' }}</p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->sl_total_credits ?? 'N/A' }}</p>
+                        {{ $leaveCredits->sl_claimed_credits ?? 'N/A' }}</p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -708,12 +715,23 @@
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->vl_claimed_credits ?? 'N/A' }}</p>
+                        {{ $leaveApplication->type_of_leave === 'Vacation Leave'
+                            ? ($leaveApplication->approved_days !== null
+                                ? number_format($leaveApplication->approved_days, 3)
+                                : 'Not yet approved')
+                            : '0.000' }}
+
+                    </p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->sl_claimed_credits ?? 'N/A' }}</p>
+                        {{ $leaveApplication->type_of_leave === 'Sick Leave'
+                            ? ($leaveApplication->approved_days !== null
+                                ? number_format($leaveApplication->approved_days, 3)
+                                : 'Not yet approved')
+                            : '0.000' }}
+                    </p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -766,12 +784,6 @@
                     colspan="5" rowspan="2">
                     <p style="padding-top: 10pt;text-indent: 0pt;text-align: left;"><br /></p>
                     <p style="padding-left: 18pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
-                    @if ($thirdApproverSignature)
-                        <img src="{{ $thirdApproverSignature }}"
-                            style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); max-width: 100px; max-height: 40px; display: block;">
-                    @endif
-                    <p class="s5" style="padding-left: 1pt; text-indent: 0pt; text-align: center; ">
-                        {{ $thirdApproverName }}</p>
                     <p class="s5"
                         style="padding-left: 1pt; text-indent: 0pt; text-align: center; border-top-style: solid; border-top-width: medium; width: 50%; margin: 0 auto;">
                         (Authorized Officer)
@@ -788,12 +800,6 @@
             <tr style="height:14pt">
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;position:relative">
-                    @if ($secondApproverSignature)
-                        <img src="{{ $secondApproverSignature }}"
-                            style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); max-width: 100px; max-height: 40px; display: block;">
-                    @endif
-                    <p class="s5" style="padding-left: 1pt; text-indent: 0pt; text-align: center;">
-                        {{ $secondApproverName }}</p>
                     <p class="s5"
                         style="padding-left: 1pt; text-indent: 0pt; text-align: center; border-top-style: solid; border-top-width: medium; width: 50%; margin: 0 auto;">
                         (Authorized Officer)
@@ -906,13 +912,6 @@
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                     <p style="text-indent: 0pt;text-align: left;" />
                     <p style="text-indent: 0pt;line-height: 1pt;text-align: left;" />
-                    @if ($firstApproverSignature)
-                        <img src="{{ $firstApproverSignature }}"
-                            style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); max-width: 100px; max-height: 40px; display: block;">
-                    @endif
-                    <p class="s10"
-                        style="text-indent: 0pt;line-height: 7pt;text-align: center; margin-bottom: 1pt;">
-                        {{ $firstApproverName }}</p>
                     <p class="s10"
                         style="text-indent: 0pt;line-height: 7pt;text-align: center; padding-bottom: 2pt; padding-top: 2pt; border-top-style: solid; border-top-width: medium; width: 50%; margin: 0 auto;">
                         (Authorized Official)</p>

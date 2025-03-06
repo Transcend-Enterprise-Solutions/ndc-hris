@@ -46,85 +46,83 @@
                                         of Leave</th>
                                     <th class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
                                         Details of Leave</th>
-                                    <th class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                        Number
-                                        of Days</th>
-                                    <th class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                        List
-                                        of Dates</th>
-                                    {{-- <th class="px-5 py-3 text-sm font-medium text-left uppercase text-center">End
-                                            Date</th> --}}
-                                    {{-- <th class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
-                                        Status
-                                    </th> --}}
+                                    @if ($activeTab === 'pending')
+                                        <th scope="col"
+                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            Requested Day/s
+                                        </th>
+                                        <th scope="col"
+                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            Requested Date/s
+                                        </th>
+                                    @elseif ($activeTab === 'disapproved')
+                                        <th scope="col"
+                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            Disapproved Day/s
+                                        </th>
+                                        <th scope="col"
+                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            Disapproved Date/s
+                                        </th>
+                                    @else
+                                        <th scope="col"
+                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            Approved Day/s
+                                        </th>
+                                        <th scope="col"
+                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            Approved Date/s
+                                        </th>
+                                    @endif
                                 </tr>
                             </thead>
                             <!-- Table body -->
                             <tbody>
                                 @if ($leaveApplications->count() > 0)
                                     @foreach ($leaveApplications as $leaveApplication)
-                                        <tr class="whitespace-nowrap">
+                                        <tr class="whitespace-nowrap border-b border-gray-400 dark:text-neutral-200">
                                             <td class="px-4 py-2 text-left">{{ $leaveApplication->user->name }}
                                             </td>
                                             <td class="px-4 py-2 text-center">
                                                 {{ $leaveApplication->date_of_filing }}
                                             </td>
                                             <td class="px-4 py-2 text-center">
-                                                @php
-                                                    $typeOfLeave = $leaveApplication->type_of_leave;
-                                                    $truncatedTypeOfLeave = \Illuminate\Support\Str::limit(
-                                                        $typeOfLeave,
-                                                        10,
-                                                        '...',
-                                                    );
-                                                @endphp
-                                                <span
-                                                    @if (strlen($typeOfLeave) > 10) title="{{ $typeOfLeave }}" @endif>
-                                                    {{ $truncatedTypeOfLeave }}
-                                                </span>
+                                                {{ $leaveApplication->type_of_leave }}
                                             </td>
                                             <td class="px-4 py-2 text-center">
-                                                @php
-                                                    $detailsOfLeave = $leaveApplication->details_of_leave;
-                                                    $truncatedDetailsOfLeave = \Illuminate\Support\Str::limit(
-                                                        $detailsOfLeave,
-                                                        10,
-                                                        '...',
-                                                    );
-                                                @endphp
-                                                <span
-                                                    @if (strlen($detailsOfLeave) > 10) title="{{ $detailsOfLeave }}" @endif>
-                                                    {{ $truncatedDetailsOfLeave }}
-                                                </span>
+                                                {{ $leaveApplication->details_of_leave ?? 'N/A' }}
                                             </td>
-                                            <td class="px-4 py-2 text-center">
-                                                {{ $leaveApplication->number_of_days }}
-                                            </td>
-                                            <td class="px-4 py-2 text-center">
-                                                @php
-                                                    $listOfDates = $leaveApplication->list_of_dates;
-                                                    $truncatedListOfDates = \Illuminate\Support\Str::limit(
-                                                        $listOfDates,
-                                                        10,
-                                                        '...',
-                                                    );
-                                                @endphp
-                                                <span
-                                                    @if (strlen($listOfDates) > 10) title="{{ $listOfDates }}" @endif>
-                                                    {{ $truncatedListOfDates }}
-                                                </span>
-                                            </td>
-                                            {{-- <td class="px-4 py-2 text-center">
-                                            <span
-                                                class="inline-block px-3 py-1 text-sm font-semibold 
-                                            {{ $leaveApplication->status === 'Approved'
-                                                ? 'text-green-800 bg-green-200'
-                                                : ($leaveApplication->status === 'Disapproved'
-                                                    ? 'text-red-800 bg-red-200'
-                                                    : 'text-yellow-800 bg-yellow-200') }} rounded-lg">
-                                                {{ $leaveApplication->status }}
-                                            </span>
-                                        </td> --}}
+                                            @if ($activeTab === 'pending' || $activeTab === 'disapproved')
+                                                <td class="px-4 py-2 text-center">
+                                                    {{ $leaveApplication->number_of_days }}
+                                                </td>
+                                                <td class="px-4 py-2 text-center">
+                                                    @if (Str::contains($leaveApplication->list_of_dates, ' - '))
+                                                        {{ $leaveApplication->list_of_dates }}
+                                                    @else
+                                                        <div class="flex flex-col">
+                                                            @foreach (explode(',', $leaveApplication->list_of_dates) as $date)
+                                                                <span>{{ trim($date) }}</span>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
+                                                </td>
+                                            @else
+                                                <td class="px-4 py-2 text-center">
+                                                    {{ $leaveApplication->approved_days ?? 'N/A' }}
+                                                </td>
+                                                <td class="px-4 py-2 text-center">
+                                                    @if (Str::contains($leaveApplication->approved_dates, ' - '))
+                                                        {{ $leaveApplication->approved_dates }}
+                                                    @else
+                                                        <div class="flex flex-col">
+                                                            @foreach (explode(',', $leaveApplication->approved_dates) as $date)
+                                                                <span>{{ trim($date) }}</span>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 @else

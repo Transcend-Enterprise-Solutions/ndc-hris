@@ -21,45 +21,45 @@ class TransferLeaveCredits extends Command
     {
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
-
+    
         // Fetch leave credits calculation for the current month
         $leaveCreditsCalculations = LeaveCreditsCalculation::where('month', $currentMonth)
             ->where('year', $currentYear)
             ->get();
-
+    
         foreach ($leaveCreditsCalculations as $calculation) {
             $userId = $calculation->user_id;
             $leaveCreditsEarned = $calculation->leave_credits_earned;
-            $totalCreditsEarned = $calculation->total_credits_earned;
-
+            $totalCreditsEarned = $calculation->late_in_credits;
+    
             // Fetch or create LeaveCredits record for the user
             $leaveCredits = LeaveCredits::firstOrCreate(
                 ['user_id' => $userId],
                 [
-                    'vl_total_credits' => 0,
-                    'sl_total_credits' => 0,
                     'vl_claimable_credits' => 0,
                     'sl_claimable_credits' => 0,
                     'vl_claimed_credits' => 0,
                     'sl_claimed_credits' => 0,
                 ]
             );
-
-            // Update total credits
-            $leaveCredits->vl_total_credits += $leaveCreditsEarned;
-            $leaveCredits->sl_total_credits += $leaveCreditsEarned;
-
-            // Subtract total_credits_earned from claimable credits
-            $leaveCredits->vl_claimable_credits = max(0, $leaveCredits->vl_claimable_credits + $leaveCreditsEarned - $totalCreditsEarned);
-            $leaveCredits->sl_claimable_credits = max(0, $leaveCredits->sl_claimable_credits + $leaveCreditsEarned - $totalCreditsEarned);
-
-            // Add subtracted credits to claimed credits
-            $leaveCredits->vl_claimed_credits += min($totalCreditsEarned, $leaveCredits->vl_claimable_credits + $leaveCreditsEarned);
-            $leaveCredits->sl_claimed_credits += min($totalCreditsEarned, $leaveCredits->sl_claimable_credits + $leaveCreditsEarned);
-
+    
+            // Step 1: Subtract late_in_credits from vl_claimable_credits (but not below 0)
+            $vlBeforeSubtraction = $leaveCredits->vl_claimable_credits;
+            $subtractedCredits = min($totalCreditsEarned, $vlBeforeSubtraction); // Actual amount subtracted
+            $leaveCredits->vl_claimable_credits = max(0, $vlBeforeSubtraction - $totalCreditsEarned);
+    
+            // Step 2: Add leave_credits_earned to vl_claimable_credits
+            $leaveCredits->vl_claimable_credits += $leaveCreditsEarned;
+    
+            // Step 3: Add the subtracted credits to vl_claimed_credits
+            $leaveCredits->vl_claimed_credits += $subtractedCredits;
+    
+            // Step 4: Add leave_credits_earned to sl_claimable_credits
+            $leaveCredits->sl_claimable_credits += $leaveCreditsEarned;
+    
             $leaveCredits->save();
         }
-
+    
         $this->info('Leave credits have been successfully transferred and adjusted for the current month.');
     }
 }

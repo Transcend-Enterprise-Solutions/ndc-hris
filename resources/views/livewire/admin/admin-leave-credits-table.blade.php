@@ -36,7 +36,7 @@
                     <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                         <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                             <tr class="whitespace-nowrap">
-                                <th scope="col" class="px-4 py-2 text-center">Name</th>
+                                <th scope="col" class="px-4 py-2 text-left">Name</th>
                                 <th scope="col" class="px-4 py-2 text-center">VL Credits</th>
                                 <th scope="col" class="px-4 py-2 text-center">SL Credits</th>
                                 <th scope="col" class="px-4 py-2 text-center">SPL Credits</th>
@@ -48,7 +48,7 @@
                         <tbody>
                             @foreach ($leaveCredits as $leaveCredit)
                                 <tr class="whitespace-nowrap">
-                                    <td class="px-4 py-2 text-center">{{ $leaveCredit->user->name }}</td>
+                                    <td class="px-4 py-2 text-left">{{ $leaveCredit->user->name }}</td>
                                     <td class="px-4 py-2 text-center">
                                         {{ number_format($leaveCredit->vl_claimable_credits ?? 0, 3) }}</td>
                                     <td class="px-4 py-2 text-center">

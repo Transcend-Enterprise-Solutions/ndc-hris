@@ -20,25 +20,25 @@ class CalculateMonthlyLeaveCredits extends Command
         $date = Carbon::now();
         $month = $date->month;
         $year = $date->year;
-
+    
         // Get users who have entries in EmployeesDtr for the specified month and year
         $activeUserIds = EmployeesDtr::whereMonth('date', $month)
             ->whereYear('date', $year)
             ->pluck('user_id')
             ->unique();
-
+    
         $users = User::join('user_data', 'users.id', '=', 'user_data.user_id')
             ->whereIn('users.id', $activeUserIds)
             ->where('user_data.appointment', '!=', 'cos')
             ->select('users.*')  // Select only users table columns to avoid conflicts
             ->get();
-        // $users = User::whereIn('id', $activeUserIds)->get();
-
+    
         $this->info("Processing " . $users->count() . " active users for " . $date->format('F Y') . ".");
-
+    
         foreach ($users as $user) {
+            // Fetch the current vl_claimable_credits from the leave_credits table
             $currentVlBalance = LeaveCredits::where('user_id', $user->id)->value('vl_claimable_credits');
-
+    
             $totalLateMinutes = EmployeesDtr::where('user_id', $user->id)
                 ->whereMonth('date', $month)
                 ->whereYear('date', $year)
@@ -48,35 +48,45 @@ class CalculateMonthlyLeaveCredits extends Command
                     [$hours, $minutes] = explode(':', $dtr->late);
                     return $hours * 60 + $minutes;
                 });
-
-            if ($currentVlBalance > 0) {
-                $totalLateMinutes = 0;
-            }
-
+    
             $totalLateTime = $this->convertMinutesToHoursAndMinutes($totalLateMinutes);
             $totalCreditsEarned = $this->calculateTotalCreditsEarned($totalLateMinutes);
-            $leaveCreditsEarned = $this->calculateLeaveCreditsEarned($totalCreditsEarned);
-
+    
+            // Calculate the adjusted credits by subtracting late_in_credits from vl_claimable_credits
+            $adjustedCredits = $currentVlBalance - $totalCreditsEarned;
+    
+            // Determine leave_credits_earned based on the adjusted credits
+            if ($adjustedCredits < 0) {
+                // If adjusted credits is negative, use the absolute value to determine leave_credits_earned
+                $leaveCreditsEarned = $this->calculateLeaveCreditsEarned(abs($adjustedCredits));
+            } else {
+                // If adjusted credits is not negative, set leave_credits_earned to 1.250
+                $leaveCreditsEarned = 1.250;
+            }
+    
+            // Update or create the LeaveCreditsCalculation record
             LeaveCreditsCalculation::updateOrCreate(
                 ['user_id' => $user->id, 'month' => $month, 'year' => $year],
                 [
                     'late_time' => $totalLateTime,
-                    'total_credits_earned' => $totalCreditsEarned,
-                    'leave_credits_earned' => $leaveCreditsEarned,
+                    'late_in_credits' => $totalCreditsEarned,
+                    'latest_vl_credits' => $currentVlBalance,
+                    'leave_credits_earned' => $leaveCreditsEarned, // Add leave_credits_earned
                 ]
             );
         }
-
+    
         $this->info("Monthly leave credits calculated and updated successfully for " . $date->format('F Y') . ".");
     }
+    
     private function calculateTotalCreditsEarned($totalLateMinutes)
     {
         // Assuming 8 hours (480 minutes) equals 1 credit
         $credits = $totalLateMinutes / 480;
         return round($credits, 3); // Round to 3 decimal places
     }
-
-    private function calculateLeaveCreditsEarned($totalCreditsEarned)
+    
+    private function calculateLeaveCreditsEarned($adjustedCredits)
     {
         $leaveCreditsTable = [
             ['DaysPresent' => 30.00, 'DaysAbsent' => 0.00, 'LeaveCreditsEarned' => 1.250],
@@ -141,16 +151,16 @@ class CalculateMonthlyLeaveCredits extends Command
             ['DaysPresent' => 0.50, 'DaysAbsent' => 29.50, 'LeaveCreditsEarned' => 0.021],
             ['DaysPresent' => 0.00, 'DaysAbsent' => 30.00, 'LeaveCreditsEarned' => 0.000],
         ];
-
+    
         foreach ($leaveCreditsTable as $entry) {
-            if ($totalCreditsEarned <= $entry['DaysAbsent']) {
+            if ($adjustedCredits <= $entry['DaysAbsent']) {
                 return $entry['LeaveCreditsEarned'];
             }
         }
-
+    
         return 0; // Default value if no match is found
     }
-
+    
     private function convertMinutesToHoursAndMinutes($totalMinutes)
     {
         $hours = intdiv($totalMinutes, 60);

@@ -16,7 +16,9 @@ class LeaveCreditsCalculation extends Model
         'month',
         'year',
         'late_time',
-        'total_credits_earned',
+        // 'total_credits_earned',
+        'late_in_credits',
+        'latest_vl_credits',
         'leave_credits_earned',
     ];
 
