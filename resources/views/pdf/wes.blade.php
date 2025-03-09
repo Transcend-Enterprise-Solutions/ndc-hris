@@ -134,12 +134,12 @@
         
         <div style="width: 100%; margin-top: 50px;">
             <div style="position: relative; width: 100%">
-                @if ($signatureImagePath)
+                {{-- @if ($signatureImagePath)
                     <div style="position: absolute; top: {{ $sigYPos }}px; right: {{ $sigXPos }}px;">
                         <img src="{{ $signatureImagePath }}" alt="E-Signature"
                             style="width: {{ $sigSize }}px; height: auto;" />
                     </div>
-                @endif
+                @endif --}}
             </div>
             <div style="width: 100%;">
                 <p style="text-align: left; margin-left: 460px; font-size: 16px; margin-bottom: -8px;">{{ Auth::user()->name }}</p>

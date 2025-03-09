@@ -18,6 +18,9 @@ class OfficialBusinessTable extends Component
     public $search;
     public $search2;
     public $search3;
+    public $search4;
+    public $search5;
+    public $search6;
     public $editOB;
     public $addOB;
     public $deleteId;
@@ -41,6 +44,12 @@ class OfficialBusinessTable extends Component
     public $viewOB;
     public $approvedBy;
     public $approvedDate;
+    public $disapprovedBy;
+    public $disapprovedDate;
+    public $approvedBySup;
+    public $supApprovedDate;
+    public $disapprovedBySup;
+    public $supDisapprovedDate;
     public $showConfirmation = false;
     public $punchState;
     public $punchObId;
@@ -52,26 +61,9 @@ class OfficialBusinessTable extends Component
 
 
     public function render(){
-        $user = Auth::user();
-        $ongoingObs = OfficialBusiness::where('date', '=', now()->toDateString())
-            ->where('time_start', '<=', now()->toTimeString())
-            ->where('time_end', '>=', now()->toTimeString())
-            ->where('time_out', '=', null)
-            ->where('user_id', $user->id)
-            ->first();
-
-        $upcomingObs = OfficialBusiness::where(function ($query) {
-            $query->where('date', '>', now()->toDateString())
-                ->orWhere(function ($subQuery) {
-                    $subQuery->where('date', '=', now()->toDateString())
-                        ->where('time_start', '>', now()->toTimeString());
-                });
-            })
-            ->where('user_id', $user->id)
-            ->where('time_out', '=', null)
-            ->orderBy('date', 'asc')
-            ->orderBy('time_start', 'asc')
-            ->paginate($this->pageSize);
+        
+        $ongoingObs = $this->ongoingObs();
+        $upcomingObs = $this->upcomingObs();
 
         if (!$ongoingObs) {
             $ongoingObs = $upcomingObs->first();
@@ -79,6 +71,33 @@ class OfficialBusinessTable extends Component
         }else{
             $this->obStatus = 'ONGOING';
         }
+
+        $completedObs = $this->completedObs();
+        $unattendedObs = $this->unattendedObs();
+        $obRequests = $this->obRequests();
+        $disapprovedObs = $this->disapprovedObs();
+        $approvedObs = $this->approvedObs();
+            
+
+        return view('livewire.user.official-business-table', [
+            'upcomingObs' => $upcomingObs,
+            'ongoingObs' => $ongoingObs,
+            'completedObs' => $completedObs,
+            'unattendedObs' => $unattendedObs,
+            'obRequests' => $obRequests,
+            'disapprovedObs' => $disapprovedObs,
+            'approvedObs' => $approvedObs,
+        ]);
+    }
+
+    public function ongoingObs(){
+        $user = Auth::user();
+        $ongoingObs = OfficialBusiness::where('date', '=', now()->toDateString())
+            ->where('time_start', '<=', now()->toTimeString())
+            ->where('time_end', '>=', now()->toTimeString())
+            ->where('time_out', '=', null)
+            ->where('user_id', $user->id)
+            ->first();
 
         $this->registeredLatitude = $ongoingObs ? $ongoingObs->lat : null;
         $this->registeredLongitude = $ongoingObs ? $ongoingObs->lng : null;
@@ -88,18 +107,6 @@ class OfficialBusinessTable extends Component
         //         return $ob->id !== $ongoingObs->id;
         //     });
         // }
-
-        $completedObs = OfficialBusiness::where('time_in', '!=', null)
-            ->where('user_id', $user->id)
-            ->where('time_out', '!=', null)
-            ->paginate($this->pageSize);
-
-
-        $unattendedObs = OfficialBusiness::where('time_in', '=', null)
-            ->where('user_id', $user->id)
-            ->where('time_out', '=', null)
-            ->where('date', '<', now()->toDateString())
-            ->paginate($this->pageSize);
 
         if($ongoingObs){
             if (now()->isSameDay(Carbon::parse($ongoingObs->date))) {
@@ -114,13 +121,141 @@ class OfficialBusinessTable extends Component
             }
         }
 
-        return view('livewire.user.official-business-table', [
-            'upcomingObs' => $upcomingObs,
-            'ongoingObs' => $ongoingObs,
-            'completedObs' => $completedObs,
-            'unattendedObs' => $unattendedObs,
-        ]);
+        return $ongoingObs;
     }
+
+    public function upcomingObs(){
+        $user = Auth::user();
+        $upcomingObs = OfficialBusiness::where(function ($query) {
+            $query->where('date', '>', now()->toDateString())
+                ->orWhere(function ($subQuery) {
+                    $subQuery->where('date', '=', now()->toDateString())
+                        ->where('time_start', '>', now()->toTimeString());
+                });
+            })
+            ->when($this->search3, function ($query) {
+                return $query->search(trim($this->search3));
+            })
+            ->where('user_id', $user->id)
+            ->where('time_out', '=', null)
+            ->orderBy('date', 'asc')
+            ->orderBy('time_start', 'asc')
+            ->paginate($this->pageSize);
+
+        return $upcomingObs;
+    }
+
+    public function completedObs(){
+        $user = Auth::user();
+        $completedObs = OfficialBusiness::where('time_in', '!=', null)
+            ->where('user_id', $user->id)
+            ->where('time_out', '!=', null)
+            ->when($this->search, function ($query) {
+                return $query->search(trim($this->search));
+            })
+            ->paginate($this->pageSize);
+        
+        return $completedObs;
+    }
+
+    public function unattendedObs(){
+        $user = Auth::user();
+        $unattendedObs = OfficialBusiness::where('time_in', '=', null)
+            ->where('user_id', $user->id)
+            ->where('time_out', '=', null)
+            ->where('date', '<', now()->toDateString())
+            ->when($this->search2, function ($query) {
+                return $query->search(trim($this->search2));
+            })
+            ->paginate($this->pageSize);
+        
+        return $unattendedObs;
+    }
+
+    public function obRequests(){
+        $user = Auth::user();
+        $obRequests = OfficialBusiness::where(function($query) {
+            $query->where(function($q) {
+                $q->whereNull('date_sup_approved')
+                ->whereNull('date_sup_disapproved')
+                ->whereNull('date_approved')
+                ->whereNull('date_disapproved');
+            })
+            ->orWhere(function($q) {
+                    $q->where(function($subQ) {
+                        $subQ->whereNotNull('date_sup_approved')
+                            ->orWhereNotNull('date_sup_disapproved');
+                    })
+                    ->where(function($subQ) {
+                        $subQ->whereNull('date_approved')
+                            ->whereNull('date_disapproved');
+                    });
+                });
+            })
+            ->where('user_id', $user->id)
+            ->where('status', 0)
+            ->when($this->search4, function ($query) {
+                return $query->search(trim($this->search4));
+            })
+            ->paginate($this->pageSize);
+
+        foreach ($obRequests as $obReq) {
+            $sup = User::where('id', $obReq->sup_approver)->first();
+            $hr = User::where('id', $obReq->approver)->first();
+
+            if(!$hr){
+                $hr = User::where('id', $obReq->disapprover)->first();
+            }
+
+            $obReq->supervisor = $sup->name;
+            $obReq->hr = $hr ? $hr->name : null;
+        }
+
+        return $obRequests;
+    }
+
+    public function disapprovedObs(){
+        $user = Auth::user();
+        $disapprovedObs = OfficialBusiness::where('status', 2)
+        ->where('user_id', $user->id)
+        ->when($this->search6, function ($query) {
+            return $query->search(trim($this->search6));
+        })
+        ->paginate($this->pageSize);
+
+        foreach ($disapprovedObs as $obs) {
+            $sup = User::where('id', $obs->sup_disapprover)->first();
+            $hr = User::where('id', $obs->disapprover)->first();
+
+            $obs->supervisor = $sup->name;
+            $obs->hr = $hr ? $hr->name : null;
+        }
+
+        return $disapprovedObs;
+    }
+
+    public function approvedObs(){
+        $user = Auth::user();
+        $approvedObs = OfficialBusiness::where('status', 1)
+        ->where('user_id', $user->id)
+        ->when($this->search5, function ($query) {
+            return $query->search(trim($this->search5));
+        })
+        ->paginate($this->pageSize);
+
+        foreach ($approvedObs as $obs) {
+            $sup = User::where('id', $obs->sup_approver)->first();
+            $hr = User::where('id', $obs->approver)->first();
+
+            $obs->supervisor = $sup->name;
+            $obs->hr = $hr ? $hr->name : null;
+        }
+
+        return $approvedObs;
+    }
+
+
+
 
     #[On('locationUpdated')] 
     public function handleLocationUpdate($locationData)
@@ -324,8 +459,18 @@ class OfficialBusinessTable extends Component
                 $this->startTime = $ob->time_start;
                 $this->endTime = $ob->time_end;
                 $this->purpose = $ob->purpose;
-                $this->approvedBy = $ob->approver ?: 'N/A';
-                $this->approvedDate = $ob->date_approved ?: 'N/A';
+
+                $this->approvedBy = $ob->approver ? User::where('id', $ob->approver)->first()->name : 'N/A';
+                $this->approvedDate = $ob->date_approved ? Carbon::parse($ob->date_approved)->format('F d, Y'): 'N/A';
+                
+                $this->disapprovedBy = $ob->disapprover ? User::where('id', $ob->disapprover)->first()->name : 'N/A';
+                $this->disapprovedDate = $ob->date_disapproved ? Carbon::parse($ob->date_disapproved)->format('F d, Y'): 'N/A';
+                
+                $this->approvedBySup = $ob->sup_approver ? User::where('id', $ob->sup_approver)->first()->name : 'N/A';
+                $this->supApprovedDate = $ob->date_sup_approved ? Carbon::parse($ob->date_sup_approved)->format('F d, Y'): 'N/A';
+                
+                $this->disapprovedBySup = $ob->sup_disapprover ? User::where('id', $ob->sup_disapprover)->first()->name : 'N/A';
+                $this->supDisapprovedDate = $ob->date_sup_disapproved ? Carbon::parse($ob->date_sup_disapproved)->format('F d, Y'): 'N/A';
             }
         }catch(Exception $e){
             throw $e;

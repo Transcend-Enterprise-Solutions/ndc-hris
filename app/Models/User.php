@@ -333,6 +333,16 @@ class User extends Authenticatable
         });
     }
 
+    public function scopeSearch5($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('official_businesses.reference_number', 'like', $term)
+                ->orWhere('official_businesses.company', 'like', $term)
+                ->orWhere('official_businesses.address', 'like', $term)
+                ->orWhere('official_businesses.purpose', 'like', $term);
+        });
+    }
+
     public function adminAccount(){
         return $this->hasOne(User::class, 'name', 'name')->where('user_role', '!=', 'emp');
     }

@@ -1,40 +1,6 @@
 <div class="w-full">
 
     <style>
-        .scrollbar-thin1::-webkit-scrollbar {
-                       width: 5px;
-                   }
-
-       .scrollbar-thin1::-webkit-scrollbar-thumb {
-           background-color: #1a1a1a4b;
-           /* cursor: grab; */
-           border-radius: 0 50px 50px 0;
-       }
-
-       .scrollbar-thin1::-webkit-scrollbar-track {
-           background-color: #ffffff23;
-           border-radius: 0 50px 50px 0;
-       }
-
-       @media (max-width: 1024px){
-           .custom-d{
-               display: block;
-           }
-       }
-
-       @media (max-width: 768px){
-           .m-scrollable{
-               width: 100%;
-               overflow-x: scroll;
-           }
-       }
-
-       @media (min-width:1024px){
-           .custom-p{
-               padding-bottom: 14px !important;
-           }
-       }
-
        @-webkit-keyframes spinner-border {
            to {
                transform: rotate(360deg);
@@ -69,7 +35,7 @@
                 </h1>
             </div>
 
-            <div class="block sm:flex items-center pb-2 justify-between">
+            <div class="block sm:flex items-center mb-6 justify-between">
 
                 <div class="block sm:flex items-center">
 
@@ -77,7 +43,7 @@
                     <div class="mr-0 sm:mr-4 relative">
                         <label for="date" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Select Date</label>
                         <input type="month" id="date" wire:model.live='date' value="{{ $date }}"
-                        class="mb-0 mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
+                        class="mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md 
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800 mb-4 sm:mb-0">
                     </div>
@@ -87,114 +53,121 @@
             </div>
 
             <!-- Table -->
-            <div class="flex flex-col p-3">
-                <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                    <div class="inline-block w-full py-2 align-middle">
-                        <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
-                            <div class="overflow-x-auto">
+            <div class="flex flex-col">
+                <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
+                    
+                    <div class="overflow-x-auto">
 
-                                <table class="w-full min-w-full">
-                                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
-                                        <tr class="whitespace-nowrap">
-                                            <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Date</th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Amount Due (1 - 15)
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Amount Due (16 - end-of-month)
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                Net Amount Received
-                                            </th>
-                                            <th style="width: 30px" class="px-5 py-3 text-gray-100 text-sm font-medium text-right uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
-                                                Action
-                                            </th>
+                        <table class="w-full min-w-full">
+                            <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                <tr class="whitespace-nowrap">
+                                    <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Date</th>
+                                    <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                        Amount Due (1 - 15)
+                                    </th>
+                                    <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                        Amount Due (16 - end-of-month)
+                                    </th>
+                                    <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                        Net Amount Received
+                                    </th>
+                                    <th style="width: 30px" class="px-5 py-3 text-gray-100 text-sm font-medium text-right uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                @if($type === "plantilla")
+                                    @foreach($payslips as $payslip)
+                                        <tr class="text-neutral-800 dark:text-neutral-200">
+                                            <td scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">
+                                                {{ \Carbon\Carbon::parse($payslip->start_date)->format('F') }},  {{ \Carbon\Carbon::parse($payslip->start_date)->format('Y') }}
+                                            </td>
+                                            <td scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                {{ $payslip->first_half_amount }}
+                                            </td>
+                                            <td scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                {{ $payslip->second_half_amount }}
+                                            </td>
+                                            <td scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                {{ $payslip->net_amount_received }}
+                                            </td>
+                                            <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-gray-100 dark:bg-gray-900">
+                                                {{-- <button wire:click="viewPlantillaPayslip('{{ $payslip->start_date }}')" 
+                                                    class="peer inline-flex items-center justify-center py-2 
+                                                    text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                    focus:outline-none" title="View Payslip">
+                                                    <i class="fas fa-eye"></i>
+                                                </button> --}}
+                                                <button wire:click="exportPlantillaPayslip('{{ $payslip->start_date }}')" 
+                                                    class="inline-flex items-center justify-center py-2
+                                                    text-sm font-medium tracking-wide hover:text-green-500 focus:outline-none" title="Export Payslip">
+                                                    <i class="fas fa-file-export ml-2" wire:target="exportPlantillaPayslip('{{ $payslip->start_date }}')" wire:loading.remove></i>
+                                                    <div wire:loading wire:target="exportPlantillaPayslip('{{ $payslip->start_date }}')" style="margin-top: -6px">
+                                                        <div class="spinner-border small text-primary" role="status">
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
-                                        @if($type === "plantilla")
-                                            @foreach($payslips as $payslip)
-                                                <tr class="text-neutral-800 dark:text-neutral-200">
-                                                    <td scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">
-                                                        {{ \Carbon\Carbon::parse($payslip->start_date)->format('F') }},  {{ \Carbon\Carbon::parse($payslip->start_date)->format('Y') }}
-                                                    </td>
-                                                    <td scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                        {{ $payslip->first_half_amount }}
-                                                    </td>
-                                                    <td scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                        {{ $payslip->second_half_amount }}
-                                                    </td>
-                                                    <td scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                        {{ $payslip->net_amount_received }}
-                                                    </td>
-                                                    <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-gray-100 dark:bg-gray-900">
-                                                        {{-- <button wire:click="viewPlantillaPayslip('{{ $payslip->start_date }}')" 
-                                                            class="peer inline-flex items-center justify-center py-2 
-                                                            text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                            focus:outline-none" title="View Payslip">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button> --}}
-                                                        <button wire:click="exportPlantillaPayslip('{{ $payslip->start_date }}')" 
-                                                            class="inline-flex items-center justify-center py-2
-                                                            text-sm font-medium tracking-wide hover:text-green-500 focus:outline-none" title="Export Payslip">
-                                                            <i class="fas fa-file-export ml-2" wire:target="exportPlantillaPayslip('{{ $payslip->start_date }}')" wire:loading.remove></i>
-                                                            <div wire:loading wire:target="exportPlantillaPayslip('{{ $payslip->start_date }}')" style="margin-top: -6px">
-                                                                <div class="spinner-border small text-primary" role="status">
-                                                                </div>
-                                                            </div>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @else
-                                            @foreach($cosPayslips as $payslip)
-                                                <tr class="text-neutral-800 dark:text-neutral-200">
-                                                    <td scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">
-                                                        {{ $payslip['month_year'] }}
-                                                    </td>
-                                                    <td scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                        {{ $payslip['first_half_amount'] }}
-                                                    </td>
-                                                    <td scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                        {{ $payslip['second_half_amount'] }}
-                                                    </td>
-                                                    <td scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
-                                                        {{ $payslip['net_amount_received'] }}
-                                                    </td>
-                                                    <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-gray-100 dark:bg-gray-900">
-                                                        {{-- <button wire:click="viewPlantillaPayslip('{{ $payslip['month_year'] }}')" 
-                                                            class="peer inline-flex items-center justify-center py-2 
-                                                            text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                            focus:outline-none" title="View Payslip">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button> --}}
-                                                        <button wire:click="exportCosPayslip('{{ $payslip['month_year'] }}')" 
-                                                            class="inline-flex items-center justify-center py-2
-                                                            text-sm font-medium tracking-wide hover:text-green-500 focus:outline-none" title="Export Payslip">
-                                                            <i class="fas fa-file-export ml-2" wire:target="exportCosPayslip('{{ $payslip['month_year'] }}')" wire:loading.remove></i>
-                                                            <div wire:loading wire:target="exportCosPayslip('{{ $payslip['month_year'] }}')" style="margin-top: -6px">
-                                                                <div class="spinner-border small text-primary" role="status">
-                                                                </div>
-                                                            </div>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
-                                    </tbody>
-                                </table>
-                            </div>
-                            @if($type === "plantilla")
-                                <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
-                                    {{ $payslips->links() ?? '' }}
-                                </div>
-                            @else
-                                <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
-                                    {{ $cosPayslips->links() ?? '' }}
-                                </div>
-                            @endif
-                        </div>
+                                    @endforeach
+                                @else
+                                    @foreach($cosPayslips as $payslip)
+                                        <tr class="text-neutral-800 dark:text-neutral-200">
+                                            <td scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">
+                                                {{ $payslip['month_year'] }}
+                                            </td>
+                                            <td scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                {{ $payslip['first_half_amount'] }}
+                                            </td>
+                                            <td scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                {{ $payslip['second_half_amount'] }}
+                                            </td>
+                                            <td scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                {{ $payslip['net_amount_received'] }}
+                                            </td>
+                                            <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-gray-100 dark:bg-gray-900">
+                                                {{-- <button wire:click="viewPlantillaPayslip('{{ $payslip['month_year'] }}')" 
+                                                    class="peer inline-flex items-center justify-center py-2 
+                                                    text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                    focus:outline-none" title="View Payslip">
+                                                    <i class="fas fa-eye"></i>
+                                                </button> --}}
+                                                <button wire:click="exportCosPayslip('{{ $payslip['month_year'] }}')" 
+                                                    class="inline-flex items-center justify-center py-2
+                                                    text-sm font-medium tracking-wide hover:text-green-500 focus:outline-none" title="Export Payslip">
+                                                    <i class="fas fa-file-export ml-2" wire:target="exportCosPayslip('{{ $payslip['month_year'] }}')" wire:loading.remove></i>
+                                                    <div wire:loading wire:target="exportCosPayslip('{{ $payslip['month_year'] }}')" style="margin-top: -6px">
+                                                        <div class="spinner-border small text-primary" role="status">
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                        @if ($type === "plantilla" && $payslips->isEmpty())
+                            <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                No records!
+                            </div> 
+                        @elseif($cosPayslips->isEmpty())
+                            <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                No records!
+                            </div> 
+                        @endif
                     </div>
+
+                    @if($type === "plantilla")
+                        <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                            {{ $payslips->links() ?? '' }}
+                        </div>
+                    @else
+                        <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                            {{ $cosPayslips->links() ?? '' }}
+                        </div>
+                    @endif
                 </div>
             </div>
 

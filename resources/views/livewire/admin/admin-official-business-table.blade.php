@@ -20,40 +20,6 @@ x-cloak>
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
-        .scrollbar-thin1::-webkit-scrollbar {
-                        width: 5px;
-                    }
-
-        .scrollbar-thin1::-webkit-scrollbar-thumb {
-            background-color: #1a1a1a4b;
-            /* cursor: grab; */
-            border-radius: 0 50px 50px 0;
-        }
-
-        .scrollbar-thin1::-webkit-scrollbar-track {
-            background-color: #ffffff23;
-            border-radius: 0 50px 50px 0;
-        }
-
-        @media (max-width: 1024px){
-            .custom-d{
-                display: block;
-            }
-        }
-
-        @media (max-width: 768px){
-            .m-scrollable{
-                width: 100%;
-                overflow-x: scroll;
-            }
-        }
-
-        @media (min-width:1024px){
-            .custom-p{
-                padding-bottom: 14px !important;
-            }
-        }
-
         @-webkit-keyframes spinner-border {
             to {
                 transform: rotate(360deg);
@@ -177,8 +143,8 @@ x-cloak>
                     placeholder="Enter employee name or reference number">
             </div>
 
-             <!-- Table -->
-             <div class="flex flex-col">
+            <!-- Table -->
+            <div class="flex flex-col">
                 <div class="flex gap-2 overflow-x-auto -mb-2">
                     <button @click="selectedTab = 'ob'" 
                             :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'ob', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'ob' }" 
@@ -204,6 +170,9 @@ x-cloak>
                                     <table class="w-full min-w-full">
                                         <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                                             <tr class="whitespace-nowrap">
+                                                <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
+                                                    Approved By
+                                                </th>
                                                 <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
                                                     Reference No.
                                                 </th>
@@ -233,6 +202,20 @@ x-cloak>
                                         <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
                                                 @foreach($obs as $employee)
                                                     <tr class="text-neutral-800 dark:text-neutral-200">
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap relative" style="overflow-y: visible">
+
+                                                            <span class="sup-td-2 {{ $employee->supervisor ? 'cursor-pointer text-green-500' : '' }}"
+                                                                title="{{ 'Office/Division: ' . $employee->supOfficeDiv . "\nUnit/Department: " . $employee->supUnit }}">
+                                                                {{ $employee->date_sup_approved ? $employee->supervisor : '' }}
+                                                            </span>
+                                                            <p class="py-1 text-left text-sm font-medium whitespace-nowrap" style="line-height: 10px"><span class="opacity-80 {{ $employee->date_sup_approved ? '' : 'hidden' }}">Date Approved:</span> {{ $employee->date_sup_approved ? \Carbon\Carbon::parse($employee->date_sup_approved)->format('F d, Y') : '' }}</p>
+                                                            
+                                                            <hr class="my-1 opacity-60 {{ $employee->date_approved && $employee->date_sup_approved ? '' : 'hidden' }}">
+
+                                                            <span class="sup-td-hr {{ $employee->hr ? 'cursor-pointer text-green-500' : '' }}">{{ $employee->date_approved ? $employee->hr : '' }}</span>
+                                                            <p class="py-1 text-left text-sm font-medium whitespace-nowrap" style="line-height: 10px"><span class="opacity-80 {{ $employee->date_approved ? '' : 'hidden' }}">Date Approved:</span> {{ $employee->date_approved ? \Carbon\Carbon::parse($employee->date_approved)->format('F d, Y') : '' }}</p>
+
+                                                        </td>
                                                         <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
                                                             {{ $employee->reference_number }}
                                                         </td>
@@ -286,6 +269,9 @@ x-cloak>
                                         <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                                             <tr class="whitespace-nowrap">
                                                 <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
+                                                    Approved By (Supervisor)
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
                                                     Reference No.
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
@@ -311,9 +297,20 @@ x-cloak>
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                        <tbody class="divide-y divide-neutral-200 dark:divide-gray-400" style="overflow-y: visible">
                                                 @foreach($obRequests as $employee)
-                                                    <tr class="text-neutral-800 dark:text-neutral-200">
+                                                    <tr class="text-neutral-800 dark:text-neutral-200" style="overflow-y: visible">
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap relative" style="overflow-y: visible">
+                                                            
+                                                            <span class="{{ $employee->supervisor ? 'sup-td cursor-pointer text-blue-500' : 'opacity-60' }}"
+                                                                @if(Auth::user()->user_role != 'sv')
+                                                                title="{{ 'Office/Division: ' . $employee->supOfficeDiv . "\nUnit/Department: " . $employee->supUnit }}"
+                                                                @endif>
+                                                                {{ $employee->supervisor ?: 'For your approval' }}
+                                                            </span>
+                                                            <p class="py-1 text-left text-sm font-medium whitespace-nowrap {{ $employee->date_sup_approved ? '' : 'hidden' }}" style="line-height: 10px"><span class="opacity-80">Date Approved:</span> {{ \Carbon\Carbon::parse($employee->date_sup_approved)->format('F d, Y') }}</p>
+                                                       
+                                                        </td>
                                                         <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
                                                             {{ $employee->reference_number }}
                                                         </td>
@@ -346,22 +343,24 @@ x-cloak>
                                                                     </button>
                                                                 </div>
                                                             </a>
-                                                            <div class="relative mt-1">
-                                                                <button wire:click="toogleConfirmModal({{ $employee->id }}, 'approve')" 
-                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                                    -mr-2 text-sm font-medium tracking-wide text-green-500 hover:text-green-600  
-                                                                    focus:outline-none" title="Approve">
-                                                                    <i class="bi bi-check-square"></i>
-                                                                </button>
-                                                            </div>
-                                                            <div class="relative mt-1">
-                                                                <button wire:click="toogleConfirmModal({{ $employee->id }}, 'disapprove')" 
-                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                                    -mr-2 text-sm font-medium tracking-wide text-red-500 hover:text-red-600  
-                                                                    focus:outline-none" title="Disapprove">
-                                                                    <i class="bi bi-x-square"></i>
-                                                                </button>
-                                                            </div>
+                                                            @if(!$employee->isApproved)
+                                                                <div class="relative mt-1">
+                                                                    <button wire:click="toogleConfirmModal({{ $employee->id }}, 'approve')" 
+                                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                        -mr-2 text-sm font-medium tracking-wide text-green-500 hover:text-green-600  
+                                                                        focus:outline-none" title="Approve">
+                                                                        <i class="bi bi-check-square"></i>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="relative mt-1">
+                                                                    <button wire:click="toogleConfirmModal({{ $employee->id }}, 'disapprove')" 
+                                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                        -mr-2 text-sm font-medium tracking-wide text-red-500 hover:text-red-600  
+                                                                        focus:outline-none" title="Disapprove">
+                                                                        <i class="bi bi-x-square"></i>
+                                                                    </button>
+                                                                </div>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -382,6 +381,9 @@ x-cloak>
                                     <table class="w-full min-w-full">
                                         <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                                             <tr class="whitespace-nowrap">
+                                                <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
+                                                    Disapproved By
+                                                </th>
                                                 <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
                                                     Reference No.
                                                 </th>
@@ -411,6 +413,20 @@ x-cloak>
                                         <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
                                                 @foreach($disapprovedObs as $employee)
                                                     <tr class="text-neutral-800 dark:text-neutral-200">
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap relative" style="overflow-y: visible">
+
+                                                            <span class="sup-td-2 {{ $employee->supervisor ? 'cursor-pointer text-blue-500' : '' }}"
+                                                                title="{{ 'Office/Division: ' . $employee->supOfficeDiv . "\nUnit/Department: " . $employee->supUnit }}">
+                                                                {{ $employee->date_sup_disapproved ? $employee->supervisor : '' }}
+                                                            </span>
+                                                            <p class="py-1 text-left text-sm font-medium whitespace-nowrap" style="line-height: 10px"><span class="opacity-80 {{ $employee->date_sup_disapproved ? '' : 'hidden' }}">Date Disapproved:</span> {{ $employee->date_sup_disapproved ? \Carbon\Carbon::parse($employee->date_sup_disapproved)->format('F d, Y') : '' }}</p>
+                                                            
+                                                            <hr class="my-1 opacity-60 {{ $employee->date_disapproved && $employee->date_sup_disapproved ? '' : 'hidden' }}">
+
+                                                            <span class="sup-td-hr {{ $employee->hr ? 'cursor-pointer text-blue-500' : '' }}">{{ $employee->date_disapproved ? $employee->hr : '' }}</span>
+                                                            <p class="py-1 text-left text-sm font-medium whitespace-nowrap" style="line-height: 10px"><span class="opacity-80 {{ $employee->date_disapproved ? '' : 'hidden' }}">Date Disapproved:</span> {{ $employee->date_disapproved ? \Carbon\Carbon::parse($employee->date_disapproved)->format('F d, Y') : '' }}</p>
+
+                                                        </td>
                                                         <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
                                                             {{ $employee->reference_number }}
                                                         </td>
@@ -548,14 +564,51 @@ x-cloak>
                 <label for="obPurpose" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Purpose</label>
                 <textarea type="text" id="obPurpose" cols="30" rows="4" wire:model='obPurpose' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly></textarea>
             </div>
-            <div class="col-span-2 sm:col-span-1">
-                <label for="approvedBy" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved By</label>
-                <input type="text" id="approvedBy" wire:model='approvedBy' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
-            </div>
-            <div class="col-span-2 sm:col-span-1">
-                <label for="approvedDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved Date</label>
-                <input type="text" id="approvedDate" wire:model='approvedDate' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
-            </div>
+
+            @if($supDisapprovedDate == 'N/A')
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="approvedBySup" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved By (Supervisor)</label>
+                    <input type="text" id="approvedBySup" wire:model='approvedBySup' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="supApprovedDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved Date (Supervisor)</label>
+                    <input type="text" id="supApprovedDate" wire:model='supApprovedDate' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+            @endif
+
+            @if($supDisapprovedDate != 'N/A')
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="disapprovedBySup" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Dispproved By (Supervisor)</label>
+                    <input type="text" id="disapprovedBySup" wire:model='disapprovedBySup' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="supDisapprovedDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Disapproved Date (Supervisor)</label>
+                    <input type="text" id="supDisapprovedDate" wire:model='supDisapprovedDate' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+            @endif
+
+            @if($disapprovedDate == 'N/A')
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="approvedBy" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved By (HR)</label>
+                    <input type="text" id="approvedBy" wire:model='approvedBy' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="approvedDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved Date (HR)</label>
+                    <input type="text" id="approvedDate" wire:model='approvedDate' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+            @endif
+            @if($disapprovedDate != 'N/A')
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="disapprovedBy" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Disapproved By (HR)</label>
+                    <input type="text" id="disapprovedBy" wire:model='disapprovedBy' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <label for="disapprovedDate" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Disapproved Date (HR)</label>
+                    <input type="text" id="disapprovedDate" wire:model='disapprovedDate' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                </div>
+            @endif
+
+
         </div>
 
         {{-- <div class="mt-4  mb-1">
@@ -575,7 +628,21 @@ x-cloak>
         </div> --}}
 
         <div class="mt-6 flex justify-end col-span-2 gap-4">
-            @if($thisObId)
+            @if($thisObId && $supDisapprovedDate == 'N/A' && $supApprovedDate == 'N/A')
+                <button wire:click="toogleConfirmModal({{ $thisObId }}, 'approve')" 
+                    class="px-3 py-1 text-white rounded-md 
+                    text-sm bg-green-500 hover:bg-green-600  
+                    focus:outline-none" title="Approve">
+                    Approve
+                </button>
+                <button wire:click="toogleConfirmModal({{ $thisObId }}, 'disapprove')" 
+                    class="px-3 py-1 text-white rounded-md 
+                    text-sm bg-red-500 hover:bg-red-600  
+                    focus:outline-none {{ $approveOnly ? 'hidden' : '' }}" title="Disapprove">
+                    Disapprove
+                </button>
+            @endif
+            @if($thisObId && ($supDisapprovedDate != 'N/A' || $supApprovedDate != 'N/A') && (Auth::user()->user_role == 'sa' || Auth::user()->user_role == 'hr'))
                 <button wire:click="toogleConfirmModal({{ $thisObId }}, 'approve')" 
                     class="px-3 py-1 text-white rounded-md 
                     text-sm bg-green-500 hover:bg-green-600  
@@ -600,7 +667,7 @@ x-cloak>
 
 </div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs"></script>
+{{-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs"></script>
 <script>
     let map;
     let marker;
@@ -665,4 +732,4 @@ x-cloak>
         }
     });
 
-</script>
+</script> --}}

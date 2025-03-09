@@ -38,4 +38,14 @@ class OfficialBusiness extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
+
+    public function scopeSearch($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('reference_number', 'like', $term)
+                ->orWhere('company', 'like', $term)
+                ->orWhere('address', 'like', $term)
+                ->orWhere('purpose', 'like', $term);
+        });
+    }
 }

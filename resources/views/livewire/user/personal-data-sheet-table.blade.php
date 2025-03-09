@@ -1,6 +1,4 @@
-<div class="w-full" x-data="{
-    selectedTab: 'C1',
-}" x-cloak>
+<div class="w-full" x-data="{selectedTab: 'C1',}" x-cloak>
 
     <style>
         @media (max-width: 1024px) {
@@ -47,6 +45,9 @@
             color: white;
         }
     </style>
+
+
+
 
     {{-- Main Display --}}
     <div class="flex justify-center w-full">
@@ -96,11 +97,11 @@
                         class="h-min px-4 pt-2 pb-4 text-sm">
                         C4
                     </button>
-                    <button @click="selectedTab = 'E-Signature'"
+                    {{-- <button @click="selectedTab = 'E-Signature'"
                         :class="{ 'font-bold text-gray-100 dark:text-gray-700 bg-gray-400 dark:bg-slate-300 rounded-t-lg': selectedTab === 'E-Signature', 'text-slate-500 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'E-Signature' }"
                         class="h-min px-4 pt-2 pb-4 text-sm whitespace-nowrap">
                         E-Signature
-                    </button>
+                    </button> --}}
                 </div>
 
                 <div x-show="selectedTab === 'C1'" class="relative z-10">
@@ -2091,6 +2092,13 @@
 
         </div>
     </div>
+
+
+
+
+
+
+
 
     {{-- Personal Info Edit Modal --}}
     <x-modal id="personalInfoModal" maxWidth="2xl" wire:model="personalInfo">
