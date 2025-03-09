@@ -66,6 +66,7 @@ class AdminLeaveMonetizationTable extends Component
                 $request->vl_monetize_credits = $vlMonetizedValue;
                 $request->sl_monetize_credits = $slMonetizedValue;
                 $request->status = 'Approved';
+                $request->date_approved = now()->toDateString();
                 $request->save();
 
                 $this->dispatch('swal', [
