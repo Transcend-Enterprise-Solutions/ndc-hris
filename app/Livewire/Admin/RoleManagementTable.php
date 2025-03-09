@@ -302,6 +302,10 @@ class RoleManagementTable extends Component
                     'positions.position', 
                     'user_data.appointment', 
                     'user_data.date_hired', 
+                    'user_data.first_name', 
+                    'user_data.middle_name', 
+                    'user_data.surname', 
+                    'user_data.name_extension', 
                     'office_divisions.office_division',
                     'office_division_units.unit',
                     'payrolls.sg_step as plantilla_sg_step',
@@ -330,7 +334,8 @@ class RoleManagementTable extends Component
                             $subQuery->orWhere('active_status', 3);
                         }
                     });
-                });
+                })
+                ->orderBy('user_data.surname', 'ASC');
 
             $selectedStatuses = $this->allStat ? ['All'] : array_keys(array_filter($this->status));
             $statusLabels = [
@@ -373,6 +378,10 @@ class RoleManagementTable extends Component
                             'positions.position', 
                             'user_data.appointment', 
                             'user_data.date_hired', 
+                            'user_data.first_name', 
+                            'user_data.middle_name', 
+                            'user_data.surname', 
+                            'user_data.name_extension', 
                             'office_divisions.office_division',
                             'office_division_units.unit',
                             'payrolls.sg_step as plantilla_sg_step',

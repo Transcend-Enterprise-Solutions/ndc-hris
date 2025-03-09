@@ -53,10 +53,33 @@ class Registration extends Component
 
     #Step 2
     public $gsis;
+    public $gsis1;
+    public $gsis2;
+    public $gsis3;
+
+
     public $pagibig;
+    public $pagibig1;
+    public $pagibig2;
+    public $pagibig3;
+
+
     public $philhealth;
+    public $philhealth1;
+    public $philhealth2;
+    public $philhealth3;
+
     public $sss;
+    public $sss1;
+    public $sss2;
+    public $sss3;
+
     public $tin;
+    public $tin1;
+    public $tin2;
+    public $tin3;
+    public $tin4;
+
     public $agency_employee_no;
 
     #Step 3
@@ -89,7 +112,7 @@ class Registration extends Component
     public $same_as_above = false;
     public $password;
     public $c_password;
-    public $step = 1;
+    public $step = 2;
 
     public function toStep2()
     {
@@ -128,14 +151,20 @@ class Registration extends Component
 
     public function toStep3()
     {
-        $this->validate([
-            'gsis' => 'required',
-            'pagibig' => 'required',
-            'philhealth' => 'required',
-            'sss' => 'required',
-            'tin' => 'required',
-            'agency_employee_no' => 'required',
-        ]);
+        // $this->validate([
+        //     'gsis' => 'required',
+        //     'pagibig' => 'required',
+        //     'philhealth' => 'required',
+        //     'sss' => 'required',
+        //     'tin' => 'required',
+        //     'agency_employee_no' => 'required',
+        // ]);
+
+        $this->gsis = ($this->gsis1 && $this->gsis2 && $this->gsis3) ? ($this->gsis1 . '-' . $this->gsis2 . '-' . $this->gsis3) : ''; 
+        $this->pagibig = ($this->pagibig1 && $this->pagibig2 && $this->pagibig3) ? ($this->pagibig1 . '-' . $this->pagibig2 . '-' . $this->pagibig3) : '';
+        $this->philhealth = ($this->philhealth1 && $this->philhealth2 && $this->philhealth3) ? ($this->philhealth1 . '-' . $this->philhealth2 . '-' . $this->philhealth3) : '';
+        $this->sss = ($this->sss1 && $this->sss2 && $this->sss3) ? ($this->sss1 . '-' . $this->sss2 . '-' . $this->sss3) : '';
+        $this->tin = ($this->tin1 && $this->tin2 && $this->tin3) ? ($this->tin1 . '-' . $this->tin2 . '-' . $this->tin3 . '-' . ($this->tin4 ?: '000')) : '';
 
         $this->step++;
     }
@@ -228,12 +257,12 @@ class Registration extends Component
                 'height' => $this->height,
                 'weight' => $this->weight,
                 'blood_type' => $this->blood_type,
-                'gsis' => $this->gsis,
-                'pagibig' => $this->pagibig,
-                'philhealth' => $this->philhealth,
-                'sss' => $this->sss,
-                'tin' => $this->tin,
-                'agency_employee_no' => $this->agency_employee_no,
+                'gsis' => $this->gsis ?: 'N/A',
+                'pagibig' => $this->pagibig ?: 'N/A',
+                'philhealth' => $this->philhealth ?: 'N/A',
+                'sss' => $this->sss ?: 'N/A',
+                'tin' => $this->tin ?: 'N/A',
+                'agency_employee_no' => $this->agency_employee_no ?: 'N/A',
                 'permanent_selectedZipcode' => $this->permanent_selectedZipcode,
                 'permanent_selectedProvince' => $this->permanent_selectedProvince,
                 'permanent_selectedCity' => $this->permanent_selectedCity,

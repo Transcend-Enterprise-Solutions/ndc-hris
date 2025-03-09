@@ -244,61 +244,141 @@
                                 Step 2 out of 3: <span class="font-bold text-black">Government IDs</span>
                             </h2>
 
-                            <div class="mt-12 gap-2 lg:columns-2 sm:columns-1">
-                                <div class="w-full">
-                                    <label for="name" class="text-sm text-gray-700">GSIS ID No. <span
-                                            class="text-red-600">*</span></label>
-                                    <input type="text" id="gsis" wire:model.live="gsis"
-                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                            <div class="mt-12 flex flex-col gap-4 columns-1">
+                                <div class="w-full" x-data="gsisFormat()">
+                                    <label for="gsis" class="text-sm text-gray-700">
+                                        GSIS ID No. <span class="opacity-90">(Optional)</span>
+                                    </label>
+                                    <div class="flex space-x-2">
+                                        <input wire:model.live="gsis1" type="number" maxlength="4" x-model="part1"
+                                            @input="if ($event.target.value.length == 4) $refs.part2.focus();"
+                                            class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <span class="text-gray-600 self-center">-</span>
+                                        <input wire:model.live="gsis2" type="number" maxlength="7" x-model="part2"
+                                            @input="if ($event.target.value.length == 7) $refs.part3.focus();"
+                                            x-ref="part2"
+                                            class="w-2/5 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <span class="text-gray-600 self-center">-</span>
+                                        <input wire:model.live="gsis3" type="number" maxlength="1" x-model="part3"
+                                            x-ref="part3"
+                                            @input="limitInput($event, 1)"
+                                            class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                    </div>
+                                    
                                     @error('gsis')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="w-full">
-                                    <label for="name" class="text-sm text-gray-700">PAGIBIG ID No. <span
-                                            class="text-red-600">*</span></label>
-                                    <input type="text" id="pagibig" wire:model.live="pagibig"
-                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                <div class="w-full" x-data="pagibigFormat()">
+                                    <label for="pagibig" class="text-sm text-gray-700">
+                                        PAGIBIG ID No. <span class="opacity-90">(Optional)</span>
+                                    </label>
+                                    <div class="flex space-x-2">
+                                        <input wire:model.live="pagibig1" type="number" maxlength="4" x-model="part1"
+                                            @input="if ($event.target.value.length == 4) $refs.part2.focus(); updateLivewire()"
+                                            class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <span class="text-gray-600 self-center">-</span>
+                                        <input wire:model.live="pagibig2" type="number" maxlength="4" x-model="part2"
+                                            @input="if ($event.target.value.length == 4) $refs.part3.focus(); updateLivewire()"
+                                            x-ref="part2"
+                                            class="w-2/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <span class="text-gray-600 self-center">-</span>
+                                        <input wire:model.live="pagibig3" type="number" maxlength="4" x-model="part3"
+                                            x-ref="part3"
+                                            @input="limitInput($event, 4)"
+                                            class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                    </div>
+                                
                                     @error('pagibig')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
 
-                            <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
-                                <div class="w-full">
-                                    <label for="name" class="text-sm text-gray-700">PhilHealth ID No. <span
-                                            class="text-red-600">*</span></label>
-                                    <input type="text" id="philhealth" wire:model.live="philhealth"
-                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                            <div class="mt-4 flex flex-col gap-4 columns-1">
+                                <div class="w-full" x-data="philhealthFormat()">
+                                    <label for="philhealth" class="text-sm text-gray-700">
+                                        PhilHealth ID No. <span class="opacity-90">(Optional)</span>
+                                    </label>
+                                    <div class="flex space-x-2">
+                                        <input wire:model.live="philhealth1" type="number" maxlength="2" x-model="part1"
+                                            @input="if ($event.target.value.length == 2) $refs.part2.focus(); updateLivewire()"
+                                            class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <span class="text-gray-600 self-center">-</span>
+                                        <input wire:model.live="philhealth2" type="number" maxlength="9" x-model="part2"
+                                            @input="if ($event.target.value.length == 9) $refs.part3.focus(); updateLivewire()"
+                                            x-ref="part2"
+                                            class="w-2/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <span class="text-gray-600 self-center">-</span>
+                                        <input wire:model.live="philhealth3" type="number" maxlength="1" x-model="part3"
+                                            x-ref="part3"
+                                            @input="limitInput($event, 1)"
+                                            class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                    </div>
+                                
                                     @error('philhealth')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="w-full">
-                                    <label for="name" class="text-sm text-gray-700">SSS No. <span
-                                            class="text-red-600">*</span></label>
-                                    <input type="text" id="sss" wire:model.live="sss"
-                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                <div class="w-full" x-data="sssFormat()">
+                                    <label for="sss" class="text-sm text-gray-700">
+                                        SSS No. <span class="opacity-90">(Optional)</span>
+                                    </label>
+                                    <div class="flex space-x-2">
+                                        <input wire:model.live="sss1" type="number" maxlength="2" x-model="part1"
+                                            @input="if ($event.target.value.length == 2) $refs.part2.focus(); updateLivewire()"
+                                            class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <span class="text-gray-600 self-center">-</span>
+                                        <input wire:model.live="sss2" type="number" maxlength="7" x-model="part2"
+                                            @input="if ($event.target.value.length == 7) $refs.part3.focus(); updateLivewire()"
+                                            x-ref="part2"
+                                            class="w-2/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <span class="text-gray-600 self-center">-</span>
+                                        <input wire:model.live="sss3" type="number" maxlength="1" x-model="part3"
+                                            x-ref="part3"
+                                            @input="limitInput($event, 1)"
+                                            class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                    </div>
+                                
                                     @error('sss')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
 
-                            <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
-                                <div class="w-full">
-                                    <label for="name" class="text-sm text-gray-700">TIN No. <span
-                                            class="text-red-600">*</span></label>
-                                    <input type="text" id="tin" wire:model.live="tin"
-                                        class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                            <div class="mt-4 flex flex-col gap-4 columns-1">
+                                <div class="w-full" x-data="tinFormat()">
+                                    <label for="tin" class="text-sm text-gray-700">
+                                        TIN No. <span class="opacity-90">(Optional)</span>
+                                    </label>
+                                    <div class="flex space-x-2">
+                                        <input wire:model.live="tin1" type="number" maxlength="3" x-model="part1"
+                                            @input="if ($event.target.value.length == 3) $refs.part2.focus(); updateLivewire()"
+                                            class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <span class="text-gray-600 self-center">-</span>
+                                        <input wire:model.live="tin2" type="number" maxlength="3" x-model="part2"
+                                            @input="if ($event.target.value.length == 3) $refs.part3.focus(); updateLivewire()"
+                                            x-ref="part2"
+                                            class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <span class="text-gray-600 self-center">-</span>
+                                        <input wire:model.live="tin3" type="number" maxlength="3" x-model="part3"
+                                            @input="if ($event.target.value.length == 3) $refs.part4.focus(); updateLivewire()"
+                                            x-ref="part3"
+                                            class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                        <span class="text-gray-600 self-center">-</span>
+                                        <input wire:model.live="tin4" type="number" maxlength="3" x-model="part4"
+                                            x-ref="part4"
+                                            @input="limitInput($event, 3)"
+                                            class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                    </div>
+                                
                                     @error('tin')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="w-full">
                                     <label for="agency_employee_no" class="text-sm text-gray-700">Agency Employee
-                                        No. <span class="text-red-600">*</span></label>
+                                        No. <span class="opacity-90">(Optional)</span></label>
                                     <input type="text" id="agency_employee_no"
                                         wire:model.live="agency_employee_no"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
@@ -318,7 +398,7 @@
                                     </button>
                                 </div>
                                 <div class="w-full relative sm:mt-0 mt-4">
-                                    <button
+                                    <button onclick='gsisFormat()' 
                                         class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
                                         wire:click="toStep3" wire:loading.attr="disabled" wire:target="toStep3">
                                         <span wire:loading.remove wire:target="toStep3">Next</span>
@@ -862,3 +942,13 @@
         <!-- Ends component -->
     </div>
 </section>
+
+
+<script>
+    function limitInput(event, maxLength) {
+        if (event.target.value.length > maxLength) {
+            event.target.value = event.target.value.slice(0, maxLength);
+            this[event.target.getAttribute('x-model')] = event.target.value;
+        }
+    }
+</script>

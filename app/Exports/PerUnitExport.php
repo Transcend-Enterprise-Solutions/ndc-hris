@@ -188,7 +188,9 @@ class PerUnitExport implements FromCollection, WithEvents
 
                 return [
                     $this->rowNumber,
-                    'Name' => $user->name,
+                    'Name' => $user->surname . ', ' . $user->first_name . 
+                        ($user->middle_name && $user->middle_name != 'N/A' ? ' ' . $user->middle_name : '') .
+                        ($user->name_extension && $user->name_extension != 'N/A' ? ' ' . $user->name_extension : ''),
                     'Email' => $user->email,
                     'Employee ID' => $cosEmpCode ?: $user->emp_code,
                     'Position' => $user->position,
