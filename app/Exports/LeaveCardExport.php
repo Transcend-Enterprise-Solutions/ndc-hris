@@ -48,21 +48,21 @@ class LeaveCardExport
             ->where('remarks', 'With Pay')
             ->whereNotNull('approved_dates')
             ->get();
-
+    
         if ($leaves->isEmpty()) {
             return [
                 'dates' => '',
                 'total_days' => 0
             ];
         }
-
+    
         $dates = [];
         $totalDays = 0;
-
+    
         foreach ($leaves as $leave) {
             $approvedDatesString = trim($leave->approved_dates, '[]"');
             $approvedDates = array_map('trim', explode(',', $approvedDatesString));
-
+    
             foreach ($approvedDates as $date) {
                 $date = trim($date, '"\'');
                 
@@ -78,18 +78,18 @@ class LeaveCardExport
                 }
             }
         }
-
+    
         if (empty($dates)) {
             return [
                 'dates' => '',
                 'total_days' => 0
             ];
         }
-
+    
         sort($dates, SORT_NUMERIC);
         $monthName = Carbon::create()->month($month)->format('M');
         $datesString = count($dates) > 0 ? $monthName . '. ' . implode(', ', $dates) : '';
-
+    
         return [
             'dates' => $datesString,
             'total_days' => $totalDays
@@ -167,50 +167,68 @@ class LeaveCardExport
         return $leaveType . ' - ' . $monthName . '. ' . implode(', ', $dates);
     }
 
+    private function getApprovedMonetizationRequests($userId, $year)
+    {
+        return MonetizationRequest::where('user_id', $userId)
+            ->where('status', 'Approved')
+            ->whereYear('date_approved', $year) // Use `date_approved` for filtering
+            ->get();
+    }
+
+    private function formatMonetizationLeave($date, $vlCredits, $slCredits)
+    {
+        $month = Carbon::parse($date)->format('M');
+        $day = Carbon::parse($date)->format('d');
+        return "Monetization Leave - $month. $day";
+    }
+
     public function export(): StreamedResponse
     {
         $user = Auth::user();
         
+        // Fetch approved monetization requests for the year
+        $monetizationRequests = $this->getApprovedMonetizationRequests($user->id, $this->year);
+    
         // Fetching user data
         $position = Positions::find($user->position_id)->position ?? 'N/A';
         $department = OfficeDivisions::find($user->office_division_id)->office_division ?? 'N/A';
         $dateHired = UserData::where('user_id', $user->id)->value('date_hired');
-
+    
         if ($dateHired) {
             $formattedDateHired = Carbon::createFromFormat('Y-m-d', $dateHired)->format('m/d/Y');
         } else {
             $formattedDateHired = 'N/A';
         }
-
+    
         $templatePath = storage_path('app/public/leave_template/LeaveLedgerTemplate.xlsx');
         $spreadsheet = IOFactory::load($templatePath);
         $sheet = $spreadsheet->getActiveSheet();
-
+    
         $richText = new RichText();
         $yearText = $richText->createTextRun("FOR THE YEAR " . $this->year);
         $yearText->getFont()->setBold(true);
         $yearText->getFont()->setName('Arial');
         $sheet->setCellValue('K5', $richText);
-
+    
         // Fill in the basic user information
         $this->setBoldLabelWithValue($sheet, 'B7', 'NAME: ', $user->name ?? 'N/A');
         $this->setBoldLabelWithValue($sheet, 'B8', 'DATE APPOINTED: ', $formattedDateHired ?? 'N/A');
         $this->setBoldLabelWithValue($sheet, 'N7', 'POSITION: ', $position ?? 'N/A');
         $this->setBoldLabelWithValue($sheet, 'N8', 'DEPARTMENT: ', $department ?? 'N/A');
-
+    
         $previousYear = $this->year - 1;
         $previousDecBalance = MonthlyCredits::where('user_id', $user->id)
             ->where('year', $previousYear)
             ->where('month', 12)
             ->first();
-
+    
         // Set the "Leave balance as of" text in D15
         $richText = new RichText();
         $balanceText = $richText->createTextRun("Leave balance as of Dec {$previousYear}");
         $balanceText->getFont()->setBold(true);
         $balanceText->getFont()->setName('Arial');
         $sheet->setCellValue('D15', $richText);
-
+    
         // Set the balances
         if ($previousDecBalance) {
             $sheet->setCellValue('L15', $previousDecBalance->vl_latest_credits);
@@ -219,11 +237,11 @@ class LeaveCardExport
             $sheet->setCellValue('L15', 0);
             $sheet->setCellValue('P15', 0);
         }
-
+    
         // Get current balance from L15
         $currentVLBalance  = floatval($sheet->getCell('L15')->getValue());
         $currentSLBalance = floatval($sheet->getCell('P15')->getValue());
-
+    
         // Array of months
         $months = [
             1 => 'JANUARY',
@@ -239,98 +257,133 @@ class LeaveCardExport
             11 => 'NOVEMBER',
             12 => 'DECEMBER'
         ];
-
-        // Set month label and process January (Row 17)
-        // $sheet->setCellValue('B17', 'JANUARY');
-        // $januaryLeaves = $this->getMonthlyLeaveDetails($user->id, 1);
-        
-        // if (!empty($januaryLeaves['dates'])) {
-        //     $sheet->setCellValue('D17', $januaryLeaves['dates']);
-        // }
-        
-        // if ($januaryLeaves['total_days'] > 0) {
-        //     $sheet->setCellValue('K17', $januaryLeaves['total_days']);
-        //     $newBalance = $currentBalance - $januaryLeaves['total_days'];
-        //     $sheet->setCellValue('L17', $newBalance);
-        // } else {
-        //     $sheet->setCellValue('L17', $currentBalance); // Maintain previous balance if no leaves
-        // }
-
-        // Process January (Row 17)
+    
+        // Determine the last month to process
+        $currentYear = Carbon::now()->year;
+        $currentMonth = Carbon::now()->month;
+    
+        $lastMonthToProcess = ($this->year == $currentYear) ? $currentMonth - 1 : 12;
+    
+        // Process all months up to the last month to process
         $currentRow = 17;
-        $sheet->setCellValue('B' . $currentRow, 'JAUNARY');
-        
-        // Process all months
-        for ($month = 1; $month <= 12; $month++) {
+        for ($month = 1; $month <= $lastMonthToProcess; $month++) {
             $monthName = $months[$month];
             $hasEntries = false;
-
-            // First row: Process leaves (VL and SL)
+            $isMonthDisplayed = false; // Flag to track if the month name has been displayed
+    
+            // Process Vacation Leave (VL)
             $vlLeaves = $this->getMonthlyLeaveDetails($user->id, $month, 'Vacation Leave');
-            $slLeaves = $this->getMonthlyLeaveDetails($user->id, $month, 'Sick Leave');
-            
-            if (!empty($vlLeaves['dates']) || !empty($slLeaves['dates'])) {
-                $sheet->setCellValue('B' . $currentRow, $monthName);
-                
-                // Format the dates string with VL/SL indicators
-                $datesString = '';
-                
-                if (!empty($vlLeaves['dates'])) {
-                    $datesString = $this->formatLeaveDetails($vlLeaves, 'VL', $month);
+            if (!empty($vlLeaves['dates'])) {
+                // Display the month name only once
+                if (!$isMonthDisplayed) {
+                    $sheet->setCellValue('B' . $currentRow, $monthName);
+                    $isMonthDisplayed = true;
                 }
-                
-                if (!empty($slLeaves['dates'])) {
-                    $slDatesString = $this->formatLeaveDetails($slLeaves, 'SL', $month);
-                    if (!empty($datesString)) {
-                        $datesString .= ' & ' . $slDatesString;
-                    } else {
-                        $datesString = $slDatesString;
-                    }
-                }
-                
-                $sheet->setCellValue('D' . $currentRow, $datesString);
-                
+                $sheet->setCellValue('D' . $currentRow, $this->formatLeaveDetails($vlLeaves, 'VL', $month));
+    
                 // Handle VL balance with per-row excess
                 if ($vlLeaves['total_days'] > 0) {
                     $sheet->setCellValue('K' . $currentRow, $vlLeaves['total_days']);
                     $newVLBalance = $currentVLBalance - $vlLeaves['total_days'];
-                    
+    
                     if ($newVLBalance < 0) {
                         $sheet->setCellValue('M' . $currentRow, round(abs($newVLBalance), 3));
                         $currentVLBalance = 0;
                     } else {
                         $currentVLBalance = $newVLBalance;
                     }
-                    
+    
                     $sheet->setCellValue('L' . $currentRow, round($currentVLBalance, 3));
                 }
-                
+    
+                $currentRow++;
+                $hasEntries = true;
+            }
+    
+            // Process Sick Leave (SL)
+            $slLeaves = $this->getMonthlyLeaveDetails($user->id, $month, 'Sick Leave');
+            if (!empty($slLeaves['dates'])) {
+                // Display the month name only once
+                if (!$isMonthDisplayed) {
+                    $sheet->setCellValue('B' . $currentRow, $monthName);
+                    $isMonthDisplayed = true;
+                }
+                $sheet->setCellValue('D' . $currentRow, $this->formatLeaveDetails($slLeaves, 'SL', $month));
+    
                 // Handle SL balance with per-row excess
                 if ($slLeaves['total_days'] > 0) {
                     $sheet->setCellValue('O' . $currentRow, $slLeaves['total_days']);
                     $newSLBalance = $currentSLBalance - $slLeaves['total_days'];
-                    
+    
                     if ($newSLBalance < 0) {
                         $sheet->setCellValue('Q' . $currentRow, round(abs($newSLBalance), 3));
                         $currentSLBalance = 0;
                     } else {
                         $currentSLBalance = $newSLBalance;
                     }
-                    
+    
                     $sheet->setCellValue('P' . $currentRow, round($currentSLBalance, 3));
                 }
-                
+    
                 $currentRow++;
                 $hasEntries = true;
             }
-
-            // Second row: Process undertime/lates (VL only)
+    
+            // Process Mandatory/Forced Leave (ML)
+            $mlLeaves = $this->getMonthlyLeaveDetails($user->id, $month, 'Mandatory/Forced Leave');
+            if (!empty($mlLeaves['dates'])) {
+                // Display the month name only once
+                if (!$isMonthDisplayed) {
+                    $sheet->setCellValue('B' . $currentRow, $monthName);
+                    $isMonthDisplayed = true;
+                }
+                $sheet->setCellValue('D' . $currentRow, $this->formatLeaveDetails($mlLeaves, 'ML', $month));
+    
+                // Handle ML balance (deduct from VL balance)
+                if ($mlLeaves['total_days'] > 0) {
+                    $sheet->setCellValue('K' . $currentRow, $mlLeaves['total_days']);
+                    $newVLBalance = $currentVLBalance - $mlLeaves['total_days'];
+    
+                    if ($newVLBalance < 0) {
+                        $sheet->setCellValue('M' . $currentRow, round(abs($newVLBalance), 3));
+                        $currentVLBalance = 0;
+                    } else {
+                        $currentVLBalance = $newVLBalance;
+                    }
+    
+                    $sheet->setCellValue('L' . $currentRow, round($currentVLBalance, 3));
+                }
+    
+                $currentRow++;
+                $hasEntries = true;
+            }
+    
+            // Process Special Privilege Leave (SPL)
+            $splLeaves = $this->getMonthlyLeaveDetails($user->id, $month, 'Special Privilege Leave');
+            if (!empty($splLeaves['dates'])) {
+                // Display the month name only once
+                if (!$isMonthDisplayed) {
+                    $sheet->setCellValue('B' . $currentRow, $monthName);
+                    $isMonthDisplayed = true;
+                }
+                $sheet->setCellValue('D' . $currentRow, $this->formatLeaveDetails($splLeaves, 'SPL', $month));
+    
+                // No deductions for SPL
+                $currentRow++;
+                $hasEntries = true;
+            }
+    
+            // Process undertime/lates (VL only)
             $monthLates = $this->getMonthlyLateDetails($user->id, $month);
-            if ($monthLates) {
-                $sheet->setCellValue('B' . $currentRow, $monthName);
+            if ($monthLates && $monthLates['deduction'] > 0) { // Only display if deduction > 0
+                // Display the month name only once
+                if (!$isMonthDisplayed) {
+                    $sheet->setCellValue('B' . $currentRow, $monthName);
+                    $isMonthDisplayed = true;
+                }
                 $sheet->setCellValue('D' . $currentRow, 'Undertime/Late');
                 $sheet->setCellValue('K' . $currentRow, $monthLates['deduction']);
-                
+    
                 $newVLBalance = $currentVLBalance - $monthLates['deduction'];
                 if ($newVLBalance < 0) {
                     $sheet->setCellValue('M' . $currentRow, round(abs($newVLBalance), 3));
@@ -338,36 +391,89 @@ class LeaveCardExport
                 } else {
                     $currentVLBalance = $newVLBalance;
                 }
-                
+    
                 $sheet->setCellValue('L' . $currentRow, round($currentVLBalance, 3));
                 $currentRow++;
                 $hasEntries = true;
             }
-
-            // Third row: Process earned credits (affects both VL and SL)
+    
+            // Process approved monetization requests
+            foreach ($monetizationRequests as $request) {
+                $approvalDate = Carbon::parse($request->date_approved);
+                if ($approvalDate->year == $this->year && $approvalDate->month == $month) {
+                    // Display the month name only once
+                    if (!$isMonthDisplayed) {
+                        $sheet->setCellValue('B' . $currentRow, $monthName);
+                        $isMonthDisplayed = true;
+                    }
+    
+                    // Format the monetization leave entry
+                    $sheet->setCellValue('D' . $currentRow, $this->formatMonetizationLeave($request->date_approved, $request->vl_credits_requested, $request->sl_credits_requested));
+    
+                    // Deduct VL credits
+                    if ($request->vl_credits_requested > 0) {
+                        $sheet->setCellValue('K' . $currentRow, $request->vl_credits_requested);
+                        $newVLBalance = $currentVLBalance - $request->vl_credits_requested;
+    
+                        if ($newVLBalance < 0) {
+                            $sheet->setCellValue('M' . $currentRow, round(abs($newVLBalance), 3));
+                            $currentVLBalance = 0;
+                        } else {
+                            $currentVLBalance = $newVLBalance;
+                        }
+    
+                        $sheet->setCellValue('L' . $currentRow, round($currentVLBalance, 3));
+                    }
+    
+                    // Deduct SL credits
+                    if ($request->sl_credits_requested > 0) {
+                        $sheet->setCellValue('O' . $currentRow, $request->sl_credits_requested);
+                        $newSLBalance = $currentSLBalance - $request->sl_credits_requested;
+    
+                        if ($newSLBalance < 0) {
+                            $sheet->setCellValue('Q' . $currentRow, round(abs($newSLBalance), 3));
+                            $currentSLBalance = 0;
+                        } else {
+                            $currentSLBalance = $newSLBalance;
+                        }
+    
+                        $sheet->setCellValue('P' . $currentRow, round($currentSLBalance, 3));
+                    }
+    
+                    $currentRow++;
+                    $hasEntries = true;
+                }
+            }
+    
+            // Process earned credits (affects both VL and SL)
             $earnedCredits = $this->getMonthlyEarnedCredits($user->id, $month);
             if ($earnedCredits !== null) {
-                $sheet->setCellValue('B' . $currentRow, $monthName);
-                
+                // Display the month name only once
+                if (!$isMonthDisplayed) {
+                    $sheet->setCellValue('B' . $currentRow, $monthName);
+                    $isMonthDisplayed = true;
+                }
+                $sheet->setCellValue('D' . $currentRow, 'Earned Credits');
+    
                 // Add earned credits to both VL and SL
                 $sheet->setCellValue('J' . $currentRow, $earnedCredits); // VL earned
                 $currentVLBalance += $earnedCredits;
                 $sheet->setCellValue('L' . $currentRow, round($currentVLBalance, 3));
-                
+    
                 $sheet->setCellValue('N' . $currentRow, $earnedCredits); // SL earned
                 $currentSLBalance += $earnedCredits;
                 $sheet->setCellValue('P' . $currentRow, round($currentSLBalance, 3));
-                
+    
                 $currentRow++;
                 $hasEntries = true;
             }
-
+    
             // Add a blank row between months if there were any entries
-            if ($hasEntries && $month < 12) {
+            if ($hasEntries && $month < $lastMonthToProcess) {
                 $currentRow++;
             }
         }
-
+    
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
         return new StreamedResponse(function () use ($writer) {
             $writer->save('php://output');
