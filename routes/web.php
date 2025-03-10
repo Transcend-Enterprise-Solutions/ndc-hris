@@ -55,6 +55,8 @@ Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
     //     return view('livewire.admin.wfh-management'); })->name('/employee-management/wfh-management');
     Route::get('/report-generation', function () {
         return view('livewire.admin.report-generation'); })->name('report-generation');
+    Route::get('/employee-management/employee-registrations', function () {
+        return view('livewire.admin.employee-registration'); })->name('/employee-management/employee-registrations');
 });
 
 /* Super Admin, HR, Supervisor, and Payroll account role */

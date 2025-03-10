@@ -101,9 +101,9 @@ x-cloak>
             </div>
 
             <div class="flex-col justify-center w-full bg-gray-200 dark:bg-slate-700 border border-gray-300 dark:border-gray-800 mb-2" style="border-radius: 8px;">
-                <div wire:ignore class="w-full">
+                {{-- <div wire:ignore class="w-full">
                     <div id="map" style="height: 250px; width: 100%; border-radius: 8px 8px 0 0; margin: 0;"></div>
-                </div>
+                </div> --}}
 
                 <div class="text-sm grid grid-cols-2 mt-2 px-4 mb-2">
                     <div class="col-span-2 sm:col-span-1">
@@ -520,7 +520,7 @@ x-cloak>
 
 </div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs"></script>
+{{-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLp1y5i3ftfv5O_BN0_YSMd0VrXUht-Bs"></script>
 <script>
     let map;
     let marker;
@@ -595,4 +595,4 @@ x-cloak>
             }
         }
     });
-</script>
+</script> --}}

@@ -663,8 +663,9 @@ class EmployeeTable extends Component
 
     public function mount(){
         $this->getProvicesAndCities();
+        $this->search = request()->query('search', $this->search);
     }
-
+    
     public function getProvicesAndCities(){
         $this->provinces = PhilippineProvinces::all();
         $this->cities = collect();

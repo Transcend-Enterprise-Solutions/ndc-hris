@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Countries;
+use Exception;
 use Livewire\Component;
 use App\Models\User;
 use App\Models\PhilippineProvinces;
@@ -14,12 +15,12 @@ use App\Models\OfficeDivisionUnits;
 use Illuminate\Support\Facades\DB;
 use App\Models\PhilippineRegions;
 use App\Models\EmployeesLeaves;
+use App\Models\RegistrationOtp;
 use Carbon\Carbon;
 
 class Registration extends Component
 {
-    public $user_role = 'emp';
-    public $active_status = 1;
+    private $active_status = 1;
     public $emp_code;
     public $pwd=0;
     public $positions = [];
@@ -113,6 +114,10 @@ class Registration extends Component
     public $password;
     public $c_password;
     public $step = 1;
+    public $otp = ['', '', '', '', '', ''];
+    public $verificationError;
+    public $verificationEmail;
+    public $canRegister;
 
     public function toStep2()
     {
@@ -304,6 +309,18 @@ class Registration extends Component
                 'credits_transferred' => 0,
                 'credits_inputted' => 0,
             ]);
+
+            $enteredOtp = implode('', $this->otp);
+            $verified = RegistrationOtp::where('otp', $enteredOtp)
+                        ->where('email', $this->verificationEmail)
+                        ->first();
+
+            if($verified){
+                $verified->update([
+                    'status' => 1,
+                    'user_id' => $user->id,
+                ]);
+            }
     
             // Commit the transaction if both user and user data are created successfully
             DB::commit();
@@ -317,13 +334,13 @@ class Registration extends Component
         }
     }
     
-
     public function mount(){
         $this->getProvicesAndCities();
         $this->officeDivisions = OfficeDivisions::all();
         $this->positions = collect();
         $this->countries = Countries::all();
     }
+
     public function updatedSelectedOfficeDivision($officeDivisionId)
     {
 
@@ -347,7 +364,6 @@ class Registration extends Component
                 ->get();
         }
     }
-
 
     public function render()
     {
@@ -441,5 +457,32 @@ class Registration extends Component
             return $this->otherSex;
         }
         return $this->sex;
+    }
+
+    public function verify(){
+        try{
+            $this->validate([
+                'verificationEmail' => 'required|email',
+                'otp' => ['required', function ($attribute, $value, $fail) {
+                    if (count($value) !== 6 || in_array(null, $value, true) || in_array('', $value, true)) {
+                        $fail('The OTP must be fully entered.');
+                    }
+                }]
+            ]);
+
+            $enteredOtp = implode('', $this->otp);
+
+            $verified = RegistrationOtp::where('otp', $enteredOtp)
+                            ->where('email', $this->verificationEmail)
+                            ->first();
+
+            if($verified){
+                $this->canRegister = true;
+            }else{
+                $this->verificationError = 'Incorrect email or one-time password (OTP).';
+            }
+        }catch(Exception $e){
+            throw $e;
+        }
     }
 }

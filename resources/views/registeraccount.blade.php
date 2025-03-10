@@ -33,6 +33,28 @@
             padding-bottom: 0.85rem;
             /* Equivalent to 3.4 * 0.25rem */
         }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .right-side-login {
+            height: 100%;
+            width: 100%;
+            overflow: visible;
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 0;
+        }
+
+        .right-side-login img {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
     </style>
 
 </head>
@@ -40,6 +62,11 @@
 <body class="font-inter antialiased bg-slate-100 bg-white text-slate-600 dark:text-slate-400">
 
     @livewire('registration')
+
+    
+    <div class="right-side-login animate-slide-in-right">
+        <img src="/images/Vector.png" alt="login bg" >
+    </div>
 
     @livewireScripts
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.5.0/flowbite.min.js"></script>

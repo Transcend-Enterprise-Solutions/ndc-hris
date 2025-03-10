@@ -94,6 +94,18 @@
                                         :class="open ? '!block' : 'hidden'">
                                         @if (Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
                                             <li class="mb-1 last:mb-0">
+                                                <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/employee-registrations')) {{ '!text-blue-500' }} @endif"
+                                                    href="{{ route('/employee-management/employee-registrations') }}" wire:navigate>
+                                                    <span class="text-sm font-medium transition-opacity duration-300"
+                                                        :class="sidebarExpanded ? 'opacity-100 lg:inline' :
+                                                            'opacity-0 lg:hidden'">
+                                                        Registrations
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        @endif
+                                        @if (Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
+                                            <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/employees')) {{ '!text-blue-500' }} @endif"
                                                     href="{{ route('/employee-management/employees') }}" wire:navigate>
                                                     <span class="text-sm font-medium transition-opacity duration-300"

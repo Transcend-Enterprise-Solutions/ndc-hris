@@ -1,5 +1,7 @@
-<section>
+<section class="z-10 relative drop-shadow-2xl">
     <div class="px-2 py-12 mx-auto md:px-12 lg:px-32 max-w-7xl">
+
+    @if($canRegister)
         <div class="max-w-lg mx-auto md:max-w-xl md:w-full">
             <div class="flex flex-col text-center">
                 <h1 class="text-3xl font-semibold tracking-tight text-gray-900">
@@ -939,7 +941,85 @@
                 </div>
             </div>
         </div>
-        <!-- Ends component -->
+    
+    @endif
+    
+    @if(!$canRegister)
+        <div class="max-w-lg mx-auto md:max-w-xl md:w-full">
+            <div class="flex flex-col text-center">
+                <h1 class="text-2xl font-semibold tracking-tight text-gray-900">
+                    Verify Your Registration
+                </h1>
+                <p class="mt-2 text-base font-medium text-gray-500"></p>
+            </div>
+            <div class="p-2 mt-8 border bg-gray-50 rounded-3xl">
+                <div class="p-4 md:p-10 bg-white border shadow-lg rounded-2xl">
+                    <div>
+                        <h2 class="text-lg font-medium text-gray-500">
+                            <span class="font-bold text-black">Verify Registration</span>
+                        </h2>
+
+                        <div class="mt-6 columns-1">
+                            <div class="w-full">
+                                <label for="email" class=" text-sm text-gray-700">Email <span
+                                        class="text-red-600">*</span></label>
+                                <input type="text" id="email" wire:model.live="verificationEmail"
+                                    class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                @error('verificationEmail')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                            
+                        <div class="mt-4 columns-1">
+                            <div class="w-full">
+                                <label for="otp" class=" text-sm text-gray-700">One-Time Password (OTP) 
+                                    <span class="text-red-600">*</span></label>
+
+                                <div x-data="{ otp: ['', '', '', '', '', ''] }" class="flex justify-between gap-2">
+                                    @foreach(range(0, 5) as $index)
+                                        <input 
+                                            wire:model.live="otp.{{ $index }}" 
+                                            type="text" 
+                                            maxlength="1" 
+                                            x-model="otp[{{ $index }}]" 
+                                            @input="if ($event.target.value.length === 1) { 
+                                                if ($refs[`otp{{ $index + 1 }}`]) { 
+                                                    $refs[`otp{{ $index + 1 }}`].focus(); 
+                                                } 
+                                            }" 
+                                            x-ref="otp{{ $index }}" 
+                                            class="w-full h-12 text-center text-lg font-semibold text-black border rounded-lg bg-chalk border-zinc-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300 sm:text-sm">
+                                    @endforeach
+                                </div>
+                                @error('otp')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        @if($verificationError)
+                            <div class="mt-4 columns-1">
+                                <span class="text-red-500 text-sm text-center">{{ $verificationError }}</span>
+                            </div>
+                        @endif
+
+                        <div class="mt-4 columns-1">
+                            <div class="w-full relative">
+                                <button
+                                    class="inline-flex items-center justify-center w-full h-12 gap-3 px-5 py-3 font-medium text-white bg-blue-700 rounded-xl hover:bg-blue-500 focus:ring-2 focus:ring-offset-2 focus:ring-black"
+                                    wire:click="verify" wire:loading.attr="disabled" wire:target="verify">
+                                    <span wire:loading.remove wire:target="verify">Verify</span>
+                                    <span wire:loading wire:target="verify">Loading...</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     </div>
 </section>
 

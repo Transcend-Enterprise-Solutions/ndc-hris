@@ -275,6 +275,12 @@ class User extends Authenticatable
         return $this->hasMany(MandatoryFormRequest::class);
 
     }
+    
+    public function registrationOtp()
+    {
+        return $this->hasMany(RegistrationOtp::class);
+
+    }
 
     /**
      * The attributes that should be cast.
