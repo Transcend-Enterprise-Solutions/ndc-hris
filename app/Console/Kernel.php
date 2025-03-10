@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
         $schedule->job(new AutoSaveDtrRecordsMonthly())->dailyAt('01:05');
         $schedule->command('calculate:monthly-leave-credits')->lastDayOfMonth('22:00');
         $schedule->command('leave-credits:transfer')->lastDayOfMonth('22:30');
-        $schedule->command('credits:calculate-monthly')->monthlyOn(1, '02:00');
+        $schedule->command('credits:calculate-monthly')->lastDayOfMonth('23:00');
         // $schedule->command('credits:calculate-monthly')->lastDayOfMonth('23:00');
         $schedule->command('leave-credits:reset')->yearlyOn(1, 1, '00:00');
         $schedule->command('credits:calculate')->everyMinute();
