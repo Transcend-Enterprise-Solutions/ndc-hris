@@ -251,13 +251,13 @@
                                     </label>
                                     <div class="flex space-x-2">
                                         <input wire:model.live="gsis1" type="number" maxlength="4" x-model="part1"
-                                            @input="if ($event.target.value.length == 4) $refs.part2.focus();"
+                                            @input="if ($event.target.value.length == 4) $refs.part2.focus(); limitInput($event, 4)"
                                             class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <span class="text-gray-600 self-center">-</span>
                                         <input wire:model.live="gsis2" type="number" maxlength="7" x-model="part2"
-                                            @input="if ($event.target.value.length == 7) $refs.part3.focus();"
+                                            @input="if ($event.target.value.length == 7) $refs.part3.focus(); limitInput($event, 7)"
                                             x-ref="part2"
-                                            class="w-2/5 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
+                                            class="w-2/2 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <span class="text-gray-600 self-center">-</span>
                                         <input wire:model.live="gsis3" type="number" maxlength="1" x-model="part3"
                                             x-ref="part3"
@@ -275,11 +275,11 @@
                                     </label>
                                     <div class="flex space-x-2">
                                         <input wire:model.live="pagibig1" type="number" maxlength="4" x-model="part1"
-                                            @input="if ($event.target.value.length == 4) $refs.part2.focus(); updateLivewire()"
+                                            @input="if ($event.target.value.length == 4) $refs.part2.focus(); limitInput($event, 4)"
                                             class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <span class="text-gray-600 self-center">-</span>
                                         <input wire:model.live="pagibig2" type="number" maxlength="4" x-model="part2"
-                                            @input="if ($event.target.value.length == 4) $refs.part3.focus(); updateLivewire()"
+                                            @input="if ($event.target.value.length == 4) $refs.part3.focus(); limitInput($event, 4)"
                                             x-ref="part2"
                                             class="w-2/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <span class="text-gray-600 self-center">-</span>
@@ -302,11 +302,11 @@
                                     </label>
                                     <div class="flex space-x-2">
                                         <input wire:model.live="philhealth1" type="number" maxlength="2" x-model="part1"
-                                            @input="if ($event.target.value.length == 2) $refs.part2.focus(); updateLivewire()"
+                                            @input="if ($event.target.value.length == 2) $refs.part2.focus(); limitInput($event, 2)"
                                             class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <span class="text-gray-600 self-center">-</span>
                                         <input wire:model.live="philhealth2" type="number" maxlength="9" x-model="part2"
-                                            @input="if ($event.target.value.length == 9) $refs.part3.focus(); updateLivewire()"
+                                            @input="if ($event.target.value.length == 9) $refs.part3.focus(); limitInput($event, 9)"
                                             x-ref="part2"
                                             class="w-2/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <span class="text-gray-600 self-center">-</span>
@@ -326,11 +326,11 @@
                                     </label>
                                     <div class="flex space-x-2">
                                         <input wire:model.live="sss1" type="number" maxlength="2" x-model="part1"
-                                            @input="if ($event.target.value.length == 2) $refs.part2.focus(); updateLivewire()"
+                                            @input="if ($event.target.value.length == 2) $refs.part2.focus(); limitInput($event, 2)"
                                             class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <span class="text-gray-600 self-center">-</span>
                                         <input wire:model.live="sss2" type="number" maxlength="7" x-model="part2"
-                                            @input="if ($event.target.value.length == 7) $refs.part3.focus(); updateLivewire()"
+                                            @input="if ($event.target.value.length == 7) $refs.part3.focus(); limitInput($event, 7)"
                                             x-ref="part2"
                                             class="w-2/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <span class="text-gray-600 self-center">-</span>
@@ -353,16 +353,16 @@
                                     </label>
                                     <div class="flex space-x-2">
                                         <input wire:model.live="tin1" type="number" maxlength="3" x-model="part1"
-                                            @input="if ($event.target.value.length == 3) $refs.part2.focus(); updateLivewire()"
+                                            @input="if ($event.target.value.length == 3) $refs.part2.focus(); limitInput($event, 3)"
                                             class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <span class="text-gray-600 self-center">-</span>
                                         <input wire:model.live="tin2" type="number" maxlength="3" x-model="part2"
-                                            @input="if ($event.target.value.length == 3) $refs.part3.focus(); updateLivewire()"
+                                            @input="if ($event.target.value.length == 3) $refs.part3.focus(); limitInput($event, 3)"
                                             x-ref="part2"
                                             class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <span class="text-gray-600 self-center">-</span>
                                         <input wire:model.live="tin3" type="number" maxlength="3" x-model="part3"
-                                            @input="if ($event.target.value.length == 3) $refs.part4.focus(); updateLivewire()"
+                                            @input="if ($event.target.value.length == 3) $refs.part4.focus(); limitInput($event, 3)"
                                             x-ref="part3"
                                             class="w-1/4 h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                         <span class="text-gray-600 self-center">-</span>

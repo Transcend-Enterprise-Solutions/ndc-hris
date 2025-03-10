@@ -112,7 +112,7 @@ class Registration extends Component
     public $same_as_above = false;
     public $password;
     public $c_password;
-    public $step = 2;
+    public $step = 1;
 
     public function toStep2()
     {
