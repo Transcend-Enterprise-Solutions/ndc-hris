@@ -201,13 +201,66 @@ class AdminDtrTable extends Component
                       ->groupBy('user_name');
 
         // Transform the data to ensure effective_remarks is always available
-        $dtrs = $dtrs->map(function ($userDtrs) {
-            return $userDtrs->map(function ($dtr) {
-                // Make sure the effective_remarks attribute is accessible in the view
+        // and calculate summary data for each employee
+        $dtrsWithSummary = [];
+
+        foreach ($dtrs as $employeeName => $employeeDtrs) {
+            // Make sure the effective_remarks attribute is accessible in the view
+            $processedDtrs = $employeeDtrs->map(function ($dtr) {
                 $dtr->effective_remarks = $dtr->effective_remarks ?? $dtr->remarks;
                 return $dtr;
             });
-        });
+
+            // Calculate summary statistics
+            $daysWorked = $processedDtrs->filter(function($dtr) {
+                return in_array($dtr->effective_remarks, ['Present', 'Late/Undertime']);
+            })->count();
+
+            $absences = $processedDtrs->filter(function($dtr) {
+                return $dtr->effective_remarks === 'Absent';
+            })->count();
+
+            $leaveDays = $processedDtrs->filter(function($dtr) {
+                return str_contains(strtolower($dtr->effective_remarks), 'leave');
+            })->count();
+
+            $holidays = $processedDtrs->filter(function($dtr) {
+                return str_contains(strtolower($dtr->effective_remarks), 'holiday');
+            })->count();
+
+            // Calculate total overtime hours
+            $totalOvertimeMinutes = 0;
+            foreach ($processedDtrs as $dtr) {
+                if (!empty($dtr->overtime) && $dtr->overtime !== '00:00') {
+                    list($hours, $minutes) = explode(':', $dtr->overtime);
+                    $totalOvertimeMinutes += ($hours * 60) + $minutes;
+                }
+            }
+            $overtime = sprintf("%02d:%02d", floor($totalOvertimeMinutes / 60), $totalOvertimeMinutes % 60);
+
+            // Calculate total tardiness in hours (changed from minutes to hours format)
+            $totalTardinessMinutes = 0;
+            foreach ($processedDtrs as $dtr) {
+                if (!empty($dtr->late) && $dtr->late != '00:00') {
+                    list($hours, $minutes) = explode(':', $dtr->late);
+                    $totalTardinessMinutes += ($hours * 60) + $minutes;
+                }
+            }
+            $tardiness = sprintf("%02d:%02d", floor($totalTardinessMinutes / 60), $totalTardinessMinutes % 60);
+
+            // Store the DTRs and summary for this employee
+            $dtrsWithSummary[$employeeName] = [
+                'dtrs' => $processedDtrs,
+                'summary' => [
+                    'days_worked' => $daysWorked,
+                    'absences' => $absences,
+                    'overtime' => $overtime,
+                    'tardiness' => $tardiness,
+                    'leave_days' => $leaveDays,
+                    'holidays' => $holidays
+                ]
+            ];
+        }
 
         // Get division name for PDF title if division is selected
         $divisionName = '';
@@ -217,8 +270,9 @@ class AdminDtrTable extends Component
                 $divisionName = $division->office_division;
             }
         }
+
         $pdf = Pdf::loadView('pdf.dtr', [
-            'dtrs' => $dtrs,
+            'dtrsWithSummary' => $dtrsWithSummary,
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
             'eSignaturePath' => $this->eSignaturePath,
