@@ -26,7 +26,7 @@ class RegistrationNotification extends Mailable
             ->subject('NDC - HRIS Registration OTP')
             ->with([
                 'header' => 'National Development Company',
-                'greetings' => 'Good day!',
+                'greetings' => 'Good day',
                 'message_body' => '
                      <p class="message">
                         You have been granted access to the NDC - HRIS registration form. To proceed with your registration, 

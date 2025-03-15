@@ -130,7 +130,7 @@
                                             {{ \Carbon\Carbon::parse($latestLocNotifDate ? $latestLocNotifDate->created_at : '' )->diffForHumans() }}
                                         </span>
                                     </a> --}}
-                                    <div x-data="{ open: false }" class="relative inline-block {{ $notification->read ? 'hidden' : '' }}">
+                                    {{-- <div x-data="{ open: false }" class="relative inline-block {{ $notification->read ? 'hidden' : '' }}">
                                         <!-- Three dots icon button -->
                                         <button @click="open = !open" @click.away="open = false"
                                                 class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
@@ -148,7 +148,7 @@
                                                 Mark as read
                                             </button>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </li>
