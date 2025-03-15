@@ -15,7 +15,7 @@ class AddNotifColumnToNotificationsTable extends Migration
     {
         Schema::table('notifications', function (Blueprint $table) {
             $table->string('notif')->nullable()->after('type');
-        });   
+        });
     }
 
     /**

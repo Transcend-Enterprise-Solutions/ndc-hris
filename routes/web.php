@@ -118,6 +118,8 @@ Route::middleware(['auth', 'checkrole:emp'])->group(function () {
         return view('livewire.user.my-schedule'); })->name('/daily-time-record/my-schedule');
     Route::get('/daily-time-record/payslip', function () {
         return view('livewire.user.payslip'); })->name('/daily-time-record/payslip');
+    Route::get('/daily-time-record/wfh-sched', function () {
+        return view('livewire.user.wfh-sched'); })->name('/daily-time-record/wfh-sched');
 
     // Filing and Approval Tabs --------------------------------------------------------------- //
     Route::get('/filing-and-approval/leave-application', function () {

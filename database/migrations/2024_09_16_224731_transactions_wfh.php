@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions_wfh', function (Blueprint $table) {
-            $table->id();
-            $table->string('emp_code');
-            $table->timestamp('punch_time')->nullable();
-            $table->string('punch_state')->nullable();
-            $table->string('punch_state_display')->nullable();
-            $table->integer('verify_type')->nullable();
-            $table->string('verify_type_display')->nullable();
-            $table->string('area_alias')->nullable();
-            $table->timestamp('upload_time')->nullable();
-            $table->timestamps();
-        });
+        // Schema::create('transactions_wfh', function (Blueprint $table) {
+        //     // $table->id();
+        //     // $table->string('emp_code');
+        //     // $table->timestamp('punch_time')->nullable();
+        //     // $table->string('punch_state')->nullable();
+        //     // $table->string('punch_state_display')->nullable();
+        //     // $table->integer('verify_type')->nullable();
+        //     // $table->string('verify_type_display')->nullable();
+        //     // $table->string('area_alias')->nullable();
+        //     // $table->timestamp('upload_time')->nullable();
+        //     // $table->timestamps();
+        // });
     }
 
     /**
