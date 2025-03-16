@@ -33,9 +33,9 @@ class LeaveCardExport
         $richText = new RichText();
     
         $boldLabel = $richText->createTextRun($label);
-        $boldLabel->getFont()->setBold(true)->setName('Arial');
+        $boldLabel->getFont()->setBold(true)->setName('Arial')->setSize(12);
         $boldValue = $richText->createTextRun($value);
-        $boldValue->getFont()->setBold(true)->setName('Arial');
+        $boldValue->getFont()->setBold(true)->setName('Arial')->setSize(12);
         $sheet->setCellValue($cell, $richText);
     }
 
@@ -200,21 +200,20 @@ class LeaveCardExport
             $formattedDateHired = 'N/A';
         }
     
-        $templatePath = storage_path('app/public/leave_template/LeaveLedgerTemplate.xlsx');
+        $templatePath = storage_path('app/public/leave_template/LEAVE-LEDGER-TEMPLATE.xlsx');
         $spreadsheet = IOFactory::load($templatePath);
         $sheet = $spreadsheet->getActiveSheet();
     
         $richText = new RichText();
-        $yearText = $richText->createTextRun("FOR THE YEAR " . $this->year);
-        $yearText->getFont()->setBold(true);
-        $yearText->getFont()->setName('Arial');
-        $sheet->setCellValue('K5', $richText);
-    
-        // Fill in the basic user information
-        $this->setBoldLabelWithValue($sheet, 'B7', 'NAME: ', $user->name ?? 'N/A');
-        $this->setBoldLabelWithValue($sheet, 'B8', 'DATE APPOINTED: ', $formattedDateHired ?? 'N/A');
-        $this->setBoldLabelWithValue($sheet, 'N7', 'POSITION: ', $position ?? 'N/A');
-        $this->setBoldLabelWithValue($sheet, 'N8', 'DEPARTMENT: ', $department ?? 'N/A');
+        $yearText = $richText->createTextRun(strtoupper("FOR THE YEAR " . $this->year));
+        $yearText->getFont()->setBold(true)->setName('Arial')->setSize(12);
+        $sheet->setCellValue('A3', $richText);
+
+        // Fill in the basic user information and set font size
+        $this->setBoldLabelWithValue($sheet, 'B5', ': ', strtoupper($user->name ?? 'N/A'));
+        $this->setBoldLabelWithValue($sheet, 'B6', ': ', strtoupper($formattedDateHired ?? 'N/A'));
+        $this->setBoldLabelWithValue($sheet, 'I5', ': ', strtoupper($position ?? 'N/A'));
+        $this->setBoldLabelWithValue($sheet, 'I6', ': ', strtoupper($department ?? 'N/A'));
     
         $previousYear = $this->year - 1;
         $previousDecBalance = MonthlyCredits::where('user_id', $user->id)
@@ -227,20 +226,20 @@ class LeaveCardExport
         $balanceText = $richText->createTextRun("Leave balance as of Dec {$previousYear}");
         $balanceText->getFont()->setBold(true);
         $balanceText->getFont()->setName('Arial');
-        $sheet->setCellValue('D15', $richText);
+        $sheet->setCellValue('B11', $richText);
     
         // Set the balances
         if ($previousDecBalance) {
-            $sheet->setCellValue('L15', $previousDecBalance->vl_latest_credits);
-            $sheet->setCellValue('P15', $previousDecBalance->sl_latest_credits);
+            $sheet->setCellValue('E11', $previousDecBalance->vl_latest_credits);
+            $sheet->setCellValue('I11', $previousDecBalance->sl_latest_credits);
         } else {
-            $sheet->setCellValue('L15', 0);
-            $sheet->setCellValue('P15', 0);
+            $sheet->setCellValue('E11', 0);
+            $sheet->setCellValue('I11', 0);
         }
     
         // Get current balance from L15
-        $currentVLBalance  = floatval($sheet->getCell('L15')->getValue());
-        $currentSLBalance = floatval($sheet->getCell('P15')->getValue());
+        $currentVLBalance  = floatval($sheet->getCell('E11')->getValue());
+        $currentSLBalance = floatval($sheet->getCell('I11')->getValue());
     
         // Array of months
         $months = [
@@ -265,7 +264,7 @@ class LeaveCardExport
         $lastMonthToProcess = ($this->year == $currentYear) ? $currentMonth - 1 : 12;
     
         // Process all months up to the last month to process
-        $currentRow = 17;
+        $currentRow = 13;
         for ($month = 1; $month <= $lastMonthToProcess; $month++) {
             $monthName = $months[$month];
             $hasEntries = false;
@@ -276,24 +275,24 @@ class LeaveCardExport
             if (!empty($vlLeaves['dates'])) {
                 // Display the month name only once
                 if (!$isMonthDisplayed) {
-                    $sheet->setCellValue('B' . $currentRow, $monthName);
+                    $sheet->setCellValue('A' . $currentRow, $monthName);
                     $isMonthDisplayed = true;
                 }
-                $sheet->setCellValue('D' . $currentRow, $this->formatLeaveDetails($vlLeaves, 'VL', $month));
+                $sheet->setCellValue('B' . $currentRow, $this->formatLeaveDetails($vlLeaves, 'VL', $month));
     
                 // Handle VL balance with per-row excess
                 if ($vlLeaves['total_days'] > 0) {
-                    $sheet->setCellValue('K' . $currentRow, $vlLeaves['total_days']);
+                    $sheet->setCellValue('D' . $currentRow, $vlLeaves['total_days']);
                     $newVLBalance = $currentVLBalance - $vlLeaves['total_days'];
     
                     if ($newVLBalance < 0) {
-                        $sheet->setCellValue('M' . $currentRow, round(abs($newVLBalance), 3));
+                        $sheet->setCellValue('F' . $currentRow, round(abs($newVLBalance), 3));
                         $currentVLBalance = 0;
                     } else {
                         $currentVLBalance = $newVLBalance;
                     }
     
-                    $sheet->setCellValue('L' . $currentRow, round($currentVLBalance, 3));
+                    $sheet->setCellValue('E' . $currentRow, round($currentVLBalance, 3));
                 }
     
                 $currentRow++;
@@ -305,24 +304,24 @@ class LeaveCardExport
             if (!empty($slLeaves['dates'])) {
                 // Display the month name only once
                 if (!$isMonthDisplayed) {
-                    $sheet->setCellValue('B' . $currentRow, $monthName);
+                    $sheet->setCellValue('A' . $currentRow, $monthName);
                     $isMonthDisplayed = true;
                 }
-                $sheet->setCellValue('D' . $currentRow, $this->formatLeaveDetails($slLeaves, 'SL', $month));
+                $sheet->setCellValue('B' . $currentRow, $this->formatLeaveDetails($slLeaves, 'SL', $month));
     
                 // Handle SL balance with per-row excess
                 if ($slLeaves['total_days'] > 0) {
-                    $sheet->setCellValue('O' . $currentRow, $slLeaves['total_days']);
+                    $sheet->setCellValue('H' . $currentRow, $slLeaves['total_days']);
                     $newSLBalance = $currentSLBalance - $slLeaves['total_days'];
     
                     if ($newSLBalance < 0) {
-                        $sheet->setCellValue('Q' . $currentRow, round(abs($newSLBalance), 3));
+                        $sheet->setCellValue('J' . $currentRow, round(abs($newSLBalance), 3));
                         $currentSLBalance = 0;
                     } else {
                         $currentSLBalance = $newSLBalance;
                     }
     
-                    $sheet->setCellValue('P' . $currentRow, round($currentSLBalance, 3));
+                    $sheet->setCellValue('I' . $currentRow, round($currentSLBalance, 3));
                 }
     
                 $currentRow++;
@@ -334,24 +333,24 @@ class LeaveCardExport
             if (!empty($mlLeaves['dates'])) {
                 // Display the month name only once
                 if (!$isMonthDisplayed) {
-                    $sheet->setCellValue('B' . $currentRow, $monthName);
+                    $sheet->setCellValue('A' . $currentRow, $monthName);
                     $isMonthDisplayed = true;
                 }
-                $sheet->setCellValue('D' . $currentRow, $this->formatLeaveDetails($mlLeaves, 'ML', $month));
+                $sheet->setCellValue('B' . $currentRow, $this->formatLeaveDetails($mlLeaves, 'ML', $month));
     
                 // Handle ML balance (deduct from VL balance)
                 if ($mlLeaves['total_days'] > 0) {
-                    $sheet->setCellValue('K' . $currentRow, $mlLeaves['total_days']);
+                    $sheet->setCellValue('D' . $currentRow, $mlLeaves['total_days']);
                     $newVLBalance = $currentVLBalance - $mlLeaves['total_days'];
     
                     if ($newVLBalance < 0) {
-                        $sheet->setCellValue('M' . $currentRow, round(abs($newVLBalance), 3));
+                        $sheet->setCellValue('F' . $currentRow, round(abs($newVLBalance), 3));
                         $currentVLBalance = 0;
                     } else {
                         $currentVLBalance = $newVLBalance;
                     }
     
-                    $sheet->setCellValue('L' . $currentRow, round($currentVLBalance, 3));
+                    $sheet->setCellValue('E' . $currentRow, round($currentVLBalance, 3));
                 }
     
                 $currentRow++;
@@ -363,10 +362,10 @@ class LeaveCardExport
             if (!empty($splLeaves['dates'])) {
                 // Display the month name only once
                 if (!$isMonthDisplayed) {
-                    $sheet->setCellValue('B' . $currentRow, $monthName);
+                    $sheet->setCellValue('A' . $currentRow, $monthName);
                     $isMonthDisplayed = true;
                 }
-                $sheet->setCellValue('D' . $currentRow, $this->formatLeaveDetails($splLeaves, 'SPL', $month));
+                $sheet->setCellValue('B' . $currentRow, $this->formatLeaveDetails($splLeaves, 'SPL', $month));
     
                 // No deductions for SPL
                 $currentRow++;
@@ -378,21 +377,21 @@ class LeaveCardExport
             if ($monthLates && $monthLates['deduction'] > 0) { // Only display if deduction > 0
                 // Display the month name only once
                 if (!$isMonthDisplayed) {
-                    $sheet->setCellValue('B' . $currentRow, $monthName);
+                    $sheet->setCellValue('A' . $currentRow, $monthName);
                     $isMonthDisplayed = true;
                 }
-                $sheet->setCellValue('D' . $currentRow, 'Undertime/Late');
-                $sheet->setCellValue('K' . $currentRow, $monthLates['deduction']);
+                $sheet->setCellValue('B' . $currentRow, 'Undertime/Late');
+                $sheet->setCellValue('D' . $currentRow, $monthLates['deduction']);
     
                 $newVLBalance = $currentVLBalance - $monthLates['deduction'];
                 if ($newVLBalance < 0) {
-                    $sheet->setCellValue('M' . $currentRow, round(abs($newVLBalance), 3));
+                    $sheet->setCellValue('F' . $currentRow, round(abs($newVLBalance), 3));
                     $currentVLBalance = 0;
                 } else {
                     $currentVLBalance = $newVLBalance;
                 }
     
-                $sheet->setCellValue('L' . $currentRow, round($currentVLBalance, 3));
+                $sheet->setCellValue('E' . $currentRow, round($currentVLBalance, 3));
                 $currentRow++;
                 $hasEntries = true;
             }
@@ -403,43 +402,49 @@ class LeaveCardExport
                 if ($approvalDate->year == $this->year && $approvalDate->month == $month) {
                     // Display the month name only once
                     if (!$isMonthDisplayed) {
-                        $sheet->setCellValue('B' . $currentRow, $monthName);
+                        $sheet->setCellValue('A' . $currentRow, $monthName);
                         $isMonthDisplayed = true;
                     }
-    
+
                     // Format the monetization leave entry
-                    $sheet->setCellValue('D' . $currentRow, $this->formatMonetizationLeave($request->date_approved, $request->vl_credits_requested, $request->sl_credits_requested));
-    
+                    $sheet->setCellValue('B' . $currentRow, $this->formatMonetizationLeave($request->date_approved, $request->vl_credits_requested, $request->sl_credits_requested));
+
                     // Deduct VL credits
                     if ($request->vl_credits_requested > 0) {
-                        $sheet->setCellValue('K' . $currentRow, $request->vl_credits_requested);
+                        $sheet->setCellValue('D' . $currentRow, $request->vl_credits_requested);
                         $newVLBalance = $currentVLBalance - $request->vl_credits_requested;
-    
+
                         if ($newVLBalance < 0) {
-                            $sheet->setCellValue('M' . $currentRow, round(abs($newVLBalance), 3));
+                            $sheet->setCellValue('F' . $currentRow, round(abs($newVLBalance), 3));
                             $currentVLBalance = 0;
                         } else {
                             $currentVLBalance = $newVLBalance;
                         }
-    
-                        $sheet->setCellValue('L' . $currentRow, round($currentVLBalance, 3));
+
+                        $sheet->setCellValue('E' . $currentRow, round($currentVLBalance, 3));
                     }
-    
+
                     // Deduct SL credits
                     if ($request->sl_credits_requested > 0) {
-                        $sheet->setCellValue('O' . $currentRow, $request->sl_credits_requested);
+                        $sheet->setCellValue('H' . $currentRow, $request->sl_credits_requested);
                         $newSLBalance = $currentSLBalance - $request->sl_credits_requested;
-    
+
                         if ($newSLBalance < 0) {
-                            $sheet->setCellValue('Q' . $currentRow, round(abs($newSLBalance), 3));
+                            $sheet->setCellValue('J' . $currentRow, round(abs($newSLBalance), 3));
                             $currentSLBalance = 0;
                         } else {
                             $currentSLBalance = $newSLBalance;
                         }
-    
-                        $sheet->setCellValue('P' . $currentRow, round($currentSLBalance, 3));
+
+                        $sheet->setCellValue('I' . $currentRow, round($currentSLBalance, 3));
                     }
-    
+
+                    // Apply Blue, Accent 1, Darker 25% font color to columns B to J for the Monetization Leave row
+                    $sheet->getStyle('B' . $currentRow . ':J' . $currentRow)
+                        ->getFont()
+                        ->getColor()
+                        ->setARGB('FF5B9BD5'); // Blue, Accent 1, Darker 25%
+
                     $currentRow++;
                     $hasEntries = true;
                 }
@@ -450,19 +455,19 @@ class LeaveCardExport
             if ($earnedCredits !== null) {
                 // Display the month name only once
                 if (!$isMonthDisplayed) {
-                    $sheet->setCellValue('B' . $currentRow, $monthName);
+                    $sheet->setCellValue('A' . $currentRow, $monthName);
                     $isMonthDisplayed = true;
                 }
-                $sheet->setCellValue('D' . $currentRow, 'Earned Credits');
+                $sheet->setCellValue('B' . $currentRow, 'Earned Credits');
     
                 // Add earned credits to both VL and SL
-                $sheet->setCellValue('J' . $currentRow, $earnedCredits); // VL earned
+                $sheet->setCellValue('C' . $currentRow, $earnedCredits); // VL earned
                 $currentVLBalance += $earnedCredits;
-                $sheet->setCellValue('L' . $currentRow, round($currentVLBalance, 3));
+                $sheet->setCellValue('E' . $currentRow, round($currentVLBalance, 3));
     
-                $sheet->setCellValue('N' . $currentRow, $earnedCredits); // SL earned
+                $sheet->setCellValue('G' . $currentRow, $earnedCredits); // SL earned
                 $currentSLBalance += $earnedCredits;
-                $sheet->setCellValue('P' . $currentRow, round($currentSLBalance, 3));
+                $sheet->setCellValue('I' . $currentRow, round($currentSLBalance, 3));
     
                 $currentRow++;
                 $hasEntries = true;
@@ -473,13 +478,29 @@ class LeaveCardExport
                 $currentRow++;
             }
         }
+
+        // Determine the last row with data in column A
+        $lastRow = $currentRow - 1; // Subtract 1 because $currentRow is incremented after the last data row
+
+        // Apply borders to cells from A10 to K{lastRow}
+        $borderStyle = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ];
+    
+        // Apply borders to the range A10:K{lastRow}
+        $sheet->getStyle('A10:K' . $lastRow)->applyFromArray($borderStyle);
     
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
         return new StreamedResponse(function () use ($writer) {
             $writer->save('php://output');
         }, 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="LeaveLedger_' . $this->year . '.xlsx"',
+            'Content-Disposition' => 'attachment; filename="LEAVE LEDGER ' . $this->year . '.xlsx"',
         ]);
     }
 
