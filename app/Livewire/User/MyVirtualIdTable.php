@@ -6,86 +6,55 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\DB;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\OfficeDivisions;
+use App\Models\Positions;
+use App\Models\ESignature;
 
 class MyVirtualIdTable extends Component
 {
+    public $office_or_department;
+    public $profilePhotoPath;
+    public $eSignaturePath;
+    public $empCodeFormatted;
+    public $showDropdown = false;
 
-    // public function downloadPdf()
-    // {
-    //     $user = Auth::user();
-    //     $userData = $user->userData;
+    public function toggleDropdown()
+    {
+        $this->showDropdown = !$this->showDropdown;
+    }
 
-    //     $position = DB::table('positions')
-    //         ->where('id', $user->position_id)
-    //         ->value('position') ?? 'No position assigned';
+    public function closeDropdown()
+    {
+        $this->showDropdown = false;
+    }
 
-    //     $formattedDateOfBirth = $userData->date_of_birth 
-    //         ? \Carbon\Carbon::parse($userData->date_of_birth)->format('F j, Y') 
-    //         : 'N/A';
-
-    //     // Get QR code
-    //     $qrCode = $this->qrCode;
-
-    //     // Create PDF in landscape orientation
-    //     $pdf = PDF::loadView('pdf.virtual-id', [
-    //         'name' => $user->name,
-    //         'emp_code' => $user->emp_code,
-    //         'profilePhotoPath' => $user->profile_photo_path 
-    //             ? public_path('storage/' . $user->profile_photo_path) 
-    //             : public_path('default-avatar.png'),
-    //         'dateOfBirth' => $formattedDateOfBirth,
-    //         'placeOfBirth' => $userData->place_of_birth ?? null,
-    //         'sex' => $userData->sex ?? null,
-    //         'civilStatus' => $userData->civil_status ?? null,
-    //         'bloodType' => $userData->blood_type ?? null,
-    //         'position' => $position,
-    //         'qrCode' => $qrCode
-    //     ]); // Set the paper size to A4 in landscape orientation
-
-    //     return response()->streamDownload(
-    //         fn () => print($pdf->output()),
-    //         "virtual-id.pdf"
-    //     );
-    // }
-    public function downloadPdf()
+    public function mount()
     {
         $user = Auth::user();
         $userData = $user->userData;
 
-        $position = DB::table('positions')
-            ->where('id', $user->position_id)
-            ->value('position') ?? 'No position assigned';
+        // Get office or department
+        $officeDivision = OfficeDivisions::find($user->office_division_id);
+        $this->office_or_department = $officeDivision ? $officeDivision->office_division : 'N/A';
 
-        $formattedDateOfBirth = $userData->date_of_birth 
-            ? \Carbon\Carbon::parse($userData->date_of_birth)->format('F j, Y') 
-            : 'N/A';
+        // Get profile photo path
+        $this->profilePhotoPath = $user->profile_photo_path;
 
-        // Get QR code as base64 string
-        $qrCode = base64_encode($this->qrCode);
+        // Get e-signature path
+        $eSignature = ESignature::where('user_id', $user->id)->first();
+        $this->eSignaturePath = $eSignature ? 'storage/' . $eSignature->file_path : null;
 
-        // Create PDF in landscape orientation
-        $pdf = PDF::loadView('pdf.virtual-id', [
-            'name' => $user->name,
-            'emp_code' => $user->emp_code,
-            'profilePhotoPath' => $user->profile_photo_path 
-                ? public_path('storage/' . $user->profile_photo_path) 
-                : public_path('default-avatar.png'),
-            'dateOfBirth' => $formattedDateOfBirth,
-            'placeOfBirth' => $userData->place_of_birth ?? null,
-            'sex' => $userData->sex ?? null,
-            'civilStatus' => $userData->civil_status ?? null,
-            'bloodType' => $userData->blood_type ?? null,
-            'position' => $position,
-            'qrCode' => $qrCode  // Pass the base64-encoded QR code
-        ]);
-
-        return response()->streamDownload(
-            fn () => print($pdf->output()),
-            "MyVirtualID.pdf"
-        );
+        // Format employee code
+        $this->empCodeFormatted = $this->formatEmpCode($user->emp_code);
     }
 
+    private function formatEmpCode($empCode)
+    {
+        if (strlen($empCode) >= 8) {
+            return substr($empCode, 0, 4) . '-' . substr($empCode, 4, 4);
+        }
+        return $empCode;
+    }
 
     public function getQrCodeProperty()
     {
@@ -93,7 +62,7 @@ class MyVirtualIdTable extends Component
         $userData = $user->userData;
         
         // Get position directly using query
-        $position = \DB::table('positions')
+        $position = DB::table('positions')
             ->where('id', $user->position_id)
             ->value('position') ?? 'N/A';
 
@@ -128,7 +97,7 @@ class MyVirtualIdTable extends Component
         $userData = $user->userData;
 
         // Get position directly
-        $position = \DB::table('positions')
+        $position = DB::table('positions')
             ->where('id', $user->position_id)
             ->value('position') ?? 'No position assigned';
 
@@ -138,8 +107,8 @@ class MyVirtualIdTable extends Component
 
         return view('livewire.user.my-virtual-id-table', [
             'name' => $user->name,
-            'emp_code' => $user->emp_code,
-            'profilePhotoPath' => $user->profile_photo_path,
+            'emp_code' => $this->empCodeFormatted,
+            'profilePhotoPath' => $this->profilePhotoPath,
             'dateOfBirth' => $formattedDateOfBirth,
             'placeOfBirth' => $userData->place_of_birth ?? null,
             'sex' => $userData->sex ?? null,
@@ -147,6 +116,8 @@ class MyVirtualIdTable extends Component
             'bloodType' => $userData->blood_type ?? null,
             'qrCode' => $this->qrCode,
             'position' => $position,
+            'office_or_department' => $this->office_or_department,
+            'eSignaturePath' => $this->eSignaturePath,
         ]);
     }
 }

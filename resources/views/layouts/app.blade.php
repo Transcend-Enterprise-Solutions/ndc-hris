@@ -24,6 +24,7 @@
         defer></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/alpine.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <!-- Scripts -->
     <script defer src="build/assets/app-DEoBNXZR.js"></script>
@@ -127,6 +128,7 @@
         window.addEventListener('popstate', initLocationHandling);
     </script> --}}
 
-@livewireScripts
+    @livewireScripts
 </body>
+
 </html>
