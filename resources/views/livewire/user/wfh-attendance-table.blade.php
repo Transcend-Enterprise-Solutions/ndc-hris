@@ -343,7 +343,7 @@
 
                             </div>
 
-                            @if ($scheduleType !== 'WFH')
+                            @if ($scheduleType !== 'WFH' && $wfhStatus !== 'approved')
                                 <div
                                     class="absolute inset-0 flex justify-center items-center bg-gray-700 bg-opacity-75 rounded-lg">
                                     <div class="text-center">
@@ -351,7 +351,7 @@
                                         <p class="mt-2 text-white font-bold">WFH is not available today</p>
                                     </div>
                                 </div>
-                            @elseif($scheduleType === 'WFH' && !$isWithinRadius)
+                                {{-- @elseif($scheduleType === 'WFH' && !$isWithinRadius) --}}
                                 {{-- <div
                                     class="absolute inset-0 flex justify-center items-center bg-gray-700 bg-opacity-75 rounded-lg">
                                     <div class="text-center">
@@ -418,7 +418,7 @@
                                             </div>
                                         </div>
                                     @endif --}}
-                                    @if ($scheduleType === 'WFH')
+                                    @if ($scheduleType === 'WFH' || $wfhStatus === 'approved')
                                         @php
                                             $displayLabels = [
                                                 'Morning In' => 'Time In',
