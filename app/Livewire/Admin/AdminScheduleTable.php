@@ -24,7 +24,7 @@ class AdminScheduleTable extends Component
     public $scheduleToDelete;
     public $selectedTab = 'current';
     public $perPage = 10;
-    public $search = ''; 
+    public $search = '';
 
     protected $queryString = ['search'];
 
@@ -41,10 +41,10 @@ class AdminScheduleTable extends Component
     {
         $this->employees = User::where('user_role', 'emp')
             ->leftJoin('user_data', 'users.id', '=', 'user_data.user_id')
-            ->select('users.*', 
-                DB::raw("CASE 
+            ->select('users.*',
+                DB::raw("CASE
                     WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
-                    ELSE users.emp_code 
+                    ELSE users.emp_code
                 END as display_emp_code"))
             ->get();
     }
@@ -52,7 +52,7 @@ class AdminScheduleTable extends Component
     public function render()
     {
         return view('livewire.admin.admin-schedule-table', [
-            'filteredSchedules' => $this->filterSchedules() 
+            'filteredSchedules' => $this->filterSchedules()
         ]);
     }
     public function updatedSearch()
@@ -64,7 +64,7 @@ class AdminScheduleTable extends Component
     {
         $now = Carbon::now()->startOfDay();
         $search = '%' . $this->search . '%';
-    
+
         return DTRSchedule::with(['user' => function ($query) {
                 $query->leftJoin('user_data', 'users.id', '=', 'user_data.user_id')
                     ->select('users.*', 'user_data.appointment');
@@ -97,7 +97,7 @@ class AdminScheduleTable extends Component
         }
         return $empCode;
     }
- 
+
 
     public function getSortedWfhDays($wfhDays)
     {
@@ -135,17 +135,17 @@ class AdminScheduleTable extends Component
     {
         $this->default_start_time = date('H:i', strtotime($this->default_start_time));
         $this->default_end_time = date('H:i', strtotime($this->default_end_time));
-    
+
         $this->validate();
-    
+
         $wfhDaysString = !empty($this->wfh_days) ? implode(',', $this->wfh_days) : null;
-    
+
         // Use the original emp_code (starting with '1' for COS) for database operations
         $originalEmpCode = $this->emp_code;
         if (strpos($this->emp_code, 'D-') === 0) {
             $originalEmpCode = '1' . substr($this->emp_code, 2);
         }
-    
+
         $overlappingSchedule = DTRSchedule::where('emp_code', $originalEmpCode)
             ->where(function ($query) {
                 $query->whereBetween('start_date', [$this->start_date, $this->end_date])
@@ -159,12 +159,12 @@ class AdminScheduleTable extends Component
                 return $query->where('id', '!=', $this->scheduleId);
             })
             ->first();
-    
+
         if ($overlappingSchedule) {
             $this->addError('date_range', 'This schedule overlaps with an existing schedule for this employee.');
             return;
         }
-    
+
         DTRSchedule::updateOrCreate(
             ['id' => $this->scheduleId],
             [
@@ -176,12 +176,12 @@ class AdminScheduleTable extends Component
                 'end_date' => $this->end_date,
             ]
         );
-    
+
         $this->dispatch('swal', [
             'title' => $this->scheduleId ? 'Schedule updated successfully.' : 'Schedule created successfully.',
             'icon' => 'success'
         ]);
-    
+
         $this->closeModal();
     }
 
@@ -189,17 +189,17 @@ class AdminScheduleTable extends Component
     {
         $schedule = DTRSchedule::findOrFail($id);
         $this->scheduleId = $id;
-        
+
         // Convert emp_code to display format (D- for COS)
         $user = User::where('emp_code', $schedule->emp_code)
             ->leftJoin('user_data', 'users.id', '=', 'user_data.user_id')
-            ->select('users.*', 
-                DB::raw("CASE 
+            ->select('users.*',
+                DB::raw("CASE
                     WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
-                    ELSE users.emp_code 
+                    ELSE users.emp_code
                 END as display_emp_code"))
             ->first();
-        
+
         $this->emp_code = $user->display_emp_code;
         $this->thisEmployeeName = $user->name;
         $this->wfh_days = !empty($schedule->wfh_days) ? explode(',', $schedule->wfh_days) : [];
