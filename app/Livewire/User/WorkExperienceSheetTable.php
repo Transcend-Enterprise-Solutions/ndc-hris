@@ -52,7 +52,7 @@ class WorkExperienceSheetTable extends Component
 
     public function showPDF(){
         $userId = Auth::user()->id;
-
+        $name = Auth::user()->name;
         $eSignature = ESignature::where('user_id', $userId)->first();
         $signatureImagePath = null;
         if ($eSignature && $eSignature->file_path) {
@@ -77,6 +77,7 @@ class WorkExperienceSheetTable extends Component
 
 
         $pdf = PDF::loadView('pdf.wes', [
+            'name' => $name,
             'myWorkExperiences' => $myWorkExperiences,
             'signatureImagePath' => $signatureImagePath,
             'sigXPos' => $this->sigXPos,

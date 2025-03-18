@@ -94,6 +94,15 @@
                             placeholder="Enter employee name or ID">
                     </div>
 
+                    <div class="w-full sm:w-auto">
+                        <button wire:click="toggleEditSig" 
+                            class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
+                            hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
+                            dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
+                            Edit Signatory
+                        </button>
+                    </div>
+
                 </div>
 
 
@@ -320,6 +329,52 @@
                 </div>
             </div>
 
+        </div>
+    </x-modal>
+
+    {{-- Register OTP Modal --}}
+    <x-modal id="regOtp" maxWidth="2xl" wire:model="editSig" centered>
+        <div class="p-4">
+            <div class="flex items-center justify-between pb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
+                    Edit Signatory
+                </h3>
+                <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {{-- Form fields --}}
+            <form wire:submit.prevent='saveSignatory'>
+                <div class="grid grid-cols-2 gap-4">
+                    
+                    <div class="col-span-2">
+                        <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Signatory</label>
+                        <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                            <option value="{{ $userId }}">{{ $name ? $name : 'Select an employee' }}</option>
+                            @foreach ($employees as $employee)
+                                <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('userId') 
+                            <span class="text-red-500 text-sm">Please select an employee!</span> 
+                        @enderror
+                    </div>
+                    
+                    {{-- Save and Cancel buttons --}}
+                    <div class="mt-4 flex justify-end col-span-2">
+                        <button class="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <div wire:loading wire:target="saveSignatory" style="margin-right: 5px">
+                                <div class="spinner-border small text-primary" role="status">
+                                </div>
+                            </div>
+                            Save
+                        </button>
+                        <p @click="show = false" class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer" wire:click='resetVariables'>
+                            Cancel
+                        </p>
+                    </div>
+                </div>
+            </form>
         </div>
     </x-modal>
 

@@ -70,6 +70,7 @@ class WESManagementTable extends Component
 
     public function showPDF($userId){
         $this->showWorkExpSheet = true;
+        $name = User::where('id', $userId)->first()->name;
         $eSignature = ESignature::where('user_id', $userId)->first();
         $signatureImagePath = null;
         if ($eSignature && $eSignature->file_path) {
@@ -96,6 +97,7 @@ class WESManagementTable extends Component
 
 
         $pdf = PDF::loadView('pdf.wes', [
+            'name' => $name,
             'myWorkExperiences' => $myWorkExperiences,
             'signatureImagePath' => $signatureImagePath,
             'sigXPos' => $sigXPos,

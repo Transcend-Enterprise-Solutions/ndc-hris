@@ -304,64 +304,64 @@ x-cloak>
                                         <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                                             <tr class="whitespace-nowrap">
                                                 <th scope="col" class="px-5 py-3 text-sm font-medium text-left uppercase">Name</th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Employee Number
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Position
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Salary Grade
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Daily Salary Rate
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     No. of Days Covered
                                                 </th>                            
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Gross Salary
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Absences (Days)
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Absences (Amount)
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Late/Undertime (Hours)
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Late/Undertime (Hours -Amount)
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Late/Undertime (Minutes)
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Late/Undertime (Mins - Amount)
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Gross Salary Less<br>(Absences/Lates/Undertime)
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Additional Premiums
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Adjustment
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Withholding Tax
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     NYCEMPC
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Other Deductions
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Total Deduction
                                                 </th>
-                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium text-left uppercase">
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Net Amount Due
                                                 </th>
                                                 <th class="px-5 py-3 text-gray-100 text-sm font-medium text-right uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
@@ -511,7 +511,7 @@ x-cloak>
                                                             <p class="pl-2">CERTIFIED: Services duly rendered as stated.</p>
                                                         </div>
                                                         <div class="absolute bottom-1 w-full flex">
-                                                            <div class="flex flex flex-col items-center w-4/5">
+                                                            <div class="flex flex-col items-center w-4/5">
 
                                                                 {{-- E-Signature Here --}}
 
@@ -533,7 +533,7 @@ x-cloak>
                                                                 <p class="text-center font-bold text-sm">{{ $cosPayroll['a'] ? $cosPayroll['a']->name : 'XXXXXXXXXX' }}</p>
                                                                 <p class="text-center">{{ $cosPayroll['a'] ? $cosPayroll['a']->position : 'Position' }}</p>
                                                             </div>
-                                                            <div class="flex flex flex-col items-center justify-end w-1/5">
+                                                            <div class="flex flex-col items-center justify-end w-1/5">
                                                                 <p class="text-center underline">01/01/2024</p>
                                                                 <p class="text-center">Date</p>
                                                             </div>
@@ -566,7 +566,7 @@ x-cloak>
                                                             <p class="pl-6 font-bold">₱ 4,884.16</p>
                                                         </div>
                                                         <div class="absolute bottom-1 w-full flex">
-                                                            <div class="flex flex flex-col items-center w-4/5">
+                                                            <div class="flex flex-col items-center w-4/5">
 
                                                                 {{-- E-Signature Here --}}
 
@@ -620,7 +620,7 @@ x-cloak>
                                                             <p class="pl-6 font-bold">₱ 4,884.16</p>
                                                         </div>
                                                         <div class="absolute bottom-1 w-full flex">
-                                                            <div class="flex flex flex-col items-center w-4/5">
+                                                            <div class="flex flex-col items-center w-4/5">
 
                                                                 {{-- E-Signature Here --}}
 
@@ -671,7 +671,7 @@ x-cloak>
                                                             </p>
                                                         </div>
                                                         <div class="absolute bottom-1 w-full flex">
-                                                            <div class="flex flex flex-col items-center w-4/5">
+                                                            <div class="flex flex-col items-center w-4/5">
 
                                                                 {{-- E-Signature Here --}}
 

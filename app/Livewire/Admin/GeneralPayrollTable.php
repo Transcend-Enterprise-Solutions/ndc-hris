@@ -6,7 +6,6 @@ use App\Exports\GeneralPayrollExport;
 use App\Exports\IndivPlantillaPayrollExport;
 use App\Exports\PayrollListExport;
 use App\Models\CosRegPayrolls;
-use App\Models\CosSkPayrolls;
 use App\Models\EmployeesDtr;
 use App\Models\LeaveCredits;
 use App\Models\LeaveCreditsCalculation;
@@ -221,10 +220,8 @@ class GeneralPayrollTable extends Component
         $this->unpayrolledEmployees = User::where('user_role', '=', 'emp')
             ->join('user_data', 'user_data.user_id', 'users.id')
             ->leftJoin('payrolls', 'payrolls.user_id', '=', 'users.id')
-            ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', '=', 'users.id')
             ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', '=', 'users.id')
             ->whereNull('payrolls.id')
-            ->whereNull('cos_sk_payrolls.id')
             ->whereNull('cos_reg_payrolls.id')
             ->where('user_data.appointment', '=', 'plantilla')
             ->select('users.*')
@@ -1274,8 +1271,7 @@ class GeneralPayrollTable extends Component
             $message = null;
             $icon = null;
             $cosReg = CosRegPayrolls::where('user_id', $user->id)->first();
-            $cosSk = CosSkPayrolls::where('user_id', $user->id)->first();
-            if(!$cosReg && !$cosSk){
+            if(!$cosReg){
                 $payrollData = [
                     'user_id' => $this->userId,
                     'sg_step' => $sg_step,
@@ -1351,7 +1347,7 @@ class GeneralPayrollTable extends Component
                     $icon = "success";
                 }
             }else{
-                $message = "This employee already has a COS Regular/SK payroll!";
+                $message = "This employee already has a COS payroll!";
                 $icon = "error";
             }
     

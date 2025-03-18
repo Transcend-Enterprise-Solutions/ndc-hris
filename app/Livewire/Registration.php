@@ -169,7 +169,7 @@ class Registration extends Component
         $this->pagibig = ($this->pagibig1 && $this->pagibig2 && $this->pagibig3) ? ($this->pagibig1 . '-' . $this->pagibig2 . '-' . $this->pagibig3) : '';
         $this->philhealth = ($this->philhealth1 && $this->philhealth2 && $this->philhealth3) ? ($this->philhealth1 . '-' . $this->philhealth2 . '-' . $this->philhealth3) : '';
         $this->sss = ($this->sss1 && $this->sss2 && $this->sss3) ? ($this->sss1 . '-' . $this->sss2 . '-' . $this->sss3) : '';
-        $this->tin = ($this->tin1 && $this->tin2 && $this->tin3) ? ($this->tin1 . '-' . $this->tin2 . '-' . $this->tin3 . '-' . ($this->tin4 ?: '000')) : '';
+        $this->tin = ($this->tin1 && $this->tin2 && $this->tin3) ? ($this->tin1 . '-' . $this->tin2 . '-' . $this->tin3 . '-' . ($this->tin4 ?: '00000')) : '';
 
         $this->step++;
     }

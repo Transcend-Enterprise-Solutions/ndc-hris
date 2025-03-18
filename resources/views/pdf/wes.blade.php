@@ -142,7 +142,7 @@
                 @endif --}}
             </div>
             <div style="width: 100%;">
-                <p style="text-align: left; margin-left: 460px; font-size: 16px; margin-bottom: -8px;">{{ Auth::user()->name }}</p>
+                <p style="text-align: center; margin-left: 425px; font-size: 16px; margin-bottom: -8px;">{{ $name }}</p>
             </div>
             <p style="text-align: right; margin-right: 40px;">_______________________________________________</p>
             <p style="text-align: right; margin-right: 50px; font-size: 16px;">

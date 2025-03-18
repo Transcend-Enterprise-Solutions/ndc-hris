@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Exports\ServiceRecordExport;
+use App\Models\Signatories;
 use App\Models\User;
 use App\Models\WorkExperience;
 use Exception;
@@ -25,6 +26,11 @@ class ServiceRecordTable extends Component
     public $showServiceRecord = true;
     public $employeeName;
     public $pdfContent;
+    public $editSig;
+    public $userId;
+    public $name;
+    public $pageSize = 10; 
+    public $pageSizes = [10, 20, 30, 50, 100]; 
 
     public function render()
     {
@@ -49,7 +55,7 @@ class ServiceRecordTable extends Component
             ->when($this->search, function ($query) {
                 return $query->search(trim($this->search));
             })
-            ->paginate(10);
+            ->paginate($this->pageSize);
         
         // $this->showPDF(userId: 79);
 
@@ -60,8 +66,13 @@ class ServiceRecordTable extends Component
             $user->formatted_gov_service = $this->formatService($years, $months);
         }
 
+        $employees = User::where('user_role', 'emp')
+                    ->select('name', 'id')
+                    ->get();
+
         return view('livewire.admin.service-record-table', [
             'users' => $users,
+            'employees' => $employees,
         ]);
     }
 
@@ -173,10 +184,45 @@ class ServiceRecordTable extends Component
         $this->employeeName = null;
     }
 
+    public function toggleEditSig(){
+        $this->editSig = true;
+        $signatory = Signatories::where('signatory_type', 'service_record')->first();
+        if($signatory){
+            $employee = User::findOrFail($signatory->user_id);
+            $this->name = $employee->name;
+            $this->userId = $employee->id;
+        }
+    }
+
+    public function saveSignatory(){
+        $signatory = Signatories::where('signatory_type', 'service_record')->first();
+        if($signatory){
+            $signatory->update([
+                'user_id' => $this->userId,
+            ]);
+        }else{
+            $this->validate([
+                'userId' => 'required',
+            ]);
+
+            Signatories::create([
+                'user_id' => $this->userId,
+                'signatory_type' => 'service_record',
+            ]);
+        }
+
+        $this->resetVariables();
+        $this->dispatch('swal', [
+            'title' => 'Signatory saved successfully',
+            'icon' => 'success'
+        ]);
+    }
+
     public function resetVariables(){
         $this->resetValidation();
         $this->recordId = null;
         $this->thisRecord = null;
         $this->serviceRecord = null;
+        $this->editSig = null;
     }
 }

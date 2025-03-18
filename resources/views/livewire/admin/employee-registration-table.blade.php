@@ -149,8 +149,10 @@
     {{-- Register OTP Modal --}}
     <x-modal id="regOtp" maxWidth="2xl" wire:model="genOtp" centered>
         <div class="p-4">
-            <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold">
-                Send Registration OTP
+            <div class="flex items-center justify-between pb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
+                    Send Registration OTP
+                </h3>
                 <button @click="show = false" class="float-right focus:outline-none" wire:click='resetVariables'>
                     <i class="fas fa-times"></i>
                 </button>

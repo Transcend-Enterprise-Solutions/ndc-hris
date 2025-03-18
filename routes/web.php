@@ -86,10 +86,8 @@ Route::middleware(['auth', 'checkrole:sa,hr,pa'])->group(function () {
     // Payroll Tabs -------------------------------------------------------------------------- //
     Route::get('/payroll/plantilla-payroll', function () {
         return view('livewire.admin.general-payroll'); })->name('/payroll/plantilla-payroll');
-    Route::get('/payroll/cos-regular-payroll', function () {
-        return view('livewire.admin.payroll'); })->name('/payroll/cos-regular-payroll');
-    Route::get('/payroll/cos-sk-payroll', function () {
-        return view('livewire.admin.cos-sk-payroll'); })->name('/payroll/cos-sk-payroll');
+    Route::get('/payroll/cos-payroll', function () {
+        return view('livewire.admin.payroll'); })->name('/payroll/cos-payroll');
 });
 
 /* Employee account role */

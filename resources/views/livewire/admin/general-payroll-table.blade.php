@@ -729,97 +729,97 @@
                                     <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                                         <tr class="whitespace-nowrap">
                                             <th scope="col"
-                                                class="px-5 py-3 text-left text-sm font-medium text-left uppercase {{ $columns['name'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-left text-sm font-mediumuppercase {{ $columns['name'] ? '' : 'hidden' }}">
                                                 Name</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['emp_code'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['emp_code'] ? '' : 'hidden' }}">
                                                 Employee Number</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['office_division'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['office_division'] ? '' : 'hidden' }}">
                                                 Office/Division</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['position'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['position'] ? '' : 'hidden' }}">
                                                 Position</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['sg_step'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['sg_step'] ? '' : 'hidden' }}">
                                                 SG Step</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['rate_per_month'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['rate_per_month'] ? '' : 'hidden' }}">
                                                 Rate Per Month</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['personal_economic_relief_allowance'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['personal_economic_relief_allowance'] ? '' : 'hidden' }}">
                                                 PERA</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['gross_amount'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['gross_amount'] ? '' : 'hidden' }}">
                                                 Gross Amount</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['additional_gsis_premium'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['additional_gsis_premium'] ? '' : 'hidden' }}">
                                                 Additional GSIS Premium</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['lbp_salary_loan'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['lbp_salary_loan'] ? '' : 'hidden' }}">
                                                 LBP Salary Loan</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['nycea_deductions'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['nycea_deductions'] ? '' : 'hidden' }}">
                                                 NYCEA Deductions</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['sc_membership'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['sc_membership'] ? '' : 'hidden' }}">
                                                 SC Membership</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['total_loans'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['total_loans'] ? '' : 'hidden' }}">
                                                 Total Loans</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['salary_loan'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['salary_loan'] ? '' : 'hidden' }}">
                                                 Salary Loan</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['policy_loan'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['policy_loan'] ? '' : 'hidden' }}">
                                                 Policy Loan</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['eal'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['eal'] ? '' : 'hidden' }}">
                                                 EAL</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['emergency_loan'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['emergency_loan'] ? '' : 'hidden' }}">
                                                 Emergency Loan</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['mpl'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['mpl'] ? '' : 'hidden' }}">
                                                 MPL</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['housing_loan'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['housing_loan'] ? '' : 'hidden' }}">
                                                 Housing Loan</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['ouli_prem'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['ouli_prem'] ? '' : 'hidden' }}">
                                                 OULI Prem</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['gfal'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['gfal'] ? '' : 'hidden' }}">
                                                 GFAL</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['cpl'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['cpl'] ? '' : 'hidden' }}">
                                                 CPL</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['pagibig_mpl'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['pagibig_mpl'] ? '' : 'hidden' }}">
                                                 Pag-IBIG MPL</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['other_deduction_philheath_diff'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['other_deduction_philheath_diff'] ? '' : 'hidden' }}">
                                                 Other Deduction PhilHealth Diff</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['life_retirement_insurance_premiums'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['life_retirement_insurance_premiums'] ? '' : 'hidden' }}">
                                                 Life Retirement Insurance Premiums</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['pagibig_contribution'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['pagibig_contribution'] ? '' : 'hidden' }}">
                                                 Pag-IBIG Contribution</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['w_holding_tax'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['w_holding_tax'] ? '' : 'hidden' }}">
                                                 Withholding Tax</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['philhealth'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['philhealth'] ? '' : 'hidden' }}">
                                                 PhilHealth</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['total_deduction'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['total_deduction'] ? '' : 'hidden' }}">
                                                 Total Deduction</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['net_amount_received'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['net_amount_received'] ? '' : 'hidden' }}">
                                                 Net Amount Received</th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['amount_due_first_half'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['amount_due_first_half'] ? '' : 'hidden' }}">
                                                 Amount Due <br>
                                                 ({{ $startDateFirstHalf ? \Carbon\Carbon::parse($startDateFirstHalf)->format('F') : '' }}
                                                 {{ $startDateFirstHalf ? \Carbon\Carbon::parse($startDateFirstHalf)->format('d') : '' }}
@@ -828,7 +828,7 @@
                                                 {{ $startDateFirstHalf ? \Carbon\Carbon::parse($startDateFirstHalf)->format('Y') : '' }})
                                             </th>
                                             <th scope="col"
-                                                class="px-5 py-3 text-center text-sm font-medium text-left uppercase {{ $columns['amount_due_second_half'] ? '' : 'hidden' }}">
+                                                class="px-5 py-3 text-center text-sm font-medium uppercase {{ $columns['amount_due_second_half'] ? '' : 'hidden' }}">
                                                 Amount Due <br>
                                                 ({{ $startDateSecondHalf ? \Carbon\Carbon::parse($startDateSecondHalf)->format('F') : '' }}
                                                 {{ $startDateSecondHalf ? \Carbon\Carbon::parse($startDateSecondHalf)->format('d') : '' }}
@@ -1042,7 +1042,7 @@
                                                         </p>
                                                     </div>
                                                     <div class="absolute bottom-1 w-full flex">
-                                                        <div class="flex flex flex-col items-center w-4/5">
+                                                        <div class="flex flex-col items-center w-4/5">
 
                                                             {{-- E-Signature Here --}}
 
@@ -1068,7 +1068,7 @@
                                                                 {{ $plantillaPayroll['a'] ? $plantillaPayroll['a']->position : 'Position' }}
                                                             </p>
                                                         </div>
-                                                        <div class="flex flex flex-col items-center justify-end w-1/5">
+                                                        <div class="flex flex-col items-center justify-end w-1/5">
                                                             <p class="text-center underline">01/01/2024</p>
                                                             <p class="text-center">Date</p>
                                                         </div>
@@ -1107,7 +1107,7 @@
                                                         <p class="pl-6 font-bold">PHP 4,884.16</p>
                                                     </div>
                                                     <div class="absolute bottom-1 w-full flex">
-                                                        <div class="flex flex flex-col items-center w-4/5">
+                                                        <div class="flex flex-col items-center w-4/5">
 
                                                             {{-- E-Signature Here --}}
 
@@ -1170,7 +1170,7 @@
                                                         <p class="pl-6 font-bold">PHP 4,884.16</p>
                                                     </div>
                                                     <div class="absolute bottom-1 w-full flex">
-                                                        <div class="flex flex flex-col items-center w-4/5">
+                                                        <div class="flex flex-col items-center w-4/5">
 
                                                             {{-- E-Signature Here --}}
 
@@ -1226,7 +1226,7 @@
                                                         <p class="pl-2"></p>
                                                     </div>
                                                     <div class="absolute bottom-1 w-full flex">
-                                                        <div class="flex flex flex-col items-center w-4/5">
+                                                        <div class="flex flex-col items-center w-4/5">
 
                                                             {{-- E-Signature Here --}}
 

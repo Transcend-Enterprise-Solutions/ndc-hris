@@ -313,24 +313,17 @@
                                                 href="{{ route('/payroll/plantilla-payroll') }}" wire:navigate>
                                                 <span class="text-sm font-medium transition-opacity duration-300"
                                                     :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                    Plantilla Payroll
+                                                    Plantilla
                                                 </span>
                                             </a>
                                         </li>
                                         <li class="mb-1 last:mb-0">
-                                            <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/payroll/cos-regular-payroll')) {{ '!text-blue-500' }} @endif"
-                                                href="{{ route('/payroll/cos-regular-payroll') }}" wire:navigate>
+                                            <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/payroll/cos-payroll')) {{ '!text-blue-500' }} @endif"
+                                                href="{{ route('/payroll/cos-payroll') }}" wire:navigate>
                                                 <span class="text-sm font-medium transition-opacity duration-300"
-                                                    :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">COS
-                                                    Regular Payroll</span>
-                                            </a>
-                                        </li>
-                                        <li class="mb-1 last:mb-0">
-                                            <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/payroll/cos-sk-payroll')) {{ '!text-blue-500' }} @endif"
-                                                href="{{ route('/payroll/cos-sk-payroll') }}" wire:navigate>
-                                                <span class="text-sm font-medium transition-opacity duration-300"
-                                                    :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">COS
-                                                    SK Payroll</span>
+                                                    :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
+                                                    Contract Of Service
+                                                </span>
                                             </a>
                                         </li>
                                     </ul>
