@@ -10,18 +10,24 @@ use Livewire\Component;
 class WfhSchedTable extends Component
 {
     public $wfhDay;
+    public $wfh_reason;
     public $selectedTab = 'pending';
     public $requests = [];
+    public $isModalOpen = false;
 
     // Validation rules
     protected $rules = [
         'wfhDay' => 'required|date|after_or_equal:today',
+        'wfh_reason' => 'required|string|min:5|max:500',
     ];
 
     protected $messages = [
         'wfhDay.required' => 'Please select a date for your WFH request.',
         'wfhDay.date' => 'The WFH date must be a valid date.',
         'wfhDay.after_or_equal' => 'The WFH date must be today or a future date.',
+        'wfh_reason.required' => 'Please provide a reason for your WFH request.',
+        'wfh_reason.min' => 'Your reason must be at least 5 characters.',
+        'wfh_reason.max' => 'Your reason cannot exceed 500 characters.',
     ];
 
     public function mount()
@@ -36,6 +42,18 @@ class WfhSchedTable extends Component
             ->get();
     }
 
+    public function openModal()
+    {
+        $this->isModalOpen = true;
+    }
+
+    public function closeModal()
+    {
+        $this->isModalOpen = false;
+        $this->reset(['wfhDay', 'wfh_reason']);
+        $this->resetValidation();
+    }
+
     public function requestWfh()
     {
         $this->validate();
@@ -46,22 +64,31 @@ class WfhSchedTable extends Component
             ->first();
 
         if ($existingRequest) {
-            session()->flash('error', 'You already have a WFH request for this date.');
+            $this->dispatch('swal', [
+                'title' => 'Request Exists',
+                'text' => 'You already have a WFH request for this date.',
+                'icon' => 'error'
+            ]);
             return;
         }
 
-        // Create new WFH request
+        // Create new WFH request with reason
         Wfh::create([
             'wfhDay' => $this->wfhDay,
+            'wfh_reason' => $this->wfh_reason,
             'status' => 'pending',
             'user_id' => Auth::id()
         ]);
 
-        // Reset form and reload requests
-        $this->reset('wfhDay');
+        // Reset form, close modal and reload requests
+        $this->reset(['wfhDay', 'wfh_reason']);
+        $this->isModalOpen = false;
         $this->loadRequests();
 
-        session()->flash('message', 'WFH request submitted successfully.');
+        $this->dispatch('swal', [
+            'title' => 'WFH Schedule Requested!',
+            'icon' => 'success'
+        ]);
     }
 
     public function cancelRequest($id)
@@ -72,9 +99,20 @@ class WfhSchedTable extends Component
         if ($request->user_id == Auth::id() && $request->status == 'pending') {
             $request->delete();
             $this->loadRequests();
-            session()->flash('message', 'WFH request cancelled successfully.');
+
+            // Replace session flash with SweetAlert
+            $this->dispatch('swal', [
+                'title' => 'Request Cancelled',
+                'text' => 'WFH request cancelled successfully.',
+                'icon' => 'success'
+            ]);
         } else {
-            session()->flash('error', 'Unable to cancel this request.');
+            // Replace session flash with SweetAlert
+            $this->dispatch('swal', [
+                'title' => 'Error',
+                'text' => 'Unable to cancel this request.',
+                'icon' => 'error'
+            ]);
         }
     }
 
