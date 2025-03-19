@@ -4,8 +4,6 @@ namespace App\Livewire\User;
 
 use App\Models\CosRegPayrolls;
 use App\Models\CosRegPayslip;
-use App\Models\CosSkPayrolls;
-use App\Models\CosSkPayslip;
 use App\Models\Payrolls;
 use App\Models\PayrollsLeaveCreditsDeduction;
 use App\Models\PlantillaPayslip;
@@ -79,7 +77,6 @@ class PayslipTable extends Component
         $user = Auth::user(); 
         $plantilla = Payrolls::where('user_id', $user->id)->first();
         $cosReg = CosRegPayrolls::where('user_id', $user->id)->first();
-        $cosSk = CosSkPayrolls::where('user_id', $user->id)->first();
 
         if($plantilla){
             $this->type = "plantilla";
@@ -93,9 +90,6 @@ class PayslipTable extends Component
         }elseif($cosReg){
             $this->type = "cos-reg";
             $cosPayslips = $this->getCosRegPayslips();
-        }elseif($cosSk){
-            $this->type = "cos-sk";
-            $cosPayslips = $this->getCosSkPayslips();
         }
 
         $perPage = 10;
@@ -118,33 +112,6 @@ class PayslipTable extends Component
     public function getCosRegPayslips(){
         $user = Auth::user(); 
         return CosRegPayslip::where('user_id', $user->id)
-            ->when($this->date, function ($query) {
-                $query->whereMonth('start_date', Carbon::parse($this->date)->month)
-                    ->whereYear('start_date', Carbon::parse($this->date)->year);
-            })
-            ->orderBy('start_date', 'DESC')
-            ->get()
-            ->groupBy(function($date) {
-                return Carbon::parse($date->start_date)->format('Y-m');
-            })
-            ->map(function ($group) {
-                $firstHalf = $group->where('start_date', '<=', Carbon::parse($group->first()->start_date)->startOfMonth()->addDays(14));
-                $secondHalf = $group->where('start_date', '>', Carbon::parse($group->first()->start_date)->startOfMonth()->addDays(14));
-                
-                return [
-                    'month_year' => Carbon::parse($group->first()->start_date)->format('F Y'),
-                    'first_half_amount' => number_format((float) $firstHalf->sum('gross_salary_less'), 2, '.', ','),
-                    'second_half_amount' => number_format((float) $secondHalf->sum('gross_salary_less'), 2, '.', ','),
-                    'net_amount_received' => number_format((float) $group->sum('net_amount_received'), 2, '.', ','),
-                    'start_date' => $group->first()->start_date,
-                ];
-            })
-            ->values();
-    }
-
-    public function getCosSkPayslips(){
-        $user = Auth::user(); 
-        return CosSkPayslip::where('user_id', $user->id)
             ->when($this->date, function ($query) {
                 $query->whereMonth('start_date', Carbon::parse($this->date)->month)
                     ->whereYear('start_date', Carbon::parse($this->date)->year);
@@ -384,43 +351,7 @@ class PayslipTable extends Component
                                     'cos_reg_payslip.*',
                                 )
                                 ->first();
-                }elseif($this->type === "cos-sk"){
-                    $payslip = CosSkPayslip::where('start_date', $startDateFirstHalf)
-                        ->where('end_date', $endDateFirstHalf)
-                        ->join('users', 'users.id', 'cos_sk_payslip.user_id')
-                        ->join('positions', 'positions.id', 'users.position_id')
-                        ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                        ->select(
-                            'users.name',
-                            'users.emp_code as employee_number',
-                            'positions.*',
-                            'office_divisions.*',
-                            'cos_sk_payslip.days_covered as no_of_days_covered',
-                            'cos_sk_payslip.w_holding_tax as withholding_tax',
-                            'cos_sk_payslip.net_amount_received as net_amount_due',
-                            'cos_sk_payslip.total_deduction as total_deductions',
-                            'cos_sk_payslip.*',
-                        )
-                        ->first();
-                    $payslip2 = CosSkPayslip::where('start_date', $startDateSecondHalf)
-                        ->where('end_date', $endDateSecondHalf)
-                        ->join('users', 'users.id', 'cos_sk_payslip.user_id')
-                        ->join('positions', 'positions.id', 'users.position_id')
-                        ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-                        ->select(
-                            'users.name',
-                            'users.emp_code as employee_number',
-                            'positions.*',
-                            'office_divisions.*',
-                            'cos_sk_payslip.days_covered as no_of_days_covered',
-                            'cos_sk_payslip.w_holding_tax as withholding_tax',
-                            'cos_sk_payslip.net_amount_received as net_amount_due',
-                            'cos_sk_payslip.total_deduction as total_deductions',
-                            'cos_sk_payslip.*',
-                        )
-                        ->first();
                 }
-
 
 
                 $dates = [

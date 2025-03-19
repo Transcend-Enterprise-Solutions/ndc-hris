@@ -139,9 +139,6 @@ class PerOfficeDivisionExport implements FromCollection, WithEvents
                 }else if($user->cos_reg_sg_step){
                     $sg_step = $user->cos_reg_sg_step;
                     $cosTag = " - Regular";
-                }else if($user->cos_sk_sg_step){
-                    $sg_step = $user->cos_sk_sg_step;
-                    $cosTag = " - SK";
                 }else{
                     $sg_step = "-";
                 }
@@ -151,8 +148,6 @@ class PerOfficeDivisionExport implements FromCollection, WithEvents
                     $rate = $user->plantilla_rate;
                 }else if($user->cos_reg_rate){
                     $rate = $user->cos_reg_rate;
-                }else if($user->cos_sk_rate){
-                    $rate = $user->cos_sk_rate;
                 }
 
                 $appointment = null;

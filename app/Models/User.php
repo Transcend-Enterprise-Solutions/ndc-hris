@@ -180,11 +180,6 @@ class User extends Authenticatable
         return $this->hasMany(CosRegPayslip::class);
     }
 
-    public function cosSkPayslip()
-    {
-        return $this->hasMany(CosSkPayslip::class);
-    }
-
     public function payrolls()
     {
         return $this->hasOne(Payrolls::class);
@@ -221,10 +216,6 @@ class User extends Authenticatable
 
     public function cosRegPayrolls(){
         return $this->hasOne(CosRegPayrolls::class);
-    }
-
-    public function cosSkPayrolls(){
-        return $this->hasOne(CosSkPayrolls::class);
     }
 
     public function pdsC4Answers(){

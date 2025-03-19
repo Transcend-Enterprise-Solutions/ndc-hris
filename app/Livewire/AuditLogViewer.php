@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\CosRegPayrolls;
 use App\Models\CosRegPayslip;
-use App\Models\CosSkPayrolls;
 use Livewire\Component;
 use Livewire\WithPagination;
 use OwenIt\Auditing\Models\Audit;
@@ -78,8 +77,6 @@ class AuditLogViewer extends Component
                               WHEN audits.auditable_type = 'App\\Models\\PlantillaPayslip' THEN 'payroll'
                               WHEN audits.auditable_type = 'App\\Models\\CosRegPayrolls' THEN 'payroll'
                               WHEN audits.auditable_type = 'App\\Models\\CosRegPayslip' THEN 'payroll'
-                              WHEN audits.auditable_type = 'App\\Models\\CosSkPayrolls' THEN 'payroll'
-                              WHEN audits.auditable_type = 'App\\Models\\CosSkPayslip' THEN 'payroll'
                               ELSE audits.auditable_type
                           END,
                           ' (ID: ',
@@ -145,12 +142,6 @@ class AuditLogViewer extends Component
             }
         }
         elseif ($audit->auditable_type === CosRegPayslip::class) {
-            if (isset($resolved['user_id'])) {
-                $user = User::find($resolved['user_id']);
-                $resolved['employee_name'] = $user ? $user->name : 'Unknown Employee';
-            }
-        }
-        elseif ($audit->auditable_type === CosSkPayrolls::class) {
             if (isset($resolved['user_id'])) {
                 $user = User::find($resolved['user_id']);
                 $resolved['employee_name'] = $user ? $user->name : 'Unknown Employee';

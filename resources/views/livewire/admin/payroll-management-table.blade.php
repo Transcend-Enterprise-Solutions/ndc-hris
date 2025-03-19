@@ -290,11 +290,6 @@
                             class="h-min px-4 pt-2 pb-4 text-sm">
                         COS Regular Payroll
                     </button>
-                    <button @click="selectedTab = 'cos'" 
-                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'cos', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'cos' }" 
-                            class="h-min px-4 pt-2 pb-4 text-sm">
-                        COS SK Payroll
-                    </button>
                     <button @click="selectedTab = 'payroll_signatories'" 
                             :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'payroll_signatories', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'payroll_signatories' }" 
                             class="h-min px-4 pt-2 pb-4 text-sm">
