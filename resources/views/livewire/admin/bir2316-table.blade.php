@@ -1,6 +1,6 @@
 <div class="w-full flex flex-col justify-center"
 x-data="{ 
-    selectedTab: 'summary'
+    selectedTab: 'bir'
 }" 
 x-cloak>
 
@@ -52,11 +52,11 @@ x-cloak>
                                 class="h-min px-4 pt-2 pb-4 text-sm no-wrap">
                             BIR 2316
                         </button>
-                        <button @click="selectedTab = 'summary'" 
+                        {{-- <button @click="selectedTab = 'summary'" 
                                 :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'summary', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'summary' }" 
                                 class="h-min px-4 pt-2 pb-4 text-sm">
                             Tax Summary
-                        </button>
+                        </button> --}}
                     </div>
                     <div x-show="selectedTab === 'bir'" class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                         <iframe id="pdfIframe" src="data:application/pdf;base64,{{ $pdfContent }}"

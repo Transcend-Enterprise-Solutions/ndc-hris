@@ -13,11 +13,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        <script defer src="build/assets/app-DEoBNXZR.js"></script>
-
         <!-- Styles -->
-        <link rel="stylesheet" href="build/assets/app-CXLG3pI-.css">
+        <link rel="stylesheet" href="{{ asset('build/assets/app-CvHr89Rv.css') }}">
 
          @livewireStyles
 
@@ -77,6 +74,7 @@
 
         </main>
 
+        <script defer src="{{ asset('build/assets/app-DEoBNXZR.js') }}"></script>
         @livewireScripts
     </body>
 </html>

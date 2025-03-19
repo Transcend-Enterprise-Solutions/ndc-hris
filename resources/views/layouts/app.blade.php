@@ -26,11 +26,8 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/alpine.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- Scripts -->
-    <script defer src="build/assets/app-DEoBNXZR.js"></script>
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="build/assets/app-CXLG3pI-.css">
+    <link rel="stylesheet" href="{{ asset('build/assets/app-CvHr89Rv.css') }}">
 
     <style>
         [x-cloak] {
@@ -128,6 +125,7 @@
         window.addEventListener('popstate', initLocationHandling);
     </script> --}}
 
+    <script defer src="{{ asset('build/assets/app-DEoBNXZR.js') }}"></script>
     @livewireScripts
 </body>
 
