@@ -48,10 +48,13 @@
                 </div>
             </div>
 
-            <div x-data="{ showModal: false, signatoryName: '' }" x-cloak>
+            <div class="ml-4" x-data="{ showModal: false, signatoryName: '' }" x-cloak>
                 <!-- Trigger Button -->
-                <button @click="showModal = true" class="p-2 flex items-center justify-center">
-                    <img src="{{ asset('images/icons8-export-pdf-60.png') }}" alt="Export to PDF" class="w-8 h-8" wire:loading.remove wire:target="exportToPdf">
+                <button @click="showModal = true" class="inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
+                                    justify-center px-2 py-1.5 text-sm font-medium tracking-wide
+                                    text-neutral-800 dark:text-neutral-200 transition-colors duration-200
+                                    rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none">
+                    <img src="{{ asset('images/icons8-export-pdf-60.png') }}" alt="Export to PDF" class="w-10" wire:loading.remove wire:target="exportToPdf">
                     <div wire:loading wire:target="exportToPdf">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" class="size-6 fill-red-600 motion-safe:animate-spin dark:fill-red-600">
                             <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
