@@ -6,8 +6,6 @@ use App\Exports\AdminRolesExport;
 use App\Exports\PerOfficeDivisionExport;
 use App\Exports\PerUnitExport;
 use App\Imports\SalaryGradeImport;
-use App\Models\CosRegPayrolls;
-use App\Models\CosSkPayrolls;
 use App\Models\OfficeDivisions;
 use App\Models\OfficeDivisionUnits;
 use App\Models\Payrolls;
@@ -171,7 +169,6 @@ class RoleManagementTable extends Component
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                 ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
-                ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
                 ->where('users.active_status', '!=', 4)
                 ->select(
                     'users.name', 
@@ -183,7 +180,6 @@ class RoleManagementTable extends Component
                     DB::raw('
                         CASE 
                             WHEN cos_reg_payrolls.id IS NOT NULL THEN "REG"
-                            WHEN cos_sk_payrolls.id IS NOT NULL THEN "SK"
                             ELSE ""
                         END as appointment_type'
                     )
@@ -291,7 +287,6 @@ class RoleManagementTable extends Component
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
                 ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
                 ->leftJoin('payrolls', 'payrolls.user_id', 'users.id')
-                ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
                 ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
                 ->where('users.active_status', '!=', 4)
                 ->select(
@@ -310,8 +305,6 @@ class RoleManagementTable extends Component
                     'office_division_units.unit',
                     'payrolls.sg_step as plantilla_sg_step',
                     'payrolls.rate_per_month as plantilla_rate',
-                    'cos_sk_payrolls.sg_step as cos_sk_sg_step',
-                    'cos_sk_payrolls.rate_per_month as cos_sk_rate',
                     'cos_reg_payrolls.sg_step as cos_reg_sg_step',
                     'cos_reg_payrolls.rate_per_month as cos_reg_rate',
                 )
@@ -368,7 +361,6 @@ class RoleManagementTable extends Component
                         ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
                         ->join('user_data', 'user_data.user_id', 'users.id')
                         ->leftJoin('payrolls', 'payrolls.user_id', 'users.id')
-                        ->leftJoin('cos_sk_payrolls', 'cos_sk_payrolls.user_id', 'users.id')
                         ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
                         ->select(
                             'users.name', 
@@ -386,8 +378,6 @@ class RoleManagementTable extends Component
                             'office_division_units.unit',
                             'payrolls.sg_step as plantilla_sg_step',
                             'payrolls.rate_per_month as plantilla_rate',
-                            'cos_sk_payrolls.sg_step as cos_sk_sg_step',
-                            'cos_sk_payrolls.rate_per_month as cos_sk_rate',
                             'cos_reg_payrolls.sg_step as cos_reg_sg_step',
                             'cos_reg_payrolls.rate_per_month as cos_reg_rate',
                         );
@@ -785,14 +775,11 @@ class RoleManagementTable extends Component
                     // $payrollId = null;
                     // $payrolls = Payrolls::where('user_id', $user->id)->first();
                     // $cosRegPayrolls = CosRegPayrolls::where('user_id', $user->id)->first();
-                    // $cosSkPayrolls = CosSkPayrolls::where('user_id', $user->id)->first();
 
                     // if($payrolls){
                     //     $payrollId = $payrolls->user_id;
                     // }else if($cosRegPayrolls){
                     //     $payrollId = $cosRegPayrolls->user_id;
-                    // }else if($cosSkPayrolls){
-                    //     $payrollId = $cosSkPayrolls->user_id;
                     // }else{
                     //     $this->dispatch('swal', [
                     //         'title' => "This employee don't have a payroll yet!",

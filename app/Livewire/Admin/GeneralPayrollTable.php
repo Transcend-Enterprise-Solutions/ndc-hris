@@ -250,9 +250,9 @@ class GeneralPayrollTable extends Component
             $user = User::where('id', $this->userId)->first();
             $pos = Positions::where('id', $user->position_id)->first();
             $officeDiv = OfficeDivisions::where('id', $user->office_division_id)->first();
-            $this->employee_number = $user->emp_code;
-            $this->position = $pos->position;
-            $this->office_division = $officeDiv->office_division;
+            $this->employee_number = $user ? $user->emp_code : '';
+            $this->position = $pos ? $pos->position : '';
+            $this->office_division = $officeDiv ? $officeDiv->office_division : '';
         }
 
         $this->nycempc_total = 
@@ -1433,6 +1433,8 @@ class GeneralPayrollTable extends Component
                     $message = "Signature saved successfully!";
                 }
             }
+
+            $this->GeneralPayrolls();
             $this->resetVariables();
             $this->dispatch('swal', [
                 'title' => $message,
