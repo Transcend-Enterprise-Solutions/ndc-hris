@@ -11,6 +11,7 @@ use App\Models\EmployeesDtr;
 use App\Models\Notification;
 use App\Models\TransactionWFH;
 use App\Models\WfhLocation;
+use App\Models\Wfh;
 use DateTime;
 use Exception;
 use Livewire\WithPagination;
@@ -56,6 +57,7 @@ class WfhAttendanceTable extends Component
     public $approveOnly;
     public $isMyBirthday;
 
+    public $wfhStatus;
 
     #[On('locationUpdated')] 
     public function handleLocationUpdate($locationData)
@@ -129,7 +131,7 @@ class WfhAttendanceTable extends Component
         $today = Carbon::now()->format('l');
         $currentDate = Carbon::now()->format('Y-m-d');
         $startOfMonth = Carbon::now()->startOfMonth()->format('Y-m-d');
-
+    
         // Get the most recent active schedule for the current month
         $schedule = DTRSchedule::where('emp_code', $user->emp_code)
             ->where(function ($query) use ($startOfMonth, $currentDate) {
@@ -140,12 +142,12 @@ class WfhAttendanceTable extends Component
             })
             ->orderBy('start_date', 'desc')
             ->first();
-
+    
         if ($schedule) {
             $wfhDays = explode(',', $schedule->wfh_days);
             $startDate = Carbon::parse($schedule->start_date)->format('Y-m-d');
             $endDate = Carbon::parse($schedule->end_date)->format('Y-m-d');
-
+    
             if (in_array($today, $wfhDays) && $currentDate >= $startDate && $currentDate <= $endDate) {
                 $this->scheduleType = 'WFH';
             } else {
@@ -154,6 +156,14 @@ class WfhAttendanceTable extends Component
         } else {
             $this->scheduleType = 'Onsite';
         }
+    
+        // Check if there is an approved WFH request for today
+        $wfhRequest = Wfh::where('user_id', $user->id)
+            ->where('wfhDay', $currentDate)
+            ->where('status', 'approved')
+            ->first();
+    
+        $this->wfhStatus = $wfhRequest ? 'approved' : null;
     }
 
     public function confirmPunch($state, $verifyType)
@@ -403,7 +413,7 @@ class WfhAttendanceTable extends Component
         $this->checkWFHDay();
         $this->resetButtonStatesIfNeeded();
         
-        if ($this->scheduleType === 'WFH') {
+        if ($this->scheduleType === 'WFH' || $this->wfhStatus === 'approved') {
             $transactions = TransactionWFH::where('emp_code', Auth::user()->emp_code)
                 ->whereDate('punch_time', Carbon::today())
                 ->orderBy('punch_time', 'asc')
@@ -415,10 +425,10 @@ class WfhAttendanceTable extends Component
                 ->first();
         }
     
-        $groupedTransactions = ($this->scheduleType === 'WFH')
+        $groupedTransactions = ($this->scheduleType === 'WFH' || $this->wfhStatus === 'approved')
             ? $transactions->groupBy('verify_type_display')
             : $transactions;
-
+    
         $userId = Auth::user()->id;
         $history = WfhLocationRequests::where('user_id', $userId)
             ->when($this->search, function ($query) {
@@ -431,6 +441,7 @@ class WfhAttendanceTable extends Component
             'groupedTransactions' => $groupedTransactions,
             'scheduleType' => $this->scheduleType,
             'history' => $history,
+            'wfhStatus' => $this->wfhStatus,
         ]);
     }
 }
