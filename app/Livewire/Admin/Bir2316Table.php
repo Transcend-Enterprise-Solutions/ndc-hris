@@ -4,12 +4,14 @@ namespace App\Livewire\Admin;
 
 use App\Exports\BIR2316Export;
 use App\Models\MonthlyIncomeTax;
+use App\Models\PlantillaPayslip;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Livewire\Component;
 use Livewire\WithPagination;
 use setasign\Fpdi\Fpdi;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class Bir2316Table extends Component
 {
@@ -24,6 +26,7 @@ class Bir2316Table extends Component
     public $employeeName;
     public $endDate;
     public $pdfContent;
+    public $pdfContent2;
     public $pageSize = 10; 
     public $pageSizes = [10, 20, 30, 50, 100]; 
 
@@ -34,7 +37,8 @@ class Bir2316Table extends Component
 
     public function render()
     {
-        $this->showPDF(79);
+        $this->showBIR2316(id: 73);
+        $this->showTaxSummary(73);
         $employees = User::where('users.user_role', 'emp')
             ->join('user_data', 'user_data.user_id', 'users.id')
             ->orderBy('user_data.surname', 'ASC')
@@ -48,7 +52,7 @@ class Bir2316Table extends Component
         ]);
     }
 
-    public function showPDF($id)
+    public function showBIR2316($id)
     {
         $templatePath = storage_path('app/templates/bir2316.pdf');
     
@@ -74,11 +78,12 @@ class Bir2316Table extends Component
         $pdf = new Fpdi();
         $pdf->SetMargins(0, 0, 0);
         $pdf->SetAutoPageBreak(false, 0);
+        $pdf->SetTitle('BIR 2316');
         $pageCount = $pdf->setSourceFile($templatePath);
 
 
 
-        $fullname = $employee->surname . ', ' . $employee->first_name . ', ' . ($employee->middle_name ?: '');
+        $fullname = $employee->surname . ', ' . $employee->first_name . ($employee->middle_name ? ', ' . $employee->middle_name : '') . ($employee->name_extension ? ', ' . $employee->name_extension : '');
         $this->employeeName = $fullname;
         $address = $employee->p_house_street . ' ' . $employee->permanent_selectedBarangay . ' ' . $employee->permanent_selectedCity . ' ' . $employee->permanent_selectedProvince;
         $address = mb_convert_case($address, MB_CASE_TITLE, "UTF-8");
@@ -237,6 +242,34 @@ class Bir2316Table extends Component
         $this->pdfContent = $pdfContent;
     }
 
+    public function showTaxSummary($userId)
+    {
+        $employee = User::where('users.id', $userId)
+                    ->join('user_data', 'user_data.user_id', 'users.id')
+                    ->leftJoin('positions', 'positions.id', 'users.position_id')
+                    ->first();
+
+        $monthlyTax = PlantillaPayslip::where('user_id', $employee->user_id)
+                    // ->whereDate('start_date', '>=', $this->startDate)
+                    // ->whereDate('start_date', '<=', $this->endDate)
+                    ->orderBy('start_date', 'ASC')
+                    ->get();
+        
+        $pdf = PDF::loadView('pdf.tax-summary', [
+            'employee' => $employee,
+            'monthlyTax' => $monthlyTax,
+        ])
+        ->setPaper('letter', 'landscape')
+        ->setOptions([
+            'defaultFont' => 'Arial',
+            'isHtml5ParserEnabled' => true,
+            'isPhpEnabled' => true,
+        ]);
+    
+        $this->pdfContent2 = base64_encode($pdf->output());
+    
+        return $this->pdfContent2;
+    }
     public function toggleExportOption($id){
         $this->exportId = $id;
         $this->employee = User::where('users.id', $id)

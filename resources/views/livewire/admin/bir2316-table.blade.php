@@ -1,6 +1,6 @@
 <div class="w-full flex flex-col justify-center"
 x-data="{ 
-    selectedTab: 'bir'
+    selectedTab: 'summary'
 }" 
 x-cloak>
 
@@ -60,6 +60,10 @@ x-cloak>
                     </div>
                     <div x-show="selectedTab === 'bir'" class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                         <iframe id="pdfIframe" src="data:application/pdf;base64,{{ $pdfContent }}"
+                            style="width: 100%; max-height: 80vh; min-height: 500px;" frameborder="0"></iframe>
+                    </div>
+                    <div x-show="selectedTab === 'summary'" class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                        <iframe id="pdfIframe2" src="data:application/pdf;base64,{{ $pdfContent2 }}#zoom=80"
                             style="width: 100%; max-height: 80vh; min-height: 500px;" frameborder="0"></iframe>
                     </div>
                 </div>
@@ -189,19 +193,28 @@ x-cloak>
 </div>
 
 <script>
-    function resizeIframe() {
-        const iframe = document.getElementById('pdfIframe');
-        const pdfDocument = iframe.contentDocument || iframe.contentWindow.document;
-
-        if (pdfDocument) {
-            // Set the iframe height based on the content
-            iframe.style.height = pdfDocument.body.scrollHeight + 'px';
+    function resizeIframe(iframeId) {
+        const iframe = document.getElementById(iframeId);
+        if (iframe && iframe.contentWindow) {
+            const pdfDocument = iframe.contentDocument || iframe.contentWindow.document;
+            if (pdfDocument && pdfDocument.body) {
+                iframe.style.height = pdfDocument.body.scrollHeight + 'px';
+            }
         }
     }
 
-    // Adjust iframe size when the PDF is loaded
-    document.getElementById('pdfIframe').onload = resizeIframe;
+    document.getElementById('pdfIframe').onload = function () {
+        resizeIframe('pdfIframe');
+    };
 
-    // Optional: Adjust iframe size when the window is resized
-    window.onresize = resizeIframe;
+    document.getElementById('pdfIframe2').onload = function () {
+        resizeIframe('pdfIframe2');
+    };
+
+    // Ensure both iframes adjust on window resize
+    window.addEventListener('resize', function () {
+        resizeIframe('pdfIframe');
+        resizeIframe('pdfIframe2');
+    });
 </script>
+
