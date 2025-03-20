@@ -452,7 +452,7 @@ class AdminLeaveRequestTable extends Component
         file_put_contents($tempFirstPagePath, $firstPagePDF->output());
     
         // Path to the second page template
-        $secondPageTemplatePath = public_path('storage/pdf_template/secondpage.pdf');
+        $secondPageTemplatePath = storage_path('app/public/pdf_template/secondpage.pdf');
         if (!file_exists($secondPageTemplatePath)) {
             throw new \Exception('Second page template not found at: ' . $secondPageTemplatePath);
         }
@@ -462,6 +462,7 @@ class AdminLeaveRequestTable extends Component
     
         // Add the first page
         $pdf->AddPage();
+        $pdf->SetTitle('Leave Application');
         $pdf->setSourceFile($tempFirstPagePath);
         $tplId = $pdf->importPage(1);
         $pdf->useTemplate($tplId);

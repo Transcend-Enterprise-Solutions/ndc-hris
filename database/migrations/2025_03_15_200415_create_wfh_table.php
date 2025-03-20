@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->date('wfhDay');
             $table->text('wfh_reason')->nullable();
+            $table->text('wfh_reason')->nullable();
             $table->string('status');
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('rejected_at')->nullable();

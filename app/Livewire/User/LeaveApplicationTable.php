@@ -15,7 +15,6 @@ use App\Models\LeaveCredits;
 use App\Models\LeaveApprovals;
 use App\Models\Payrolls;
 use App\Models\CosRegPayrolls;
-use App\Models\CosSkPayrolls;
 use App\Models\OfficeDivisions;
 use App\Models\Positions;
 use App\Models\ESignature;
@@ -149,9 +148,6 @@ class LeaveApplicationTable extends Component
             $cosRegPayroll = CosRegPayrolls::where('user_id', $user->id)->first();
             if ($cosRegPayroll) {
                 $this->salary = $cosRegPayroll->rate_per_month;
-            } else {
-                $cosSkPayroll = CosSkPayrolls::where('user_id', $user->id)->first();
-                $this->salary = $cosSkPayroll ? $cosSkPayroll->rate_per_month : 0;
             }
         }
     }

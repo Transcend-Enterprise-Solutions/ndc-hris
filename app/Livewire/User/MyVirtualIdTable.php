@@ -105,6 +105,9 @@ class MyVirtualIdTable extends Component
             ? \Carbon\Carbon::parse($userData->date_of_birth)->format('F j, Y') 
             : 'N/A';
 
+        $this->eSignaturePath = explode('/',$this->eSignaturePath);
+        $this->eSignaturePath = $this->eSignaturePath[1] . '/' . $this->eSignaturePath[2];
+
         return view('livewire.user.my-virtual-id-table', [
             'name' => $user->name,
             'emp_code' => $this->empCodeFormatted,

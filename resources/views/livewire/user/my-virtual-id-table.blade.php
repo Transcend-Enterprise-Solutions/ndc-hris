@@ -44,7 +44,7 @@
                     <!-- Picture Box -->
                     <div class="w-40 h-40 border border-gray-400 flex items-center justify-center bg-white mt-2">
                         @if ($profilePhotoPath)
-                            <img src="{{ $profilePhotoPath ? asset('storage/' . $profilePhotoPath) : asset('default-avatar.png') }}"
+                            <img src="{{ $profilePhotoPath ? route('profile-photo.file', ['filename' => basename($profilePhotoPath)]) : asset('default-avatar.png') }}"
                                 alt="Profile Photo" class="w-full h-full object-cover">
                         @else
                             <span class="text-green-500">Picture</span>
@@ -55,7 +55,7 @@
                     @if ($eSignaturePath)
                         <div class="flex items-center justify-center" style="height: 48px;">
                             <!-- Fixed height container -->
-                            <img src="{{ asset($eSignaturePath) }}" alt="E-Signature"
+                            <img src="{{ route('signature.file', ['filename' => basename($eSignaturePath)]) }}" alt="E-Signature"
                                 class="max-w-full max-h-full object-contain">
                         </div>
                     @else
