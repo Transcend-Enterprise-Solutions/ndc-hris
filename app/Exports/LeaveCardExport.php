@@ -96,6 +96,63 @@ class LeaveCardExport
         ];
     }
 
+    private function getMonthlyWithoutPayLeaveDetails($userId, $month, $leaveType)
+    {
+        // Get all approved leaves without pay for the specified type
+        $leaves = LeaveApplication::where('user_id', $userId)
+            ->where('type_of_leave', $leaveType)
+            ->where('status', 'Approved')
+            ->where('remarks', 'Without Pay')
+            ->whereNotNull('approved_dates')
+            ->get();
+    
+        if ($leaves->isEmpty()) {
+            return [
+                'dates' => '',
+                'total_days' => 0
+            ];
+        }
+    
+        $dates = [];
+        $totalDays = 0;
+    
+        foreach ($leaves as $leave) {
+            $approvedDatesString = trim($leave->approved_dates, '[]"');
+            $approvedDates = array_map('trim', explode(',', $approvedDatesString));
+    
+            foreach ($approvedDates as $date) {
+                $date = trim($date, '"\'');
+                
+                try {
+                    $leaveDate = Carbon::parse($date);
+                    
+                    if ($leaveDate->year == $this->year && $leaveDate->month == $month) {
+                        $dates[] = $leaveDate->format('d');
+                        $totalDays += 1;
+                    }
+                } catch (\Exception $e) {
+                    continue;
+                }
+            }
+        }
+    
+        if (empty($dates)) {
+            return [
+                'dates' => '',
+                'total_days' => 0
+            ];
+        }
+    
+        sort($dates, SORT_NUMERIC);
+        $monthName = Carbon::create()->month($month)->format('M');
+        $datesString = count($dates) > 0 ? $monthName . '. ' . implode(', ', $dates) : '';
+    
+        return [
+            'dates' => $datesString,
+            'total_days' => $totalDays
+        ];
+    }
+
     private $lateTimeMatrix = [
         1 => 0.002, 2 => 0.004, 3 => 0.006, 4 => 0.008, 5 => 0.010,
         6 => 0.012, 7 => 0.015, 8 => 0.017, 9 => 0.019, 10 => 0.021,
@@ -271,6 +328,63 @@ class LeaveCardExport
             $isMonthDisplayed = false; // Flag to track if the month name has been displayed
     
             // Process Vacation Leave (VL)
+            // $vlLeaves = $this->getMonthlyLeaveDetails($user->id, $month, 'Vacation Leave');
+            // if (!empty($vlLeaves['dates'])) {
+            //     // Display the month name only once
+            //     if (!$isMonthDisplayed) {
+            //         $sheet->setCellValue('A' . $currentRow, $monthName);
+            //         $isMonthDisplayed = true;
+            //     }
+            //     $sheet->setCellValue('B' . $currentRow, $this->formatLeaveDetails($vlLeaves, 'VL', $month));
+    
+            //     // Handle VL balance with per-row excess
+            //     if ($vlLeaves['total_days'] > 0) {
+            //         $sheet->setCellValue('D' . $currentRow, $vlLeaves['total_days']);
+            //         $newVLBalance = $currentVLBalance - $vlLeaves['total_days'];
+    
+            //         if ($newVLBalance < 0) {
+            //             $sheet->setCellValue('F' . $currentRow, round(abs($newVLBalance), 3));
+            //             $currentVLBalance = 0;
+            //         } else {
+            //             $currentVLBalance = $newVLBalance;
+            //         }
+    
+            //         $sheet->setCellValue('E' . $currentRow, round($currentVLBalance, 3));
+            //     }
+    
+            //     $currentRow++;
+            //     $hasEntries = true;
+            // }
+    
+            // // Process Sick Leave (SL)
+            // $slLeaves = $this->getMonthlyLeaveDetails($user->id, $month, 'Sick Leave');
+            // if (!empty($slLeaves['dates'])) {
+            //     // Display the month name only once
+            //     if (!$isMonthDisplayed) {
+            //         $sheet->setCellValue('A' . $currentRow, $monthName);
+            //         $isMonthDisplayed = true;
+            //     }
+            //     $sheet->setCellValue('B' . $currentRow, $this->formatLeaveDetails($slLeaves, 'SL', $month));
+    
+            //     // Handle SL balance with per-row excess
+            //     if ($slLeaves['total_days'] > 0) {
+            //         $sheet->setCellValue('H' . $currentRow, $slLeaves['total_days']);
+            //         $newSLBalance = $currentSLBalance - $slLeaves['total_days'];
+    
+            //         if ($newSLBalance < 0) {
+            //             $sheet->setCellValue('J' . $currentRow, round(abs($newSLBalance), 3));
+            //             $currentSLBalance = 0;
+            //         } else {
+            //             $currentSLBalance = $newSLBalance;
+            //         }
+    
+            //         $sheet->setCellValue('I' . $currentRow, round($currentSLBalance, 3));
+            //     }
+    
+            //     $currentRow++;
+            //     $hasEntries = true;
+            // }
+            // Process Vacation Leave (VL) - With Pay
             $vlLeaves = $this->getMonthlyLeaveDetails($user->id, $month, 'Vacation Leave');
             if (!empty($vlLeaves['dates'])) {
                 // Display the month name only once
@@ -279,27 +393,51 @@ class LeaveCardExport
                     $isMonthDisplayed = true;
                 }
                 $sheet->setCellValue('B' . $currentRow, $this->formatLeaveDetails($vlLeaves, 'VL', $month));
-    
+                $sheet->getStyle('B' . $currentRow)->getAlignment()->setWrapText(true); // Enable text wrapping
+                $sheet->getRowDimension($currentRow)->setRowHeight(-1); // Auto-adjust row height
+
                 // Handle VL balance with per-row excess
                 if ($vlLeaves['total_days'] > 0) {
                     $sheet->setCellValue('D' . $currentRow, $vlLeaves['total_days']);
                     $newVLBalance = $currentVLBalance - $vlLeaves['total_days'];
-    
+
                     if ($newVLBalance < 0) {
                         $sheet->setCellValue('F' . $currentRow, round(abs($newVLBalance), 3));
+                        $sheet->getStyle('F' . $currentRow)
+                            ->getFont()
+                            ->getColor()
+                            ->setARGB('FFFF0000'); // Red color
                         $currentVLBalance = 0;
                     } else {
                         $currentVLBalance = $newVLBalance;
                     }
-    
+
                     $sheet->setCellValue('E' . $currentRow, round($currentVLBalance, 3));
                 }
-    
+
                 $currentRow++;
                 $hasEntries = true;
             }
-    
-            // Process Sick Leave (SL)
+
+            // Process Vacation Leave (VL) - Without Pay
+            $vlWithoutPayLeaves = $this->getMonthlyWithoutPayLeaveDetails($user->id, $month, 'Vacation Leave');
+            if (!empty($vlWithoutPayLeaves['dates'])) {
+                // Display the month name only once
+                if (!$isMonthDisplayed) {
+                    $sheet->setCellValue('A' . $currentRow, $monthName);
+                    $isMonthDisplayed = true;
+                }
+                $sheet->setCellValue('B' . $currentRow, $this->formatLeaveDetails($vlWithoutPayLeaves, 'VL', $month));
+                $sheet->getStyle('B' . $currentRow)->getAlignment()->setWrapText(true); // Enable text wrapping
+                $sheet->getRowDimension($currentRow)->setRowHeight(-1); // Auto-adjust row height
+
+                // Display Without Pay leaves in column F
+                $sheet->setCellValue('F' . $currentRow, $vlWithoutPayLeaves['total_days']);
+                $currentRow++;
+                $hasEntries = true;
+            }
+
+            // Process Sick Leave (SL) - With Pay
             $slLeaves = $this->getMonthlyLeaveDetails($user->id, $month, 'Sick Leave');
             if (!empty($slLeaves['dates'])) {
                 // Display the month name only once
@@ -308,22 +446,46 @@ class LeaveCardExport
                     $isMonthDisplayed = true;
                 }
                 $sheet->setCellValue('B' . $currentRow, $this->formatLeaveDetails($slLeaves, 'SL', $month));
-    
+                $sheet->getStyle('B' . $currentRow)->getAlignment()->setWrapText(true); // Enable text wrapping
+                $sheet->getRowDimension($currentRow)->setRowHeight(-1); // Auto-adjust row height
+
                 // Handle SL balance with per-row excess
                 if ($slLeaves['total_days'] > 0) {
                     $sheet->setCellValue('H' . $currentRow, $slLeaves['total_days']);
                     $newSLBalance = $currentSLBalance - $slLeaves['total_days'];
-    
+
                     if ($newSLBalance < 0) {
                         $sheet->setCellValue('J' . $currentRow, round(abs($newSLBalance), 3));
+                        $sheet->getStyle('J' . $currentRow)
+                            ->getFont()
+                            ->getColor()
+                            ->setARGB('FFFF0000'); // Red color
                         $currentSLBalance = 0;
                     } else {
                         $currentSLBalance = $newSLBalance;
                     }
-    
+
                     $sheet->setCellValue('I' . $currentRow, round($currentSLBalance, 3));
                 }
-    
+
+                $currentRow++;
+                $hasEntries = true;
+            }
+
+            // Process Sick Leave (SL) - Without Pay
+            $slWithoutPayLeaves = $this->getMonthlyWithoutPayLeaveDetails($user->id, $month, 'Sick Leave');
+            if (!empty($slWithoutPayLeaves['dates'])) {
+                // Display the month name only once
+                if (!$isMonthDisplayed) {
+                    $sheet->setCellValue('A' . $currentRow, $monthName);
+                    $isMonthDisplayed = true;
+                }
+                $sheet->setCellValue('B' . $currentRow, $this->formatLeaveDetails($slWithoutPayLeaves, 'SL', $month));
+                $sheet->getStyle('B' . $currentRow)->getAlignment()->setWrapText(true); // Enable text wrapping
+                $sheet->getRowDimension($currentRow)->setRowHeight(-1); // Auto-adjust row height
+
+                // Display Without Pay leaves in column J
+                $sheet->setCellValue('J' . $currentRow, $slWithoutPayLeaves['total_days']);
                 $currentRow++;
                 $hasEntries = true;
             }
