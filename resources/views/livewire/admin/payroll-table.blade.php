@@ -822,13 +822,13 @@ x-cloak>
                                                     <div class="w-1/4"></div>
                                                 </div>
                                                 <div class="flex mt-6">
-                                                    <div class="w-1/4 font-bold text-sm">{{ $preparedBy->name }}</div>
+                                                    <div class="w-1/4 font-bold text-sm">{{ $preparedBy ? $preparedBy->name : 'XXXXXXXXXX' }}</div>
                                                     <div class="w-1/4"></div>
                                                     <div class="w-1/4 font-bold text-sm">{{ $cosPayslipSigns['notedBy'] ? $cosPayslipSigns['notedBy']->name : 'XXXXXXXXXX' }}</div>
                                                     <div class="w-1/4"></div>
                                                 </div>
                                                 <div class="flex">
-                                                    <div class="w-1/4">{{ $preparedBy->position }}</div>
+                                                    <div class="w-1/4">{{ $preparedBy ? $preparedBy->position : 'XXXXXXXXXX' }}</div>
                                                     <div class="w-1/4"></div>
                                                     <div class="w-1/4">{{ $cosPayslipSigns['notedBy'] ? $cosPayslipSigns['notedBy']->position : 'Position' }}</div>
                                                     <div class="w-1/4"></div>

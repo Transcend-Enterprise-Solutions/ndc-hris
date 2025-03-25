@@ -37,8 +37,8 @@ class Bir2316Table extends Component
 
     public function render()
     {
-        $this->showBIR2316(id: 73);
-        $this->showTaxSummary(73);
+        // $this->showBIR2316(id: 73);
+        // $this->showTaxSummary(73);
         $employees = User::where('users.user_role', 'emp')
             ->join('user_data', 'user_data.user_id', 'users.id')
             ->orderBy('user_data.surname', 'ASC')
