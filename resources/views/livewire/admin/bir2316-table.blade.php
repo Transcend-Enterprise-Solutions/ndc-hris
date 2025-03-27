@@ -148,7 +148,7 @@ x-cloak>
                 
                                                         <td
                                                             class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                            <button wire:click="showPDF({{ $user->user_id }})"
+                                                            <button wire:click="showBIR2316({{ $user->user_id }})"
                                                                 class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 focus:outline-none">
                                                                 <i class="fas fa-eye" title="Show Details"></i>
                                                             </button>
