@@ -853,6 +853,12 @@ class PayrollTable extends Component
     
     public function saveCosPayroll(){
         try {
+            $this->validate([
+                'userId' => 'required',
+                'sg' => 'required',
+                'step' => 'required',
+            ]);
+            
             $payroll = CosRegPayrolls::where('user_id', $this->userId)->first();
             $user = User::where('id', $this->userId)->first();
             $sg_step = implode('-', [$this->sg, $this->step]);

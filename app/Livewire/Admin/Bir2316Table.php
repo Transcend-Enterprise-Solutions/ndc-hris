@@ -129,20 +129,37 @@ class Bir2316Table extends Component
                 $pdf->Text(201.5, 37.5, $toDay[1] ?? 'X');
 
                 // Employee TIN ------------------------------------------- //
-                $pdf->Text(32, 47.5, $tin[0] ?? 'X');
-                $pdf->Text(36.5, 47.5, $tin[1] ?? 'X');
-                $pdf->Text(40.6, 47.5, $tin[2] ?? 'X');
-                $pdf->Text(49.5, 47.5, $tin[3] ?? 'X');
-                $pdf->Text(54, 47.5, $tin[4] ?? 'X');
-                $pdf->Text(58.3, 47.5, $tin[5] ?? 'X');
-                $pdf->Text(67, 47.5, $tin[6] ?? 'X');
-                $pdf->Text(71.5, 47.5, $tin[7] ?? 'X');
-                $pdf->Text(76, 47.5, $tin[8] ?? 'X');
-                $pdf->Text(84.5, 47.5, $tin[9] ?? '0');
-                $pdf->Text(89.5, 47.5, $tin[10] ?? '0');
-                $pdf->Text(95, 47.5, $tin[11] ?? '0');
-                $pdf->Text(100, 47.5, $tin[12] ?? '0');
-                $pdf->Text(105, 47.5, $tin[13] ?? '0');
+                if($employee->tin != 'N/A' && $employee->tin != 'n/a'){
+                    $pdf->Text(32, 47.5, $tin[0] ?? 'X');
+                    $pdf->Text(36.5, 47.5, $tin[1] ?? 'X');
+                    $pdf->Text(40.6, 47.5, $tin[2] ?? 'X');
+                    $pdf->Text(49.5, 47.5, $tin[3] ?? 'X');
+                    $pdf->Text(54, 47.5, $tin[4] ?? 'X');
+                    $pdf->Text(58.3, 47.5, $tin[5] ?? 'X');
+                    $pdf->Text(67, 47.5, $tin[6] ?? 'X');
+                    $pdf->Text(71.5, 47.5, $tin[7] ?? 'X');
+                    $pdf->Text(76, 47.5, $tin[8] ?? 'X');
+                    $pdf->Text(84.5, 47.5, $tin[9] ?? '0');
+                    $pdf->Text(89.5, 47.5, $tin[10] ?? '0');
+                    $pdf->Text(95, 47.5, $tin[11] ?? '0');
+                    $pdf->Text(100, 47.5, $tin[12] ?? '0');
+                    $pdf->Text(105, 47.5, $tin[13] ?? '0');
+                }else{
+                    $pdf->Text(32, 47.5, 'X');
+                    $pdf->Text(36.5, 47.5, 'X');
+                    $pdf->Text(40.6, 47.5, 'X');
+                    $pdf->Text(49.5, 47.5, 'X');
+                    $pdf->Text(54, 47.5, 'X');
+                    $pdf->Text(58.3, 47.5, 'X');
+                    $pdf->Text(67, 47.5, 'X');
+                    $pdf->Text(71.5, 47.5, 'X');
+                    $pdf->Text(76, 47.5, 'X');
+                    $pdf->Text(84.5, 47.5, '0');
+                    $pdf->Text(89.5, 47.5, '0');
+                    $pdf->Text(95, 47.5, '0');
+                    $pdf->Text(100, 47.5, '0');
+                    $pdf->Text(105, 47.5, '0');
+                }
                 
 
 

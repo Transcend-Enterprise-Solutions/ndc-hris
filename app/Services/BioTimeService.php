@@ -17,6 +17,18 @@ class BioTimeService
 
     public function __construct()
     {
+        $this->client = new Client([
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ],
+            'allow_redirects' => true,
+        ]);
+    }
+
+    // Function to authenticate and get JWT token
+    public function authenticate()
+    {
         // Fetch the credentials from the database
         $bioCon = BiometricConnection::first();
         if ($bioCon) {
@@ -33,18 +45,6 @@ class BioTimeService
             $this->authUrl = null;
         }
 
-        $this->client = new Client([
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-            ],
-            'allow_redirects' => true,
-        ]);
-    }
-
-    // Function to authenticate and get JWT token
-    public function authenticate()
-    {
         if ($this->token) {
             return;
         }

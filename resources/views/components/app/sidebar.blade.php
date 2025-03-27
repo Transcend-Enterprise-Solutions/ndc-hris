@@ -129,7 +129,7 @@
                                             </li>
                                             <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/admin-official-business')) {{ '!text-blue-500' }} @endif"
-                                                    href="{{ route('/employee-management/admin-official-business') }}">
+                                                    href="{{ route('/employee-management/admin-official-business') }}" wire:navigate>
                                                     <span class="text-sm font-medium transition-opacity duration-300"
                                                         :class="sidebarExpanded ? 'opacity-100 lg:inline' :
                                                             'opacity-0 lg:hidden'">
@@ -141,7 +141,7 @@
                                         @if (Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
                                             <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/admin-schedule')) {{ '!text-blue-500' }} @endif"
-                                                    href="{{ route('/employee-management/admin-schedule') }}"wire:navigate>
+                                                    href="{{ route('/employee-management/admin-schedule') }}" wire:navigate>
                                                     <span class="text-sm font-medium transition-opacity duration-300"
                                                         :class="sidebarExpanded ? 'opacity-100 lg:inline' :
                                                             'opacity-0 lg:hidden'">
@@ -203,7 +203,7 @@
                                             </li>
                                             <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/wes-management')) {{ '!text-blue-500' }} @endif"
-                                                    href="{{ route('/employee-management/wes-management') }}">
+                                                    href="{{ route('/employee-management/wes-management') }}" wire:navigate>
                                                     <span class="text-sm font-medium transition-opacity duration-300"
                                                         :class="sidebarExpanded ? 'opacity-100 lg:inline' :
                                                             'opacity-0 lg:hidden'">
@@ -213,7 +213,7 @@
                                             </li>
                                             <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/bir2316')) {{ '!text-blue-500' }} @endif"
-                                                    href="{{ route('/employee-management/bir2316') }}">
+                                                    href="{{ route('/employee-management/bir2316') }}" wire:navigate>
                                                     <span class="text-sm font-medium transition-opacity duration-300"
                                                         :class="sidebarExpanded ? 'opacity-100 lg:inline' :
                                                             'opacity-0 lg:hidden'">

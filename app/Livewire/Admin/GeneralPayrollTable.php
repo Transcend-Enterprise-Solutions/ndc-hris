@@ -1265,6 +1265,12 @@ class GeneralPayrollTable extends Component
 
     public function savePayroll(){
         try {
+            $this->validate([
+                'userId' => 'required',
+                'sg' => 'required',
+                'step' => 'required',
+            ]);
+
             $payroll = Payrolls::where('user_id', $this->userId)->first();
             $user = User::where('id', $this->userId)->first();
             $sg_step = implode('-', [$this->sg, $this->step]);
