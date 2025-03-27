@@ -22,10 +22,10 @@ class AdminLeaveCreditsTable extends Component
     public $vlClaimedCredits;
     public $slClaimableCredits;
     public $slClaimedCredits;
-    public $splClaimableCredits;
-    public $splClaimedCredits;
-    public $ctoClaimableCredits;
-    public $ctoClaimedCredits;
+    // public $splClaimableCredits;
+    // public $splClaimedCredits;
+    // public $ctoClaimableCredits;
+    // public $ctoClaimedCredits;
     public $selectedEmployeeId = null;
     public $processedEmployees = [];
     public $credits_inputted;
@@ -49,10 +49,10 @@ class AdminLeaveCreditsTable extends Component
         $this->vlClaimedCredits = null;
         $this->slClaimableCredits = null;
         $this->slClaimedCredits = null;
-        $this->splClaimableCredits = null;
-        $this->splClaimedCredits = null;
-        $this->ctoClaimableCredits = null;
-        $this->ctoClaimedCredits = null;
+        // $this->splClaimableCredits = null;
+        // $this->splClaimedCredits = null;
+        // $this->ctoClaimableCredits = null;
+        // $this->ctoClaimedCredits = null;
         $this->resetValidation();
     }
 
@@ -63,10 +63,10 @@ class AdminLeaveCreditsTable extends Component
         $this->vlClaimedCredits = null;
         $this->slClaimableCredits = null;
         $this->slClaimedCredits = null;
-        $this->splClaimableCredits = null;
-        $this->splClaimedCredits = null;
-        $this->ctoClaimableCredits = null;
-        $this->ctoClaimedCredits = null;
+        // $this->splClaimableCredits = null;
+        // $this->splClaimedCredits = null;
+        // $this->ctoClaimableCredits = null;
+        // $this->ctoClaimedCredits = null;
         $this->resetValidation();
     }
 
@@ -75,12 +75,17 @@ class AdminLeaveCreditsTable extends Component
         $this->validate([
             'vlClaimableCredits' => 'required|numeric',
             'slClaimableCredits' => 'required|numeric',
-            'splClaimableCredits' => 'required|numeric',
-            'ctoClaimableCredits' => 'required|numeric',
+            // 'splClaimableCredits' => 'required|numeric',
+            // 'ctoClaimableCredits' => 'required|numeric',
         ]);
 
         if (is_null($this->employee) ||
-            (is_null($this->vlClaimableCredits) && is_null($this->slClaimableCredits) && is_null($this->splClaimableCredits) && is_null($this->ctoClaimableCredits))
+            (is_null($this->vlClaimableCredits) && 
+            is_null($this->slClaimableCredits) 
+            // && 
+            // is_null($this->splClaimableCredits) && 
+            // is_null($this->ctoClaimableCredits)
+            )
         ) {
             session()->flash('error', 'Please fill out all required fields.');
             return;
@@ -93,12 +98,12 @@ class AdminLeaveCreditsTable extends Component
                 'vl_claimed_credits' => 0,
                 'sl_claimable_credits' => 0,
                 'sl_claimed_credits' => 0,
-                'spl_claimable_credits' => 0,
-                'spl_claimed_credits' => 0,
-                'cto_claimable_credits' => 0,
+                // 'spl_claimable_credits' => 0,
+                // 'spl_claimed_credits' => 0,
+                // 'cto_claimable_credits' => 0,
                 'vl_total_credits' => 0,
                 'sl_total_credits' => 0,
-                'spl_total_credits' => 0,
+                // 'spl_total_credits' => 0,
             ]
         );
 
@@ -127,22 +132,22 @@ class AdminLeaveCreditsTable extends Component
         $leaveCredits->sl_total_credits = $leaveCredits->sl_claimable_credits + $leaveCredits->sl_claimed_credits;
 
         // Update Special Privilege Leave credits
-        if (!is_null($this->splClaimableCredits)) {
-            $leaveCredits->spl_claimable_credits += $this->splClaimableCredits;
-        }
-        if (!is_null($this->splClaimedCredits)) {
-            $leaveCredits->spl_claimed_credits += $this->splClaimedCredits;
-        }
-        $leaveCredits->spl_total_credits = $leaveCredits->spl_claimable_credits + $leaveCredits->spl_claimed_credits;
+        // if (!is_null($this->splClaimableCredits)) {
+        //     $leaveCredits->spl_claimable_credits += $this->splClaimableCredits;
+        // }
+        // if (!is_null($this->splClaimedCredits)) {
+        //     $leaveCredits->spl_claimed_credits += $this->splClaimedCredits;
+        // }
+        // $leaveCredits->spl_total_credits = $leaveCredits->spl_claimable_credits + $leaveCredits->spl_claimed_credits;
 
         // Update Special Privilege Leave credits
-        if (!is_null($this->ctoClaimableCredits)) {
-            $leaveCredits->cto_claimable_credits += $this->ctoClaimableCredits;
-        }
-        if (!is_null($this->ctoClaimedCredits)) {
-            $leaveCredits->cto_claimed_credits += $this->ctoClaimedCredits;
-        }
-        $leaveCredits->cto_total_credits = $leaveCredits->cto_claimable_credits + $leaveCredits->cto_claimed_credits;
+        // if (!is_null($this->ctoClaimableCredits)) {
+        //     $leaveCredits->cto_claimable_credits += $this->ctoClaimableCredits;
+        // }
+        // if (!is_null($this->ctoClaimedCredits)) {
+        //     $leaveCredits->cto_claimed_credits += $this->ctoClaimedCredits;
+        // }
+        // $leaveCredits->cto_total_credits = $leaveCredits->cto_claimable_credits + $leaveCredits->cto_claimed_credits;
         
         $leaveCredits->credits_inputted = 1;
         $leaveCredits->save();
@@ -166,8 +171,8 @@ class AdminLeaveCreditsTable extends Component
             // Fetch the employee's leave credits
             $this->vlClaimableCredits = $this->editEmployeeCredits->vl_claimable_credits;
             $this->slClaimableCredits = $this->editEmployeeCredits->sl_claimable_credits;
-            $this->splClaimableCredits = $this->editEmployeeCredits->spl_claimable_credits;
-            $this->ctoClaimableCredits = $this->editEmployeeCredits->cto_claimable_credits;
+            // $this->splClaimableCredits = $this->editEmployeeCredits->spl_claimable_credits;
+            // $this->ctoClaimableCredits = $this->editEmployeeCredits->cto_claimable_credits;
 
             $this->credits_inputted = $this->editEmployeeCredits->credits_inputted;
 
@@ -189,8 +194,8 @@ class AdminLeaveCreditsTable extends Component
         $this->validate([
             'vlClaimableCredits' => 'required|numeric',
             'slClaimableCredits' => 'required|numeric',
-            'splClaimableCredits' => 'required|numeric',
-            'ctoClaimableCredits' => 'required|numeric',
+            // 'splClaimableCredits' => 'required|numeric',
+            // 'ctoClaimableCredits' => 'required|numeric',
         ]);
 
         if (is_null($this->editEmployeeCredits)) {
@@ -206,12 +211,12 @@ class AdminLeaveCreditsTable extends Component
         if (!is_null($this->slClaimableCredits)) {
             $leaveCredits->sl_claimable_credits = $this->slClaimableCredits;
         }
-        if (!is_null($this->splClaimableCredits)) {
-            $leaveCredits->spl_claimable_credits = $this->splClaimableCredits;
-        }
-        if (!is_null($this->ctoClaimableCredits)) {
-            $leaveCredits->cto_claimable_credits = $this->ctoClaimableCredits;
-        }
+        // if (!is_null($this->splClaimableCredits)) {
+        //     $leaveCredits->spl_claimable_credits = $this->splClaimableCredits;
+        // }
+        // if (!is_null($this->ctoClaimableCredits)) {
+        //     $leaveCredits->cto_claimable_credits = $this->ctoClaimableCredits;
+        // }
 
         $leaveCredits->save();
 

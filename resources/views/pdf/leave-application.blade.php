@@ -245,7 +245,7 @@
                         6.A TYPE OF LEAVE TO BE AVAILED OF
                     </p>
                     <div style="padding-left: 3px; display: grid;">
-                        @foreach (['Vacation Leave', 'Mandatory/Forced Leave', 'Sick Leave', 'Maternity Leave', 'Paternity Leave', 'Special Privilege Leave', 'Solo Parent Leave', 'Study Leave', '10-Day VAWC Leave', 'Rehabilitation Privilege', 'Special Leave Benefits for Women', 'Special Emergency (Calamity) Leave', 'Adoption Leave', 'CTO Leave'] as $leaveType)
+                        @foreach (['Vacation Leave', 'Mandatory/Forced Leave', 'Sick Leave', 'Maternity Leave', 'Paternity Leave', 'Special Privilege Leave', 'Solo Parent Leave', 'Study Leave', '10-Day VAWC Leave', 'Rehabilitation Privilege', 'Special Leave Benefits for Women', 'Special Emergency (Calamity) Leave', 'Adoption Leave'] as $leaveType)
                             <div style="display: block; width: 100%; margin-left: 5px;">
                                 <div style="display: inline-block; vertical-align: middle;">
                                     <input type="checkbox"

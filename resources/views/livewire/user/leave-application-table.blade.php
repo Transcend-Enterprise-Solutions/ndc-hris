@@ -346,7 +346,7 @@
                                         class="block text-sm font-medium text-gray-700 dark:text-slate-100">Date of
                                         Filing</label>
                                     <input type="date" id="date_of_filing" wire:model="date_of_filing" disabled
-                                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                        class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                                 </div>
 
                                 <div class="gap-2 lg:columns-2 sm:columns-1 mt-2">
@@ -449,10 +449,10 @@
                                 <input type="radio" value="Adoption Leave" wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">Adoption Leave</label>
                             </div>
-                            <div class="gap-2 columns-1">
+                            {{-- <div class="gap-2 columns-1">
                                 <input type="radio" value="CTO Leave" wire:model.live="type_of_leave">
                                 <label class="text-md text-gray-700 dark:text-slate-100">CTO Leave</label>
-                            </div>
+                            </div> --}}
 
                             <div class="gap-2 columns-1">
                                 <input type="radio" value="Others" wire:model.live="type_of_leave">
@@ -462,7 +462,7 @@
                                 @if ($type_of_leave === 'Others')
                                     <input type="text" id="other_leave" wire:model="other_leave"
                                         placeholder="Please specify"
-                                        class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
+                                        class="mt-2 p-2 block shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                 @endif
                             </div>
 
@@ -482,16 +482,16 @@
                                     class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto">
                                     <h6
                                         class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
-                                        Other purpose:
+                                        Other purpose (optional):
                                     </h6>
                                     <div class="gap-2 columns-1">
-                                        <input type="checkbox" class="ml-1" value="Monetization of Leave Credits"
+                                        <input type="radio" class="ml-1" value="Monetization of Leave Credits"
                                             wire:model="details_of_leave">
                                         <label class="text-md text-gray-700 dark:text-slate-100">Monetization of Leave
                                             Credits</label>
                                     </div>
                                     <div class="gap-2 columns-1 mt-4">
-                                        <input type="checkbox" class="ml-1" value="Terminal Leave"
+                                        <input type="radio" class="ml-1" value="Terminal Leave"
                                             wire:model="details_of_leave">
                                         <label class="text-md text-gray-700 dark:text-slate-100">Terminal Leave</label>
                                     </div>
@@ -513,7 +513,7 @@
                                             @if ($details_of_leave === 'Within the Philippines')
                                                 <input type="text" id="within_the_ph" wire:model="philippines"
                                                     placeholder="Please specify"
-                                                    class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
+                                                    class="mt-2 p-2 block shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                             @endif
                                         </div>
                                         <div class="gap-2 columns-1">
@@ -524,7 +524,7 @@
                                             @if ($details_of_leave === 'Abroad')
                                                 <input type="text" id="abroad_value" wire:model="abroad"
                                                     placeholder="Please specify"
-                                                    class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
+                                                    class="mt-2 p-2 block shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                             @endif
                                         </div>
                                     </div>
@@ -547,7 +547,7 @@
                                             @if ($details_of_leave === 'In Hospital')
                                                 <input type="text" id="in_hospital" wire:model="inHospital"
                                                     placeholder="Please specify"
-                                                    class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
+                                                    class="mt-2 p-2 block shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                             @endif
                                         </div>
                                         <div class="gap-2 columns-1">
@@ -558,7 +558,7 @@
                                             @if ($details_of_leave === 'Out Patient')
                                                 <input type="text" id="out_patient" wire:model="outPatient"
                                                     placeholder="Please specify"
-                                                    class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
+                                                    class="mt-2 p-2 block shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                             @endif
                                         </div>
                                     </div>
@@ -579,7 +579,7 @@
                                         @if ($details_of_leave === 'Women Special Illness')
                                             <input type="text" id="women_leave"
                                                 wire:model="specialIllnessForWomen" placeholder="Please specify"
-                                                class="mt-2 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
+                                                class="mt-2 p-2 block shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full">
                                         @endif
                                     </div>
                                 </div>
@@ -616,7 +616,7 @@
                                 <div class="gap-2 columns-1">
                                     <label class="text-sm text-gray-700 dark:text-slate-100">Days</label>
                                     <input type="number" id="number_of_days" wire:model="number_of_days" readonly
-                                        class="mt-1 p-2 block w-1/2 shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full bg-gray-100">
+                                        class="mt-1 p-2 block shadow-sm text-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 w-full bg-gray-100">
                                     @error('number_of_days')
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
@@ -632,7 +632,7 @@
                                         $type_of_leave === '10-Day VAWC Leave' ||
                                         $type_of_leave === 'Special Emergency (Calamity) Leave' ||
                                         $type_of_leave === 'Adoption Leave' ||
-                                        $type_of_leave === 'CTO Leave' ||
+                                        // $type_of_leave === 'CTO Leave' ||
                                         $type_of_leave === 'Others')
                                     <div class="mb-4 mt-2">
                                         <label class="block text-sm font-medium text-gray-700 dark:text-slate-100">List
@@ -692,7 +692,7 @@
                                                     class="block text-sm font-medium text-gray-700 dark:text-slate-100">Start
                                                     date</label>
                                                 <input type="date" id="start_date" wire:model.live="start_date"
-                                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                                             </div>
 
                                             <div class="gap-2 columns-1 mt-2">
@@ -700,7 +700,7 @@
                                                     class="block text-sm font-medium text-gray-700 dark:text-slate-100 mt-2">End
                                                     date</label>
                                                 <input type="date" id="end_date" wire:model.live="end_date"
-                                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:bg-gray-100">
+                                                    class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                                             </div>
                                         </div>
                                     </fieldset>
@@ -729,7 +729,7 @@
                         <div
                             class="flex flex-col items-center justify-center w-full col-span-1 md:col-span-2 mt-4 md:mt-0">
                             <label for="dropzone-file"
-                                class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
                                 <div class="flex flex-col items-center justify-center pt-5 pb-6">
                                     <i class="bi bi-cloud-arrow-up" style="font-size: 2rem;"></i>
                                     <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span
