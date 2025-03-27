@@ -3243,9 +3243,9 @@
                                     <div class="flex gap-4">
                                         <input type="date" id="to_{{ $index }}"
                                             wire:model="newEducation.{{ $index }}.to"
-                                            class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700 {{ $newEducation[$index]['toPresent'] ? 'hidden' : '' }}">
+                                            class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md  dark:text-gray-300 dark:bg-gray-700 {{ isset($newEducation[$index]['toPresent']) && $newEducation[$index]['toPresent'] ? 'hidden' : '' }}">
                                         <div
-                                            class="flex items-center justify-center gap-2 mr-4 {{ $newEducation[$index]['toPresent'] ? 'flex-row mt-4' : 'flex-col' }}">
+                                            class="flex items-center justify-center gap-2 mr-4 {{ isset($newEducation[$index]['toPresent']) && $newEducation[$index]['toPresent'] ? 'flex-row mt-4' : 'flex-col' }}">
                                             <label for="to_{{ $index }}"
                                                 class="block text-sm font-medium text-gray-700 dark:text-slate-400">Present</label>
                                             <input type="checkbox" id="to_{{ $index }}"

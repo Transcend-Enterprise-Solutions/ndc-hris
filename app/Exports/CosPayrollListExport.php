@@ -30,11 +30,7 @@ class CosPayrollListExport implements FromCollection, WithEvents
         };
 
         $table = '';
-        if($this->filters['type'] == 'sk'){
-            $table = 'cos_sk_payrolls';
-        }else{
-            $table = 'cos_reg_payrolls';
-        }
+        $table = 'cos_reg_payrolls';
 
         $query = User::query()
                 ->join($table, $table . '.user_id', 'users.id')
