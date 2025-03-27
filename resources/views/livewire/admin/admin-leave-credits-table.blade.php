@@ -36,11 +36,11 @@
                     <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                         <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                             <tr class="whitespace-nowrap">
-                                <th scope="col" class="px-4 py-2 text-left">Name</th>
+                                <th scope="col" class="px-4 py-2 text-center">Name</th>
                                 <th scope="col" class="px-4 py-2 text-center">VL Credits</th>
                                 <th scope="col" class="px-4 py-2 text-center">SL Credits</th>
-                                <th scope="col" class="px-4 py-2 text-center">SPL Credits</th>
-                                <th scope="col" class="px-4 py-2 text-center">CTO Credits</th>
+                                {{-- <th scope="col" class="px-4 py-2 text-center">SPL Credits</th>
+                                <th scope="col" class="px-4 py-2 text-center">CTO Credits</th> --}}
                                 <th scope="col" class="px-4 py-2 text-center">Updated as of</th>
                                 <th scope="col" class="px-4 py-2 text-center">Actions</th>
                             </tr>
@@ -48,15 +48,15 @@
                         <tbody>
                             @foreach ($leaveCredits as $leaveCredit)
                                 <tr class="whitespace-nowrap">
-                                    <td class="px-4 py-2 text-left">{{ $leaveCredit->user->name }}</td>
+                                    <td class="px-4 py-2 text-center">{{ $leaveCredit->user->name }}</td>
                                     <td class="px-4 py-2 text-center">
                                         {{ number_format($leaveCredit->vl_claimable_credits ?? 0, 3) }}</td>
                                     <td class="px-4 py-2 text-center">
                                         {{ number_format($leaveCredit->sl_claimable_credits ?? 0, 3) }}</td>
-                                    <td class="px-4 py-2 text-center">
+                                    {{-- <td class="px-4 py-2 text-center">
                                         {{ number_format($leaveCredit->spl_claimable_credits ?? 0, 3) }}</td>
                                     <td class="px-4 py-2 text-center">
-                                        {{ number_format($leaveCredit->cto_claimable_credits ?? 0, 3) }}</td>
+                                        {{ number_format($leaveCredit->cto_claimable_credits ?? 0, 3) }}</td> --}}
                                     <td class="px-4 py-2 text-center">
                                         {{ \Carbon\Carbon::today()->format('M d, Y') }}
                                     </td>
@@ -142,7 +142,7 @@
 
                 </div>
 
-                <div class="flex flex-col md:flex-row md:space-x-4">
+                {{-- <div class="flex flex-col md:flex-row md:space-x-4">
                     <!-- Claimable Credits -->
                     <div class="w-full">
                         <label for="splClaimableCredits"
@@ -155,9 +155,9 @@
                         @enderror
                     </div>
 
-                </div>
+                </div> --}}
 
-                <div class="flex flex-col md:flex-row md:space-x-4">
+                {{-- <div class="flex flex-col md:flex-row md:space-x-4">
                     <!-- Claimable Credits -->
                     <div class="w-full">
                         <label for="ctoClaimableCredits"
@@ -169,7 +169,7 @@
                             <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                         @enderror
                     </div>
-                </div>
+                </div> --}}
 
                 <!-- Action Buttons -->
                 <div class="mt-6 flex justify-end space-x-4">
@@ -238,7 +238,7 @@
                 {{-- @endif --}}
 
                 {{-- @if ($credits_inputted != 1) --}}
-                <div class="flex flex-col md:flex-row md:space-x-4">
+                {{-- <div class="flex flex-col md:flex-row md:space-x-4">
                     <!-- Claimable Credits -->
                     <div class="w-full">
                         <label for="splClaimableCredits"
@@ -250,13 +250,13 @@
                             <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                         @enderror
                     </div>
-                </div>
+                </div> --}}
                 {{-- @endif --}}
 
                 <!-- CTO Leave Part -->
                 {{-- <fieldset class="border border-gray-300 p-4 rounded-lg overflow-hidden w-full h-full mb-4 md:mb-0"> --}}
                 {{-- <legend class="text-gray-700 dark:text-slate-100">CTO Leave</legend> --}}
-                <div class="flex flex-col md:flex-row md:space-x-4">
+                {{-- <div class="flex flex-col md:flex-row md:space-x-4">
                     <!-- Claimable Credits -->
                     <div class="w-full">
                         <label for="ctoClaimableCredits"
@@ -267,10 +267,10 @@
                         @error('ctoClaimableCredits')
                             <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                         @enderror
-                    </div>
+                    </div> --}}
 
-                    <!-- Claimed Credits -->
-                    {{-- <div class="w-full md:w-1/2 mt-4 md:mt-0">
+                <!-- Claimed Credits -->
+                {{-- <div class="w-full md:w-1/2 mt-4 md:mt-0">
                             <label for="splClaimedCredits"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300">Claimed
                                 Credits</label>
@@ -281,7 +281,7 @@
                                 <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                             @enderror
                         </div> --}}
-                </div>
+                {{-- </div> --}}
                 {{-- </fieldset> --}}
 
                 <!-- Action Buttons -->

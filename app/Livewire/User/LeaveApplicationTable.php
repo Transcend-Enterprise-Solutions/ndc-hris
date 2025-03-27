@@ -180,7 +180,7 @@ class LeaveApplicationTable extends Component
             'Sick Leave',
             'Special Leave Benefits for Women',
             'Study Leave',
-            'Others'
+            // 'Others'
         ];
     
         // Add validation rule for details_of_leave if the selected type requires it
@@ -215,7 +215,7 @@ class LeaveApplicationTable extends Component
             '10-Day VAWC Leave',
             'Special Emergency (Calamity) Leave',
             'Adoption Leave',
-            'CTO Leave',
+            // 'CTO Leave',
         ];
     
         if (in_array($this->type_of_leave, $leaveTypesRequiringDates)) {
@@ -223,10 +223,10 @@ class LeaveApplicationTable extends Component
         }
     
         // Require file upload if CTO Leave is selected
-        if ($this->type_of_leave === 'CTO Leave') {
-            $rules['files'] = 'required|array|min:1';
-            $rules['files.*'] = 'file|mimes:jpeg,png,jpg,pdf|max:2048';
-        }
+        // if ($this->type_of_leave === 'CTO Leave') {
+        //     $rules['files'] = 'required|array|min:1';
+        //     $rules['files.*'] = 'file|mimes:jpeg,png,jpg,pdf|max:2048';
+        // }
     
         $this->validate($rules);
     
@@ -259,9 +259,10 @@ class LeaveApplicationTable extends Component
         // Handle "Others" type of leave
         if ($this->type_of_leave === 'Others') {
             $this->validate([
-                'other_leave' => 'required|string'
+                'other_leave' => 'required|string',
+                'details_of_leave' => 'required|string',
             ]);
-            $this->type_of_leave = $this->other_leave;
+            $this->type_of_leave = 'Others = ' . $this->other_leave;
         }
     
         $filePaths = [];
@@ -294,6 +295,14 @@ class LeaveApplicationTable extends Component
                 $leaveDetails .= ' = ' . $this->outPatient;
             } elseif ($this->details_of_leave === 'Women Special Illness') {
                 $leaveDetails .= ' = ' . $this->specialIllnessForWomen;
+            } elseif ($this->details_of_leave === 'Completion of Masters Degree') {
+                $leaveDetails;
+            } elseif ($this->details_of_leave === 'BAR/Board Examination Review') {
+                $leaveDetails;
+            } elseif ($this->details_of_leave === 'Monetization of Leave Credits') {
+                $leaveDetails;
+            } elseif ($this->details_of_leave === 'Terminal Leave') {
+                $leaveDetails;
             }
         }
     
