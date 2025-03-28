@@ -114,7 +114,6 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
             ->whereDate('start_date', '<=', $date)
             ->whereDate('end_date', '>=', $date)
             ->first();
-        $lateThreshold = Carbon::createFromTimeString($schedule->default_start_time);
 
         // Initialize default values
         $location = 'Onsite';
@@ -231,8 +230,8 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
         }
 
         // If morning in exists, calculate lateness based on default start time
-        if ($morningIn && $morningIn->gt($lateThreshold)) {
-            $late = $late->addMinutes($morningIn->diffInMinutes($lateThreshold));
+        if ($morningIn && $morningIn->gt($defaultStartTime)) {
+            $late = $late->addMinutes($morningIn->diffInMinutes($defaultStartTime));
         }
 
         // Add 4 hours to lateness if no afternoon out exists but there is a morning in
@@ -270,8 +269,12 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
             $remarks = 'Absent';
         } elseif (($morningIn && !$morningOut) || ($afternoonIn && !$afternoonOut)) {
             $remarks = 'Incomplete';
-        } elseif ($lateFormatted !== '00:00') {
+        } elseif ($lateFormatted !== '00:00' && $undertimeFormatted !== '00:00') {
             $remarks = 'Late/Undertime';
+        } elseif ($lateFormatted !== '00:00') {
+            $remarks = 'Late';
+        } elseif ($undertimeFormatted !== '00:00') {
+            $remarks = 'Undertime';
         } else {
             $remarks = 'Present';
         }
@@ -297,6 +300,7 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
             'total_hours_rendered' => $totalHoursRendered,
             'late' => $lateFormatted,
             'overtime' => $overtimeFormatted,
+            'ut' => $undertimeFormatted,
             'remarks' => $remarks,
         ];
     }

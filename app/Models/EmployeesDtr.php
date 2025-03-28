@@ -22,6 +22,7 @@ class EmployeesDtr extends Model
         'afternoon_out',
         'late',
         'overtime',
+        'ut',
         'total_hours_rendered',
         'remarks',
         'attachment'
@@ -29,6 +30,7 @@ class EmployeesDtr extends Model
     protected $casts = [
         'late' => 'string',  // Changed from float to string
         'overtime' => 'string',  // Changed from float to string
+        'ut' => 'string',
         'total_hours_rendered' => 'string',  // Changed from float to string
     ];
     protected $dates = [

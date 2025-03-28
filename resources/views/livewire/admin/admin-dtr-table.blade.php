@@ -165,7 +165,15 @@
                                 <button wire:click="sortBy('late')" class="{{ $sortField === 'late' ? 'text-blue-600' : 'text-gray-400' }}">
                                     <i class="bi bi-arrow-down-up"></i>
                                 </button>
-                                <span class="ml-2">Late/Undertime</span>
+                                <span class="ml-2">Late</span>
+                            </div>
+                        </th>
+                        <th class="px-4 py-2 text-center">
+                            <div class="flex items-center justify-center">
+                                <button wire:click="sortBy('ut')" class="{{ $sortField === 'ut' ? 'text-blue-600' : 'text-gray-400' }}">
+                                    <i class="bi bi-arrow-down-up"></i>
+                                </button>
+                                <span class="ml-2">Undertime</span>
                             </div>
                         </th>
                         <th class="px-4 py-2 text-center">Overtime</th>
@@ -189,6 +197,7 @@
                             <td class="px-4 py-2 text-center">{{ $dtr->afternoon_in ?? '--:--' }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->afternoon_out ?? '--:--' }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->late }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->ut }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->overtime }}</td>
                             <td class="px-4 py-2 text-center">{{ $dtr->total_hours_rendered }}</td>
                             <td class="px-4 py-2 text-center">
@@ -201,7 +210,12 @@
                                 @endif
                             </td>
                             <td class="px-4 py-2 text-center">
-                                @switch(strtolower($dtr->effective_remarks))
+                                @php
+                                    $effectiveRemarks = strtolower($dtr->effective_remarks);
+                                    $lateUndertime = $dtr->late || $dtr->ut;
+                                @endphp
+
+                                @switch($effectiveRemarks)
                                     @case('absent')
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-red-600 bg-white text-xs font-medium text-red-600 dark:border-red-600 dark:bg-slate-900 dark:text-red-600">
                                             <span class="px-2 py-1 bg-red-600/10 dark:bg-red-600/10">{{ $dtr->effective_remarks }}</span>
@@ -219,12 +233,9 @@
                                         @break
                                     @case('present')
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-green-600 bg-white text-xs font-medium text-green-600 dark:border-green-600 dark:bg-slate-900 dark:text-green-600">
-                                            <span class="px-2 py-1 bg-green-600/10 dark:bg-green-600/10">{{ $dtr->effective_remarks }}</span>
-                                        </span>
-                                        @break
-                                    @case('late/undertime')
-                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-amber-500 bg-white text-xs font-medium text-amber-500 dark:border-amber-500 dark:bg-slate-900 dark:text-amber-500">
-                                            <span class="px-2 py-1 bg-amber-500/10 dark:bg-amber-500/10">{{ $dtr->effective_remarks }}</span>
+                                            <span class="px-2 py-1 bg-green-600/10 dark:bg-green-600/10">
+                                                {{ $lateUndertime ? 'Late/Undertime' : 'Present' }}
+                                            </span>
                                         </span>
                                         @break
                                     @default
@@ -236,7 +247,7 @@
                         </tr>
                     @empty
                         <tr class="whitespace-nowrap">
-                            <td colspan="13" class="px-4 py-2 text-center">No records found</td>
+                            <td colspan="14" class="px-4 py-2 text-center">No records found</td>
                         </tr>
                     @endforelse
                 </tbody>

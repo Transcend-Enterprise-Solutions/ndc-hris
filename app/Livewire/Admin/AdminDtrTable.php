@@ -165,6 +165,17 @@ class AdminDtrTable extends Component
 
     public function exportToPdf()
     {
+        // Validate date range
+        if (!$this->startDate || !$this->endDate) {
+            $this->dispatch('swal', [
+                'title' => 'Error',
+                'text' => 'Please select a valid date range.',
+                'icon' => 'error'
+            ]);
+            return null;
+        }
+
+        // Prepare the base query
         $query = EmployeesDtr::query()
             ->join('users', 'employees_dtr.user_id', '=', 'users.id')
             ->join('user_data', 'users.id', '=', 'user_data.user_id')
@@ -195,40 +206,43 @@ class AdminDtrTable extends Component
             $query->where('users.office_division_id', $this->selectedDivision);
         }
 
+        // Order the results
         $dtrs = $query->orderBy('users.name')
                       ->orderBy('employees_dtr.date')
                       ->get()
                       ->groupBy('user_name');
 
-        // Transform the data to ensure effective_remarks is always available
-        // and calculate summary data for each employee
+        // Prepare DTRs with summary
         $dtrsWithSummary = [];
 
         foreach ($dtrs as $employeeName => $employeeDtrs) {
-            // Make sure the effective_remarks attribute is accessible in the view
+            // Ensure effective_remarks is accessible
             $processedDtrs = $employeeDtrs->map(function ($dtr) {
                 $dtr->effective_remarks = $dtr->effective_remarks ?? $dtr->remarks;
                 return $dtr;
             });
 
-            // Calculate summary statistics
+            // Calculate days worked
             $daysWorked = $processedDtrs->filter(function($dtr) {
-                return in_array($dtr->effective_remarks, ['Present', 'Late/Undertime']);
+                return in_array(strtolower($dtr->effective_remarks), ['present', 'late/undertime']);
             })->count();
 
+            // Calculate absences
             $absences = $processedDtrs->filter(function($dtr) {
-                return $dtr->effective_remarks === 'Absent';
+                return strtolower($dtr->effective_remarks) === 'absent';
             })->count();
 
+            // Calculate leave days
             $leaveDays = $processedDtrs->filter(function($dtr) {
                 return str_contains(strtolower($dtr->effective_remarks), 'leave');
             })->count();
 
+            // Calculate holidays
             $holidays = $processedDtrs->filter(function($dtr) {
                 return str_contains(strtolower($dtr->effective_remarks), 'holiday');
             })->count();
 
-            // Calculate total overtime hours
+            // Calculate overtime hours
             $totalOvertimeMinutes = 0;
             foreach ($processedDtrs as $dtr) {
                 if (!empty($dtr->overtime) && $dtr->overtime !== '00:00') {
@@ -238,14 +252,28 @@ class AdminDtrTable extends Component
             }
             $overtime = sprintf("%02d:%02d", floor($totalOvertimeMinutes / 60), $totalOvertimeMinutes % 60);
 
-            // Calculate total tardiness in hours (changed from minutes to hours format)
-            $totalTardinessMinutes = 0;
+            // Calculate late hours
+            $totalLateMinutes = 0;
             foreach ($processedDtrs as $dtr) {
                 if (!empty($dtr->late) && $dtr->late != '00:00') {
                     list($hours, $minutes) = explode(':', $dtr->late);
-                    $totalTardinessMinutes += ($hours * 60) + $minutes;
+                    $totalLateMinutes += ($hours * 60) + $minutes;
                 }
             }
+            $late = sprintf("%02d:%02d", floor($totalLateMinutes / 60), $totalLateMinutes % 60);
+
+            // Calculate undertime hours
+            $totalUndertimeMinutes = 0;
+            foreach ($processedDtrs as $dtr) {
+                if (!empty($dtr->ut) && $dtr->ut !== '00:00') {
+                    list($hours, $minutes) = explode(':', $dtr->ut);
+                    $totalUndertimeMinutes += ($hours * 60) + $minutes;
+                }
+            }
+            $undertime = sprintf("%02d:%02d", floor($totalUndertimeMinutes / 60), $totalUndertimeMinutes % 60);
+
+            // Calculate total tardiness (late + undertime)
+            $totalTardinessMinutes = $totalLateMinutes + $totalUndertimeMinutes;
             $tardiness = sprintf("%02d:%02d", floor($totalTardinessMinutes / 60), $totalTardinessMinutes % 60);
 
             // Store the DTRs and summary for this employee
@@ -255,6 +283,8 @@ class AdminDtrTable extends Component
                     'days_worked' => $daysWorked,
                     'absences' => $absences,
                     'overtime' => $overtime,
+                    'late' => $late,
+                    'undertime' => $undertime,
                     'tardiness' => $tardiness,
                     'leave_days' => $leaveDays,
                     'holidays' => $holidays
@@ -271,22 +301,40 @@ class AdminDtrTable extends Component
             }
         }
 
-        $pdf = Pdf::loadView('pdf.dtr', [
-            'dtrsWithSummary' => $dtrsWithSummary,
-            'startDate' => $this->startDate,
-            'endDate' => $this->endDate,
-            'eSignaturePath' => $this->eSignaturePath,
-            'divisionName' => $divisionName
-        ]);
+        // Get the authenticated user's e-signature path
+        $this->eSignaturePath = auth()->user()->esignature_path ?? null;
 
-        $this->dispatch('swal', [
-            'title' => 'DTR Exported Successfully!',
-            'icon' => 'success'
-        ]);
+        // Generate PDF
+        try {
+            $pdf = Pdf::loadView('pdf.dtr', [
+                'dtrsWithSummary' => $dtrsWithSummary,
+                'startDate' => $this->startDate,
+                'endDate' => $this->endDate,
+                'eSignaturePath' => $this->eSignaturePath,
+                'divisionName' => $divisionName
+            ])->setPaper('legal', 'portrait');
 
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->output();
-        }, 'dtr_report.pdf');
+            // Dispatch success notification
+            $this->dispatch('swal', [
+                'title' => 'DTR Exported Successfully!',
+                'icon' => 'success'
+            ]);
+
+            // Stream the PDF download
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->output();
+            }, 'dtr_report_'.now()->format('YmdHis').'.pdf');
+
+        } catch (\Exception $e) {
+            // Handle any PDF generation errors
+            $this->dispatch('swal', [
+                'title' => 'Error',
+                'text' => 'Failed to generate PDF: ' . $e->getMessage(),
+                'icon' => 'error'
+            ]);
+
+            return null;
+        }
     }
 
     public function downloadFile($dtrId)

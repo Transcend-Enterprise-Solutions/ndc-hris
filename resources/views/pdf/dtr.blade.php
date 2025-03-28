@@ -154,6 +154,7 @@
                     <th>PM Out</th>
                     <th>Hours</th>
                     <th>Late</th>
+                    <th>UT</th>
                     <th>OT</th>
                     <th>Arr.</th>
                     <th class="remark-column">Remarks</th>
@@ -176,6 +177,7 @@
                         <td>{{ $dtr->afternoon_out && $dtr->afternoon_out != '00:00' ? $dtr->afternoon_out : '' }}</td>
                         <td>{{ $hasTimeEntries && $dtr->total_hours_rendered && $dtr->total_hours_rendered != '00:00' ? $dtr->total_hours_rendered : '' }}</td>
                         <td>{{ $hasTimeEntries && $dtr->late ? $dtr->late : '' }}</td>
+                        <td>{{ $hasTimeEntries && $dtr->ut ? $dtr->ut : '' }}</td>
                         <td>{{ $dtr->overtime && $dtr->overtime != '00:00' ? $dtr->overtime : '' }}</td>
                         <td>{{ $dtr->location === 'Onsite' ? '' : ($dtr->location === 'Work From Home' ? 'WFH' : $dtr->location) }}</td>
                         <td class="remark-column" title="{{ $dtr->effective_remarks !== 'Present' ? $dtr->effective_remarks : '' }}">
@@ -193,8 +195,8 @@
                     <span class="summary-value">{{ $data['summary']['days_worked'] }}</span>
                 </div>
                 <div class="summary-item">
-                    <span class="summary-label">Tardiness (hrs):</span>
-                    <span class="summary-value">{{ $data['summary']['tardiness'] }}</span>
+                    <span class="summary-label">Late (hrs):</span>
+                    <span class="summary-value">{{ $data['summary']['late'] }}</span>
                 </div>
             </div>
             <div class="summary-column">
@@ -203,14 +205,24 @@
                     <span class="summary-value">{{ $data['summary']['absences'] }}</span>
                 </div>
                 <div class="summary-item">
-                    <span class="summary-label">Leave Days:</span>
-                    <span class="summary-value">{{ $data['summary']['leave_days'] }}</span>
+                    <span class="summary-label">Undertime (hrs):</span>
+                    <span class="summary-value">{{ $data['summary']['undertime'] }}</span>
                 </div>
             </div>
             <div class="summary-column">
                 <div class="summary-item">
                     <span class="summary-label">Overtime (hrs):</span>
                     <span class="summary-value">{{ $data['summary']['overtime'] }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Tardiness (hrs):</span>
+                    <span class="summary-value">{{ $data['summary']['tardiness'] }}</span>
+                </div>
+            </div>
+            <div class="summary-column">
+                <div class="summary-item">
+                    <span class="summary-label">Leave Days:</span>
+                    <span class="summary-value">{{ $data['summary']['leave_days'] }}</span>
                 </div>
                 <div class="summary-item">
                     <span class="summary-label">Holidays:</span>
