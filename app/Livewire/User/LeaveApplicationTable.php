@@ -101,6 +101,7 @@ class LeaveApplicationTable extends Component
     {
         $this->applyForLeave = false;
         $this->resetForm();
+        $this->resetValidation();
     }
 
     public function resetVariables()
@@ -123,6 +124,8 @@ class LeaveApplicationTable extends Component
         $this->new_date = null;
         $this->start_date = null;
         $this->end_date = null;
+        $this->other_leave = null;
+        $this->resetValidation();
     }
 
     public function loadUserData()
@@ -173,21 +176,18 @@ class LeaveApplicationTable extends Component
             'commutation' => 'required',
         ];
     
-        // Leave types that require details
         $leaveTypesRequiringDetails = [
             'Vacation Leave',
             'Special Privilege Leave',
             'Sick Leave',
             'Special Leave Benefits for Women',
             'Study Leave',
-            // 'Others'
+            'Others'
         ];
     
-        // Add validation rule for details_of_leave if the selected type requires it
         if (in_array($this->type_of_leave, $leaveTypesRequiringDetails)) {
             $rules['details_of_leave'] = 'required|string';
             
-            // Add specific validation for additional fields based on details selected
             if ($this->details_of_leave === 'Within the Philippines') {
                 $rules['philippines'] = 'required|string';
             }
@@ -222,20 +222,12 @@ class LeaveApplicationTable extends Component
             $rules['list_of_dates'] = 'required|array|min:1';
         }
     
-        // Require file upload if CTO Leave is selected
-        // if ($this->type_of_leave === 'CTO Leave') {
-        //     $rules['files'] = 'required|array|min:1';
-        //     $rules['files.*'] = 'file|mimes:jpeg,png,jpg,pdf|max:2048';
-        // }
-    
         $this->validate($rules);
     
-        // New validation for Vacation Leave and Mandatory/Forced Leave
         $now = now();
         $fiveDaysFromNow = $now->copy()->addDays(5)->startOfDay();
     
         if ($this->type_of_leave === 'Vacation Leave' || $this->type_of_leave === 'Mandatory/Forced Leave') {
-            // Validation for dates at least 5 days from now
             $invalidDates = collect($this->list_of_dates)->filter(function ($date) use ($fiveDaysFromNow) {
                 return Carbon::parse($date)->startOfDay()->lt($fiveDaysFromNow);
             });
@@ -245,7 +237,6 @@ class LeaveApplicationTable extends Component
                 return;
             }
     
-            // Validation for future dates
             $invalidPastDates = collect($this->list_of_dates)->filter(function ($date) use ($now) {
                 return Carbon::parse($date)->startOfDay()->lte($now->startOfDay());
             });
@@ -256,19 +247,15 @@ class LeaveApplicationTable extends Component
             }
         }
     
-        // Handle "Others" type of leave
         if ($this->type_of_leave === 'Others') {
             $this->validate([
                 'other_leave' => 'required|string',
-                'details_of_leave' => 'required|string',
             ]);
-            $this->type_of_leave = 'Others = ' . $this->other_leave;
         }
-    
+            
         $filePaths = [];
         $fileNames = [];
     
-        // Handle file uploads
         if ($this->files) {
             foreach ($this->files as $file) {
                 $originalFilename = $file->getClientOriginalName();
@@ -280,11 +267,9 @@ class LeaveApplicationTable extends Component
     
         $leaveDetails = null;
 
-        // Only process details if the leave type requires it
         if (in_array($this->type_of_leave, $leaveTypesRequiringDetails)) {
             $leaveDetails = $this->details_of_leave;
             
-            // Add additional details if needed based on the selection
             if ($this->details_of_leave === 'Within the Philippines') {
                 $leaveDetails .= ' = ' . $this->philippines;
             } elseif ($this->details_of_leave === 'Abroad') {
@@ -312,6 +297,10 @@ class LeaveApplicationTable extends Component
         } else if (!empty($this->list_of_dates)) {
             $datesString = implode(',', $this->list_of_dates);
         }
+
+        if ($this->type_of_leave === 'Others') {
+            $this->type_of_leave = 'Others = ' . $this->other_leave;
+        }
     
         $userId = Auth::id();
     
@@ -332,14 +321,12 @@ class LeaveApplicationTable extends Component
             'list_of_dates' => $datesString,
         ]);
     
-        // Insert into leave_approvals
         LeaveApprovals::create([
             'user_id' => $userId,
             'application_id' => $leaveApplication->id,
             'stage' => 0
         ]);
     
-        // Create specific leave details if needed
         if ($this->type_of_leave === 'Vacation Leave') {
             VacationLeaveDetails::create([
                 'application_id' => $leaveApplication->id,
@@ -497,11 +484,27 @@ class LeaveApplicationTable extends Component
         }
 
         $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
+        // $otherLeave = '';
+        // foreach ($selectedLeaveTypes as $leaveType) {
+        //     if (strpos($leaveType, 'Others: ') === 0) {
+        //         $otherLeave = str_replace('Others: ', '', $leaveType);
+        //         break;
+        //     }
+        // }
         $otherLeave = '';
-        foreach ($selectedLeaveTypes as $leaveType) {
-            if (strpos($leaveType, 'Others: ') === 0) {
-                $otherLeave = str_replace('Others: ', '', $leaveType);
-                break;
+        if ($leaveApplication->type_of_leave === 'Others') {
+            // If stored separately (recommended approach)
+            $otherLeave = $leaveApplication->other_leave_text ?? '';
+        } else {
+            // Fallback to parsing from type_of_leave
+            foreach ($selectedLeaveTypes as $leaveType) {
+                if (strpos($leaveType, 'Others = ') === 0) {  // Changed to match your storage format
+                    $otherLeave = str_replace('Others = ', '', $leaveType);
+                    break;
+                } elseif (strpos($leaveType, 'Others: ') === 0) {  // Backward compatibility
+                    $otherLeave = str_replace('Others: ', '', $leaveType);
+                    break;
+                }
             }
         }
 
@@ -747,11 +750,27 @@ class LeaveApplicationTable extends Component
 
         $selectedLeaveTypes = $leaveApplication->type_of_leave ? explode(',', $leaveApplication->type_of_leave) : [];
 
+        // $otherLeave = '';
+        // foreach ($selectedLeaveTypes as $leaveType) {
+        //     if (strpos($leaveType, 'Others: ') === 0) {
+        //         $otherLeave = str_replace('Others: ', '', $leaveType);
+        //         break;
+        //     }
+        // }
         $otherLeave = '';
-        foreach ($selectedLeaveTypes as $leaveType) {
-            if (strpos($leaveType, 'Others: ') === 0) {
-                $otherLeave = str_replace('Others: ', '', $leaveType);
-                break;
+        if ($leaveApplication->type_of_leave === 'Others') {
+            // If stored separately (recommended approach)
+            $otherLeave = $leaveApplication->other_leave_text ?? '';
+        } else {
+            // Fallback to parsing from type_of_leave
+            foreach ($selectedLeaveTypes as $leaveType) {
+                if (strpos($leaveType, 'Others = ') === 0) {  // Changed to match your storage format
+                    $otherLeave = str_replace('Others = ', '', $leaveType);
+                    break;
+                } elseif (strpos($leaveType, 'Others: ') === 0) {  // Backward compatibility
+                    $otherLeave = str_replace('Others: ', '', $leaveType);
+                    break;
+                }
             }
         }
 
