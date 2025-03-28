@@ -265,18 +265,24 @@ class AutoSaveDtrRecordsMonthly implements ShouldQueue
 
         // Remarks logic
         $remarks = '';
-        if (!$morningIn && !$afternoonIn) {
-            $remarks = 'Absent';
-        } elseif (($morningIn && !$morningOut) || ($afternoonIn && !$afternoonOut)) {
-            $remarks = 'Incomplete';
-        } elseif ($lateFormatted !== '00:00' && $undertimeFormatted !== '00:00') {
-            $remarks = 'Late/Undertime';
-        } elseif ($lateFormatted !== '00:00') {
-            $remarks = 'Late';
-        } elseif ($undertimeFormatted !== '00:00') {
-            $remarks = 'Undertime';
+
+        // Add check for Saturday and Sunday first
+        if ($dayOfWeek === 'Saturday' || $dayOfWeek === 'Sunday') {
+            $remarks = $dayOfWeek;
         } else {
-            $remarks = 'Present';
+            if (!$morningIn && !$afternoonIn) {
+                $remarks = 'Absent';
+            } elseif (($morningIn && !$morningOut) || ($afternoonIn && !$afternoonOut)) {
+                $remarks = 'Incomplete';
+            } elseif ($lateFormatted !== '00:00' && $undertimeFormatted !== '00:00') {
+                $remarks = 'Late/Undertime';
+            } elseif ($lateFormatted !== '00:00') {
+                $remarks = 'Late';
+            } elseif ($undertimeFormatted !== '00:00') {
+                $remarks = 'Undertime';
+            } else {
+                $remarks = 'Present';
+            }
         }
 
         // Check for holidays or leaves
