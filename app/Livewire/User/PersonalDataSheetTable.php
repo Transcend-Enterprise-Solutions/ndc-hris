@@ -21,6 +21,7 @@ use App\Models\PdsPhoto;
 use App\Models\PhilippineBarangays;
 use App\Models\PhilippineCities;
 use App\Models\PhilippineProvinces;
+use App\Models\ServiceRecords;
 use App\Models\Skills;
 use App\Models\VoluntaryWorks;
 use App\Models\WorkExperience;
@@ -1375,6 +1376,25 @@ class PersonalDataSheetTable extends Component
                                 'remarks' => $exp['gov_service'] ? $exp['remarks'] : null,
                             ]);
                         }
+
+                        $existingRecord = ServiceRecords::where('user_id', $user->id)
+                            ->where('from', $exp['start_date'])
+                            ->first();
+                
+                        if ($existingRecord) {
+                            $existingRecord->update([
+                                'from' => $exp['start_date'] ?: null,
+                                'to' => $exp['end_date'] ?: null,
+                                'toPresent' => $exp['toPresent'] ?: null,
+                                'designation' => $exp['position'] ?: '--do--',
+                                'status' => $exp['status_of_appointment'] ?: '--do--',
+                                'salary_annum' => $exp['monthly_salary'] * 12,
+                                'station_place_of_assignment' => $exp['department'] ?: '--do--',
+                                'branch' => $exp['branch'] ?: '--do--',
+                                'lv_abs_wo_pay' => $exp['leave_absence_wo_pay'] ?: '--do--',
+                                'remarks' => $exp['remarks'] ?: '--do--',
+                            ]);
+                        }
                     }
                     $this->editWorkExp = null;
                     $this->addWorkExp = null;
@@ -1421,6 +1441,22 @@ class PersonalDataSheetTable extends Component
                             // 'separation_cause' => $exp['separation_cause'],
                             'remarks' => $exp['gov_service'] && $exp['remarks'] ? $exp['remarks'] : null,
                         ]);
+
+                        if($exp['gov_service']){
+                            ServiceRecords::create([
+                                'user_id' => $user->id,
+                                'from' => $exp['start_date'] ?: null,
+                                'to' => $exp['end_date'] ?: null,
+                                'toPresent' => $exp['toPresent'] ?: null,
+                                'designation' => $exp['position'] ?: '--do--',
+                                'status' => $exp['status_of_appointment'] ?: '--do--',
+                                'salary_annum' => $exp['monthly_salary'] * 12,
+                                'station_place_of_assignment' => $exp['department'] ?: '--do--',
+                                'branch' => $exp['branch'] ?: '--do--',
+                                'lv_abs_wo_pay' => $exp['leave_absence_wo_pay'] ?: '--do--',
+                                'remarks' => $exp['remarks'] ?: '--do--',
+                            ]);
+                        }
                     }
                     $this->editWorkExp = null;
                     $this->addWorkExp = null;

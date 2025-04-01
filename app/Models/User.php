@@ -145,6 +145,11 @@ class User extends Authenticatable
         return $this->hasMany(WorkExperienceSheetTable::class, 'user_id');
     }
 
+    public function serviceRecords()
+    {
+        return $this->hasMany(ServiceRecords::class, 'user_id');
+    }
+
     public function employeeDocuments()
     {
         return $this->hasMany(EmployeeDocument::class);
@@ -337,6 +342,14 @@ class User extends Authenticatable
                 ->orWhere('official_businesses.company', 'like', $term)
                 ->orWhere('official_businesses.address', 'like', $term)
                 ->orWhere('official_businesses.purpose', 'like', $term);
+        });
+    }
+
+    public function scopeSearch6($query, $term){
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('users.emp_code', 'like', $term)
+                ->orWhere('users.name', 'like', $term);
         });
     }
 

@@ -16,7 +16,7 @@ class DashboardTotalEmployee extends Component
     {
         $currentYear = date('Y');
 
-        $this->totalEmployees = User::whereYear('created_at', $currentYear)->where('user_role', '=','emp')->count();
+        $this->totalEmployees = User::where('user_role', '=','emp')->count();
 
         $createdByMonth = User::whereYear('created_at', $currentYear)
             ->where('user_role', '=','emp')

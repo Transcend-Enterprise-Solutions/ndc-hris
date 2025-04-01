@@ -26,8 +26,7 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/alpine.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-
-    <link rel="stylesheet" href="{{ asset('build/assets/app-CvHr89Rv.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/assets/app-Dmq8oRs2.css') }}">
 
     <style>
         [x-cloak] {
