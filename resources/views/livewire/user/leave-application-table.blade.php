@@ -306,13 +306,17 @@
                                 class="absolute right-0 w-64 bg-gray-700 text-white text-sm p-3 rounded border border-slate-50 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300 z-50">
                                 <strong>📌 Instructions:</strong><br><br>
                                 <strong>Basic Information:</strong> This section is automatically filled with your
-                                details.<br><br>
+                                details.<br>
+                                <strong>- If you don't have a salary yet, then advice or request to your HR or Admin to
+                                    give you an appointment.</strong><br><br>
+
                                 <strong>Details of Application:</strong><br>
                                 - In <strong>Part A</strong>, select one leave type.<br>
-                                - In <strong>Part B</strong>, choose one option that applies to your leave.<br>
+                                - In <strong>Part B</strong>, choose one option that applies to your leave. (If
+                                applicable)<br>
                                 - In <strong>Part C</strong>, select your leave dates. If you're sure, click "Add" to
                                 confirm, or close it to make changes. The total days will be calculated
-                                automatically.<br>
+                                automatically. And if it's range then simply select the range of your leave.<br>
                                 - In <strong>Part D</strong>, you must select one required option.<br><br>
                                 <strong>Upload File:</strong> This step is optional. You may attach supporting documents
                                 if needed.
@@ -358,7 +362,7 @@
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
 
-                                    <label for="salary"
+                                    {{-- <label for="salary"
                                         class="block text-sm font-medium text-gray-700 dark:text-slate-100">Salary</label>
                                     <div class="mt-1 relative flex items-center">
                                         <span style="font-family: 'Arial', sans-serif; font-weight: bold;"
@@ -368,7 +372,25 @@
                                     </div>
                                     @error('salary')
                                         <span class="text-red-500 text-sm">This field is required!</span>
-                                    @enderror
+                                    @enderror --}}
+                                    <div class="mb-4">
+                                        <!-- Label and error message row -->
+                                        <div class="flex items-center justify-start">
+                                            <label for="salary"
+                                                class="block text-sm font-medium text-gray-700 dark:text-slate-100">Salary</label>
+                                            @error('salary')
+                                                <span class="text-red-500 text-xs ml-2">( {{ $message }} )</span>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Input field -->
+                                        <div class="mt-1 relative flex items-center">
+                                            <span style="font-family: 'Arial', sans-serif; font-weight: bold;"
+                                                class="absolute left-3">&#8369;</span>
+                                            <input type="number" id="salary" wire:model="salary" disabled
+                                                class="p-2 pl-8 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                                        </div>
+                                    </div>
                                 </div>
 
                             </div>
@@ -482,7 +504,7 @@
                                     class="w-full p-3 bg-slate-100 rounded-lg shadow-sm dark:bg-gray-700 max-h-60 overflow-y-auto">
                                     <h6
                                         class="mb-3 text-sm font-medium text-gray-900 dark:text-white italic bg-red-400 pl-1">
-                                        Other purpose (optional):
+                                        Other purpose:
                                     </h6>
                                     <div class="gap-2 columns-1">
                                         <input type="radio" class="ml-1" value="Monetization of Leave Credits"

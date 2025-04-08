@@ -264,7 +264,14 @@
                         <div style="display: block; width: 100%; margin-left: 5px;">
                             <div style="display: inline-block; vertical-align: middle; margin-left: 8px;">
                                 <u
-                                    style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">{{ $otherLeave ?: str_repeat('_', 20) }}</u>
+                                    style="color: black; font-family: Arial, sans-serif; font-style: normal; font-weight: normal; font-size: 8pt;">
+                                    {{-- {{ $otherLeave ?: str_repeat('_', 20) }} --}}
+                                    @if (!empty($otherLeave))
+                                        {{ $otherLeave }}
+                                    @else
+                                        {{ str_repeat('_', 20) }}
+                                    @endif
+                                </u>
                             </div>
                         </div>
                     </div>

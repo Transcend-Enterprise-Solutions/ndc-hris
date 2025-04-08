@@ -95,19 +95,20 @@ class MyVirtualIdTable extends Component
     {
         $user = Auth::user();
         $userData = $user->userData;
-
+    
         // Get position directly
         $position = DB::table('positions')
             ->where('id', $user->position_id)
             ->value('position') ?? 'No position assigned';
-
+    
         $formattedDateOfBirth = $userData->date_of_birth 
             ? \Carbon\Carbon::parse($userData->date_of_birth)->format('F j, Y') 
             : 'N/A';
-
-        $this->eSignaturePath = explode('/',$this->eSignaturePath);
-        $this->eSignaturePath = $this->eSignaturePath[1] . '/' . $this->eSignaturePath[2];
-
+    
+        // Safely handle eSignaturePath
+        $eSignatureParts = explode('/', $this->eSignaturePath);
+        $this->eSignaturePath = (count($eSignatureParts) >= 3) ? $eSignatureParts[1] . '/' . $eSignatureParts[2] : null;
+    
         return view('livewire.user.my-virtual-id-table', [
             'name' => $user->name,
             'emp_code' => $this->empCodeFormatted,
