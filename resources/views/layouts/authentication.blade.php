@@ -20,7 +20,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="{{ asset('build/assets/app-Dmq8oRs2.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/assets/app-CGiy6LcY.css') }}">
 
     @livewireStyles
     <style>
