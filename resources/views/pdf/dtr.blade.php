@@ -213,43 +213,40 @@
             </tbody>
         </table>
 
-        <div class="total-summary">TOTAL SUMMARY</div>
+        <div class="total-summary" style="text-align: left; margin-left: 3px; margin-top: 8px; margin-bottom: 3px;">TOTAL SUMMARY</div>
 
-        <div class="summary-grid">
-            <div class="summary-item">
-                <span class="summary-label">Days Worked (DW):</span>
-                <span>{{ $data['summary']['days_worked'] }}</span>
-            </div>
-            <div class="summary-item">
-                <span class="summary-label">Late:</span>
-                <span>{{ $data['summary']['late'] ?? '0' }}</span>
-            </div>
-            <div class="summary-item">
-                <span class="summary-label">Leave:</span>
-                <span>{{ $data['summary']['leave_days'] }}</span>
-            </div>
-            <div class="summary-item">
-                <span class="summary-label">Overtime:</span>
-                <span>{{ $data['summary']['overtime'] }}</span>
-            </div>
-
-            <div class="summary-item">
-                <span class="summary-label">Absences:</span>
-                <span>{{ $data['summary']['absences'] }}</span>
-            </div>
-            <div class="summary-item">
-                <span class="summary-label">Undertime:</span>
-                <span>{{ $data['summary']['undertime'] }}</span>
-            </div>
-            <div class="summary-item">
-                <span class="summary-label">Holiday:</span>
-                <span>{{ $data['summary']['holidays'] }}</span>
-            </div>
-            <div class="summary-item">
-                <span class="summary-label">Total Hrs Worked:</span>
-                <span>{{ isset($data['summary']['total_hours']) ? $data['summary']['total_hours'] : '0' }}</span>
-            </div>
-        </div>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 9px;">
+            <tr>
+                <!-- First Row -->
+                <td style="border: none; padding: 1px 3px; text-align: left;">
+                    <strong>Days Worked : </strong> 0
+                </td>
+                <td style="border: none; padding: 1px 3px; text-align: left;">
+                    <strong>Late : </strong> 00:00
+                </td>
+                <td style="border: none; padding: 1px 3px; text-align: left;">
+                    <strong>Leave : </strong> 0
+                </td>
+                <td style="border: none; padding: 1px 3px; text-align: left;">
+                    <strong>OT : </strong> 00:00
+                </td>
+            </tr>
+            <tr>
+                <!-- Second Row -->
+                <td style="border: none; padding: 1px 3px; text-align: left;">
+                    <strong>Absences : </strong> 20
+                </td>
+                <td style="border: none; padding: 1px 3px; text-align: left;">
+                    <strong>UT : </strong> 01:22
+                </td>
+                <td style="border: none; padding: 1px 3px; text-align: left;">
+                    <strong>Holiday : </strong> 0
+                </td>
+                <td style="border: none; padding: 1px 3px; text-align: left;">
+                    <strong>Total Hrs Worked : </strong> 0
+                </td>
+            </tr>
+        </table>
 
         <div class="certification">
             I CERTIFY on my honor that the above is a true and correct report of the hours of work performed, record of which was made daily at the time of arrival and departure from office.
