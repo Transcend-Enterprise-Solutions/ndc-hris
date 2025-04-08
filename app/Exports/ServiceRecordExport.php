@@ -2,6 +2,9 @@
 
 namespace App\Exports;
 
+use App\Models\Positions;
+use App\Models\Signatories;
+use App\Models\User;
 use Exception;
 use Maatwebsite\Excel\Concerns\Exportable;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -10,6 +13,7 @@ use Illuminate\Support\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Symfony\Component\Console\Output\NullOutput;
 
 class ServiceRecordExport
 {
@@ -81,14 +85,14 @@ class ServiceRecordExport
         $totalRecords = count($record);
 
         foreach ($record as $index => $data) {
-            $sheet->setCellValue("A{$this->currentRow}", $formatDate($data->start_date));
-            $sheet->setCellValue("C{$this->currentRow}", $data->end_date ? $formatDate($data->end_date) : $data->toPresent);
-            $sheet->setCellValue("E{$this->currentRow}", $data->position ?: '-do-');
-            $sheet->setCellValue("F{$this->currentRow}", $data->status_of_appointment ?: '-do-');
-            $sheet->setCellValue("H{$this->currentRow}", $data->monthly_salary ? $formatCurrency($data->monthly_salary): '-do-');
-            $sheet->setCellValue("J{$this->currentRow}", $data->department ?: '-do-');
+            $sheet->setCellValue("A{$this->currentRow}", $formatDate($data->from));
+            $sheet->setCellValue("C{$this->currentRow}", $data->to ? $formatDate($data->to) : $data->toPresent);
+            $sheet->setCellValue("E{$this->currentRow}", $data->designation ?: '-do-');
+            $sheet->setCellValue("F{$this->currentRow}", $data->status ?: '-do-');
+            $sheet->setCellValue("H{$this->currentRow}", $data->salary_annum ? $formatCurrency($data->salary_annum): '-do-');
+            $sheet->setCellValue("J{$this->currentRow}", $data->station_place_of_assignment ?: '-do-');
             $sheet->setCellValue("L{$this->currentRow}", $data->branch ?: '-do-');
-            $sheet->setCellValue("M{$this->currentRow}", $data->leave_absence_wo_pay ?: '-do-');
+            $sheet->setCellValue("M{$this->currentRow}", $data->lv_abs_wo_pay ?: '-do-');
             $sheet->setCellValue("O{$this->currentRow}", $data->remarks ?: '-do-');
 
             $sheet->getStyle("B{$this->currentRow}:L{$this->currentRow}")->getAlignment()->setWrapText(true);
@@ -199,21 +203,33 @@ class ServiceRecordExport
             $sheet->getStyle("A{$this->currentRow}:Q{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $sheet->getStyle("A{$this->currentRow}")->getFont()->setBold(true);
 
+            $signatory1 = Signatories::where('signatory_type', 'service_record_1')->first();
+            $signatory2 = Signatories::where('signatory_type', 'service_record_2')->first();
+            $emp1 = $signatory1  ? User::findOrFail($signatory1->user_id) : null;
+            $emp2 = $signatory2  ? User::findOrFail($signatory2->user_id) : null;
+            $employee1 = $emp1 ? strtoupper($emp1->name) : 'XXXXXXXXXX';
+            $employee2 = $emp2 ? strtoupper($emp2->name) : 'XXXXXXXXXX';
+            $pos1 = $emp1 ? Positions::findOrFail($emp1->position_id) : null;
+            $pos2 = $emp1 ? Positions::findOrFail($emp2->position_id) : null;
+            $position1 = $pos1 ? ucwords(strtolower($pos1->position)) : 'XXXXXXXXXX';
+            $position2 = $pos2 ? ucwords(strtolower($pos2->position)) : 'XXXXXXXXXX';            
+
+
             $this->currentRow += 2;
             $sheet->unmergeCells("O{$this->currentRow}:Q{$this->currentRow}");
             $sheet->mergeCells("A{$this->currentRow}:K{$this->currentRow}");
-            $sheet->setCellValue("A{$this->currentRow}", "XXXXXXXXXX");
+            $sheet->setCellValue("A{$this->currentRow}", $employee1);
             $sheet->mergeCells("L{$this->currentRow}:R{$this->currentRow}");
-            $sheet->setCellValue("L{$this->currentRow}", "XXXXXXXXXX");
+            $sheet->setCellValue("L{$this->currentRow}", $employee2);
             $sheet->getStyle("A{$this->currentRow}:L{$this->currentRow}")->getFont()->setBold(true);
             $sheet->getStyle("A{$this->currentRow}:L{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
             
             $this->currentRow ++;
             $sheet->unmergeCells("O{$this->currentRow}:Q{$this->currentRow}");
             $sheet->mergeCells("A{$this->currentRow}:K{$this->currentRow}");
-            $sheet->setCellValue("A{$this->currentRow}", "Human Resource Management Officer V");
+            $sheet->setCellValue("A{$this->currentRow}", $position1);
             $sheet->mergeCells("L{$this->currentRow}:R{$this->currentRow}");
-            $sheet->setCellValue("L{$this->currentRow}", "Assistant General Manager");
+            $sheet->setCellValue("L{$this->currentRow}", $position2);
             $sheet->getStyle("A{$this->currentRow}:L{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
             
             $this->currentRow ++;

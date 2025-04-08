@@ -14,7 +14,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap" rel="stylesheet" />
 
         <!-- Styles -->
-        <link rel="stylesheet" href="{{ asset('build/assets/app-CvHr89Rv.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/assets/app-Dmq8oRs2.css') }}">
 
          @livewireStyles
 

@@ -3654,7 +3654,7 @@
 
                                 @if($workExperiences[$index]['gov_service'])
                                     <fieldset class="border border-gray-300 rounded-md pt-2 pl-2 pr-2 pb-4 col-span-2 grid grid-cols-2 gap-4">
-                                        <legend class="px-2">For Service Record</legend>
+                                        <legend class="px-2">For Service Record (Optional)</legend>
                                         <div class="col-span-2 sm:col-span-1">
                                             <label for="pera_{{ $index }}"
                                                 class="block text-sm font-medium text-gray-700 dark:text-slate-400">Longevity Pay/Allowance</label>
@@ -3829,7 +3829,7 @@
 
                                 @if($newWorkExperiences[$index]['gov_service'])
                                     <fieldset class="border border-gray-300 rounded-md pt-2 pl-2 pr-2 pb-4 col-span-2 grid grid-cols-2 gap-4">
-                                        <legend class="px-2">For Service Record</legend>
+                                        <legend class="px-2">For Service Record (Optional)</legend>
                                         <div class="col-span-2 sm:col-span-1">
                                             <label for="pera_{{ $index }}"
                                                 class="block text-sm font-medium text-gray-700 dark:text-slate-400">Longevity Pay/Allowance</label>

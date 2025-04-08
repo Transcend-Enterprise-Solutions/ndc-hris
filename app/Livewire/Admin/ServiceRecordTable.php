@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Exports\ServiceRecordExport;
+use App\Models\ServiceRecords;
 use App\Models\Signatories;
 use App\Models\User;
 use App\Models\WorkExperience;
@@ -13,6 +14,8 @@ use Livewire\WithPagination;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\ESignature;
 use App\Models\UserData;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class ServiceRecordTable extends Component
@@ -28,48 +31,59 @@ class ServiceRecordTable extends Component
     public $pdfContent;
     public $editSig;
     public $userId;
+    public $userId2;
     public $name;
+    public $name2;
+    public $tableData = [];
+    public $headers = [
+        'From', 'To', 
+        'Designation', 
+        'Status', 'Salary/Annum', 
+        'Station/Place of Assignment', 
+        'Branch', 'L/V Abs W/O Pay', 
+        'Remarks'];
     public $pageSize = 10; 
     public $pageSizes = [10, 20, 30, 50, 100]; 
 
+    public function mount()
+    {
+        $this->tableData = [
+            array_fill(0, 9, '')
+        ];
+    }
+
     public function render()
     {
-        $users = User::join('positions', 'positions.id', 'users.position_id')
-            ->join('user_data', 'user_data.user_id', 'users.id')
-            ->where('positions.position', '!=', 'Super Admin')
-            ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-            ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
+        $users = User::join('user_data', 'user_data.user_id', 'users.id')
             ->where('users.user_role', 'emp')
             ->where('users.active_status', '!=', 4)
-            ->select('users.*', 'user_data.appointment')
-            ->withCount(['workExperience as total_months_gov_service' => function ($query) {
-                $query->where('gov_service', 1)
-                    ->select(DB::raw('SUM(
-                        CASE
-                            WHEN toPresent = "Present" THEN TIMESTAMPDIFF(MONTH, start_date, CURDATE())
-                            WHEN end_date IS NOT NULL THEN TIMESTAMPDIFF(MONTH, start_date, end_date)
-                            ELSE 0
-                        END
-                    )'));
+            ->select('users.*', 'user_data.appointment', 'user_data.surname', 'user_data.first_name', 'user_data.middle_name', 'user_data.name_extension')
+            ->withCount(['serviceRecords as total_months_gov_service' => function ($query) {
+                $query->select(DB::raw('SUM(
+                    CASE
+                        WHEN `to` = "Present" THEN TIMESTAMPDIFF(MONTH, `from`, CURDATE())
+                        WHEN `to` IS NOT NULL THEN TIMESTAMPDIFF(MONTH, `from`, `to`)
+                        ELSE 0
+                    END
+                )'));
             }])
             ->when($this->search, function ($query) {
-                return $query->search(trim($this->search));
+                return $query->search6(trim($this->search));
             })
+            ->orderBy('user_data.surname')
             ->paginate($this->pageSize);
-        
-        // $this->showPDF(userId: 79);
-
+    
         foreach ($users as $user) {
             $totalMonths = $user->total_months_gov_service;
             $years = floor($totalMonths / 12);
             $months = $totalMonths % 12;
             $user->formatted_gov_service = $this->formatService($years, $months);
         }
-
+    
         $employees = User::where('user_role', 'emp')
                     ->select('name', 'id')
                     ->get();
-
+    
         return view('livewire.admin.service-record-table', [
             'users' => $users,
             'employees' => $employees,
@@ -88,35 +102,27 @@ class ServiceRecordTable extends Component
         return empty($result) ? '0 months' : implode(' ', $result);
     }
 
-    public function toggleViewRecord($id){
+    public function toggleViewRecord($id)
+    {
         $this->recordId = $id;
-        $user = User::where('users.id', $id)
-            ->join('positions', 'positions.id', 'users.position_id')
-            ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
-            ->leftJoin('office_division_units', 'office_division_units.id', 'users.unit_id')
-            ->select('users.*')
-            ->addSelect(DB::raw('(
-                SELECT SUM(
-                    CASE
-                        WHEN work_experience.toPresent = "Present" THEN DATEDIFF(CURDATE(), work_experience.start_date)
-                        WHEN work_experience.end_date IS NOT NULL THEN DATEDIFF(work_experience.end_date, work_experience.start_date)
-                        ELSE 0
-                    END
-                )
-                FROM work_experience
-                WHERE work_experience.user_id = users.id AND work_experience.gov_service = 1
-            ) as total_days_gov_service'))
-            ->first();
-        $totalDays = $user->total_days_gov_service;
-        $years = floor($totalDays / 365.25);
-        $months = floor(($totalDays % 365.25) / 30.44);
-        $user->formatted_gov_service = $this->formatService($years, $months);
-
-        $this->thisRecord = $user;
-        $this->serviceRecord = WorkExperience::where('user_id', $id)
-                ->orderBy('start_date', 'DESC')
-                ->get();
+        $this->tableData = ServiceRecords::where('user_id', $id)
+            ->get()
+            ->map(function ($record) {
+                return [
+                    Carbon::parse($record->from)->format('m/d/Y'),
+                    $record->to ? Carbon::parse($record->to)->format('m/d/Y'): $record->toPresent,
+                    $record->designation,
+                    $record->status,
+                    $record->salary_annum,
+                    $record->station_place_of_assignment,
+                    $record->branch,
+                    $record->lv_abs_wo_pay,
+                    $record->remarks,
+                ];
+            })
+            ->toArray();
     }
+    
 
     public function exportRecord($id = null){
         try{
@@ -124,8 +130,8 @@ class ServiceRecordTable extends Component
                 $id = $this->recordId;
             }
             $user = User::findOrFail($id);
-            $record = WorkExperience::where('user_id', $id)
-                    ->orderBy('start_date', 'DESC')
+            $record = ServiceRecords::where('user_id', $id)
+                    ->orderBy('from', 'DESC')
                     ->get();
             if($record){
                 $filters = [
@@ -145,38 +151,67 @@ class ServiceRecordTable extends Component
         }
     }
 
-    // public function showPDF($userId){
-    //     $this->showServiceRecord = true;
-    //     $eSignature = ESignature::where('user_id', $userId)->first();
-    //     $signatureImagePath = null;
-    //     if ($eSignature && $eSignature->file_path) {
-    //         $signatureImagePath = Storage::disk('public')->path($eSignature->file_path);
-    //     }
+    public function addRow()
+    {
+        $this->tableData[] = array_fill(0, 9, '');
+    }
 
+    public function saveRecords()
+    {
+        if (empty($this->tableData) || collect($this->tableData)->every(fn($row) => !array_filter($row))) {
+            $this->dispatch('swal', [
+                'title' => 'No valid service records to save.',
+                'icon' => 'error'
+            ]);
+            return;
+        }
 
-    //     $this->employeeName = User::where('id', $userId)->first()->name;
-    //     $userData = UserData::where('user_id', 79)->first();
+       
+        foreach ($this->tableData as $row) {
+            if (!array_filter($row)) {
+                continue;
+            }
 
-    //     $sigXPos = 110;
-    //     $sigYPos = -50;
-    //     $sigSize = 100;
+            $existingRecord = ServiceRecords::where('user_id', $this->recordId)
+                ->where('from', Carbon::parse($row[0])->format('Y-m-d'))
+                ->first();
 
-    //     $record = WorkExperience::where('user_id', 79)
-    //             ->orderBy('start_date', 'DESC')
-    //             ->get();
-
-    //     $pdf = PDF::loadView('pdf.service-record', [
-    //         'myWorkExperiences' => $record,
-    //         'signatureImagePath' => null,
-    //         'userData' => $userData,
-    //         'sigXPos' => $sigXPos,
-    //         'sigYPos' => $sigYPos,
-    //         'sigSize' => $sigSize,
-    //     ]);
-
-    //     $this->pdfContent = base64_encode($pdf->output());
-    // }
-
+            if ($existingRecord) {
+                $existingRecord->update([
+                    'from' => $row[0] ? Carbon::parse($row[0])->format('Y-m-d'): null,
+                    'to' => $row[1] != 'Present' ? Carbon::parse($row[0])->format('Y-m-d') : null,
+                    'toPresent' => $row[1] == 'Present' ? $row[1] : null,
+                    'designation' => $row[2] ?: '--do--',
+                    'status' => $row[3] ?: '--do--',
+                    'salary_annum' => $row[4] ?: '--do--',
+                    'station_place_of_assignment' => $row[5] ?: '--do--',
+                    'branch' => $row[6] ?: '--do--',
+                    'lv_abs_wo_pay' => $row[7] ?: '--do--',
+                    'remarks' => $row[8] ?: '--do--',
+                ]);
+            } else {
+                ServiceRecords::create([
+                    'user_id' => $this->recordId,
+                    'from' => $row[0] ? Carbon::parse($row[0])->format('Y-m-d'): null,
+                    'to' => ($row[1] != 'Present' && strtotime($row[1])) ? Carbon::parse($row[0])->format('Y-m-d') : null,
+                    'toPresent' => $row[1] == 'Present' ? $row[1] : null,
+                    'designation' => $row[2] ?: '--do--',
+                    'status' => $row[3] ?: '--do--',
+                    'salary_annum' => $row[4] ?: '--do--',
+                    'station_place_of_assignment' => $row[5] ?: '--do--',
+                    'branch' => $row[6] ?: '--do--',
+                    'lv_abs_wo_pay' => $row[7] ?: '--do--',
+                    'remarks' => $row[8] ?: '--do--',
+                ]);
+            }
+        }
+    
+        $this->resetVariables();
+        $this->dispatch('swal', [
+            'title' => 'Service record saved successfully',
+            'icon' => 'success'
+        ]);
+    }
     
     public function closeWorkExpSheet(){
         $this->showServiceRecord = null;
@@ -186,18 +221,24 @@ class ServiceRecordTable extends Component
 
     public function toggleEditSig(){
         $this->editSig = true;
-        $signatory = Signatories::where('signatory_type', 'service_record')->first();
-        if($signatory){
-            $employee = User::findOrFail($signatory->user_id);
+        $signatory1 = Signatories::where('signatory_type', 'service_record_1')->first();
+        $signatory2 = Signatories::where('signatory_type', 'service_record_2')->first();
+        if($signatory1){
+            $employee = User::findOrFail($signatory1->user_id);
             $this->name = $employee->name;
             $this->userId = $employee->id;
+        }
+        if($signatory2){
+            $employee = User::findOrFail($signatory2->user_id);
+            $this->name2 = $employee->name;
+            $this->userId2 = $employee->id;
         }
     }
 
     public function saveSignatory(){
-        $signatory = Signatories::where('signatory_type', 'service_record')->first();
-        if($signatory){
-            $signatory->update([
+        $signatory1 = Signatories::where('signatory_type', 'service_record_1')->first();
+        if($signatory1){
+            $signatory1->update([
                 'user_id' => $this->userId,
             ]);
         }else{
@@ -207,7 +248,22 @@ class ServiceRecordTable extends Component
 
             Signatories::create([
                 'user_id' => $this->userId,
-                'signatory_type' => 'service_record',
+                'signatory_type' => 'service_record_1',
+            ]);
+        }
+
+        $signatory2 = Signatories::where('signatory_type', 'service_record_2')->first();
+        if($signatory2 && $this->userId2){
+            $signatory2->update([
+                'user_id' => $this->userId,
+            ]);
+        }elseif($this->userId2){
+            $this->validate([
+                'userId2' => 'required',
+            ]);
+            Signatories::create([
+                'user_id' => $this->userId2,
+                'signatory_type' => 'service_record_2',
             ]);
         }
 
