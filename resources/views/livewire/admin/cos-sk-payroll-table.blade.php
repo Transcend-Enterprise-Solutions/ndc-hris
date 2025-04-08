@@ -120,19 +120,19 @@ x-cloak>
                     <!-- Start Date -->
                     <div class="w-full sm:w-auto relative">
                         <label for="startDate" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">Start Date</label>
-                        <input type="date" id="startDate" wire:model.live='startDate' value="{{ $startDate }}"
-                        class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
-                            dark:hover:bg-slate-600 dark:border-slate-600
-                            dark:text-gray-300 dark:bg-gray-800">
+                        <input type="text" id="startDate" wire:model.live='startDate' value="{{ $startDate }}"
+                            class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                                    dark:hover:bg-slate-600 dark:border-slate-600
+                                    dark:text-gray-300 dark:bg-gray-800">
                     </div>
 
-                     <!-- End Date -->
+                    <!-- End Date -->
                     <div class="w-full sm:w-auto relative">
                         <label for="endDate" class="absolute bottom-10 block text-sm font-medium text-gray-700 dark:text-slate-400">End Date</label>
-                        <input type="date" id="endDate" wire:model.live='endDate' value="{{ $endDate }}"
-                        class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
-                            dark:hover:bg-slate-600 dark:border-slate-600
-                            dark:text-gray-300 dark:bg-gray-800">
+                        <input type="text" id="endDate" wire:model.live='endDate' value="{{ $endDate }}"
+                            class="mt-4 sm:mt-1 px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                                    dark:hover:bg-slate-600 dark:border-slate-600
+                                    dark:text-gray-300 dark:bg-gray-800">
                     </div>
 
                     <!-- Save Payroll -->
@@ -1244,3 +1244,20 @@ x-cloak>
     </x-modal>
 
 </div>
+
+
+<script>
+    document.addEventListener('livewire:init', () => {
+        flatpickr("#startDate", {
+            dateFormat: "m/d/Y",
+            allowInput: true,
+            defaultDate: "{{ $startDate }}"
+        });
+        
+        flatpickr("#endDate", {
+            dateFormat: "m/d/Y",
+            allowInput: true,
+            defaultDate: "{{ $endDate }}"
+        });
+    });
+</script>
