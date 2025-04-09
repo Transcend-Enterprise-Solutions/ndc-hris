@@ -128,12 +128,12 @@ class AdminLeaveRequestTable extends Component
                 $this->selectedApplication->approved_days = $this->days;
                 $this->selectedApplication->remarks = $this->status;
 
-                // if ($this->status === 'With Pay') {
-                //     if (!$this->checkLeaveCredits($this->days)) {
-                //         return;
-                //     }
-                //     $this->updateLeaveDetails($this->days, $this->status);
-                // }
+                if ($this->status === 'With Pay') {
+                    if (!$this->checkLeaveCredits($this->days)) {
+                        return;
+                    }
+                    $this->updateLeaveDetails($this->days, $this->status);
+                }
 
                 $allApprovedDates = [];
                 foreach ($this->selectedDates as $date) {
