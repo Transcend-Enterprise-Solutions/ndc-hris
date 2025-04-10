@@ -55,25 +55,6 @@
             overflow-x: hidden;
         }
 
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-            }
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        .animate-slide-in-right {
-            transform: translateX(100%);
-            animation: slideInRight 0.5s ease-out forwards;
-        }
-
-        .animate-slide-in-right-delay {
-            transform: translateX(100%);
-            animation: slideInRight 0.5s ease-out 0.15s forwards;
-        }
-
         .right-side-content {
             transform: translateX(100%);
         }
@@ -117,7 +98,7 @@
             </div>
         </div>
 
-        <div class="right-side-login animate-slide-in-right">
+        <div class="right-side-login">
             <img src="/images/Vector.png" alt="login bg" >
         </div>
     </main>
