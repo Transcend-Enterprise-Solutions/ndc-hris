@@ -569,6 +569,15 @@ x-cloak>
                 <textarea type="text" id="obPurpose" cols="30" rows="4" wire:model='obPurpose' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly></textarea>
             </div>
 
+            <div class="col-span-2 sm:col-span-1">
+                <label for="obTimeIn" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Time In</label>
+                <input type="time" id="obTimeIn" wire:model='obTimeIn' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+                <label for="obTimeOut" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Time Out</label>
+                <input type="time" id="obTimeOut" wire:model='obTimeOut' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+            </div>
+
             @if($supDisapprovedDate == 'N/A')
                 <div class="col-span-2 sm:col-span-1">
                     <label for="approvedBySup" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Approved By (Supervisor)</label>
