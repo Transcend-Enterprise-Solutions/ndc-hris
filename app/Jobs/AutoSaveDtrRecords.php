@@ -1,20 +1,21 @@
 <?php
 namespace App\Jobs;
 
-use App\Models\Transaction;
-use App\Models\TransactionWFH;
-use App\Models\User;
-use App\Models\DTRSchedule;
-use App\Models\EmployeesDtr;
-use App\Models\Holiday;
-use App\Models\LeaveApplication;
+use App\Models\{
+    Transaction,
+    TransactionWFH,
+    User,
+    DTRSchedule,
+    EmployeesDtr,
+    Holiday,
+    LeaveApplication
+};
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Log;
 
 class AutoSaveDtrRecords implements ShouldQueue
@@ -23,286 +24,332 @@ class AutoSaveDtrRecords implements ShouldQueue
 
     public function handle()
     {
-        echo "AutoSaveDtrRecords job started\n";
-        Log::info("AutoSaveDtrRecords job started");
+
+        $this->logJobStart();
+        $currentDate = Carbon::now()->toDateString();
 
         try {
-            // Get the current date
-            $currentDate = Carbon::now()->toDateString();
-            echo "Processing date: {$currentDate}\n";
-            Log::info("Processing date: {$currentDate}");
-
-            $users = User::where('user_role', 'emp')->get();
-
-            foreach ($users as $user) {
-                echo "Processing user: {$user->emp_code}\n";
-                Log::info("Processing user: {$user->emp_code}");
-
-                // Get the user's schedule for the current date
-                $schedule = DTRSchedule::where('emp_code', $user->emp_code)
-                    ->whereDate('start_date', '<=', $currentDate)
-                    ->whereDate('end_date', '>=', $currentDate)
-                    ->first();
-
-                $isWFH = false;
-                if ($schedule) {
-                    $wfhDays = array_map('ucfirst', array_map('trim', explode(',', $schedule->wfh_days)));
-                    $dayOfWeek = Carbon::parse($currentDate)->format('l');
-                    $isWFH = in_array($dayOfWeek, $wfhDays);
+            User::where('user_role', 'emp')->chunk(100, function ($users) use ($currentDate) {
+                foreach ($users as $user) {
+                    $this->processUserDtr($user, $currentDate);
                 }
+            });
 
-                // Determine which transaction model to use
-                $transactionModel = $isWFH ? TransactionWFH::class : Transaction::class;
-
-                // Get the transactions for the current date
-                $transactions = $transactionModel::where('emp_code', $user->emp_code)
-                    ->whereDate('punch_time', $currentDate)
-                    ->orderBy('punch_time')
-                    ->get();
-
-                // Get approved leaves for the current date
-                $approvedLeaves = LeaveApplication::where('user_id', $user->id)
-                    ->where('status', 'Approved')
-                    ->whereRaw("FIND_IN_SET(?, approved_dates) > 0", [$currentDate])
-                    ->get();
-
-                echo "Total transactions found for user {$user->emp_code}: " . $transactions->count() . "\n";
-                Log::info("Total transactions found for user {$user->emp_code}: " . $transactions->count());
-
-                // Process the transactions for the current date
-                $calculatedData = $this->calculateTimeRecords($transactions, $user->emp_code, $currentDate, $approvedLeaves);
-                echo "Calculated data for user {$user->emp_code} on {$currentDate}: " . json_encode($calculatedData) . "\n";
-                Log::info("Calculated data for user {$user->emp_code} on {$currentDate}: " . json_encode($calculatedData));
-
-                try {
-                    $record = EmployeesDtr::updateOrCreate(
-                        ['user_id' => $user->id, 'date' => $currentDate],
-                        array_merge(['emp_code' => $user->emp_code], $calculatedData)
-                    );
-                    echo "DTR record saved/updated for user {$user->emp_code} on {$currentDate}. Record ID: " . $record->id . "\n";
-                    Log::info("DTR record saved/updated for user {$user->emp_code} on {$currentDate}. Record ID: " . $record->id);
-                } catch (\Exception $e) {
-                    echo "Error saving DTR record for user {$user->emp_code} on {$currentDate}: " . $e->getMessage() . "\n";
-                    Log::error("Error saving DTR record for user {$user->emp_code} on {$currentDate}: " . $e->getMessage());
-                }
-            }
-
-            echo "AutoSaveDtrRecords job completed successfully\n";
-            Log::info("AutoSaveDtrRecords job completed successfully");
+            $this->logJobSuccess();
         } catch (\Exception $e) {
-            echo "AutoSaveDtrRecords job failed: " . $e->getMessage() . "\n";
-            Log::error("AutoSaveDtrRecords job failed: " . $e->getMessage());
-            Log::error($e->getTraceAsString());
+            $this->logJobError($e);
         }
     }
 
-    private function calculateTimeRecords($transactions, $empCode, $date, $approvedLeaves)
+    protected function processUserDtr(User $user, string $currentDate): void
     {
-        $carbonDate = Carbon::parse($date);
-        $dayOfWeek = $carbonDate->format('l');
+        Log::info("Processing user: {$user->emp_code}");
 
-        // Fetch the schedule from DTRSchedule table
-        $schedule = DTRSchedule::where('emp_code', $empCode)
+        $transactions = $this->getUserTransactions($user, $currentDate);
+        $approvedLeaves = $this->getApprovedLeaves($user, $currentDate);
+        $calculatedData = $this->calculateTimeRecords($transactions, $user->emp_code, $currentDate, $approvedLeaves);
+
+        $this->saveDtrRecord($user, $currentDate, $calculatedData);
+    }
+
+    protected function getUserTransactions(User $user, string $date)
+    {
+        $schedule = $this->getUserSchedule($user->emp_code, $date);
+        $isWFH = $this->isWorkFromHomeDay($schedule, $date);
+
+        $transactionModel = $isWFH ? TransactionWFH::class : Transaction::class;
+
+        return $transactionModel::where('emp_code', $user->emp_code)
+            ->whereDate('punch_time', $date)
+            ->orderBy('punch_time')
+            ->get();
+    }
+
+    protected function getUserSchedule(string $empCode, string $date): ?DTRSchedule
+    {
+        return DTRSchedule::where('emp_code', $empCode)
             ->whereDate('start_date', '<=', $date)
             ->whereDate('end_date', '>=', $date)
             ->first();
+    }
 
-        // Initialize default values
-        $location = 'Onsite';
-        $isWFH = false;
-        $morningIn = null;
-        $morningOut = null;
-        $afternoonIn = null;
-        $afternoonOut = null;
+    protected function isWorkFromHomeDay(?DTRSchedule $schedule, string $date): bool
+    {
+        if (!$schedule) {
+            return false;
+        }
 
-        // Set values for Work From Home (WFH) days
-        if ($schedule) {
-            $wfhDays = array_map('ucfirst', array_map('trim', explode(',', $schedule->wfh_days)));
-            if (in_array($dayOfWeek, $wfhDays)) {
-                $location = 'WFH';
-                $isWFH = true;
+        $wfhDays = array_map('ucfirst', array_map('trim', explode(',', $schedule->wfh_days)));
+        $dayOfWeek = Carbon::parse($date)->format('l');
+
+        return in_array($dayOfWeek, $wfhDays);
+    }
+
+    protected function getApprovedLeaves(User $user, string $date)
+    {
+        return LeaveApplication::where('user_id', $user->id)
+            ->where('status', 'Approved')
+            ->whereRaw("FIND_IN_SET(?, approved_dates) > 0", [$date])
+            ->get();
+    }
+
+    protected function saveDtrRecord(User $user, string $date, array $data): void
+    {
+        try {
+            $record = EmployeesDtr::updateOrCreate(
+                ['user_id' => $user->id, 'date' => $date],
+                array_merge(['emp_code' => $user->emp_code], $data)
+            );
+
+            Log::info("DTR record saved/updated for user {$user->emp_code} on {$date}. Record ID: {$record->id}");
+        } catch (\Exception $e) {
+            Log::error("Error saving DTR record for user {$user->emp_code} on {$date}: " . $e->getMessage());
+        }
+    }
+
+    protected function calculateTimeRecords($transactions, $empCode, $date, $approvedLeaves)
+    {
+        $carbonDate = Carbon::parse($date);
+        $dayOfWeek = $carbonDate->format('l');
+        $schedule = $this->getUserSchedule($empCode, $date);
+
+        $location = $this->determineLocation($schedule, $dayOfWeek);
+        $timeData = $this->extractTimeData($transactions, $empCode, $date, $schedule);
+
+        $calculatedTimes = $this->calculateTimes($timeData, $carbonDate, $schedule);
+        $remarks = $this->determineRemarks($timeData, $dayOfWeek, $approvedLeaves, $date);
+
+        return array_merge([
+            'day_of_week' => $dayOfWeek,
+            'location' => $location,
+            'remarks' => $remarks,
+        ], $calculatedTimes);
+    }
+
+    protected function determineLocation(?DTRSchedule $schedule, string $dayOfWeek): string
+    {
+        if (!$schedule) {
+            return 'Onsite';
+        }
+
+        $wfhDays = array_map('ucfirst', array_map('trim', explode(',', $schedule->wfh_days)));
+        return in_array($dayOfWeek, $wfhDays) ? 'WFH' : 'Onsite';
+    }
+
+    protected function extractTimeData($transactions, $empCode, $date, ?DTRSchedule $schedule): array
+    {
+        $carbonDate = Carbon::parse($date);
+        $timeData = [
+            'morningIn' => null,
+            'morningOut' => null,
+            'afternoonIn' => null,
+            'afternoonOut' => null,
+            'lunchBreakStart' => $carbonDate->copy()->setTimeFromTimeString('12:00:00'),
+            'lunchBreakEnd' => $carbonDate->copy()->setTimeFromTimeString('13:00:00'),
+        ];
+
+        if (!$schedule) {
+            return $timeData;
+        }
+
+        // Get morning in transactions (before 12:00)
+        $morningInTransactions = $transactions->filter(function ($transaction) {
+            $time = Carbon::parse($transaction->punch_time);
+            return $transaction->punch_state == 0 && $time->hour < 12;
+        });
+
+        if ($morningInTransactions->isNotEmpty()) {
+            $timeData['morningIn'] = Carbon::parse($morningInTransactions->first()->punch_time);
+        } else {
+            // Check if first punch is afternoon in
+            $firstPunch = $transactions->first();
+            if ($firstPunch && Carbon::parse($firstPunch->punch_time)->hour >= 12) {
+                $timeData['afternoonIn'] = Carbon::parse($firstPunch->punch_time);
             }
+        }
 
-            // Use exact times from the schedule
-            $defaultStartTime = Carbon::parse($date)->setTimeFromTimeString($schedule->default_start_time);
-            $defaultEndTime = Carbon::parse($date)->setTimeFromTimeString($schedule->default_end_time);
-
-            // If the user has morning in before 12:00, automate lunch break times
-            $lunchBreakStart = $carbonDate->copy()->setTimeFromTimeString('12:00:00');
-            $lunchBreakEnd = $carbonDate->copy()->setTimeFromTimeString('13:00:00');
-
-            // Get the transactions for the current date
-            $transactionModel = $isWFH ? TransactionWFH::class : Transaction::class;
-            $transactions = $transactionModel::where('emp_code', $empCode)
-                ->whereDate('punch_time', $date)
-                ->orderBy('punch_time')
-                ->get();
-
-            // Check for morning in (before 12:00), otherwise assign it to afternoon in if it's after 12:00
-            $morningInTransactions = $transactions->filter(function ($transaction) {
+        // Process morning out if morning in exists
+        if ($timeData['morningIn']) {
+            $morningOutTransactions = $transactions->filter(function ($transaction) use ($timeData) {
                 $time = Carbon::parse($transaction->punch_time);
-                return $transaction->punch_state == 0 && $time->hour < 12;
+                return $transaction->punch_state == 1 && $time->gt($timeData['morningIn']) && $time->hour < 13;
             });
 
-            if ($morningInTransactions->isNotEmpty()) {
-                $morningIn = Carbon::parse($morningInTransactions->first()->punch_time);
-            } else {
-                // If no morning in, check if the first punch is 12:00 PM or later, assign it to afternoon in
-                $firstPunch = $transactions->first();
-                if ($firstPunch) {
-                    $firstPunchTime = Carbon::parse($firstPunch->punch_time);
-                    if ($firstPunchTime->hour >= 12) {
-                        $afternoonIn = $firstPunchTime; // Record as afternoon in
-                    }
-                }
+            if ($morningOutTransactions->isNotEmpty()) {
+                $timeData['morningOut'] = Carbon::parse($morningOutTransactions->last()->punch_time);
             }
 
-            // Automate morning out and afternoon in times based on punch
-            if ($morningIn) {
-                $morningOutTransactions = $transactions->filter(function ($transaction) use ($morningIn) {
-                    $time = Carbon::parse($transaction->punch_time);
-                    return $transaction->punch_state == 1 && $time->gt($morningIn) && $time->hour < 13;
-                });
-
-                if ($morningOutTransactions->isNotEmpty()) {
-                    $morningOut = Carbon::parse($morningOutTransactions->last()->punch_time);
-                }
-
-                // Automate lunch break times if morning out is before 12
-                if ($morningIn->lt($lunchBreakStart)) {
-                    $morningOut = $morningOut ?? $lunchBreakStart; // Set lunch out time if no morning out
-                    $afternoonIn = $lunchBreakEnd; // Automate afternoon in time
-                }
+            // Automate lunch break times if morning out is before 12
+            if ($timeData['morningIn']->lt($timeData['lunchBreakStart'])) {
+                $timeData['morningOut'] = $timeData['morningOut'] ?? $timeData['lunchBreakStart'];
+                $timeData['afternoonIn'] = $timeData['lunchBreakEnd'];
             }
+        }
 
-            // Only process afternoon in if there is no morning out
-            if (!$morningOut && !$afternoonIn) {
-                $afternoonInTransactions = $transactions->filter(function ($transaction) {
-                    $time = Carbon::parse($transaction->punch_time);
-                    return $transaction->punch_state == 0 && $time->hour >= 13;  // Afternoon in after 1 PM
-                });
-
-                if ($afternoonInTransactions->isNotEmpty()) {
-                    $afternoonIn = Carbon::parse($afternoonInTransactions->first()->punch_time);
-                }
-            }
-
-            // Filter for afternoon out
-            $afternoonOutTransactions = $transactions->filter(function ($transaction) {
+        // Process afternoon in if no morning out
+        if (!$timeData['morningOut'] && !$timeData['afternoonIn']) {
+            $afternoonInTransactions = $transactions->filter(function ($transaction) {
                 $time = Carbon::parse($transaction->punch_time);
-                return $transaction->punch_state == 1 && $time->hour >= 13;
+                return $transaction->punch_state == 0 && $time->hour >= 13;
             });
 
-            if ($afternoonOutTransactions->isNotEmpty()) {
-                $afternoonOut = Carbon::parse($afternoonOutTransactions->last()->punch_time);
+            if ($afternoonInTransactions->isNotEmpty()) {
+                $timeData['afternoonIn'] = Carbon::parse($afternoonInTransactions->first()->punch_time);
             }
+        }
+
+        // Process afternoon out
+        $afternoonOutTransactions = $transactions->filter(function ($transaction) {
+            $time = Carbon::parse($transaction->punch_time);
+            return $transaction->punch_state == 1 && $time->hour >= 13;
+        });
+
+        if ($afternoonOutTransactions->isNotEmpty()) {
+            $timeData['afternoonOut'] = Carbon::parse($afternoonOutTransactions->last()->punch_time);
+        }
+
+        $timeData['defaultStartTime'] = Carbon::parse($date)->setTimeFromTimeString($schedule->default_start_time);
+        $timeData['defaultEndTime'] = Carbon::parse($date)->setTimeFromTimeString($schedule->default_end_time);
+
+        return $timeData;
+    }
+
+    protected function calculateTimes(array $timeData, Carbon $carbonDate, ?DTRSchedule $schedule): array
+    {
+        $result = [
+            'morning_in' => $timeData['morningIn']?->format('H:i:s'),
+            'morning_out' => $timeData['morningOut']?->format('H:i:s'),
+            'afternoon_in' => $timeData['afternoonIn']?->format('H:i:s'),
+            'afternoon_out' => $timeData['afternoonOut']?->format('H:i:s'),
+            'total_hours_rendered' => '00:00',
+            'late' => '00:00',
+            'overtime' => '00:00',
+            'ut' => '00:00',
+        ];
+
+        if (!$schedule) {
+            return $result;
         }
 
         // Calculate total hours rendered
         $totalMinutesRendered = 0;
-        if ($morningIn && $morningOut) {
-            $morningEnd = min($lunchBreakStart, $morningOut);
-            $totalMinutesRendered += max(0, $morningIn->diffInMinutes($morningEnd));
+
+        if ($timeData['morningIn'] && $timeData['morningOut']) {
+            $morningEnd = min($timeData['lunchBreakStart'], $timeData['morningOut']);
+            $totalMinutesRendered += max(0, $timeData['morningIn']->diffInMinutes($morningEnd));
         }
 
-        if ($afternoonIn && $afternoonOut) {
-            $afternoonStart = max($lunchBreakEnd, $afternoonIn);
-            $afternoonEnd = min($defaultEndTime, $afternoonOut);
+        if ($timeData['afternoonIn'] && $timeData['afternoonOut']) {
+            $afternoonStart = max($timeData['lunchBreakEnd'], $timeData['afternoonIn']);
+            $afternoonEnd = min($timeData['defaultEndTime'], $timeData['afternoonOut']);
             $totalMinutesRendered += max(0, $afternoonStart->diffInMinutes($afternoonEnd));
         }
 
-        $totalHoursRendered = Carbon::createFromTime(0, 0, 0)->addMinutes($totalMinutesRendered)->format('H:i');
+        $result['total_hours_rendered'] = Carbon::createFromTime(0, 0, 0)
+            ->addMinutes($totalMinutesRendered)
+            ->format('H:i');
 
-        // Calculate lateness (only for morning in)
-        $late = Carbon::createFromTime(0, 0, 0);
+        // Calculate lateness
+        $lateMinutes = 0;
 
-        if ($morningIn && $morningIn->gt($defaultStartTime)) {
-            $late = $late->addMinutes($morningIn->diffInMinutes($defaultStartTime));
-        }
+        if ($timeData['morningIn'] && $timeData['morningIn']->gt($timeData['defaultStartTime'])) {
+            $lateMinutes = $timeData['morningIn']->diffInMinutes($timeData['defaultStartTime']);
+        } elseif (!$timeData['morningIn'] && $timeData['afternoonIn']) {
+            $lateMinutes = 4 * 60; // 4 hours penalty for missing morning
 
-        // If no morning in but there's afternoon in, add 4 hours to lateness
-        if (!$morningIn && $afternoonIn) {
-            $late = $late->addMinutes(4 * 60); // Automatically add 4 hours to lateness
-        }
-
-        // Handle lateness for afternoon in if there's no morning in
-        if (!$morningIn && $afternoonIn) {
-            // Only calculate lateness from 13:00 onward
-            $afternoonThreshold = Carbon::parse($date)->setTime(13, 0, 0); // 13:00 threshold for afternoon
-            if ($afternoonIn->gt($afternoonThreshold)) {
-                $late = $late->addMinutes($afternoonIn->diffInMinutes($afternoonThreshold));
+            // Additional lateness if afternoon in is after 13:00
+            $afternoonThreshold = $carbonDate->copy()->setTime(13, 0, 0);
+            if ($timeData['afternoonIn']->gt($afternoonThreshold)) {
+                $lateMinutes += $timeData['afternoonIn']->diffInMinutes($afternoonThreshold);
             }
         }
 
-        // Calculate undertime separately (only based on afternoon out)
-        $undertime = Carbon::createFromTime(0, 0, 0);
-        if ($afternoonOut) {
-            if ($afternoonOut->lt($defaultEndTime)) {
-                $undertime = $undertime->addMinutes($defaultEndTime->diffInMinutes($afternoonOut));
+        $result['late'] = Carbon::createFromTime(0, 0, 0)
+            ->addMinutes($lateMinutes)
+            ->format('H:i');
+
+        // Calculate undertime
+        $undertimeMinutes = 0;
+
+        if ($timeData['afternoonOut']) {
+            if ($timeData['afternoonOut']->lt($timeData['defaultEndTime'])) {
+                $undertimeMinutes = $timeData['defaultEndTime']->diffInMinutes($timeData['afternoonOut']);
             }
-        } else {
-            // If no afternoon out but there was morning in, count as undertime
-            if ($morningIn) {
-                $undertime = $undertime->addMinutes(4 * 60); // 4 hours undertime for missing afternoon
-            }
+        } elseif ($timeData['morningIn']) {
+            $undertimeMinutes = 4 * 60; // 4 hours penalty for missing afternoon
         }
 
-        // Calculate overtime (only if there's afternoon out and it's after end time)
-        $overtime = Carbon::createFromTime(0, 0, 0);
-        if ($afternoonOut && $afternoonOut->gt($defaultEndTime)) {
-            $overtime = $overtime->addMinutes($afternoonOut->diffInMinutes($defaultEndTime));
+        $result['ut'] = Carbon::createFromTime(0, 0, 0)
+            ->addMinutes($undertimeMinutes)
+            ->format('H:i');
+
+        // Calculate overtime
+        $overtimeMinutes = 0;
+
+        if ($timeData['afternoonOut'] && $timeData['afternoonOut']->gt($timeData['defaultEndTime'])) {
+            $overtimeMinutes = $timeData['afternoonOut']->diffInMinutes($timeData['defaultEndTime']);
         }
 
-        // Format output values
-        $lateFormatted = $late->format('H:i');
-        $undertimeFormatted = $undertime->format('H:i');
-        $overtimeFormatted = $overtime->format('H:i');
+        $result['overtime'] = Carbon::createFromTime(0, 0, 0)
+            ->addMinutes($overtimeMinutes)
+            ->format('H:i');
 
-        // Remarks logic
-        $remarks = '';
+        return $result;
+    }
 
-        // Add check for Saturday and Sunday first
-        if ($dayOfWeek === 'Saturday' || $dayOfWeek === 'Sunday') {
-            $remarks = $dayOfWeek;
-        } else {
-            if (!$morningIn && !$afternoonIn) {
-                $remarks = 'Absent';
-            } elseif (($morningIn && !$morningOut) || ($afternoonIn && !$afternoonOut)) {
-                $remarks = 'Incomplete';
-            } elseif ($lateFormatted !== '00:00' && $undertimeFormatted !== '00:00') {
-                $remarks = 'Late/Undertime';
-            } elseif ($lateFormatted !== '00:00') {
-                $remarks = 'Late';
-            } elseif ($undertimeFormatted !== '00:00') {
-                $remarks = 'Undertime';
-            } else {
-                $remarks = 'Present';
-            }
+    protected function determineRemarks(array $timeData, string $dayOfWeek, $approvedLeaves, string $date): string
+    {
+        // Check for weekends first
+        if (in_array($dayOfWeek, ['Saturday', 'Sunday'])) {
+            return $dayOfWeek;
         }
 
-        // Check for holidays or leaves
-        $holiday = Holiday::whereDate('holiday_date', $date)->first();
-        if ($holiday) {
-            $remarks = 'Holiday';
+        // Check for holidays
+        if (Holiday::whereDate('holiday_date', $date)->exists()) {
+            return 'Holiday';
         }
 
-        $isOnLeave = $approvedLeaves->isNotEmpty();
-        if ($isOnLeave) {
-            $remarks = 'Leave';
+        // Check for leaves
+        if ($approvedLeaves->isNotEmpty()) {
+            return 'Leave';
         }
 
-        return [
-            'day_of_week' => $dayOfWeek,
-            'location' => $location,
-            'morning_in' => $morningIn ? $morningIn->format('H:i:s') : null,
-            'morning_out' => $morningOut ? $morningOut->format('H:i:s') : null,
-            'afternoon_in' => $afternoonIn ? $afternoonIn->format('H:i:s') : null,
-            'afternoon_out' => $afternoonOut ? $afternoonOut->format('H:i:s') : null,
-            'total_hours_rendered' => $totalHoursRendered,
-            'late' => $lateFormatted,
-            'overtime' => $overtimeFormatted,
-            'ut' => $undertimeFormatted,
-            'remarks' => $remarks,
-        ];
+        // Determine based on time entries
+        if (!$timeData['morningIn'] && !$timeData['afternoonIn']) {
+            return 'Absent';
+        }
+
+        if (($timeData['morningIn'] && !$timeData['morningOut']) || ($timeData['afternoonIn'] && !$timeData['afternoonOut'])) {
+            return 'Incomplete';
+        }
+
+        $late = $timeData['morningIn'] && $timeData['morningIn']->gt($timeData['defaultStartTime'] ?? Carbon::now());
+        $undertime = $timeData['afternoonOut'] && $timeData['afternoonOut']->lt($timeData['defaultEndTime'] ?? Carbon::now());
+
+        if ($late && $undertime) {
+            return 'Late/Undertime';
+        } elseif ($late) {
+            return 'Late';
+        } elseif ($undertime) {
+            return 'Undertime';
+        }
+
+        return 'Present';
+    }
+
+    protected function logJobStart(): void
+    {
+        Log::info("AutoSaveDtrRecords job started");
+    }
+
+    protected function logJobSuccess(): void
+    {
+        Log::info("AutoSaveDtrRecords job completed successfully");
+    }
+
+    protected function logJobError(\Exception $e): void
+    {
+        Log::error("AutoSaveDtrRecords job failed: " . $e->getMessage());
+        Log::error($e->getTraceAsString());
     }
 }
