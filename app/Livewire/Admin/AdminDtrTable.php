@@ -222,12 +222,26 @@ class AdminDtrTable extends Component
                 return $dtr;
             });
 
-            // Calculate days worked
-            $daysWorked = $processedDtrs->filter(function($dtr) {
-                return in_array(strtolower($dtr->effective_remarks), ['present', 'late/undertime']);
+            // Calculate days with time entries
+            $daysWithTimeEntries = $processedDtrs->filter(function($dtr) {
+                return $dtr->morning_in || $dtr->morning_out || $dtr->afternoon_in || $dtr->afternoon_out;
             })->count();
 
-            // Calculate absences
+            // Calculate days worked - if has time entries, consider it as a day worked
+            // regardless of remarks (except for absences)
+            $daysWorked = $processedDtrs->filter(function($dtr) {
+                // If there are time entries, consider it as worked
+                $hasTimeEntries = $dtr->morning_in || $dtr->morning_out || $dtr->afternoon_in || $dtr->afternoon_out;
+
+                // Only consider as not worked if explicitly marked as absent
+                if (strtolower($dtr->effective_remarks) === 'absent') {
+                    return false;
+                }
+
+                return $hasTimeEntries;
+            })->count();
+
+            // Calculate absences (records explicitly marked as absent)
             $absences = $processedDtrs->filter(function($dtr) {
                 return strtolower($dtr->effective_remarks) === 'absent';
             })->count();
@@ -247,27 +261,29 @@ class AdminDtrTable extends Component
             foreach ($processedDtrs as $dtr) {
                 if (!empty($dtr->overtime) && $dtr->overtime !== '00:00') {
                     list($hours, $minutes) = explode(':', $dtr->overtime);
-                    $totalOvertimeMinutes += ($hours * 60) + $minutes;
+                    $totalOvertimeMinutes += (intval($hours) * 60) + intval($minutes);
                 }
             }
             $overtime = sprintf("%02d:%02d", floor($totalOvertimeMinutes / 60), $totalOvertimeMinutes % 60);
 
-            // Calculate late hours
+            // Calculate late hours - only for days with time entries
             $totalLateMinutes = 0;
             foreach ($processedDtrs as $dtr) {
-                if (!empty($dtr->late) && $dtr->late != '00:00') {
+                $hasTimeEntries = $dtr->morning_in || $dtr->morning_out || $dtr->afternoon_in || $dtr->afternoon_out;
+                if ($hasTimeEntries && !empty($dtr->late) && $dtr->late !== '00:00') {
                     list($hours, $minutes) = explode(':', $dtr->late);
-                    $totalLateMinutes += ($hours * 60) + $minutes;
+                    $totalLateMinutes += (intval($hours) * 60) + intval($minutes);
                 }
             }
             $late = sprintf("%02d:%02d", floor($totalLateMinutes / 60), $totalLateMinutes % 60);
 
-            // Calculate undertime hours
+            // Calculate undertime hours - only for days with time entries
             $totalUndertimeMinutes = 0;
             foreach ($processedDtrs as $dtr) {
-                if (!empty($dtr->ut) && $dtr->ut !== '00:00') {
+                $hasTimeEntries = $dtr->morning_in || $dtr->morning_out || $dtr->afternoon_in || $dtr->afternoon_out;
+                if ($hasTimeEntries && !empty($dtr->ut) && $dtr->ut !== '00:00') {
                     list($hours, $minutes) = explode(':', $dtr->ut);
-                    $totalUndertimeMinutes += ($hours * 60) + $minutes;
+                    $totalUndertimeMinutes += (intval($hours) * 60) + intval($minutes);
                 }
             }
             $undertime = sprintf("%02d:%02d", floor($totalUndertimeMinutes / 60), $totalUndertimeMinutes % 60);
