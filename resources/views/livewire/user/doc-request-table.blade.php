@@ -144,11 +144,11 @@
     x-transition:leave="ease-in duration-200"
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
-    class="fixed inset-0 z-50 overflow-y-auto bg-gray-500 bg-opacity-75"
+    class="fixed inset-0 z-50 overflow-y-auto bg-gray-500 bg-opacity-75 rounded-lg"
     aria-labelledby="modal-title"
     role="dialog" aria-modal="true"
     x-cloak
-    @click.away="showModal = false">
+    @click.away="showModal = false" style="z-index: 9999;">
 
         <div class="flex items-center justify-center min-h-screen p-4">
             <div @click.away="showModal = false"
