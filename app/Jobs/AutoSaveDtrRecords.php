@@ -213,22 +213,16 @@ class AutoSaveDtrRecords implements ShouldQueue
 
         $totalHoursRendered = Carbon::createFromTime(0, 0, 0)->addMinutes($totalMinutesRendered)->format('H:i');
 
-        // Calculate lateness based on the schedule start time
+        // Calculate lateness (only for morning in)
         $late = Carbon::createFromTime(0, 0, 0);
 
-        // If no morning in but there's afternoon in, add 4 hours to lateness
-        if (!$morningIn && $afternoonIn) {
-            $late = $late->addMinutes(4 * 60); // Automatically add 4 hours to lateness
-        }
-
-        // If morning in exists, calculate lateness based on default start time
         if ($morningIn && $morningIn->gt($defaultStartTime)) {
             $late = $late->addMinutes($morningIn->diffInMinutes($defaultStartTime));
         }
 
-        // Add 4 hours to lateness if no afternoon out exists but there is a morning in
-        if ($morningIn && !$afternoonOut) {
-            $late = $late->addMinutes(4 * 60); // Add 4 hours
+        // If no morning in but there's afternoon in, add 4 hours to lateness
+        if (!$morningIn && $afternoonIn) {
+            $late = $late->addMinutes(4 * 60); // Automatically add 4 hours to lateness
         }
 
         // Handle lateness for afternoon in if there's no morning in
@@ -240,14 +234,23 @@ class AutoSaveDtrRecords implements ShouldQueue
             }
         }
 
-        // Calculate overtime and undertime based on the schedule end time
+        // Calculate undertime separately (only based on afternoon out)
         $undertime = Carbon::createFromTime(0, 0, 0);
-        $overtime = Carbon::createFromTime(0, 0, 0);
+        if ($afternoonOut) {
+            if ($afternoonOut->lt($defaultEndTime)) {
+                $undertime = $undertime->addMinutes($defaultEndTime->diffInMinutes($afternoonOut));
+            }
+        } else {
+            // If no afternoon out but there was morning in, count as undertime
+            if ($morningIn) {
+                $undertime = $undertime->addMinutes(4 * 60); // 4 hours undertime for missing afternoon
+            }
+        }
 
+        // Calculate overtime (only if there's afternoon out and it's after end time)
+        $overtime = Carbon::createFromTime(0, 0, 0);
         if ($afternoonOut && $afternoonOut->gt($defaultEndTime)) {
             $overtime = $overtime->addMinutes($afternoonOut->diffInMinutes($defaultEndTime));
-        } elseif ($afternoonOut && $afternoonOut->lt($defaultEndTime)) {
-            $undertime = $undertime->addMinutes($defaultEndTime->diffInMinutes($afternoonOut));
         }
 
         // Format output values
@@ -302,7 +305,4 @@ class AutoSaveDtrRecords implements ShouldQueue
             'remarks' => $remarks,
         ];
     }
-
-
-
 }

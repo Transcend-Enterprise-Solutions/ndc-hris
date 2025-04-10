@@ -219,31 +219,31 @@
             <tr>
                 <!-- First Row -->
                 <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>Days Worked : </strong> 0
+                    <strong>Days Worked : </strong> {{ $data['summary']['days_worked'] }}
                 </td>
                 <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>Late : </strong> 00:00
+                    <strong>Late : </strong> {{ $data['summary']['late'] }}
                 </td>
                 <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>Leave : </strong> 0
+                    <strong>Leave : </strong> {{ $data['summary']['leave_days'] }}
                 </td>
                 <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>OT : </strong> 00:00
+                    <strong>OT : </strong> {{ $data['summary']['overtime'] }}
                 </td>
             </tr>
             <tr>
                 <!-- Second Row -->
                 <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>Absences : </strong> 20
+                    <strong>Absences : </strong> {{ $data['summary']['absences'] }}
                 </td>
                 <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>UT : </strong> 01:22
+                    <strong>UT : </strong> {{ $data['summary']['undertime'] }}
                 </td>
                 <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>Holiday : </strong> 0
+                    <strong>Holiday : </strong> {{ $data['summary']['holidays'] }}
                 </td>
                 <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>Total Hrs Worked : </strong> 0
+                    <strong>Total Tardiness : </strong> {{ $data['summary']['tardiness'] }}
                 </td>
             </tr>
         </table>
