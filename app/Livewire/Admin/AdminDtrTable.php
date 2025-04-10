@@ -177,21 +177,24 @@ class AdminDtrTable extends Component
 
         // Prepare the base query
         $query = EmployeesDtr::query()
-            ->join('users', 'employees_dtr.user_id', '=', 'users.id')
-            ->join('user_data', 'users.id', '=', 'user_data.user_id')
-            ->leftJoin('office_divisions', 'users.office_division_id', '=', 'office_divisions.id')
-            ->select(
-                'employees_dtr.*',
-                'users.name as user_name',
-                'office_divisions.sign_name',
-                'office_divisions.sign_pos',
-                DB::raw("CASE
-                    WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
-                    ELSE users.emp_code
-                END as emp_code"),
-                DB::raw("COALESCE(employees_dtr.up_remarks, employees_dtr.remarks) as effective_remarks")
-            )
-            ->whereBetween('employees_dtr.date', [$this->startDate, $this->endDate]);
+        ->join('users', 'employees_dtr.user_id', '=', 'users.id')
+        ->join('user_data', 'users.id', '=', 'user_data.user_id')
+        ->leftJoin('office_divisions', 'users.office_division_id', '=', 'office_divisions.id')
+        ->leftJoin('positions', 'users.position_id', '=', 'positions.id')
+        ->select(
+            'employees_dtr.*',
+            'users.name as user_name',
+            'positions.position as user_position',
+            'office_divisions.office_division as user_department',
+            'office_divisions.sign_name',
+            'office_divisions.sign_pos',
+            DB::raw("CASE
+                WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
+                ELSE users.emp_code
+            END as emp_code"),
+            DB::raw("COALESCE(employees_dtr.up_remarks, employees_dtr.remarks) as effective_remarks")
+        )
+        ->whereBetween('employees_dtr.date', [$this->startDate, $this->endDate]);
 
         // Apply search filter
         if ($this->searchTerm) {
@@ -327,7 +330,9 @@ class AdminDtrTable extends Component
                 'startDate' => $this->startDate,
                 'endDate' => $this->endDate,
                 'eSignaturePath' => $this->eSignaturePath,
-                'divisionName' => $divisionName
+                'divisionName' => $divisionName,
+                'userPosition' => $employeeDtrs->first()->user_position ?? '',
+                'userDepartment' => $employeeDtrs->first()->user_department ?? ''
             ])->setPaper('legal', 'portrait');
 
             // Dispatch success notification
