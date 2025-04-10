@@ -204,6 +204,7 @@
                     <p class="text-3xl font-bold text-green-700 dark:text-green-100">{{ $docRequestsCount }}</p>
                 </div>
             </div>
+            
             {{-- Rating  --}}
             <div class="col-span-full sm:col-span-6 bg-blue-100 dark:bg-blue-800 p-4 rounded-lg shadow block">
                 <div class="block sm:flex justify-between items-center">

@@ -139,7 +139,11 @@ class AttendanceExport implements FromCollection, WithEvents
                     'positions.position', 
                     'office_divisions.office_division', 
                     'user_data.appointment', 
-                );
+                    'user_data.surname', 
+                    'user_data.first_name', 
+                    'user_data.middle_name', 
+                    'user_data.name_extension',
+                )->orderBy('user_data.surname', 'asc');
 
         if ($this->filters && isset($this->filters['date'])) {
             try {
@@ -170,7 +174,9 @@ class AttendanceExport implements FromCollection, WithEvents
 
                 return [
                     $this->rowNumber,
-                    'NAME' => $user->name,
+                    'Name' => $user->surname . ', ' . $user->first_name . 
+                        ($user->middle_name && $user->middle_name != 'N/A' ? ' ' . $user->middle_name : '') .
+                        ($user->name_extension && $user->name_extension != 'N/A' ? ' ' . $user->name_extension : ''),
                     'EMPLOYEE ID' => $user->emp_code,
                     'POSITION' => $user->position,
                     'APPOINTMENT' => $appointment,
