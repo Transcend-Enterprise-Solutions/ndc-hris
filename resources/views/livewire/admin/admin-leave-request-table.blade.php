@@ -10,31 +10,31 @@
                     <div class="flex flex-col p-3">
                         <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div class="inline-block w-full py-2 align-middle">
-                                <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
+                                <div class="overflow-hidden border dark:border-gray-700 rounded-lg text-sm">
                                     <div class="overflow-x-auto">
                                         <table class="w-full min-w-full">
                                             <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                                                 <tr class="whitespace-nowrap">
                                                     <th scope="col"
-                                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                        class="px-5 py-3 text-sm font-medium text-left uppercase">
                                                         Name</th>
                                                     <th scope="col"
-                                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                        class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                         Date of Filing</th>
                                                     <th scope="col"
-                                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                        class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                         Type of Leave</th>
                                                     <th scope="col"
-                                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                        class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                         Details of Leave</th>
                                                     <th scope="col"
-                                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                        class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                         Number of day/s</th>
                                                     <th scope="col"
-                                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                        class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                         List of Date</th>
                                                     <th scope="col"
-                                                        class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                                        class="px-5 py-3 text-sm font-medium uppercase text-center">
                                                         Uploaded File</th>
                                                     <th scope="col"
                                                         class="px-5 py-3 text-gray-100 text-sm font-medium text-right sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
@@ -45,7 +45,7 @@
                                                 @foreach ($leaveApplications as $leaveApplication)
                                                     <tr
                                                         class="whitespace-nowrap border-b border-gray-400 dark:text-neutral-200">
-                                                        <td class="px-4 py-2 text-center">{{ $leaveApplication->name }}
+                                                        <td class="px-4 py-2 text-left">{{ $leaveApplication->name }}
                                                         </td>
                                                         <td class="px-4 py-2 text-center">
                                                             {{ $leaveApplication->date_of_filing }}</td>

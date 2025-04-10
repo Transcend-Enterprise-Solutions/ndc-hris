@@ -126,8 +126,8 @@ class RoleManagementTable extends Component
                 ->paginate($this->pageSize);
 
         foreach($admins as $admin){
-            $empCode = explode('-', $admin->emp_code);
-            $appt = User::where('users.emp_code', $empCode[1])
+            $empCode = $admin->emp_code;
+            $appt = User::where('users.emp_code', $empCode)
                         ->join('user_data', 'user_data.user_id', 'users.id')
                         ->select('user_data.appointment')
                         ->first();

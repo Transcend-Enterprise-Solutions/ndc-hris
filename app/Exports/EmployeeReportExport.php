@@ -141,7 +141,6 @@ class EmployeeReportExport implements FromCollection, WithEvents
         return $this->filters['employees']->get()
             ->map(function ($user) use ($formatDate, $formatCurrency) {
                 $this->rowNumber++;
-                $cosEmpCode = null;
                 $sg_step = null;
                 if($user->plantilla_sg_step){
                     $sg_step = $user->plantilla_sg_step;
@@ -171,7 +170,6 @@ class EmployeeReportExport implements FromCollection, WithEvents
                         $appointment = 'Co-Terminus';
                     }else{
                         $appointment = 'COS';
-                        $cosEmpCode = ('D-' . substr($user->emp_code, 1));
                     }
                 }
 
@@ -195,7 +193,7 @@ class EmployeeReportExport implements FromCollection, WithEvents
                     $this->rowNumber,
                     'Name' => $user->name,
                     'Email' => $user->email,
-                    'Employee ID' => $cosEmpCode ?: $user->emp_code,
+                    'Employee ID' => $user->emp_code,
                     'Position' => $user->position,
                     'Appointment' => $appointment,
                     'Office/Division' => $user->office_division,

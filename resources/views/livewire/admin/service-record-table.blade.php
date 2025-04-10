@@ -217,11 +217,7 @@
                                                             {{ $user->surname }}, {{ $user->first_name }}{{ $user->middle_name && $user->middle_name !== 'N/A' && $user->middle_name !== 'n/a' ? ' ' . $user->middle_name : '' }}{{ ($user->name_extension && $user->name_extension !== 'N/A' && $user->name_extension !== 'n/a') ? ' ' . $user->name_extension : '' }}
                                                         </td>
                                                         <td class="px-4 py-2 text-center">
-                                                            @if($user->appointment == 'cos')
-                                                                {{ $user->emp_code ? 'D-' . substr($user->emp_code, 1) : '' }}
-                                                            @else
-                                                                {{ $user->emp_code }}
-                                                            @endif
+                                                            {{ $user->emp_code }}
                                                         </td>
                                                         <td class="px-4 py-2 text-center">
                                                             {{ $user->formatted_gov_service }}

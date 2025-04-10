@@ -51,7 +51,7 @@
                 </div>
 
                 <!-- Tab Content -->
-                <div class="px-2 py-4 text-slate-700 dark:text-slate-300">
+                <div class="px-2 py-4 text-slate-700 dark:text-slate-300 text-sm">
                     @foreach (['pending', 'approved', 'rejected'] as $status)
                         <div x-show="selectedTab === '{{ $status }}'" id="tabpanel{{ ucfirst($status) }}" role="tabpanel" aria-labelledby="tab{{ ucfirst($status) }}">
                             <div class="overflow-x-auto">

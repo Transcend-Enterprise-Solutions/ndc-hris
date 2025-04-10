@@ -172,8 +172,8 @@
 
 
                         <!-- Table for Leave Applications -->
-                        <div class="overflow-x-auto">
-                            <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
+                        <div class="overflow-x-auto text-sm">
+                            <div class="overflow-hidden border dark:border-gray-700 rounded-t-lg">
                                 <div class="overflow-x-auto">
                                     <table class="w-full min-w-full">
                                         <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
@@ -216,7 +216,7 @@
                                                 @foreach ($leaveApplications as $leaveApplication)
                                                     <tr class="whitespace-nowrap">
                                                         <td class="px-4 py-2 text-center">
-                                                            {{ $leaveApplication->date_of_filing }}</td>
+                                                            {{ \Carbon\Carbon::parse($leaveApplication->date_of_filing)->format('m/d/Y') }}</td>
                                                         <td class="px-4 py-2 text-center">
                                                             {{ $leaveApplication->type_of_leave }}</td>
                                                         <td class="px-4 py-2 text-center">
@@ -227,11 +227,11 @@
                                                             </td>
                                                             <td class="px-4 py-2 text-center">
                                                                 @if (Str::contains($leaveApplication->list_of_dates, ' - '))
-                                                                    {{ $leaveApplication->list_of_dates }}
+                                                                    {{ \Carbon\Carbon::parse($leaveApplication->list_of_dates)->format('m/d/Y') }}
                                                                 @else
                                                                     <div class="flex flex-col">
                                                                         @foreach (explode(',', $leaveApplication->list_of_dates) as $date)
-                                                                            <span>{{ trim($date) }}</span>
+                                                                            <span>{{ \Carbon\Carbon::parse(trim($date))->format('m/d/Y') }}</span>
                                                                         @endforeach
                                                                     </div>
                                                                 @endif
@@ -242,11 +242,11 @@
                                                             </td>
                                                             <td class="px-4 py-2 text-center">
                                                                 @if (Str::contains($leaveApplication->approved_dates, ' - '))
-                                                                    {{ $leaveApplication->approved_dates }}
+                                                                    {{ \Carbon\Carbon::parse($leaveApplication->approved_dates)->format('m/d/Y') }}
                                                                 @else
                                                                     <div class="flex flex-col">
                                                                         @foreach (explode(',', $leaveApplication->approved_dates) as $date)
-                                                                            <span>{{ trim($date) }}</span>
+                                                                            <span>{{ \Carbon\Carbon::parse(trim($date))->format('m/d/Y') }}</span>
                                                                         @endforeach
                                                                     </div>
                                                                 @endif

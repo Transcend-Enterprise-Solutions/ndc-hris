@@ -204,7 +204,7 @@ x-cloak>
             </div>
 
             <!-- Table -->
-            <div class="flex flex-col">
+            <div class="flex flex-col text-sm">
                 <div class="flex gap-2 overflow-x-auto -mb-2">
                     <button @click="selectedTab = 'cos'" 
                             :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'cos', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'cos' }" 
@@ -259,7 +259,7 @@ x-cloak>
                                                                         ]))
                                                                         {{ currency_format($payroll->$column) }}
                                                                     @elseif($column == 'employee_number')
-                                                                        {{ $payroll->$column ? 'D-' . substr($payroll->$column, 1) : '' }}
+                                                                        {{ $payroll->$column }}
                                                                     @elseif($column == 'name')
                                                                         {{ $payroll->surname .", "  . $payroll->first_name . " " . $payroll->middle_name ?: '' . " " . $payroll->name_extension ?: ''}}
                                                                     @else
@@ -376,7 +376,7 @@ x-cloak>
                                                         {{ $payroll['name'] ?? '' }}
                                                     </td>
                                                     <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                        {{ isset($payroll['employee_number']) ? 'D-' . substr($payroll['employee_number'], 1) : '' }}
+                                                        {{ $payroll['employee_number'] }}
                                                     </td>
                                                     <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                         {{ $payroll['position'] ?? '' }}

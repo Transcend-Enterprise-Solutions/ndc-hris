@@ -10,7 +10,7 @@
                 <label for="search" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Search</label>
                 <input type="search" id="search" wire:model.live="search" placeholder="Enter employee name"
                     class="py-2 px-3 block w-full sm:w-80 shadow-sm text-sm font-medium border-gray-400
-                                   dark:text-neutral-200 rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
+                                   rounded-md dark:text-gray-300 dark:bg-gray-800 outline-none focus:outline-none">
             </div>
 
             <!-- Tabs -->
@@ -28,49 +28,49 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto text-sm">
                 <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
                     <div class="overflow-x-auto">
                         <table class="w-full min-w-full">
                             <!-- Table head -->
                             <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                                 <tr class="whitespace-nowrap">
-                                    <th class="px-5 py-3 text-sm font-medium text-left uppercase text-left">
+                                    <th class="px-5 py-3 text-sm font-medium text-left uppercase">
                                         Name
                                     </th>
-                                    <th class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                    <th class="px-5 py-3 text-sm font-medium uppercase text-center">
                                         Date
                                         of Filing</th>
-                                    <th class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                    <th class="px-5 py-3 text-sm font-medium uppercase text-center">
                                         Type
                                         of Leave</th>
-                                    <th class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                    <th class="px-5 py-3 text-sm font-medium uppercase text-center">
                                         Details of Leave</th>
                                     @if ($activeTab === 'pending')
                                         <th scope="col"
-                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            class="px-5 py-3 text-sm font-medium uppercase text-center">
                                             Requested Day/s
                                         </th>
                                         <th scope="col"
-                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            class="px-5 py-3 text-sm font-medium uppercase text-center">
                                             Requested Date/s
                                         </th>
                                     @elseif ($activeTab === 'disapproved')
                                         <th scope="col"
-                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            class="px-5 py-3 text-sm font-medium uppercase text-center">
                                             Disapproved Day/s
                                         </th>
                                         <th scope="col"
-                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            class="px-5 py-3 text-sm font-medium uppercase text-center">
                                             Disapproved Date/s
                                         </th>
                                     @else
                                         <th scope="col"
-                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            class="px-5 py-3 text-sm font-medium uppercase text-center">
                                             Approved Day/s
                                         </th>
                                         <th scope="col"
-                                            class="px-5 py-3 text-sm font-medium text-left uppercase text-center">
+                                            class="px-5 py-3 text-sm font-medium uppercase text-center">
                                             Approved Date/s
                                         </th>
                                     @endif
@@ -81,22 +81,22 @@
                                 @if ($leaveApplications->count() > 0)
                                     @foreach ($leaveApplications as $leaveApplication)
                                         <tr class="whitespace-nowrap border-b border-gray-400 dark:text-neutral-200">
-                                            <td class="px-4 py-2 text-left">{{ $leaveApplication->user->name }}
+                                            <td class="px-4 py-3 text-left">{{ $leaveApplication->user->name }}
                                             </td>
-                                            <td class="px-4 py-2 text-center">
+                                            <td class="px-4 py-3 text-center">
                                                 {{ $leaveApplication->date_of_filing }}
                                             </td>
-                                            <td class="px-4 py-2 text-center">
+                                            <td class="px-4 py-3 text-center">
                                                 {{ $leaveApplication->type_of_leave }}
                                             </td>
-                                            <td class="px-4 py-2 text-center">
+                                            <td class="px-4 py-3 text-center">
                                                 {{ $leaveApplication->details_of_leave ?? 'N/A' }}
                                             </td>
                                             @if ($activeTab === 'pending' || $activeTab === 'disapproved')
-                                                <td class="px-4 py-2 text-center">
+                                                <td class="px-4 py-3 text-center">
                                                     {{ $leaveApplication->number_of_days }}
                                                 </td>
-                                                <td class="px-4 py-2 text-center">
+                                                <td class="px-4 py-3 text-center">
                                                     @if (Str::contains($leaveApplication->list_of_dates, ' - '))
                                                         {{ $leaveApplication->list_of_dates }}
                                                     @else
@@ -108,10 +108,10 @@
                                                     @endif
                                                 </td>
                                             @else
-                                                <td class="px-4 py-2 text-center">
+                                                <td class="px-4 py-3 text-center">
                                                     {{ $leaveApplication->approved_days ?? 'N/A' }}
                                                 </td>
-                                                <td class="px-4 py-2 text-center">
+                                                <td class="px-4 py-3 text-center">
                                                     @if (Str::contains($leaveApplication->approved_dates, ' - '))
                                                         {{ $leaveApplication->approved_dates }}
                                                     @else

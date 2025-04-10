@@ -595,7 +595,7 @@
             </div>
 
             <!-- Table -->
-            <div class="flex flex-col">
+            <div class="flex flex-col text-sm">
                 <div class="flex gap-2 overflow-x-auto -mb-2">
                     <button @click="selectedTab = 'plantilla'"
                         :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'plantilla', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'plantilla' }"

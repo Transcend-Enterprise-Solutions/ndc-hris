@@ -105,11 +105,6 @@ class AdminRolesExport implements FromCollection, WithEvents
     }
 
     public function collection(){
-        $empCode = function($value) {
-            $code = explode('-', $value);
-            return $code[1];
-        };
-
         $role = function($value){
             $adminRole = "";
             if ($value === 'sa'){
@@ -127,13 +122,13 @@ class AdminRolesExport implements FromCollection, WithEvents
 
 
         return $this->filters['admins']->get()
-            ->map(function ($user) use ($empCode, $role) {
+            ->map(function ($user) use ($role) {
                 $this->rowNumber++;
                 return [
                     $this->rowNumber,
                     'Admin Role' => $role($user->user_role),
                     'Name' => $user->name,
-                    'Employee ID' => $empCode($user->emp_code),
+                    'Employee ID' => $user->emp_code,
                     'Office/Division' => $user->office_division,
                     'Unit' => $user->unit ?: '-',
                     'Position' => $user->position,

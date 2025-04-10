@@ -135,8 +135,8 @@ class HeadCount extends Component
         try {
             $employees = User::where('user_role', 'emp')
                 ->join('user_data', 'user_data.user_id', 'users.id')
-                ->join('positions', 'positions.id', 'users.position_id')
-                ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
+                ->leftJoin('positions', 'positions.id', 'users.position_id')
+                ->leftJoin('office_divisions', 'office_divisions.id', 'users.office_division_id')
                 ->leftJoin('payrolls', 'payrolls.user_id', 'users.id')
                 ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', 'users.id')
                 ->where('users.active_status', '!=', 4)
@@ -147,7 +147,11 @@ class HeadCount extends Component
                     'users.active_status', 
                     'positions.position', 
                     'user_data.appointment', 
-                    'user_data.date_hired', 
+                    'user_data.date_hired',
+                    'user_data.surname', 
+                    'user_data.first_name', 
+                    'user_data.middle_name', 
+                    'user_data.name_extension',  
                     'office_divisions.office_division',
                     'payrolls.sg_step as plantilla_sg_step',
                     'payrolls.rate_per_month as plantilla_rate',
@@ -194,6 +198,10 @@ class HeadCount extends Component
                     'positions.position', 
                     'user_data.appointment', 
                     'user_data.date_hired', 
+                    'user_data.surname', 
+                    'user_data.first_name', 
+                    'user_data.middle_name', 
+                    'user_data.name_extension', 
                     'office_divisions.office_division',
                     'payrolls.sg_step as plantilla_sg_step',
                     'payrolls.rate_per_month as plantilla_rate',
@@ -230,6 +238,10 @@ class HeadCount extends Component
                     'positions.position', 
                     'user_data.appointment', 
                     'user_data.date_hired', 
+                    'user_data.surname', 
+                    'user_data.first_name', 
+                    'user_data.middle_name', 
+                    'user_data.name_extension', 
                     'office_divisions.office_division',
                     'office_division_units.unit',
                     'payrolls.sg_step as plantilla_sg_step',

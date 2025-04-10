@@ -568,7 +568,7 @@
                                             href="{{ route('/daily-time-record/wfh-sched') }}"wire:navigate>
                                             <span class="text-sm font-medium transition-opacity duration-300"
                                                 :class="sidebarExpanded ? 'opacity-100 lg:inline' : 'opacity-0 lg:hidden'">
-                                                Wfh Request
+                                                WFH Request
                                             </span>
                                         </a>
                                     </li>

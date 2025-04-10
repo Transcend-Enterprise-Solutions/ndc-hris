@@ -289,7 +289,7 @@ x-cloak>
                                                                         <th width="30%" scope="col" class="px-2 py-3 text-xs font-medium text-center uppercase sticky top-0 bg-white dark:bg-gray-600">
                                                                             Position
                                                                         </th>
-                                                                        <th width="20%" scope="col" class="px-2 py-3 text-xs font-medium text-left uppercase sticky top-0 bg-white dark:bg-gray-600">
+                                                                        <th width="20%" scope="col" class="px-2 py-3 text-xs font-medium text-center uppercase sticky top-0 bg-white dark:bg-gray-600">
                                                                             Appointment
                                                                         </th>
                                                                         <th width="5%" scope="col" class="px-2 py-3 text-xs font-medium text-center uppercase sticky top-0 bg-white dark:bg-gray-600">
@@ -309,16 +309,12 @@ x-cloak>
                                                                                     {{ $user->name ?? 'N/A' }}
                                                                                 </td>
                                                                                 <td width="15%" class="px-2 py-2 text-center text-xs text-nowrap">
-                                                                                    @if($user->appointment == 'cos')
-                                                                                        {{ $user->emp_code ? 'D-' . substr($user->emp_code, 1) : '' }}
-                                                                                    @else
-                                                                                        {{ $user->emp_code }}
-                                                                                    @endif
+                                                                                    {{ $user->emp_code }}
                                                                                 </td>
                                                                                 <td width="30%" class="px-2 py-2 text-center text-xs text-nowrap">
                                                                                     {{ $user->position ?? 'N/A' }}
                                                                                 </td>
-                                                                                <td width="20%" class="px-2 py-2 text-left text-xs text-nowrap uppercase">
+                                                                                <td width="20%" class="px-2 py-2 text-center text-xs text-nowrap uppercase">
                                                                                     @if($user->appointment != "cos" && $user->appointment != "ct")
                                                                                         @php
                                                                                             $appointment = explode(',', $user->appointment);
@@ -332,7 +328,7 @@ x-cloak>
                                                                                         @if($user->appointment == "ct")
                                                                                             Co-Terminus
                                                                                         @else
-                                                                                            {{ $user->appointment }} {{ $user->appointment_type ? '- ' . $user->appointment_type : '' }}
+                                                                                            {{ $user->appointment }}
                                                                                         @endif
                                                                                     @endif
                                                                                 </td>
@@ -682,11 +678,7 @@ x-cloak>
                                                                     {{ $pos->surname }}, {{ $pos->first_name }}{{ $pos->middle_name ? ' ' . $pos->middle_name : '' }}{{ $pos->name_extension ? ' ' . $pos->name_extension : '' }}
                                                                 </td>
                                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                                    @if($pos->appointment == 'cos')
-                                                                        {{ $pos->emp_code ? 'D-' . substr($pos->emp_code, 1) : '' }}
-                                                                    @else
-                                                                        {{ $pos->emp_code }}
-                                                                    @endif
+                                                                    {{ $pos->emp_code }}
                                                                 </td>
                                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                                     {{ $pos->office_division }}
