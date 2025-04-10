@@ -157,7 +157,7 @@ class HeadCount extends Component
                     'payrolls.rate_per_month as plantilla_rate',
                     'cos_reg_payrolls.sg_step as cos_reg_sg_step',
                     'cos_reg_payrolls.rate_per_month as cos_reg_rate', 
-                );
+                )->orderBy('user_data.surname', 'asc');
             $filters = [
                 'employees' => $employees,
             ];
@@ -207,7 +207,7 @@ class HeadCount extends Component
                     'payrolls.rate_per_month as plantilla_rate',
                     'cos_reg_payrolls.sg_step as cos_reg_sg_step',
                     'cos_reg_payrolls.rate_per_month as cos_reg_rate', 
-                );
+                )->orderBy('user_data.surname', 'asc');
             $filters = [
                 'employees' => $employees,
                 'month' => $month,
@@ -265,7 +265,7 @@ class HeadCount extends Component
                             $subQuery->orWhere('active_status', 3);
                         }
                     });
-                });
+                })->orderBy('user_data.surname', 'asc');
 
             $selectedStatuses = $this->allStat ? ['All'] : array_keys(array_filter($this->status));
             $statusLabels = [
