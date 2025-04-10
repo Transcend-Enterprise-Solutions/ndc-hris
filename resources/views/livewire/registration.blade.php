@@ -820,17 +820,7 @@
                                 <div x-data="{ appointment: @entangle('appointment'), empCode: @entangle('emp_code') }" class="w-full">
                                     <label for="emp_code" class="text-sm text-gray-700">Employee Code<span
                                             class="text-red-600">*</span></label>
-                                    <input type="text" id="emp_code" x-model="empCode" x-init="$watch('appointment', value => {
-                                        if (value === 'cos') empCode = 'D-';
-                                    })"
-                                        x-on:input="
-                                            if (appointment === 'cos') {
-                                                let cleanValue = empCode.replace(/[^0-9]/g, '');
-                                                empCode = 'D-' + cleanValue.match(/.{1,4}/g)?.join('-') || '';
-                                            } else {
-                                                empCode = empCode.replace(/[^0-9]/g, '').match(/.{1,4}/g)?.join('-') || '';
-                                            }
-                                        "
+                                    <input type="text" id="emp_code" wire:model.live="emp_code"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
                                     @error('emp_code')
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -933,6 +923,9 @@
                                         <span wire:loading.remove wire:target="submit">Submit</span>
                                         <span wire:loading wire:target="submit">Submitting...</span>
                                     </button>
+                                    @error('submit')
+                                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                         </div>

@@ -340,6 +340,9 @@ class User extends Authenticatable
         $query->where(function ($query) use ($term) {
             $query->where('official_businesses.reference_number', 'like', $term)
                 ->orWhere('official_businesses.company', 'like', $term)
+                ->orWhere('user_data.surname', 'like', $term)
+                ->orWhere('user_data.first_name', 'like', $term)
+                ->orWhere('user_data.middle_name', 'like', $term)
                 ->orWhere('official_businesses.address', 'like', $term)
                 ->orWhere('official_businesses.purpose', 'like', $term);
         });

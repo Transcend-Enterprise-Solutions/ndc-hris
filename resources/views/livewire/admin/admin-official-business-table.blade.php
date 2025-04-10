@@ -1,7 +1,5 @@
 <div class="w-full flex flex-col justify-center"
-x-data="{ 
-    selectedTab: '{{ request()->query('tab', 'ob') }}',
-}" 
+x-data="{ selectedTab: @entangle('selectedTab') }"
 x-cloak>
 
     <div id="ob-details"></div>
@@ -229,13 +227,15 @@ x-cloak>
                                                             {{ $employee->address ?? 'None' }}
                                                         </td>
                                                         <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ $employee->date }}
+                                                            {{ \Carbon\Carbon::parse($employee->date)->format('m/d/Y') }}
                                                         </td>
-                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ $employee->time_start }} - {{ $employee->time_end }}
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                            <span class="opacity-70">Start:</span> {{ \Carbon\Carbon::parse($employee->time_start)->format('h:i A') }} <br>
+                                                            <span class="opacity-70">End:</span> {{ \Carbon\Carbon::parse($employee->time_end)->format('h:i A') }}
                                                         </td>
-                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ $employee->time_in }} - {{ $employee->time_out }}
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                            <span class="opacity-70">Time In:</span> {{ $employee->time_in ? \Carbon\Carbon::parse($employee->time_in)->format('h:i A') : '' }} <br>
+                                                            <span class="opacity-70">Time Out:</span> {{ $employee->time_out ? \Carbon\Carbon::parse($employee->time_out)->format('h:i A') : '' }}
                                                         </td>
                                                         <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                             <a href="#ob-details">
@@ -324,13 +324,15 @@ x-cloak>
                                                             {{ $employee->address ?? 'None' }}
                                                         </td>
                                                         <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ $employee->date }}
+                                                            {{ \Carbon\Carbon::parse($employee->date)->format('m/d/Y') }}
                                                         </td>
-                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ $employee->time_start }} - {{ $employee->time_end }}
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                            <span class="opacity-70">Start:</span> {{ \Carbon\Carbon::parse($employee->time_start)->format('h:i A') }} <br>
+                                                            <span class="opacity-70">End:</span> {{ \Carbon\Carbon::parse($employee->time_end)->format('h:i A') }}
                                                         </td>
-                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ $employee->time_in }} - {{ $employee->time_out }}
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                            <span class="opacity-70">Time In:</span> {{ $employee->time_in ? \Carbon\Carbon::parse($employee->time_in)->format('h:i A') : '' }} <br>
+                                                            <span class="opacity-70">Time Out:</span> {{ $employee->time_out ? \Carbon\Carbon::parse($employee->time_out)->format('h:i A') : '' }}
                                                         </td>
                                                         <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                             <a href="#ob-details">
@@ -440,13 +442,15 @@ x-cloak>
                                                             {{ $employee->address ?? 'None' }}
                                                         </td>
                                                         <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ $employee->date }}
+                                                            {{ \Carbon\Carbon::parse($employee->date)->format('m/d/Y') }}
                                                         </td>
-                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ $employee->time_start }} - {{ $employee->time_end }}
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                            <span class="opacity-70">Start:</span> {{ \Carbon\Carbon::parse($employee->time_start)->format('h:i A') }} <br>
+                                                            <span class="opacity-70">End:</span> {{ \Carbon\Carbon::parse($employee->time_end)->format('h:i A') }}
                                                         </td>
-                                                        <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                            {{ $employee->time_in }} - {{ $employee->time_out }}
+                                                        <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                            <span class="opacity-70">Time In:</span> {{ $employee->time_in ? \Carbon\Carbon::parse($employee->time_in)->format('h:i A') : '' }} <br>
+                                                            <span class="opacity-70">Time Out:</span> {{ $employee->time_out ? \Carbon\Carbon::parse($employee->time_out)->format('h:i A') : '' }}
                                                         </td>
                                                         <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                             <a href="#ob-details">

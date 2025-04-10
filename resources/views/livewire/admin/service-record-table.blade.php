@@ -63,7 +63,7 @@
             <div class="w-full bg-white rounded-2xl p-3 sm:p-6 shadow dark:bg-gray-800 overflow-x-visible">
                 <div class="overflow-hidden rounded-lg">
                     <div class="p-2 w-full overflow-x-auto rounded-lg bg-gray-200">
-                        <p class="text-gray-800 text-md mb-2 mt-4">Add/Edit Service Record for: <span class="text-black font-bold">Jhon Francis Duarte</span></p>
+                        <p class="text-gray-800 text-md mb-2 mt-4">Add/Edit Service Record for: <span class="text-black font-bold">{{ $name }}</span></p>
                         <table class="w-full border-collapse border border-gray-800">
                             <thead>
                                 <tr class="bg-green-700">
@@ -236,7 +236,7 @@
                                                                 </button>
                                                                 <div class="relative mt-2" style="margin-right: -2px;">
                                                                     <button
-                                                                        wire:click="exportRecord({{ $user->id }})"
+                                                                        wire:click.prevent="exportRecord({{ $user->id }})"
                                                                         class="peer inline-flex items-center justify-center px-4 py-2 -m-5 -mr-2
                                                                         text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
                                                                         title="Export Service Record" wire:target="exportRecord({{ $user->id }})"

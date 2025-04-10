@@ -15,9 +15,6 @@ use Livewire\Attributes\On;
 
 class OfficialBusinessTable extends Component
 {
-    public $search;
-    public $search2;
-    public $search3;
     public $search4;
     public $search5;
     public $search6;
@@ -30,6 +27,8 @@ class OfficialBusinessTable extends Component
     public $date;
     public $startTime;
     public $endTime;
+    public $timeIn;
+    public $timeOut;
     public $purpose;
     public $registeredLatitude = null;
     public $registeredLongitude = null;
@@ -56,46 +55,47 @@ class OfficialBusinessTable extends Component
     public $verifyType;
     public $hasObTimeIn;
     public $hasObTimeOut;
+    public $ongoingObs;
+    public $upcomingObs;
+    public $selectedTab = 'approved';
     public $pageSize = 10; 
     public $pageSizes = [10, 20, 30, 50, 100]; 
 
+    public function mount(){
+        $this->ongoingObs = $this->ongoingOfficialBusinesses();
+        $this->upcomingObs = $this->upcomingOfficialBusinesses();
 
-    public function render(){
-        
-        $ongoingObs = $this->ongoingObs();
-        $upcomingObs = $this->upcomingObs();
-
-        if (!$ongoingObs) {
-            $ongoingObs = $upcomingObs->first();
+        if (!$this->ongoingObs) {
+            $this->ongoingObs = $this->upcomingObs->first();
             $this->obStatus = 'UPCOMING';
         }else{
             $this->obStatus = 'ONGOING';
         }
 
-        $completedObs = $this->completedObs();
-        $unattendedObs = $this->unattendedObs();
+        $this->selectedTab = request('tab', 'approved');
+    }
+
+
+    public function render(){
         $obRequests = $this->obRequests();
         $disapprovedObs = $this->disapprovedObs();
         $approvedObs = $this->approvedObs();
             
 
         return view('livewire.user.official-business-table', [
-            'upcomingObs' => $upcomingObs,
-            'ongoingObs' => $ongoingObs,
-            'completedObs' => $completedObs,
-            'unattendedObs' => $unattendedObs,
             'obRequests' => $obRequests,
             'disapprovedObs' => $disapprovedObs,
             'approvedObs' => $approvedObs,
         ]);
     }
 
-    public function ongoingObs(){
+    public function ongoingOfficialBusinesses(){
         $user = Auth::user();
         $ongoingObs = OfficialBusiness::where('date', '=', now()->toDateString())
             ->where('time_start', '<=', now()->toTimeString())
             ->where('time_end', '>=', now()->toTimeString())
-            ->where('time_out', '=', null)
+            ->whereNull('time_out')  
+            ->whereNull('date_sup_disapproved')
             ->where('user_id', $user->id)
             ->first();
 
@@ -124,7 +124,7 @@ class OfficialBusinessTable extends Component
         return $ongoingObs;
     }
 
-    public function upcomingObs(){
+    public function upcomingOfficialBusinesses(){
         $user = Auth::user();
         $upcomingObs = OfficialBusiness::where(function ($query) {
             $query->where('date', '>', now()->toDateString())
@@ -133,14 +133,12 @@ class OfficialBusinessTable extends Component
                         ->where('time_start', '>', now()->toTimeString());
                 });
             })
-            ->when($this->search3, function ($query) {
-                return $query->search(trim($this->search3));
-            })
+            ->whereNull('date_sup_disapproved')
             ->where('user_id', $user->id)
-            ->where('time_out', '=', null)
+            ->whereNull('time_out')  
             ->orderBy('date', 'asc')
             ->orderBy('time_start', 'asc')
-            ->paginate($this->pageSize);
+            ->get();
 
         return $upcomingObs;
     }
@@ -150,9 +148,6 @@ class OfficialBusinessTable extends Component
         $completedObs = OfficialBusiness::where('time_in', '!=', null)
             ->where('user_id', $user->id)
             ->where('time_out', '!=', null)
-            ->when($this->search, function ($query) {
-                return $query->search(trim($this->search));
-            })
             ->paginate($this->pageSize);
         
         return $completedObs;
@@ -164,9 +159,6 @@ class OfficialBusinessTable extends Component
             ->where('user_id', $user->id)
             ->where('time_out', '=', null)
             ->where('date', '<', now()->toDateString())
-            ->when($this->search2, function ($query) {
-                return $query->search(trim($this->search2));
-            })
             ->paginate($this->pageSize);
         
         return $unattendedObs;
@@ -458,6 +450,8 @@ class OfficialBusinessTable extends Component
                 $this->date = $ob->date;
                 $this->startTime = $ob->time_start;
                 $this->endTime = $ob->time_end;
+                $this->timeIn = $ob->time_in;
+                $this->timeOut = $ob->time_out;
                 $this->purpose = $ob->purpose;
 
                 $this->approvedBy = $ob->approver ? User::where('id', $ob->approver)->first()->name : 'N/A';
@@ -489,13 +483,33 @@ class OfficialBusinessTable extends Component
             $ob = OfficialBusiness::where('id', $this->punchObId)->first();
             if($ob){
                 if($this->punchState == 'timeIn'){
+                    if($this->hasObTimeIn){
+                        $this->dispatch('swal', [
+                            'title' => 'You have already recorded your time in for this Official Business',
+                            'icon' => 'error'
+                        ]);
+                        return;
+                    }
                     $ob->update([
                         'time_in' => now()->toTimeString(),
                     ]);
-                }else{
+                }elseif($this->punchState == 'timeOut'){
+                    if($this->hasObTimeOut){
+                        $this->dispatch('swal', [
+                            'title' => 'You have already recorded your time out for this Official Business',
+                            'icon' => 'error'
+                        ]);
+                        return;
+                    }
                     $ob->update([
                         'time_out' => now()->toTimeString(),
                     ]);
+                }else{
+                    $this->dispatch('swal', [
+                        'title' => 'Invalid action',
+                        'icon' => 'error'
+                    ]);
+                    return;
                 }
                 $this->dispatch('swal', [
                     'title' => 'Official Business attendance recorded successfully',
@@ -507,6 +521,8 @@ class OfficialBusinessTable extends Component
                     'icon' => 'error'
                 ]);
             }
+                   $this->ongoingObs = $this->ongoingOfficialBusinesses();
+        $this->upcomingObs = $this->upcomingOfficialBusinesses();
             $this->resetVariables();
         }catch(Exception $e){
             throw $e;

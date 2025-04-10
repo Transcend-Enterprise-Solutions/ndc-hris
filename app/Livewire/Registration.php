@@ -15,7 +15,9 @@ use App\Models\OfficeDivisionUnits;
 use Illuminate\Support\Facades\DB;
 use App\Models\PhilippineRegions;
 use App\Models\EmployeesLeaves;
+use App\Models\LeaveCredits;
 use App\Models\RegistrationOtp;
+use App\Models\UserData;
 use Carbon\Carbon;
 
 class Registration extends Component
@@ -186,10 +188,6 @@ class Registration extends Component
             'permanent_selectedProvince' => 'required',
             'permanent_selectedCity' => 'required',
             'permanent_selectedBarangay' => 'required',
-            'residential_selectedZipcode' => 'required',
-            'residential_selectedProvince' => 'required',
-            'residential_selectedCity' => 'required',
-            'residential_selectedBarangay' => 'required',
             'mobile_number' => ['required', 'regex:/^\+639\d{9}$|^\d{11}$/'],
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
@@ -200,6 +198,23 @@ class Registration extends Component
             'date_hired' => 'required|date',
             'appointment' => 'required',
         ]);
+
+        if($this->same_as_above){
+            $this->residential_selectedZipcode = $this->permanent_selectedZipcode;
+            $this->residential_selectedProvince = $this->permanent_selectedProvince;
+            $this->residential_selectedCity = $this->permanent_selectedCity;
+            $this->residential_selectedBarangay = $this->permanent_selectedBarangay;
+            $this->r_house = $this->p_house;
+            $this->r_street = $this->p_street;
+            $this->r_subdivision = $this->p_subdivision;
+        }else{
+            $this->validate([
+                'residential_selectedZipcode' => 'required',
+                'residential_selectedProvince' => 'required',
+                'residential_selectedCity' => 'required',
+                'residential_selectedBarangay' => 'required',
+            ]);
+        }
     
         if ($this->p_house == null && $this->p_street == null && $this->p_subdivision == null) {
             $this->addError('p_subdivision', 'Please add either House/Block/Lot No. or Street or Subdivision/Village.');
@@ -224,8 +239,9 @@ class Registration extends Component
         $this->surname = ucwords(strtolower($this->surname));
 
         try {
-            $this->emp_code = str_replace('-', '', $this->emp_code); // Remove hyphens
-            $this->emp_code = str_replace('D', '1', $this->emp_code); // Replace 'D' with '1'
+            // $this->emp_code = str_replace('-', '', $this->emp_code); // Remove hyphens
+            // $this->emp_code = str_replace('D', '1', $this->emp_code); // Replace 'D' with '1'
+            
             // Creating the user
             $user = User::create([
                 'name' => $this->first_name . " " . $this->middle_name . " " . $this->surname,
@@ -245,7 +261,7 @@ class Registration extends Component
             $sexValue = $this->getSexValue();
     
             // Creating user data
-            $userData = $user->userData()->create([
+            UserData::create([
                 'user_id' => $user->id,
                 'first_name' => $this->first_name,
                 'middle_name' => $this->middle_name,
@@ -286,7 +302,8 @@ class Registration extends Component
                 'item_number' => $this->itemNumber,
             ]);
 
-            $user->leaveCredits()->create([
+            // Creating Leave Credits
+            LeaveCredits::create([
                 'user_id' => $user->id,
                 'vl_total_credits' => 0,
                 'sl_total_credits' => 0,
@@ -302,7 +319,6 @@ class Registration extends Component
                 'cto_claimed_credits' => 0,
                 'fl_claimable_credits' => 0,
                 'fl_claimed_credits' => 0,
-                // These fields remain null
                 'vlbalance_brought_forward' => null,
                 'slbalance_brought_forward' => null,
                 'date_forwarded' => null,
@@ -321,14 +337,13 @@ class Registration extends Component
                     'user_id' => $user->id,
                 ]);
             }
+
+
     
-            // Commit the transaction if both user and user data are created successfully
             DB::commit();
-    
             session()->flash('message', 'Registration successful!');
             return redirect()->route('login');
-        } catch (\Exception $e) {
-            // Rollback the transaction if there was an error
+        } catch (Exception $e) {
             DB::rollBack();
             $this->addError('submit', 'There was an error processing your registration. Please try again.');
         }

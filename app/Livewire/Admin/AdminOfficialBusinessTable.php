@@ -44,9 +44,15 @@ class AdminOfficialBusinessTable extends Component
     public $search3;
     public $confirmId;
     public $confirmMessage;
+    public $selectedTab = 'ob';
     public $pageSize = 10; 
     public $pageSizes = [10, 20, 30, 50, 100]; 
     public $viewOB;
+
+    public function mount()
+    {
+        $this->selectedTab = request('tab', 'ob');
+    }
 
     public function render()
     {

@@ -61,7 +61,7 @@ class ServiceRecordTable extends Component
             ->withCount(['serviceRecords as total_months_gov_service' => function ($query) {
                 $query->select(DB::raw('SUM(
                     CASE
-                        WHEN `to` = "Present" THEN TIMESTAMPDIFF(MONTH, `from`, CURDATE())
+                        WHEN `toPresent` = "Present" THEN TIMESTAMPDIFF(MONTH, `from`, CURDATE())
                         WHEN `to` IS NOT NULL THEN TIMESTAMPDIFF(MONTH, `from`, `to`)
                         ELSE 0
                     END
@@ -105,7 +105,12 @@ class ServiceRecordTable extends Component
     public function toggleViewRecord($id)
     {
         $this->recordId = $id;
+        $user = UserData::where('user_id', $id)->first();
+        $this->name = $user->surname . ', ' . $user->first_name . ($user->middle_name ? ' ' . $user->middle_name  : '' ) . ($user->name_extension ? ' ' . $user->name_extension : '');
+
         $this->tableData = ServiceRecords::where('user_id', $id)
+            ->orderByRaw("CASE WHEN toPresent = 'Present' THEN 0 ELSE 1 END")
+            ->orderBy('from') 
             ->get()
             ->map(function ($record) {
                 return [
@@ -129,11 +134,15 @@ class ServiceRecordTable extends Component
             if(!$id){
                 $id = $this->recordId;
             }
+
+           
             $user = User::findOrFail($id);
             $record = ServiceRecords::where('user_id', $id)
-                    ->orderBy('from', 'DESC')
+                    ->orderByRaw("CASE WHEN toPresent = 'Present' THEN 0 ELSE 1 END")
+                    ->orderBy('from', 'desc') 
                     ->get();
-            if($record){
+            
+            if($user && $record){
                 $filters = [
                     'user' => $user,
                     'record' => $record,
@@ -141,10 +150,14 @@ class ServiceRecordTable extends Component
 
                 $exporter = new ServiceRecordExport($filters);
                 $result = $exporter->export();
-
                 return response()->streamDownload(function () use ($result) {
                     echo $result['content'];
                 }, $result['filename']);
+            }else{
+                $this->dispatch('swal', [
+                    'title' => 'No service record found for this user.',
+                    'icon' => 'error'
+                ]);
             }
         }catch(Exception $e){
             throw $e;
@@ -179,7 +192,7 @@ class ServiceRecordTable extends Component
             if ($existingRecord) {
                 $existingRecord->update([
                     'from' => $row[0] ? Carbon::parse($row[0])->format('Y-m-d'): null,
-                    'to' => $row[1] != 'Present' ? Carbon::parse($row[0])->format('Y-m-d') : null,
+                    'to' => $row[1] != 'Present' ? Carbon::parse($row[1])->format('Y-m-d') : null,
                     'toPresent' => $row[1] == 'Present' ? $row[1] : null,
                     'designation' => $row[2] ?: '--do--',
                     'status' => $row[3] ?: '--do--',
@@ -193,7 +206,7 @@ class ServiceRecordTable extends Component
                 ServiceRecords::create([
                     'user_id' => $this->recordId,
                     'from' => $row[0] ? Carbon::parse($row[0])->format('Y-m-d'): null,
-                    'to' => ($row[1] != 'Present' && strtotime($row[1])) ? Carbon::parse($row[0])->format('Y-m-d') : null,
+                    'to' => ($row[1] != 'Present' && strtotime($row[1])) ? Carbon::parse($row[1])->format('Y-m-d') : null,
                     'toPresent' => $row[1] == 'Present' ? $row[1] : null,
                     'designation' => $row[2] ?: '--do--',
                     'status' => $row[3] ?: '--do--',
@@ -280,5 +293,8 @@ class ServiceRecordTable extends Component
         $this->thisRecord = null;
         $this->serviceRecord = null;
         $this->editSig = null;
+        $this->name = null;
+        $this->name2 = null;
+        $this->userId = null;
     }
 }

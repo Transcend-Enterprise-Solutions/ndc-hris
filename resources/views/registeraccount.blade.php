@@ -16,10 +16,10 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script defer src="/build/assets/app-B9GXRaBV.js"></script>
+    <script defer src="{{ asset('/build/assets/app-DEoBNXZR.js') }}"></script>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/build/assets/app-6skvEm6U.css">
+    <link rel="stylesheet" href="{{ asset('/build/assets/app-CGiy6LcY.css') }}">
     @livewireStyles
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.5.0/flowbite.min.css" rel="stylesheet">
@@ -59,7 +59,7 @@
 
 </head>
 
-<body class="font-inter antialiased bg-slate-100 bg-white text-slate-600 dark:text-slate-400">
+<body class="font-inter antialiased bg-white text-slate-600 dark:text-slate-400">
 
     @livewire('registration')
 

@@ -13,7 +13,6 @@ use Illuminate\Support\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use Symfony\Component\Console\Output\NullOutput;
 
 class ServiceRecordExport
 {
@@ -83,7 +82,7 @@ class ServiceRecordExport
         $pageNumber = 1;
         $totalPages = 2;
         $totalRecords = count($record);
-
+    
         foreach ($record as $index => $data) {
             $sheet->setCellValue("A{$this->currentRow}", $formatDate($data->from));
             $sheet->setCellValue("C{$this->currentRow}", $data->to ? $formatDate($data->to) : $data->toPresent);
@@ -127,6 +126,8 @@ class ServiceRecordExport
                 $this->currentRow++;
             }
         }
+
+       
 
         if ($numberOfData < 20 || $numberOfData == $totalRecords) {
             $sheet->getStyle("A{$this->currentRow}:Q{$this->currentRow}")->applyFromArray([
@@ -209,11 +210,17 @@ class ServiceRecordExport
             $emp2 = $signatory2  ? User::findOrFail($signatory2->user_id) : null;
             $employee1 = $emp1 ? strtoupper($emp1->name) : 'XXXXXXXXXX';
             $employee2 = $emp2 ? strtoupper($emp2->name) : 'XXXXXXXXXX';
-            $pos1 = $emp1 ? Positions::findOrFail($emp1->position_id) : null;
-            $pos2 = $emp1 ? Positions::findOrFail($emp2->position_id) : null;
+
+            $pos1 = null;
+            $pos2 = null;
+            if($emp1){
+                $pos1 = Positions::where('id', $emp1->position_id)->first();
+            }
+            if($emp2){
+                $pos2 = Positions::where('id', $emp2->position_id)->first();
+            }
             $position1 = $pos1 ? ucwords(strtolower($pos1->position)) : 'XXXXXXXXXX';
             $position2 = $pos2 ? ucwords(strtolower($pos2->position)) : 'XXXXXXXXXX';            
-
 
             $this->currentRow += 2;
             $sheet->unmergeCells("O{$this->currentRow}:Q{$this->currentRow}");

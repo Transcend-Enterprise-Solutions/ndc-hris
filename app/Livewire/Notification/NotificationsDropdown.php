@@ -26,32 +26,73 @@ class NotificationsDropdown extends Component
     public function refreshNotifications()
     {
         $user = Auth::user();
-        if ($user->user_role === 'sa') {
+        if (in_array($user->user_role, ['sa', 'hr'])) {
             $this->locRequestCount = WfhLocationRequests::where('status', 0)->count();
-            $this->obRequestCount = OfficialBusiness::where('status', 0)->count();
-            $this->docRequestCount = NotificationModel::where('read', 0)->where('type', 'request')->get()->count();
-
-            $this->latestDocNotifDate = NotificationModel::where('read', 0)->where('type', 'request')->latest()->first();
-            $this->latestLocNotifDate = NotificationModel::where('read', 0)->where('type', 'locrequest')->latest()->first();
-            $this->latestObNotifDate = NotificationModel::where('read', 0)->where('type', 'obrequest')->latest()->first();
+        
+            $this->obRequestCount = OfficialBusiness::where('status', 0)
+                ->whereNotNull('date_sup_approved')
+                ->count();
+        
+            $this->docRequestCount = NotificationModel::where('read', 0)
+                ->where('type', 'request')
+                ->count();
+        
+            $this->latestDocNotifDate = NotificationModel::where('read', 0)
+                ->where('type', 'request')
+                ->latest()
+                ->first();
+        
+            $this->latestLocNotifDate = NotificationModel::where('read', 0)
+                ->where('type', 'locrequest')
+                ->latest()
+                ->first();
+        
+            // Types to include in notification queries
+            $types = $this->obRequestCount != 0 
+                ? ['request', 'locrequest', 'obrequest'] 
+                : ['request', 'locrequest'];
+        
+            if (in_array('obrequest', $types)) {
+                $this->latestObNotifDate = NotificationModel::where('read', 0)
+                    ->where('type', 'obrequest')
+                    ->latest()
+                    ->first();
+            }
+        
+            $this->notifications = NotificationModel::where('read', 0)
+                ->whereIn('type', $types)
+                ->selectRaw('type, count(*) as unread_count')
+                ->groupBy('type')
+                ->latest()
+                ->get();
+        
+            $this->unreadCount = NotificationModel::where('read', 0)
+                ->whereIn('type', $types)
+                ->count();
 
             // $this->notifications = NotificationModel::with('docRequest')
             //                             ->where('read', 0)
             //                             ->where('type', 'request')
             //                             ->latest()
             //                             ->get();
+        } elseif($user->user_role === 'sv'){
+            $this->obRequestCount = OfficialBusiness::where('status', 0)
+                ->whereNull('approver')
+                ->whereNull('date_sup_approved')
+                ->count();
+
+            $this->latestObNotifDate = NotificationModel::where('read', 0)->where('type', 'obrequest')->latest()->first();
 
             $this->notifications = NotificationModel::where('read', 0)
-                                        ->whereIn('type', ['request', 'locrequest', 'obrequest'])
-                                        ->selectRaw('type, count(*) as unread_count')
-                                        ->groupBy('type')
-                                        ->latest()
-                                        ->get();
-                                    
-            $this->unreadCount = NotificationModel::where('read', 0)
-                                        ->whereIn('type', ['request', 'locrequest', 'obrequest'])
-                                        ->get()->count();
-        } else {
+                ->where('type', 'obrequest')
+                ->selectRaw('type, COUNT(*) as unread_count')
+                ->groupBy('type')
+                ->latest()
+                ->get();
+
+                    
+            $this->unreadCount = $this->obRequestCount;
+        } elseif($user->user_role === 'emp') {
             $notifications = NotificationModel::with('docRequest')
                                         ->where('read', 0)
                                         ->where('user_id', $user->id)
