@@ -42,7 +42,7 @@
             margin: 2px 0;
         }
         .dtr-title {
-            font-size: 16px; /* Increased from 14px */
+            font-size: 14px; /* Increased from 14px */
             font-weight: bold;
             margin: 5px 0;
         }
@@ -50,7 +50,7 @@
             margin-top: 15px;
             margin-bottom: 10px;
             text-align: left;
-            font-size: 14px; /* Increased from 12px */
+            font-size: 13px;
         }
         .employee-name-label {
             font-weight: bold;
@@ -58,7 +58,7 @@
             margin-right: 5px;
         }
         .employee-name {
-            font-weight: bold;
+
             display: inline-block;
         }
         .month-header {
@@ -167,8 +167,13 @@
 
         <div class="employee-name-container">
             <span class="employee-name-label">Name:</span>
-            <span class="employee-name">{{ $employeeName }}</span>
+            <span class="employee-name">{{ $employeeName }}</span><br>
+            <span class="employee-name-label">Position:</span>
+            <span class="employee-name">{{ $userPosition }}</span><br>
+            <span class="employee-name-label">Department:</span>
+            <span class="employee-name">{{ $userDepartment }}</span>
         </div>
+
 
         <div class="month-header">
             FOR THE MONTH OF {{ Carbon\Carbon::parse($startDate)->format('F Y') }}
