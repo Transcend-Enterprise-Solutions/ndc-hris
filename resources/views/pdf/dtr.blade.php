@@ -10,13 +10,13 @@
             margin: 0;
             padding: 15px;
             position: relative;
-            font-size: 9px;
+            font-size: 11px; /* Increased from 9px */
         }
         .form-number {
             position: absolute;
             top: 5px;
             left: 5px;
-            font-size: 8px;
+            font-size: 10px; /* Increased from 8px */
             color: #333;
         }
         .header-section {
@@ -33,16 +33,16 @@
             margin-bottom: 2px;
         }
         .org-title {
-            font-size: 12px;
+            font-size: 14px; /* Increased from 12px */
             font-weight: bold;
             margin: 2px 0;
         }
         .org-subtitle {
-            font-size: 11px;
+            font-size: 13px; /* Increased from 11px */
             margin: 2px 0;
         }
         .dtr-title {
-            font-size: 14px;
+            font-size: 16px; /* Increased from 14px */
             font-weight: bold;
             margin: 5px 0;
         }
@@ -50,7 +50,7 @@
             margin-top: 15px;
             margin-bottom: 10px;
             text-align: left;
-            font-size: 12px;
+            font-size: 14px; /* Increased from 12px */
         }
         .employee-name-label {
             font-weight: bold;
@@ -65,7 +65,7 @@
             text-align: center;
             font-weight: bold;
             margin: 10px 0;
-            font-size: 11px;
+            font-size: 13px; /* Increased from 11px */
             border: 1px solid #000;
             padding: 3px;
             background-color: #f2f2f2;
@@ -77,9 +77,9 @@
         }
         th, td {
             border: 1px solid black;
-            padding: 3px;
+            padding: 4px; /* Increased from 3px */
             text-align: center;
-            font-size: 9px;
+            font-size: 11px; /* Increased from 9px */
         }
         th {
             background-color: #f2f2f2;
@@ -92,7 +92,7 @@
             margin-top: 10px;
             text-align: center;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 12px; /* Increased from 10px */
         }
         .summary-grid {
             display: grid;
@@ -105,7 +105,7 @@
         .summary-item {
             display: flex;
             justify-content: space-between;
-            font-size: 9px;
+            font-size: 11px; /* Increased from 9px */
             padding: 2px;
         }
         .summary-label {
@@ -114,7 +114,7 @@
         }
         .certification {
             margin-top: 15px;
-            font-size: 9px;
+            font-size: 11px; /* Increased from 9px */
             text-align: center;
             font-style: italic;
         }
@@ -131,10 +131,10 @@
             border-top: 1px solid black;
             margin-top: 25px;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 12px; /* Increased from 10px */
         }
         .signature-title {
-            font-size: 9px;
+            font-size: 11px; /* Increased from 9px */
             margin-top: 3px;
         }
         .remarks-column {
@@ -144,7 +144,7 @@
             position: absolute;
             bottom: 5px;
             left: 5px;
-            font-size: 8px;
+            font-size: 10px; /* Increased from 8px */
             color: #666;
         }
     </style>
@@ -154,9 +154,12 @@
         <div class="form-number">Civil Service Form No.48</div>
 
         <div class="header-section">
-            <div class="logo-container">
-                <img src="{{ public_path('images/ndc-logo-transparent.png') }}" alt="NDC Logo" class="logo">
+            <div class="logo-container" style="display: flex; align-items: center;">
+                <img src="{{ public_path('images/ndc-logo-transparent.png') }}" alt="NDC Logo" class="logo" style="margin-right: 20px;">
+                <img src="{{ public_path('images/bagong-pilipinas-logo.png') }}" alt="Bagong Pilipinas Logo" class="logo" style="position: relative; top: -6px;">
             </div>
+
+
             <div class="org-title">Republic of the Philippines</div>
             <div class="org-subtitle">National Development Company</div>
             <div class="dtr-title">DAILY TIME RECORD</div>
@@ -215,7 +218,7 @@
 
         <div class="total-summary" style="text-align: left; margin-left: 3px; margin-top: 8px; margin-bottom: 3px;">TOTAL SUMMARY</div>
 
-        <table style="width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 9px;">
+        <table style="width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 11px;"> <!-- Increased from 9px -->
             <tr>
                 <!-- First Row -->
                 <td style="border: none; padding: 1px 3px; text-align: left;">
