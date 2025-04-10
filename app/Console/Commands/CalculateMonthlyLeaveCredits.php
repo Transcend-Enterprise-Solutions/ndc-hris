@@ -39,15 +39,31 @@ class CalculateMonthlyLeaveCredits extends Command
             // Fetch the current vl_claimable_credits from the leave_credits table
             $currentVlBalance = LeaveCredits::where('user_id', $user->id)->value('vl_claimable_credits');
     
-            $totalLateMinutes = EmployeesDtr::where('user_id', $user->id)
+            // Get all DTR records for the user in the current month/year
+            $dtrRecords = EmployeesDtr::where('user_id', $user->id)
                 ->whereMonth('date', $month)
                 ->whereYear('date', $year)
-                ->where('remarks', 'Late/Undertime')
-                ->get()
-                ->sum(function ($dtr) {
-                    [$hours, $minutes] = explode(':', $dtr->late);
-                    return $hours * 60 + $minutes;
-                });
+                ->whereIn('remarks', ['Late', 'Undertime', 'Late/Undertime'])
+                ->get();
+    
+            $totalLateMinutes = 0;
+            
+            foreach ($dtrRecords as $dtr) {
+                switch ($dtr->remarks) {
+                    case 'Late/Undertime':
+                        // Sum both late and undertime minutes
+                        $totalLateMinutes += $this->timeToMinutes($dtr->late) + $this->timeToMinutes($dtr->ut);
+                        break;
+                    case 'Late':
+                        // Add only late minutes
+                        $totalLateMinutes += $this->timeToMinutes($dtr->late);
+                        break;
+                    case 'Undertime':
+                        // Add only undertime minutes
+                        $totalLateMinutes += $this->timeToMinutes($dtr->ut);
+                        break;
+                }
+            }
     
             $totalLateTime = $this->convertMinutesToHoursAndMinutes($totalLateMinutes);
             $totalCreditsEarned = $this->calculateTotalCreditsEarned($totalLateMinutes);
@@ -71,12 +87,22 @@ class CalculateMonthlyLeaveCredits extends Command
                     'late_time' => $totalLateTime,
                     'late_in_credits' => $totalCreditsEarned,
                     'latest_vl_credits' => $currentVlBalance,
-                    'leave_credits_earned' => $leaveCreditsEarned, // Add leave_credits_earned
+                    'leave_credits_earned' => $leaveCreditsEarned,
                 ]
             );
         }
     
         $this->info("Monthly leave credits calculated and updated successfully for " . $date->format('F Y') . ".");
+    }
+
+    private function timeToMinutes($time)
+    {
+        if (empty($time)) {
+            return 0;
+        }
+        
+        [$hours, $minutes] = explode(':', $time);
+        return ($hours * 60) + $minutes;
     }
     
     private function calculateTotalCreditsEarned($totalLateMinutes)

@@ -474,7 +474,14 @@
 
                         <div class="space-y-6">
                             <p class="text-gray-700 dark:text-gray-300">
-                                Are you sure you want to punch {{ $verifyType }}?
+                                Are you sure you want to punch
+                                @if ($verifyType === 'Morning In')
+                                    Time In
+                                @elseif($verifyType === 'Afternoon Out')
+                                    Time Out
+                                @else
+                                    {{ $verifyType }}
+                                @endif?
                             </p>
 
                             <!-- Action Buttons -->
