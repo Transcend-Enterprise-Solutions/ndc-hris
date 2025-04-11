@@ -661,8 +661,7 @@
                                             of Dates</label>
                                         <div class="mt-1 flex">
                                             <input type="date" wire:model="new_date"
-                                                class="block w-full rounded-l-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm sm:text-sm"
-                                                min="{{ date('Y-m-d') }}">
+                                                class="block w-full rounded-l-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm sm:text-sm">
                                             <button wire:click="addDate"
                                                 class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-green-600 hover:bg-green-700 focus:outline-none">
                                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24"

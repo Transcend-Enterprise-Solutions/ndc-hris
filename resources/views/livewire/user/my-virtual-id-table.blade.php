@@ -25,11 +25,42 @@
                             class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
                             Export Back ID
                         </button>
+                        <button wire:click="toggleUploadSignature"
+                            class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
+                            Upload E-Signature
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Signature Upload Modal -->
+    <x-modal wire:model.defer="showSignatureModal" centered maxWidth="md">
+        <div class="p-6">
+            <h2 class="text-lg font-bold mb-4 text-slate-800 dark:text-white">Upload E-Signature</h2>
+
+            <div class="mb-4">
+                <input type="file" wire:model="signatureFile"
+                    class="w-full border rounded p-2 dark:bg-gray-700 dark:border-gray-600">
+                @error('signatureFile')
+                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                @enderror
+                <p class="text-xs text-gray-500 mt-1">Max file size: 1MB (PNG, JPG, JPEG)</p>
+            </div>
+
+            <div class="flex justify-end space-x-2">
+                <button wire:click="$set('showSignatureModal', false)"
+                    class="px-4 py-2 text-sm text-slate-800 dark:text-white hover:bg-gray-200 dark:hover:bg-slate-600 rounded">
+                    Cancel
+                </button>
+                <button wire:click="saveSignature"
+                    class="px-4 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600">
+                    Upload
+                </button>
+            </div>
+        </div>
+    </x-modal>
 
     <div class="grid grid-cols-1 gap-6">
         <!-- Front Side -->
@@ -52,11 +83,11 @@
                     </div>
 
                     <!-- SIGN HERE -->
-                    @if ($eSignaturePath)
+                    @if ($this->eSignatureUrl)
                         <div class="flex items-center justify-center" style="height: 48px;">
-                            <!-- Fixed height container -->
-                            <img src="{{ route('signature.file', ['filename' => basename($eSignaturePath)]) }}" alt="E-Signature"
-                                class="max-w-full max-h-full object-contain">
+                            <img src="{{ $this->eSignatureUrl }}" alt="E-Signature"
+                                class="max-w-full max-h-full object-contain"
+                                onerror="this.onerror=null;this.parentElement.innerHTML='<p class=\'text-red-500 text-sm\'>SIGN HERE</p>';">
                         </div>
                     @else
                         <div class="flex items-center justify-center" style="height: 48px;">
