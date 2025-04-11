@@ -224,28 +224,28 @@ class LeaveApplicationTable extends Component
     
         $this->validate($rules);
     
-        $now = now();
-        $fiveDaysFromNow = $now->copy()->addDays(5)->startOfDay();
+        // $now = now();
+        // $fiveDaysFromNow = $now->copy()->addDays(5)->startOfDay();
     
-        if ($this->type_of_leave === 'Vacation Leave' || $this->type_of_leave === 'Mandatory/Forced Leave') {
-            $invalidDates = collect($this->list_of_dates)->filter(function ($date) use ($fiveDaysFromNow) {
-                return Carbon::parse($date)->startOfDay()->lt($fiveDaysFromNow);
-            });
+        // if ($this->type_of_leave === 'Vacation Leave' || $this->type_of_leave === 'Mandatory/Forced Leave') {
+        //     $invalidDates = collect($this->list_of_dates)->filter(function ($date) use ($fiveDaysFromNow) {
+        //         return Carbon::parse($date)->startOfDay()->lt($fiveDaysFromNow);
+        //     });
     
-            if ($invalidDates->isNotEmpty()) {
-                $this->addError('list_of_dates', 'For Vacation Leave or Mandatory/Forced Leave, all leave dates must be at least 5 days from now.');
-                return;
-            }
+        //     if ($invalidDates->isNotEmpty()) {
+        //         $this->addError('list_of_dates', 'For Vacation Leave or Mandatory/Forced Leave, all leave dates must be at least 5 days from now.');
+        //         return;
+        //     }
     
-            $invalidPastDates = collect($this->list_of_dates)->filter(function ($date) use ($now) {
-                return Carbon::parse($date)->startOfDay()->lte($now->startOfDay());
-            });
+        //     $invalidPastDates = collect($this->list_of_dates)->filter(function ($date) use ($now) {
+        //         return Carbon::parse($date)->startOfDay()->lte($now->startOfDay());
+        //     });
     
-            if ($invalidPastDates->isNotEmpty()) {
-                $this->addError('list_of_dates', 'For Vacation Leave or Mandatory/Forced Leave, all dates must be in the future.');
-                return;
-            }
-        }
+        //     if ($invalidPastDates->isNotEmpty()) {
+        //         $this->addError('list_of_dates', 'For Vacation Leave or Mandatory/Forced Leave, all dates must be in the future.');
+        //         return;
+        //     }
+        // }
     
         if ($this->type_of_leave === 'Others') {
             $this->validate([

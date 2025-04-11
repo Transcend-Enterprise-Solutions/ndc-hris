@@ -131,17 +131,26 @@ Route::middleware(['auth', 'checkrole:emp'])->group(function () {
 });
 
 
+// Route::get('/signature/{filename}', function ($filename) {
+//     $path = 'signatures/' . $filename;  // Note: plural "signatures"
+
+//     if (!Storage::disk('public')->exists($path)) {
+//         abort(404);
+//     }
+
+//     $file = Storage::disk('public')->get($path);
+//     $type = Storage::disk('public')->mimeType($path);
+
+//     return response($file, 200)->header('Content-Type', $type);
+// })->name('signature.file');
 Route::get('/signature/{filename}', function ($filename) {
-    $path = 'signatures/' . $filename;
+    $path = 'signatures/'.$filename;
 
     if (!Storage::disk('public')->exists($path)) {
         abort(404);
     }
 
-    $file = Storage::disk('public')->get($path);
-    $type = File::mimeType(storage_path('app/public/' . $path));
-
-    return response($file, 200)->header('Content-Type', $type);
+    return Storage::disk('public')->response($path);
 })->name('signature.file');
 
 Route::get('/pds-photo/{filename}', function ($filename) {
@@ -169,16 +178,3 @@ Route::get('/profile-photo/{filename}', function ($filename) {
 
     return response($file, 200)->header('Content-Type', $type);
 })->name('profile-photo.file');
-
-Route::get('/signature/{filename}', function ($filename) {
-    $path = 'signature/' . $filename;
-
-    if (!Storage::disk('public')->exists($path)) {
-        abort(404);
-    }
-
-    $file = Storage::disk('public')->get($path);
-    $type = File::mimeType(storage_path('app/public/' . $path));
-
-    return response($file, 200)->header('Content-Type', $type);
-})->name('signature.file');
