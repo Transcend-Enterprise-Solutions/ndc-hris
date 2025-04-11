@@ -33,7 +33,9 @@ class ServiceRecordTable extends Component
     public $userId;
     public $userId2;
     public $name;
+    public $editingRow = null;
     public $name2;
+    public $toDeleteId = null;
     public $tableData = [];
     public $headers = [
         'From', 'To', 
@@ -114,6 +116,7 @@ class ServiceRecordTable extends Component
             ->get()
             ->map(function ($record) {
                 return [
+                    $record->id,
                     Carbon::parse($record->from)->format('m/d/Y'),
                     $record->to ? Carbon::parse($record->to)->format('m/d/Y'): $record->toPresent,
                     $record->designation,
@@ -164,64 +167,109 @@ class ServiceRecordTable extends Component
         }
     }
 
-    public function addRow()
+    public function editRow($index)
     {
-        $this->tableData[] = array_fill(0, 9, '');
+        $this->editingRow = $index;
     }
 
-    public function saveRecords()
+    public function addRow()
     {
-        if (empty($this->tableData) || collect($this->tableData)->every(fn($row) => !array_filter($row))) {
-            $this->dispatch('swal', [
-                'title' => 'No valid service records to save.',
-                'icon' => 'error'
-            ]);
-            return;
+        $newRow = array_fill(0, 10, '');
+        $newRow['is_new'] = true;
+        $this->tableData[] = $newRow;
+        $this->editingRow = array_key_last($this->tableData);
+    }
+
+    public function cancelEdit()
+    {
+        if ($this->editingRow !== null) {
+            if (array_key_exists('is_new', $this->tableData[$this->editingRow])) {
+                unset($this->tableData[$this->editingRow]);
+                $this->tableData = array_values($this->tableData);
+            }
         }
 
-       
-        foreach ($this->tableData as $row) {
-            if (!array_filter($row)) {
-                continue;
-            }
+        $this->editingRow = null;
+        $this->resetValidation();
+    }
 
-            $existingRecord = ServiceRecords::where('user_id', $this->recordId)
-                ->where('from', Carbon::parse($row[0])->format('Y-m-d'))
-                ->first();
+    public function saveRecords($rowIndex)
+    {
+        $row = $this->tableData[$rowIndex];
+        $recordId = $row[0];
+        
+        $this->validate([
+            'tableData.'.$rowIndex.'.1' => 'required|date', // from date
+            'tableData.'.$rowIndex.'.2' => ['required', function ($attribute, $value, $fail) {
+                if (strtolower($value) === 'present') {
+                    return; // Valid if "present" in any case
+                }
+                
+                if (!is_string($value) || !strtotime($value)) {
+                    $fail('The '.$attribute.' must be a valid date or "Present".');
+                }
+            }],
+            'tableData.'.$rowIndex.'.3' => 'required',      // designation
+            'tableData.'.$rowIndex.'.4' => 'required',      // status
+            'tableData.'.$rowIndex.'.5' => 'required',      // salary
+            'tableData.'.$rowIndex.'.6' => 'required',      // station
+            'tableData.'.$rowIndex.'.7' => 'required',      // branch
+        ]);
 
-            if ($existingRecord) {
-                $existingRecord->update([
-                    'from' => $row[0] ? Carbon::parse($row[0])->format('Y-m-d'): null,
-                    'to' => $row[1] != 'Present' ? Carbon::parse($row[1])->format('Y-m-d') : null,
-                    'toPresent' => $row[1] == 'Present' ? $row[1] : null,
-                    'designation' => $row[2] ?: '--do--',
-                    'status' => $row[3] ?: '--do--',
-                    'salary_annum' => $row[4] ?: '--do--',
-                    'station_place_of_assignment' => $row[5] ?: '--do--',
-                    'branch' => $row[6] ?: '--do--',
-                    'lv_abs_wo_pay' => $row[7] ?: '--do--',
-                    'remarks' => $row[8] ?: '--do--',
-                ]);
-            } else {
-                ServiceRecords::create([
-                    'user_id' => $this->recordId,
-                    'from' => $row[0] ? Carbon::parse($row[0])->format('Y-m-d'): null,
-                    'to' => ($row[1] != 'Present' && strtotime($row[1])) ? Carbon::parse($row[1])->format('Y-m-d') : null,
-                    'toPresent' => $row[1] == 'Present' ? $row[1] : null,
-                    'designation' => $row[2] ?: '--do--',
-                    'status' => $row[3] ?: '--do--',
-                    'salary_annum' => $row[4] ?: '--do--',
-                    'station_place_of_assignment' => $row[5] ?: '--do--',
-                    'branch' => $row[6] ?: '--do--',
-                    'lv_abs_wo_pay' => $row[7] ?: '--do--',
-                    'remarks' => $row[8] ?: '--do--',
-                ]);
-            }
+        if (isset($this->tableData[$rowIndex]['is_new'])) {
+            unset($this->tableData[$rowIndex]['is_new']);
         }
     
-        $this->resetVariables();
+        $data = [
+            'from' => $row[1] ? Carbon::parse($row[1])->format('Y-m-d') : null,
+            'to' => ($row[2] != 'Present' && $row[2]) ? Carbon::parse($row[2])->format('Y-m-d') : null,
+            'toPresent' => $row[2] == 'Present' ? 'Present' : null,
+            'designation' => $row[3] ?: '--do--',
+            'status' => $row[4] ?: '--do--',
+            'salary_annum' => $row[5] ?: '--do--',
+            'station_place_of_assignment' => $row[6] ?: '--do--',
+            'branch' => $row[7] ?: '--do--',
+            'lv_abs_wo_pay' => $row[8] ?: '--do--',
+            'remarks' => $row[9] ?: '--do--',
+        ];
+    
+        if ($recordId) {
+            // Update existing record
+            ServiceRecords::where('id', $recordId)->update($data);
+        } else {
+            // Create new record
+            $data['user_id'] = $this->recordId;
+            ServiceRecords::create($data);
+        }
+    
+        // Refresh the data
+        $this->toggleViewRecord($this->recordId);
+        $this->editingRow = null;
+        
         $this->dispatch('swal', [
             'title' => 'Service record saved successfully',
+            'icon' => 'success'
+        ]);
+    }
+
+    public function deleteRow($id)
+    {
+        $this->toDeleteId = $id;
+    }
+
+    public function deleteRecord()
+    {
+        $record = ServiceRecords::findOrFail($this->toDeleteId);
+        $record->delete();
+
+        $this->tableData = array_filter($this->tableData, function($row) {
+            return $row[0] != $this->toDeleteId;
+        });
+
+        $this->toDeleteId = null;
+        $this->toggleViewRecord($this->recordId);
+        $this->dispatch('swal', [
+            'title' => 'Record deleted successfully',
             'icon' => 'success'
         ]);
     }
@@ -296,5 +344,7 @@ class ServiceRecordTable extends Component
         $this->name = null;
         $this->name2 = null;
         $this->userId = null;
+        $this->editingRow = null;
+        $this->toDeleteId = null;
     }
 }
