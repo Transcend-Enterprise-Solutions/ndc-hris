@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('office_division_id');
             $table->foreign('office_division_id')->references('id')->on('office_divisions')->onDelete('cascade');
-            $table->unsignedBigInteger('unit_id');
+            $table->unsignedBigInteger('unit_id')->nullable();
             $table->string('position');
             $table->timestamps();
         });
