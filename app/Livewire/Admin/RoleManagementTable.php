@@ -879,6 +879,7 @@ class RoleManagementTable extends Component
             }else{
                 $user = User::where('id', $this->deleteId)->first();
                 if ($user) {
+                    DB::statement('SET FOREIGN_KEY_CHECKS=0;');
                     switch($this->deleteMessage){
                         case "role":
                             $user->delete();
@@ -895,7 +896,8 @@ class RoleManagementTable extends Component
                             break;
                         default:
                             break;
-                    }             
+                    }   
+                    DB::statement('SET FOREIGN_KEY_CHECKS=1;');          
                 }
             }
 
