@@ -3,7 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Models\Notification;
-use App\Models\OfficeDivisions;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\OfficialBusiness;
 use App\Models\User;
 use Carbon\Carbon;
@@ -58,6 +58,7 @@ class OfficialBusinessTable extends Component
     public $ongoingObs;
     public $upcomingObs;
     public $selectedTab = 'approved';
+    public $pdfContent;
     public $pageSize = 10; 
     public $pageSizes = [10, 20, 30, 50, 100]; 
 
@@ -77,6 +78,7 @@ class OfficialBusinessTable extends Component
 
 
     public function render(){
+        $this->showOb(5);
         $obRequests = $this->obRequests();
         $disapprovedObs = $this->disapprovedObs();
         $approvedObs = $this->approvedObs();
@@ -87,6 +89,15 @@ class OfficialBusinessTable extends Component
             'disapprovedObs' => $disapprovedObs,
             'approvedObs' => $approvedObs,
         ]);
+    }
+
+    public function showOb($obId)
+    {
+        $pdf = PDF::loadView('pdf.ob', [
+  
+        ]);
+
+        $this->pdfContent = base64_encode($pdf->output());
     }
 
     public function ongoingOfficialBusinesses(){

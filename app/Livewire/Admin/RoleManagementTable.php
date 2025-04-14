@@ -498,7 +498,7 @@ class RoleManagementTable extends Component
         $this->settings = true;  
         $this->settingsId = $id;
         $this->data = $data;
-        if($data == "office/division"){
+        if($data == "work group"){
             $officeDivisions = OfficeDivisions::where('id', $this->settingsId)->first();
             $this->settings_data = $officeDivisions->office_division;
 
@@ -519,7 +519,7 @@ class RoleManagementTable extends Component
         try {
             $message = null;
             if($this->add){
-                if ($this->data == "office/division") {
+                if ($this->data == "work group") {
                     $this->validate([
                         'units.*.value' => 'required|string|max:255',
                     ]);
@@ -535,7 +535,7 @@ class RoleManagementTable extends Component
                         ]);
                     }
 
-                    $message = "Office/Division added successfully!";
+                    $message = "Work Group added successfully!";
                 } else if ($this->data == "position") {
                     $this->validate([
                         'settingsData.*.value' => 'required|string|max:255',
@@ -563,8 +563,8 @@ class RoleManagementTable extends Component
                     $message = "Position/s added successfully!";
                 }
             }else{
-                  // Update existing Office/Division or Position
-                if ($this->data == "office/division") {
+                  // Update existing work group or Position
+                if ($this->data == "work group") {
                     $this->validate([
                         'units.*.value' => 'required|string|max:255',
                     ]);
@@ -597,7 +597,7 @@ class RoleManagementTable extends Component
                     $removedUnitIds = array_diff($existingUnitIds, $updatedUnitIds);
                     OfficeDivisionUnits::whereIn('id', $removedUnitIds)->delete();
 
-                    $message = "Office/Division updated successfully!";
+                    $message = "Work Group updated successfully!";
                 } else if ($this->data == "position") {
                     $this->validate([
                         'settingsData.*.value' => 'required|string|max:255',
@@ -863,10 +863,10 @@ class RoleManagementTable extends Component
             $message = null;
 
             if($this->data){
-                if($this->data == "office/division"){
+                if($this->data == "work group"){
                     $officeDivisions = OfficeDivisions::where('id', $this->deleteId)->first();
                     $officeDivisions->delete();
-                    $message = "Office/Division deleted successfully!";
+                    $message = "Work Group deleted successfully!";
                 }else if($this->data == "position"){
                     $positions = Positions::where('id', $this->deleteId)->first();
                     $positions->delete();

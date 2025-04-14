@@ -471,29 +471,15 @@
 </div>
 
 <script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('leaveType', () => ({
-            vacationLeave: false,
-            specialPrivilegeLeave: false,
-            sickLeave: false,
-            specialLeaveBenefitsForWomen: false,
-            studyLeave: false,
-        }));
-    });
-
     function resizeIframe() {
         const iframe = document.getElementById('pdfIframe');
         const pdfDocument = iframe.contentDocument || iframe.contentWindow.document;
 
         if (pdfDocument) {
-            // Set the iframe height based on the content
             iframe.style.height = pdfDocument.body.scrollHeight + 'px';
         }
     }
 
-    // Adjust iframe size when the PDF is loaded
     document.getElementById('pdfIframe').onload = resizeIframe;
-
-    // Optional: Adjust iframe size when the window is resized
     window.onresize = resizeIframe;
 </script>

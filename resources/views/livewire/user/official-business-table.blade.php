@@ -89,290 +89,277 @@ x-cloak>
                 </h1>
             </div>
 
-            @if($ongoingObs)
-                <div class="w-full flex flex-col justify-center items-center mb-6 bg-gray-300 dark:bg-slate-900 border border-gray-300 dark:border-slate-900 shadow-xl" x-data="{ showDialog: false }">
-                    <style>
-                        .obs{
-                            height: 200px;
-                            width: 66%;
-                        }
-
-                        .obs2{
-                            height: 200px;
-                            width: 34%;
-                        }
-
-                        @media (max-width: 768px){
-                            .obs,
-                            .obs2{
-                                width: 100%;
+            
+            @if($pdfContent)
+                <div class="mt-2" style="overflow: hidden;">
+                    <iframe id="pdfIframe" src="data:application/pdf;base64,{{ $pdfContent }}"
+                        style="width: 100%; max-height: 80vh; min-height: 500px;" frameborder="0"></iframe>
+                </div>
+            @else
+                @if($ongoingObs)
+                    <div class="w-full flex flex-col justify-center items-center mb-6 bg-gray-300 dark:bg-slate-900 border border-gray-300 dark:border-slate-900 shadow-xl" x-data="{ showDialog: false }">
+                        <style>
+                            .obs{
+                                height: 200px;
+                                width: 66%;
                             }
-                        }
-                    </style>
 
-                    <div class="flex flex-col sm:flex-row justify-center items-center w-full overflow-hidden">
-                        <div class="block shadow bg-gray-100 dark:bg-gray-900 relative obs">
-                            <div class="w-full p-4">
-                                <div class="flex w-full">
-                                    <p class="font-bold"><span class="{{ $obStatus == 'ONGOING' ? 'text-green-500' : 'text-orange-500' }}">{{ $obStatus }}</span> Official Business: {{ $ongoingObs->company }}</p>
+                            .obs2{
+                                height: 200px;
+                                width: 34%;
+                            }
+
+                            @media (max-width: 768px){
+                                .obs,
+                                .obs2{
+                                    width: 100%;
+                                }
+                            }
+                        </style>
+
+                        <div class="flex flex-col sm:flex-row justify-center items-center w-full overflow-hidden">
+                            <div class="block shadow bg-gray-100 dark:bg-gray-900 relative obs">
+                                <div class="w-full p-4">
+                                    <div class="flex w-full">
+                                        <p class="font-bold"><span class="{{ $obStatus == 'ONGOING' ? 'text-green-500' : 'text-orange-500' }}">{{ $obStatus }}</span> Official Business: {{ $ongoingObs->company }}</p>
+                                    </div>
+                                    {{-- <div class="flex w-full">
+                                        <div class="flex items-center">
+                                            <p class="mr-2">Current Location: </p>
+                                            <div class="relative flex items-center justify-center mr-3" style="height: 18px; width: 18px;">
+                                                <div class="bg-blue-500 rounded-full border border-white z-10" style="height: 12px; width: 12px;"></div>
+                                                <div class="bg-blue-500 rounded-full dot-anim opacity-40"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex">
+                                            <p class="">OB Location: </p><img src="{{ asset('/images/red-dot.png') }}" alt="map icon" style="width: 25px; height: 25px; margin-bottom:-3px;" />
+                                        </div>
+                                    </div> --}}
+                                    <div>
+                                        <p class="">Company: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->company }}</span></p>
+                                        <p class="">Address: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->address }}</span></p>
+                                        <p class="">Date: <span class="text-gray-700 dark:text-gray-100">{{ \Carbon\Carbon::parse($ongoingObs->date)->format('F d, Y') }}</span></p>
+                                        <p class="">Start Time: 
+                                            <span class="text-gray-700 dark:text-gray-100">
+                                                {{ \Carbon\Carbon::parse($ongoingObs->time_start)->format('h:i A') }}
+                                            </span>
+                                        </p>
+                                        <p class="">End Time: 
+                                            <span class="text-gray-700 dark:text-gray-100">
+                                                {{ \Carbon\Carbon::parse($ongoingObs->time_end)->format('h:i A') }}
+                                            </span>
+                                        </p>                                    
+                                        <p class="">Purpose: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->purpose }}</span></p>
+                                    </div>
                                 </div>
-                                {{-- <div class="flex w-full">
-                                    <div class="flex items-center">
-                                        <p class="mr-2">Current Location: </p>
-                                        <div class="relative flex items-center justify-center mr-3" style="height: 18px; width: 18px;">
-                                            <div class="bg-blue-500 rounded-full border border-white z-10" style="height: 12px; width: 12px;"></div>
-                                            <div class="bg-blue-500 rounded-full dot-anim opacity-40"></div>
+                                {{-- <div wire:ignore style="height: 240px; width: 100%;">
+                                    <div id="map2" style="height: 100%; width: 100%; margin: 0;"></div>
+                                </div> --}}
+                            </div>
+
+                            <div class="block p-6 shadow bg-gray-200 dark:bg-slate-800 relative obs2">
+                                <h5 class="text-lg font-bold tracking-tight text-gray-900 dark:text-white text-center">OB ATTENDANCE</h5>
+                                <div class="grid grid-cols-1 gap-2 p-4">
+                                    <div class="flex justify-center">
+                                        <button wire:click="confirmPunch({{ $ongoingObs->id }}, 'timeIn', 'Time In')"
+                                            {{ $hasObTimeIn ? 'disabled' : '' }}
+                                            class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm 
+                                            font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 
+                                            group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white
+                                            dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 
+                                            dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <span
+                                                class="relative px-2 py-2.5 bg-white dark:bg-gray-900 rounded-md 
+                                                group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in 
+                                                group-disabled:bg-opacity-0 group-disabled:text-white nowrap">
+                                                Time In{{ $hasObTimeIn ? (': ' . \Carbon\Carbon::parse($hasObTimeIn)->format('h:i A')) : '' }}
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="flex justify-center">
+                                        <button wire:click="confirmPunch({{ $ongoingObs->id }}, 'timeOut', 'Time Out')"
+                                            {{ $hasObTimeIn && !$hasObTimeOut ? '' : 'disabled' }}
+                                            class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <span
+                                                class="relative px-2 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
+                                                Time Out{{ $hasObTimeOut ? (': ' . \Carbon\Carbon::parse($hasObTimeOut)->format('h:i A')) : '' }}
+                                            </span>
+                                        </button>
+                                    </div>
+
+                                    @if($isWithinRadius)
+                                        <div class="flex justify-center">
+                                            <p class="text-blue-500 underline" @click="showDialog = true">OB Details</p>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                {{-- @if(!$isWithinRadius && $isTodayIsOb)
+                                    <div
+                                        class="absolute inset-0 flex justify-center items-center bg-gray-200 dark:bg-slate-700 bg-opacity-90 dark:bg-opacity-90">
+                                        <div class="text-center">
+                                            <i class="bi bi-person-lock" style="font-size: 3rem;"></i>
+                                            <p class="font-bold mb-4">You have not arrived at <br>
+                                                the OB location.</p>
+                                            <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p>
                                         </div>
                                     </div>
-                                    <div class="flex">
-                                        <p class="">OB Location: </p><img src="{{ asset('/images/red-dot.png') }}" alt="map icon" style="width: 25px; height: 25px; margin-bottom:-3px;" />
-                                    </div>
-                                </div> --}}
-                                <div>
-                                    <p class="">Company: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->company }}</span></p>
-                                    <p class="">Address: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->address }}</span></p>
-                                    <p class="">Date: <span class="text-gray-700 dark:text-gray-100">{{ \Carbon\Carbon::parse($ongoingObs->date)->format('F d, Y') }}</span></p>
-                                    <p class="">Start Time: 
-                                        <span class="text-gray-700 dark:text-gray-100">
-                                            {{ \Carbon\Carbon::parse($ongoingObs->time_start)->format('h:i A') }}
-                                        </span>
-                                    </p>
-                                    <p class="">End Time: 
-                                        <span class="text-gray-700 dark:text-gray-100">
-                                            {{ \Carbon\Carbon::parse($ongoingObs->time_end)->format('h:i A') }}
-                                        </span>
-                                    </p>                                    
-                                    <p class="">Purpose: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->purpose }}</span></p>
-                                </div>
-                            </div>
-                            {{-- <div wire:ignore style="height: 240px; width: 100%;">
-                                <div id="map2" style="height: 100%; width: 100%; margin: 0;"></div>
-                            </div> --}}
-                        </div>
-
-                        <div class="block p-6 shadow bg-gray-200 dark:bg-slate-800 relative obs2">
-                            <h5 class="text-lg font-bold tracking-tight text-gray-900 dark:text-white text-center">OB ATTENDANCE</h5>
-                            <div class="grid grid-cols-1 gap-2 p-4">
-                                <div class="flex justify-center">
-                                    <button wire:click="confirmPunch({{ $ongoingObs->id }}, 'timeIn', 'Time In')"
-                                        {{ $hasObTimeIn ? 'disabled' : '' }}
-                                        class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm 
-                                        font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 
-                                        group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white
-                                         dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 
-                                         dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
-                                        <span
-                                            class="relative px-2 py-2.5 bg-white dark:bg-gray-900 rounded-md 
-                                            group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in 
-                                            group-disabled:bg-opacity-0 group-disabled:text-white nowrap">
-                                            Time In{{ $hasObTimeIn ? (': ' . \Carbon\Carbon::parse($hasObTimeIn)->format('h:i A')) : '' }}
-                                        </span>
-                                    </button>
-                                </div>
-                                <div class="flex justify-center">
-                                    <button wire:click="confirmPunch({{ $ongoingObs->id }}, 'timeOut', 'Time Out')"
-                                        {{ $hasObTimeIn && !$hasObTimeOut ? '' : 'disabled' }}
-                                        class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 w-48 lg:w-64 disabled:opacity-50 disabled:cursor-not-allowed">
-                                        <span
-                                            class="relative px-2 py-2.5 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 w-48 lg:w-64 transition-all duration-75 ease-in group-disabled:bg-opacity-0 group-disabled:text-white">
-                                            Time Out{{ $hasObTimeOut ? (': ' . \Carbon\Carbon::parse($hasObTimeOut)->format('h:i A')) : '' }}
-                                        </span>
-                                    </button>
-                                </div>
-
-                                @if($isWithinRadius)
-                                    <div class="flex justify-center">
-                                        <p class="text-blue-500 underline" @click="showDialog = true">OB Details</p>
+                                @elseif(!$isTodayIsOb) --}}
+                                @if(!$isTodayIsOb)
+                                    <div
+                                        class="absolute inset-0 flex justify-center items-center bg-gray-200 dark:bg-slate-700 bg-opacity-90 dark:bg-opacity-90">
+                                        <div class="text-center">
+                                            <i class="bi bi-person-lock" style="font-size: 3rem;"></i>
+                                            <p class="font-bold mb-4">Attendance will be available on <br>
+                                                <span class="text-gray-800 dark:text-white">{{ \Carbon\Carbon::parse($ongoingObs->date)->format('F d, Y') }}</span>
+                                            </p>
+                                            {{-- <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p> --}}
+                                        </div>
                                     </div>
                                 @endif
+
+                                {{-- <div 
+                                    x-show="showDialog" 
+                                    x-transition:enter="transition ease-out duration-300 transform"
+                                    x-transition:enter-start="translate-y-full opacity-0"
+                                    x-transition:enter-end="translate-y-0 opacity-100"
+                                    x-transition:leave="transition ease-in duration-200 transform"
+                                    x-transition:leave-start="translate-y-0 opacity-100"
+                                    x-transition:leave-end="translate-y-full opacity-0"
+                                    x-cloak 
+                                    class="absolute inset-0 bg-gray-200 dark:bg-slate-700 overflow-hidden">
+                                    <div class="p-6 scrollbar-thin1" style="height: 100%; overflow-y:scroll">
+                                        <div>
+                                            <button @click="showDialog = false" class="float-right focus:outline-none">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                        <h5 class="text-xl font-bold mb-4 text-center text-gray-700 dark:text-gray-50">OB Details</h5>
+                                        <p class="">Company: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->company }}</span></p>
+                                        <p class="">Address: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->address }}</span></p>
+                                        <p class="">Date: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->date }}</span></p>
+                                        <p class="">Stary Time: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->time_start }}</span></p>
+                                        <p class="">End Time: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->time_end }}</span></p>
+                                        <p class="">Purpose: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->purpose }}</span></p>
+                                        <div class="w-full flex justify-center mt-6">
+                                            <button 
+                                                class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600"
+                                                @click="showDialog = false">
+                                                Attendance
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div> --}}
+
                             </div>
-
-                            {{-- @if(!$isWithinRadius && $isTodayIsOb)
-                                <div
-                                    class="absolute inset-0 flex justify-center items-center bg-gray-200 dark:bg-slate-700 bg-opacity-90 dark:bg-opacity-90">
-                                    <div class="text-center">
-                                        <i class="bi bi-person-lock" style="font-size: 3rem;"></i>
-                                        <p class="font-bold mb-4">You have not arrived at <br>
-                                            the OB location.</p>
-                                        <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p>
-                                    </div>
-                                </div>
-                            @elseif(!$isTodayIsOb) --}}
-                            @if(!$isTodayIsOb)
-                                <div
-                                    class="absolute inset-0 flex justify-center items-center bg-gray-200 dark:bg-slate-700 bg-opacity-90 dark:bg-opacity-90">
-                                    <div class="text-center">
-                                        <i class="bi bi-person-lock" style="font-size: 3rem;"></i>
-                                        <p class="font-bold mb-4">Attendance will be available on <br>
-                                            <span class="text-gray-800 dark:text-white">{{ \Carbon\Carbon::parse($ongoingObs->date)->format('F d, Y') }}</span>
-                                        </p>
-                                        {{-- <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p> --}}
-                                    </div>
-                                </div>
-                            @endif
-
-                            {{-- <div 
-                                x-show="showDialog" 
-                                x-transition:enter="transition ease-out duration-300 transform"
-                                x-transition:enter-start="translate-y-full opacity-0"
-                                x-transition:enter-end="translate-y-0 opacity-100"
-                                x-transition:leave="transition ease-in duration-200 transform"
-                                x-transition:leave-start="translate-y-0 opacity-100"
-                                x-transition:leave-end="translate-y-full opacity-0"
-                                x-cloak 
-                                class="absolute inset-0 bg-gray-200 dark:bg-slate-700 overflow-hidden">
-                                <div class="p-6 scrollbar-thin1" style="height: 100%; overflow-y:scroll">
-                                    <div>
-                                        <button @click="showDialog = false" class="float-right focus:outline-none">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                    <h5 class="text-xl font-bold mb-4 text-center text-gray-700 dark:text-gray-50">OB Details</h5>
-                                    <p class="">Company: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->company }}</span></p>
-                                    <p class="">Address: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->address }}</span></p>
-                                    <p class="">Date: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->date }}</span></p>
-                                    <p class="">Stary Time: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->time_start }}</span></p>
-                                    <p class="">End Time: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->time_end }}</span></p>
-                                    <p class="">Purpose: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->purpose }}</span></p>
-                                    <div class="w-full flex justify-center mt-6">
-                                        <button 
-                                            class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600"
-                                            @click="showDialog = false">
-                                            Attendance
-                                        </button>
-                                    </div>
-                                </div>
-                            </div> --}}
-
                         </div>
                     </div>
-                </div>
-            @endif
+                @endif
 
+                <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
+                    <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'requests'">
+                        <label for="search4" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                        <input type="text" id="search4" wire:model.live="search4"
+                            class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                                dark:hover:bg-slate-600 dark:border-slate-600
+                                dark:text-gray-300 dark:bg-gray-800"
+                            placeholder="Enter reference number or company">
+                    </div>
+                    <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'approved'">
+                        <label for="search5" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                        <input type="text" id="search5" wire:model.live="search5"
+                            class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                                dark:hover:bg-slate-600 dark:border-slate-600
+                                dark:text-gray-300 dark:bg-gray-800"
+                            placeholder="Enter reference number or company">
+                    </div>
+                    <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'disapproved'">
+                        <label for="search6" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
+                        <input type="text" id="search6" wire:model.live="search6"
+                            class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                                dark:hover:bg-slate-600 dark:border-slate-600
+                                dark:text-gray-300 dark:bg-gray-800"
+                            placeholder="Enter reference number or company">
+                    </div>
 
-            <div class="mb-6 flex flex-col sm:flex-row items-end justify-between">
-                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'requests'">
-                    <label for="search4" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
-                    <input type="text" id="search4" wire:model.live="search4"
-                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
-                            dark:hover:bg-slate-600 dark:border-slate-600
-                            dark:text-gray-300 dark:bg-gray-800"
-                        placeholder="Enter reference number or company">
-                </div>
-                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'approved'">
-                    <label for="search5" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
-                    <input type="text" id="search5" wire:model.live="search5"
-                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
-                            dark:hover:bg-slate-600 dark:border-slate-600
-                            dark:text-gray-300 dark:bg-gray-800"
-                        placeholder="Enter reference number or company">
-                </div>
-                <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'disapproved'">
-                    <label for="search6" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Search</label>
-                    <input type="text" id="search6" wire:model.live="search6"
-                        class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
-                            dark:hover:bg-slate-600 dark:border-slate-600
-                            dark:text-gray-300 dark:bg-gray-800"
-                        placeholder="Enter reference number or company">
+                    <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
+                        <div class="w-full sm:w-auto">
+                            <button wire:click="toggleAddOB" 
+                                class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
+                                hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
+                                dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
+                                Apply OB
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
 
-                <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
-                    <div class="w-full sm:w-auto">
-                        <button wire:click="toggleAddOB" 
-                            class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
-                            hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
-                            dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
-                            Apply OB
+                <div class="overflow-hidden text-sm pb-3">
+                    <div class="flex gap-2 overflow-x-auto -mb-2" class="relative">
+                        <button @click="selectedTab = 'approved'"
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'approved', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'approved' }"
+                            class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
+                            Approved OB
+                        </button>
+                        <button @click="selectedTab = 'requests'"
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'requests', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'requests' }"
+                            class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
+                            OB Requests
+                        </button>
+                        <button @click="selectedTab = 'disapproved'"
+                            :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'disapproved', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'disapproved' }"
+                            class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
+                            Disapproved OB
                         </button>
                     </div>
-                </div>
 
-            </div>
-
-
-            <div class="overflow-hidden text-sm pb-3">
-                <div class="flex gap-2 overflow-x-auto -mb-2" class="relative">
-                    <button @click="selectedTab = 'approved'"
-                        :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'approved', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'approved' }"
-                        class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
-                        Approved OB
-                    </button>
-                    <button @click="selectedTab = 'requests'"
-                        :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'requests', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'requests' }"
-                        class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
-                        OB Requests
-                    </button>
-                    <button @click="selectedTab = 'disapproved'"
-                        :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'disapproved', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'disapproved' }"
-                        class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
-                        Disapproved OB
-                    </button>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
-                        <div x-show="selectedTab === 'requests'">
-                            <div class="overflow-x-auto">
-                                <table class="w-full min-w-full">
-                                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
-                                        <tr class="whitespace-nowrap">
-                                            <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
-                                                Approval Status
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
-                                                Reference No.
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Company
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Address
-                                            </th>
-                                            {{-- <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Geolocation
-                                            </th> --}}
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Purpose
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Date
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Time
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Attendance
-                                            </th>
-                                            <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
-                                                Action
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
-                                        @foreach ($obRequests as $obs)
-                                            <tr class="text-neutral-800 dark:text-neutral-200">
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap relative" style="overflow-y: visible">
-                                                    <div>
-                                                        <span class="opacity-60">Supervisor: </span>
-                                                            {{ $obs->supervisor }} <br/>
-                                                        <span class="opacity-60">Status: </span>
-                                                            <span class="{{ isset($obs->date_sup_approved) && $obs->date_sup_approved ? 'text-green-500' :
-                                                            (isset($obs->date_sup_disapproved) && $obs->date_sup_disapproved ? 'text-red-500' : 'text-orange-500') }}">
-                                                        
-                                                                {{ isset($obs->date_sup_approved) && $obs->date_sup_approved ? 'Approved' :
-                                                                (isset($obs->date_sup_disapproved) && $obs->date_sup_disapproved ? 'Disapproved' : 'Pending') }}
-                                                            </span><br/>
-                                                        @if($obs->date_sup_approved)
-                                                            <span class="opacity-60">Date Approved: </span>{{ \Carbon\Carbon::parse($obs->date_sup_approved)->format('F d, Y') }} <br/>
-                                                        @endif
-                                                        @if($obs->date_sup_disapproved)
-                                                            <span class="opacity-60">Date Disapproved: </span>{{ \Carbon\Carbon::parse($obs->date_sup_disapproved)->format('F d, Y') }} <br/>
-                                                        @endif
-                                                    </div>
-                                                    <hr class="my-1 opacity-60">
-                                                    <div>
-                                                        <span class="opacity-60">HR: </span><span class="{{ $obs->hr ? '' : 'text-orange-500' }}">{{ $obs->hr ?: 'Pending' }}</span> <br/>
-                                                        @if($obs->hr)
+                    <div class="overflow-x-auto">
+                        <div class="overflow-hidden border dark:border-gray-700 rounded-lg">
+                            <div x-show="selectedTab === 'requests'">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full min-w-full">
+                                        <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                            <tr class="whitespace-nowrap">
+                                                <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
+                                                    Approval Status
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
+                                                    Reference No.
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Company
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Address
+                                                </th>
+                                                {{-- <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Geolocation
+                                                </th> --}}
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Purpose
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Date
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Time
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Attendance
+                                                </th>
+                                                <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                    Action
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                            @foreach ($obRequests as $obs)
+                                                <tr class="text-neutral-800 dark:text-neutral-200">
+                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap relative" style="overflow-y: visible">
+                                                        <div>
+                                                            <span class="opacity-60">Supervisor: </span>
+                                                                {{ $obs->supervisor }} <br/>
                                                             <span class="opacity-60">Status: </span>
                                                                 <span class="{{ isset($obs->date_sup_approved) && $obs->date_sup_approved ? 'text-green-500' :
                                                                 (isset($obs->date_sup_disapproved) && $obs->date_sup_disapproved ? 'text-red-500' : 'text-orange-500') }}">
@@ -386,346 +373,365 @@ x-cloak>
                                                             @if($obs->date_sup_disapproved)
                                                                 <span class="opacity-60">Date Disapproved: </span>{{ \Carbon\Carbon::parse($obs->date_sup_disapproved)->format('F d, Y') }} <br/>
                                                             @endif
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                    {{ $obs->reference_number }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ $obs->company }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ $obs->address }}
-                                                </td>
-                                                {{-- <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    Lat: {{ $obs->lat }} <br>
-                                                    Lng: {{ $obs->lng }}
-                                                </td> --}}
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    <div 
-                                                        class="truncate max-w-xs"
-                                                        style="max-width: 20ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                                                    >
-                                                        {{ $obs->purpose }}
-                                                    </div>
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ \Carbon\Carbon::parse($obs->date)->format('m/d/Y') }}
-                                                </td>
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                    <span class="opacity-70">Start:</span> {{ \Carbon\Carbon::parse($obs->time_start)->format('h:i A') }} <br>
-                                                    <span class="opacity-70">End:</span> {{ \Carbon\Carbon::parse($obs->time_end)->format('h:i A') }}
-                                                </td>
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                    <span class="opacity-70">Time In:</span> {{ $obs->time_in ? \Carbon\Carbon::parse($obs->time_in)->format('h:i A') : '' }} <br>
-                                                    <span class="opacity-70">Time Out:</span> {{ $obs->time_out ? \Carbon\Carbon::parse($obs->time_out)->format('h:i A') : '' }}
-                                                </td>
-                                                <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                    <div class="relative">
+                                                        </div>
+                                                        <hr class="my-1 opacity-60">
+                                                        <div>
+                                                            <span class="opacity-60">HR: </span><span class="{{ $obs->hr ? '' : 'text-orange-500' }}">{{ $obs->hr ?: 'Pending' }}</span> <br/>
+                                                            @if($obs->hr)
+                                                                <span class="opacity-60">Status: </span>
+                                                                    <span class="{{ isset($obs->date_sup_approved) && $obs->date_sup_approved ? 'text-green-500' :
+                                                                    (isset($obs->date_sup_disapproved) && $obs->date_sup_disapproved ? 'text-red-500' : 'text-orange-500') }}">
+                                                                
+                                                                        {{ isset($obs->date_sup_approved) && $obs->date_sup_approved ? 'Approved' :
+                                                                        (isset($obs->date_sup_disapproved) && $obs->date_sup_disapproved ? 'Disapproved' : 'Pending') }}
+                                                                    </span><br/>
+                                                                @if($obs->date_sup_approved)
+                                                                    <span class="opacity-60">Date Approved: </span>{{ \Carbon\Carbon::parse($obs->date_sup_approved)->format('F d, Y') }} <br/>
+                                                                @endif
+                                                                @if($obs->date_sup_disapproved)
+                                                                    <span class="opacity-60">Date Disapproved: </span>{{ \Carbon\Carbon::parse($obs->date_sup_disapproved)->format('F d, Y') }} <br/>
+                                                                @endif
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                        {{ $obs->reference_number }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ $obs->company }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ $obs->address }}
+                                                    </td>
+                                                    {{-- <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        Lat: {{ $obs->lat }} <br>
+                                                        Lng: {{ $obs->lng }}
+                                                    </td> --}}
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        <div 
+                                                            class="truncate max-w-xs"
+                                                            style="max-width: 20ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                                        >
+                                                            {{ $obs->purpose }}
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ \Carbon\Carbon::parse($obs->date)->format('m/d/Y') }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                        <span class="opacity-70">Start:</span> {{ \Carbon\Carbon::parse($obs->time_start)->format('h:i A') }} <br>
+                                                        <span class="opacity-70">End:</span> {{ \Carbon\Carbon::parse($obs->time_end)->format('h:i A') }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                        <span class="opacity-70">Time In:</span> {{ $obs->time_in ? \Carbon\Carbon::parse($obs->time_in)->format('h:i A') : '' }} <br>
+                                                        <span class="opacity-70">Time Out:</span> {{ $obs->time_out ? \Carbon\Carbon::parse($obs->time_out)->format('h:i A') : '' }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                        <div class="relative">
 
-                                                        @if(!$obs->date_sup_approved && !$obs->date_sup_disapproved)
-                                                            <button wire:click="toggleEditOB({{ $obs->id }})" 
+                                                            @if(!$obs->date_sup_approved && !$obs->date_sup_disapproved)
+                                                                <button wire:click="toggleEditOB({{ $obs->id }})" 
+                                                                    class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                    -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    focus:outline-none" title="Edit">
+                                                                    <i class="fas fa-pencil-alt ml-3"></i>
+                                                                </button>
+                                                                <button wire:click="toggleDeleteOB({{ $obs->id }})" 
+                                                                    class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                    dark:hover:text-red-900 relative z-10" title="Delete">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            @endif
+                                                            
+                                                            <button wire:click="viewThisOB({{ $obs->id }})" 
                                                                 class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                                 -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                                focus:outline-none" title="Edit">
-                                                                <i class="fas fa-pencil-alt ml-3"></i>
+                                                                focus:outline-none" title="View">
+                                                                <i class="fas fa-eye ml-3"></i>
                                                             </button>
-                                                            <button wire:click="toggleDeleteOB({{ $obs->id }})" 
-                                                                class=" text-red-600 hover:text-red-900 dark:text-red-600 
-                                                                dark:hover:text-red-900 relative z-10" title="Delete">
-                                                                <i class="fas fa-trash"></i>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    @if ($obRequests->isEmpty())
+                                        <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                            No records!
+                                        </div> 
+                                    @endif
+                                </div>
+                                <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                    {{ $obRequests->links() }}
+                                </div>
+                            </div>
+                            <div x-show="selectedTab === 'disapproved'">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full min-w-full">
+                                        <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                            <tr class="whitespace-nowrap">
+                                                <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
+                                                    Approval Status
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
+                                                    Reference No.
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Company
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Address
+                                                </th>
+                                                {{-- <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Geolocation
+                                                </th> --}}
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Purpose
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Date
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Time
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Attendance
+                                                </th>
+                                                <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                    Action
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                            @foreach ($disapprovedObs as $obs)
+                                                <tr class="text-neutral-800 dark:text-neutral-200">
+                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap relative" style="overflow-y: visible">
+                                                        <div>
+                                                            <span class="opacity-60">Supervisor: </span>
+                                                                {{ $obs->supervisor }} <br/>
+                                                            <span class="opacity-60">Status: </span>
+                                                                <span class="{{ isset($obs->date_sup_approved) && $obs->date_sup_approved ? 'text-green-500' :
+                                                                (isset($obs->date_sup_disapproved) && $obs->date_sup_disapproved ? 'text-red-500' : 'text-orange-500') }}">
+                                                            
+                                                                    {{ isset($obs->date_sup_approved) && $obs->date_sup_approved ? 'Approved' :
+                                                                    (isset($obs->date_sup_disapproved) && $obs->date_sup_disapproved ? 'Disapproved' : 'Pending') }}
+                                                                </span><br/>
+                                                            @if($obs->date_sup_approved)
+                                                                <span class="opacity-60">Date Approved: </span>{{ \Carbon\Carbon::parse($obs->date_sup_approved)->format('F d, Y') }} <br/>
+                                                            @endif
+                                                            @if($obs->date_sup_disapproved)
+                                                                <span class="opacity-60">Date Disapproved: </span>{{ \Carbon\Carbon::parse($obs->date_sup_disapproved)->format('F d, Y') }} <br/>
+                                                            @endif
+                                                        </div>
+                                                        <hr class="my-1 opacity-60">
+                                                        <div>
+                                                            <span class="opacity-60">HR: </span><span class="{{ $obs->hr ? '' : 'text-orange-500' }}">{{ $obs->hr ?: 'Pending' }}</span> <br/>
+                                                            @if($obs->hr)
+                                                                <span class="opacity-60">Status: </span>
+                                                                    <span class="{{ $obs->date_approved ? 'text-green-500' : ($obs->date_disapproved ? 'text-red-500' : 'text-orange-500') }}">
+                                                                        {{ $obs->date_approved ? 'Approved' : ($obs->date_disapproved ? 'Disapproved' : 'Pending') }}
+                                                                    </span><br/>
+                                                                @if($obs->date_approved)
+                                                                    <span class="opacity-60">Date Approved: </span>{{ \Carbon\Carbon::parse($obs->date_approved)->format('F d, Y') }} <br/>
+                                                                @endif
+                                                                @if($obs->date_disapproved)
+                                                                    <span class="opacity-60">Date Disapproved: </span>{{ \Carbon\Carbon::parse($obs->date_disapproved)->format('F d, Y') }} <br/>
+                                                                @endif
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                        {{ $obs->reference_number }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ $obs->company }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ $obs->address }}
+                                                    </td>
+                                                    {{-- <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        Lat: {{ $obs->lat }} <br>
+                                                        Lng: {{ $obs->lng }}
+                                                    </td> --}}
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        <div 
+                                                            class="truncate max-w-xs"
+                                                            style="max-width: 20ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                                        >
+                                                            {{ $obs->purpose }}
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ \Carbon\Carbon::parse($obs->date)->format('m/d/Y') }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                        <span class="opacity-70">Start:</span> {{ \Carbon\Carbon::parse($obs->time_start)->format('h:i A') }} <br>
+                                                        <span class="opacity-70">End:</span> {{ \Carbon\Carbon::parse($obs->time_end)->format('h:i A') }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                        <span class="opacity-70">Time In:</span> {{ $obs->time_in ? \Carbon\Carbon::parse($obs->time_in)->format('h:i A') : '' }} <br>
+                                                        <span class="opacity-70">Time Out:</span> {{ $obs->time_out ? \Carbon\Carbon::parse($obs->time_out)->format('h:i A') : '' }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                        <div class="relative">
+                                                            <button wire:click="viewThisOB({{ $obs->id }})" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="View">
+                                                                <i class="fas fa-eye ml-3"></i>
                                                             </button>
-                                                        @endif
-                                                        
-                                                        <button wire:click="viewThisOB({{ $obs->id }})" 
-                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                            focus:outline-none" title="View">
-                                                            <i class="fas fa-eye ml-3"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    @if ($disapprovedObs->isEmpty())
+                                        <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                            No records!
+                                        </div> 
+                                    @endif
+                                </div>
+                                <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                    {{ $disapprovedObs->links() }}
+                                </div>
+                            </div>
+                            <div x-show="selectedTab === 'approved'">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full min-w-full">
+                                        <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
+                                            <tr class="whitespace-nowrap">
+                                                <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
+                                                    Approved By
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
+                                                    Reference No.
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Company
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Address
+                                                </th>
+                                                {{-- <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Geolocation
+                                                </th> --}}
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Purpose
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Date
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Time
+                                                </th>
+                                                <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Attendance
+                                                </th>
+                                                <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                    Action
+                                                </th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                @if ($obRequests->isEmpty())
-                                    <div class="p-4 text-center text-gray-500 dark:text-gray-300">
-                                        No records!
-                                    </div> 
-                                @endif
-                            </div>
-                            <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
-                                {{ $obRequests->links() }}
-                            </div>
-                        </div>
-                        <div x-show="selectedTab === 'disapproved'">
-                            <div class="overflow-x-auto">
-                                <table class="w-full min-w-full">
-                                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
-                                        <tr class="whitespace-nowrap">
-                                            <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
-                                                Approval Status
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
-                                                Reference No.
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Company
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Address
-                                            </th>
-                                            {{-- <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Geolocation
-                                            </th> --}}
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Purpose
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Date
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Time
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Attendance
-                                            </th>
-                                            <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
-                                                Action
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
-                                        @foreach ($disapprovedObs as $obs)
-                                            <tr class="text-neutral-800 dark:text-neutral-200">
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap relative" style="overflow-y: visible">
-                                                    <div>
-                                                        <span class="opacity-60">Supervisor: </span>
-                                                            {{ $obs->supervisor }} <br/>
-                                                        <span class="opacity-60">Status: </span>
-                                                            <span class="{{ isset($obs->date_sup_approved) && $obs->date_sup_approved ? 'text-green-500' :
-                                                            (isset($obs->date_sup_disapproved) && $obs->date_sup_disapproved ? 'text-red-500' : 'text-orange-500') }}">
-                                                        
-                                                                {{ isset($obs->date_sup_approved) && $obs->date_sup_approved ? 'Approved' :
-                                                                (isset($obs->date_sup_disapproved) && $obs->date_sup_disapproved ? 'Disapproved' : 'Pending') }}
-                                                            </span><br/>
-                                                        @if($obs->date_sup_approved)
-                                                            <span class="opacity-60">Date Approved: </span>{{ \Carbon\Carbon::parse($obs->date_sup_approved)->format('F d, Y') }} <br/>
-                                                        @endif
-                                                        @if($obs->date_sup_disapproved)
-                                                            <span class="opacity-60">Date Disapproved: </span>{{ \Carbon\Carbon::parse($obs->date_sup_disapproved)->format('F d, Y') }} <br/>
-                                                        @endif
-                                                    </div>
-                                                    <hr class="my-1 opacity-60">
-                                                    <div>
-                                                        <span class="opacity-60">HR: </span><span class="{{ $obs->hr ? '' : 'text-orange-500' }}">{{ $obs->hr ?: 'Pending' }}</span> <br/>
-                                                        @if($obs->hr)
+                                        </thead>
+                                        <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                            @foreach ($approvedObs as $obs)
+                                                <tr class="text-neutral-800 dark:text-neutral-200">
+                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap relative" style="overflow-y: visible">
+                                                        <div>
+                                                            <span class="opacity-60">Supervisor: </span>
+                                                                {{ $obs->supervisor }} <br/>
                                                             <span class="opacity-60">Status: </span>
-                                                                <span class="{{ $obs->date_approved ? 'text-green-500' : ($obs->date_disapproved ? 'text-red-500' : 'text-orange-500') }}">
-                                                                    {{ $obs->date_approved ? 'Approved' : ($obs->date_disapproved ? 'Disapproved' : 'Pending') }}
+                                                                <span class="{{ isset($obs->date_sup_approved) && $obs->date_sup_approved ? 'text-green-500' :
+                                                                (isset($obs->date_sup_disapproved) && $obs->date_sup_disapproved ? 'text-red-500' : 'text-orange-500') }}">
+                                                            
+                                                                    {{ isset($obs->date_sup_approved) && $obs->date_sup_approved ? 'Approved' :
+                                                                    (isset($obs->date_sup_disapproved) && $obs->date_sup_disapproved ? 'Disapproved' : 'Pending') }}
                                                                 </span><br/>
-                                                            @if($obs->date_approved)
-                                                                <span class="opacity-60">Date Approved: </span>{{ \Carbon\Carbon::parse($obs->date_approved)->format('F d, Y') }} <br/>
+                                                            @if($obs->date_sup_approved)
+                                                                <span class="opacity-60">Date Approved: </span>{{ \Carbon\Carbon::parse($obs->date_sup_approved)->format('F d, Y') }} <br/>
                                                             @endif
-                                                            @if($obs->date_disapproved)
-                                                                <span class="opacity-60">Date Disapproved: </span>{{ \Carbon\Carbon::parse($obs->date_disapproved)->format('F d, Y') }} <br/>
+                                                            @if($obs->date_sup_disapproved)
+                                                                <span class="opacity-60">Date Disapproved: </span>{{ \Carbon\Carbon::parse($obs->date_sup_disapproved)->format('F d, Y') }} <br/>
                                                             @endif
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                    {{ $obs->reference_number }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ $obs->company }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ $obs->address }}
-                                                </td>
-                                                {{-- <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    Lat: {{ $obs->lat }} <br>
-                                                    Lng: {{ $obs->lng }}
-                                                </td> --}}
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    <div 
-                                                        class="truncate max-w-xs"
-                                                        style="max-width: 20ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                                                    >
-                                                        {{ $obs->purpose }}
-                                                    </div>
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ \Carbon\Carbon::parse($obs->date)->format('m/d/Y') }}
-                                                </td>
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                    <span class="opacity-70">Start:</span> {{ \Carbon\Carbon::parse($obs->time_start)->format('h:i A') }} <br>
-                                                    <span class="opacity-70">End:</span> {{ \Carbon\Carbon::parse($obs->time_end)->format('h:i A') }}
-                                                </td>
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                    <span class="opacity-70">Time In:</span> {{ $obs->time_in ? \Carbon\Carbon::parse($obs->time_in)->format('h:i A') : '' }} <br>
-                                                    <span class="opacity-70">Time Out:</span> {{ $obs->time_out ? \Carbon\Carbon::parse($obs->time_out)->format('h:i A') : '' }}
-                                                </td>
-                                                <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                    <div class="relative">
-                                                        <button wire:click="viewThisOB({{ $obs->id }})" 
-                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                            focus:outline-none" title="View">
-                                                            <i class="fas fa-eye ml-3"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                @if ($disapprovedObs->isEmpty())
-                                    <div class="p-4 text-center text-gray-500 dark:text-gray-300">
-                                        No records!
-                                    </div> 
-                                @endif
-                            </div>
-                            <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
-                                {{ $disapprovedObs->links() }}
-                            </div>
-                        </div>
-                        <div x-show="selectedTab === 'approved'">
-                            <div class="overflow-x-auto">
-                                <table class="w-full min-w-full">
-                                    <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
-                                        <tr class="whitespace-nowrap">
-                                            <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
-                                                Approved By
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-left text-sm font-medium uppercase">
-                                                Reference No.
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Company
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Address
-                                            </th>
-                                            {{-- <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Geolocation
-                                            </th> --}}
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Purpose
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Date
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Time
-                                            </th>
-                                            <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                Attendance
-                                            </th>
-                                            <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
-                                                Action
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
-                                        @foreach ($approvedObs as $obs)
-                                            <tr class="text-neutral-800 dark:text-neutral-200">
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap relative" style="overflow-y: visible">
-                                                    <div>
-                                                        <span class="opacity-60">Supervisor: </span>
-                                                            {{ $obs->supervisor }} <br/>
-                                                        <span class="opacity-60">Status: </span>
-                                                            <span class="{{ isset($obs->date_sup_approved) && $obs->date_sup_approved ? 'text-green-500' :
-                                                            (isset($obs->date_sup_disapproved) && $obs->date_sup_disapproved ? 'text-red-500' : 'text-orange-500') }}">
-                                                        
-                                                                {{ isset($obs->date_sup_approved) && $obs->date_sup_approved ? 'Approved' :
-                                                                (isset($obs->date_sup_disapproved) && $obs->date_sup_disapproved ? 'Disapproved' : 'Pending') }}
-                                                            </span><br/>
-                                                        @if($obs->date_sup_approved)
-                                                            <span class="opacity-60">Date Approved: </span>{{ \Carbon\Carbon::parse($obs->date_sup_approved)->format('F d, Y') }} <br/>
-                                                        @endif
-                                                        @if($obs->date_sup_disapproved)
-                                                            <span class="opacity-60">Date Disapproved: </span>{{ \Carbon\Carbon::parse($obs->date_sup_disapproved)->format('F d, Y') }} <br/>
-                                                        @endif
-                                                    </div>
-                                                    <hr class="my-1 opacity-60">
-                                                    <div>
-                                                        <span class="opacity-60">HR: </span><span class="{{ $obs->hr ? '' : 'text-orange-500' }}">{{ $obs->hr ?: 'Pending' }}</span> <br/>
-                                                        @if($obs->hr)
-                                                            <span class="opacity-60">Status: </span>
-                                                                <span class="{{ $obs->date_approved ? 'text-green-500' : ($obs->date_disapproved ? 'text-red-500' : 'text-orange-500') }}">
-                                                                    {{ $obs->date_approved ? 'Approved' : ($obs->date_disapproved ? 'Disapproved' : 'Pending') }}
-                                                                </span><br/>
-                                                            @if($obs->date_approved)
-                                                                <span class="opacity-60">Date Approved: </span>{{ \Carbon\Carbon::parse($obs->date_approved)->format('F d, Y') }} <br/>
+                                                        </div>
+                                                        <hr class="my-1 opacity-60">
+                                                        <div>
+                                                            <span class="opacity-60">HR: </span><span class="{{ $obs->hr ? '' : 'text-orange-500' }}">{{ $obs->hr ?: 'Pending' }}</span> <br/>
+                                                            @if($obs->hr)
+                                                                <span class="opacity-60">Status: </span>
+                                                                    <span class="{{ $obs->date_approved ? 'text-green-500' : ($obs->date_disapproved ? 'text-red-500' : 'text-orange-500') }}">
+                                                                        {{ $obs->date_approved ? 'Approved' : ($obs->date_disapproved ? 'Disapproved' : 'Pending') }}
+                                                                    </span><br/>
+                                                                @if($obs->date_approved)
+                                                                    <span class="opacity-60">Date Approved: </span>{{ \Carbon\Carbon::parse($obs->date_approved)->format('F d, Y') }} <br/>
+                                                                @endif
+                                                                @if($obs->date_disapproved)
+                                                                    <span class="opacity-60">Date Disapproved: </span>{{ \Carbon\Carbon::parse($obs->date_disapproved)->format('F d, Y') }} <br/>
+                                                                @endif
                                                             @endif
-                                                            @if($obs->date_disapproved)
-                                                                <span class="opacity-60">Date Disapproved: </span>{{ \Carbon\Carbon::parse($obs->date_disapproved)->format('F d, Y') }} <br/>
-                                                            @endif
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                    {{ $obs->reference_number }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ $obs->company }}
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ $obs->address }}
-                                                </td>
-                                                {{-- <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    Lat: {{ $obs->lat }} <br>
-                                                    Lng: {{ $obs->lng }}
-                                                </td> --}}
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    <div 
-                                                        class="truncate max-w-xs"
-                                                        style="max-width: 20ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                                                    >
-                                                        {{ $obs->purpose }}
-                                                    </div>
-                                                </td>
-                                                <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
-                                                    {{ \Carbon\Carbon::parse($obs->date)->format('m/d/Y') }}
-                                                </td>
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                    <span class="opacity-70">Start:</span> {{ \Carbon\Carbon::parse($obs->time_start)->format('h:i A') }} <br>
-                                                    <span class="opacity-70">End:</span> {{ \Carbon\Carbon::parse($obs->time_end)->format('h:i A') }}
-                                                </td>
-                                                <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                    <span class="opacity-70">Time In:</span> {{ $obs->time_in ? \Carbon\Carbon::parse($obs->time_in)->format('h:i A') : '' }} <br>
-                                                    <span class="opacity-70">Time Out:</span> {{ $obs->time_out ? \Carbon\Carbon::parse($obs->time_out)->format('h:i A') : '' }}
-                                                </td>
-                                                <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                    <div class="relative">
-                                                        <button wire:click="viewThisOB({{ $obs->id }})" 
-                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
-                                                            focus:outline-none" title="View">
-                                                            <i class="fas fa-eye ml-3"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                @if ($approvedObs->isEmpty())
-                                    <div class="p-4 text-center text-gray-500 dark:text-gray-300">
-                                        No records!
-                                    </div> 
-                                @endif
-                            </div>
-                            <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
-                                {{ $approvedObs->links() }}
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                        {{ $obs->reference_number }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ $obs->company }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ $obs->address }}
+                                                    </td>
+                                                    {{-- <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        Lat: {{ $obs->lat }} <br>
+                                                        Lng: {{ $obs->lng }}
+                                                    </td> --}}
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        <div 
+                                                            class="truncate max-w-xs"
+                                                            style="max-width: 20ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                                        >
+                                                            {{ $obs->purpose }}
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        {{ \Carbon\Carbon::parse($obs->date)->format('m/d/Y') }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                        <span class="opacity-70">Start:</span> {{ \Carbon\Carbon::parse($obs->time_start)->format('h:i A') }} <br>
+                                                        <span class="opacity-70">End:</span> {{ \Carbon\Carbon::parse($obs->time_end)->format('h:i A') }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                        <span class="opacity-70">Time In:</span> {{ $obs->time_in ? \Carbon\Carbon::parse($obs->time_in)->format('h:i A') : '' }} <br>
+                                                        <span class="opacity-70">Time Out:</span> {{ $obs->time_out ? \Carbon\Carbon::parse($obs->time_out)->format('h:i A') : '' }}
+                                                    </td>
+                                                    <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                        <div class="relative">
+                                                            <button wire:click="viewThisOB({{ $obs->id }})" 
+                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
+                                                                -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                focus:outline-none" title="View">
+                                                                <i class="fas fa-eye ml-3"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    @if ($approvedObs->isEmpty())
+                                        <div class="p-4 text-center text-gray-500 dark:text-gray-300">
+                                            No records!
+                                        </div> 
+                                    @endif
+                                </div>
+                                <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
+                                    {{ $approvedObs->links() }}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            @endif
 
-            </div>
         </div>
     </div>
 
@@ -829,8 +835,8 @@ x-cloak>
         </div>
     </x-modal>
 
-     {{-- View OB Modal --}}
-     <x-modal id="obModal" maxWidth="2xl" wire:model="viewOB">
+    {{-- View OB Modal --}}
+    <x-modal id="obModal" maxWidth="2xl" wire:model="viewOB">
         <div class="p-4">
             <div class="rounded-lg mb-4 p-4 dark:text-gray-50 text-slate-900 font-bold text-lg">
                 Official Business: {{ $company}}
@@ -1227,3 +1233,17 @@ x-cloak>
     setInterval(initMap2 , 5000);
     setInterval(initMap3 , 5000);
 </script> --}}
+
+<script>
+    function resizeIframe() {
+        const iframe = document.getElementById('pdfIframe');
+        const pdfDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+        if (pdfDocument) {
+            iframe.style.height = pdfDocument.body.scrollHeight + 'px';
+        }
+    }
+
+    document.getElementById('pdfIframe').onload = resizeIframe;
+    window.onresize = resizeIframe;
+</script>

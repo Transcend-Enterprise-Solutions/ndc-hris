@@ -889,10 +889,10 @@ x-cloak>
                     </div>
 
                     <div class="col-span-full sm:col-span-1">
-                        <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
+                        <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Work Group</label>
                         <input type="text" id="office_division" wire:model='office_division' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
                         @error('office_division') 
-                            <span class="text-red-500 text-sm">The office/division is required!</span> 
+                            <span class="text-red-500 text-sm">The work group is required!</span> 
                         @enderror
                     </div>
 

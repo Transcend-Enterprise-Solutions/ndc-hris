@@ -73,9 +73,9 @@
                 </div>
             </div>
 
-            <!-- Office/Division Distribution Card -->
+            <!-- Work Group Distribution Card -->
             <div class="col-span-full sm:col-span-6 bg-purple-100 dark:bg-purple-800 p-4 rounded-lg shadow">
-                <div class="text-sm font-semibold text-purple-800 dark:text-gray-100 mb-4 overflow-hidden">Office/Division Distribution
+                <div class="text-sm font-semibold text-purple-800 dark:text-gray-100 mb-4 overflow-hidden">Work Group Distribution
                     <hr class="border-t border-purple-200 dark:border-purple-600">
                     <label for="allColActive" class="text-xs text-gray-900 dark:text-gray-300">Select Status: </label>
                     <div class="overflow-hidden">

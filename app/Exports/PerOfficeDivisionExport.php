@@ -58,7 +58,7 @@ class PerOfficeDivisionExport implements FromCollection, WithEvents
                 $sheet->setCellValue('D4', 'EMPLOYEE NO.');
                 $sheet->setCellValue('E4', 'POSITION');
                 $sheet->setCellValue('F4', 'APPOINTMENT');
-                $sheet->setCellValue('G4', 'OFFICE/DIVISION');
+                $sheet->setCellValue('G4', 'WORK GROUP');
                 $sheet->setCellValue('H4', 'UNIT');
                 $sheet->setCellValue('I4', 'SG/STEP');
                 $sheet->setCellValue('J4', 'RATE PER MONTH');
@@ -188,7 +188,7 @@ class PerOfficeDivisionExport implements FromCollection, WithEvents
                     'Employee ID' => $user->emp_code,
                     'Position' => $user->position,
                     'Appointment' => $appointment,
-                    'Office/Division' => $user->office_division,
+                    'Work Group' => $user->office_division,
                     'Unit' => $user->unit ?: '-',
                     'SG/STEP' => $sg_step,
                     'Rate Per Month' => $formatCurrency($rate),

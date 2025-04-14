@@ -56,7 +56,7 @@ class AttendanceExport implements FromCollection, WithEvents
                 $sheet->setCellValue('C4', 'EMPLOYEE NO.');
                 $sheet->setCellValue('D4', 'POSITION');
                 $sheet->setCellValue('E4', 'APPOINTMENT');
-                $sheet->setCellValue('F4', 'OFFICE/DIVISION');
+                $sheet->setCellValue('F4', 'WORK GROUP');
                 $sheet->setCellValue('G4', 'MORNING IN');
                 $sheet->setCellValue('H4', 'MORNING OUT');
                 $sheet->setCellValue('I4', 'AFTERNOON IN');
@@ -180,7 +180,7 @@ class AttendanceExport implements FromCollection, WithEvents
                     'EMPLOYEE ID' => $user->emp_code,
                     'POSITION' => $user->position,
                     'APPOINTMENT' => $appointment,
-                    'OFFICE/DIVISION' => $user->office_division,
+                    'WORK GROUP' => $user->office_division,
                     'MORNING IN' => $user->morning_in,
                     'MORNING OUT' => $user->morning_out,
                     'AFTERNOON IN' => $user->afternoon_in,

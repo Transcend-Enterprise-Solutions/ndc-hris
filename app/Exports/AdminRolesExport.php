@@ -51,7 +51,7 @@ class AdminRolesExport implements FromCollection, WithEvents
                 $sheet->setCellValue('B4', 'ADMIN ROLE');
                 $sheet->setCellValue('C4', 'NAME');
                 $sheet->setCellValue('D4', 'EMPLOYEE NO.');
-                $sheet->setCellValue('E4', 'OFFICE/DIVISION');
+                $sheet->setCellValue('E4', 'WORK GROUP');
                 $sheet->setCellValue('F4', 'UNIT');
                 $sheet->setCellValue('G4', 'POSITION');
 
@@ -129,7 +129,7 @@ class AdminRolesExport implements FromCollection, WithEvents
                     'Admin Role' => $role($user->user_role),
                     'Name' => $user->name,
                     'Employee ID' => $user->emp_code,
-                    'Office/Division' => $user->office_division,
+                    'Work Group' => $user->office_division,
                     'Unit' => $user->unit ?: '-',
                     'Position' => $user->position,
                 ];

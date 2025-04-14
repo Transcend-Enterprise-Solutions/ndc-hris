@@ -77,7 +77,7 @@ x-cloak>
                         class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800"
-                        placeholder="Search name/id/position/office/divisions">
+                        placeholder="Search name/id/position/work groups">
                 </div>
 
                 <div class="w-full sm:w-1/3 sm:mr-4" x-show="selectedTab === 'role'">
@@ -104,7 +104,7 @@ x-cloak>
                         class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
                             dark:hover:bg-slate-600 dark:border-slate-600
                             dark:text-gray-300 dark:bg-gray-800"
-                        placeholder="Enter office/division">
+                        placeholder="Enter work group">
                 </div>
 
                 <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4" x-show="selectedTab === 'org'">
@@ -363,7 +363,7 @@ x-cloak>
                                         <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700" x-show="selectedSubTab === 'positions'">
                                             @foreach ($officeDivisions as $officeDivision)
 
-                                                <!-- Office/Division Header -->
+                                                <!-- Work Group Header -->
                                                 <div class="flex justify-between items-center w-full py-1.5 bg-gray-50 dark:bg-gray-800 px-4">
                                                     <div class="flex items-end">
                                                         <i class="bi bi-building mr-2 text-emerald-500 dark:text-emerald-300"></i>
@@ -448,7 +448,7 @@ x-cloak>
                                                     </div>
                                                     <div class="w-full pt-4">
                                                         <h3 class="text-xs font-semibold text-gray-300 dark:text-gray-500">UNITS</h3>
-                                                        <!-- Units under the Office/Division -->
+                                                        <!-- Units under the Work Group -->
                                                         @if($officeDivision->officeDivisionUnits->isNotEmpty())
                                                             <div class="flex overflow-x-auto pb-4">
                                                                 @foreach ($officeDivision->officeDivisionUnits as $unit)
@@ -561,7 +561,7 @@ x-cloak>
                                                             Employee Number
                                                         </th>
                                                         <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
-                                                            Office/Division
+                                                            Work Group
                                                         </th>
                                                         <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
                                                             Unit
@@ -651,7 +651,7 @@ x-cloak>
                                                             Employee Number
                                                         </th>
                                                         <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
-                                                            Office/Division
+                                                            Work Group
                                                         </th>
                                                         <th scope="col" class="px-5 py-3 text-sm font-medium text-center uppercase">
                                                             Unit
@@ -756,9 +756,9 @@ x-cloak>
                                                     <tr class="whitespace-nowrap">
                                                         <td>
                                                             <div class="flex flex-col md:flex-col lg:flex-row lg:justify-between items-center w-full mb-2">
-                                                                <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Office / Division <span class="mx-2">|</span> <span>Units</span> <span class="mx-2">|</span> <span>Positions</span></h3>
+                                                                <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">WORK GROUPS <span class="mx-2">|</span> <span>Units</span> <span class="mx-2">|</span> <span>Positions</span></h3>
                                                                 <div>
-                                                                    <button wire:click="toggleAddSettings('office/division')" 
+                                                                    <button wire:click="toggleAddSettings('work group')" 
                                                                         class="peer inline-flex items-center justify-center px-4 py-2 
                                                                         text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
                                                                         focus:outline-none" title="Add">
@@ -774,20 +774,20 @@ x-cloak>
 
                                             @foreach ($officeDivisions as $officeDivision)
 
-                                                <!-- Office/Division Header -->
+                                                <!-- Work Group Header -->
                                                 <div class="flex justify-between items-center w-full py-1.5 bg-gray-50 dark:bg-gray-800 px-4">
                                                     <div class="flex items-end">
                                                         <i class="bi bi-building mr-2 text-emerald-500 dark:text-emerald-300"></i>
                                                         <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-300">{{ $officeDivision->office_division }}</h3>
                                                     </div>
                                                     <div class="relative px-2">
-                                                        <button wire:click="toggleEditSettings({{ $officeDivision->id }}, 'office/division')" 
+                                                        <button wire:click="toggleEditSettings({{ $officeDivision->id }}, 'work group')" 
                                                             class="peer inline-flex items-center justify-center py-2 lg:mr-2
                                                             text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600 
                                                             focus:outline-none" title="Edit">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </button>
-                                                        <button wire:click="toggleDeleteSettings({{ $officeDivision->id }}, 'office/division')" 
+                                                        <button wire:click="toggleDeleteSettings({{ $officeDivision->id }}, 'work group')" 
                                                             class="text-red-600 text-xs hover:text-red-900 dark:text-red-600 
                                                             dark:hover:text-red-900" title="Delete">
                                                             <i class="fas fa-trash"></i>
@@ -816,7 +816,7 @@ x-cloak>
                                                                 @endif
                                                             </div>
                                                         </div>
-                                                        <!-- Positions directly under the Office/Division -->
+                                                        <!-- Positions directly under the work group -->
                                                         @if($officeDivision->positions->isNotEmpty())
                                                             <ul class="ml-4 list-disc">
                                                                 @foreach ($officeDivision->positions as $position)
@@ -827,7 +827,7 @@ x-cloak>
                                                     </div>
                                                     <div class="w-full pt-4">
                                                         <h3 class="text-xs font-semibold text-gray-300 dark:text-gray-500">UNITS</h3>
-                                                        <!-- Units under the Office/Division -->
+                                                        <!-- Units under the work group -->
                                                         @if($officeDivision->officeDivisionUnits->isNotEmpty())
                                                             <div class="flex overflow-x-auto pb-4">
                                                                 @foreach ($officeDivision->officeDivisionUnits as $unit)
@@ -1039,15 +1039,15 @@ x-cloak>
                     </div>
 
                     <div class="col-span-full sm:col-span-1">
-                        <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division <span class="text-red-500">*</span></label>
+                        <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Work Group <span class="text-red-500">*</span></label>
                         <select id="office_division" wire:model.live='divId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                            <option class="text-gray-300" value="{{ $divId }}">{{ $office_division ? $office_division : 'Select office/division' }}</option>
+                            <option class="text-gray-300" value="{{ $divId }}">{{ $office_division ? $office_division : 'Select work group' }}</option>
                             @foreach($officeDivisions as $office)
                                 <option value="{{ $office->id }}">{{ $office->office_division }}</option>
                             @endforeach
                         </select>
                         @error('divId') 
-                            <span class="text-red-500 text-sm">Please select office/division!</span> 
+                            <span class="text-red-500 text-sm">Please select work group!</span> 
                         @enderror
                     </div>
 
@@ -1098,7 +1098,7 @@ x-cloak>
         </div>
     </x-modal>
 
-    {{-- Add and Edit Office/Division or Position Modal --}}
+    {{-- Add and Edit work group or Position Modal --}}
     <x-modal id="posModal" maxWidth="2xl" wire:model="settings">
         <div class="p-4">
             <div class="bg-slate-800 rounded-lg mb-4 dark:bg-gray-200 p-4 text-gray-50 dark:text-slate-900 font-bold uppercase">
@@ -1112,7 +1112,7 @@ x-cloak>
                 <div class="grid grid-cols-2 gap-4">
                     
                     @if($add)
-                            @if($data === "office/division")
+                            @if($data === "work group")
                                 <div class="col-span-2 relative">
                                     <label for="settings_data" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
                                     <input type="text" id="settings_data" wire:model='settings_data' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
@@ -1153,12 +1153,12 @@ x-cloak>
                                             <span class="text-red-500 text-sm">This field is required!</span>
                                         @enderror
                                     </div>
-                                    <div class="col-span-2">
-                                        <button type="button" wire:click="addNewSetting" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                            Add Another {{ $data }}
-                                        </button>
-                                    </div>
                                 @endforeach
+                                <div class="col-span-2">
+                                    <button type="button" wire:click="addNewSetting" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        Add Another {{ $data }}
+                                    </button>
+                                </div>
                             @endif
                             @if($data === "unit-position")
                                 @foreach ($settingsData as $index => $setting)
@@ -1182,7 +1182,7 @@ x-cloak>
                                 </div>
                             @endif
                     @else
-                        @if($data === "office/division")
+                        @if($data === "work group")
                             <div class="col-span-2 relative">
                                 <label for="settings_data" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
                                 <input type="text" id="settings_data" wire:model='settings_data' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
@@ -1365,15 +1365,15 @@ x-cloak>
                     </div>
                     
                     <div class="col-span-full sm:col-span-1">
-                        <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Office/Division</label>
+                        <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Work Group</label>
                         <select id="office_division" wire:model.live='officeDivisionId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                            <option class="text-gray-300" value="{{ $officeDivisionId }}">{{ $office_division ? $office_division : 'Select office/division' }}</option>
+                            <option class="text-gray-300" value="{{ $officeDivisionId }}">{{ $office_division ? $office_division : 'Select work group' }}</option>
                             @foreach($officeDivisions as $office)
                                 <option value="{{ $office->id }}">{{ $office->office_division }}</option>
                             @endforeach
                         </select>
                         @error('office_division') 
-                            <span class="text-red-500 text-sm">Please select office/division!</span> 
+                            <span class="text-red-500 text-sm">Please select work group!</span> 
                         @enderror
                     </div>
                     
