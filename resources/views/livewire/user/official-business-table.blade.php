@@ -91,16 +91,23 @@ x-cloak>
 
             
             @if($pdfContent)
+                <div class="flex justify-end w-full">
+                    <button class="text-gray-100 bg-green-500 
+                        hover:bg-green-500 focus:outline-none rounded-md py-1 px-4"
+                        wire:click="closeOb">
+                        Back
+                    </button>
+                </div>
                 <div class="mt-2" style="overflow: hidden;">
                     <iframe id="pdfIframe" src="data:application/pdf;base64,{{ $pdfContent }}"
                         style="width: 100%; max-height: 80vh; min-height: 500px;" frameborder="0"></iframe>
                 </div>
             @else
                 @if($ongoingObs)
-                    <div class="w-full flex flex-col justify-center items-center mb-6 bg-gray-300 dark:bg-slate-900 border border-gray-300 dark:border-slate-900 shadow-xl" x-data="{ showDialog: false }">
+                    <div class="w-full flex flex-col justify-center items-center mb-6 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-slate-900 shadow-xl relative" x-data="{ showDialog: false }">
                         <style>
                             .obs{
-                                height: 200px;
+                                /* height: 200px; */
                                 width: 66%;
                             }
 
@@ -117,8 +124,8 @@ x-cloak>
                             }
                         </style>
 
-                        <div class="flex flex-col sm:flex-row justify-center items-center w-full overflow-hidden">
-                            <div class="block shadow bg-gray-100 dark:bg-gray-900 relative obs">
+                        <div class="flex justify-left items-center w-full overflow-hidden">
+                            <div class="block bg-gray-100 dark:bg-gray-900 relative obs">
                                 <div class="w-full p-4">
                                     <div class="flex w-full">
                                         <p class="font-bold"><span class="{{ $obStatus == 'ONGOING' ? 'text-green-500' : 'text-orange-500' }}">{{ $obStatus }}</span> Official Business: {{ $ongoingObs->company }}</p>
@@ -139,25 +146,32 @@ x-cloak>
                                         <p class="">Company: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->company }}</span></p>
                                         <p class="">Address: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->address }}</span></p>
                                         <p class="">Date: <span class="text-gray-700 dark:text-gray-100">{{ \Carbon\Carbon::parse($ongoingObs->date)->format('F d, Y') }}</span></p>
-                                        <p class="">Start Time: 
+                                        <p class="">Duration: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->duration ? ucwords(str_replace('_', ' ', $ongoingObs->duration)) : 'N/A' }}</span></p>
+                                        <p class="">Time of Departure: 
                                             <span class="text-gray-700 dark:text-gray-100">
                                                 {{ \Carbon\Carbon::parse($ongoingObs->time_start)->format('h:i A') }}
                                             </span>
                                         </p>
-                                        <p class="">End Time: 
+                                        <p class="">Estimated Time of Return 
                                             <span class="text-gray-700 dark:text-gray-100">
                                                 {{ \Carbon\Carbon::parse($ongoingObs->time_end)->format('h:i A') }}
                                             </span>
                                         </p>                                    
                                         <p class="">Purpose: <span class="text-gray-700 dark:text-gray-100">{{ $ongoingObs->purpose }}</span></p>
                                     </div>
+
                                 </div>
                                 {{-- <div wire:ignore style="height: 240px; width: 100%;">
                                     <div id="map2" style="height: 100%; width: 100%; margin: 0;"></div>
                                 </div> --}}
                             </div>
+                            <button class="absolute top-2 right-2 text-gray-100 bg-green-500 
+                                hover:bg-green-500 focus:outline-none rounded-md py-1 px-4"
+                                wire:click="showOb({{ $ongoingObs->id }})">
+                                View
+                            </button>
 
-                            <div class="block p-6 shadow bg-gray-200 dark:bg-slate-800 relative obs2">
+                            {{-- <div class="block p-6 shadow bg-gray-200 dark:bg-slate-800 relative obs2">
                                 <h5 class="text-lg font-bold tracking-tight text-gray-900 dark:text-white text-center">OB ATTENDANCE</h5>
                                 <div class="grid grid-cols-1 gap-2 p-4">
                                     <div class="flex justify-center">
@@ -194,7 +208,7 @@ x-cloak>
                                     @endif
                                 </div>
 
-                                {{-- @if(!$isWithinRadius && $isTodayIsOb)
+                                @if(!$isWithinRadius && $isTodayIsOb)
                                     <div
                                         class="absolute inset-0 flex justify-center items-center bg-gray-200 dark:bg-slate-700 bg-opacity-90 dark:bg-opacity-90">
                                         <div class="text-center">
@@ -204,7 +218,7 @@ x-cloak>
                                             <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p>
                                         </div>
                                     </div>
-                                @elseif(!$isTodayIsOb) --}}
+                                @elseif(!$isTodayIsOb)
                                 @if(!$isTodayIsOb)
                                     <div
                                         class="absolute inset-0 flex justify-center items-center bg-gray-200 dark:bg-slate-700 bg-opacity-90 dark:bg-opacity-90">
@@ -213,12 +227,12 @@ x-cloak>
                                             <p class="font-bold mb-4">Attendance will be available on <br>
                                                 <span class="text-gray-800 dark:text-white">{{ \Carbon\Carbon::parse($ongoingObs->date)->format('F d, Y') }}</span>
                                             </p>
-                                            {{-- <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p> --}}
+                                            <p class="text-white bg-blue-500 p-2 rounded-md cursor-pointer hover:bg-blue-600" @click="showDialog = true">View OB Details</p>
                                         </div>
                                     </div>
                                 @endif
 
-                                {{-- <div 
+                                <div 
                                     x-show="showDialog" 
                                     x-transition:enter="transition ease-out duration-300 transform"
                                     x-transition:enter-start="translate-y-full opacity-0"
@@ -249,9 +263,9 @@ x-cloak>
                                             </button>
                                         </div>
                                     </div>
-                                </div> --}}
+                                </div>
 
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 @endif
@@ -343,11 +357,14 @@ x-cloak>
                                                     Date
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                    Time
+                                                    Duration
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                    Attendance
+                                                    Time
                                                 </th>
+                                                {{-- <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Attendance
+                                                </th> --}}
                                                 <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
                                                     Action
                                                 </th>
@@ -418,16 +435,27 @@ x-cloak>
                                                     <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                         {{ \Carbon\Carbon::parse($obs->date)->format('m/d/Y') }}
                                                     </td>
-                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                        <span class="opacity-70">Start:</span> {{ \Carbon\Carbon::parse($obs->time_start)->format('h:i A') }} <br>
-                                                        <span class="opacity-70">End:</span> {{ \Carbon\Carbon::parse($obs->time_end)->format('h:i A') }}
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        @if($obs->duration == 'half_day')
+                                                            Half day / less than 8 hours 
+                                                        @else
+                                                            {{ $obs->duration ? ucwords(str_replace('_', ' ', $obs->duration)) : 'N/A' }}
+                                                        @endif
                                                     </td>
                                                     <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                        @if($obs->duration == 'half_day')
+                                                            <span class="opacity-70">Time of Departure:</span> {{ \Carbon\Carbon::parse($obs->time_start)->format('h:i A') }} <br>
+                                                            <span class="opacity-70">Estimated Time of Return :</span> {{ \Carbon\Carbon::parse($obs->time_end)->format('h:i A') }}
+                                                        @else
+                                                            --
+                                                        @endif
+                                                    </td>
+                                                    {{-- <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
                                                         <span class="opacity-70">Time In:</span> {{ $obs->time_in ? \Carbon\Carbon::parse($obs->time_in)->format('h:i A') : '' }} <br>
                                                         <span class="opacity-70">Time Out:</span> {{ $obs->time_out ? \Carbon\Carbon::parse($obs->time_out)->format('h:i A') : '' }}
-                                                    </td>
-                                                    <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
-                                                        <div class="relative">
+                                                    </td> --}}
+                                                    <td class="text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800 border-b-2 border-neutral-300 dark:border-gray-500">
+                                                        <div class="relative w-full h-full flex items-center justify-center">
 
                                                             @if(!$obs->date_sup_approved && !$obs->date_sup_disapproved)
                                                                 <button wire:click="toggleEditOB({{ $obs->id }})" 
@@ -443,7 +471,7 @@ x-cloak>
                                                                 </button>
                                                             @endif
                                                             
-                                                            <button wire:click="viewThisOB({{ $obs->id }})" 
+                                                            <button wire:click="showOb({{ $obs->id }})" 
                                                                 class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                                 -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
                                                                 focus:outline-none" title="View">
@@ -492,11 +520,14 @@ x-cloak>
                                                     Date
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                    Time
+                                                    Duration
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                    Attendance
+                                                    Time
                                                 </th>
+                                                {{-- <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Attendance
+                                                </th> --}}
                                                 <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
                                                     Action
                                                 </th>
@@ -564,17 +595,28 @@ x-cloak>
                                                     <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                         {{ \Carbon\Carbon::parse($obs->date)->format('m/d/Y') }}
                                                     </td>
-                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                        <span class="opacity-70">Start:</span> {{ \Carbon\Carbon::parse($obs->time_start)->format('h:i A') }} <br>
-                                                        <span class="opacity-70">End:</span> {{ \Carbon\Carbon::parse($obs->time_end)->format('h:i A') }}
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        @if($obs->duration == 'half_day')
+                                                            Half day / less than 8 hours 
+                                                        @else
+                                                            {{ $obs->duration ? ucwords(str_replace('_', ' ', $obs->duration)) : 'N/A' }}
+                                                        @endif
                                                     </td>
                                                     <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                        @if($obs->duration == 'half_day')
+                                                            <span class="opacity-70">Time of Departure:</span> {{ \Carbon\Carbon::parse($obs->time_start)->format('h:i A') }} <br>
+                                                            <span class="opacity-70">Estimated Time of Return :</span> {{ \Carbon\Carbon::parse($obs->time_end)->format('h:i A') }}
+                                                        @else
+                                                            --
+                                                        @endif
+                                                    </td>
+                                                    {{-- <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
                                                         <span class="opacity-70">Time In:</span> {{ $obs->time_in ? \Carbon\Carbon::parse($obs->time_in)->format('h:i A') : '' }} <br>
                                                         <span class="opacity-70">Time Out:</span> {{ $obs->time_out ? \Carbon\Carbon::parse($obs->time_out)->format('h:i A') : '' }}
-                                                    </td>
+                                                    </td> --}}
                                                     <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                         <div class="relative">
-                                                            <button wire:click="viewThisOB({{ $obs->id }})" 
+                                                            <button wire:click="showOb({{ $obs->id }})" 
                                                                 class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                                 -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
                                                                 focus:outline-none" title="View">
@@ -623,11 +665,14 @@ x-cloak>
                                                     Date
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                    Time
+                                                    Duration
                                                 </th>
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
-                                                    Attendance
+                                                    Time
                                                 </th>
+                                                {{-- <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
+                                                    Attendance
+                                                </th> --}}
                                                 <th class="px-5 py-3 text-gray-100 text-sm font-medium text-center uppercase sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
                                                     Action
                                                 </th>
@@ -695,17 +740,28 @@ x-cloak>
                                                     <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                         {{ \Carbon\Carbon::parse($obs->date)->format('m/d/Y') }}
                                                     </td>
-                                                    <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
-                                                        <span class="opacity-70">Start:</span> {{ \Carbon\Carbon::parse($obs->time_start)->format('h:i A') }} <br>
-                                                        <span class="opacity-70">End:</span> {{ \Carbon\Carbon::parse($obs->time_end)->format('h:i A') }}
+                                                    <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
+                                                        @if($obs->duration == 'half_day')
+                                                            Half day / less than 8 hours 
+                                                        @else
+                                                            {{ $obs->duration ? ucwords(str_replace('_', ' ', $obs->duration)) : 'N/A' }}
+                                                        @endif
                                                     </td>
                                                     <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
+                                                        @if($obs->duration == 'half_day')
+                                                            <span class="opacity-70">Time of Departure:</span> {{ \Carbon\Carbon::parse($obs->time_start)->format('h:i A') }} <br>
+                                                            <span class="opacity-70">Estimated Time of Return :</span> {{ \Carbon\Carbon::parse($obs->time_end)->format('h:i A') }}
+                                                        @else
+                                                            --
+                                                        @endif
+                                                    </td>
+                                                    {{-- <td class="px-5 py-4 text-left text-sm font-medium whitespace-nowrap">
                                                         <span class="opacity-70">Time In:</span> {{ $obs->time_in ? \Carbon\Carbon::parse($obs->time_in)->format('h:i A') : '' }} <br>
                                                         <span class="opacity-70">Time Out:</span> {{ $obs->time_out ? \Carbon\Carbon::parse($obs->time_out)->format('h:i A') : '' }}
-                                                    </td>
+                                                    </td> --}}
                                                     <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                         <div class="relative">
-                                                            <button wire:click="viewThisOB({{ $obs->id }})" 
+                                                            <button wire:click="showOb({{ $obs->id }})" 
                                                                 class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
                                                                 -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
                                                                 focus:outline-none" title="View">
@@ -748,38 +804,104 @@ x-cloak>
 
             <div class="grid grid-cols-2 gap-4">
                 <div class="col-span-2">
-                    <label for="company" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Company <span class="text-red-500">*</span></label>
+                    <label for="company" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Destination (Company) <span class="text-red-500">*</span></label>
                     <input type="text" id="company" wire:model.live='company' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     @error('company') 
                         <span class="text-red-500 text-sm">The company is required!</span> 
                     @enderror
                 </div>
                 <div class="col-span-2">
-                    <label for="address" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Address <span class="text-red-500">*</span></label>
+                    <label for="address" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Destination (Address) <span class="text-red-500">*</span></label>
                     <input type="text" id="address" wire:model.live='address' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     @error('address') 
                         <span class="text-red-500 text-sm">The address is required!</span> 
                     @enderror
                 </div>
                 <div class="col-span-2">
-                    <label for="date" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date <span class="text-red-500">*</span></label>
+                    <label for="date" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Date of OB <span class="text-red-500">*</span></label>
                     <input type="date" id="date" wire:model.live='date' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                     @error('date') 
                         <span class="text-red-500 text-sm">The date is required!</span> 
                     @enderror
                 </div>
-                <div class="col-span-2 sm:col-span-1">
-                    <label for="startTime" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Start Time <span class="text-red-500">*</span></label>
-                    <input type="time" id="startTime" wire:model.live='startTime' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                    @error('startTime') 
-                        <span class="text-red-500 text-sm">The start time is required!</span> 
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-slate-400">Duration <span class="text-red-500">*</span></label>
+                    <div class="mt-2 space-y-2">
+                        <div class="flex items-center">
+                            <input 
+                                type="radio" 
+                                id="whole_day" 
+                                wire:model.live="duration" 
+                                value="whole_day" 
+                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:bg-gray-700 dark:border-gray-600"
+                            >
+                            <label for="whole_day" class="ml-2 block text-sm text-gray-700 dark:text-slate-400">Whole day</label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input 
+                                type="radio" 
+                                id="half_day" 
+                                wire:model.live="duration" 
+                                value="half_day" 
+                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:bg-gray-700 dark:border-gray-600"
+                            >
+                            <label for="half_day" class="ml-2 block text-sm text-gray-700 dark:text-slate-400">Half day / less than 8 hours</label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input 
+                                type="radio" 
+                                id="am" 
+                                wire:model.live="duration" 
+                                value="am" 
+                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:bg-gray-700 dark:border-gray-600"
+                            >
+                            <label for="am" class="ml-2 block text-sm text-gray-700 dark:text-slate-400">AM</label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input 
+                                type="radio" 
+                                id="pm" 
+                                wire:model.live="duration" 
+                                value="pm" 
+                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:bg-gray-700 dark:border-gray-600"
+                            >
+                            <label for="pm" class="ml-2 block text-sm text-gray-700 dark:text-slate-400">PM</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Conditional time inputs for half day selection -->
+                    <div x-show="$wire.duration === 'half_day'" class="grid grid-cols-2 gap-4 mt-3">
+                        <div>
+                            <label for="startTime" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Time of Departure <span class="text-red-500">*</span></label>
+                            <input 
+                                type="time" 
+                                id="startTime" 
+                                wire:model.live="startTime" 
+                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
+                            >
+                        </div>
+                        <div>
+                            <label for="endTime" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Estimated Time of Return <span class="text-red-500">*</span></label>
+                            <input 
+                                type="time" 
+                                id="endTime" 
+                                wire:model.live="endTime" 
+                                class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
+                            >
+                        </div>
+                    </div>
+                    
+                    @error('duration')
+                        <span class="text-red-500 text-sm">Please select a time option!</span>
                     @enderror
-                </div>
-                <div class="col-span-2 sm:col-span-1">
-                    <label for="endTime" class="block text-sm font-medium text-gray-700 dark:text-slate-400">End Time <span class="text-red-500">*</span></label>
-                    <input type="time" id="endTime" wire:model.live='endTime' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                    @error('endTime') 
-                        <span class="text-red-500 text-sm">The end time is required!</span> 
+                    @error('startTime')
+                        <span class="text-red-500 text-sm">Start time is required for half day selection!</span>
+                    @enderror
+                    @error('endTime')
+                        <span class="text-red-500 text-sm">End time is required for half day selection!</span>
                     @enderror
                 </div>
                 <div class="col-span-2">

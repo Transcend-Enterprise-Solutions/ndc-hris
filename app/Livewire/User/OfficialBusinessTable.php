@@ -3,6 +3,8 @@
 namespace App\Livewire\User;
 
 use App\Models\Notification;
+use App\Models\OfficeDivisions;
+use App\Models\OfficeDivisionUnits;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\OfficialBusiness;
 use App\Models\User;
@@ -57,6 +59,7 @@ class OfficialBusinessTable extends Component
     public $hasObTimeOut;
     public $ongoingObs;
     public $upcomingObs;
+    public $duration = '';
     public $selectedTab = 'approved';
     public $pdfContent;
     public $pageSize = 10; 
@@ -78,7 +81,7 @@ class OfficialBusinessTable extends Component
 
 
     public function render(){
-        $this->showOb(5);
+        // $this->showOb(5);
         $obRequests = $this->obRequests();
         $disapprovedObs = $this->disapprovedObs();
         $approvedObs = $this->approvedObs();
@@ -93,11 +96,34 @@ class OfficialBusinessTable extends Component
 
     public function showOb($obId)
     {
-        $pdf = PDF::loadView('pdf.ob', [
-  
-        ]);
+        try{
+            $ob = OfficialBusiness::where('id', $obId)->first();
+            $userName = Auth::user()->name;
+            $workGoup = OfficeDivisions::where('id', Auth::user()->office_division_id)->first(); 
+            $unit = OfficeDivisionUnits::where('id', Auth::user()->unit_id)->first(); 
+            if($ob){
+                $pdf = PDF::loadView('pdf.ob', [
+                    'ob' => $ob,
+                    'userName' => $userName,
+                    'workGroup' => $workGoup,
+                    'unit' => $unit,
+                ]);
+        
+                $this->pdfContent = base64_encode($pdf->output());
+            }else{
+              $this->dispatch('swal', [
+                    'title' => 'Official Business not found',
+                    'icon' => 'error'
+                ]);  
+            }  
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
 
-        $this->pdfContent = base64_encode($pdf->output());
+    public function closeOb()
+    {
+        $this->pdfContent = null;
     }
 
     public function ongoingOfficialBusinesses(){
@@ -335,6 +361,7 @@ class OfficialBusinessTable extends Component
                 $this->startTime = $ob->time_start;
                 $this->endTime = $ob->time_end;
                 $this->purpose = $ob->purpose;
+                $this->duration = $ob->duration;
             }
         }catch(Exception $e){
             throw $e;
@@ -372,11 +399,16 @@ class OfficialBusinessTable extends Component
                 'company' => 'required',
                 'address' => 'required',
                 'date' => 'required',
-                'startTime' => 'required',
-                'endTime' => 'required',
                 'purpose' => 'required',
                 // 'newLatitude' => 'required',
             ]);
+
+            if($this->duration == 'half_day'){      
+                $this->validate([
+                    'startTime' => 'required',
+                    'endTime' => 'required|after:startTime',
+                ]);
+            }
 
             $supervisor = User::where('user_role', 'sv')
                     ->where('office_division_id', $user->office_division_id)
@@ -410,6 +442,7 @@ class OfficialBusinessTable extends Component
                     // 'lat' => $this->newLatitude,        
                     // 'lng' => $this->newLongitude,        
                     'date' => $this->date,  
+                    'duration' => $this->duration,  
                     'time_start' => $this->startTime,  
                     'time_end' => $this->endTime,  
                     'purpose' => $this->purpose,  
@@ -433,6 +466,7 @@ class OfficialBusinessTable extends Component
                         // 'lat' => $this->newLatitude,        
                         // 'lng' => $this->newLongitude,        
                         'date' => $this->date,  
+                        'duration' => $this->duration,
                         'time_start' => $this->startTime,  
                         'time_end' => $this->endTime,  
                         'purpose' => $this->purpose,
@@ -444,39 +478,6 @@ class OfficialBusinessTable extends Component
                 'title' => 'Official Business added successfully',
                 'icon' => 'success'
             ]);
-        }catch(Exception $e){
-            throw $e;
-        }
-    }
-
-    public function viewThisOB($id){
-        $this->viewOB = true;
-        try{
-            $ob = OfficialBusiness::where('id', $id)->first();
-            if($ob){
-                $this->company = $ob->company;
-                $this->address = $ob->address;
-                $this->registeredLatitude = $ob->lat;
-                $this->registeredLongitude = $ob->lng;
-                $this->date = $ob->date;
-                $this->startTime = $ob->time_start;
-                $this->endTime = $ob->time_end;
-                $this->timeIn = $ob->time_in;
-                $this->timeOut = $ob->time_out;
-                $this->purpose = $ob->purpose;
-
-                $this->approvedBy = $ob->approver ? User::where('id', $ob->approver)->first()->name : 'N/A';
-                $this->approvedDate = $ob->date_approved ? Carbon::parse($ob->date_approved)->format('F d, Y'): 'N/A';
-                
-                $this->disapprovedBy = $ob->disapprover ? User::where('id', $ob->disapprover)->first()->name : 'N/A';
-                $this->disapprovedDate = $ob->date_disapproved ? Carbon::parse($ob->date_disapproved)->format('F d, Y'): 'N/A';
-                
-                $this->approvedBySup = $ob->sup_approver ? User::where('id', $ob->sup_approver)->first()->name : 'N/A';
-                $this->supApprovedDate = $ob->date_sup_approved ? Carbon::parse($ob->date_sup_approved)->format('F d, Y'): 'N/A';
-                
-                $this->disapprovedBySup = $ob->sup_disapprover ? User::where('id', $ob->sup_disapprover)->first()->name : 'N/A';
-                $this->supDisapprovedDate = $ob->date_sup_disapproved ? Carbon::parse($ob->date_sup_disapproved)->format('F d, Y'): 'N/A';
-            }
         }catch(Exception $e){
             throw $e;
         }

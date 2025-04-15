@@ -118,7 +118,7 @@
                 <tbody>
                     <tr>
                         <td style="width: 20%;" class="td border-y border-r">Date filed: </td>
-                        <td style="width: 80%;" class="td border-y"></td>
+                        <td style="width: 80%;" class="td border-y">{{ \Carbon\Carbon::parse($ob->created_at)->format('m/d/Y') }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -127,11 +127,11 @@
                 <tbody>
                     <tr>
                         <td style="width: 20%;" class="td border-y border-r">Name of Employee: </td>
-                        <td style="width: 80%;" class="td border-y"></td>
+                        <td style="width: 80%;" class="td border-y">{{ $userName }}</td>
                     </tr>
                     <tr>
-                        <td style="width: 20%;" class="td border-y border-r">Workgroup / Unit: </td>
-                        <td style="width: 80%;" class="td border-y"></td>
+                        <td style="width: 20%;" class="td border-y border-r">Workgroup / Unit: </td> 
+                        <td style="width: 80%;" class="td border-y">{{ $workGroup->office_division }} {{ $unit ? ' - ' . $unit->unit : '' }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -144,15 +144,15 @@
                 <tbody>
                     <tr>
                         <td style="width: 20%;" class="td border-y border-r">Date of OB: </td>
-                        <td style="width: 80%;" class="td border-y"></td>
+                        <td style="width: 80%;" class="td border-y">{{ \Carbon\Carbon::parse($ob->date)->format('m/d/Y') }}</td>
                     </tr>
                     <tr>
                         <td style="width: 20%;" class="td border-y border-r">Destination: </td>
-                        <td style="width: 80%;" class="td border-y"></td>
+                        <td style="width: 80%;" class="td border-y">{{ $ob->company }} - {{ $ob->address }}</td>
                     </tr>
                     <tr>
                         <td style="width: 20%;" class="td border-y border-r">Purpose: </td>
-                        <td style="width: 80%;" class="td border-y"></td>
+                        <td style="width: 80%;" class="td border-y">{{ $ob->purpose }}</td>
                     </tr>
                     <tr>
                         <td style="width: 20%;" class="td border-y border-r">Duration: </td>
@@ -165,10 +165,10 @@
                         </td>
                         <td style="width: 80%;" class="td">
                             <p style="font-family: 'DejaVu Sans', sans-serif; text-align: center; font-size: 11px; margin-top: -8px;">
-                                ☐ Whole day &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                ☑ Half day / less than 8 hours &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                ☐ AM &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                ☐ PM
+                                {{ $ob->duration == 'whole_day' ? '☑' : '☐' }} Whole day &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                {{ $ob->duration == 'half_day' ? '☑' : '☐' }} Half day / less than 8 hours &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                {{ $ob->duration == 'am' ? '☑' : '☐' }} AM &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                {{ $ob->duration == 'pm' ? '☑' : '☐' }} PM
                             </p>
                         </td>
                     </tr>
@@ -183,9 +183,13 @@
                             less than 8 hours)
                         </td>
                         <td style="width: 20%; vertical-align: middle;" class="td border-t border-r">Time of Departure: </td>
-                        <td style="width: 20%; vertical-align: middle;" class="td border-t border-r"></td>
+                        <td style="width: 20%; vertical-align: middle;" class="td border-t border-r">
+                            {{ $ob->time_start ? \Carbon\Carbon::parse($ob->time_start)->format('h:i A') : 'N/A' }}
+                        </td>
                         <td style="width: 20%; vertical-align: middle;" class="td border-t border-r">Estimated Time of <br>Return: </td>
-                        <td style="width: 20%; vertical-align: middle;" class="td border-t"></td>
+                        <td style="width: 20%; vertical-align: middle;" class="td border-t">
+                            {{ $ob->time_end ? \Carbon\Carbon::parse($ob->time_end)->format('h:i A') : 'N/A' }}
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -200,7 +204,7 @@
                         <td style="width: 60%;" class="td border-b">Approved by: </td>
                     </tr>
                     <tr>
-                        <td style="width: 40%; height: 60px;" class="td border-y border-r"></td>
+                        <td style="width: 40%; height: 60px; text-align: center; vertical-align: bottom; font-size: 14px" class="td border-y border-r">{{ $userName }}</td>
                         <td style="width: 60%; height: 60px;" class="td border-y"></td>
                     </tr>
                     <tr>
@@ -221,7 +225,7 @@
             </p>
         </div>
 
-        <table style="width: 100%; margin-top: 5px">
+        <table style="width: 100%;">
             <tbody>
                 <tr>
                     <td width="30">
@@ -241,7 +245,7 @@
         </table>
 
         <div style="border: 2px solid black; width: 100%; margin-top: 5px;">
-            <p style="font-weight: bold; font-size: 11px; padding: 5px 3px;">
+            <p style="font-weight: bold; font-size: 11px; padding: 3px;">
                 Note: This form must be forwarded to the HR Unit before going on Official Business or immediately upon reporting <br>
                 back from Official Business.
             </p>
@@ -250,7 +254,7 @@
                 <tbody>
                     <tr>
                         <td style="width: 20%;" class="td border-y border-r">Date filed: </td>
-                        <td style="width: 80%;" class="td border-y"></td>
+                        <td style="width: 80%;" class="td border-y">{{ \Carbon\Carbon::parse($ob->created_at)->format('m/d/Y') }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -259,11 +263,11 @@
                 <tbody>
                     <tr>
                         <td style="width: 20%;" class="td border-y border-r">Name of Employee: </td>
-                        <td style="width: 80%;" class="td border-y"></td>
+                        <td style="width: 80%;" class="td border-y">{{ $userName }}</td>
                     </tr>
                     <tr>
-                        <td style="width: 20%;" class="td border-y border-r">Workgroup / Unit: </td>
-                        <td style="width: 80%;" class="td border-y"></td>
+                        <td style="width: 20%;" class="td border-y border-r">Workgroup / Unit: </td> 
+                        <td style="width: 80%;" class="td border-y">{{ $workGroup->office_division }} {{ $unit ? ' - ' . $unit->unit : '' }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -276,15 +280,15 @@
                 <tbody>
                     <tr>
                         <td style="width: 20%;" class="td border-y border-r">Date of OB: </td>
-                        <td style="width: 80%;" class="td border-y"></td>
+                        <td style="width: 80%;" class="td border-y">{{ \Carbon\Carbon::parse($ob->date)->format('m/d/Y') }}</td>
                     </tr>
                     <tr>
                         <td style="width: 20%;" class="td border-y border-r">Destination: </td>
-                        <td style="width: 80%;" class="td border-y"></td>
+                        <td style="width: 80%;" class="td border-y">{{ $ob->company }} - {{ $ob->address }}</td>
                     </tr>
                     <tr>
                         <td style="width: 20%;" class="td border-y border-r">Purpose: </td>
-                        <td style="width: 80%;" class="td border-y"></td>
+                        <td style="width: 80%;" class="td border-y">{{ $ob->purpose }}</td>
                     </tr>
                     <tr>
                         <td style="width: 20%;" class="td border-y border-r">Duration: </td>
@@ -297,10 +301,10 @@
                         </td>
                         <td style="width: 80%;" class="td">
                             <p style="font-family: 'DejaVu Sans', sans-serif; text-align: center; font-size: 11px; margin-top: -8px;">
-                                ☐ Whole day &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                ☑ Half day / less than 8 hours &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                ☐ AM &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                ☐ PM
+                                {{ $ob->duration == 'whole_day' ? '☑' : '☐' }} Whole day &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                {{ $ob->duration == 'half_day' ? '☑' : '☐' }} Half day / less than 8 hours &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                {{ $ob->duration == 'am' ? '☑' : '☐' }} AM &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                {{ $ob->duration == 'pm' ? '☑' : '☐' }} PM
                             </p>
                         </td>
                     </tr>
@@ -315,9 +319,13 @@
                             less than 8 hours)
                         </td>
                         <td style="width: 20%; vertical-align: middle;" class="td border-t border-r">Time of Departure: </td>
-                        <td style="width: 20%; vertical-align: middle;" class="td border-t border-r"></td>
+                        <td style="width: 20%; vertical-align: middle;" class="td border-t border-r">
+                            {{ $ob->time_start ? \Carbon\Carbon::parse($ob->time_start)->format('h:i A') : 'N/A' }}
+                        </td>
                         <td style="width: 20%; vertical-align: middle;" class="td border-t border-r">Estimated Time of <br>Return: </td>
-                        <td style="width: 20%; vertical-align: middle;" class="td border-t"></td>
+                        <td style="width: 20%; vertical-align: middle;" class="td border-t">
+                            {{ $ob->time_end ? \Carbon\Carbon::parse($ob->time_end)->format('h:i A') : 'N/A' }}
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -332,7 +340,7 @@
                         <td style="width: 60%;" class="td border-b">Approved by: </td>
                     </tr>
                     <tr>
-                        <td style="width: 40%; height: 60px;" class="td border-y border-r"></td>
+                        <td style="width: 40%; height: 60px; text-align: center; vertical-align: bottom; font-size: 14px" class="td border-y border-r">{{ $userName }}</td>
                         <td style="width: 60%; height: 60px;" class="td border-y"></td>
                     </tr>
                     <tr>

@@ -19,6 +19,7 @@ class OfficialBusiness extends Model
         'lat',        
         'lng',        
         'date',  
+        'duration',  
         'time_start',  
         'time_end',  
         'time_in',  

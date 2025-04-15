@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminOfficialBusinessTable extends Component
 {
@@ -48,6 +49,7 @@ class AdminOfficialBusinessTable extends Component
     public $pageSize = 10; 
     public $pageSizes = [10, 20, 30, 50, 100]; 
     public $viewOB;
+    public $pdfContent;
 
     public function mount()
     {
@@ -176,6 +178,39 @@ class AdminOfficialBusinessTable extends Component
         }
 
         return $obRequests;
+    }
+
+    public function showOb($obId)
+    {
+        try{
+            $ob = OfficialBusiness::where('id', $obId)->first();
+            $user = User::where('id', $ob->user_id)->first();
+            $userName = $user->name;
+            $workGoup = OfficeDivisions::where('id', $user->office_division_id)->first(); 
+            $unit = OfficeDivisionUnits::where('id', $user->unit_id)->first(); 
+            if($ob){
+                $pdf = PDF::loadView('pdf.ob', [
+                    'ob' => $ob,
+                    'userName' => $userName,
+                    'workGroup' => $workGoup,
+                    'unit' => $unit,
+                ]);
+        
+                $this->pdfContent = base64_encode($pdf->output());
+            }else{
+              $this->dispatch('swal', [
+                    'title' => 'Official Business not found',
+                    'icon' => 'error'
+                ]);  
+            }  
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+
+    public function closeOb()
+    {
+        $this->pdfContent = null;
     }
 
     
