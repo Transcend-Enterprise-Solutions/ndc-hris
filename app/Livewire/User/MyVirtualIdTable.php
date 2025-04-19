@@ -18,15 +18,55 @@ class MyVirtualIdTable extends Component
 
     public $office_or_department;
     public $profilePhotoPath;
-    public $eSignatureFilename; // Changed from eSignaturePath to be more explicit
+    public $eSignatureFilename;
     public $empCodeFormatted;
     public $showDropdown = false;
     public $showSignatureModal = false;
     public $signatureFile;
+    public $showProfilePhotoModal = false;
+    public $profilePhoto;
+    public $idType = 'virtual'; // 'virtual' or 'arta'
+
+    public function toggleUploadProfilePhoto()
+    {
+        $this->showProfilePhotoModal = true;
+    }
 
     public function toggleUploadSignature()
     {
         $this->showSignatureModal = true;
+    }
+
+    public function switchIdType()
+    {
+        $this->idType = $this->idType === 'virtual' ? 'arta' : 'virtual';
+    }
+
+    public function saveProfilePhoto()
+    {
+        $this->validate([
+            'profilePhoto' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+        ]);
+    
+        $user = Auth::user();
+        
+        $eSignature = ESignature::firstOrNew(['user_id' => $user->id]);
+        
+        if ($eSignature->profile_photo_path) {
+            Storage::disk('public')->delete('profile-photos/'.$eSignature->profile_photo_path);
+        }
+    
+        $filename = 'profile_'.$user->id.'_'.time().'.'.$this->profilePhoto->extension();
+        $this->profilePhoto->storeAs('profile-photos', $filename, 'public');
+        
+        $eSignature->profile_photo_path = $filename;
+        $eSignature->save();
+    
+        $this->profilePhotoPath = 'profile-photos/'.$filename;
+        $this->showProfilePhotoModal = false;
+        $this->profilePhoto = null;
+        
+        $this->dispatch('profile-photo-uploaded');
     }
 
     public function saveSignature()
@@ -37,32 +77,31 @@ class MyVirtualIdTable extends Component
     
         $user = Auth::user();
         
-        // Delete old signature
         $oldSignature = ESignature::where('user_id', $user->id)->first();
         if ($oldSignature) {
             Storage::disk('public')->delete('signatures/'.$oldSignature->file_path);
             $oldSignature->delete();
         }
     
-        // Generate safe filename
-        $extension = $this->signatureFile->extension();
-        $filename = 'sig_'.$user->id.'_'.time().'.'.$extension;
-        
-        // Store file
+        $filename = 'sig_'.$user->id.'_'.time().'.'.$this->signatureFile->extension();
         $this->signatureFile->storeAs('signatures', $filename, 'public');
         
-        // Save to database
         ESignature::create([
             'user_id' => $user->id,
             'file_path' => $filename,
         ]);
     
-        // Update component
         $this->eSignatureFilename = $filename;
         $this->showSignatureModal = false;
         $this->signatureFile = null;
         
         $this->dispatch('signature-uploaded');
+    }
+
+    public function getProfilePhotoUrlProperty()
+    {
+        if (!$this->profilePhotoPath) return null;
+        return route('profile-photo.file', ['filename' => basename($this->profilePhotoPath)]);
     }
 
     public function getESignatureUrlProperty()
@@ -74,13 +113,12 @@ class MyVirtualIdTable extends Component
     public function getSignatureExistsProperty()
     {
         if (!$this->eSignatureFilename) return false;
-        
         return Storage::disk('public')->exists('signatures/'.$this->eSignatureFilename);
     }
 
     public function resetVariables()
     {
-        $this->reset('signatureFile');
+        $this->reset(['signatureFile', 'profilePhoto']);
     }
 
     public function toggleDropdown()
@@ -98,18 +136,16 @@ class MyVirtualIdTable extends Component
         $user = Auth::user();
         $userData = $user->userData;
     
-        // Get office or department
         $officeDivision = OfficeDivisions::find($user->office_division_id);
         $this->office_or_department = $officeDivision ? $officeDivision->office_division : 'N/A';
     
-        // Get profile photo path
-        $this->profilePhotoPath = $user->profile_photo_path;
-    
-        // Get e-signature filename only
         $eSignature = ESignature::where('user_id', $user->id)->first();
-        $this->eSignatureFilename = $eSignature ? $eSignature->file_path : null;
+        $this->profilePhotoPath = $eSignature?->profile_photo_path 
+            ? 'profile-photos/'.$eSignature->profile_photo_path 
+            : $user->profile_photo_path;
     
-        // Format employee code
+        $this->eSignatureFilename = $eSignature?->file_path;
+    
         $this->empCodeFormatted = $this->formatEmpCode($user->emp_code);
     }
 
@@ -130,23 +166,25 @@ class MyVirtualIdTable extends Component
             ->where('id', $user->position_id)
             ->value('position') ?? 'N/A';
 
-        $formattedDateOfBirth = $userData->date_of_birth 
-            ? \Carbon\Carbon::parse($userData->date_of_birth)->format('F j, Y') 
-            : 'N/A';
+        if ($this->idType === 'arta') {
+            $formattedData = sprintf(
+                "ARTA ID\nName: %s\nPosition: %s\nDepartment: %s\nID: %s",
+                $user->name,
+                $position,
+                $this->office_or_department,
+                $user->emp_code
+            );
+        } else {
+            $formattedData = sprintf(
+                "Name: %s\nEmployee Code: %s\nPosition: %s\nDepartment: %s",
+                $user->name,
+                $user->emp_code,
+                $position,
+                $this->office_or_department
+            );
+        }
 
-        $formattedData = sprintf(
-            "Name: %s\nEmployee Code: %s\nDate of Birth: %s\nPlace of Birth: %s\nSex: %s\nCivil Status: %s\nBlood Type: %s\nPosition: %s",
-            $user->name,
-            $user->emp_code,
-            $formattedDateOfBirth,
-            $userData->place_of_birth ?? 'N/A',
-            $userData->sex ?? 'N/A',
-            $userData->civil_status ?? 'N/A',
-            strtoupper($userData->blood_type ?? 'N/A'),
-            $position
-        );
-
-        return QrCode::size(300)
+        return QrCode::size($this->idType === 'arta' ? 100 : 100)
             ->backgroundColor(255, 255, 255)
             ->color(0, 0, 0)
             ->margin(2)
@@ -162,15 +200,13 @@ class MyVirtualIdTable extends Component
             ->where('id', $user->position_id)
             ->value('position') ?? 'No position assigned';
     
-        $formattedDateOfBirth = $userData->date_of_birth 
-            ? \Carbon\Carbon::parse($userData->date_of_birth)->format('F j, Y') 
-            : 'N/A';
-    
         return view('livewire.user.my-virtual-id-table', [
             'name' => $user->name,
             'emp_code' => $this->empCodeFormatted,
             'profilePhotoPath' => $this->profilePhotoPath,
-            'dateOfBirth' => $formattedDateOfBirth,
+            'dateOfBirth' => $userData->date_of_birth 
+                ? \Carbon\Carbon::parse($userData->date_of_birth)->format('F j, Y') 
+                : 'N/A',
             'placeOfBirth' => $userData->place_of_birth ?? null,
             'sex' => $userData->sex ?? null,
             'civilStatus' => $userData->civil_status ?? null,
@@ -178,8 +214,9 @@ class MyVirtualIdTable extends Component
             'qrCode' => $this->qrCode,
             'position' => $position,
             'office_or_department' => $this->office_or_department,
-            'eSignatureUrl' => $this->eSignatureUrl, // Use computed property
-            'signatureExists' => $this->signatureExists, // Use computed property
+            'eSignatureUrl' => $this->eSignatureUrl,
+            'signatureExists' => $this->signatureExists,
+            'idType' => $this->idType,
         ]);
     }
 }

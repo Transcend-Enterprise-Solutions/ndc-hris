@@ -674,18 +674,39 @@
             <tr style="height:4pt">
                 <td
                     style="width:74pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Total Earned
-                    </p>
+                    <p class="s9" style="text-indent: 0pt;line-height: 3pt;text-align: center;">Total Earned</p>
                 </td>
                 <td
                     style="width:72pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->vl_claimed_credits ?? 'N/A' }}</p>
+                        @php
+                            // Calculate VL Total Earned
+                            $vlBalance = $leaveCredits->vl_claimable_credits ?? 0;
+                            $vlLess =
+                                $leaveApplication->type_of_leave === 'Vacation Leave' &&
+                                $leaveApplication->approved_days !== null
+                                    ? $leaveApplication->approved_days
+                                    : 0;
+                            $vlTotalEarned = number_format($vlBalance + $vlLess, 3);
+                        @endphp
+                        {{ $vlTotalEarned }}
+                    </p>
                 </td>
                 <td
                     style="width:73pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;line-height: 3pt;text-align: center;">
-                        {{ $leaveCredits->sl_claimed_credits ?? 'N/A' }}</p>
+                        @php
+                            // Calculate SL Total Earned
+                            $slBalance = $leaveCredits->sl_claimable_credits ?? 0;
+                            $slLess =
+                                $leaveApplication->type_of_leave === 'Sick Leave' &&
+                                $leaveApplication->approved_days !== null
+                                    ? $leaveApplication->approved_days
+                                    : 0;
+                            $slTotalEarned = number_format($slBalance + $slLess, 3);
+                        @endphp
+                        {{ $slTotalEarned }}
+                    </p>
                 </td>
                 <td
                     style="width:212pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -725,7 +746,7 @@
                         {{ $leaveApplication->type_of_leave === 'Vacation Leave'
                             ? ($leaveApplication->approved_days !== null
                                 ? number_format($leaveApplication->approved_days, 3)
-                                : 'Not yet approved')
+                                : '')
                             : '0.000' }}
 
                     </p>
@@ -736,7 +757,7 @@
                         {{ $leaveApplication->type_of_leave === 'Sick Leave'
                             ? ($leaveApplication->approved_days !== null
                                 ? number_format($leaveApplication->approved_days, 3)
-                                : 'Not yet approved')
+                                : '')
                             : '0.000' }}
                     </p>
                 </td>
