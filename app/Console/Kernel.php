@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('credits:calculate')->everyMinute();
         $schedule->command('fetch:biotime-transactions-monthly')->dailyAt('01:00');
 
-        $schedule->command('leave:deduct-credits')->dailyAt('23:59');
+        // $schedule->command('leave:deduct-credits')->dailyAt('23:59');
     }
 
     /**
