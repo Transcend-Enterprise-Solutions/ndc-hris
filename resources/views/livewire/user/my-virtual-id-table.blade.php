@@ -256,8 +256,7 @@
 
                 <div
                     class="absolute sm:top-[230px] sm:right-7 transform sm:-translate-y-1/2 top-[150px] right-3 -translate-y-1/2 flex flex-col items-center text-center">
-                    <img src="/images/ndc-logo-transparent.png" class="sm:h-[60px]" style="height: 120px"
-                        alt="">
+                    <img src="/images/ndc-logo-transparent.png" class="sm:h-[120px] h-[64px]" alt="NDC Logo">
                     <p class="sm:text-xs text-[8px] text-black -mt-2">
                         NDC Building, 116 Tordesillas St.,<br> Salcedo Village, Makati City, Philippines 1227
                     </p>
@@ -274,9 +273,9 @@
                         <h2 class="sm:text-sm text-[9px] font-bold text-black">IN CASE OF EMERGENCY, PLEASE NOTIFY:
                         </h2>
                         <p class="sm:text-sm text-[9px] font-bold text-black">NAME: <span
-                                class="font-normal">{{ $emergencyContactName ?? 'EMPLOYEE RELATIVE' }}</span></p>
+                                class="font-normal">{{ $emergencyContactName ?? 'N/A' }}</span></p>
                         <p class="sm:text-sm text-[9px] font-bold text-black">TEL. NO.: <span
-                                class="font-normal">{{ $emergencyContactNumber ?? '09123456789' }}</span>
+                                class="font-normal">{{ $emergencyContactNumber ?? 'N/A' }}</span>
                         </p>
                     </div>
 
