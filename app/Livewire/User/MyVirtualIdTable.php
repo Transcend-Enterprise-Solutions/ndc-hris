@@ -26,6 +26,38 @@ class MyVirtualIdTable extends Component
     public $showProfilePhotoModal = false;
     public $profilePhoto;
     public $idType = 'virtual'; // 'virtual' or 'arta'
+    public $showEmergencyContactModal = false;
+    public $emergencyContactName;
+    public $emergencyContactNumber;
+
+    public function toggleEmergencyContactModal()
+    {
+        $this->showEmergencyContactModal = !$this->showEmergencyContactModal;
+        
+        // Load existing values if available
+        $eSignature = ESignature::where('user_id', Auth::id())->first();
+        if ($eSignature) {
+            $this->emergencyContactName = $eSignature->emergency_contact_name;
+            $this->emergencyContactNumber = $eSignature->emergency_contact_number;
+        }
+    }
+
+    public function saveEmergencyContact()
+    {
+        $this->validate([
+            'emergencyContactName' => 'required|string|max:255',
+            'emergencyContactNumber' => 'required|string|max:20',
+        ]);
+
+        $user = Auth::user();
+        $eSignature = ESignature::firstOrNew(['user_id' => $user->id]);
+        $eSignature->emergency_contact_name = $this->emergencyContactName;
+        $eSignature->emergency_contact_number = $this->emergencyContactNumber;
+        $eSignature->save();
+
+        $this->showEmergencyContactModal = false;
+        $this->dispatch('emergency-contact-saved');
+    }
 
     public function toggleUploadProfilePhoto()
     {
@@ -96,6 +128,18 @@ class MyVirtualIdTable extends Component
         $this->signatureFile = null;
         
         $this->dispatch('signature-uploaded');
+    }
+
+    public function getEmergencyContactNameProperty()
+    {
+        $eSignature = ESignature::where('user_id', Auth::id())->first();
+        return $eSignature?->emergency_contact_name;
+    }
+
+    public function getEmergencyContactNumberProperty()
+    {
+        $eSignature = ESignature::where('user_id', Auth::id())->first();
+        return $eSignature?->emergency_contact_number;
     }
 
     public function getProfilePhotoUrlProperty()

@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::table('e_signatures', function (Blueprint $table) {
             $table->string('profile_photo_path')->nullable()->after('file_path');
+            $table->string('emergency_contact_name')->nullable()->after('profile_photo_path');
+            $table->string('emergency_contact_number')->nullable()->after('emergency_contact_name');
         });
     }
 
@@ -22,7 +24,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('e_signatures', function (Blueprint $table) {
-            $table->dropColumn('profile_photo_path');
+            $table->dropColumn(['profile_photo_path', 'emergency_contact_name', 'emergency_contact_number']);
         });
     }
 };
