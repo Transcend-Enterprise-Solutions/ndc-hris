@@ -23,13 +23,17 @@ class VirtualIdTable extends Component
     // public $position;
     public $profilePhotoUrl;
     public $eSignatureUrl;
+    public $emergencyContactName;
+    public $emergencyContactNumber;
     
     // Instead of storing the QR code HTML, store just the data that will go into the QR code
     public $qrCodeData = '';
 
     public function mount()
     {
-        $this->employees = User::with('userData')->get();
+        $this->employees = User::with('userData')
+                                ->where('user_role', 'emp')    
+                                ->get();
     }
 
     public function selectEmployee($employeeId)
@@ -81,6 +85,9 @@ class VirtualIdTable extends Component
         $this->eSignatureUrl = $eSignature?->file_path 
             ? route('signature.file', ['filename' => $eSignature->file_path])
             : null;
+
+        $this->emergencyContactName = $eSignature?->emergency_contact_name ?? 'N/A';
+        $this->emergencyContactNumber = $eSignature?->emergency_contact_number ?? 'N/A';
 
         // Set name and prepare QR code data
         $this->name = $user->name;

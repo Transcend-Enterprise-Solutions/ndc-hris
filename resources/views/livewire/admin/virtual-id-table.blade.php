@@ -189,10 +189,10 @@
                             <div class="flex justify-between items-center m-4">
                                 <div class="w-[70%]">
                                     <h2 class="text-sm font-bold text-black">IN CASE OF EMERGENCY, PLEASE NOTIFY:</h2>
-                                    <p class="text-sm font-bold text-black">NAME: <span class="font-normal">CONTACT
-                                            NAME</span></p>
+                                    <p class="text-sm font-bold text-black">NAME: <span
+                                            class="font-normal">{{ $emergencyContactName }}</span></p>
                                     <p class="text-sm font-bold text-black">TEL. NO.: <span
-                                            class="font-normal">CONTACT PHONE</span></p>
+                                            class="font-normal">{{ $emergencyContactNumber }}</span></p>
                                 </div>
 
                                 <div class="w-[30%] flex items-center justify-center">

@@ -256,7 +256,8 @@
 
                 <div
                     class="absolute sm:top-[230px] sm:right-7 transform sm:-translate-y-1/2 top-[150px] right-3 -translate-y-1/2 flex flex-col items-center text-center">
-                    <img src="/images/ndc-logo-transparent.png" class="sm:h-[120px] h-[60px]" alt="">
+                    <img src="/images/ndc-logo-transparent.png" class="sm:h-[60px]" style="height: 120px"
+                        alt="">
                     <p class="sm:text-xs text-[8px] text-black -mt-2">
                         NDC Building, 116 Tordesillas St.,<br> Salcedo Village, Makati City, Philippines 1227
                     </p>
