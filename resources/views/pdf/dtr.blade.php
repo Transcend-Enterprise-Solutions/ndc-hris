@@ -33,16 +33,16 @@
             margin-bottom: 2px;
         }
         .org-title {
-            font-size: 14px; /* Increased from 12px */
+            font-size: 14px;
             font-weight: bold;
             margin: 2px 0;
         }
         .org-subtitle {
-            font-size: 13px; /* Increased from 11px */
+            font-size: 13px;
             margin: 2px 0;
         }
         .dtr-title {
-            font-size: 14px; /* Increased from 14px */
+            font-size: 14px;
             font-weight: bold;
             margin: 5px 0;
         }
@@ -65,7 +65,7 @@
             text-align: center;
             font-weight: bold;
             margin: 10px 0;
-            font-size: 13px; /* Increased from 11px */
+            font-size: 13px;
             border: 1px solid #000;
             padding: 3px;
             background-color: #f2f2f2;
@@ -77,9 +77,9 @@
         }
         th, td {
             border: 1px solid black;
-            padding: 4px; /* Increased from 3px */
+            padding: 4px;
             text-align: center;
-            font-size: 11px; /* Increased from 9px */
+            font-size: 11px;
         }
         th {
             background-color: #f2f2f2;
@@ -92,7 +92,7 @@
             margin-top: 10px;
             text-align: center;
             font-weight: bold;
-            font-size: 12px; /* Increased from 10px */
+            font-size: 12px;
         }
         .summary-grid {
             display: grid;
@@ -105,7 +105,7 @@
         .summary-item {
             display: flex;
             justify-content: space-between;
-            font-size: 11px; /* Increased from 9px */
+            font-size: 11px;
             padding: 2px;
         }
         .summary-label {
@@ -114,7 +114,7 @@
         }
         .certification {
             margin-top: 15px;
-            font-size: 11px; /* Increased from 9px */
+            font-size: 11px;
             text-align: center;
             font-style: italic;
         }
@@ -131,10 +131,10 @@
             border-top: 1px solid black;
             margin-top: 25px;
             font-weight: bold;
-            font-size: 12px; /* Increased from 10px */
+            font-size: 12px;
         }
         .signature-title {
-            font-size: 11px; /* Increased from 9px */
+            font-size: 11px;
             margin-top: 3px;
         }
         .remarks-column {
@@ -144,7 +144,7 @@
             position: absolute;
             bottom: 5px;
             left: 5px;
-            font-size: 10px; /* Increased from 8px */
+            font-size: 10px;
             color: #666;
         }
     </style>
@@ -192,10 +192,10 @@
                     <th rowspan="2" class="remarks-column">REMARKS</th>
                 </tr>
                 <tr>
-                    <th>Arrival</th>
-                    <th>Departure</th>
-                    <th>Arrival</th>
-                    <th>Departure</th>
+                    <th>Time In</th>
+                    <th>Time Out</th>
+                    <th>Time In</th>
+                    <th>Time Out</th>
                 </tr>
             </thead>
             <tbody>

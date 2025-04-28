@@ -243,6 +243,9 @@
                                             <span class="px-2 py-1 bg-slate-100/10 dark:bg-slate-800/10">{{ $dtr->effective_remarks }}</span>
                                         </span>
                                 @endswitch
+                                <button wire:click="openEditModal({{ $dtr->id }})" class="ml-2 text-indigo-600 hover:text-indigo-900">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </button>
                             </td>
                         </tr>
                     @empty
@@ -253,6 +256,60 @@
                 </tbody>
             </table>
         </div>
+        {{-- edit modal --}}
+        @if($showEditModal)
+        <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-2xl">
+                <h2 class="text-xl font-semibold mb-4">Edit DTR</h2>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium">Morning In</label>
+                        <input type="time" wire:model.defer="editData.morning_in" class="mt-1 block w-full border rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Noon Out</label>
+                        <input type="time" wire:model.defer="editData.morning_out" class="mt-1 block w-full border rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Noon In</label>
+                        <input type="time" wire:model.defer="editData.afternoon_in" class="mt-1 block w-full border rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Afternoon Out</label>
+                        <input type="time" wire:model.defer="editData.afternoon_out" class="mt-1 block w-full border rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Late</label>
+                        <input type="text" wire:model.defer="editData.late" class="mt-1 block w-full border rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Undertime</label>
+                        <input type="text" wire:model.defer="editData.ut" class="mt-1 block w-full border rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Overtime</label>
+                        <input type="text" wire:model.defer="editData.overtime" class="mt-1 block w-full border rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Hours Rendered</label>
+                        <input type="text" wire:model.defer="editData.total_hours_rendered" class="mt-1 block w-full border rounded" />
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium">Remarks</label>
+                        <input type="text" wire:model.defer="editData.effective_remarks" class="mt-1 block w-full border rounded" />
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end space-x-2">
+                    <button wire:click="closeEditModal" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                    <button wire:click="saveEdit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Save</button>
+                </div>
+            </div>
+        </div>
+        @endif
+
+
 
         <!-- Pagination -->
         <div class="mt-4">

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
@@ -29,6 +30,21 @@ class AdminDtrTable extends Component
     public $signName = '';
     public $signPos = '';
     public $showSignatoryModal = false;
+
+    // Added for Edit Modal
+    public $showEditModal = false;
+    public $editData = [
+        'morning_in' => '',
+        'morning_out' => '',
+        'afternoon_in' => '',
+        'afternoon_out' => '',
+        'late' => '',
+        'ut' => '',
+        'overtime' => '',
+        'total_hours_rendered' => '',
+        'effective_remarks' => '',
+    ];
+    public $editId;
 
     protected $queryString = [
         'searchTerm' => ['except' => ''],
@@ -71,6 +87,65 @@ class AdminDtrTable extends Component
             'title' => 'Signatory Updated Successfully!',
             'icon' => 'success'
         ]);
+    }
+
+    public function openEditModal($id)
+    {
+        $dtr = EmployeesDtr::findOrFail($id);
+
+        $this->editId = $id;
+        $this->editData = [
+            'morning_in' => $dtr->morning_in,
+            'morning_out' => $dtr->morning_out,
+            'afternoon_in' => $dtr->afternoon_in,
+            'afternoon_out' => $dtr->afternoon_out,
+            'late' => $dtr->late,
+            'ut' => $dtr->ut,
+            'overtime' => $dtr->overtime,
+            'total_hours_rendered' => $dtr->total_hours_rendered,
+            'effective_remarks' => $dtr->up_remarks ?? $dtr->remarks,
+        ];
+
+        $this->showEditModal = true;
+    }
+
+    public function saveEdit()
+    {
+        $this->validate([
+            'editData.morning_in' => 'nullable',
+            'editData.morning_out' => 'nullable',
+            'editData.afternoon_in' => 'nullable',
+            'editData.afternoon_out' => 'nullable',
+            'editData.late' => 'nullable|string',
+            'editData.ut' => 'nullable|string',
+            'editData.overtime' => 'nullable|string',
+            'editData.total_hours_rendered' => 'nullable|string',
+            'editData.effective_remarks' => 'nullable|string',
+        ]);
+
+        $dtr = EmployeesDtr::findOrFail($this->editId);
+        $dtr->update([
+            'morning_in' => $this->editData['morning_in'],
+            'morning_out' => $this->editData['morning_out'],
+            'afternoon_in' => $this->editData['afternoon_in'],
+            'afternoon_out' => $this->editData['afternoon_out'],
+            'late' => $this->editData['late'],
+            'ut' => $this->editData['ut'],
+            'overtime' => $this->editData['overtime'],
+            'total_hours_rendered' => $this->editData['total_hours_rendered'],
+            'up_remarks' => $this->editData['effective_remarks'],
+        ]);
+
+        $this->showEditModal = false;
+        $this->dispatch('swal', [
+            'title' => 'DTR Updated Successfully!',
+            'icon' => 'success'
+        ]);
+    }
+
+    public function closeEditModal()
+    {
+        $this->showEditModal = false;
     }
 
     public function mount()

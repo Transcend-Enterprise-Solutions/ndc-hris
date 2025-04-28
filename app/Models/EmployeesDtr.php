@@ -25,19 +25,30 @@ class EmployeesDtr extends Model
         'ut',
         'total_hours_rendered',
         'remarks',
-        'attachment'
+        'attachment',
+        'up_remarks',
+        'updated_by',
+        'up_morning_in',
+        'up_morning_out',
+        'up_afternoon_in',
+        'up_afternoon_out',
+        'up_late',
+        'up_ut',
+        'up_ot'
     ];
+
     protected $casts = [
-        'late' => 'string',  // Changed from float to string
-        'overtime' => 'string',  // Changed from float to string
+        'late' => 'string',
+        'overtime' => 'string',
         'ut' => 'string',
-        'total_hours_rendered' => 'string',  // Changed from float to string
+        'total_hours_rendered' => 'string',
     ];
+
     protected $dates = [
         'date',
     ];
 
-    // Define relationships if needed
+    // Define relationships
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -52,6 +63,12 @@ class EmployeesDtr extends Model
     {
         return $this->hasMany(VacationLeaveDetails::class);
     }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
     public function sickLeaveDetails()
     {
         return $this->hasMany(SickLeaveDetails::class);
