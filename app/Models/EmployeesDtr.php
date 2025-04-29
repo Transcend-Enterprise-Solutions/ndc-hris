@@ -34,7 +34,8 @@ class EmployeesDtr extends Model
         'up_afternoon_out',
         'up_late',
         'up_ut',
-        'up_ot'
+        'up_ot',
+        'up_total_hours_rendered'
     ];
 
     protected $casts = [

@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\EmployeesDtr;
 use App\Models\OfficeDivisions;
+use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\PDF as DomPDFPDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -31,8 +32,9 @@ class AdminDtrTable extends Component
     public $signPos = '';
     public $showSignatoryModal = false;
 
-    // Added for Edit Modal
+    // Edit Modal Properties
     public $showEditModal = false;
+    public $editId;
     public $editData = [
         'morning_in' => '',
         'morning_out' => '',
@@ -44,7 +46,6 @@ class AdminDtrTable extends Component
         'total_hours_rendered' => '',
         'effective_remarks' => '',
     ];
-    public $editId;
 
     protected $queryString = [
         'searchTerm' => ['except' => ''],
@@ -54,6 +55,12 @@ class AdminDtrTable extends Component
         'sortDirection' => ['except' => 'asc'],
         'pageSize' => ['except' => 30],
     ];
+
+    public function mount()
+    {
+        $this->startDate = Carbon::now()->startOfMonth()->toDateString();
+        $this->endDate = Carbon::now()->endOfMonth()->toDateString();
+    }
 
     public function openSignatoryModal($divisionId)
     {
@@ -95,45 +102,49 @@ class AdminDtrTable extends Component
 
         $this->editId = $id;
         $this->editData = [
-            'morning_in' => $dtr->morning_in,
-            'morning_out' => $dtr->morning_out,
-            'afternoon_in' => $dtr->afternoon_in,
-            'afternoon_out' => $dtr->afternoon_out,
-            'late' => $dtr->late,
-            'ut' => $dtr->ut,
-            'overtime' => $dtr->overtime,
-            'total_hours_rendered' => $dtr->total_hours_rendered,
+            'morning_in' => $dtr->up_morning_in ?? $dtr->morning_in,
+            'morning_out' => $dtr->up_morning_out ?? $dtr->morning_out,
+            'afternoon_in' => $dtr->up_afternoon_in ?? $dtr->afternoon_in,
+            'afternoon_out' => $dtr->up_afternoon_out ?? $dtr->afternoon_out,
+            'late' => $dtr->up_late ?? $dtr->late,
+            'ut' => $dtr->up_ut ?? $dtr->ut,
+            'overtime' => $dtr->up_ot ?? $dtr->overtime,
+            'total_hours_rendered' => $dtr->up_total_hours_rendered ?? $dtr->total_hours_rendered,
             'effective_remarks' => $dtr->up_remarks ?? $dtr->remarks,
         ];
 
         $this->showEditModal = true;
+        $this->dispatch('edit-modal-opened'); // Optional: For any JS side effects
     }
 
     public function saveEdit()
     {
         $this->validate([
-            'editData.morning_in' => 'nullable',
-            'editData.morning_out' => 'nullable',
-            'editData.afternoon_in' => 'nullable',
-            'editData.afternoon_out' => 'nullable',
-            'editData.late' => 'nullable|string',
-            'editData.ut' => 'nullable|string',
-            'editData.overtime' => 'nullable|string',
-            'editData.total_hours_rendered' => 'nullable|string',
-            'editData.effective_remarks' => 'nullable|string',
+            'editData.morning_in' => 'nullable|date_format:H:i',
+            'editData.morning_out' => 'nullable|date_format:H:i',
+            'editData.afternoon_in' => 'nullable|date_format:H:i',
+            'editData.afternoon_out' => 'nullable|date_format:H:i',
+            'editData.late' => 'nullable|string|max:255',
+            'editData.ut' => 'nullable|string|max:255',
+            'editData.overtime' => 'nullable|string|max:255',
+            'editData.total_hours_rendered' => 'nullable|string|max:255',
+            'editData.effective_remarks' => 'nullable|string|max:255',
         ]);
 
         $dtr = EmployeesDtr::findOrFail($this->editId);
+
         $dtr->update([
-            'morning_in' => $this->editData['morning_in'],
-            'morning_out' => $this->editData['morning_out'],
-            'afternoon_in' => $this->editData['afternoon_in'],
-            'afternoon_out' => $this->editData['afternoon_out'],
-            'late' => $this->editData['late'],
-            'ut' => $this->editData['ut'],
-            'overtime' => $this->editData['overtime'],
-            'total_hours_rendered' => $this->editData['total_hours_rendered'],
+            'up_morning_in' => $this->editData['morning_in'],
+            'up_morning_out' => $this->editData['morning_out'],
+            'up_afternoon_in' => $this->editData['afternoon_in'],
+            'up_afternoon_out' => $this->editData['afternoon_out'],
+            'up_late' => $this->editData['late'],
+            'up_ut' => $this->editData['ut'],
+            'up_ot' => $this->editData['overtime'],
             'up_remarks' => $this->editData['effective_remarks'],
+            'up_total_hours_rendered' => $this->editData['total_hours_rendered'],
+            'updated_by' => Auth::user()->name,
+            'updated_at' => now(),
         ]);
 
         $this->showEditModal = false;
@@ -146,12 +157,7 @@ class AdminDtrTable extends Component
     public function closeEditModal()
     {
         $this->showEditModal = false;
-    }
-
-    public function mount()
-    {
-        $this->startDate = Carbon::now()->startOfMonth()->toDateString();
-        $this->endDate = Carbon::now()->endOfMonth()->toDateString();
+        $this->reset(['editData', 'editId']);
     }
 
     public function updatedPageSize()
@@ -294,22 +300,35 @@ class AdminDtrTable extends Component
         $dtrsWithSummary = [];
 
         foreach ($dtrs as $employeeName => $employeeDtrs) {
-            // Ensure effective_remarks is accessible
+            // Process each DTR record to use updated values when available
             $processedDtrs = $employeeDtrs->map(function ($dtr) {
-                $dtr->effective_remarks = $dtr->effective_remarks ?? $dtr->remarks;
+                // Use updated values if available, otherwise use original values
+                $dtr->effective_morning_in = $dtr->up_morning_in ?: $dtr->morning_in;
+                $dtr->effective_morning_out = $dtr->up_morning_out ?: $dtr->morning_out;
+                $dtr->effective_afternoon_in = $dtr->up_afternoon_in ?: $dtr->afternoon_in;
+                $dtr->effective_afternoon_out = $dtr->up_afternoon_out ?: $dtr->afternoon_out;
+                $dtr->effective_late = $dtr->up_late ?: $dtr->late;
+                $dtr->effective_ut = $dtr->up_ut ?: $dtr->ut;
+                $dtr->effective_overtime = $dtr->up_ot ?: $dtr->overtime;
+                $dtr->effective_total_hours_rendered = $dtr->up_total_hours_rendered ?: $dtr->total_hours_rendered;
+                $dtr->effective_remarks = $dtr->up_remarks ?: $dtr->remarks;
+                $dtr->effective_updated_by = $dtr->updated_by;
+
                 return $dtr;
             });
 
             // Calculate days with time entries
             $daysWithTimeEntries = $processedDtrs->filter(function($dtr) {
-                return $dtr->morning_in || $dtr->morning_out || $dtr->afternoon_in || $dtr->afternoon_out;
+                return $dtr->effective_morning_in || $dtr->effective_morning_out ||
+                       $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
             })->count();
 
             // Calculate days worked - if has time entries, consider it as a day worked
             // regardless of remarks (except for absences)
             $daysWorked = $processedDtrs->filter(function($dtr) {
                 // If there are time entries, consider it as worked
-                $hasTimeEntries = $dtr->morning_in || $dtr->morning_out || $dtr->afternoon_in || $dtr->afternoon_out;
+                $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
+                                  $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
 
                 // Only consider as not worked if explicitly marked as absent
                 if (strtolower($dtr->effective_remarks) === 'absent') {
@@ -337,8 +356,8 @@ class AdminDtrTable extends Component
             // Calculate overtime hours
             $totalOvertimeMinutes = 0;
             foreach ($processedDtrs as $dtr) {
-                if (!empty($dtr->overtime) && $dtr->overtime !== '00:00') {
-                    list($hours, $minutes) = explode(':', $dtr->overtime);
+                if (!empty($dtr->effective_overtime) && $dtr->effective_overtime !== '00:00') {
+                    list($hours, $minutes) = explode(':', $dtr->effective_overtime);
                     $totalOvertimeMinutes += (intval($hours) * 60) + intval($minutes);
                 }
             }
@@ -347,9 +366,10 @@ class AdminDtrTable extends Component
             // Calculate late hours - only for days with time entries
             $totalLateMinutes = 0;
             foreach ($processedDtrs as $dtr) {
-                $hasTimeEntries = $dtr->morning_in || $dtr->morning_out || $dtr->afternoon_in || $dtr->afternoon_out;
-                if ($hasTimeEntries && !empty($dtr->late) && $dtr->late !== '00:00') {
-                    list($hours, $minutes) = explode(':', $dtr->late);
+                $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
+                                 $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
+                if ($hasTimeEntries && !empty($dtr->effective_late) && $dtr->effective_late !== '00:00') {
+                    list($hours, $minutes) = explode(':', $dtr->effective_late);
                     $totalLateMinutes += (intval($hours) * 60) + intval($minutes);
                 }
             }
@@ -358,9 +378,10 @@ class AdminDtrTable extends Component
             // Calculate undertime hours - only for days with time entries
             $totalUndertimeMinutes = 0;
             foreach ($processedDtrs as $dtr) {
-                $hasTimeEntries = $dtr->morning_in || $dtr->morning_out || $dtr->afternoon_in || $dtr->afternoon_out;
-                if ($hasTimeEntries && !empty($dtr->ut) && $dtr->ut !== '00:00') {
-                    list($hours, $minutes) = explode(':', $dtr->ut);
+                $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
+                                 $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
+                if ($hasTimeEntries && !empty($dtr->effective_ut) && $dtr->effective_ut !== '00:00') {
+                    list($hours, $minutes) = explode(':', $dtr->effective_ut);
                     $totalUndertimeMinutes += (intval($hours) * 60) + intval($minutes);
                 }
             }

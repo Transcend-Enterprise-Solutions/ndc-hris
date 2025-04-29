@@ -10,13 +10,13 @@
             margin: 0;
             padding: 15px;
             position: relative;
-            font-size: 11px; /* Increased from 9px */
+            font-size: 11px;
         }
         .form-number {
             position: absolute;
             top: 5px;
             left: 5px;
-            font-size: 10px; /* Increased from 8px */
+            font-size: 10px;
             color: #333;
         }
         .header-section {
@@ -58,7 +58,6 @@
             margin-right: 5px;
         }
         .employee-name {
-
             display: inline-block;
         }
         .month-header {
@@ -159,7 +158,6 @@
                 <img src="{{ public_path('images/bagong-pilipinas-logo.png') }}" alt="Bagong Pilipinas Logo" class="logo" style="position: relative; top: -6px;">
             </div>
 
-
             <div class="org-title">Republic of the Philippines</div>
             <div class="org-subtitle">National Development Company</div>
             <div class="dtr-title">DAILY TIME RECORD</div>
@@ -173,7 +171,6 @@
             <span class="employee-name-label">Department:</span>
             <span class="employee-name">{{ $userDepartment }}</span>
         </div>
-
 
         <div class="month-header">
             FOR THE MONTH OF {{ Carbon\Carbon::parse($startDate)->format('F Y') }}
@@ -201,20 +198,21 @@
             <tbody>
                 @foreach($data['dtrs'] as $dtr)
                     @php
-                        $hasTimeEntries = $dtr->morning_in || $dtr->morning_out || $dtr->afternoon_in || $dtr->afternoon_out;
+                        $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
+                                         $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
                         $dayOfWeek = $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('D') : '';
                         $dayNum = $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('j') : '';
                         $isWeekend = in_array($dayOfWeek, ['Sat', 'Sun']);
                     @endphp
                     <tr class="{{ $isWeekend ? 'weekend' : '' }}">
                         <td>{{ $dayNum }} {{ $dayOfWeek }}</td>
-                        <td>{{ $dtr->morning_in && $dtr->morning_in != '00:00' ? $dtr->morning_in : '' }}</td>
-                        <td>{{ $dtr->morning_out && $dtr->morning_out != '00:00' ? $dtr->morning_out : '' }}</td>
-                        <td>{{ $dtr->afternoon_in && $dtr->afternoon_in != '00:00' ? $dtr->afternoon_in : '' }}</td>
-                        <td>{{ $dtr->afternoon_out && $dtr->afternoon_out != '00:00' ? $dtr->afternoon_out : '' }}</td>
-                        <td>{{ $hasTimeEntries && $dtr->late ? $dtr->late : '' }}</td>
-                        <td>{{ $hasTimeEntries && $dtr->ut ? $dtr->ut : '' }}</td>
-                        <td>{{ $dtr->overtime && $dtr->overtime != '00:00' ? $dtr->overtime : '' }}</td>
+                        <td>{{ $dtr->effective_morning_in && $dtr->effective_morning_in != '00:00' ? $dtr->effective_morning_in : '--:--' }}</td>
+                        <td>{{ $dtr->effective_morning_out && $dtr->effective_morning_out != '00:00' ? $dtr->effective_morning_out : '--:--' }}</td>
+                        <td>{{ $dtr->effective_afternoon_in && $dtr->effective_afternoon_in != '00:00' ? $dtr->effective_afternoon_in : '--:--' }}</td>
+                        <td>{{ $dtr->effective_afternoon_out && $dtr->effective_afternoon_out != '00:00' ? $dtr->effective_afternoon_out : '--:--' }}</td>
+                        <td>{{ $hasTimeEntries && $dtr->effective_late ? $dtr->effective_late : '--:--' }}</td>
+                        <td>{{ $hasTimeEntries && $dtr->effective_ut ? $dtr->effective_ut : '--:--' }}</td>
+                        <td>{{ $dtr->effective_overtime && $dtr->effective_overtime != '00:00' ? $dtr->effective_overtime : '--:--' }}</td>
                         <td>{{ $dtr->effective_remarks !== 'Present' ? $dtr->effective_remarks : '' }}</td>
                     </tr>
                 @endforeach
@@ -223,7 +221,7 @@
 
         <div class="total-summary" style="text-align: left; margin-left: 3px; margin-top: 8px; margin-bottom: 3px;">TOTAL SUMMARY</div>
 
-        <table style="width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 11px;"> <!-- Increased from 9px -->
+        <table style="width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 11px;">
             <tr>
                 <!-- First Row -->
                 <td style="border: none; padding: 1px 3px; text-align: left;">

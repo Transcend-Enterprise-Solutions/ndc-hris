@@ -130,56 +130,23 @@
             <table class="min-w-full bg-white dark:bg-gray-800 overflow-hidden">
                 <thead class="bg-gray-200 dark:bg-gray-700 rounded-xl">
                     <tr class="whitespace-nowrap">
-                        <th class="px-4 py-2 text-center">
-                            <div class="flex items-center justify-center">
-                                <button wire:click="sortBy('emp_code')" class="{{ $sortField === 'emp_code' ? 'text-blue-600' : 'text-gray-400' }}">
-                                    <i class="bi bi-arrow-down-up"></i>
-                                </button>
-                                <span class="ml-2">Employee ID</span>
-                            </div>
-                        </th>
-                        <th class="px-4 py-2 text-center">
-                            <div class="flex items-center justify-center">
-                                <button wire:click="sortBy('user.name')" class="{{ $sortField === 'user.name' ? 'text-blue-600' : 'text-gray-400' }}">
-                                    <i class="bi bi-arrow-down-up"></i>
-                                </button>
-                                <span class="ml-2">Employee Name</span>
-                            </div>
-                        </th>
-                        <th class="px-4 py-2 text-center">
-                            <div class="flex items-center justify-center">
-                                <button wire:click="sortBy('date')" class="{{ $sortField === 'date' ? 'text-blue-600' : 'text-gray-400' }}">
-                                    <i class="bi bi-arrow-down-up"></i>
-                                </button>
-                                <span class="ml-2">Date</span>
-                            </div>
-                        </th>
+                        <th class="px-4 py-2 text-center">Employee ID</th>
+                        <th class="px-4 py-2 text-center">Employee Name</th>
+                        <th class="px-4 py-2 text-center">Date</th>
                         <th class="px-4 py-2 text-center">Day</th>
                         <th class="px-4 py-2 text-center">Location</th>
                         <th class="px-4 py-2 text-center">Morning In</th>
-                        <th class="px-4 py-2 text-center">Noon Out</th>
+                        <th class="px-4 py-2 text-center">Morning Out</th>
                         <th class="px-4 py-2 text-center">Noon In</th>
                         <th class="px-4 py-2 text-center">Afternoon Out</th>
-                        <th class="px-4 py-2 text-center">
-                            <div class="flex items-center justify-center">
-                                <button wire:click="sortBy('late')" class="{{ $sortField === 'late' ? 'text-blue-600' : 'text-gray-400' }}">
-                                    <i class="bi bi-arrow-down-up"></i>
-                                </button>
-                                <span class="ml-2">Late</span>
-                            </div>
-                        </th>
-                        <th class="px-4 py-2 text-center">
-                            <div class="flex items-center justify-center">
-                                <button wire:click="sortBy('ut')" class="{{ $sortField === 'ut' ? 'text-blue-600' : 'text-gray-400' }}">
-                                    <i class="bi bi-arrow-down-up"></i>
-                                </button>
-                                <span class="ml-2">Undertime</span>
-                            </div>
-                        </th>
+                        <th class="px-4 py-2 text-center">Late</th>
+                        <th class="px-4 py-2 text-center">Undertime</th>
                         <th class="px-4 py-2 text-center">Overtime</th>
                         <th class="px-4 py-2 text-center">Hours Rendered</th>
-                        <th class="px-4 py-2 text-center">Attachment</th>
+                        {{-- <th class="px-4 py-2 text-center">Attachment</th> --}}
+                        <th class="px-4 py-2 text-center">Updated By</th>
                         <th class="px-4 py-2 text-center">Remarks</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -192,45 +159,60 @@
                             <td class="px-4 py-2 text-center">
                                 {{ $dtr->location === 'Onsite' ? '' : $dtr->location }}
                             </td>
-                            <td class="px-4 py-2 text-center">{{ $dtr->morning_in ?? '--:--' }}</td>
-                            <td class="px-4 py-2 text-center">{{ $dtr->morning_out ?? '--:--' }}</td>
-                            <td class="px-4 py-2 text-center">{{ $dtr->afternoon_in ?? '--:--' }}</td>
-                            <td class="px-4 py-2 text-center">{{ $dtr->afternoon_out ?? '--:--' }}</td>
-                            <td class="px-4 py-2 text-center">{{ $dtr->late }}</td>
-                            <td class="px-4 py-2 text-center">{{ $dtr->ut }}</td>
-                            <td class="px-4 py-2 text-center">{{ $dtr->overtime }}</td>
-                            <td class="px-4 py-2 text-center">{{ $dtr->total_hours_rendered }}</td>
-                            <td class="px-4 py-2 text-center">
+
+                            <!-- Use updated values if available -->
+                            <td class="px-4 py-2 text-center">{{ $dtr->up_morning_in ?? $dtr->morning_in ?? '--:--' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->up_morning_out ?? $dtr->morning_out ?? '--:--' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->up_afternoon_in ?? $dtr->afternoon_in ?? '--:--' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->up_afternoon_out ?? $dtr->afternoon_out ?? '--:--' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->up_late ?? $dtr->late ?? '00:00' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->up_ut ?? $dtr->ut ?? '00:00' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $dtr->up_ot ?? $dtr->overtime ?? '00:00' }}</td>
+
+                            <td class="px-4 py-2 text-center">{{ $dtr->up_total_hours_rendered ?? $dtr->total_hours_rendered ?? '00:00' }}</td>
+                            {{-- Attachments --}}
+                            {{-- <td class="px-4 py-2 text-center">
                                 @if($dtr->attachment)
                                     <a href="#" wire:click.prevent="downloadFile({{ $dtr->id }})" class="text-blue-600 hover:underline">
-                                        {{ $dtr->date }} (Download)
+                                        Download
                                     </a>
                                 @else
                                     No file
                                 @endif
+                            </td> --}}
+                            <!-- Updated By -->
+                            <td class="px-4 py-2 text-center">
+                                {{ $dtr->updated_by ?? '-' }}
                             </td>
+
+                            <!-- Remarks -->
                             <td class="px-4 py-2 text-center">
                                 @php
-                                    $effectiveRemarks = strtolower($dtr->effective_remarks);
-                                    $lateUndertime = $dtr->late || $dtr->ut;
+                                    $effectiveRemarks = $dtr->up_remarks ?: $dtr->effective_remarks;
+                                    $late = $dtr->up_late ?? $dtr->late;
+                                    $ut = $dtr->up_ut ?? $dtr->ut;
+                                    $lateUndertime = $late || $ut;
                                 @endphp
 
-                                @switch($effectiveRemarks)
+                                @switch(strtolower($effectiveRemarks))
                                     @case('absent')
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-red-600 bg-white text-xs font-medium text-red-600 dark:border-red-600 dark:bg-slate-900 dark:text-red-600">
-                                            <span class="px-2 py-1 bg-red-600/10 dark:bg-red-600/10">{{ $dtr->effective_remarks }}</span>
+                                            <span class="px-2 py-1 bg-red-600/10 dark:bg-red-600/10">{{ ucfirst($effectiveRemarks) }}</span>
                                         </span>
                                         @break
+
                                     @case('leave')
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-sky-600 bg-white text-xs font-medium text-sky-600 dark:border-sky-600 dark:bg-slate-900 dark:text-sky-600">
-                                            <span class="px-2 py-1 bg-sky-600/10 dark:bg-sky-600/10">{{ $dtr->effective_remarks }}</span>
+                                            <span class="px-2 py-1 bg-sky-600/10 dark:bg-sky-600/10">{{ ucfirst($effectiveRemarks) }}</span>
                                         </span>
                                         @break
+
                                     @case('holiday')
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-blue-600 bg-white text-xs font-medium text-blue-600 dark:border-blue-600 dark:bg-slate-900 dark:text-blue-600">
-                                            <span class="px-2 py-1 bg-green-600/10 dark:bg-green-600/10">{{ $dtr->effective_remarks }}</span>
+                                            <span class="px-2 py-1 bg-blue-600/10 dark:bg-blue-600/10">{{ ucfirst($effectiveRemarks) }}</span>
                                         </span>
                                         @break
+
                                     @case('present')
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-green-600 bg-white text-xs font-medium text-green-600 dark:border-green-600 dark:bg-slate-900 dark:text-green-600">
                                             <span class="px-2 py-1 bg-green-600/10 dark:bg-green-600/10">
@@ -238,78 +220,124 @@
                                             </span>
                                         </span>
                                         @break
+
                                     @default
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-slate-300 bg-white text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
-                                            <span class="px-2 py-1 bg-slate-100/10 dark:bg-slate-800/10">{{ $dtr->effective_remarks }}</span>
+                                            <span class="px-2 py-1 bg-slate-100/10 dark:bg-slate-800/10">{{ ucfirst($effectiveRemarks) }}</span>
                                         </span>
                                 @endswitch
+
                                 <button wire:click="openEditModal({{ $dtr->id }})" class="ml-2 text-indigo-600 hover:text-indigo-900">
                                     <i class="bi bi-pencil-square"></i> Edit
                                 </button>
                             </td>
+
+
                         </tr>
                     @empty
-                        <tr class="whitespace-nowrap">
-                            <td colspan="14" class="px-4 py-2 text-center">No records found</td>
+                        <tr>
+                            <td colspan="16" class="px-4 py-2 text-center">No records found</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
+
+
+
         {{-- edit modal --}}
         @if($showEditModal)
-        <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-2xl">
-                <h2 class="text-xl font-semibold mb-4">Edit DTR</h2>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium">Morning In</label>
-                        <input type="time" wire:model.defer="editData.morning_in" class="mt-1 block w-full border rounded" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium">Noon Out</label>
-                        <input type="time" wire:model.defer="editData.morning_out" class="mt-1 block w-full border rounded" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium">Noon In</label>
-                        <input type="time" wire:model.defer="editData.afternoon_in" class="mt-1 block w-full border rounded" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium">Afternoon Out</label>
-                        <input type="time" wire:model.defer="editData.afternoon_out" class="mt-1 block w-full border rounded" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium">Late</label>
-                        <input type="text" wire:model.defer="editData.late" class="mt-1 block w-full border rounded" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium">Undertime</label>
-                        <input type="text" wire:model.defer="editData.ut" class="mt-1 block w-full border rounded" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium">Overtime</label>
-                        <input type="text" wire:model.defer="editData.overtime" class="mt-1 block w-full border rounded" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium">Hours Rendered</label>
-                        <input type="text" wire:model.defer="editData.total_hours_rendered" class="mt-1 block w-full border rounded" />
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-sm font-medium">Remarks</label>
-                        <input type="text" wire:model.defer="editData.effective_remarks" class="mt-1 block w-full border rounded" />
-                    </div>
+        <div class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
+            <div class="relative bg-white dark:bg-gray-800 p-6 mx-4 md:mx-auto max-w-lg w-full md:max-w-lg rounded-2xl">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between pb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
+                        Edit DTR
+                    </h3>
+                    <button wire:click="closeEditModal"
+                        class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                            </path>
+                        </svg>
+                    </button>
                 </div>
 
-                <div class="mt-6 flex justify-end space-x-2">
-                    <button wire:click="closeEditModal" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-                    <button wire:click="saveEdit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Save</button>
+                <!-- Modal body -->
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Morning In</label>
+                            <input type="time" wire:model.defer="editData.morning_in"
+                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                                value="{{ $dtr->up_morning_in ?? $dtr->morning_in }}" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Morning Out</label>
+                            <input type="time" wire:model.defer="editData.morning_out"
+                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                                value="{{ $dtr->up_morning_out ?? $dtr->morning_out }}" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Afternoon In</label>
+                            <input type="time" wire:model.defer="editData.afternoon_in"
+                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                                value="{{ $dtr->up_afternoon_in ?? $dtr->afternoon_in }}" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Afternoon Out</label>
+                            <input type="time" wire:model.defer="editData.afternoon_out"
+                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                                value="{{ $dtr->up_afternoon_out ?? $dtr->afternoon_out }}" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Late</label>
+                            <input type="text" wire:model.defer="editData.late"
+                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                                value="{{ $dtr->up_late ?? $dtr->late }}" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Undertime</label>
+                            <input type="text" wire:model.defer="editData.ut"
+                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                                value="{{ $dtr->up_ut ?? $dtr->ut }}" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Overtime</label>
+                            <input type="text" wire:model.defer="editData.overtime"
+                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                                value="{{ $dtr->up_ot ?? $dtr->overtime }}" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Hours Rendered</label>
+                            <input type="text" wire:model.defer="editData.total_hours_rendered"
+                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                                value="{{ $dtr->up_total_hours_rendered ?? $dtr->total_hours_rendered }}" />
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Remarks</label>
+                            <input type="text" wire:model.defer="editData.effective_remarks"
+                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
+                                value="{{ $dtr->up_remarks ?? $dtr->effective_remarks }}" />
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="mt-6 flex justify-end space-x-2">
+                        <button wire:click="closeEditModal"
+                            class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200">
+                            Cancel
+                        </button>
+                        <button wire:click="saveEdit"
+                            class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600">
+                            Save
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
         @endif
-
-
 
         <!-- Pagination -->
         <div class="mt-4">
