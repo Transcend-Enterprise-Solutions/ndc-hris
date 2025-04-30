@@ -173,7 +173,7 @@
         </div>
 
         <div class="month-header">
-            FOR THE MONTH OF {{ Carbon\Carbon::parse($startDate)->format('F Y') }}
+            FOR THE MONTH OF {{ strtoupper(Carbon\Carbon::parse($startDate)->format('F Y')) }}
         </div>
 
         <!-- DTR Table -->
