@@ -710,7 +710,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div x-data="{ appointment: @entangle('appointment') }" class="mt-4 gap-2 lg:columns-2 sm:columns-1">
+                            <div x-data="{ appointment: @entangle('appointment') }" class="mt-4 gap-2 columns-1">
                                 <div class="w-full">
                                     <label for="office_division" class="text-sm text-gray-700">Nature of Appointment
                                         <span class="text-red-600">*</span></label>
@@ -726,16 +726,15 @@
                                 </div>
 
                                 <!-- Plantilla Item Number Field -->
-                                <div class="w-full mt-4">
-                                    <label for="itemNumber" class="text-sm text-gray-700">Item Number <span
-                                            class="text-red-600">*</span></label>
+                                {{-- <div class="w-full mt-4">
+                                    <label for="itemNumber" class="text-sm text-gray-700">Item Number</label>
                                     <input id="itemNumber" wire:model="itemNumber"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm"
                                         type="text" placeholder="Enter Item Number">
                                     @error('itemNumber')
                                         <span class="text-red-500 text-sm">This field is required</span>
                                     @enderror
-                                </div>
+                                </div> --}}
                                 <!-- Data of Assumption Field -->
                                 {{-- <div x-show="appointment === 'pa'" class="w-full mt-4">
                                     <label for="data_of_assumption" class="text-sm text-gray-700">Data of Assumption <span class="text-red-600">*</span></label>
@@ -755,11 +754,11 @@
                             <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
 
                                 <div class="w-full">
-                                    <label for="office_division" class="text-sm text-gray-700">Office Division <span
+                                    <label for="office_division" class="text-sm text-gray-700">Work Group <span
                                             class="text-red-600">*</span></label>
                                     <select id="office_division" wire:model.live="selectedOfficeDivision"
                                         class="w-full h-12 px-4 py-2 text-black border rounded-lg appearance-none bg-chalk border-zinc-300 placeholder-zinc-300 focus:border-zinc-300 focus:outline-none focus:ring-zinc-300 sm:text-sm">
-                                        <option value="" selected>Select an office division</option>
+                                        <option value="" selected>Select a work group</option>
                                         @foreach ($officeDivisions as $officeDivision)
                                             <option value="{{ $officeDivision->id }}">
                                                 {{ $officeDivision->office_division }}</option>
@@ -786,7 +785,7 @@
                                 @enderror
 
                             </div>
-                            <div class="mt-4 gap-2 lg:columns-2 sm:columns-1">
+                            <div class="mt-4 gap-2 columns-1">
                                 <div class="w-full">
                                     <label for="position" class="text-sm text-gray-700">Position <span
                                             class="text-red-600">*</span></label>
@@ -839,7 +838,7 @@
                                     @enderror
                                 </div>
 
-                                <div class="relative w-full" x-data="{ show: false }">
+                                <div class="relative w-full mt-4" x-data="{ show: false }">
                                     <div class="relative inline-block" x-data="{ tooltip: false }">
                                         <!-- Info Icon -->
                                         <i class="bi bi-info-circle-fill text-blue-700 cursor-pointer"
@@ -871,7 +870,7 @@
                                         <span class="text-red-500 text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="relative w-full" x-data="{ show: false }">
+                                <div class="relative w-full mt-4" x-data="{ show: false }">
                                     <div class="relative inline-block" x-data="{ tooltip: false }">
                                         <!-- Info Icon -->
                                         <i class="bi bi-info-circle-fill text-blue-700 cursor-pointer"

@@ -30,7 +30,9 @@ class EmployeeRegistrationTable extends Component
 
         foreach($registrations as $reg){
             $reg->admin = User::where('id', $reg->provided_by)->first()->name;
-            $reg->user = $reg->user_id ? User::where('id', $reg->user_id)->first()->name : '';
+            $user = User::where('id', $reg->user_id)->first();
+            $userName = $user ? $user->name : '';
+            $reg->user = $reg->user_id ? $userName : '';
         }
 
         return view('livewire.admin.employee-registration-table' , [

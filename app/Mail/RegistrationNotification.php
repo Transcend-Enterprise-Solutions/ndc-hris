@@ -43,7 +43,7 @@ class RegistrationNotification extends Mailable
                     </p>
     
                     <div class="action-wrapper">
-                        <a href="http://127.0.0.1:8000/register" target="_blank">
+                        <a href="https://hris.ndc.gov.ph/register" target="_blank">
                             <button class="action-btn">
                                 Register Now
                             </button>
