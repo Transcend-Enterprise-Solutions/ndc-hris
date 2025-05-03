@@ -10,13 +10,13 @@
             margin: 0;
             padding: 15px;
             position: relative;
-            font-size: 11px; /* Increased from 9px */
+            font-size: 11px;
         }
         .form-number {
             position: absolute;
             top: 5px;
             left: 5px;
-            font-size: 10px; /* Increased from 8px */
+            font-size: 10px;
             color: #333;
         }
         .header-section {
@@ -33,16 +33,16 @@
             margin-bottom: 2px;
         }
         .org-title {
-            font-size: 14px; /* Increased from 12px */
+            font-size: 14px;
             font-weight: bold;
             margin: 2px 0;
         }
         .org-subtitle {
-            font-size: 13px; /* Increased from 11px */
+            font-size: 13px;
             margin: 2px 0;
         }
         .dtr-title {
-            font-size: 14px; /* Increased from 14px */
+            font-size: 14px;
             font-weight: bold;
             margin: 5px 0;
         }
@@ -58,14 +58,13 @@
             margin-right: 5px;
         }
         .employee-name {
-
             display: inline-block;
         }
         .month-header {
             text-align: center;
             font-weight: bold;
             margin: 10px 0;
-            font-size: 13px; /* Increased from 11px */
+            font-size: 13px;
             border: 1px solid #000;
             padding: 3px;
             background-color: #f2f2f2;
@@ -77,9 +76,9 @@
         }
         th, td {
             border: 1px solid black;
-            padding: 4px; /* Increased from 3px */
+            padding: 4px;
             text-align: center;
-            font-size: 11px; /* Increased from 9px */
+            font-size: 11px;
         }
         th {
             background-color: #f2f2f2;
@@ -92,7 +91,7 @@
             margin-top: 10px;
             text-align: center;
             font-weight: bold;
-            font-size: 12px; /* Increased from 10px */
+            font-size: 12px;
         }
         .summary-grid {
             display: grid;
@@ -105,7 +104,7 @@
         .summary-item {
             display: flex;
             justify-content: space-between;
-            font-size: 11px; /* Increased from 9px */
+            font-size: 11px;
             padding: 2px;
         }
         .summary-label {
@@ -114,7 +113,7 @@
         }
         .certification {
             margin-top: 15px;
-            font-size: 11px; /* Increased from 9px */
+            font-size: 11px;
             text-align: center;
             font-style: italic;
         }
@@ -131,10 +130,10 @@
             border-top: 1px solid black;
             margin-top: 25px;
             font-weight: bold;
-            font-size: 12px; /* Increased from 10px */
+            font-size: 12px;
         }
         .signature-title {
-            font-size: 11px; /* Increased from 9px */
+            font-size: 11px;
             margin-top: 3px;
         }
         .remarks-column {
@@ -144,7 +143,7 @@
             position: absolute;
             bottom: 5px;
             left: 5px;
-            font-size: 10px; /* Increased from 8px */
+            font-size: 10px;
             color: #666;
         }
     </style>
@@ -158,7 +157,6 @@
                 <img src="{{ public_path('images/ndc-logo-transparent.png') }}" alt="NDC Logo" class="logo" style="margin-right: 20px;">
                 <img src="{{ public_path('images/bagong-pilipinas-logo.png') }}" alt="Bagong Pilipinas Logo" class="logo" style="position: relative; top: -6px;">
             </div>
-
 
             <div class="org-title">Republic of the Philippines</div>
             <div class="org-subtitle">National Development Company</div>
@@ -174,9 +172,8 @@
             <span class="employee-name">{{ $userDepartment }}</span>
         </div>
 
-
         <div class="month-header">
-            FOR THE MONTH OF {{ Carbon\Carbon::parse($startDate)->format('F Y') }}
+            FOR THE MONTH OF {{ strtoupper(Carbon\Carbon::parse($startDate)->format('F Y')) }}
         </div>
 
         <!-- DTR Table -->
@@ -192,29 +189,30 @@
                     <th rowspan="2" class="remarks-column">REMARKS</th>
                 </tr>
                 <tr>
-                    <th>Arrival</th>
-                    <th>Departure</th>
-                    <th>Arrival</th>
-                    <th>Departure</th>
+                    <th>Time In</th>
+                    <th>Time Out</th>
+                    <th>Time In</th>
+                    <th>Time Out</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($data['dtrs'] as $dtr)
                     @php
-                        $hasTimeEntries = $dtr->morning_in || $dtr->morning_out || $dtr->afternoon_in || $dtr->afternoon_out;
+                        $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
+                                         $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
                         $dayOfWeek = $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('D') : '';
                         $dayNum = $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('j') : '';
                         $isWeekend = in_array($dayOfWeek, ['Sat', 'Sun']);
                     @endphp
                     <tr class="{{ $isWeekend ? 'weekend' : '' }}">
                         <td>{{ $dayNum }} {{ $dayOfWeek }}</td>
-                        <td>{{ $dtr->morning_in && $dtr->morning_in != '00:00' ? $dtr->morning_in : '' }}</td>
-                        <td>{{ $dtr->morning_out && $dtr->morning_out != '00:00' ? $dtr->morning_out : '' }}</td>
-                        <td>{{ $dtr->afternoon_in && $dtr->afternoon_in != '00:00' ? $dtr->afternoon_in : '' }}</td>
-                        <td>{{ $dtr->afternoon_out && $dtr->afternoon_out != '00:00' ? $dtr->afternoon_out : '' }}</td>
-                        <td>{{ $hasTimeEntries && $dtr->late ? $dtr->late : '' }}</td>
-                        <td>{{ $hasTimeEntries && $dtr->ut ? $dtr->ut : '' }}</td>
-                        <td>{{ $dtr->overtime && $dtr->overtime != '00:00' ? $dtr->overtime : '' }}</td>
+                        <td>{{ $dtr->effective_morning_in && $dtr->effective_morning_in != '00:00' ? $dtr->effective_morning_in : '--:--' }}</td>
+                        <td>{{ $dtr->effective_morning_out && $dtr->effective_morning_out != '00:00' ? $dtr->effective_morning_out : '--:--' }}</td>
+                        <td>{{ $dtr->effective_afternoon_in && $dtr->effective_afternoon_in != '00:00' ? $dtr->effective_afternoon_in : '--:--' }}</td>
+                        <td>{{ $dtr->effective_afternoon_out && $dtr->effective_afternoon_out != '00:00' ? $dtr->effective_afternoon_out : '--:--' }}</td>
+                        <td>{{ $hasTimeEntries && $dtr->effective_late ? $dtr->effective_late : '--:--' }}</td>
+                        <td>{{ $hasTimeEntries && $dtr->effective_ut ? $dtr->effective_ut : '--:--' }}</td>
+                        <td>{{ $dtr->effective_overtime && $dtr->effective_overtime != '00:00' ? $dtr->effective_overtime : '--:--' }}</td>
                         <td>{{ $dtr->effective_remarks !== 'Present' ? $dtr->effective_remarks : '' }}</td>
                     </tr>
                 @endforeach
@@ -223,7 +221,7 @@
 
         <div class="total-summary" style="text-align: left; margin-left: 3px; margin-top: 8px; margin-bottom: 3px;">TOTAL SUMMARY</div>
 
-        <table style="width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 11px;"> <!-- Increased from 9px -->
+        <table style="width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 11px;">
             <tr>
                 <!-- First Row -->
                 <td style="border: none; padding: 1px 3px; text-align: left;">

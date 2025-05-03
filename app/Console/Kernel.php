@@ -14,19 +14,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
-        // $schedule->command('fetch:biotime-transactions')->everyMinute();
+        $schedule->command('inspire')->hourly();
+        $schedule->command('fetch:biotime-transactions')->everyMinute();
         $schedule->job(new AutoSaveDtrRecords())->everyMinute();
         $schedule->job(new AutoSaveDtrRecordsMonthly())->hourly();
-        // $schedule->command('calculate:monthly-leave-credits')->lastDayOfMonth('22:00');
-        // $schedule->command('leave-credits:transfer')->lastDayOfMonth('22:30');
-        // $schedule->command('credits:calculate-monthly')->lastDayOfMonth('23:00');
-        // // $schedule->command('credits:calculate-monthly')->lastDayOfMonth('23:00');
-        // $schedule->command('leave-credits:reset')->yearlyOn(1, 1, '00:00');
-        // $schedule->command('credits:calculate')->everyMinute();
-        // $schedule->command('fetch:biotime-transactions-monthly')->dailyAt('01:00');
+        $schedule->command('calculate:monthly-leave-credits')->lastDayOfMonth('22:00');
+        $schedule->command('leave-credits:transfer')->lastDayOfMonth('22:30');
+        $schedule->command('credits:calculate-monthly')->lastDayOfMonth('23:00');
+        $schedule->command('credits:calculate-monthly')->lastDayOfMonth('23:00');
+        $schedule->command('leave-credits:reset')->yearlyOn(1, 1, '00:00');
+        $schedule->command('credits:calculate')->everyMinute();
+        $schedule->command('fetch:biotime-transactions-monthly')->dailyAt('01:00');
 
-        // $schedule->command('leave:deduct-credits')->dailyAt('23:59');
+        $schedule->command('leave:deduct-credits')->dailyAt('23:59');
     }
 
     /**
