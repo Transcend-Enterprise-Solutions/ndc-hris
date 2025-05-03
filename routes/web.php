@@ -45,6 +45,8 @@ Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
         return view('livewire.admin.w-e-s-management'); })->name('/employee-management/wes-management');
     Route::get('/employee-management/bir2316', function () {
         return view('livewire.admin.bir2316'); })->name('/employee-management/bir2316');
+    Route::get('/employee-management/virtual-id', function () {
+        return view('livewire.admin.virtual-id'); })->name('/employee-management/virtual-id');
     Route::get('/employee-management/admin-doc-request', function () {
         return view('livewire.admin.admin-doc-request'); })->name('/employee-management/admin-doc-request');
     Route::get('/employee-management/admin-wfh-request', function () {
