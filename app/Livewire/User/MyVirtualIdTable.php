@@ -79,22 +79,25 @@ class MyVirtualIdTable extends Component
         $this->validate([
             'profilePhoto' => 'required|image|mimes:png,jpg,jpeg|max:2048',
         ]);
-    
-        $user = Auth::user();
         
+        $user = Auth::user();
         $eSignature = ESignature::firstOrNew(['user_id' => $user->id]);
         
+        // Delete old photo if exists
         if ($eSignature->profile_photo_path) {
             Storage::disk('public')->delete('profile-photos/'.$eSignature->profile_photo_path);
         }
-    
+        
+        // Generate filename and store
         $filename = 'profile_'.$user->id.'_'.time().'.'.$this->profilePhoto->extension();
         $this->profilePhoto->storeAs('profile-photos', $filename, 'public');
         
+        // Store just the filename (not full path)
         $eSignature->profile_photo_path = $filename;
         $eSignature->save();
-    
-        $this->profilePhotoPath = 'profile-photos/'.$filename;
+        
+        // Update the component property with just the filename
+        $this->profilePhotoPath = $filename;
         $this->showProfilePhotoModal = false;
         $this->profilePhoto = null;
         
@@ -179,17 +182,16 @@ class MyVirtualIdTable extends Component
     {
         $user = Auth::user();
         $userData = $user->userData;
-    
+
         $officeDivision = OfficeDivisions::find($user->office_division_id);
         $this->office_or_department = $officeDivision ? $officeDivision->office_division : 'N/A';
-    
+
         $eSignature = ESignature::where('user_id', $user->id)->first();
-        $this->profilePhotoPath = $eSignature?->profile_photo_path 
-            ? 'profile-photos/'.$eSignature->profile_photo_path 
-            : $user->profile_photo_path;
-    
+        
+        // Store just the filename (not full path) for profile photos
+        $this->profilePhotoPath = $eSignature?->profile_photo_path;
+        
         $this->eSignatureFilename = $eSignature?->file_path;
-    
         $this->empCodeFormatted = $this->formatEmpCode($user->emp_code);
     }
 

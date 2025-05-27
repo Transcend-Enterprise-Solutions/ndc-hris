@@ -121,37 +121,42 @@
                     <p class="text-xs text-[#232323] -mt-1">
                         Makati City, Philippines 1227
                     </p>
-
                 </div>
             </div>
 
-            <!-- Profile Photo -->
+            <!-- Profile Photo - Clickable when empty -->
             <div class="flex justify-center mb-4">
-                <div class="w-40 h-40 border border-gray-400 bg-white">
+                <div class="w-40 h-40 border border-gray-400 bg-white cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+                    @if (!$this->profilePhotoUrl) wire:click="toggleUploadProfilePhoto" @endif>
                     @if ($this->profilePhotoUrl)
                         <img src="{{ $this->profilePhotoUrl }}" alt="Profile Photo" class="w-full h-full object-cover"
                             onerror="this.onerror=null;this.innerHTML='<span class=\'text-green-500 flex items-center justify-center h-full\'>No Photo</span>';">
                     @else
-                        <span class="text-green-500 flex items-center justify-center h-full">No Photo</span>
+                        <span class="text-green-500 flex flex-col items-center justify-center h-full">
+                            <i class="bi bi-camera text-3xl mb-2"></i>
+                            <span class="text-sm">Upload Photo</span>
+                        </span>
                     @endif
                 </div>
             </div>
 
-            <!-- E-Signature -->
-            <div class="flex justify-center mb-4" style="height: 40px;">
+            <!-- E-Signature - Clickable when empty -->
+            <div class="flex justify-center mb-4 h-12 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+                @if (!$this->eSignatureUrl) wire:click="toggleUploadSignature" @endif>
                 @if ($this->eSignatureUrl)
                     <img src="{{ $this->eSignatureUrl }}" alt="E-Signature" class="h-full object-contain"
-                        onerror="this.onerror=null;this.innerHTML='<span class=\'text-red-500 text-sm\'>SIGN HERE</span>';">
+                        onerror="this.onerror=null;this.innerHTML='<span class=\'text-red-500 text-sm flex items-center\'>Upload Signature</span>';">
                 @else
-                    <span class="text-red-500 text-sm">SIGN HERE</span>
+                    <span class="text-red-500 text-sm flex items-center">
+                        <i class="bi bi-pen-fill mr-2"></i> Upload Signature
+                    </span>
                 @endif
             </div>
 
             <!-- Information -->
             <div class="text-center mb-6">
                 <h3 class="text-xl font-bold text-black">{{ $name }}</h3>
-                <p class="text-sm text-center text-black tracking-tighter font-bold">{{ $office_or_department }}
-                </p>
+                <p class="text-sm text-center text-black tracking-tighter font-bold">{{ $office_or_department }}</p>
                 <p class="text-sm mt-4 text-black">ID NO: <span class="font-bold">{{ $emp_code }}</span></p>
             </div>
 
@@ -160,11 +165,6 @@
                 <div class="flex items-center justify-center bg-white p-1 border border-gray-200">
                     {!! $qrCode !!}
                 </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="text-center mt-4">
-                {{-- <p class="text-xs text-gray-500">Valid until: {{ now()->addYears(2)->format('m/d/Y') }}</p> --}}
             </div>
         </div>
     @else
@@ -178,27 +178,34 @@
 
                 <div class="flex items-center h-[250px] ml-4">
                     <div class="flex flex-col items-center space-y-1">
-                        <!-- Picture Box -->
-                        <div class="w-40 h-40 border border-gray-400 flex items-center justify-center bg-white mt-2">
+                        <!-- Picture Box - Clickable when empty -->
+                        <div class="w-40 h-40 border border-gray-400 flex items-center justify-center bg-white mt-2 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+                            @if (!$this->profilePhotoUrl) wire:click="toggleUploadProfilePhoto" @endif>
                             @if ($this->profilePhotoUrl)
                                 <img src="{{ $this->profilePhotoUrl }}" alt="Profile Photo"
                                     class="w-full h-full object-cover"
-                                    onerror="this.onerror=null;this.innerHTML='<span class=\'text-green-500\'>Picture</span>';">
+                                    onerror="this.onerror=null;this.innerHTML='<span class=\'text-green-500 flex items-center justify-center h-full\'>Upload Photo</span>';">
                             @else
-                                <span class="text-green-500">Picture</span>
+                                <span class="text-green-500 flex flex-col items-center justify-center h-full">
+                                    <i class="bi bi-camera text-3xl mb-2"></i>
+                                    <span class="text-sm">Upload Photo</span>
+                                </span>
                             @endif
                         </div>
 
-                        <!-- SIGN HERE -->
+                        <!-- SIGN HERE - Clickable when empty -->
                         @if ($this->eSignatureUrl)
-                            <div class="flex items-center justify-center" style="height: 48px;">
+                            <div class="flex items-center justify-center h-12">
                                 <img src="{{ $this->eSignatureUrl }}" alt="E-Signature"
                                     class="max-w-full max-h-full object-contain"
-                                    onerror="this.onerror=null;this.parentElement.innerHTML='<p class=\'text-red-500 text-sm\'>SIGN HERE</p>';">
+                                    onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'flex items-center justify-center h-12 cursor-pointer hover:bg-gray-50 transition-colors duration-200\' wire:click=\'toggleUploadSignature\'><span class=\'text-red-500 text-sm flex items-center\'><i class=\'bi bi-pen-fill mr-2\'></i> Upload Signature</span></div>';">
                             </div>
                         @else
-                            <div class="flex items-center justify-center" style="height: 48px;">
-                                <p class="text-red-500 text-sm">SIGN HERE</p>
+                            <div class="flex items-center justify-center h-12 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+                                wire:click="toggleUploadSignature">
+                                <span class="text-red-500 text-sm flex items-center">
+                                    <i class="bi bi-pen-fill mr-2"></i> Upload Signature
+                                </span>
                             </div>
                         @endif
 
@@ -223,10 +230,10 @@
                 <div class="flex justify-between items-center m-4">
                     <div class="w-[70%]">
                         <h2 class="text-sm font-bold text-black">IN CASE OF EMERGENCY, PLEASE NOTIFY:</h2>
-                        <p class="text-sm font-bold text-black">NAME: <span class="font-normal">EMPLOYEE
-                                RELATIVE</span></p>
-                        <p class="text-sm font-bold text-black">TEL. NO.: <span class="font-normal">09123456789</span>
-                        </p>
+                        <p class="text-sm font-bold text-black">NAME: <span
+                                class="font-normal">{{ $emergencyContactName ?? 'EMPLOYEE RELATIVE' }}</span></p>
+                        <p class="text-sm font-bold text-black">TEL. NO.: <span
+                                class="font-normal">{{ $emergencyContactNumber ?? '09123456789' }}</span></p>
                     </div>
 
                     <div class="w-[30%] flex items-center justify-center">
@@ -285,12 +292,13 @@
         }
 
         html2canvas(element, {
-            scale: 2, // Higher quality
-            logging: true, // Helpful for debugging
-            useCORS: true // For external images
+            scale: 2,
+            logging: true,
+            useCORS: true,
+            backgroundColor: null
         }).then(canvas => {
             const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png', 1.0); // Highest quality
+            link.href = canvas.toDataURL('image/png', 1.0);
             link.download = 'Front-ID.png';
             link.click();
         }).catch(err => {
@@ -310,7 +318,8 @@
         html2canvas(element, {
             scale: 2,
             logging: true,
-            useCORS: true
+            useCORS: true,
+            backgroundColor: null
         }).then(canvas => {
             const link = document.createElement('a');
             link.href = canvas.toDataURL('image/png', 1.0);
@@ -328,9 +337,14 @@
             return;
         }
 
-        html2canvas(element).then(canvas => {
+        html2canvas(element, {
+            scale: 2,
+            logging: true,
+            useCORS: true,
+            backgroundColor: null
+        }).then(canvas => {
             const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
+            link.href = canvas.toDataURL('image/png', 1.0);
             link.download = 'ARTA-ID.png';
             link.click();
         }).catch(err => {
