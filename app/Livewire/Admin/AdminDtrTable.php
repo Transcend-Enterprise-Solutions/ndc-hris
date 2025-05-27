@@ -191,10 +191,6 @@ class AdminDtrTable extends Component
             ->join('users', 'employees_dtr.user_id', '=', 'users.id')
             ->join('user_data', 'users.id', '=', 'user_data.user_id')
             ->select('employees_dtr.*', 'users.name as user_name',
-                DB::raw("CASE
-                    WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
-                    ELSE users.emp_code
-                END as emp_code"),
                 DB::raw("COALESCE(employees_dtr.up_remarks, employees_dtr.remarks) as effective_remarks")
             );
 
