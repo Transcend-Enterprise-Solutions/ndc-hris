@@ -205,49 +205,32 @@ class MyVirtualIdTable extends Component
 
     public function getQrCodeProperty()
     {
-        $user = Auth::user();
-        $userData = $user->userData;
-        
-        $position = DB::table('positions')
-            ->where('id', $user->position_id)
-            ->value('position') ?? 'N/A';
-
-        if ($this->idType === 'arta') {
-            $formattedData = sprintf(
-                "ARTA ID\nName: %s\nPosition: %s\nDepartment: %s\nID: %s",
-                $user->name,
-                $position,
-                $this->office_or_department,
-                $user->emp_code
-            );
-        } else {
-            $formattedData = sprintf(
-                "Name: %s\nEmployee Code: %s\nPosition: %s\nDepartment: %s",
-                $user->name,
-                $user->emp_code,
-                $position,
-                $this->office_or_department
-            );
-        }
-
+        // Simply generate a QR code that links to the NDC website
         return QrCode::size($this->idType === 'arta' ? 100 : 100)
             ->backgroundColor(255, 255, 255)
             ->color(0, 0, 0)
             ->margin(2)
-            ->generate($formattedData);
+            ->generate('https://www.ndc.gov.ph/');
     }
 
     public function render()
     {
         $user = Auth::user();
         $userData = $user->userData;
-    
+
+        // Format the name: FIRSTNAME M. SURNAME
+        $formattedName = strtoupper(
+            ($userData->first_name ?? '') . ' ' .
+            (isset($userData->middle_name) ? substr($userData->middle_name, 0, 1) . '.' : '') . ' ' .
+            ($userData->surname ?? '')
+        );
+
         $position = DB::table('positions')
             ->where('id', $user->position_id)
             ->value('position') ?? 'No position assigned';
-    
+
         return view('livewire.user.my-virtual-id-table', [
-            'name' => $user->name,
+            'name' => $formattedName, // Updated to use formatted name
             'emp_code' => $this->empCodeFormatted,
             'profilePhotoPath' => $this->profilePhotoPath,
             'dateOfBirth' => $userData->date_of_birth 
