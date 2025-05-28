@@ -155,10 +155,10 @@
                     <h2 class="text-md font-bold text-black" style="font-family: 'Arial Black', Gadget, sans-serif;">
                         NATIONAL
                         DEVELOPMENT COMPANY</h2>
-                    <p class="text-xs text-[#232323] -mt-1" style="font-family: 'Arial Black', Gadget, sans-serif;">
+                    <p class="text-xs text-black -mt-1" style="font-family: 'Arial Black', Gadget, sans-serif;">
                         NDC Building, 116 Tordesillas St., Salcedo Village,
                     </p>
-                    <p class="text-xs text-[#232323] -mt-1" style="font-family: 'Arial Black', Gadget, sans-serif;">
+                    <p class="text-xs text-black -mt-1" style="font-family: 'Arial Black', Gadget, sans-serif;">
                         Makati City, Philippines 1227
                     </p>
                 </div>
