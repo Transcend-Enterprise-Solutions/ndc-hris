@@ -69,59 +69,69 @@
                 <!-- ID Display -->
                 @if ($idType === 'arta')
                     <!-- ARTA ID Layout -->
-                    <div id="arta-id-container"
-                        class="w-[500px] h-[600px] bg-white p-6 shadow-lg border rounded-lg relative mx-auto"
-                        style="background-image: url('/images/arta-bg.png'); background-size: cover; background-position: center;">
-                        <!-- Header -->
-                        <div class="flex items-center justify-center mb-6">
-                            <img src="/images/ndc-logo-transparent.png" class="h-16" alt="Company Logo">
-                            <div class="text-left">
-                                <h2 class="text-lg font-bold text-black">NATIONAL DEVELOPMENT COMPANY</h2>
-                                <p class="text-xs text-[#232323] -mt-1">
-                                    NDC Building, 116 Tordesillas St., Salcedo Village,
-                                </p>
-                                <p class="text-xs text-[#232323] -mt-1">
-                                    Makati City, Philippines 1227
-                                </p>
+                    <div class="grid grid-cols-1 gap-6 mx-auto" style="width: 550px;">
+                        <div id="arta-id-container"
+                            class="w-full h-[600px] bg-white p-6 shadow-lg border rounded-lg relative"
+                            style="background-image: url('/images/arta-bg-darker.png'); background-size: cover; background-position: center;">
+                            <!-- Header -->
+                            <div class="flex items-center justify-center mb-6">
+                                <img src="/images/ndc-logo-transparent.png" class="h-16" alt="Company Logo">
+                                <div class="text-left">
+                                    <h2 class="text-md font-bold text-black"
+                                        style="font-family: 'Arial Black', Gadget, sans-serif;">NATIONAL DEVELOPMENT
+                                        COMPANY</h2>
+                                    <p class="text-xs text-black -mt-1 font-bold"
+                                        style="font-family: 'Arial', sans-serif;">
+                                        NDC Building, 116 Tordesillas St., Salcedo Village,
+                                    </p>
+                                    <p class="text-xs text-black -mt-1 font-bold"
+                                        style="font-family: 'Arial', sans-serif;">
+                                        Makati City, Philippines 1227
+                                    </p>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Profile Photo -->
-                        <div class="flex justify-center mb-4">
-                            <div class="w-40 h-40 border border-gray-400 bg-white">
-                                @if ($profilePhotoUrl)
-                                    <img src="{{ $profilePhotoUrl }}" alt="Profile Photo"
-                                        class="w-full h-full object-cover"
-                                        onerror="this.onerror=null;this.innerHTML='<span class=\'text-green-500 flex items-center justify-center h-full\'>No Photo</span>';">
+                            <!-- Profile Photo -->
+                            <div class="flex justify-center mb-4">
+                                <div class="w-40 h-40 border border-gray-400 bg-white">
+                                    @if ($profilePhotoUrl)
+                                        <img src="{{ $profilePhotoUrl }}" alt="Profile Photo"
+                                            class="w-full h-full object-cover"
+                                            onerror="this.onerror=null;this.innerHTML='<span class=\'text-green-500 flex items-center justify-center h-full\'>No Photo</span>';">
+                                    @else
+                                        <span class="text-green-500 flex items-center justify-center h-full">No
+                                            Photo</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- E-Signature -->
+                            <div class="flex justify-center mb-4" style="height: 40px;">
+                                @if ($eSignatureUrl)
+                                    <img src="{{ $eSignatureUrl }}" alt="E-Signature" class="h-full object-contain"
+                                        onerror="this.onerror=null;this.innerHTML='<span class=\'text-red-500 text-sm\'>SIGN HERE</span>';">
                                 @else
-                                    <span class="text-green-500 flex items-center justify-center h-full">No Photo</span>
+                                    <span class="text-red-500 text-sm">SIGN HERE</span>
                                 @endif
                             </div>
-                        </div>
 
-                        <!-- E-Signature -->
-                        <div class="flex justify-center mb-4" style="height: 40px;">
-                            @if ($eSignatureUrl)
-                                <img src="{{ $eSignatureUrl }}" alt="E-Signature" class="h-full object-contain"
-                                    onerror="this.onerror=null;this.innerHTML='<span class=\'text-red-500 text-sm\'>SIGN HERE</span>';">
-                            @else
-                                <span class="text-red-500 text-sm">SIGN HERE</span>
-                            @endif
-                        </div>
+                            <!-- Information -->
+                            <div class="text-center mb-6">
+                                <h3 class="text-xl font-bold text-black"
+                                    style="font-family: 'Arial Black', Gadget, sans-serif;">{{ $name }}</h3>
+                                <p class="text-sm text-center text-black tracking-tighter font-bold"
+                                    style="font-family: 'Arial', sans-serif;">
+                                    {{ $office_or_department }}</p>
+                                <p class="text-sm mt-4 text-black">ID No: <span
+                                        class="font-bold">{{ $emp_code }}</span>
+                                </p>
+                            </div>
 
-                        <!-- Information -->
-                        <div class="text-center mb-6">
-                            <h3 class="text-xl font-bold text-black">{{ $name }}</h3>
-                            <p class="text-sm text-center text-black tracking-tighter font-bold">
-                                {{ $office_or_department }}</p>
-                            <p class="text-sm mt-4 text-black">ID NO: <span class="font-bold">{{ $emp_code }}</span>
-                            </p>
-                        </div>
-
-                        <!-- QR Code -->
-                        <div class="flex justify-center mb-2">
-                            <div class="flex items-center justify-center bg-white p-1 border border-gray-200">
-                                {!! $this->getQrCodeHtml() !!}
+                            <!-- QR Code -->
+                            <div class="flex justify-center mb-2">
+                                <div class="flex items-center justify-center bg-white p-1 border border-gray-200">
+                                    {!! $this->getQrCodeHtml() !!}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -131,11 +141,13 @@
                         <!-- Front Side -->
                         <div id="virtual-id-front"
                             class="w-full h-[340px] bg-white p-4 shadow-lg border rounded-lg relative"
-                            style="background-image: url('/images/id-bg.png');">
-                            <h2 class="text-2xl font-bold text-black text-left ml-8 tracking-normal">
+                            style="background-image: url('/images/id-bg-darker.png');">
+                            <h2 class="text-2xl font-bold text-black text-left ml-8 tracking-normal"
+                                style="font-family: 'Arial Black', Gadget, sans-serif;">
                                 {{ $name }}
                             </h2>
-                            <p class="text-sm text-left ml-8 text-black tracking-tighter font-bold">
+                            <p class="text-sm text-left ml-8 text-black tracking-tighter font-bold"
+                                style="font-family: 'Arial', sans-serif;">
                                 {{ $office_or_department }}</p>
 
                             <div class="flex items-center h-[250px] ml-4">
@@ -166,8 +178,7 @@
                                     @endif
 
                                     <!-- ID Number -->
-                                    <p class="text-sm text-black">ID NO. <span
-                                            class="underline">{{ $emp_code }}</span></p>
+                                    <p class="text-sm text-black">ID No. {{ $emp_code }}</p>
                                 </div>
                             </div>
 
@@ -185,14 +196,20 @@
                         <!-- Back Side -->
                         <div id="virtual-id-back"
                             class="w-full h-[340px] bg-white p-4 shadow-lg border rounded-lg relative"
-                            style="background-image: url('/images/id-bg.png');">
+                            style="background-image: url('/images/id-bg-darker.png');">
                             <div class="flex justify-between items-center m-4">
                                 <div class="w-[70%]">
-                                    <h2 class="text-sm font-bold text-black">IN CASE OF EMERGENCY, PLEASE NOTIFY:</h2>
-                                    <p class="text-sm font-bold text-black">NAME: <span
-                                            class="font-normal">{{ $emergencyContactName }}</span></p>
-                                    <p class="text-sm font-bold text-black">TEL. NO.: <span
-                                            class="font-normal">{{ $emergencyContactNumber }}</span></p>
+                                    <h2 class="text-sm font-bold text-black"
+                                        style="font-family: 'Arial Black', Gadget, sans-serif;">IN CASE OF EMERGENCY,
+                                        PLEASE NOTIFY:</h2>
+                                    <p class="text-sm font-bold text-black" style="font-family: 'Arial', sans-serif;">
+                                        NAME: <span class="font-normal"
+                                            style="font-family: 'Arial Black', Gadget, sans-serif;">{{ $emergencyContactName }}</span>
+                                    </p>
+                                    <p class="text-sm font-bold text-black" style="font-family: 'Arial', sans-serif;">
+                                        TEL. NO.: <span class="font-normal"
+                                            style="font-family: 'Arial Black', Gadget, sans-serif;">{{ $emergencyContactNumber }}</span>
+                                    </p>
                                 </div>
 
                                 <div class="w-[30%] flex items-center justify-center">
@@ -204,7 +221,8 @@
 
                             <div class="flex justify-between items-center m-4">
                                 <div class="w-[65%]">
-                                    <p class="text-sm text-black text-justify tracking-tight leading-none">
+                                    <p class="text-sm text-black text-justify tracking-tight leading-none"
+                                        style="font-family: 'Arial Black', Gadget, sans-serif;">
                                         This certifies that the person whose name, picture, and signature appear on this
                                         card is an
                                         employee of the <span class="font-bold">National Development Company.</span>
@@ -223,7 +241,8 @@
 
                             <div class="flex justify-between items-center m-4">
                                 <div class="w-[65%]">
-                                    <p class="text-sm text-black text-justify tracking-tight leading-none">
+                                    <p class="text-sm text-black text-justify tracking-tight leading-none"
+                                        style="font-family: 'Arial Black', Gadget, sans-serif;">
                                         Report loss of card to the Human Resources Unit for immediate replacement.
                                         Finder of this is
                                         requested to return it to the National Development Company or call (02)

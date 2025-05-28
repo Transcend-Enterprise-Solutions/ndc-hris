@@ -66,6 +66,12 @@ class VirtualIdTable extends Component
         if (!$user) return;
 
         $userData = $user->userData;
+        
+        $formattedName = strtoupper(
+            ($userData->first_name ?? '') . ' ' .
+            (isset($userData->middle_name) ? substr($userData->middle_name, 0, 1) . '.' : '') . ' ' .
+            ($userData->surname ?? '')
+        );
 
         // Get office/department
         $officeDivision = OfficeDivisions::find($user->office_division_id);
@@ -90,7 +96,7 @@ class VirtualIdTable extends Component
         $this->emergencyContactNumber = $eSignature?->emergency_contact_number ?? 'N/A';
 
         // Set name and prepare QR code data
-        $this->name = $user->name;
+        $this->name = $formattedName;
         $this->prepareQrCodeData();
     }
 
@@ -104,23 +110,8 @@ class VirtualIdTable extends Component
 
     private function prepareQrCodeData()
     {
-        if ($this->idType === 'arta') {
-            $this->qrCodeData = sprintf(
-                "ARTA ID\nName: %s\nDepartment: %s\nID: %s",
-                $this->name,
-                // $this->position,
-                $this->office_or_department,
-                $this->emp_code
-            );
-        } else {
-            $this->qrCodeData = sprintf(
-                "Name: %s\nEmployee Code: %s\nDepartment: %s",
-                $this->name,
-                $this->emp_code,
-                // $this->position,
-                $this->office_or_department
-            );
-        }
+        // Simply use the NDC website URL for all QR codes
+        $this->qrCodeData = 'https://www.ndc.gov.ph/';
     }
     
     // Generate QR code on-the-fly when needed
@@ -130,7 +121,7 @@ class VirtualIdTable extends Component
             return '';
         }
         
-        return QrCode::size($this->idType === 'arta' ? 100 : 100)
+        return QrCode::size(100) // Fixed size for all QR codes
             ->backgroundColor(255, 255, 255)
             ->color(0, 0, 0)
             ->margin(2)
