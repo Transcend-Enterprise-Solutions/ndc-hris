@@ -25,6 +25,11 @@ class OfficeDivisions extends Model
         return $this->hasMany(Positions::class, 'office_division_id')->whereNull('unit_id')->where('position', '!=', 'Super Admin');
     }
 
+    public function idSignatories()
+    {
+        return $this->hasMany(IdSignatory::class, 'office_division_id');
+    }
+
 
     public function scopeSearch($query, $term){
         $term = "%$term%";

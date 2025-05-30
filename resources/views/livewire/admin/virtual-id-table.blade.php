@@ -1,23 +1,133 @@
 <div class="w-full">
     <div class="w-full flex justify-center">
         <div class="w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
-            <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Employees Virtual ID</h1>
+            {{-- <h1 class="text-lg font-bold text-center text-black dark:text-white mb-6">Employees Virtual ID</h1> --}}
+
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-lg font-bold text-black dark:text-white">Employees Virtual ID</h1>
+                <button wire:click="openSignatoryModal"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
+                    <i class="bi bi-pen-fill mr-1"></i> Edit Signatory
+                </button>
+            </div>
 
             <!-- Employee Selection -->
-            <div class="mb-6">
+            <div class="mb-6 relative">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Select Employee
                 </label>
-                <select wire:model="selectedEmployeeId" wire:change="selectEmployee($event.target.value)"
-                    class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
-                    <option value="">-- Select an employee --</option>
-                    @foreach ($employees as $employee)
-                        <option value="{{ $employee->id }}">
-                            {{ $employee->name }} ({{ $employee->emp_code }})
-                        </option>
-                    @endforeach
-                </select>
+
+                <div class="relative">
+                    <input type="text" wire:model.live="searchTerm" wire:focus="showEmployeeDropdown = true"
+                        wire:click="showEmployeeDropdown = true" placeholder="Search employee by name or ID..."
+                        class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
+
+                    <!-- Employee Dropdown -->
+                    @if ($showEmployeeDropdown)
+                        <div class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 max-h-60 overflow-y-auto"
+                            wire:click.away="showEmployeeDropdown = false">
+                            @forelse($employees as $employee)
+                                <div wire:click="selectEmployee('{{ $employee->id }}')"
+                                    class="p-3 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer border-b border-gray-200 dark:border-gray-600">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-gray-800 dark:text-gray-200">
+                                            {{ $employee->name }}
+                                        </span>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                                            Employee Code: {{ $employee->emp_code }}
+                                        </span>
+                                    </div>
+                                    @if ($employee->officeDivision)
+                                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                            {{ $employee->officeDivision->office_division }}
+                                        </div>
+                                    @endif
+                                </div>
+                            @empty
+                                <div class="p-3 text-gray-500 dark:text-gray-400">
+                                    No employees found
+                                </div>
+                            @endforelse
+                        </div>
+                    @endif
+                </div>
             </div>
+
+            <x-modal id="showSignatoryModal" maxWidth="lg" centered wire:model="showSignatoryModal">
+                <div class="p-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+                        <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Edit Signatory Details
+                        </h2>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Signatory
+                                    Name</label>
+                                <input type="text" wire:model="signatoryName"
+                                    class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                            </div>
+
+                            <!-- Position Dropdown -->
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Position</label>
+                                <select wire:model="signatoryPositionId"
+                                    class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                                    <option value="">Select Position</option>
+                                    @foreach ($positions as $position)
+                                        <option value="{{ $position->id }}">{{ $position->position }}</option>
+                                    @endforeach
+                                </select>
+                                @error('signatoryPositionId')
+                                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <!-- Office Division Dropdown -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Office
+                                    Division</label>
+                                <select wire:model="signatoryOfficeDivisionId"
+                                    class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                                    <option value="">Select Office Division</option>
+                                    @foreach ($officeDivisions as $division)
+                                        <option value="{{ $division->id }}">{{ $division->office_division }}</option>
+                                    @endforeach
+                                </select>
+                                @error('signatoryOfficeDivisionId')
+                                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Signatory
+                                    Signature</label>
+
+                                @if ($tempSignatureUrl)
+                                    <div class="mb-2">
+                                        <img src="{{ $tempSignatureUrl }}" alt="Signature Preview" class="h-20 border">
+                                    </div>
+                                @endif
+
+                                <input type="file" wire:model="signatorySignature"
+                                    class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                                <p class="text-xs text-gray-500 mt-1">Upload signature image (max 2MB)</p>
+                            </div>
+
+                            <div class="flex justify-end space-x-2">
+                                <button wire:click="showSignatoryModal = false"
+                                    class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition">
+                                    Cancel
+                                </button>
+                                <button wire:click="saveSignatoryDetails"
+                                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </x-modal>
 
             <!-- ID Display Controls -->
             @if ($selectedEmployeeId)
@@ -40,7 +150,7 @@
                             </button>
 
                             <!-- Dropdown Menu -->
-                            <div wire:click.away="closeDropdown"
+                            {{-- <div wire:click.away="closeDropdown"
                                 class="absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-white dark:bg-slate-700 ring-1 ring-black ring-opacity-5 z-50 {{ $showDropdown ? 'block' : 'hidden' }}">
                                 <div class="p-2">
                                     @if ($idType === 'virtual')
@@ -58,6 +168,22 @@
                                         <button onclick="exportArtaId()"
                                             class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
                                             Export ARTA ID
+                                        </button>
+                                    @endif
+                                </div>
+                            </div> --}}
+                            <div wire:click.away="closeDropdown"
+                                class="absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-white dark:bg-slate-700 ring-1 ring-black ring-opacity-5 z-50 {{ $showDropdown ? 'block' : 'hidden' }}">
+                                <div class="p-2">
+                                    @if ($idType === 'virtual')
+                                        <button onclick="printVirtualID()"
+                                            class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
+                                            Print Virtual ID (Front & Back)
+                                        </button>
+                                    @else
+                                        <button onclick="printArtaID()"
+                                            class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
+                                            Print ARTA ID
                                         </button>
                                     @endif
                                 </div>
@@ -118,7 +244,8 @@
                             <!-- Information -->
                             <div class="text-center mb-6">
                                 <h3 class="text-xl font-bold text-black"
-                                    style="font-family: 'Arial Black', Gadget, sans-serif;">{{ $name }}</h3>
+                                    style="font-family: 'Arial Black', Gadget, sans-serif;">{{ $name }}
+                                </h3>
                                 <p class="text-sm text-center text-black tracking-tighter font-bold"
                                     style="font-family: 'Arial', sans-serif;">
                                     {{ $office_or_department }}</p>
@@ -184,7 +311,7 @@
 
                             <div
                                 class="absolute top-[230px] right-7 transform -translate-y-1/2 flex flex-col items-center text-center">
-                                <img src="/images/ndc-logo-transparent.png" class="h-[120px]" alt="">
+                                <img src="/images/ndc-logo-transparent.png" class="h-24" alt="">
                                 <p class="text-xs text-black -mt-2">
                                     NDC Building, 116 Tordesillas St.,<br> Salcedo Village, Makati City, Philippines
                                     1227
@@ -200,7 +327,8 @@
                             <div class="flex justify-between items-center m-4">
                                 <div class="w-[70%]">
                                     <h2 class="text-sm font-bold text-black"
-                                        style="font-family: 'Arial Black', Gadget, sans-serif;">IN CASE OF EMERGENCY,
+                                        style="font-family: 'Arial Black', Gadget, sans-serif;">IN CASE OF
+                                        EMERGENCY,
                                         PLEASE NOTIFY:</h2>
                                     <p class="text-sm font-bold text-black" style="font-family: 'Arial', sans-serif;">
                                         NAME: <span class="font-normal"
@@ -223,9 +351,11 @@
                                 <div class="w-[65%]">
                                     <p class="text-sm text-black text-justify tracking-tight leading-none"
                                         style="font-family: 'Arial Black', Gadget, sans-serif;">
-                                        This certifies that the person whose name, picture, and signature appear on this
+                                        This certifies that the person whose name, picture, and signature appear on
+                                        this
                                         card is an
-                                        employee of the <span class="font-bold">National Development Company.</span>
+                                        employee of the <span class="font-bold">National Development
+                                            Company.</span>
                                     </p>
                                 </div>
 
@@ -251,10 +381,21 @@
                                 </div>
 
                                 <div class="w-[35%] flex flex-col items-center text-center justify-center space-x-2">
-                                    <p class="text-red-500 font-bold">SIGN</p>
-                                    <p class="text-[11px] text-black font-bold">Atty. RHOEL Z. MABAZZA</p>
-                                    <p class="text-[10px] text-black font-bold">Assistant General Manager</p>
-                                    <p class="text-[10px] text-black font-bold">Corporate Support Group</p>
+                                    @if ($this->getSignatorySignatureUrl())
+                                        <img src="{{ $this->getSignatorySignatureUrl() }}" alt="Signatory Signature"
+                                            class="h-12 -m-2">
+                                    @else
+                                        <p class="text-red-500 font-bold">SIGN</p>
+                                    @endif
+                                    <p class="text-[11px] text-black font-bold uppercase">
+                                        {{ $signatoryName ?? 'Atty. RHOEL Z. MABAZZA' }}
+                                    </p>
+                                    <p class="text-[10px] text-black font-bold">
+                                        {{ $defaultSignatory->position->position ?? 'Assistant General Manager' }}
+                                    </p>
+                                    <p class="text-[10px] text-black font-bold">
+                                        {{ $defaultSignatory->officeDivision->office_division ?? 'Corporate Support Group' }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -265,103 +406,181 @@
     </div>
 </div>
 
-<!-- JavaScript for ID Export -->
 <script>
-    // Make sure html2canvas is loaded
-    function ensureHtml2CanvasIsLoaded() {
-        return new Promise((resolve, reject) => {
-            if (typeof html2canvas === 'undefined') {
-                // If html2canvas is not loaded, dynamically load it
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-                script.onload = () => resolve();
-                script.onerror = () => reject(new Error('Failed to load html2canvas'));
-                document.head.appendChild(script);
-            } else {
-                resolve();
-            }
-        });
+    function printVirtualID() {
+        // Clone the original elements with all their styles
+        const frontElement = document.getElementById('virtual-id-front').cloneNode(true);
+        const backElement = document.getElementById('virtual-id-back').cloneNode(true);
+
+        // Create a print window
+        const printWindow = window.open('', '_blank');
+
+        // Add all original styles to the print window
+        printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Print Virtual ID</title>
+            <style>
+                ${getAllCSS()}
+                @page { size: auto; margin: 0mm; }
+                body { 
+                    margin: 16px; 
+                    padding: 16px; 
+                    display: flex;
+                    flex-direction: column;
+                    align-items: end;
+                    justify-content: center;
+                    min-height: 100vh;
+                }
+                .print-page {
+                    width: 550px;
+                    height: 340px;
+                    page-break-after: always;
+                    margin: 0 auto;
+                    padding: 16px;
+                    border: 1px solid #ccc;
+                    border-radius: 8px;
+                }
+                
+                /* Force background images to print */
+                * {
+                    -webkit-print-color-adjust: exact !important;
+                    color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                
+                /* Specific background image fixes */
+                .print-page {
+                    background-image: url('/images/id-bg-darker.png') !important;
+                    background-size: cover !important;
+                    background-position: center !important;
+                    background-repeat: no-repeat !important;
+                    position: relative !important;
+                }
+                
+                /* Fix absolute positioning for print */
+                .print-page .absolute {
+                    position: absolute !important;
+                }
+                
+                .print-page .top-\\[230px\\] {
+                    top: 230px !important;
+                }
+                
+                .print-page .right-7 {
+                    right: 28px !important; /* 1.75rem = 28px */
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-page">${frontElement.innerHTML}</div>
+            <div class="print-page">${backElement.innerHTML}</div>
+            <script>
+                // Auto-print after content loads
+                window.onload = function() {
+                    setTimeout(function() {
+                        window.print();
+                        window.close();
+                    }, 500);
+                };
+            <\/script>
+        </body>
+        </html>
+    `);
+        printWindow.document.close();
     }
 
-    // Export Virtual ID Front
-    function exportVirtualFront() {
-        console.log("Exporting Virtual ID Front");
-        ensureHtml2CanvasIsLoaded().then(() => {
-            const element = document.getElementById('virtual-id-front');
-            if (!element) {
-                console.error("Front ID container not found!");
-                return;
-            }
+    // Function to get all CSS from the page
+    function getAllCSS() {
+        let css = '';
+        const styleSheets = document.styleSheets;
 
-            html2canvas(element, {
-                scale: 2, // Higher quality
-                logging: true, // Helpful for debugging
-                useCORS: true // For external images
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png', 1.0); // Highest quality
-                link.download = 'Front-ID.png';
-                link.click();
-            }).catch(err => {
-                console.error("Error generating front ID:", err);
-            });
-        }).catch(err => {
-            console.error("Failed to load html2canvas:", err);
+        for (let i = 0; i < styleSheets.length; i++) {
+            try {
+                const rules = styleSheets[i].cssRules;
+                for (let j = 0; j < rules.length; j++) {
+                    css += rules[j].cssText + '\n';
+                }
+            } catch (e) {
+                // Skip cross-origin stylesheets that throw errors
+            }
+        }
+
+        // Add inline styles from the page
+        const inlineStyles = document.querySelectorAll('style');
+        inlineStyles.forEach(style => {
+            css += style.innerHTML + '\n';
         });
+
+        return css;
     }
 
-    // Export Virtual ID Back
-    function exportVirtualBack() {
-        console.log("Exporting Virtual ID Back");
-        ensureHtml2CanvasIsLoaded().then(() => {
-            const element = document.getElementById('virtual-id-back');
-            if (!element) {
-                console.error("Back ID container not found!");
-                return;
-            }
+    // Function to print ARTA ID
+    function printArtaID() {
+        const element = document.getElementById('arta-id-container').cloneNode(true);
 
-            html2canvas(element, {
-                scale: 2,
-                logging: true,
-                useCORS: true
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png', 1.0);
-                link.download = 'Back-ID.png';
-                link.click();
-            }).catch(err => {
-                console.error("Error generating back ID:", err);
-            });
-        }).catch(err => {
-            console.error("Failed to load html2canvas:", err);
-        });
-    }
-
-    // Export ARTA ID
-    function exportArtaId() {
-        console.log("Exporting ARTA ID");
-        ensureHtml2CanvasIsLoaded().then(() => {
-            const element = document.getElementById('arta-id-container');
-            if (!element) {
-                console.error("ARTA ID container not found!");
-                return;
-            }
-
-            html2canvas(element, {
-                scale: 2,
-                logging: true,
-                useCORS: true,
-                backgroundColor: null // For transparent backgrounds
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png', 1.0);
-                link.download = 'ARTA-ID.png';
-                link.click();
-            }).catch(err => {
-                console.error("Error generating ARTA ID:", err);
-            });
-        }).catch(err => {
-            console.error("Failed to load html2canvas:", err);
-        });
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Print ARTA ID</title>
+            <style>
+                ${getAllCSS()}
+                @page { size: auto; margin: 0mm; }
+                body { 
+                    margin: 0; 
+                    padding: 0; 
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    min-height: 100vh;
+                }
+                .print-page {
+                    width: 550px;
+                    height: 600px;
+                    margin: 0 auto;
+                    padding: 24px;
+                    border: 1px solid #ccc;
+                    border-radius: 8px;
+                }
+                
+                /* Force background images to print */
+                * {
+                    -webkit-print-color-adjust: exact !important;
+                    color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                
+                /* Specific background image fixes */
+                .print-page {
+                    background-image: url('/images/arta-bg-darker.png') !important;
+                    background-size: cover !important;
+                    background-position: center !important;
+                    background-repeat: no-repeat !important;
+                    position: relative !important;
+                }
+                
+                /* Fix absolute positioning for print */
+                .print-page .absolute {
+                    position: absolute !important;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-page">${element.innerHTML}</div>
+            <script>
+                window.onload = function() {
+                    setTimeout(function() {
+                        window.print();
+                        window.close();
+                    }, 500);
+                };
+            <\/script>
+        </body>
+        </html>
+    `);
+        printWindow.document.close();
     }
 </script>

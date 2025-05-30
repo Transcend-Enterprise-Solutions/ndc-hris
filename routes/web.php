@@ -155,6 +155,16 @@ Route::get('/signature/{filename}', function ($filename) {
     return Storage::disk('public')->response($path);
 })->name('signature.file');
 
+Route::get('/signatory-signature/{filename}', function ($filename) {
+    $path = storage_path('app/public/signatory-signatures/' . $filename);
+    
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    
+    return response()->file($path);
+})->name('signatory-signature.file');
+
 Route::get('/pds-photo/{filename}', function ($filename) {
     $path = 'pds-photos/' . $filename;
 
