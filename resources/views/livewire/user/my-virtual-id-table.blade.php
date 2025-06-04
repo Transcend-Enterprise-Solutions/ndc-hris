@@ -327,12 +327,20 @@
                     </div>
 
                     <div class="w-[35%] flex flex-col items-center text-center justify-center space-x-2">
-                        <p class="text-[11px] text-red-500 font-bold">SIGN</p>
-                        <p class="text-[11px] text-black font-bold text-nowrap">Atty. RHOEL Z. MABAZZA
+                        @if ($signatorySignatureUrl)
+                            <img src="{{ $signatorySignatureUrl }}" alt="Signatory Signature" class="h-12 -m-2">
+                        @else
+                            <p class="text-[11px] text-red-500 font-bold">SIGN</p>
+                        @endif
+
+                        <p class="text-[11px] text-black font-bold text-nowrap uppercase">
+                            {{ $signatoryName }}
                         </p>
-                        <p class="text-[10px] text-black font-bold text-nowrap">Assistant General Manager
+                        <p class="text-[10px] text-black font-bold text-nowrap">
+                            {{ $signatoryPosition }}
                         </p>
-                        <p class="text-[10px] text-black font-bold text-nowrap">Corporate Support Group
+                        <p class="text-[10px] text-black font-bold text-nowrap">
+                            {{ $signatoryOfficeDivision }}
                         </p>
                     </div>
                 </div>

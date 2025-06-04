@@ -11,6 +11,7 @@ use App\Models\Positions;
 use App\Models\ESignature;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
+use App\Models\IdSignatory;
 
 class MyVirtualIdTable extends Component
 {
@@ -229,6 +230,10 @@ class MyVirtualIdTable extends Component
             ->where('id', $user->position_id)
             ->value('position') ?? 'No position assigned';
 
+        $signatory = IdSignatory::where('is_default', true)
+            ->with(['position', 'officeDivision'])
+            ->first();
+
         return view('livewire.user.my-virtual-id-table', [
             'name' => $formattedName, // Updated to use formatted name
             'emp_code' => $this->empCodeFormatted,
@@ -246,6 +251,12 @@ class MyVirtualIdTable extends Component
             'eSignatureUrl' => $this->eSignatureUrl,
             'signatureExists' => $this->signatureExists,
             'idType' => $this->idType,
+            'signatoryName' => $signatory->name ?? 'Atty. RHOEL Z. MABAZZA',
+            'signatoryPosition' => $signatory->position->position ?? 'Assistant General Manager',
+            'signatoryOfficeDivision' => $signatory->officeDivision->office_division ?? 'Corporate Support Group',
+            'signatorySignatureUrl' => $signatory && $signatory->signature_path 
+                ? Storage::url('signatory-signatures/' . $signatory->signature_path)
+                : null,
         ]);
     }
 }

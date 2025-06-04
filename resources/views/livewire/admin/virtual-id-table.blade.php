@@ -180,10 +180,22 @@
                                             class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
                                             Print Virtual ID (Front & Back)
                                         </button>
+                                        <button onclick="exportVirtualFront()"
+                                            class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
+                                            Export Front ID
+                                        </button>
+                                        <button onclick="exportVirtualBack()"
+                                            class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
+                                            Export Back ID
+                                        </button>
                                     @else
                                         <button onclick="printArtaID()"
                                             class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
                                             Print ARTA ID
+                                        </button>
+                                        <button onclick="exportArtaId()"
+                                            class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
+                                            Export ARTA ID
                                         </button>
                                     @endif
                                 </div>
@@ -407,6 +419,104 @@
 </div>
 
 <script>
+    // Make sure html2canvas is loaded
+    function ensureHtml2CanvasIsLoaded() {
+        return new Promise((resolve, reject) => {
+            if (typeof html2canvas === 'undefined') {
+                // If html2canvas is not loaded, dynamically load it
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                script.onload = () => resolve();
+                script.onerror = () => reject(new Error('Failed to load html2canvas'));
+                document.head.appendChild(script);
+            } else {
+                resolve();
+            }
+        });
+    }
+
+    // Export Virtual ID Front
+    function exportVirtualFront() {
+        console.log("Exporting Virtual ID Front");
+        ensureHtml2CanvasIsLoaded().then(() => {
+            const element = document.getElementById('virtual-id-front');
+            if (!element) {
+                console.error("Front ID container not found!");
+                return;
+            }
+
+            html2canvas(element, {
+                scale: 2, // Higher quality
+                logging: true, // Helpful for debugging
+                useCORS: true // For external images
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png', 1.0); // Highest quality
+                link.download = 'Front-ID.png';
+                link.click();
+            }).catch(err => {
+                console.error("Error generating front ID:", err);
+            });
+        }).catch(err => {
+            console.error("Failed to load html2canvas:", err);
+        });
+    }
+
+    // Export Virtual ID Back
+    function exportVirtualBack() {
+        console.log("Exporting Virtual ID Back");
+        ensureHtml2CanvasIsLoaded().then(() => {
+            const element = document.getElementById('virtual-id-back');
+            if (!element) {
+                console.error("Back ID container not found!");
+                return;
+            }
+
+            html2canvas(element, {
+                scale: 2,
+                logging: true,
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.download = 'Back-ID.png';
+                link.click();
+            }).catch(err => {
+                console.error("Error generating back ID:", err);
+            });
+        }).catch(err => {
+            console.error("Failed to load html2canvas:", err);
+        });
+    }
+
+    // Export ARTA ID
+    function exportArtaId() {
+        console.log("Exporting ARTA ID");
+        ensureHtml2CanvasIsLoaded().then(() => {
+            const element = document.getElementById('arta-id-container');
+            if (!element) {
+                console.error("ARTA ID container not found!");
+                return;
+            }
+
+            html2canvas(element, {
+                scale: 2,
+                logging: true,
+                useCORS: true,
+                backgroundColor: null // For transparent backgrounds
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.download = 'ARTA-ID.png';
+                link.click();
+            }).catch(err => {
+                console.error("Error generating ARTA ID:", err);
+            });
+        }).catch(err => {
+            console.error("Failed to load html2canvas:", err);
+        });
+    }
+
     function printVirtualID() {
         // Clone the original elements with all their styles
         const frontElement = document.getElementById('virtual-id-front').cloneNode(true);
