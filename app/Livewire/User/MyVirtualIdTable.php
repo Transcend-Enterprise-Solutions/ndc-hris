@@ -11,6 +11,7 @@ use App\Models\Positions;
 use App\Models\ESignature;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
+use App\Models\IdSignatory;
 
 class MyVirtualIdTable extends Component
 {
@@ -79,22 +80,25 @@ class MyVirtualIdTable extends Component
         $this->validate([
             'profilePhoto' => 'required|image|mimes:png,jpg,jpeg|max:2048',
         ]);
-    
-        $user = Auth::user();
         
+        $user = Auth::user();
         $eSignature = ESignature::firstOrNew(['user_id' => $user->id]);
         
+        // Delete old photo if exists
         if ($eSignature->profile_photo_path) {
             Storage::disk('public')->delete('profile-photos/'.$eSignature->profile_photo_path);
         }
-    
+        
+        // Generate filename and store
         $filename = 'profile_'.$user->id.'_'.time().'.'.$this->profilePhoto->extension();
         $this->profilePhoto->storeAs('profile-photos', $filename, 'public');
         
+        // Store just the filename (not full path)
         $eSignature->profile_photo_path = $filename;
         $eSignature->save();
-    
-        $this->profilePhotoPath = 'profile-photos/'.$filename;
+        
+        // Update the component property with just the filename
+        $this->profilePhotoPath = $filename;
         $this->showProfilePhotoModal = false;
         $this->profilePhoto = null;
         
@@ -179,17 +183,16 @@ class MyVirtualIdTable extends Component
     {
         $user = Auth::user();
         $userData = $user->userData;
-    
+
         $officeDivision = OfficeDivisions::find($user->office_division_id);
         $this->office_or_department = $officeDivision ? $officeDivision->office_division : 'N/A';
-    
+
         $eSignature = ESignature::where('user_id', $user->id)->first();
-        $this->profilePhotoPath = $eSignature?->profile_photo_path 
-            ? 'profile-photos/'.$eSignature->profile_photo_path 
-            : $user->profile_photo_path;
-    
+        
+        // Store just the filename (not full path) for profile photos
+        $this->profilePhotoPath = $eSignature?->profile_photo_path;
+        
         $this->eSignatureFilename = $eSignature?->file_path;
-    
         $this->empCodeFormatted = $this->formatEmpCode($user->emp_code);
     }
 
@@ -203,49 +206,36 @@ class MyVirtualIdTable extends Component
 
     public function getQrCodeProperty()
     {
-        $user = Auth::user();
-        $userData = $user->userData;
-        
-        $position = DB::table('positions')
-            ->where('id', $user->position_id)
-            ->value('position') ?? 'N/A';
-
-        if ($this->idType === 'arta') {
-            $formattedData = sprintf(
-                "ARTA ID\nName: %s\nPosition: %s\nDepartment: %s\nID: %s",
-                $user->name,
-                $position,
-                $this->office_or_department,
-                $user->emp_code
-            );
-        } else {
-            $formattedData = sprintf(
-                "Name: %s\nEmployee Code: %s\nPosition: %s\nDepartment: %s",
-                $user->name,
-                $user->emp_code,
-                $position,
-                $this->office_or_department
-            );
-        }
-
+        // Simply generate a QR code that links to the NDC website
         return QrCode::size($this->idType === 'arta' ? 100 : 100)
             ->backgroundColor(255, 255, 255)
             ->color(0, 0, 0)
             ->margin(2)
-            ->generate($formattedData);
+            ->generate('https://www.ndc.gov.ph/');
     }
 
     public function render()
     {
         $user = Auth::user();
         $userData = $user->userData;
-    
+
+        // Format the name: FIRSTNAME M. SURNAME
+        $formattedName = strtoupper(
+            ($userData->first_name ?? '') . ' ' .
+            (isset($userData->middle_name) ? substr($userData->middle_name, 0, 1) . '.' : '') . ' ' .
+            ($userData->surname ?? '')
+        );
+
         $position = DB::table('positions')
             ->where('id', $user->position_id)
             ->value('position') ?? 'No position assigned';
-    
+
+        $signatory = IdSignatory::where('is_default', true)
+            ->with(['position', 'officeDivision'])
+            ->first();
+
         return view('livewire.user.my-virtual-id-table', [
-            'name' => $user->name,
+            'name' => $formattedName, // Updated to use formatted name
             'emp_code' => $this->empCodeFormatted,
             'profilePhotoPath' => $this->profilePhotoPath,
             'dateOfBirth' => $userData->date_of_birth 
@@ -261,6 +251,12 @@ class MyVirtualIdTable extends Component
             'eSignatureUrl' => $this->eSignatureUrl,
             'signatureExists' => $this->signatureExists,
             'idType' => $this->idType,
+            'signatoryName' => $signatory->name ?? 'Atty. RHOEL Z. MABAZZA',
+            'signatoryPosition' => $signatory->position->position ?? 'Assistant General Manager',
+            'signatoryOfficeDivision' => $signatory->officeDivision->office_division ?? 'Corporate Support Group',
+            'signatorySignatureUrl' => $signatory && $signatory->signature_path 
+                ? Storage::url('signatory-signatures/' . $signatory->signature_path)
+                : null,
         ]);
     }
 }
