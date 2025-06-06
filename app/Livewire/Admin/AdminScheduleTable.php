@@ -25,6 +25,7 @@ class AdminScheduleTable extends Component
     public $selectedTab = 'current';
     public $perPage = 10;
     public $search = '';
+    public $is_flexi = false;
 
     protected $queryString = ['search'];
 
@@ -35,6 +36,7 @@ class AdminScheduleTable extends Component
         'default_end_time' => 'required|date_format:H:i',
         'start_date' => 'required|date',
         'end_date' => 'required|date|after_or_equal:start_date',
+        'is_flexi' => 'boolean',
     ];
 
     public function mount()
@@ -166,16 +168,17 @@ class AdminScheduleTable extends Component
         }
 
         DTRSchedule::updateOrCreate(
-            ['id' => $this->scheduleId],
-            [
-                'emp_code' => $originalEmpCode,
-                'wfh_days' => $wfhDaysString,
-                'default_start_time' => $this->default_start_time,
-                'default_end_time' => $this->default_end_time,
-                'start_date' => $this->start_date,
-                'end_date' => $this->end_date,
-            ]
-        );
+        ['id' => $this->scheduleId],
+        [
+            'emp_code' => $originalEmpCode,
+            'wfh_days' => $wfhDaysString,
+            'default_start_time' => $this->default_start_time,
+            'default_end_time' => $this->default_end_time,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
+            'is_flexi' => $this->is_flexi,
+        ]
+    );
 
         $this->dispatch('swal', [
             'title' => $this->scheduleId ? 'Schedule updated successfully.' : 'Schedule created successfully.',
@@ -207,6 +210,7 @@ class AdminScheduleTable extends Component
         $this->default_end_time = date('H:i', strtotime($schedule->default_end_time));
         $this->start_date = $schedule->start_date->format('Y-m-d');
         $this->end_date = $schedule->end_date->format('Y-m-d');
+        $this->is_flexi = (bool)$schedule->is_flexi; // Add this line
         $this->isEditMode = true;
         $this->isModalOpen = true;
     }
@@ -241,6 +245,7 @@ class AdminScheduleTable extends Component
         $this->default_end_time = '18:30';
         $this->start_date = null;
         $this->end_date = null;
+        $this->is_flexi = false; // Add this line
         $this->isEditMode = false;
     }
 }

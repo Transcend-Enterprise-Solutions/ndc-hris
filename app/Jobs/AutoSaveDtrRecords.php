@@ -231,6 +231,9 @@ class AutoSaveDtrRecords implements ShouldQueue
             return $result;
         }
 
+        // Check if this is a flexi schedule
+        $isFlexi = $schedule->is_flexi == 1;
+
         // Calculate total hours rendered
         $totalMinutesRendered = 0;
 
@@ -249,18 +252,33 @@ class AutoSaveDtrRecords implements ShouldQueue
             ->addMinutes($totalMinutesRendered)
             ->format('H:i');
 
-        // Calculate lateness
+        // Calculate lateness based on flexi schedule
         $lateMinutes = 0;
 
-        if ($timeData['morningIn'] && $timeData['morningIn']->gt($timeData['defaultStartTime'])) {
-            $lateMinutes = $timeData['morningIn']->diffInMinutes($timeData['defaultStartTime']);
-        } elseif (!$timeData['morningIn'] && $timeData['afternoonIn']) {
-            $lateMinutes = 4 * 60; // 4 hours penalty for missing morning
+        if ($isFlexi) {
+            // For flexi schedule: only late if time in is after 9:00 AM
+            $flexiCutoff = $carbonDate->copy()->setTime(9, 0, 0);
 
-            // Additional lateness if afternoon in is after 13:00
-            $afternoonThreshold = $carbonDate->copy()->setTime(13, 0, 0);
-            if ($timeData['afternoonIn']->gt($afternoonThreshold)) {
-                $lateMinutes += $timeData['afternoonIn']->diffInMinutes($afternoonThreshold);
+            if ($timeData['morningIn'] && $timeData['morningIn']->gt($flexiCutoff)) {
+                $lateMinutes = $timeData['morningIn']->diffInMinutes($flexiCutoff);
+            } elseif (!$timeData['morningIn'] && $timeData['afternoonIn']) {
+                // If no morning in but has afternoon in, check if afternoon in is after 9:00 AM
+                if ($timeData['afternoonIn']->gt($flexiCutoff)) {
+                    $lateMinutes = $timeData['afternoonIn']->diffInMinutes($flexiCutoff);
+                }
+            }
+        } else {
+            // Regular schedule calculation
+            if ($timeData['morningIn'] && $timeData['morningIn']->gt($timeData['defaultStartTime'])) {
+                $lateMinutes = $timeData['morningIn']->diffInMinutes($timeData['defaultStartTime']);
+            } elseif (!$timeData['morningIn'] && $timeData['afternoonIn']) {
+                $lateMinutes = 4 * 60; // 4 hours penalty for missing morning
+
+                // Additional lateness if afternoon in is after 13:00
+                $afternoonThreshold = $carbonDate->copy()->setTime(13, 0, 0);
+                if ($timeData['afternoonIn']->gt($afternoonThreshold)) {
+                    $lateMinutes += $timeData['afternoonIn']->diffInMinutes($afternoonThreshold);
+                }
             }
         }
 
@@ -268,26 +286,49 @@ class AutoSaveDtrRecords implements ShouldQueue
             ->addMinutes($lateMinutes)
             ->format('H:i');
 
-        // Calculate undertime
+        // Calculate undertime based on flexi schedule
         $undertimeMinutes = 0;
 
-        if ($timeData['afternoonOut']) {
-            if ($timeData['afternoonOut']->lt($timeData['defaultEndTime'])) {
-                $undertimeMinutes = $timeData['defaultEndTime']->diffInMinutes($timeData['afternoonOut']);
+        if ($isFlexi) {
+            // For flexi schedule: calculate expected end time based on time in
+            $expectedEndTime = $this->calculateFlexiEndTime($timeData, $carbonDate, $schedule);
+
+            if ($timeData['afternoonOut']) {
+                if ($timeData['afternoonOut']->lt($expectedEndTime)) {
+                    $undertimeMinutes = $expectedEndTime->diffInMinutes($timeData['afternoonOut']);
+                }
+            } elseif ($timeData['morningIn']) {
+                $undertimeMinutes = 4 * 60; // 4 hours penalty for missing afternoon
             }
-        } elseif ($timeData['morningIn']) {
-            $undertimeMinutes = 4 * 60; // 4 hours penalty for missing afternoon
+        } else {
+            // Regular schedule calculation
+            if ($timeData['afternoonOut']) {
+                if ($timeData['afternoonOut']->lt($timeData['defaultEndTime'])) {
+                    $undertimeMinutes = $timeData['defaultEndTime']->diffInMinutes($timeData['afternoonOut']);
+                }
+            } elseif ($timeData['morningIn']) {
+                $undertimeMinutes = 4 * 60; // 4 hours penalty for missing afternoon
+            }
         }
 
         $result['ut'] = Carbon::createFromTime(0, 0, 0)
             ->addMinutes($undertimeMinutes)
             ->format('H:i');
 
-        // Calculate overtime
+        // Calculate overtime based on flexi schedule
         $overtimeMinutes = 0;
 
-        if ($timeData['afternoonOut'] && $timeData['afternoonOut']->gt($timeData['defaultEndTime'])) {
-            $overtimeMinutes = $timeData['afternoonOut']->diffInMinutes($timeData['defaultEndTime']);
+        if ($isFlexi) {
+            $expectedEndTime = $this->calculateFlexiEndTime($timeData, $carbonDate, $schedule);
+
+            if ($timeData['afternoonOut'] && $timeData['afternoonOut']->gt($expectedEndTime)) {
+                $overtimeMinutes = $timeData['afternoonOut']->diffInMinutes($expectedEndTime);
+            }
+        } else {
+            // Regular schedule calculation
+            if ($timeData['afternoonOut'] && $timeData['afternoonOut']->gt($timeData['defaultEndTime'])) {
+                $overtimeMinutes = $timeData['afternoonOut']->diffInMinutes($timeData['defaultEndTime']);
+            }
         }
 
         $result['overtime'] = Carbon::createFromTime(0, 0, 0)
@@ -295,6 +336,27 @@ class AutoSaveDtrRecords implements ShouldQueue
             ->format('H:i');
 
         return $result;
+    }
+
+    /**
+     * Calculate expected end time for flexi schedule based on time in
+     */
+    protected function calculateFlexiEndTime(array $timeData, Carbon $carbonDate, DTRSchedule $schedule): Carbon
+    {
+        // Standard work hours (8 hours + 1 hour lunch break = 9 hours total)
+        $standardWorkHours = 9;
+
+        if ($timeData['morningIn']) {
+            // Add 9 hours to morning in time
+            return $timeData['morningIn']->copy()->addHours($standardWorkHours);
+        } elseif ($timeData['afternoonIn']) {
+            // If only afternoon in, calculate based on afternoon in time
+            // Assume they should work until at least the default end time
+            return $carbonDate->copy()->setTimeFromTimeString($schedule->default_end_time);
+        }
+
+        // Fallback to default end time
+        return $carbonDate->copy()->setTimeFromTimeString($schedule->default_end_time);
     }
 
     protected function determineRemarks(array $timeData, string $dayOfWeek, $approvedLeaves, string $date): string

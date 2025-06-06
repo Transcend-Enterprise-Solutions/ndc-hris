@@ -17,7 +17,7 @@
             <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
                 <div class="w-full sm:w-auto">
                     <button wire:click="openModal"
-                        class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
+                        class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md
                         hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
                         dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
                         Add Schedule
@@ -25,7 +25,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Tabs -->
         <div class="w-full mb-4">
             <div class="flex gap-2 overflow-x-auto border-b border-slate-300 dark:border-slate-700" role="tablist">
@@ -50,6 +50,7 @@
                         <th class="px-4 py-2 text-center">Employee</th>
                         <th class="px-4 py-2 text-center">WFH Days</th>
                         <th class="px-4 py-2 text-center">Default Time</th>
+                        <th class="px-4 py-2 text-center">Flexi</th>
                         <th class="px-4 py-2 text-center">Dates</th>
                         <th class="px-4 py-2 text-center">Actions</th>
                     </tr>
@@ -65,6 +66,13 @@
                         </td>
                         <td class="px-4 py-2 text-center">{{ $schedule->default_start_time }} - {{
                             $schedule->default_end_time }}</td>
+                        <td class="px-4 py-2 text-center">
+                            @if($schedule->is_flexi)
+                                <span class="text-green-500">✓</span>
+                            @else
+                                <span class="text-gray-400">✗</span>
+                            @endif
+                        </td>
                         <td class="px-4 py-2 text-center">{{ $schedule->start_date->format('Y-m-d') }} - {{
                             $schedule->end_date->format('Y-m-d') }}</td>
                         <td class="px-4 py-2 text-center">
@@ -178,6 +186,12 @@
                 <div>
                     @error('date_range') <span class="text-red-500">{{ $message }}</span> @enderror
                 </div>
+                <div class="mt-4">
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" wire:model="is_flexi" class="form-checkbox text-blue-500">
+                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Flexi Schedule</span>
+                    </label>
+                </div>
 
                 <div>
                     <label for="wfh_days" class="block text-sm font-medium text-gray-700 dark:text-gray-300">WFH
@@ -193,6 +207,7 @@
                     </div>
                     @error('wfh_days') <span class="text-red-500">{{ $message }}</span> @enderror
                 </div>
+
 
                 <!-- Save Button -->
                 <div class="mt-4 flex justify-end">
