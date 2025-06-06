@@ -1350,6 +1350,15 @@ x-cloak>
             </div>
             <form wire:submit.prevent='savePosition'>
                 <div class="grid grid-cols-2 gap-4">
+
+                    <div class="col-span-full">
+                        <label for="employeeId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee ID</label>
+                        <input id="employeeId" wire:model='employeeId' class="mt-1 p-2 block w-full shadow-sm 
+                            sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" />
+                        @error('employeeId') 
+                            <span class="text-red-500 text-sm">{{ $message }}</span> 
+                        @enderror
+                    </div>
                     
                     <div class="col-span-full sm:col-span-1">
                         <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>

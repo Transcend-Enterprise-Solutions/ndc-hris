@@ -71,6 +71,7 @@ class RoleManagementTable extends Component
     public $allStat = true;
     public $activeStatus;
     public $positionId;
+    public $employeeId;
     public $officeDivisionId;
     public $unitId;
     public $file;
@@ -738,6 +739,7 @@ class RoleManagementTable extends Component
             if ($empPos) {
                 $this->userId = $empPos->id;
                 $this->name = $empPos->name;
+                $this->employeeId = $empPos->emp_code;
                 $this->position = $empPos->position;
                 $this->office_division = $empPos->office_division;
                 $this->positionId = $empPos->position_id;
@@ -832,26 +834,68 @@ class RoleManagementTable extends Component
         }
     }
 
-    public function savePosition(){
+    public function savePosition() {
         try {
+            $this->validate([
+                'employeeId' => 'required|string|max:255|unique:users,emp_code,' . $this->userId,
+                'positionId' => 'required',
+                'officeDivisionId' => 'required',
+            ]);
+
             $empPos = User::where('users.id', $this->userId)->first();
+
             if ($empPos) {
-                $empPos->update([
-                    'position_id' => $this->positionId,
-                    'office_division_id' => $this->officeDivisionId,
-                    'unit_id' => $this->unit,
-                    'active_status' => $this->activeStatus,
-                ]);
-                $this->dispatch('swal', [
-                    'title' => 'Employee settings updated successfully!',
-                    'icon' => 'success'
-                ]);
-                $this->resetVariables();
+                // Start a database transaction to ensure data consistency
+                DB::beginTransaction();
+
+                try {
+                    $oldEmpCode = $empPos->emp_code;
+                    $newEmpCode = $this->employeeId;
+
+                    // Only update related tables if emp_code is being changed
+                    if ($oldEmpCode != $newEmpCode) {
+                        // Update transactions table
+                        DB::table('transactions')
+                            ->where('emp_code', $oldEmpCode)
+                            ->update(['emp_code' => $newEmpCode]);
+
+                        // Update transactions_wfh table
+                        DB::table('transactions_wfh')
+                            ->where('emp_code', $oldEmpCode)
+                            ->update(['emp_code' => $newEmpCode]);
+
+                        // Update dtrschedules table
+                        DB::table('dtrschedules')
+                            ->where('emp_code', $oldEmpCode)
+                            ->update(['emp_code' => $newEmpCode]);
+                    }
+
+                    // Update the user record
+                    $empPos->update([
+                        'emp_code' => $newEmpCode,
+                        'position_id' => $this->positionId,
+                        'office_division_id' => $this->officeDivisionId,
+                        'unit_id' => $this->unit,
+                        'active_status' => $this->activeStatus,
+                    ]);
+
+                    // Commit the transaction
+                    DB::commit();
+
+                    $this->dispatch('swal', [
+                        'title' => 'Employee settings updated successfully!',
+                        'icon' => 'success'
+                    ]);
+                    $this->resetVariables();
+                } catch (Exception $e) {
+                    DB::rollBack();
+                    throw $e;
+                }
             }
         } catch (Exception $e) {
             throw $e;
         }
-    }
+    }   
 
     public function toggleDelete($userId, $message){
         $this->deleteMessage = $message;

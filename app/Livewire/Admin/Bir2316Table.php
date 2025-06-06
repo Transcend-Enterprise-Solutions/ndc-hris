@@ -162,15 +162,69 @@ class Bir2316Table extends Component
                 }
                 
 
-
+                // Employee Name ----------------------------------------- //
                 $pdf->Text(16, 56.2, $fullname);
+
+                // Employee Address --------------------------------------- //
+                $address = mb_convert_case($address, MB_CASE_TITLE, "UTF-8");
+                $maxWidth = 70; // Approximate maximum width before zip code starts (in mm)
+                $originalFontSize = 10;
+                $minFontSize = 6; // Minimum font size you're willing to go
+
+                // Start with original font size
+                $currentFontSize = $originalFontSize;
+                $pdf->SetFont('times', '', $currentFontSize);
+
+                // Calculate text width
+                $textWidth = $pdf->GetStringWidth($address);
+
+                // Reduce font size if text is too wide
+                while ($textWidth > $maxWidth && $currentFontSize > $minFontSize) {
+                    $currentFontSize -= 0.5; // Reduce by 0.5 points each iteration
+                    $pdf->SetFont('times', '', $currentFontSize);
+                    $textWidth = $pdf->GetStringWidth($address);
+                }
+
+                // Output the address
                 $pdf->Text(16, 66.2, $address);
+
+                // Local Address --------------------------------------- //
+                $address = mb_convert_case($address, MB_CASE_TITLE, "UTF-8");
+                $maxWidth = 70; // Approximate maximum width before zip code starts (in mm)
+                $originalFontSize = 10;
+                $minFontSize = 6; // Minimum font size you're willing to go
+
+                // Start with original font size
+                $currentFontSize = $originalFontSize;
+                $pdf->SetFont('times', '', $currentFontSize);
+
+                // Calculate text width
+                $textWidth = $pdf->GetStringWidth($address);
+
+                // Reduce font size if text is too wide
+                while ($textWidth > $maxWidth && $currentFontSize > $minFontSize) {
+                    $currentFontSize -= 0.5; // Reduce by 0.5 points each iteration
+                    $pdf->SetFont('times', '', $currentFontSize);
+                    $textWidth = $pdf->GetStringWidth($address);
+                }
+
+                // Output the address
+                $pdf->Text(16, 75.2, $address);
+
+                // Reset font size for subsequent text
+                $pdf->SetFont('times', '', $originalFontSize);
 
                 // Employee Zip Code -------------------------------------- //
                 $pdf->Text(93.5, 66.2, $zipCode[0] ?? 'X');
                 $pdf->Text(98, 66.2, $zipCode[1] ?? 'X');
                 $pdf->Text(102.5, 66.2, $zipCode[2] ?? 'X');
                 $pdf->Text(106.5, 66.2, $zipCode[3] ?? 'X');
+
+                // Local Zip Code -------------------------------------- //
+                $pdf->Text(93.5, 75.2, $zipCode[0] ?? 'X');
+                $pdf->Text(98, 75.2, $zipCode[1] ?? 'X');
+                $pdf->Text(102.5, 75.2, $zipCode[2] ?? 'X');
+                $pdf->Text(106.5, 75.2, $zipCode[3] ?? 'X');
 
                 // Brthday ----------------------------------------------- //
                 $pdf->Text(17.9, 94, $birthDay[0] ?? 'X');
