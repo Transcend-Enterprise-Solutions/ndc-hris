@@ -20,6 +20,7 @@ class DTRSchedule extends Model implements AuditableContract
         'default_end_time',
         'start_date',
         'end_date',
+        'is_flexi',
     ];
 
     protected $casts = [
