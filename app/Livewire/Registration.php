@@ -411,7 +411,7 @@ class Registration extends Component
                             ->where('province_code', isset($rprovinceCode['province_code']) ? $rprovinceCode['province_code'] : '')
                             ->select('city_municipality_code')->first();
             $rcityCode = $rcityCode ? $rcityCode->getAttributes() : [];
-            $this->rbarangays = PhilippineBarangays::where('city_municipality_code', isset($rcityCode['city_municipality_code']) ? $pcityCode['city_municipality_code'] : '')->get();
+            $this->rbarangays = PhilippineBarangays::where('city_municipality_code', isset($rcityCode['city_municipality_code']) ? $rcityCode['city_municipality_code'] : '')->get();
         }
 
         return view('livewire.registration',[
