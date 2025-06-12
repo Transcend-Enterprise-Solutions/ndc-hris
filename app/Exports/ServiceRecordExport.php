@@ -150,11 +150,21 @@ class ServiceRecordExport
             $this->currentRow ++;
             $sheet->getStyle("A{$this->currentRow}:N{$this->currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
             $sheet->mergeCells("A{$this->currentRow}:N{$this->currentRow}");
-            $middleInitial = strtoupper(substr($user->userData->middle_name, 0, 1));
-            $sheet->setCellValue("A{$this->currentRow}", "Service Record of " . 
-                $user->userData->surname . ", " . 
-                $user->userData->first_name . " " . 
-                $middleInitial[0] . ".");
+            $middleName = $user->userData->middle_name;
+
+            if (!empty($middleName) && strtolower($middleName) !== 'n/a') {
+                $middleInitial = strtoupper(substr($middleName, 0, 1)) . '.';
+            } else {
+                $middleInitial = '';
+            }
+
+            $fullName = $user->userData->surname . ", " . $user->userData->first_name;
+            if ($middleInitial) {
+                $fullName .= " " . $middleInitial;
+            }
+
+            $sheet->setCellValue("A{$this->currentRow}", "Service Record of " . $fullName);
+
             
             $this->currentRow ++;
             $pageNumber ++;

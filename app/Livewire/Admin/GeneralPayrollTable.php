@@ -256,45 +256,45 @@ class GeneralPayrollTable extends Component
         }
 
         $this->nycempc_total = 
-                ($this->nycempc_mpl ?: 0) +
-                ($this->nycempc_educ_loan ?: 0 )+
-                ($this->nycempc_pi ?: 0) +
-                ($this->nycempc_business_loan ?: 0);
+            (float) $this->nycempc_mpl +
+            (float) $this->nycempc_educ_loan +
+            (float) $this->nycempc_pi +
+            (float) $this->nycempc_business_loan;
 
-        if(!$this->payroll){
+        if (!$this->payroll) {
             $this->total_deduction = 
-                    ($this->additional_gsis_premium ?: 0) +
-                    ($this->lbp_salary_loan ?: 0 )+
-                    ($this->nycea_deductions ?: 0) +
-                    ($this->sc_membership ?: 0) +
-                    ($this->nycempc_total ?: 0) +
-                    ($this->salary_loan ?: 0) +
-                    ($this->policy_loan ?: 0) +
-                    ($this->eal ?: 0) +
-                    ($this->emergency_loan ?: 0) +
-                    ($this->mpl ?: 0) +
-                    ($this->housing_loan ?: 0) +
-                    ($this->ouli_prem ?: 0) +
-                    ($this->gfal ?: 0) +
-                    ($this->cpl ?: 0) +
-                    ($this->pagibig_mpl ?: 0) +
-                    ($this->pagibig_calamity_loan ?: 0) +
-                    ($this->lwop ?: 0) +
-                    ($this->gsis_rlip ?: 0) +
-                    ($this->pagibig_contribution ?: 0) +
-                    ($this->w_holding_tax ?: 0) +
-                    ($this->other_deductions ?: 0) + 
-                    ($this->philhealth ?: 0);
+                (float) $this->additional_gsis_premium +
+                (float) $this->lbp_salary_loan +
+                (float) $this->nycea_deductions +
+                (float) $this->sc_membership +
+                (float) $this->nycempc_total +
+                (float) $this->salary_loan +
+                (float) $this->policy_loan +
+                (float) $this->eal +
+                (float) $this->emergency_loan +
+                (float) $this->mpl +
+                (float) $this->housing_loan +
+                (float) $this->ouli_prem +
+                (float) $this->gfal +
+                (float) $this->cpl +
+                (float) $this->pagibig_mpl +
+                (float) $this->pagibig_calamity_loan +
+                (float) $this->lwop +
+                (float) $this->gsis_rlip +
+                (float) $this->pagibig_contribution +
+                (float) $this->w_holding_tax +
+                (float) $this->other_deductions +
+                (float) $this->philhealth;
         }
-        
-        $this->total_deduction = number_format((float)$this->total_deduction, 2, '.', '');
 
+        $this->total_deduction = number_format((float)$this->total_deduction, 2, '.', '');
 
         $this->getRate();
 
-        if($this->rate_per_month){
-            $this->gross_amount = $this->rate_per_month + $this->personal_economic_relief_allowance ?: 0;
+        if ($this->rate_per_month) {
+            $this->gross_amount = (float)$this->rate_per_month + (float)$this->personal_economic_relief_allowance;
         }
+
 
         $plantillaPayrollSignatories = User::join('signatories', 'signatories.user_id', 'users.id')
             ->join('positions', 'positions.id', 'users.position_id')
