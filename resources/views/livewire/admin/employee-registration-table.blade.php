@@ -88,6 +88,9 @@
                                                 <th scope="col" class="px-5 py-3 text-center text-sm font-medium uppercase">
                                                     Employee Registered
                                                 </th>
+                                                  <th
+                                                    class="px-5 py-3 text-gray-100 text-sm font-medium text-right sticky right-0 z-10 bg-gray-600 dark:bg-gray-600">
+                                                    Action</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
@@ -122,6 +125,17 @@
                                                             @else
                                                                 --
                                                             @endif
+                                                        </td>
+                                                        <td
+                                                            class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
+                                                            <div class="relative">
+                                                                <button wire:click="toggleDelete({{ $regs->id }})"
+                                                                    class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                        dark:hover:text-red-900"
+                                                                    title="Delete">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -184,6 +198,38 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </x-modal>
+
+    {{-- Delete Modal --}}
+    <x-modal id="deleteModal" maxWidth="md" wire:model="deleteId" centered>
+        <div class="p-4">
+            <div class="mb-4 text-slate-900 dark:text-gray-100 font-bold">
+                Confirm Deletion
+                <button @click="show = false" class="float-right focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">
+                Are you sure you want to delete this registration OTP?
+            </label>
+            <form wire:submit.prevent='deleteData'>
+                <div class="mt-4 flex justify-end col-span-1 sm:col-span-1">
+                    <button class="mr-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        <div wire:loading wire:target="deleteData" style="margin-bottom: 5px;">
+                            <div class="spinner-border small text-primary" role="status">
+                            </div>
+                        </div>
+                        Delete
+                    </button>
+                    <p @click="show = false"
+                        class="bg-gray-400 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                        Cancel
+                    </p>
+                </div>
+            </form>
+
         </div>
     </x-modal>
 
