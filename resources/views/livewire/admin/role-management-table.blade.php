@@ -1,8 +1,8 @@
 <div class="w-full"
-x-data="{ 
+x-data="{
     selectedTab: 'org',
     selectedSubTab: 'headcount',
-}" 
+}"
 x-cloak>
 
     <style>
@@ -108,12 +108,12 @@ x-cloak>
                 </div>
 
                 <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4" x-show="selectedTab === 'org'">
-              
+
                     <div class="w-full sm:w-auto relative" x-data="{ open: false }" @click.outside="open = false">
                         <button @click="open = !open"
                             class="mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                            justify-center px-2 py-1.5 text-sm font-medium tracking-wide 
-                            text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                            justify-center px-2 py-1.5 text-sm font-medium tracking-wide
+                            text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button">
                             Filter Status
@@ -121,7 +121,7 @@ x-cloak>
                         </button>
 
                         <div x-show="open"
-                            class="absolute top-12 z-20 p-3 border border-gray-400 bg-white rounded-lg 
+                            class="absolute top-12 z-20 p-3 border border-gray-400 bg-white rounded-lg
                             shadow-2xl dark:bg-gray-700 max-h-60 overflow-y-auto scrollbar-thin1" style="width: 130px">
                             <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Select Status</h6>
                             <ul class="space-y-2 text-sm">
@@ -159,8 +159,8 @@ x-cloak>
                 <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4" x-show="selectedTab === 'role'">
 
                     <div class="w-full sm:w-auto">
-                        <button wire:click="toggleAddRole" 
-                            class="mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
+                        <button wire:click="toggleAddRole"
+                            class="mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md
                             hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
                             dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
                             Add Role
@@ -171,32 +171,32 @@ x-cloak>
                     <div class="relative inline-block text-left">
                         <button wire:click="exportRoles"
                             class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                            justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
-                            text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                            justify-center px-4 py-1.5 text-sm font-medium tracking-wide
+                            text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                             rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                             type="button" title="Export Roles">
                             <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
                             <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
-                        </button>                    
+                        </button>
                     </div>
 
                 </div>
-                
-                <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4" x-show="selectedTab === 'pos'">      
+
+                <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4" x-show="selectedTab === 'pos'">
 
                         <!-- Export to Excel -->
                         {{-- <div class="relative inline-block text-left">
                             <button wire:click="exportExcel"
                                 class="peer mt-4 sm:mt-1 inline-flex items-center dark:hover:bg-slate-600 dark:border-slate-600
-                                justify-center px-4 py-1.5 text-sm font-medium tracking-wide 
-                                text-neutral-800 dark:text-neutral-200 transition-colors duration-200 
+                                justify-center px-4 py-1.5 text-sm font-medium tracking-wide
+                                text-neutral-800 dark:text-neutral-200 transition-colors duration-200
                                 rounded-lg border border-gray-400 hover:bg-gray-300 focus:outline-none"
                                 type="button"  aria-describedby="excelExport">
                                 <img class="flex dark:hidden" src="/images/export-excel.png" width="22" alt="">
                                 <img class="hidden dark:block" src="/images/export-excel-dark.png" width="22" alt="">
                             </button>
                             <div id="excelExport" class="absolute -top-5 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap rounded bg-gray-600 px-2 py-1 text-center text-sm text-white opacity-0 transition-all ease-out peer-hover:opacity-100 peer-focus:opacity-100 dark:text-black" role="tooltip">Export Roles</div>
-                        </div> --}} 
+                        </div> --}}
                 </div>
             </div>
 
@@ -204,30 +204,35 @@ x-cloak>
             <div class="w-full">
                 <div class="flex flex-col">
                     <div class="flex gap-2 overflow-x-auto -mb-2">
-                        <button @click="selectedTab = 'org'" 
-                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'org', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'org' }" 
+                        <button @click="selectedTab = 'org'"
+                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'org', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'org' }"
                                 class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
                             Organization
                         </button>
-                        <button @click="selectedTab = 'role'" 
-                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'role', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'role' }" 
+                        <button @click="selectedTab = 'role'"
+                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'role', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'role' }"
                                 class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
                             Admin Role
                         </button>
-                        <button @click="selectedTab = 'pos'" 
-                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'pos', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'pos' }" 
+                        <button @click="selectedTab = 'pos'"
+                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'pos', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'pos' }"
                                 class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
                             Employee Settings
                         </button>
-                        <button @click="selectedTab = 'settings'" 
-                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'settings', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'settings' }" 
+                        <button @click="selectedTab = 'settings'"
+                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'settings', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'settings' }"
                                 class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
                             HR Settings
                         </button>
-                        <button @click="selectedTab = 'sgstep'" 
-                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'sgstep', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'sgstep' }" 
+                        <button @click="selectedTab = 'sgstep'"
+                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'sgstep', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'sgstep' }"
                                 class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
-                            SG/STEP 
+                            SG/STEP
+                        </button>
+                        <button @click="selectedTab = 'dlforms'"
+                                :class="{ 'font-bold dark:text-gray-300 dark:bg-gray-700 bg-gray-200 rounded-t-lg': selectedTab === 'dlforms', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedTab !== 'dlforms' }"
+                                class="h-min px-4 pt-2 pb-4 text-sm text-nowrap">
+                            Downloadable Forms
                         </button>
                     </div>
                     <div class="-my-2 overflow-x-auto">
@@ -237,13 +242,13 @@ x-cloak>
                                     <div x-show="selectedTab === 'org'">
                                         <div class="overflow-x-hidden">
                                             <div class="flex gap-2 overflow-x-auto dark:bg-gray-700 bg-gray-200 rounded-t-lg">
-                                                <button @click="selectedSubTab = 'headcount'" 
-                                                        :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab === 'headcount', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab !== 'headcount' }" 
+                                                <button @click="selectedSubTab = 'headcount'"
+                                                        :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab === 'headcount', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab !== 'headcount' }"
                                                         class="h-min px-4 pt-2 pb-2 text-sm no-wrap">
                                                     Headcount
                                                 </button>
-                                                <button @click="selectedSubTab = 'positions'" 
-                                                        :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab === 'positions', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab !== 'positions' }" 
+                                                <button @click="selectedSubTab = 'positions'"
+                                                        :class="{ 'font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400': selectedSubTab === 'positions', 'text-slate-700 font-medium dark:text-slate-300 dark:hover:text-white hover:text-black': selectedSubTab !== 'positions' }"
                                                         class="h-min px-4 pt-2 pb-2 text-sm no-wrap">
                                                     Position Distribution
                                                 </button>
@@ -262,7 +267,7 @@ x-cloak>
                                                             <p class="text-xs">Number of Employees</p>
                                                         </div>
                                                         <div class="flex justify-center items-center absolute bottom-2 w-full">
-                                                            <button wire:click="exportEmployees('{{ $division }}')" 
+                                                            <button wire:click="exportEmployees('{{ $division }}')"
                                                                 class="peer inline-flex items-center justify-center px-2
                                                                 text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
                                                                 title="Export List">
@@ -334,14 +339,14 @@ x-cloak>
                                                                                 </td>
                                                                                 <td width="5%" class="px-2 py-2 text-center text-xs text-nowrap">
                                                                                     <span title="
-                                                                                        {{ $user->active_status == 0 ? 'Status: Inactive' : '' }} 
-                                                                                        {{ $user->active_status == 1 ? 'Status: Active' : '' }} 
-                                                                                        {{ $user->active_status == 2 ? 'Status: Resigned' : '' }} 
+                                                                                        {{ $user->active_status == 0 ? 'Status: Inactive' : '' }}
+                                                                                        {{ $user->active_status == 1 ? 'Status: Active' : '' }}
+                                                                                        {{ $user->active_status == 2 ? 'Status: Resigned' : '' }}
                                                                                         {{ $user->active_status == 3 ? 'Status: Retired' : '' }}"
-                                                                                        class="inline-block px-3 py-1 text-xs font-semibold 
-                                                                                        {{ $user->active_status == 0 ? 'text-red-400' : '' }} 
-                                                                                        {{ $user->active_status == 1 ? 'text-green-400' : '' }} 
-                                                                                        {{ $user->active_status == 2 ? 'text-yellow-400' : '' }} 
+                                                                                        class="inline-block px-3 py-1 text-xs font-semibold
+                                                                                        {{ $user->active_status == 0 ? 'text-red-400' : '' }}
+                                                                                        {{ $user->active_status == 1 ? 'text-green-400' : '' }}
+                                                                                        {{ $user->active_status == 2 ? 'text-yellow-400' : '' }}
                                                                                         {{ $user->active_status == 3 ? 'text-purple-400' : '' }}">
                                                                                         ⦿
                                                                                     </span>
@@ -370,12 +375,12 @@ x-cloak>
                                                         <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-300">{{ $officeDivision->office_division }}</h3>
                                                     </div>
                                                 </div>
-                                        
+
                                                 <div class="w-full p-4 flex flex-col mb-6 bg-white dark:bg-gray-600">
                                                     <div class="w-full">
                                                         <div class="flex justify-left items-center w-full">
                                                             <h3 class="text-xs font-semibold text-gray-300 dark:text-gray-500">POSITIONS</h3>
-                                                            <button wire:click="exportEmployeesPerUnit(null, {{ $officeDivision->id }})" 
+                                                            <button wire:click="exportEmployeesPerUnit(null, {{ $officeDivision->id }})"
                                                                 class="peer inline-flex items-center justify-center px-2
                                                                 text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
                                                                 title="Export List">
@@ -423,17 +428,17 @@ x-cloak>
                                                                                     </td>
                                                                                     <td width="30%" class="px-2 py-2 text-left text-xs text-nowrap">
                                                                                         {{ $user1 ? $user1->name : '' }}
-                                                                                    </td>                                                                
+                                                                                    </td>
                                                                                     <td width="5%" class="px-2 py-2 text-center text-xs text-nowrap">
                                                                                         <span title="
-                                                                                            {{ $user1 && $user1->active_status == 0 ? 'Status: Inactive' : '' }} 
-                                                                                            {{ $user1 && $user1->active_status == 1 ? 'Status: Active' : '' }} 
-                                                                                            {{ $user1 && $user1->active_status == 2 ? 'Status: Resigned' : '' }} 
+                                                                                            {{ $user1 && $user1->active_status == 0 ? 'Status: Inactive' : '' }}
+                                                                                            {{ $user1 && $user1->active_status == 1 ? 'Status: Active' : '' }}
+                                                                                            {{ $user1 && $user1->active_status == 2 ? 'Status: Resigned' : '' }}
                                                                                             {{ $user1 && $user1->active_status == 3 ? 'Status: Retired' : '' }}"
-                                                                                            class="inline-block px-3 py-1 text-xs font-semibold 
-                                                                                            {{ $user1 && $user1->active_status == 0 ? 'text-red-400' : '' }} 
-                                                                                            {{ $user1 && $user1->active_status == 1 ? 'text-green-400' : '' }} 
-                                                                                            {{ $user1 && $user1->active_status == 2 ? 'text-yellow-400' : '' }} 
+                                                                                            class="inline-block px-3 py-1 text-xs font-semibold
+                                                                                            {{ $user1 && $user1->active_status == 0 ? 'text-red-400' : '' }}
+                                                                                            {{ $user1 && $user1->active_status == 1 ? 'text-green-400' : '' }}
+                                                                                            {{ $user1 && $user1->active_status == 2 ? 'text-yellow-400' : '' }}
                                                                                             {{ $user1 && $user1->active_status == 3 ? 'text-purple-400' : '' }}">
                                                                                             {{ $user1 ? '⦿' : '' }}
                                                                                         </span>
@@ -458,7 +463,7 @@ x-cloak>
                                                                             <img class="flex dark:hidden" src="/images/unit-dark.png" width="15" alt="">
                                                                             <img class="hidden dark:block" src="/images/unit-light.png" width="15" alt="">
                                                                             <h4 class="ml-2 text-sm text-gray-500 dark:text-gray-300">{{ $unit->unit }}</h4>
-                                                                            <button wire:click="exportEmployeesPerUnit({{ $unit->id }}, {{ $officeDivision->id }})" 
+                                                                            <button wire:click="exportEmployeesPerUnit({{ $unit->id }}, {{ $officeDivision->id }})"
                                                                                 class="peer inline-flex items-center justify-center px-2
                                                                                 text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
                                                                                 title="Export List">
@@ -513,17 +518,17 @@ x-cloak>
                                                                                                     </td>
                                                                                                     <td width="40%" class="px-2 py-2 text-left text-xs text-nowrap">
                                                                                                         {{ $user ? $user->name : '' }}
-                                                                                                    </td>                                                                
+                                                                                                    </td>
                                                                                                     <td width="20%" class="px-2 py-2 text-center text-xs text-nowrap">
                                                                                                         <span title="
-                                                                                                            {{ $user && $user->active_status == 0 ? 'Status: Inactive' : '' }} 
-                                                                                                            {{ $user && $user->active_status == 1 ? 'Status: Active' : '' }} 
-                                                                                                            {{ $user && $user->active_status == 2 ? 'Status: Resigned' : '' }} 
+                                                                                                            {{ $user && $user->active_status == 0 ? 'Status: Inactive' : '' }}
+                                                                                                            {{ $user && $user->active_status == 1 ? 'Status: Active' : '' }}
+                                                                                                            {{ $user && $user->active_status == 2 ? 'Status: Resigned' : '' }}
                                                                                                             {{ $user && $user->active_status == 3 ? 'Status: Retired' : '' }}"
-                                                                                                            class="inline-block px-3 py-1 text-xs font-semibold 
-                                                                                                            {{ $user && $user->active_status == 0 ? 'text-red-400' : '' }} 
-                                                                                                            {{ $user && $user->active_status == 1 ? 'text-green-400' : '' }} 
-                                                                                                            {{ $user && $user->active_status == 2 ? 'text-yellow-400' : '' }} 
+                                                                                                            class="inline-block px-3 py-1 text-xs font-semibold
+                                                                                                            {{ $user && $user->active_status == 0 ? 'text-red-400' : '' }}
+                                                                                                            {{ $user && $user->active_status == 1 ? 'text-green-400' : '' }}
+                                                                                                            {{ $user && $user->active_status == 2 ? 'text-yellow-400' : '' }}
                                                                                                             {{ $user && $user->active_status == 3 ? 'text-purple-400' : '' }}">
                                                                                                             {{ $user ? '⦿' : '' }}
                                                                                                         </span>
@@ -535,13 +540,13 @@ x-cloak>
                                                                                 </div>
                                                                             </div>
                                                                         @endif
-                                                                                                                                                
+
                                                                     </div>
                                                                 @endforeach
                                                             </div>
                                                         @endif
                                                     </div>
-                                                </div>                                       
+                                                </div>
 
                                             @endforeach
                                         </div>
@@ -581,7 +586,7 @@ x-cloak>
                                                                 @if ($admin->user_role === 'sa')
                                                                     Super Admin
                                                                 @elseif($admin->user_role === 'hr')
-                                                                    HR 
+                                                                    HR
                                                                 @elseif($admin->user_role === 'sv')
                                                                     Supervisor
                                                                 @elseif($admin->user_role === 'pa')
@@ -612,14 +617,14 @@ x-cloak>
                                                             </td>
                                                             <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                                 <div class="relative">
-                                                                    <button wire:click="toggleEditRole({{ $admin->id }})" 
-                                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                                        -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    <button wire:click="toggleEditRole({{ $admin->id }})"
+                                                                        class="peer inline-flex items-center justify-center px-4 py-2 -m-5
+                                                                        -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600
                                                                         focus:outline-none" title="Edit">
                                                                         <i class="fas fa-pencil-alt"></i>
                                                                     </button>
-                                                                    <button wire:click="toggleDelete({{ $admin->id }}, 'role')" 
-                                                                        class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                    <button wire:click="toggleDelete({{ $admin->id }}, 'role')"
+                                                                        class=" text-red-600 hover:text-red-900 dark:text-red-600
                                                                         dark:hover:text-red-900" title="Delete">
                                                                         <i class="fas fa-trash"></i>
                                                                     </button>
@@ -632,7 +637,7 @@ x-cloak>
                                             @if ($admins->isEmpty())
                                                 <div class="p-4 text-center text-gray-500 dark:text-gray-300">
                                                     No records!
-                                                </div> 
+                                                </div>
                                             @endif
                                         </div>
                                         <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
@@ -702,11 +707,11 @@ x-cloak>
                                                                 </td>
                                                                 <td class="px-5 py-4 text-center text-sm font-medium whitespace-nowrap">
                                                                     <span
-                                                                        class="inline-block px-3 py-1 text-sm font-semibold 
-                                                                        {{ $pos->active_status == 0 ? 'text-red-800 bg-red-200' : '' }} 
-                                                                        {{ $pos->active_status == 1 ? 'text-green-800 bg-green-200' : '' }} 
-                                                                        {{ $pos->active_status == 2 ? 'text-yellow-800 bg-yellow-200' : '' }} 
-                                                                        {{ $pos->active_status == 3 ? 'text-purple-800 bg-purple-200' : '' }} 
+                                                                        class="inline-block px-3 py-1 text-sm font-semibold
+                                                                        {{ $pos->active_status == 0 ? 'text-red-800 bg-red-200' : '' }}
+                                                                        {{ $pos->active_status == 1 ? 'text-green-800 bg-green-200' : '' }}
+                                                                        {{ $pos->active_status == 2 ? 'text-yellow-800 bg-yellow-200' : '' }}
+                                                                        {{ $pos->active_status == 3 ? 'text-purple-800 bg-purple-200' : '' }}
                                                                          rounded-full">
                                                                         @if($pos->active_status == 0)
                                                                             Inactive
@@ -721,14 +726,14 @@ x-cloak>
                                                                 </td>
                                                                 <td class="px-5 py-4 text-sm font-medium text-center whitespace-nowrap sticky right-0 z-10 bg-white dark:bg-gray-800">
                                                                     <div class="relative">
-                                                                        <button wire:click="toggleEditPosition({{ $pos->id }})" 
-                                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                        <button wire:click="toggleEditPosition({{ $pos->id }})"
+                                                                            class="peer inline-flex items-center justify-center px-4 py-2 -m-5
+                                                                            -mr-2 text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600
                                                                             focus:outline-none" title="Edit">
                                                                             <i class="fas fa-pencil-alt"></i>
                                                                         </button>
-                                                                        <button wire:click="toggleDelete({{ $pos->id }}, 'role')" 
-                                                                            class=" text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                        <button wire:click="toggleDelete({{ $pos->id }}, 'role')"
+                                                                            class=" text-red-600 hover:text-red-900 dark:text-red-600
                                                                             dark:hover:text-red-900" title="Delete">
                                                                             <i class="fas fa-trash"></i>
                                                                         </button>
@@ -742,7 +747,7 @@ x-cloak>
                                             @if ($empPos->isEmpty())
                                                 <div class="p-4 text-center text-gray-500 dark:text-gray-300">
                                                     No records!
-                                                </div> 
+                                                </div>
                                             @endif
                                         </div>
                                         <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700">
@@ -758,9 +763,9 @@ x-cloak>
                                                             <div class="flex flex-col md:flex-col lg:flex-row lg:justify-between items-center w-full mb-2">
                                                                 <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">WORK GROUPS <span class="mx-2">|</span> <span>Units</span> <span class="mx-2">|</span> <span>Positions</span></h3>
                                                                 <div>
-                                                                    <button wire:click="toggleAddSettings('work group')" 
-                                                                        class="peer inline-flex items-center justify-center px-4 py-2 
-                                                                        text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    <button wire:click="toggleAddSettings('work group')"
+                                                                        class="peer inline-flex items-center justify-center px-4 py-2
+                                                                        text-sm font-medium tracking-wide text-blue-500 hover:text-blue-600
                                                                         focus:outline-none" title="Add">
                                                                         <i title="Add" class="fas fa-plus text-green-500"></i>
                                                                     </button>
@@ -781,34 +786,34 @@ x-cloak>
                                                         <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-300">{{ $officeDivision->office_division }}</h3>
                                                     </div>
                                                     <div class="relative px-2">
-                                                        <button wire:click="toggleEditSettings({{ $officeDivision->id }}, 'work group')" 
+                                                        <button wire:click="toggleEditSettings({{ $officeDivision->id }}, 'work group')"
                                                             class="peer inline-flex items-center justify-center py-2 lg:mr-2
-                                                            text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                            text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600
                                                             focus:outline-none" title="Edit">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </button>
-                                                        <button wire:click="toggleDeleteSettings({{ $officeDivision->id }}, 'work group')" 
-                                                            class="text-red-600 text-xs hover:text-red-900 dark:text-red-600 
+                                                        <button wire:click="toggleDeleteSettings({{ $officeDivision->id }}, 'work group')"
+                                                            class="text-red-600 text-xs hover:text-red-900 dark:text-red-600
                                                             dark:hover:text-red-900" title="Delete">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </div>
                                                 </div>
-                                        
+
                                                 <div class="w-full p-4 flex flex-col mb-6 bg-white dark:bg-gray-600">
                                                     <div class="w-full">
                                                         <div class="flex justify-left items-center w-full">
                                                             <h3 class="text-xs font-semibold text-gray-300 dark:text-gray-500">POSITIONS</h3>
                                                             <div class="relative">
                                                                 @if($officeDivision->positions->isNotEmpty())
-                                                                    <button wire:click="toggleEditPos({{ $officeDivision->id }}, 'position')" 
-                                                                        class="peer inline-flex items-center justify-center ml-4 mb-3 
-                                                                        text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                    <button wire:click="toggleEditPos({{ $officeDivision->id }}, 'position')"
+                                                                        class="peer inline-flex items-center justify-center ml-4 mb-3
+                                                                        text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600
                                                                         focus:outline-none" title="Edit Positions">
                                                                         <i class="fas fa-pencil-alt" style="font-size: 10px"></i>
                                                                     </button>
                                                                 @else
-                                                                    <button wire:click="toggleAddPos({{ $officeDivision->id }}, 'position')" 
+                                                                    <button wire:click="toggleAddPos({{ $officeDivision->id }}, 'position')"
                                                                         class="text-red-600 text-xs hover:text-red-900 dark:text-red-600 ml-4 mb-1
                                                                         dark:hover:text-red-900" title="Add Position">
                                                                         <i title="Add Position" class="fas fa-plus text-green-500"></i>
@@ -838,20 +843,20 @@ x-cloak>
                                                                             <img class="hidden dark:block" src="/images/unit-light.png" width="15" alt="">
                                                                             <h4 class="ml-2 text-sm text-gray-500 dark:text-gray-300">{{ $unit->unit }}</h4>
                                                                         </div>
-                                                    
+
                                                                         <div class="ml-6 flex justify-between items-center w-full">
                                                                             <h3 class="text-xs font-semibold text-gray-300 dark:text-gray-500">POSITIONS</h3>
                                                                             <div class="relative mr-4 mb-2">
                                                                                 @if($unit->positions->isNotEmpty())
-                                                                                    <button wire:click="toggleEditUnitPos({{ $officeDivision->id }}, {{ $unit->id }} ,'unit-position')" 
-                                                                                        class="peer inline-flex items-center justify-center 
-                                                                                        text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                                    <button wire:click="toggleEditUnitPos({{ $officeDivision->id }}, {{ $unit->id }} ,'unit-position')"
+                                                                                        class="peer inline-flex items-center justify-center
+                                                                                        text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600
                                                                                         focus:outline-none" title="Edit Positions">
                                                                                         <i class="fas fa-pencil-alt" style="font-size: 10px"></i>
                                                                                     </button>
                                                                                 @else
-                                                                                    <button wire:click="toggleAddUnitPos({{ $officeDivision->id }}, {{ $unit->id }} ,'unit-position')" 
-                                                                                        class="text-red-600 text-xs hover:text-red-900 dark:text-red-600 
+                                                                                    <button wire:click="toggleAddUnitPos({{ $officeDivision->id }}, {{ $unit->id }} ,'unit-position')"
+                                                                                        class="text-red-600 text-xs hover:text-red-900 dark:text-red-600
                                                                                         dark:hover:text-red-900" title="Add Position">
                                                                                         <i title="Add Position" class="fas fa-plus text-green-500"></i>
                                                                                     </button>
@@ -866,13 +871,13 @@ x-cloak>
                                                                                 @endforeach
                                                                             </ul>
                                                                         @endif
-                                                                                                                                                
+
                                                                     </div>
                                                                 @endforeach
                                                             </div>
                                                         @endif
                                                     </div>
-                                                </div>                                       
+                                                </div>
 
                                             @endforeach
                                         </div>
@@ -948,14 +953,14 @@ x-cloak>
                                                                                     @endfor
                                                                                     <td class="py-2 px-2 text-center sticky right-0 z-10 bg-white dark:bg-gray-700">
                                                                                         <div class="relative">
-                                                                                            <button wire:click="editSG({{ $salaryGrade->id }})" 
-                                                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5 
-                                                                                                -mr-2 text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600 
+                                                                                            <button wire:click="editSG({{ $salaryGrade->id }})"
+                                                                                                class="peer inline-flex items-center justify-center px-4 py-2 -m-5
+                                                                                                -mr-2 text-xs font-medium tracking-wide text-blue-500 hover:text-blue-600
                                                                                                 focus:outline-none" title="Edit">
                                                                                                 <i class="fas fa-pencil-alt"></i>
                                                                                             </button>
-                                                                                            <button wire:click="toggleDeleteSG({{ $salaryGrade->id }}, 'salary grade')" 
-                                                                                                class="text-xs text-red-600 hover:text-red-900 dark:text-red-600 
+                                                                                            <button wire:click="toggleDeleteSG({{ $salaryGrade->id }}, 'salary grade')"
+                                                                                                class="text-xs text-red-600 hover:text-red-900 dark:text-red-600
                                                                                                 dark:hover:text-red-900" title="Delete">
                                                                                                 <i class="fas fa-trash"></i>
                                                                                             </button>
@@ -974,9 +979,14 @@ x-cloak>
                                                             </div>
                                                         </div>
                                                     </div>
-                                        
+
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div x-show="selectedTab === 'dlforms'">
+                                        <div class="overflow-x-auto">
+                                            <livewire:admin.downloadable-forms />
                                         </div>
                                     </div>
                                 </div>
@@ -985,7 +995,7 @@ x-cloak>
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
 
@@ -1001,7 +1011,7 @@ x-cloak>
             {{-- Form fields --}}
             <form wire:submit.prevent='saveRole'>
                 <div class="grid grid-cols-2 gap-4">
-                    
+
                     <div class="col-span-full sm:col-span-2">
                         <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name <span class="text-red-500">*</span></label>
                         <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700"
@@ -1011,8 +1021,8 @@ x-cloak>
                                 <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                             @endforeach
                         </select>
-                        @error('userId') 
-                            <span class="text-red-500 text-sm">Please select an employee!</span> 
+                        @error('userId')
+                            <span class="text-red-500 text-sm">Please select an employee!</span>
                         @enderror
                     </div>
 
@@ -1024,17 +1034,17 @@ x-cloak>
                             <option value="hr">Human Resource</option>
                             <option value="sv">Supervisor</option>
                             <option value="pa">Payroll</option>
-                        </select>                        
-                        @error('user_role') 
-                            <span class="text-red-500 text-sm">The account role is required!</span> 
+                        </select>
+                        @error('user_role')
+                            <span class="text-red-500 text-sm">The account role is required!</span>
                         @enderror
                     </div>
 
                     <div class="col-span-full sm:col-span-1">
                         <label for="admin_email" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Admin Email <span class="text-red-500">*</span></label>
                         <input type="text" id="admin_email" wire:model='admin_email' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                        @error('admin_email') 
-                            <span class="text-red-500 text-sm">{{ $message }}</span> 
+                        @error('admin_email')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -1046,8 +1056,8 @@ x-cloak>
                                 <option value="{{ $office->id }}">{{ $office->office_division }}</option>
                             @endforeach
                         </select>
-                        @error('divId') 
-                            <span class="text-red-500 text-sm">Please select work group!</span> 
+                        @error('divId')
+                            <span class="text-red-500 text-sm">Please select work group!</span>
                         @enderror
                     </div>
 
@@ -1069,16 +1079,16 @@ x-cloak>
                         <div class="col-span-full sm:col-span-1">
                             <label for="password" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Password <span class="text-red-500">*</span></label>
                             <input type="password" id="password" wire:model='password' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                            @error('password') 
-                                <span class="text-red-500 text-sm">{{ $message }}</span> 
+                            @error('password')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="col-span-full sm:col-span-1">
                             <label for="cpassword" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Confirm Password <span class="text-red-500">*</span></label>
                             <input type="password" id="cpassword" wire:model='cpassword' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                            @error('cpassword') 
-                                <span class="text-red-500 text-sm">{{ $message }}</span> 
+                            @error('cpassword')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
                     @endif
@@ -1110,7 +1120,7 @@ x-cloak>
             {{-- Form fields --}}
             <form wire:submit.prevent='saveSettings'>
                 <div class="grid grid-cols-2 gap-4">
-                    
+
                     @if($add)
                             @if($data === "work group")
                                 <div class="col-span-2 relative">
@@ -1144,11 +1154,11 @@ x-cloak>
                                     <div class="col-span-2 relative">
                                         <label for="settings_data_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
                                         <input type="text" id="settings_data_{{ $index }}" wire:model='settingsData.{{ $index }}.value' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                  
+
                                         <button type="button" wire:click="removeSetting({{ $index }})" class="absolute right-2 top-8 text-red-500 hover:text-red-700">
                                             <i class="fas fa-times"></i>
                                         </button>
-  
+
                                         @error('settingsData.' . $index . '.value')
                                             <span class="text-red-500 text-sm">This field is required!</span>
                                         @enderror
@@ -1165,11 +1175,11 @@ x-cloak>
                                     <div class="col-span-2 relative">
                                         <label for="settings_data_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
                                         <input type="text" id="settings_data_{{ $index }}" wire:model='settingsData.{{ $index }}.value' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                                
+
                                         <button type="button" wire:click="removeSetting({{ $index }})" class="absolute right-2 top-8 text-red-500 hover:text-red-700">
                                             <i class="fas fa-times"></i>
                                         </button>
-                      
+
                                         @error('settingsData.' . $index . '.value')
                                             <span class="text-red-500 text-sm">This field is required!</span>
                                         @enderror
@@ -1194,7 +1204,7 @@ x-cloak>
                                 <div class="col-span-1 relative">
                                     <label for="unit_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">Unit</label>
                                     <input type="text" id="unit_{{ $index }}" wire:model='units.{{ $index }}.value' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                     
+
                                     <button type="button" wire:click="removeUnit({{ $index }})" class="absolute right-2 top-8 text-red-500 hover:text-red-700">
                                         <i class="fas fa-times"></i>
                                     </button>
@@ -1214,11 +1224,11 @@ x-cloak>
                                 <div class="col-span-2 relative">
                                     <label for="settings_data_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
                                     <input type="text" id="settings_data_{{ $index }}" wire:model='settingsData.{{ $index }}.value' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                        
+
                                     <button type="button" wire:click="removeSetting({{ $index }})" class="absolute right-2 top-8 text-red-500 hover:text-red-700">
                                         <i class="fas fa-times"></i>
                                     </button>
-                   
+
                                     @error('settingsData.' . $index . '.value')
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
@@ -1235,11 +1245,11 @@ x-cloak>
                                 <div class="col-span-2 relative">
                                     <label for="settings_data_{{ $index }}" class="block text-sm font-medium text-gray-700 dark:text-slate-400 uppercase">{{ $data }}</label>
                                     <input type="text" id="settings_data_{{ $index }}" wire:model='settingsData.{{ $index }}.value' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
-                           
+
                                     <button type="button" wire:click="removeSetting({{ $index }})" class="absolute right-2 top-8 text-red-500 hover:text-red-700">
                                         <i class="fas fa-times"></i>
                                     </button>
-                   
+
                                     @error('settingsData.' . $index . '.value')
                                         <span class="text-red-500 text-sm">This field is required!</span>
                                     @enderror
@@ -1338,7 +1348,7 @@ x-cloak>
             </form>
         </div>
     </x-modal>
-    
+
     {{-- Add and Edit Employee Pos Modal --}}
     <x-modal id="empModal" maxWidth="2xl" wire:model="editPosition" centered>
         <div class="p-4">
@@ -1350,7 +1360,7 @@ x-cloak>
             </div>
             <form wire:submit.prevent='savePosition'>
                 <div class="grid grid-cols-2 gap-4">
-                    
+
                     <div class="col-span-full sm:col-span-1">
                         <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
                         <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" style="pointer-events: {{ $addPosition ? 'all' : 'none' }}">
@@ -1359,11 +1369,11 @@ x-cloak>
                                 <option value="{{ $employee->id }}">{{ $employee->name }}</option>
                             @endforeach
                         </select>
-                        @error('userId') 
-                            <span class="text-red-500 text-sm">Please select an employee!</span> 
+                        @error('userId')
+                            <span class="text-red-500 text-sm">Please select an employee!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-full sm:col-span-1">
                         <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Work Group</label>
                         <select id="office_division" wire:model.live='officeDivisionId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
@@ -1372,11 +1382,11 @@ x-cloak>
                                 <option value="{{ $office->id }}">{{ $office->office_division }}</option>
                             @endforeach
                         </select>
-                        @error('office_division') 
-                            <span class="text-red-500 text-sm">Please select work group!</span> 
+                        @error('office_division')
+                            <span class="text-red-500 text-sm">Please select work group!</span>
                         @enderror
                     </div>
-                    
+
                     <div class="col-span-full sm:col-span-1">
                         <label for="unit" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Unit</label>
                         <select id="unit" wire:model.live='unit' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
@@ -1390,7 +1400,7 @@ x-cloak>
                             @endif
                         </select>
                     </div>
-                    
+
                     <div class="col-span-full sm:col-span-1">
                         <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
                         <select id="position" wire:model='positionId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
@@ -1398,8 +1408,8 @@ x-cloak>
                                 <option value="{{ $pos->id }}">{{ $pos->position }}</option>
                             @endforeach
                         </select>
-                        @error('position') 
-                            <span class="text-red-500 text-sm">Please select position!</span> 
+                        @error('position')
+                            <span class="text-red-500 text-sm">Please select position!</span>
                         @enderror
                     </div>
 
@@ -1422,7 +1432,7 @@ x-cloak>
                                 <input id="allColRetired" type="radio" name="status" value="3" wire:model.live="activeStatus" class="h-4 w-4">
                                 <label for="allColRetired" class="sm:ml-2 text-gray-900 dark:text-gray-300">Retired</label>
                             </li>
-                        </ul>                    
+                        </ul>
                     </div>
 
                     <div class="mt-4 flex justify-end col-span-2">

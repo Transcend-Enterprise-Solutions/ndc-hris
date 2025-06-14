@@ -128,6 +128,9 @@ Route::middleware(['auth', 'checkrole:emp'])->group(function () {
         return view('livewire.user.leave-credits'); })->name('/filing-and-approval/leave-credits');
     Route::get('/filing-and-approval/leave-monetization', function () {
         return view('livewire.user.leave-monetization'); })->name('/filing-and-approval/leave-monetization');
+
+    Route::get('/downloadable', function () {
+        return view('livewire.user.downloadable'); })->name('downloadable');
 });
 
 
