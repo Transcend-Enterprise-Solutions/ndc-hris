@@ -692,50 +692,6 @@ class LeaveApplicationTable extends Component
         return response()->download($outputPdfPath, 'LeaveApplication' . $leaveApplicationId . '.pdf')->deleteFileAfterSend(true);
     }
 
-    public function render()
-    {
-        $userId = Auth::id();
-
-        $request = MandatoryFormRequest::where('user_id', $userId)
-            ->orderBy('date_requested', 'desc')
-            ->first();
-
-        $this->requestSent = $request !== null;
-        $this->requestApproved = $request && $request->status === 'approved';
-
-        $leaveCredits = LeaveCredits::where('user_id', $userId)->first();
-
-        $leaveApplications = LeaveApplication::query()
-            ->where('user_id', $userId)
-            ->when($this->activeTab === 'pending', function ($query) {
-                return $query->where('status', 'Pending');
-            })
-            ->when($this->activeTab === 'approved', function ($query) {
-                return $query->where('status', 'Approved');
-            })
-            ->when($this->activeTab === 'disapproved', function ($query) {
-                return $query->where('status', 'Disapproved');
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate($this->pageSize);
-
-        return view('livewire.user.leave-application-table', [
-            'leaveApplications' => $leaveApplications,
-        ]);
-    }
-
-    public function setActiveTab($tab)
-    {
-        $this->activeTab = $tab;
-        $this->resetPage();
-    }
-
-    public function closeLeaveDetails()
-    {
-        $this->showPDFPreview = false;
-        $this->pdfContent = null;
-    }
-
     public function showPDF($leaveApplicationId)
     {
         $leaveApplication = LeaveApplication::with('user.userData')->findOrFail($leaveApplicationId);
@@ -948,6 +904,51 @@ class LeaveApplicationTable extends Component
         $this->pdfContent = base64_encode($pdf->Output($fileName, 'S'));
         $this->showPDFPreview = true;
     }
+    
+    public function render()
+    {
+        $userId = Auth::id();
+
+        $request = MandatoryFormRequest::where('user_id', $userId)
+            ->orderBy('date_requested', 'desc')
+            ->first();
+
+        $this->requestSent = $request !== null;
+        $this->requestApproved = $request && $request->status === 'approved';
+
+        $leaveCredits = LeaveCredits::where('user_id', $userId)->first();
+
+        $leaveApplications = LeaveApplication::query()
+            ->where('user_id', $userId)
+            ->when($this->activeTab === 'pending', function ($query) {
+                return $query->where('status', 'Pending');
+            })
+            ->when($this->activeTab === 'approved', function ($query) {
+                return $query->where('status', 'Approved');
+            })
+            ->when($this->activeTab === 'disapproved', function ($query) {
+                return $query->where('status', 'Disapproved');
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate($this->pageSize);
+
+        return view('livewire.user.leave-application-table', [
+            'leaveApplications' => $leaveApplications,
+        ]);
+    }
+
+    public function setActiveTab($tab)
+    {
+        $this->activeTab = $tab;
+        $this->resetPage();
+    }
+
+    public function closeLeaveDetails()
+    {
+        $this->showPDFPreview = false;
+        $this->pdfContent = null;
+    }
+
 
     public function mount()
     {

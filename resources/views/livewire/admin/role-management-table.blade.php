@@ -1360,7 +1360,6 @@ x-cloak>
             </div>
             <form wire:submit.prevent='savePosition'>
                 <div class="grid grid-cols-2 gap-4">
-
                     <div class="col-span-full sm:col-span-1">
                         <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Name</label>
                         <select id="userId" wire:model='userId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" style="pointer-events: {{ $addPosition ? 'all' : 'none' }}">

@@ -45,6 +45,8 @@ Route::middleware(['auth', 'checkrole:sa,hr'])->group(function () {
         return view('livewire.admin.w-e-s-management'); })->name('/employee-management/wes-management');
     Route::get('/employee-management/bir2316', function () {
         return view('livewire.admin.bir2316'); })->name('/employee-management/bir2316');
+    Route::get('/employee-management/virtual-id', function () {
+        return view('livewire.admin.virtual-id'); })->name('/employee-management/virtual-id');
     Route::get('/employee-management/admin-doc-request', function () {
         return view('livewire.admin.admin-doc-request'); })->name('/employee-management/admin-doc-request');
     Route::get('/employee-management/admin-wfh-request', function () {
@@ -155,6 +157,16 @@ Route::get('/signature/{filename}', function ($filename) {
 
     return Storage::disk('public')->response($path);
 })->name('signature.file');
+
+Route::get('/signatory-signature/{filename}', function ($filename) {
+    $path = storage_path('app/public/signatory-signatures/' . $filename);
+    
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    
+    return response()->file($path);
+})->name('signatory-signature.file');
 
 Route::get('/pds-photo/{filename}', function ($filename) {
     $path = 'pds-photos/' . $filename;
