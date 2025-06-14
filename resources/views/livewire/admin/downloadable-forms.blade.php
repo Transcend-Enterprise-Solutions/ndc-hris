@@ -193,10 +193,19 @@
                                     </button>
                                     <button
                                         type="submit"
-                                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium rounded-lg transition-colors duration-200"
+                                        wire:target="file"
+                                        wire:loading.attr="disabled"
+                                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
                                     >
-                                        {{ $isEditing ? 'Update Form' : 'Save Form' }}
+                                        <svg wire:loading wire:target="file" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                                        </svg>
+                                        <span wire:loading.remove wire:target="file">
+                                            {{ $isEditing ? 'Update Form' : 'Save Form' }}
+                                        </span>
                                     </button>
+
                                 </div>
                             </form>
                         </div>
