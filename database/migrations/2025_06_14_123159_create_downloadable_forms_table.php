@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('downloadable_forms', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('name');
+            $table->string('file_path');
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
             $table->string('original_filename')->nullable();
         });
     }
