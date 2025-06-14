@@ -95,7 +95,8 @@
                                         @if (Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
                                             <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/employee-registrations')) {{ '!text-blue-500' }} @endif"
-                                                    href="{{ route('/employee-management/employee-registrations') }}" wire:navigate>
+                                                    href="{{ route('/employee-management/employee-registrations') }}"
+                                                    wire:navigate>
                                                     <span class="text-sm font-medium transition-opacity duration-300"
                                                         :class="sidebarExpanded ? 'opacity-100 lg:inline' :
                                                             'opacity-0 lg:hidden'">
@@ -129,7 +130,8 @@
                                             </li>
                                             <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/admin-official-business')) {{ '!text-blue-500' }} @endif"
-                                                    href="{{ route('/employee-management/admin-official-business') }}" wire:navigate>
+                                                    href="{{ route('/employee-management/admin-official-business') }}"
+                                                    wire:navigate>
                                                     <span class="text-sm font-medium transition-opacity duration-300"
                                                         :class="sidebarExpanded ? 'opacity-100 lg:inline' :
                                                             'opacity-0 lg:hidden'">
@@ -141,7 +143,8 @@
                                         @if (Auth::user()->user_role === 'sa' || Auth::user()->user_role === 'hr')
                                             <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/admin-schedule')) {{ '!text-blue-500' }} @endif"
-                                                    href="{{ route('/employee-management/admin-schedule') }}" wire:navigate>
+                                                    href="{{ route('/employee-management/admin-schedule') }}"
+                                                    wire:navigate>
                                                     <span class="text-sm font-medium transition-opacity duration-300"
                                                         :class="sidebarExpanded ? 'opacity-100 lg:inline' :
                                                             'opacity-0 lg:hidden'">
@@ -203,7 +206,8 @@
                                             </li>
                                             <li class="mb-1 last:mb-0">
                                                 <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/wes-management')) {{ '!text-blue-500' }} @endif"
-                                                    href="{{ route('/employee-management/wes-management') }}" wire:navigate>
+                                                    href="{{ route('/employee-management/wes-management') }}"
+                                                    wire:navigate>
                                                     <span class="text-sm font-medium transition-opacity duration-300"
                                                         :class="sidebarExpanded ? 'opacity-100 lg:inline' :
                                                             'opacity-0 lg:hidden'">
@@ -218,6 +222,17 @@
                                                         :class="sidebarExpanded ? 'opacity-100 lg:inline' :
                                                             'opacity-0 lg:hidden'">
                                                         BIR 2316
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li class="mb-1 last:mb-0">
+                                                <a class="block text-slate-400 hover:text-blue-500 transition duration-150 truncate @if (Route::is('/employee-management/virtual-id')) {{ '!text-blue-500' }} @endif"
+                                                    href="{{ route('/employee-management/virtual-id') }}"
+                                                    wire:navigate>
+                                                    <span class="text-sm font-medium transition-opacity duration-300"
+                                                        :class="sidebarExpanded ? 'opacity-100 lg:inline' :
+                                                            'opacity-0 lg:hidden'">
+                                                        Virtual IDs
                                                     </span>
                                                 </a>
                                             </li>

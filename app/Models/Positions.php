@@ -24,4 +24,9 @@ class Positions extends Model
     public function user(){
         return $this->hasOne(User::class, 'position_id');
     }
+
+    public function idSignatories()
+    {
+        return $this->hasMany(IdSignatory::class, 'position_id');
+    }
 }

@@ -383,34 +383,35 @@ class Registration extends Component
     public function render()
     {
         if ($this->permanent_selectedProvince != null) {
-            $provinceCode = PhilippineProvinces::where('province_description', $this->permanent_selectedProvince)
+            $pprovinceCode = PhilippineProvinces::where('province_description', $this->permanent_selectedProvince)
                             // ->where('region_code', isset($regionCode['region_code']) ? $regionCode['region_code'] : '')
                             ->select('province_code')->first();
-            $provinceCode = $provinceCode ? $provinceCode->getAttributes() : [];
-            $this->pcities = PhilippineCities::where('province_code', isset($provinceCode['province_code']) ? $provinceCode['province_code'] : '')->get();
+            $pprovinceCode = $pprovinceCode ? $pprovinceCode->getAttributes() : [];
+            $this->pcities = PhilippineCities::where('province_code', isset($pprovinceCode['province_code']) ? $pprovinceCode['province_code'] : '')->get();
         }
 
         if ($this->residential_selectedProvince != null) {
-            $provinceCode = PhilippineProvinces::where('province_description', $this->residential_selectedProvince)
+            $rprovinceCode = PhilippineProvinces::where('province_description', $this->residential_selectedProvince)
                             // ->where('region_code', isset($regionCode['region_code']) ? $regionCode['region_code'] : '')
                             ->select('province_code')->first();
-            $provinceCode = $provinceCode ? $provinceCode->getAttributes() : [];
-            $this->rcities = PhilippineCities::where('province_code', isset($provinceCode['province_code']) ? $provinceCode['province_code'] : '')->get();
+            $rprovinceCode = $rprovinceCode ? $rprovinceCode->getAttributes() : [];
+            $this->rcities = PhilippineCities::where('province_code', isset($rprovinceCode['province_code']) ? $rprovinceCode['province_code'] : '')->get();
         }
 
         if ($this->permanent_selectedCity != null) {
-            $cityCode = PhilippineCities::where('city_municipality_description', $this->permanent_selectedCity)
-                            ->where('province_code', isset($provinceCode['province_code']) ? $provinceCode['province_code'] : '')
+            $pcityCode = PhilippineCities::where('city_municipality_description', $this->permanent_selectedCity)
+                            ->where('province_code', isset($pprovinceCode['province_code']) ? $pprovinceCode['province_code'] : '')
                             ->select('city_municipality_code')->first();
-            $cityCode = $cityCode ? $cityCode->getAttributes() : [];
-            $this->pbarangays = PhilippineBarangays::where('city_municipality_code', isset($cityCode['city_municipality_code']) ? $cityCode['city_municipality_code'] : '')->get();
+            $pcityCode = $pcityCode ? $pcityCode->getAttributes() : [];
+            $this->pbarangays = PhilippineBarangays::where('city_municipality_code', isset($pcityCode['city_municipality_code']) ? $pcityCode['city_municipality_code'] : '')->get();
         }
 
         if ($this->residential_selectedCity != null) {
-            $cityCode = PhilippineCities::where('city_municipality_description', $this->residential_selectedCity)
+            $rcityCode = PhilippineCities::where('city_municipality_description', $this->residential_selectedCity)
+                            ->where('province_code', isset($rprovinceCode['province_code']) ? $rprovinceCode['province_code'] : '')
                             ->select('city_municipality_code')->first();
-            $cityCode = $cityCode->getAttributes();
-            $this->rbarangays = PhilippineBarangays::where('city_municipality_code', $cityCode['city_municipality_code'])->get();
+            $rcityCode = $rcityCode ? $rcityCode->getAttributes() : [];
+            $this->rbarangays = PhilippineBarangays::where('city_municipality_code', isset($rcityCode['city_municipality_code']) ? $rcityCode['city_municipality_code'] : '')->get();
         }
 
         return view('livewire.registration',[
