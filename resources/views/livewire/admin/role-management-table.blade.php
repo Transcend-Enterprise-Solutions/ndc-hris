@@ -1374,6 +1374,14 @@ x-cloak>
                     </div>
 
                     <div class="col-span-full sm:col-span-1">
+                        <label for="employeeId" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Employee Number</label>
+                        <input type="text" id="employeeId" wire:model='employeeId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
+                        @error('employeeId')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="col-span-full sm:col-span-1">
                         <label for="office_division" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Work Group</label>
                         <select id="office_division" wire:model.live='officeDivisionId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             <option class="text-gray-300" value="{{ $officeDivisionId }}">{{ $office_division ? $office_division : 'Select work group' }}</option>
@@ -1400,7 +1408,7 @@ x-cloak>
                         </select>
                     </div>
 
-                    <div class="col-span-full sm:col-span-1">
+                    <div class="col-span-full">
                         <label for="position" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Position</label>
                         <select id="position" wire:model='positionId' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                             @foreach ($positions as $pos)
