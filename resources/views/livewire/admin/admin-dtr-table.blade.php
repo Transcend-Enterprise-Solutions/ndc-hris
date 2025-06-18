@@ -191,7 +191,10 @@
                                     $effectiveRemarks = $dtr->up_remarks ?: $dtr->effective_remarks;
                                     $late = $dtr->up_late ?? $dtr->late;
                                     $ut = $dtr->up_ut ?? $dtr->ut;
-                                    $lateUndertime = $late || $ut;
+
+                                    // Check if late or undertime values are not zero/empty
+                                    $hasLate = !in_array($late, ['00:00', '00:00:00', '0:00', null, '']);
+                                    $hasUndertime = !in_array($ut, ['00:00', '00:00:00', '0:00', null, '']);
                                 @endphp
 
                                 @switch(strtolower($effectiveRemarks))
@@ -215,9 +218,38 @@
 
                                     @case('present')
                                         <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-green-600 bg-white text-xs font-medium text-green-600 dark:border-green-600 dark:bg-slate-900 dark:text-green-600">
-                                            <span class="px-2 py-1 bg-green-600/10 dark:bg-green-600/10">
-                                                {{ $lateUndertime ? 'Late/Undertime' : 'Present' }}
-                                            </span>
+                                            <span class="px-2 py-1 bg-green-600/10 dark:bg-green-600/10">Present</span>
+                                        </span>
+                                        @break
+
+                                    @case('late')
+                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-yellow-600 bg-white text-xs font-medium text-yellow-600 dark:border-yellow-600 dark:bg-slate-900 dark:text-yellow-600">
+                                            <span class="px-2 py-1 bg-yellow-600/10 dark:bg-yellow-600/10">Late</span>
+                                        </span>
+                                        @break
+
+                                    @case('undertime')
+                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-orange-600 bg-white text-xs font-medium text-orange-600 dark:border-orange-600 dark:bg-slate-900 dark:text-orange-600">
+                                            <span class="px-2 py-1 bg-orange-600/10 dark:bg-orange-600/10">Undertime</span>
+                                        </span>
+                                        @break
+
+                                    @case('late/undertime')
+                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-red-500 bg-white text-xs font-medium text-red-500 dark:border-red-500 dark:bg-slate-900 dark:text-red-500">
+                                            <span class="px-2 py-1 bg-red-500/10 dark:bg-red-500/10">Late/Undertime</span>
+                                        </span>
+                                        @break
+
+                                    @case('incomplete')
+                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-purple-600 bg-white text-xs font-medium text-purple-600 dark:border-purple-600 dark:bg-slate-900 dark:text-purple-600">
+                                            <span class="px-2 py-1 bg-purple-600/10 dark:bg-purple-600/10">Incomplete</span>
+                                        </span>
+                                        @break
+
+                                    @case('saturday')
+                                    @case('sunday')
+                                        <span class="w-fit inline-flex overflow-hidden rounded-2xl border border-gray-600 bg-white text-xs font-medium text-gray-600 dark:border-gray-600 dark:bg-slate-900 dark:text-gray-600">
+                                            <span class="px-2 py-1 bg-gray-600/10 dark:bg-gray-600/10">{{ ucfirst($effectiveRemarks) }}</span>
                                         </span>
                                         @break
 
