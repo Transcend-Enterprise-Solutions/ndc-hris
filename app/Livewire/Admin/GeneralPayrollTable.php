@@ -223,7 +223,7 @@ class GeneralPayrollTable extends Component
             ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', '=', 'users.id')
             ->whereNull('payrolls.id')
             ->whereNull('cos_reg_payrolls.id')
-            ->where('user_data.appointment', '=', 'plantilla')
+            ->whereIn('user_data.appointment', ['plantilla', 'ct', 'pa'])
             ->select('users.*')
             ->get();
         

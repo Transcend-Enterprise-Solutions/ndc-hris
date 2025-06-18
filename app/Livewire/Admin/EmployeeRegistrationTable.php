@@ -18,6 +18,7 @@ class EmployeeRegistrationTable extends Component
     public $search;
     public $genOtp;
     public $email;
+    public $deleteId;
     public $pageSize = 10; 
     public $pageSizes = [10, 20, 30, 50, 100]; 
 
@@ -42,6 +43,31 @@ class EmployeeRegistrationTable extends Component
 
     public function toggleAddRegOtp(){
         $this->genOtp = true;
+    }
+
+    public function toggleDelete($id){
+        $this->deleteId = $id;
+    }
+
+    public function deleteData(){
+        try {
+            $user = RegistrationOtp::where('id', $this->deleteId)->first();
+            if ($user) {
+                $user->delete();
+                $this->resetVariables();
+                $this->dispatch('swal', [
+                    'title' => 'OTP deleted successfully',
+                    'icon' => 'success'
+                ]);            
+            }
+        } catch (Exception $e) {
+            $this->dispatch('swal', [
+                'title' => "OTP deletion was unsuccessful!",
+                'icon' => 'error'
+            ]);
+            $this->resetVariables();
+            throw $e;
+        }
     }
 
     public function submitRegOtp(){
@@ -84,5 +110,6 @@ class EmployeeRegistrationTable extends Component
     public function resetVariables(){
         $this->email = null;
         $this->genOtp = null;
+        $this->deleteId= null;
     }
 }
