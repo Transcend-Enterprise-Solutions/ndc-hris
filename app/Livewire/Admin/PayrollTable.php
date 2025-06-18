@@ -137,7 +137,7 @@ class PayrollTable extends Component
             ->leftJoin('cos_reg_payrolls', 'cos_reg_payrolls.user_id', '=', 'users.id')
             ->whereNull('payrolls.id')
             ->whereNull('cos_reg_payrolls.id')
-            ->where('user_data.appointment', '!=', 'plantilla')
+            ->where('user_data.appointment', 'cos')
             ->select('users.*')
             ->get();
 
