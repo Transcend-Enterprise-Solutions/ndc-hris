@@ -225,11 +225,12 @@ class PayrollTable extends Component
         ];
 
         $this->total_deduction = 
-                ($this->additional_premiums ?: 0) +
-                ($this->adjustment ?: 0) +
-                ($this->nycempc ?: 0) +
-                ($this->withholding_tax ?: 0) +
-                ($this->other_deductions ?: 0);
+        (float) $this->additional_premiums +
+        (float) $this->adjustment +
+        (float) $this->nycempc +
+        (float) $this->withholding_tax +
+        (float) $this->other_deductions;
+
 
         if($this->signatures) {
             foreach ($this->signatures as $id => $signature) {

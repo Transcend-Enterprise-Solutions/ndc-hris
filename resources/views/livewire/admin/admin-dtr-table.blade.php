@@ -247,7 +247,7 @@
 
         {{-- edit modal --}}
         @if($showEditModal)
-        <div class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center">
+        <div class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center" style="z-index: 9999">
             <div class="relative bg-white dark:bg-gray-800 p-6 mx-4 md:mx-auto max-w-lg w-full md:max-w-lg rounded-2xl">
                 <!-- Modal header -->
                 <div class="flex items-center justify-between pb-4">
