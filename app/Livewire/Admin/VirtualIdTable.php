@@ -50,6 +50,12 @@ class VirtualIdTable extends Component
     public $qrCodeData = '';
     public $defaultSignatory;
 
+    public $showProfilePhotoModal = false;
+    public $profilePhoto;
+    public $showSignatureModal = false;
+    public $signatureFile;
+
+
     public function mount()
     {
         $this->officeDivisions = OfficeDivisions::all();
@@ -281,6 +287,101 @@ class VirtualIdTable extends Component
         // $this->showEmployeeDropdown = false;
         // $this->emergencyContactName = '';
         // $this->emergencyContactNumber = '';
+    }
+
+    public function toggleUploadProfilePhoto()
+    {
+        $this->showProfilePhotoModal = true;
+    }
+
+    public function toggleUploadSignature()
+    {
+        $this->showSignatureModal = true;
+    }
+
+    public function saveProfilePhoto()
+    {
+        $this->validate([
+            'profilePhoto' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+        ]);
+        
+        $user = User::find($this->selectedEmployeeId);
+        if (!$user) {
+            session()->flash('error', 'Employee not found');
+            return;
+        }
+        
+        $eSignature = ESignature::firstOrNew(['user_id' => $user->id]);
+        
+        // Delete old photo if exists
+        if ($eSignature->profile_photo_path) {
+            Storage::delete('public/profile-photos/'.$eSignature->profile_photo_path);
+        }
+        
+        // Generate filename and store
+        $filename = 'profile_'.$user->id.'_'.time().'.'.$this->profilePhoto->extension();
+        $this->profilePhoto->storeAs('public/profile-photos', $filename);
+        
+        // Update record
+        $eSignature->profile_photo_path = $filename;
+        $eSignature->save();
+        
+        // Refresh data
+        $this->profilePhotoUrl = route('profile-photo.file', ['filename' => $filename]);
+        $this->showProfilePhotoModal = false;
+        $this->profilePhoto = null;
+        
+        // session()->flash('message', 'Profile photo uploaded successfully!');
+        $this->dispatch('swal', [
+            'title' => "Success",
+            'text' => "Profile photo uploaded successfully!",
+            'icon' => 'success',
+        ]);
+    }
+
+    public function saveSignature()
+    {
+        $this->validate([
+            'signatureFile' => 'required|image|mimes:png,jpg,jpeg|max:1024',
+        ]);
+
+        $user = User::find($this->selectedEmployeeId);
+        if (!$user) {
+            // session()->flash('error', 'Employee not found');
+            $this->dispatch('swal', [
+                'title' => "Error",
+                'text' => "Employee not found",
+                'icon' => 'error',
+            ]);
+            return;
+        }
+        
+        $eSignature = ESignature::firstOrNew(['user_id' => $user->id]);
+        
+        // Delete old signature if exists
+        if ($eSignature->file_path) {
+            Storage::delete('public/signatures/'.$eSignature->file_path);
+        }
+        
+        // Generate filename and store
+        $filename = 'sig_'.$user->id.'_'.time().'.'.$this->signatureFile->extension();
+        $this->signatureFile->storeAs('public/signatures', $filename);
+        
+        // Update record
+        $eSignature->file_path = $filename;
+        $eSignature->save();
+        
+        // Refresh data
+        $this->eSignatureUrl = route('signature.file', ['filename' => $filename]);
+        $this->showSignatureModal = false;
+        $this->signatureFile = null;
+        
+        // session()->flash('message', 'E-Signature uploaded successfully!');
+        $this->dispatch('swal', [
+            'title' => "Success",
+            'text' => "E-Signature uploaded successfully!",
+            'icon' => 'success',
+        ]);
     }
 
     public function render()

@@ -129,6 +129,55 @@
                 </div>
             </x-modal>
 
+            <x-modal wire:model.defer="showProfilePhotoModal" centered maxWidth="md">
+                <div class="p-6">
+                    <h2 class="text-lg font-bold mb-4 text-slate-800 dark:text-white">Upload Profile Photo</h2>
+                    <div class="mb-4">
+                        <input type="file" wire:model="profilePhoto"
+                            class="w-full border rounded p-2 dark:bg-gray-700 dark:border-gray-600">
+                        @error('profilePhoto')
+                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                        @enderror
+                        <p class="text-xs text-gray-500 mt-1">Max file size: 2MB (PNG, JPG, JPEG)</p>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button wire:click="$set('showProfilePhotoModal', false)"
+                            class="px-4 py-2 text-sm text-slate-800 dark:text-white hover:bg-gray-200 dark:hover:bg-slate-600 rounded">
+                            Cancel
+                        </button>
+                        <button wire:click="saveProfilePhoto"
+                            class="px-4 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600">
+                            Upload
+                        </button>
+                    </div>
+                </div>
+            </x-modal>
+
+            <x-modal wire:model.defer="showSignatureModal" centered maxWidth="md">
+                <div class="p-6">
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-white">Upload E-Signature</h2>
+                    <p class="italic mb-4">(Please upload with transparent background)</p>
+                    <div class="mb-4">
+                        <input type="file" wire:model="signatureFile"
+                            class="w-full border rounded p-2 dark:bg-gray-700 dark:border-gray-600">
+                        @error('signatureFile')
+                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                        @enderror
+                        <p class="text-xs text-gray-500 mt-1">Max file size: 1MB (PNG, JPG, JPEG)</p>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button wire:click="$set('showSignatureModal', false)"
+                            class="px-4 py-2 text-sm text-slate-800 dark:text-white hover:bg-gray-200 dark:hover:bg-slate-600 rounded">
+                            Cancel
+                        </button>
+                        <button wire:click="saveSignature"
+                            class="px-4 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600">
+                            Upload
+                        </button>
+                    </div>
+                </div>
+            </x-modal>
+
             <!-- ID Display Controls -->
             @if ($selectedEmployeeId)
                 <div class="w-full mb-6 text-center relative">
@@ -149,29 +198,6 @@
                                 <i class="bi bi-three-dots-vertical text-slate-800 dark:text-white"></i>
                             </button>
 
-                            <!-- Dropdown Menu -->
-                            {{-- <div wire:click.away="closeDropdown"
-                                class="absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-white dark:bg-slate-700 ring-1 ring-black ring-opacity-5 z-50 {{ $showDropdown ? 'block' : 'hidden' }}">
-                                <div class="p-2">
-                                    @if ($idType === 'virtual')
-                                        <!-- Virtual ID Options -->
-                                        <button onclick="exportVirtualFront()"
-                                            class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
-                                            Export Front ID
-                                        </button>
-                                        <button onclick="exportVirtualBack()"
-                                            class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
-                                            Export Back ID
-                                        </button>
-                                    @else
-                                        <!-- ARTA ID Options -->
-                                        <button onclick="exportArtaId()"
-                                            class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
-                                            Export ARTA ID
-                                        </button>
-                                    @endif
-                                </div>
-                            </div> --}}
                             <div wire:click.away="closeDropdown"
                                 class="absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-white dark:bg-slate-700 ring-1 ring-black ring-opacity-5 z-50 {{ $showDropdown ? 'block' : 'hidden' }}">
                                 <div class="p-2">
@@ -198,6 +224,15 @@
                                             Export ARTA ID
                                         </button>
                                     @endif
+
+                                    <button wire:click="toggleUploadProfilePhoto"
+                                        class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
+                                        Upload Profile Photo
+                                    </button>
+                                    <button wire:click="toggleUploadSignature"
+                                        class="block w-full whitespace-nowrap px-4 py-2 text-xs text-slate-800 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-600 rounded-md transition-all">
+                                        Upload E-Signature
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -292,29 +327,31 @@
                             <div class="flex items-center h-[250px] ml-4">
                                 <div class="flex flex-col items-center space-y-1">
                                     <!-- Picture Box -->
-                                    <div
-                                        class="w-40 h-40 border border-gray-400 flex items-center justify-center bg-white mt-2">
+                                    <div class="w-40 h-40 border border-gray-400 bg-white flex items-center justify-center mt-2 cursor-pointer"
+                                        wire:click="toggleUploadProfilePhoto">
                                         @if ($profilePhotoUrl)
                                             <img src="{{ $profilePhotoUrl }}" alt="Profile Photo"
                                                 class="w-full h-full object-cover"
-                                                onerror="this.onerror=null;this.innerHTML='<span class=\'text-green-500\'>Picture</span>';">
+                                                onerror="this.onerror=null;this.innerHTML='<span class=\'text-green-500 flex items-center justify-center h-full\'>Click to Upload</span>';">
                                         @else
-                                            <span class="text-green-500">Picture</span>
+                                            <span class="text-green-500 flex items-center justify-center h-full">
+                                                Click to Upload
+                                            </span>
                                         @endif
                                     </div>
 
+
                                     <!-- SIGN HERE -->
-                                    @if ($eSignatureUrl)
-                                        <div class="flex items-center justify-center" style="height: 48px;">
+                                    <div class="flex items-center justify-center cursor-pointer" style="height: 48px;"
+                                        wire:click="toggleUploadSignature">
+                                        @if ($eSignatureUrl)
                                             <img src="{{ $eSignatureUrl }}" alt="E-Signature"
-                                                class="max-w-full max-h-full object-contain"
-                                                onerror="this.onerror=null;this.parentElement.innerHTML='<p class=\'text-red-500 text-sm\'>SIGN HERE</p>';">
-                                        </div>
-                                    @else
-                                        <div class="flex items-center justify-center" style="height: 48px;">
-                                            <p class="text-red-500 text-sm">SIGN HERE</p>
-                                        </div>
-                                    @endif
+                                                class="h-full object-contain"
+                                                onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\'text-red-500 text-sm\'>Click to Upload</span>';">
+                                        @else
+                                            <span class="text-red-500 text-sm">Click to Upload E-Sign</span>
+                                        @endif
+                                    </div>
 
                                     <!-- ID Number -->
                                     <p class="text-sm text-black">ID No. {{ $emp_code }}</p>
