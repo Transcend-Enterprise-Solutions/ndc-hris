@@ -199,73 +199,88 @@ class VirtualIdTable extends Component
         $this->tempSignatureUrl = $this->signatorySignature->temporaryUrl();
     }
 
-public function saveSignatoryDetails()
-{
-    $this->validate([
-        'signatoryName' => 'required|string|max:255',
-        'signatoryPositionId' => 'required|exists:positions,id',
-        'signatoryOfficeDivisionId' => 'required|exists:office_divisions,id',
-        'signatorySignature' => 'nullable|image|max:2048',
-    ]);
-
-    try {
-        // Debug: Log input values
-        \Log::info('Attempting to save signatory:', [
-            'name' => $this->signatoryName,
-            'position_id' => $this->signatoryPositionId,
-            'office_division_id' => $this->signatoryOfficeDivisionId,
-            'has_signature' => !empty($this->signatorySignature)
+    public function saveSignatoryDetails()
+    {
+        $this->validate([
+            'signatoryName' => 'required|string|max:255',
+            'signatoryPositionId' => 'required|exists:positions,id',
+            'signatoryOfficeDivisionId' => 'required|exists:office_divisions,id',
+            'signatorySignature' => 'nullable|image|max:2048',
         ]);
 
-        // First, unset any existing default signatory
-        IdSignatory::where('is_default', true)->update(['is_default' => false]);
-        
-        $signatoryData = [
-            'name' => $this->signatoryName,
-            'position_id' => $this->signatoryPositionId,
-            'office_division_id' => $this->signatoryOfficeDivisionId,
-            'is_default' => true,
-        ];
+        try {
+            // Debug: Log input values
+            \Log::info('Attempting to save signatory:', [
+                'name' => $this->signatoryName,
+                'position_id' => $this->signatoryPositionId,
+                'office_division_id' => $this->signatoryOfficeDivisionId,
+                'has_signature' => !empty($this->signatorySignature)
+            ]);
 
-        // Handle signature upload
-        if ($this->signatorySignature) {
-            // Delete old signature if exists
-            if ($this->defaultSignatory && $this->defaultSignatory->signature_path) {
-                Storage::delete('public/signatory-signatures/' . $this->defaultSignatory->signature_path);
+            // First, unset any existing default signatory
+            IdSignatory::where('is_default', true)->update(['is_default' => false]);
+            
+            $signatoryData = [
+                'name' => $this->signatoryName,
+                'position_id' => $this->signatoryPositionId,
+                'office_division_id' => $this->signatoryOfficeDivisionId,
+                'is_default' => true,
+            ];
+
+            // Handle signature upload
+            if ($this->signatorySignature) {
+                // Delete old signature if exists
+                if ($this->defaultSignatory && $this->defaultSignatory->signature_path) {
+                    Storage::delete('public/signatory-signatures/' . $this->defaultSignatory->signature_path);
+                }
+
+                $filename = 'signatory_' . time() . '.' . $this->signatorySignature->extension();
+                $path = $this->signatorySignature->storeAs('public/signatory-signatures', $filename);
+                $signatoryData['signature_path'] = $filename;
+                
+                \Log::info('Signature stored at:', ['path' => $path]);
             }
 
-            $filename = 'signatory_' . time() . '.' . $this->signatorySignature->extension();
-            $path = $this->signatorySignature->storeAs('public/signatory-signatures', $filename);
-            $signatoryData['signature_path'] = $filename;
+            // Save the signatory
+            $this->defaultSignatory = IdSignatory::updateOrCreate(
+                ['id' => $this->defaultSignatory->id ?? null],
+                $signatoryData
+            );
+
+            // Refresh the displayed data
+            $this->loadDefaultSignatory();
             
-            \Log::info('Signature stored at:', ['path' => $path]);
+            session()->flash('message', 'Signatory details saved successfully!');
+            $this->showSignatoryModal = false;
+            
+        } catch (\Exception $e) {
+            \Log::error('Failed to save signatory:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            session()->flash('error', 'Error saving signatory details. Please check logs.');
         }
-
-        // Save the signatory
-        $this->defaultSignatory = IdSignatory::updateOrCreate(
-            ['id' => $this->defaultSignatory->id ?? null],
-            $signatoryData
-        );
-
-        // Refresh the displayed data
-        $this->loadDefaultSignatory();
-        
-        session()->flash('message', 'Signatory details saved successfully!');
-        $this->showSignatoryModal = false;
-        
-    } catch (\Exception $e) {
-        \Log::error('Failed to save signatory:', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
-        session()->flash('error', 'Error saving signatory details. Please check logs.');
     }
-}
+
     public function getSignatorySignatureUrl()
     {
         return $this->defaultSignatory && $this->defaultSignatory->signature_path 
             ? route('signatory-signature.file', ['filename' => $this->defaultSignatory->signature_path])
             : null;
+    }
+
+    public function resetVariables()
+    {
+        // $this->showSignatoryModal = false;
+        // $this->signatoryName = '';
+        // $this->signatoryPositionId = null;
+        // $this->signatoryOfficeDivisionId = null;
+        // $this->tempSignatureUrl = null;
+        // $this->signatorySignature = null;
+        // $this->searchTerm = '';
+        // $this->showEmployeeDropdown = false;
+        // $this->emergencyContactName = '';
+        // $this->emergencyContactNumber = '';
     }
 
     public function render()
