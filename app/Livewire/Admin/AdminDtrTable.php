@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\EmployeesDtr;
 use App\Models\OfficeDivisions;
+use App\Models\OfficeDivisionUnits;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\PDF as DomPDFPDF;
 use Carbon\Carbon;
@@ -27,10 +28,17 @@ class AdminDtrTable extends Component
     public $pageSize = 10;
     public $pageSizes = [10, 20, 30, 50, 100];
 
+    // Division Signatory Properties
     public $selectedDivision = null;
     public $signName = '';
     public $signPos = '';
     public $showSignatoryModal = false;
+
+    // Unit Signatory Properties
+    public $selectedUnit = null;
+    public $unitSignName = '';
+    public $unitSignPos = '';
+    public $showUnitSignatoryModal = false;
 
     // Edit Modal Properties
     public $showEditModal = false;
@@ -62,6 +70,7 @@ class AdminDtrTable extends Component
         $this->endDate = Carbon::now()->endOfMonth()->toDateString();
     }
 
+    // Division Signatory Methods
     public function openSignatoryModal($divisionId)
     {
         $this->selectedDivision = $divisionId;
@@ -91,11 +100,47 @@ class AdminDtrTable extends Component
 
         $this->showSignatoryModal = false;
         $this->dispatch('swal', [
-            'title' => 'Signatory Updated Successfully!',
+            'title' => 'Division Signatory Updated Successfully!',
             'icon' => 'success'
         ]);
     }
 
+    // Unit Signatory Methods
+    public function openUnitSignatoryModal($unitId)
+    {
+        $this->selectedUnit = $unitId;
+        $unit = OfficeDivisionUnits::find($unitId);
+
+        if ($unit) {
+            $this->unitSignName = $unit->sign_name;
+            $this->unitSignPos = $unit->sign_pos;
+        }
+
+        $this->showUnitSignatoryModal = true;
+    }
+
+    public function saveUnitSignatory()
+    {
+        $this->validate([
+            'unitSignName' => 'required',
+            'unitSignPos' => 'required',
+            'selectedUnit' => 'required'
+        ]);
+
+        $unit = OfficeDivisionUnits::find($this->selectedUnit);
+        $unit->update([
+            'sign_name' => $this->unitSignName,
+            'sign_pos' => $this->unitSignPos
+        ]);
+
+        $this->showUnitSignatoryModal = false;
+        $this->dispatch('swal', [
+            'title' => 'Unit Signatory Updated Successfully!',
+            'icon' => 'success'
+        ]);
+    }
+
+    // Edit Modal Methods
     public function openEditModal($id)
     {
         $dtr = EmployeesDtr::findOrFail($id);
@@ -114,7 +159,7 @@ class AdminDtrTable extends Component
         ];
 
         $this->showEditModal = true;
-        $this->dispatch('edit-modal-opened'); // Optional: For any JS side effects
+        $this->dispatch('edit-modal-opened');
     }
 
     public function saveEdit()
@@ -232,7 +277,7 @@ class AdminDtrTable extends Component
         }
 
         $dtrs = $query->paginate($this->pageSize);
-        $officeDivisions = OfficeDivisions::all();
+        $officeDivisions = OfficeDivisions::with('units')->get();
 
         return view('livewire.admin.admin-dtr-table', [
             'dtrs' => $dtrs,
@@ -252,26 +297,30 @@ class AdminDtrTable extends Component
             return null;
         }
 
-        // Prepare the base query
+        // Prepare the base query with unit join
         $query = EmployeesDtr::query()
-        ->join('users', 'employees_dtr.user_id', '=', 'users.id')
-        ->join('user_data', 'users.id', '=', 'user_data.user_id')
-        ->leftJoin('office_divisions', 'users.office_division_id', '=', 'office_divisions.id')
-        ->leftJoin('positions', 'users.position_id', '=', 'positions.id')
-        ->select(
-            'employees_dtr.*',
-            'users.name as user_name',
-            'positions.position as user_position',
-            'office_divisions.office_division as user_department',
-            'office_divisions.sign_name',
-            'office_divisions.sign_pos',
-            DB::raw("CASE
-                WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
-                ELSE users.emp_code
-            END as emp_code"),
-            DB::raw("COALESCE(employees_dtr.up_remarks, employees_dtr.remarks) as effective_remarks")
-        )
-        ->whereBetween('employees_dtr.date', [$this->startDate, $this->endDate]);
+            ->join('users', 'employees_dtr.user_id', '=', 'users.id')
+            ->join('user_data', 'users.id', '=', 'user_data.user_id')
+            ->leftJoin('office_divisions', 'users.office_division_id', '=', 'office_divisions.id')
+            ->leftJoin('office_division_units', 'users.unit_id', '=', 'office_division_units.id')
+            ->leftJoin('positions', 'users.position_id', '=', 'positions.id')
+            ->select(
+                'employees_dtr.*',
+                'users.name as user_name',
+                'users.unit_id',
+                'positions.position as user_position',
+                'office_divisions.office_division as user_department',
+                'office_divisions.sign_name as division_sign_name',
+                'office_divisions.sign_pos as division_sign_pos',
+                'office_division_units.sign_name as unit_sign_name',
+                'office_division_units.sign_pos as unit_sign_pos',
+                DB::raw("CASE
+                    WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
+                    ELSE users.emp_code
+                END as emp_code"),
+                DB::raw("COALESCE(employees_dtr.up_remarks, employees_dtr.remarks) as effective_remarks")
+            )
+            ->whereBetween('employees_dtr.date', [$this->startDate, $this->endDate]);
 
         // Apply search filter
         if ($this->searchTerm) {
@@ -319,14 +368,11 @@ class AdminDtrTable extends Component
                        $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
             })->count();
 
-            // Calculate days worked - if has time entries, consider it as a day worked
-            // regardless of remarks (except for absences)
+            // Calculate days worked
             $daysWorked = $processedDtrs->filter(function($dtr) {
-                // If there are time entries, consider it as worked
                 $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
                                   $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
 
-                // Only consider as not worked if explicitly marked as absent
                 if (strtolower($dtr->effective_remarks) === 'absent') {
                     return false;
                 }
@@ -334,7 +380,7 @@ class AdminDtrTable extends Component
                 return $hasTimeEntries;
             })->count();
 
-            // Calculate absences (records explicitly marked as absent)
+            // Calculate absences
             $absences = $processedDtrs->filter(function($dtr) {
                 return strtolower($dtr->effective_remarks) === 'absent';
             })->count();
@@ -359,7 +405,7 @@ class AdminDtrTable extends Component
             }
             $overtime = sprintf("%02d:%02d", floor($totalOvertimeMinutes / 60), $totalOvertimeMinutes % 60);
 
-            // Calculate late hours - only for days with time entries
+            // Calculate late hours
             $totalLateMinutes = 0;
             foreach ($processedDtrs as $dtr) {
                 $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
@@ -371,7 +417,7 @@ class AdminDtrTable extends Component
             }
             $late = sprintf("%02d:%02d", floor($totalLateMinutes / 60), $totalLateMinutes % 60);
 
-            // Calculate undertime hours - only for days with time entries
+            // Calculate undertime hours
             $totalUndertimeMinutes = 0;
             foreach ($processedDtrs as $dtr) {
                 $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
@@ -383,9 +429,21 @@ class AdminDtrTable extends Component
             }
             $undertime = sprintf("%02d:%02d", floor($totalUndertimeMinutes / 60), $totalUndertimeMinutes % 60);
 
-            // Calculate total tardiness (late + undertime)
+            // Calculate total tardiness
             $totalTardinessMinutes = $totalLateMinutes + $totalUndertimeMinutes;
             $tardiness = sprintf("%02d:%02d", floor($totalTardinessMinutes / 60), $totalTardinessMinutes % 60);
+
+            // Determine the correct signatory
+            $employee = $employeeDtrs->first();
+            if ($employee->unit_id) {
+                // Use unit signatory if employee belongs to a unit
+                $signName = $employee->unit_sign_name ?? '';
+                $signPos = $employee->unit_sign_pos ?? '';
+            } else {
+                // Use division signatory if no unit
+                $signName = $employee->division_sign_name ?? '';
+                $signPos = $employee->division_sign_pos ?? '';
+            }
 
             // Store the DTRs and summary for this employee
             $dtrsWithSummary[$employeeName] = [
@@ -399,6 +457,10 @@ class AdminDtrTable extends Component
                     'tardiness' => $tardiness,
                     'leave_days' => $leaveDays,
                     'holidays' => $holidays
+                ],
+                'signatory' => [
+                    'name' => $signName,
+                    'position' => $signPos
                 ]
             ];
         }
