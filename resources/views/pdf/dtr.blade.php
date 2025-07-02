@@ -262,15 +262,15 @@
             <div class="signature-block">
                 @if($eSignaturePath)
                     <img src="{{ storage_path('app/public/' . $eSignaturePath) }}"
-                         style="width: 80px; height: auto; margin-bottom: -5px;">
+                        style="width: 80px; height: auto; margin-bottom: -5px;">
                 @endif
                 <div class="signature-line">{{ $employeeName }}</div>
                 <div class="signature-title">Employee's Signature</div>
             </div>
 
             <div class="signature-block">
-                <div class="signature-line">{{ $data['dtrs']->first()->sign_name ?? '' }}</div>
-                <div class="signature-title">{{ $data['dtrs']->first()->sign_pos ?? '' }}</div>
+                <div class="signature-line">{{ $data['signatory']['name'] ?? '' }}</div>
+                <div class="signature-title">{{ $data['signatory']['position'] ?? '' }}</div>
                 <div class="signature-title">Verified as to the prescribed office hours</div>
             </div>
         </div>
