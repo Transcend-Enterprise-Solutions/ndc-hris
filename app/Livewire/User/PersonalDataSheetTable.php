@@ -1286,7 +1286,7 @@ class PersonalDataSheetTable extends Component
                             'date' => $elig['date'],
                             'place_of_exam' => $elig['place_of_exam'],
                             'license' => $elig['license'],
-                            'date_of_validity' => $elig['date_of_validity'],
+                            'date_of_validity' => !empty($elig['date_of_validity']) ? $elig['date_of_validity'] : null,
                         ]);
                     }
                     $this->editEligibility = null;
