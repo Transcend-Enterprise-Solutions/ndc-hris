@@ -14,13 +14,17 @@ class OfficeDivisionUnits extends Model
     protected $fillable = [
         'office_division_id',
         'unit',
+        'sign_name',
+        'sign_pos'
     ];
 
-    public function officeDivisions(){
-        return $this->belongsTo(OfficeDivisions::class);
+    public function division()
+    {
+        return $this->belongsTo(OfficeDivisions::class, 'office_division_id');
     }
 
-    public function positions(){
+    public function positions()
+    {
         return $this->hasMany(Positions::class, 'unit_id');
     }
 }
