@@ -140,6 +140,24 @@ class AdminDtrTable extends Component
         ]);
     }
 
+   // Helper method to convert time format
+    private function convertTimeFormat($time)
+    {
+        if (empty($time)) return '';
+
+        // If it's already in H:i format, return as is
+        if (preg_match('/^\d{2}:\d{2}$/', $time)) {
+            return $time;
+        }
+
+        // Try to parse and convert from various formats
+        try {
+            return date('H:i', strtotime($time));
+        } catch (\Exception $e) {
+            return '';
+        }
+    }
+
     // Edit Modal Methods
     public function openEditModal($id)
     {
@@ -147,19 +165,18 @@ class AdminDtrTable extends Component
 
         $this->editId = $id;
         $this->editData = [
-            'morning_in' => $dtr->up_morning_in ?? $dtr->morning_in,
-            'morning_out' => $dtr->up_morning_out ?? $dtr->morning_out,
-            'afternoon_in' => $dtr->up_afternoon_in ?? $dtr->afternoon_in,
-            'afternoon_out' => $dtr->up_afternoon_out ?? $dtr->afternoon_out,
+            'morning_in' => $this->convertTimeFormat($dtr->up_morning_in ?? $dtr->morning_in),
+            'morning_out' => $this->convertTimeFormat($dtr->up_morning_out ?? $dtr->morning_out),
+            'afternoon_in' => $this->convertTimeFormat($dtr->up_afternoon_in ?? $dtr->afternoon_in),
+            'afternoon_out' => $this->convertTimeFormat($dtr->up_afternoon_out ?? $dtr->afternoon_out),
             'late' => $dtr->up_late ?? $dtr->late,
             'ut' => $dtr->up_ut ?? $dtr->ut,
             'overtime' => $dtr->up_ot ?? $dtr->overtime,
             'total_hours_rendered' => $dtr->up_total_hours_rendered ?? $dtr->total_hours_rendered,
-            'effective_remarks' => $dtr->up_remarks ?? $dtr->remarks,
+            'effective_remarks' => $dtr->up_remarks ?? $dtr->effective_remarks,
         ];
 
         $this->showEditModal = true;
-        $this->dispatch('edit-modal-opened');
     }
 
     public function saveEdit()
@@ -174,29 +191,48 @@ class AdminDtrTable extends Component
             'editData.overtime' => 'nullable|string|max:255',
             'editData.total_hours_rendered' => 'nullable|string|max:255',
             'editData.effective_remarks' => 'nullable|string|max:255',
+        ], [
+            'editData.morning_in.date_format' => 'Morning In must be in HH:MM format',
+            'editData.morning_out.date_format' => 'Morning Out must be in HH:MM format',
+            'editData.afternoon_in.date_format' => 'Afternoon In must be in HH:MM format',
+            'editData.afternoon_out.date_format' => 'Afternoon Out must be in HH:MM format',
         ]);
 
-        $dtr = EmployeesDtr::findOrFail($this->editId);
+        try {
+            $dtr = EmployeesDtr::findOrFail($this->editId);
 
-        $dtr->update([
-            'up_morning_in' => $this->editData['morning_in'],
-            'up_morning_out' => $this->editData['morning_out'],
-            'up_afternoon_in' => $this->editData['afternoon_in'],
-            'up_afternoon_out' => $this->editData['afternoon_out'],
-            'up_late' => $this->editData['late'],
-            'up_ut' => $this->editData['ut'],
-            'up_ot' => $this->editData['overtime'],
-            'up_remarks' => $this->editData['effective_remarks'],
-            'up_total_hours_rendered' => $this->editData['total_hours_rendered'],
-            'updated_by' => Auth::user()->name,
-            'updated_at' => now(),
-        ]);
+            $dtr->update([
+                'up_morning_in' => $this->editData['morning_in'],
+                'up_morning_out' => $this->editData['morning_out'],
+                'up_afternoon_in' => $this->editData['afternoon_in'],
+                'up_afternoon_out' => $this->editData['afternoon_out'],
+                'up_late' => $this->editData['late'],
+                'up_ut' => $this->editData['ut'],
+                'up_ot' => $this->editData['overtime'],
+                'up_remarks' => $this->editData['effective_remarks'],
+                'up_total_hours_rendered' => $this->editData['total_hours_rendered'],
+                'updated_by' => Auth::user()->name,
+                'updated_at' => now(),
+            ]);
 
-        $this->showEditModal = false;
-        $this->dispatch('swal', [
-            'title' => 'DTR Updated Successfully!',
-            'icon' => 'success'
-        ]);
+            $this->showEditModal = false;
+            $this->reset(['editData', 'editId']);
+
+            $this->dispatch('swal', [
+                'title' => 'DTR Updated Successfully!',
+                'icon' => 'success'
+            ]);
+
+            // Refresh the component to show updated data
+            $this->dispatch('$refresh');
+
+        } catch (\Exception $e) {
+            $this->dispatch('swal', [
+                'title' => 'Error',
+                'text' => 'Failed to update DTR: ' . $e->getMessage(),
+                'icon' => 'error'
+            ]);
+        }
     }
 
     public function closeEditModal()
@@ -204,7 +240,6 @@ class AdminDtrTable extends Component
         $this->showEditModal = false;
         $this->reset(['editData', 'editId']);
     }
-
     public function updatedPageSize()
     {
         $this->resetPage();
