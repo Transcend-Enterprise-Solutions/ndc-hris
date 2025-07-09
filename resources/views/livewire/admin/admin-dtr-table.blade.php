@@ -279,96 +279,96 @@
 
         {{-- edit modal --}}
         @if($showEditModal)
-        <div class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center" style="z-index: 9999">
-            <div class="relative bg-white dark:bg-gray-800 p-6 mx-4 md:mx-auto max-w-lg w-full md:max-w-lg rounded-2xl">
-                <!-- Modal header -->
-                <div class="flex items-center justify-between pb-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
-                        Edit DTR
-                    </h3>
-                    <button wire:click="closeEditModal"
-                        class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                            </path>
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Modal body -->
-                <div class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Morning In</label>
-                            <input type="time" wire:model.defer="editData.morning_in"
-                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                                value="{{ $dtr->up_morning_in ?? $dtr->morning_in }}" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Morning Out</label>
-                            <input type="time" wire:model.defer="editData.morning_out"
-                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                                value="{{ $dtr->up_morning_out ?? $dtr->morning_out }}" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Afternoon In</label>
-                            <input type="time" wire:model.defer="editData.afternoon_in"
-                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                                value="{{ $dtr->up_afternoon_in ?? $dtr->afternoon_in }}" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Afternoon Out</label>
-                            <input type="time" wire:model.defer="editData.afternoon_out"
-                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                                value="{{ $dtr->up_afternoon_out ?? $dtr->afternoon_out }}" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Late</label>
-                            <input type="text" wire:model.defer="editData.late"
-                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                                value="{{ $dtr->up_late ?? $dtr->late }}" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Undertime</label>
-                            <input type="text" wire:model.defer="editData.ut"
-                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                                value="{{ $dtr->up_ut ?? $dtr->ut }}" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Overtime</label>
-                            <input type="text" wire:model.defer="editData.overtime"
-                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                                value="{{ $dtr->up_ot ?? $dtr->overtime }}" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Hours Rendered</label>
-                            <input type="text" wire:model.defer="editData.total_hours_rendered"
-                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                                value="{{ $dtr->up_total_hours_rendered ?? $dtr->total_hours_rendered }}" />
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Remarks</label>
-                            <input type="text" wire:model.defer="editData.effective_remarks"
-                                class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700"
-                                value="{{ $dtr->up_remarks ?? $dtr->effective_remarks }}" />
-                        </div>
+            <div class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-40 flex items-center justify-center" style="z-index: 9999">
+                <div class="relative bg-white dark:bg-gray-800 p-6 mx-4 md:mx-auto max-w-lg w-full md:max-w-lg rounded-2xl">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between pb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200">
+                            Edit DTR
+                        </h3>
+                        <button wire:click="closeEditModal"
+                            class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                                </path>
+                            </svg>
+                        </button>
                     </div>
 
-                    <!-- Modal footer -->
-                    <div class="mt-6 flex justify-end space-x-2">
-                        <button wire:click="closeEditModal"
-                            class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200">
-                            Cancel
-                        </button>
-                        <button wire:click="saveEdit"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600">
-                            Save
-                        </button>
+                    <!-- Modal body -->
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Morning In</label>
+                                <input type="time" wire:model="editData.morning_in"
+                                    class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700" />
+                                @error('editData.morning_in') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Morning Out</label>
+                                <input type="time" wire:model="editData.morning_out"
+                                    class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700" />
+                                @error('editData.morning_out') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Afternoon In</label>
+                                <input type="time" wire:model="editData.afternoon_in"
+                                    class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700" />
+                                @error('editData.afternoon_in') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Afternoon Out</label>
+                                <input type="time" wire:model="editData.afternoon_out"
+                                    class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700" />
+                                @error('editData.afternoon_out') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Late</label>
+                                <input type="text" wire:model="editData.late"
+                                    class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700" />
+                                @error('editData.late') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Undertime</label>
+                                <input type="text" wire:model="editData.ut"
+                                    class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700" />
+                                @error('editData.ut') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Overtime</label>
+                                <input type="text" wire:model="editData.overtime"
+                                    class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700" />
+                                @error('editData.overtime') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Hours Rendered</label>
+                                <input type="text" wire:model="editData.total_hours_rendered"
+                                    class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700" />
+                                @error('editData.total_hours_rendered') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Remarks</label>
+                                <input type="text" wire:model="editData.effective_remarks"
+                                    class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700" />
+                                @error('editData.effective_remarks') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="mt-6 flex justify-end space-x-2">
+                            <button wire:click="closeEditModal"
+                                class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200">
+                                Cancel
+                            </button>
+                            <button wire:click="saveEdit"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600">
+                                Save
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         @endif
 
         <!-- Pagination -->

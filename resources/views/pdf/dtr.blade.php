@@ -46,9 +46,13 @@
             font-weight: bold;
             margin: 5px 0;
         }
-        .employee-name-container {
+        .employee-info-container {
+            display: flex;
+            justify-content: space-between;
             margin-top: 15px;
             margin-bottom: 10px;
+        }
+        .employee-details {
             text-align: left;
             font-size: 13px;
         }
@@ -118,7 +122,7 @@
             font-style: italic;
         }
         .signature-section {
-            margin-top: 20px;
+            margin-top: 30px;
             display: flex;
             justify-content: space-between;
         }
@@ -128,13 +132,24 @@
         }
         .signature-line {
             border-top: 1px solid black;
-            margin-top: 25px;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        .signature-name {
             font-weight: bold;
-            font-size: 12px;
+            margin-top: 5px;
         }
         .signature-title {
             font-size: 11px;
-            margin-top: 3px;
+        }
+        .signature-pair {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        .signature-left, .signature-right {
+            width: 48%;
+            text-align: center;
         }
         .remarks-column {
             width: 120px;
@@ -146,136 +161,242 @@
             font-size: 10px;
             color: #666;
         }
+        .month-separator {
+            page-break-after: always;
+        }
+        .month-container:last-child .month-separator {
+            page-break-after: auto;
+        }
     </style>
 </head>
 <body>
-    @foreach($dtrsWithSummary as $employeeName => $data)
-        <div class="form-number">Civil Service Form No.48</div>
+    @php
+        // Group DTRs by employee and month
+        $groupedData = [];
+        foreach($dtrsWithSummary as $employeeName => $employeeData) {
+            $monthlyGroups = [];
+            foreach($employeeData['dtrs'] as $dtr) {
+                $monthYear = Carbon\Carbon::parse($dtr->date)->format('Y-m');
+                if (!isset($monthlyGroups[$monthYear])) {
+                    $monthlyGroups[$monthYear] = [
+                        'dtrs' => [],
+                        'summary' => [
+                            'days_worked' => 0,
+                            'absences' => 0,
+                            'overtime' => '00:00',
+                            'late' => '00:00',
+                            'undertime' => '00:00',
+                            'tardiness' => '00:00',
+                            'leave_days' => 0,
+                            'holidays' => 0
+                        ]
+                    ];
+                }
+                $monthlyGroups[$monthYear]['dtrs'][] = $dtr;
+            }
 
-        <div class="header-section">
-            <div class="logo-container" style="display: flex; align-items: center;">
-                <img src="{{ public_path('images/ndc-logo-transparent.png') }}" alt="NDC Logo" class="logo" style="margin-right: 20px;">
-                <img src="{{ public_path('images/bagong-pilipinas-logo.png') }}" alt="Bagong Pilipinas Logo" class="logo" style="position: relative; top: -6px;">
-            </div>
+            // Calculate summaries for each month
+            foreach($monthlyGroups as $month => &$monthData) {
+                $totalOvertimeMinutes = 0;
+                $totalLateMinutes = 0;
+                $totalUndertimeMinutes = 0;
 
-            <div class="org-title">Republic of the Philippines</div>
-            <div class="org-subtitle">National Development Company</div>
-            <div class="dtr-title">DAILY TIME RECORD</div>
-        </div>
+                foreach($monthData['dtrs'] as $dtr) {
+                    // Days worked
+                    $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
+                                    $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
 
-        <div class="employee-name-container">
-            <span class="employee-name-label">Name:</span>
-            <span class="employee-name">{{ $employeeName }}</span><br>
-            <span class="employee-name-label">Position:</span>
-            <span class="employee-name">{{ $userPosition }}</span><br>
-            <span class="employee-name-label">Department:</span>
-            <span class="employee-name">{{ $userDepartment }}</span>
-        </div>
+                    if (strtolower($dtr->effective_remarks) === 'absent') {
+                        $monthData['summary']['absences']++;
+                    } elseif (str_contains(strtolower($dtr->effective_remarks), 'leave')) {
+                        $monthData['summary']['leave_days']++;
+                    } elseif (str_contains(strtolower($dtr->effective_remarks), 'holiday')) {
+                        $monthData['summary']['holidays']++;
+                    } elseif ($hasTimeEntries) {
+                        $monthData['summary']['days_worked']++;
+                    }
 
-        <div class="month-header">
-            FOR THE MONTH OF {{ strtoupper(Carbon\Carbon::parse($startDate)->format('F Y')) }}
-        </div>
+                    // Overtime calculation
+                    if (!empty($dtr->effective_overtime) && $dtr->effective_overtime !== '00:00') {
+                        list($hours, $minutes) = explode(':', $dtr->effective_overtime);
+                        $totalOvertimeMinutes += (intval($hours) * 60) + intval($minutes);
+                    }
 
-        <!-- DTR Table -->
-        <table>
-            <thead>
-                <tr>
-                    <th rowspan="2">Day</th>
-                    <th colspan="2">A.M.</th>
-                    <th colspan="2">P.M.</th>
-                    <th rowspan="2">Late</th>
-                    <th rowspan="2">UT</th>
-                    <th rowspan="2">OT</th>
-                    <th rowspan="2" class="remarks-column">REMARKS</th>
-                </tr>
-                <tr>
-                    <th>Time In</th>
-                    <th>Time Out</th>
-                    <th>Time In</th>
-                    <th>Time Out</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($data['dtrs'] as $dtr)
-                    @php
-                        $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
-                                         $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
-                        $dayOfWeek = $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('D') : '';
-                        $dayNum = $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('j') : '';
-                        $isWeekend = in_array($dayOfWeek, ['Sat', 'Sun']);
-                    @endphp
-                    <tr class="{{ $isWeekend ? 'weekend' : '' }}">
-                        <td>{{ $dayNum }} {{ $dayOfWeek }}</td>
-                        <td>{{ $dtr->effective_morning_in && $dtr->effective_morning_in != '00:00' ? $dtr->effective_morning_in : '--:--' }}</td>
-                        <td>{{ $dtr->effective_morning_out && $dtr->effective_morning_out != '00:00' ? $dtr->effective_morning_out : '--:--' }}</td>
-                        <td>{{ $dtr->effective_afternoon_in && $dtr->effective_afternoon_in != '00:00' ? $dtr->effective_afternoon_in : '--:--' }}</td>
-                        <td>{{ $dtr->effective_afternoon_out && $dtr->effective_afternoon_out != '00:00' ? $dtr->effective_afternoon_out : '--:--' }}</td>
-                        <td>{{ $hasTimeEntries && $dtr->effective_late ? $dtr->effective_late : '--:--' }}</td>
-                        <td>{{ $hasTimeEntries && $dtr->effective_ut ? $dtr->effective_ut : '--:--' }}</td>
-                        <td>{{ $dtr->effective_overtime && $dtr->effective_overtime != '00:00' ? $dtr->effective_overtime : '--:--' }}</td>
-                        <td>{{ $dtr->effective_remarks !== 'Present' ? $dtr->effective_remarks : '' }}</td>
+                    // Late calculation
+                    if ($hasTimeEntries && !empty($dtr->effective_late) && $dtr->effective_late !== '00:00') {
+                        list($hours, $minutes) = explode(':', $dtr->effective_late);
+                        $totalLateMinutes += (intval($hours) * 60) + intval($minutes);
+                    }
+
+                    // Undertime calculation
+                    if ($hasTimeEntries && !empty($dtr->effective_ut) && $dtr->effective_ut !== '00:00') {
+                        list($hours, $minutes) = explode(':', $dtr->effective_ut);
+                        $totalUndertimeMinutes += (intval($hours) * 60) + intval($minutes);
+                    }
+                }
+
+                $monthData['summary']['overtime'] = sprintf("%02d:%02d", floor($totalOvertimeMinutes / 60), $totalOvertimeMinutes % 60);
+                $monthData['summary']['late'] = sprintf("%02d:%02d", floor($totalLateMinutes / 60), $totalLateMinutes % 60);
+                $monthData['summary']['undertime'] = sprintf("%02d:%02d", floor($totalUndertimeMinutes / 60), $totalUndertimeMinutes % 60);
+                $totalTardinessMinutes = $totalLateMinutes + $totalUndertimeMinutes;
+                $monthData['summary']['tardiness'] = sprintf("%02d:%02d", floor($totalTardinessMinutes / 60), $totalTardinessMinutes % 60);
+            }
+
+            $groupedData[$employeeName] = $monthlyGroups;
+        }
+    @endphp
+
+    @foreach($groupedData as $employeeName => $monthlyData)
+        @foreach($monthlyData as $month => $data)
+            <div class="month-container">
+                <div class="form-number">Civil Service Form No.48</div>
+
+                <div class="header-section">
+                    <div class="logo-container" style="display: flex; align-items: center;">
+                        <img src="{{ public_path('images/ndc-logo-transparent.png') }}" alt="NDC Logo" class="logo" style="margin-right: 20px;">
+                        <img src="{{ public_path('images/bagong-pilipinas-logo.png') }}" alt="Bagong Pilipinas Logo" class="logo" style="position: relative; top: -6px;">
+                    </div>
+
+                    <div class="org-title">Republic of the Philippines</div>
+                    <div class="org-subtitle">National Development Company</div>
+                    <div class="dtr-title">DAILY TIME RECORD</div>
+                </div>
+
+                <div class="employee-info-container">
+                    <div class="employee-details">
+                        <div>
+                            <span class="employee-name-label">Name:</span>
+                            <span class="employee-name">{{ $employeeName }}</span>
+                        </div>
+                        <div>
+                            <span class="employee-name-label">Position:</span>
+                            <span class="employee-name">{{ $userPosition }}</span>
+                        </div>
+                        <div>
+                            <span class="employee-name-label">Department:</span>
+                            <span class="employee-name">{{ $userDepartment }}</span>
+                        </div>
+                    </div>
+
+                    <div class="signature-block" style="width: 40%; text-align: right;">
+                        <div class="signature-line"></div>
+                        <div class="signature-title">{{ $data['signatory']['name'] ?? '' }}</div>
+                        <div class="signature-title">{{ $data['signatory']['position'] ?? '' }}</div>
+                        <div class="signature-title">Verified as to the prescribed office hours</div>
+                    </div>
+                </div>
+
+                <div class="month-header">
+                    FOR THE MONTH OF {{ strtoupper(Carbon\Carbon::parse($month . '-01')->format('F Y')) }}
+                </div>
+
+                <!-- DTR Table -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Day</th>
+                            <th colspan="2">A.M.</th>
+                            <th colspan="2">P.M.</th>
+                            <th rowspan="2">Late</th>
+                            <th rowspan="2">UT</th>
+                            <th rowspan="2">OT</th>
+                            <th rowspan="2" class="remarks-column">REMARKS</th>
+                        </tr>
+                        <tr>
+                            <th>Time In</th>
+                            <th>Time Out</th>
+                            <th>Time In</th>
+                            <th>Time Out</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($data['dtrs'] as $dtr)
+                            @php
+                                $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
+                                                 $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
+                                $dayOfWeek = $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('D') : '';
+                                $dayNum = $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('j') : '';
+                                $isWeekend = in_array($dayOfWeek, ['Sat', 'Sun']);
+                            @endphp
+                            <tr class="{{ $isWeekend ? 'weekend' : '' }}">
+                                <td>{{ $dayNum }} {{ $dayOfWeek }}</td>
+                                <td>{{ $dtr->effective_morning_in && $dtr->effective_morning_in != '00:00' ? $dtr->effective_morning_in : '--:--' }}</td>
+                                <td>{{ $dtr->effective_morning_out && $dtr->effective_morning_out != '00:00' ? $dtr->effective_morning_out : '--:--' }}</td>
+                                <td>{{ $dtr->effective_afternoon_in && $dtr->effective_afternoon_in != '00:00' ? $dtr->effective_afternoon_in : '--:--' }}</td>
+                                <td>{{ $dtr->effective_afternoon_out && $dtr->effective_afternoon_out != '00:00' ? $dtr->effective_afternoon_out : '--:--' }}</td>
+                                <td>{{ $hasTimeEntries && $dtr->effective_late ? $dtr->effective_late : '--:--' }}</td>
+                                <td>{{ $hasTimeEntries && $dtr->effective_ut ? $dtr->effective_ut : '--:--' }}</td>
+                                <td>{{ $dtr->effective_overtime && $dtr->effective_overtime != '00:00' ? $dtr->effective_overtime : '--:--' }}</td>
+                                <td>{{ $dtr->effective_remarks !== 'Present' ? $dtr->effective_remarks : '' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+                <div class="total-summary" style="text-align: left; margin-left: 3px; margin-top: 8px; margin-bottom: 3px;">TOTAL SUMMARY</div>
+
+                <table style="width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 11px;">
+                    <tr>
+                        <!-- First Row -->
+                        <td style="border: none; padding: 1px 3px; text-align: left;">
+                            <strong>Days Worked : </strong> {{ $data['summary']['days_worked'] }}
+                        </td>
+                        <td style="border: none; padding: 1px 3px; text-align: left;">
+                            <strong>Late : </strong> {{ $data['summary']['late'] }}
+                        </td>
+                        <td style="border: none; padding: 1px 3px; text-align: left;">
+                            <strong>Leave : </strong> {{ $data['summary']['leave_days'] }}
+                        </td>
+                        <td style="border: none; padding: 1px 3px; text-align: left;">
+                            <strong>OT : </strong> {{ $data['summary']['overtime'] }}
+                        </td>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                    <tr>
+                        <!-- Second Row -->
+                        <td style="border: none; padding: 1px 3px; text-align: left;">
+                            <strong>Absences : </strong> {{ $data['summary']['absences'] }}
+                        </td>
+                        <td style="border: none; padding: 1px 3px; text-align: left;">
+                            <strong>UT : </strong> {{ $data['summary']['undertime'] }}
+                        </td>
+                        <td style="border: none; padding: 1px 3px; text-align: left;">
+                            <strong>Holiday : </strong> {{ $data['summary']['holidays'] }}
+                        </td>
+                        <td style="border: none; padding: 1px 3px; text-align: left;">
+                            <strong>Total Tardiness : </strong> {{ $data['summary']['tardiness'] }}
+                        </td>
+                    </tr>
+                </table>
 
-        <div class="total-summary" style="text-align: left; margin-left: 3px; margin-top: 8px; margin-bottom: 3px;">TOTAL SUMMARY</div>
+                <div class="certification">
+        I CERTIFY on my honor that the above is a true and correct report of the hours of work performed, record of which was made daily at the time of arrival and departure from office.
+    </div>
 
-        <table style="width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 11px;">
-            <tr>
-                <!-- First Row -->
-                <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>Days Worked : </strong> {{ $data['summary']['days_worked'] }}
-                </td>
-                <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>Late : </strong> {{ $data['summary']['late'] }}
-                </td>
-                <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>Leave : </strong> {{ $data['summary']['leave_days'] }}
-                </td>
-                <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>OT : </strong> {{ $data['summary']['overtime'] }}
-                </td>
-            </tr>
-            <tr>
-                <!-- Second Row -->
-                <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>Absences : </strong> {{ $data['summary']['absences'] }}
-                </td>
-                <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>UT : </strong> {{ $data['summary']['undertime'] }}
-                </td>
-                <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>Holiday : </strong> {{ $data['summary']['holidays'] }}
-                </td>
-                <td style="border: none; padding: 1px 3px; text-align: left;">
-                    <strong>Total Tardiness : </strong> {{ $data['summary']['tardiness'] }}
-                </td>
-            </tr>
-        </table>
-
-        <div class="certification">
-            I CERTIFY on my honor that the above is a true and correct report of the hours of work performed, record of which was made daily at the time of arrival and departure from office.
+    <div class="signature-pair">
+        <div class="signature-left">
+            @if($eSignaturePath)
+                <img src="{{ storage_path('app/public/' . $eSignaturePath) }}"
+                    style="width: 80px; height: auto; margin-bottom: 5px;">
+            @endif
+            <div class="signature-line"></div>
+            <div class="signature-name">{{ $employeeName }}</div>
+            <div class="signature-title">Employee's Signature</div>
         </div>
 
-        <div class="signature-section">
-            <div class="signature-block">
-                @if($eSignaturePath)
-                    <img src="{{ storage_path('app/public/' . $eSignaturePath) }}"
-                         style="width: 80px; height: auto; margin-bottom: -5px;">
+        <div class="signature-right">
+            <div class="signature-line"></div>
+            <div class="signature-name">{{ $data['signatory']['name'] ?? '' }}</div>
+            <div class="signature-title">{{ $data['signatory']['position'] ?? '' }}</div>
+        </div>
+    </div>
+
+    <div class="timestamp">Generated on: {{ now()->format('F d, Y H:i:s') }}</div>
+
+                @if(!$loop->last)
+                    <div class="month-separator"></div>
                 @endif
-                <div class="signature-line">{{ $employeeName }}</div>
-                <div class="signature-title">Employee's Signature</div>
             </div>
-
-            <div class="signature-block">
-                <div class="signature-line">{{ $data['dtrs']->first()->sign_name ?? '' }}</div>
-                <div class="signature-title">{{ $data['dtrs']->first()->sign_pos ?? '' }}</div>
-                <div class="signature-title">Verified as to the prescribed office hours</div>
-            </div>
-        </div>
-
-        <div class="timestamp">Generated on: {{ now()->format('F d, Y H:i:s') }}</div>
+        @endforeach
 
         @if(!$loop->last)
             <div style="page-break-after: always;"></div>
