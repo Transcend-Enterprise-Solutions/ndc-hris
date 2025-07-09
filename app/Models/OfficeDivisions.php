@@ -37,6 +37,7 @@ class OfficeDivisions extends Model
             $query->where('office_divisions.office_division', 'like', $term);
         });
     }
+    
     public function units()
     {
         return $this->hasMany(OfficeDivisionUnits::class, 'office_division_id');

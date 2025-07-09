@@ -856,8 +856,6 @@ class PayrollTable extends Component
         try {
             $this->validate([
                 'userId' => 'required',
-                'sg' => 'required',
-                'step' => 'required',
             ]);
             
             $payroll = CosRegPayrolls::where('user_id', $this->userId)->first();
@@ -884,8 +882,6 @@ class PayrollTable extends Component
                         'employee_number' => 'required|max:100',
                         'office_division' => 'required|max:100',
                         'position' => 'required|max:100',
-                        'sg' => 'required|numeric',
-                        'step' => 'required|numeric',
                         'rate_per_month' => 'required|numeric',
                     ]);
     
@@ -897,8 +893,6 @@ class PayrollTable extends Component
                         'employee_number' => 'required|max:100',
                         'office_division' => 'required|max:100',
                         'position' => 'required|max:100',
-                        'sg' => 'required|numeric',
-                        'step' => 'required|numeric',
                         'rate_per_month' => 'required|numeric',
                     ]);
                     CosRegPayrolls::create($payrollData);

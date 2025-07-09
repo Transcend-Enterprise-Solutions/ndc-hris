@@ -937,7 +937,7 @@ x-cloak>
 
                     <div class="col-span-full sm:col-span-1">
                         <label for="rate_per_month" class="block text-sm font-medium text-gray-700 dark:text-slate-400">Rate per Month</label>
-                        <input type="number" step="0.01" id="rate_per_month" wire:model.live='rate_per_month' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700" readonly>
+                        <input type="number" step="0.01" id="rate_per_month" wire:model.live='rate_per_month' class="mt-1 p-2 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:text-gray-300 dark:bg-gray-700">
                         @error('rate_per_month') 
                             <span class="text-red-500 text-sm">The rate per month is required!</span> 
                         @enderror
