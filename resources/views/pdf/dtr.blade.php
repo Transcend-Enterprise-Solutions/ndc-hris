@@ -47,8 +47,6 @@
             margin: 5px 0;
         }
         .employee-info-container {
-            display: flex;
-            justify-content: space-between;
             margin-top: 15px;
             margin-bottom: 10px;
         }
@@ -73,18 +71,19 @@
             padding: 3px;
             background-color: #f2f2f2;
         }
-        table {
+        table.dtr-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 5px;
         }
-        th, td {
+        table.dtr-table th,
+        table.dtr-table td {
             border: 1px solid black;
             padding: 4px;
             text-align: center;
             font-size: 11px;
         }
-        th {
+        table.dtr-table th {
             background-color: #f2f2f2;
             font-weight: bold;
         }
@@ -92,28 +91,12 @@
             background-color: #f8f8f8;
         }
         .total-summary {
-            margin-top: 10px;
-            text-align: center;
+            text-align: left;
+            margin-left: 3px;
+            margin-top: 8px;
+            margin-bottom: 3px;
             font-weight: bold;
             font-size: 12px;
-        }
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 5px;
-            margin-top: 10px;
-            border: 1px solid #000;
-            padding: 5px;
-        }
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            padding: 2px;
-        }
-        .summary-label {
-            font-weight: bold;
-            margin-right: 5px;
         }
         .certification {
             margin-top: 15px;
@@ -121,38 +104,29 @@
             text-align: center;
             font-style: italic;
         }
-        .signature-section {
+        .signature-container {
             margin-top: 30px;
-            display: flex;
-            justify-content: space-between;
         }
-        .signature-block {
-            width: 45%;
+        .signature-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .signature-table td {
+            width: 50%;
             text-align: center;
+            vertical-align: top;
+            padding: 0;
         }
         .signature-line {
             border-top: 1px solid black;
-            width: 100%;
-            margin-bottom: 5px;
+            width: 80%;
+            margin: 0 auto 5px;
         }
         .signature-name {
             font-weight: bold;
-            margin-top: 5px;
         }
         .signature-title {
             font-size: 11px;
-        }
-        .signature-pair {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 40px;
-        }
-        .signature-left, .signature-right {
-            width: 48%;
-            text-align: center;
-        }
-        .remarks-column {
-            width: 120px;
         }
         .timestamp {
             position: absolute;
@@ -189,7 +163,8 @@
                             'tardiness' => '00:00',
                             'leave_days' => 0,
                             'holidays' => 0
-                        ]
+                        ],
+                        'signatory' => $employeeData['signatory']
                     ];
                 }
                 $monthlyGroups[$monthYear]['dtrs'][] = $dtr;
@@ -277,13 +252,6 @@
                             <span class="employee-name">{{ $userDepartment }}</span>
                         </div>
                     </div>
-
-                    <div class="signature-block" style="width: 40%; text-align: right;">
-                        <div class="signature-line"></div>
-                        <div class="signature-title">{{ $data['signatory']['name'] ?? '' }}</div>
-                        <div class="signature-title">{{ $data['signatory']['position'] ?? '' }}</div>
-                        <div class="signature-title">Verified as to the prescribed office hours</div>
-                    </div>
                 </div>
 
                 <div class="month-header">
@@ -291,7 +259,7 @@
                 </div>
 
                 <!-- DTR Table -->
-                <table>
+                <table class="dtr-table">
                     <thead>
                         <tr>
                             <th rowspan="2">Day</th>
@@ -300,7 +268,7 @@
                             <th rowspan="2">Late</th>
                             <th rowspan="2">UT</th>
                             <th rowspan="2">OT</th>
-                            <th rowspan="2" class="remarks-column">REMARKS</th>
+                            <th rowspan="2" style="width: 120px;">REMARKS</th>
                         </tr>
                         <tr>
                             <th>Time In</th>
@@ -333,11 +301,10 @@
                     </tbody>
                 </table>
 
-                <div class="total-summary" style="text-align: left; margin-left: 3px; margin-top: 8px; margin-bottom: 3px;">TOTAL SUMMARY</div>
+                <div class="total-summary">TOTAL SUMMARY</div>
 
                 <table style="width: 100%; border-collapse: collapse; margin-top: 3px; font-size: 11px;">
                     <tr>
-                        <!-- First Row -->
                         <td style="border: none; padding: 1px 3px; text-align: left;">
                             <strong>Days Worked : </strong> {{ $data['summary']['days_worked'] }}
                         </td>
@@ -352,7 +319,6 @@
                         </td>
                     </tr>
                     <tr>
-                        <!-- Second Row -->
                         <td style="border: none; padding: 1px 3px; text-align: left;">
                             <strong>Absences : </strong> {{ $data['summary']['absences'] }}
                         </td>
@@ -369,28 +335,31 @@
                 </table>
 
                 <div class="certification">
-        I CERTIFY on my honor that the above is a true and correct report of the hours of work performed, record of which was made daily at the time of arrival and departure from office.
-    </div>
+                    I CERTIFY on my honor that the above is a true and correct report of the hours of work performed, record of which was made daily at the time of arrival and departure from office.
+                </div>
 
-    <div class="signature-pair">
-        <div class="signature-left">
-            @if($eSignaturePath)
-                <img src="{{ storage_path('app/public/' . $eSignaturePath) }}"
-                    style="width: 80px; height: auto; margin-bottom: 5px;">
-            @endif
-            <div class="signature-line"></div>
-            <div class="signature-name">{{ $employeeName }}</div>
-            <div class="signature-title">Employee's Signature</div>
-        </div>
+                <div class="signature-container">
+                    <table class="signature-table">
+                        <tr>
+                            <td>
+                                @if($eSignaturePath)
+                                    <img src="{{ storage_path('app/public/' . $eSignaturePath) }}"
+                                         style="width: 80px; height: auto; margin-bottom: 5px; display: block; margin-left: auto; margin-right: auto;">
+                                @endif
+                                <div class="signature-line"></div>
+                                <div class="signature-name">{{ $employeeName }}</div>
+                                <div class="signature-title">Employee's Signature</div>
+                            </td>
+                            <td>
+                                <div class="signature-line"></div>
+                                <div class="signature-name">{{ $data['signatory']['name'] ?? '' }}</div>
+                                <div class="signature-title">{{ $data['signatory']['position'] ?? '' }}</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
 
-        <div class="signature-right">
-            <div class="signature-line"></div>
-            <div class="signature-name">{{ $data['signatory']['name'] ?? '' }}</div>
-            <div class="signature-title">{{ $data['signatory']['position'] ?? '' }}</div>
-        </div>
-    </div>
-
-    <div class="timestamp">Generated on: {{ now()->format('F d, Y H:i:s') }}</div>
+                <div class="timestamp">Generated on: {{ now()->format('F d, Y H:i:s') }}</div>
 
                 @if(!$loop->last)
                     <div class="month-separator"></div>
