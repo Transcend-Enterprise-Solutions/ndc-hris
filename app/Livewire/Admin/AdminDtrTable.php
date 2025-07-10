@@ -27,6 +27,7 @@ class AdminDtrTable extends Component
     public $eSignaturePath = '';
     public $pageSize = 10;
     public $pageSizes = [10, 20, 30, 50, 100];
+    public $selectedAppointment = '';
 
     // Division Signatory Properties
     public $selectedDivision = null;
@@ -62,6 +63,7 @@ class AdminDtrTable extends Component
         'sortField' => ['except' => 'date'],
         'sortDirection' => ['except' => 'asc'],
         'pageSize' => ['except' => 30],
+        'selectedAppointment' => ['except' => ''],
     ];
 
     public function mount()
@@ -140,7 +142,7 @@ class AdminDtrTable extends Component
         ]);
     }
 
-   // Helper method to convert time format
+    // Helper method to convert time format
     private function convertTimeFormat($time)
     {
         if (empty($time)) return '';
@@ -240,6 +242,7 @@ class AdminDtrTable extends Component
         $this->showEditModal = false;
         $this->reset(['editData', 'editId']);
     }
+
     public function updatedPageSize()
     {
         $this->resetPage();
@@ -285,6 +288,11 @@ class AdminDtrTable extends Component
         // Apply office division filter
         if ($this->selectedDivision) {
             $query->where('users.office_division_id', $this->selectedDivision);
+        }
+
+        // Apply appointment filter
+        if ($this->selectedAppointment) {
+            $query->where('user_data.appointment', $this->selectedAppointment);
         }
 
         // Apply date filters
@@ -368,6 +376,11 @@ class AdminDtrTable extends Component
         // Apply office division filter
         if ($this->selectedDivision) {
             $query->where('users.office_division_id', $this->selectedDivision);
+        }
+
+        // Apply appointment filter
+        if ($this->selectedAppointment) {
+            $query->where('user_data.appointment', $this->selectedAppointment);
         }
 
         // Order the results
