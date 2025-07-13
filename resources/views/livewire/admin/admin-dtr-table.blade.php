@@ -28,6 +28,18 @@
                     @endforeach
                 </select>
             </div>
+            {{-- Appointment --}}
+            <div class="w-full sm:w-1/3 sm:mr-4">
+                <label for="appointmentFilter" class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Appointment</label>
+                <select id="appointmentFilter" wire:model.live="selectedAppointment"
+                    class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                        dark:hover:bg-slate-600 dark:border-slate-600
+                        dark:text-gray-300 dark:bg-gray-800">
+                    <option value="">All Appointments</option>
+                    <option value="plantilla">Plantilla</option>
+                    <option value="cos">COS</option>
+                </select>
+            </div>
 
             <!-- Date Range Picker -->
             <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
