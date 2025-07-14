@@ -86,6 +86,7 @@ class PayrollTable extends Component
     public $sg;
     public $step = 1;
     public $rate_per_month;
+    public $rate_per_day;
     public $daily_salary_rate;
     public $no_of_days_covered;
     public $gross_salary;
@@ -435,9 +436,11 @@ class PayrollTable extends Component
                         continue;
                     }
 
-                    $ratePerMonth = ($payrollRecord->rate_per_month * 0.20) + $payrollRecord->rate_per_month;
+                    $ratePerMonth = 
+                        // ($payrollRecord->rate_per_month * 0.20) + 
+                        $payrollRecord->rate_per_month;
 
-                    $dailySalaryRate = $ratePerMonth / 22;
+                    $dailySalaryRate = $payrollRecord->rate_per_day ?? $ratePerMonth / 22;
                     
                     //Get total number of covered days
                     $totalDays = $dtrData['total_days'];
@@ -513,6 +516,7 @@ class PayrollTable extends Component
                             'user_id' => $user->id,
                             'salary_grade' => $payrollRecord->sg_step,
                             'rate_per_month' => $payrollRecord->rate_per_month,
+                            'rate_per_day' => $payrollRecord->rate_per_day ?? $payrollRecord->rate_per_month / 22,
                             'days_covered' => $totalDays,
                             'gross_salary' => $grossSalary,
                             'absences_days' => $absentDays,
@@ -531,8 +535,8 @@ class PayrollTable extends Component
                             'net_amount_received' => $netAmountDue,
                             'start_date' => $sDate,
                             'end_date' => $eDate,
-                            'prepared_by_name' => $preparedBy->name,
-                            'prepared_by_position' => $preparedBy->position,
+                            'prepared_by_name' => $preparedBy ? $preparedBy->name : '',
+                            'prepared_by_position' => $preparedBy ? $preparedBy->position : '',
                         ]);
                     }else{
                         $payrolls->push([
@@ -546,6 +550,7 @@ class PayrollTable extends Component
                             'salary_grade' => $payrollRecord->sg_step,
                             'daily_salary_rate' => $dailySalaryRate,
                             'rate_per_month' => $payrollRecord->rate_per_month,
+                            'rate_per_day' => $payrollRecord->rate_per_day,
                             'additional_premiums' => $payrollRecord->additional_premiums,
                             'no_of_days_covered' => $totalDays,
                             'gross_salary' => $grossSalary,
@@ -590,7 +595,7 @@ class PayrollTable extends Component
             }
         } catch (Exception $e) {
             $this->dispatch('swal', [
-                'title' => $e->getMessage(),
+                'title' => 'Something went wrong. ' . $e->getMessage(),
                 'icon' => 'error'
             ]);
             return new LengthAwarePaginator([], 0, 1);
@@ -869,6 +874,7 @@ class PayrollTable extends Component
                     'user_id' => $this->userId,
                     'sg_step' => $this->sg,
                     'rate_per_month' => $this->rate_per_month,
+                    'rate_per_day' => $this->rate_per_day,
                     'additional_premiums' => $this->additional_premiums,
                     'adjustment' => $this->adjustment,
                     'withholding_tax' => $this->withholding_tax,
@@ -883,6 +889,7 @@ class PayrollTable extends Component
                         'office_division' => 'required|max:100',
                         'position' => 'required|max:100',
                         'rate_per_month' => 'required|numeric',
+                        'rate_per_day' => 'required|numeric',
                     ]);
     
                     $payroll->update($payrollData);
@@ -894,6 +901,7 @@ class PayrollTable extends Component
                         'office_division' => 'required|max:100',
                         'position' => 'required|max:100',
                         'rate_per_month' => 'required|numeric',
+                        'rate_per_day' => 'required|numeric',
                     ]);
                     CosRegPayrolls::create($payrollData);
                     $message = "COS Payroll added successfully!";
@@ -1247,5 +1255,6 @@ class PayrollTable extends Component
         $this->signatures = [];
         $this->preparedBySign = null;
         $this->view = null;
+        $this->rate_per_day = null;
     }
 }

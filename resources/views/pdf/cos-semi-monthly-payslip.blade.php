@@ -46,21 +46,21 @@
             return number_format((float)$value, 2, '.', ',');
         };
 
-        $halfSalary = $payslip['rate_per_month'] / 2;
-        $perDay = $payslip['rate_per_month'] / 22;
+        $halfSalary = $payslip ? $payslip['rate_per_month'] / 2 : '--';
+        $perDay = $payslip && $payslip['rate_per_day'] ?? $payslip['rate_per_month'] / 22;
         $perHour = $perDay / 8;
         $perMinute = $perHour / 60;
-        $lateUndertimeAbsencesAmount = $payslip['absences_amount'] + $payslip['late_undertime_hours_amount'] + $payslip['late_undertime_mins_amount'];
-        $lateUndertimeAbsencesAmount2 = $payslip2['absences_amount'] + $payslip2['late_undertime_hours_amount'] + $payslip2['late_undertime_mins_amount'];
-        $totalNetPay = $payslip['net_amount_due'] + $payslip2['net_amount_due'];
+        $lateUndertimeAbsencesAmount = ($payslip ? $payslip['absences_amount'] : 0) + ($payslip ? $payslip['late_undertime_hours_amount'] : 0) + ($payslip ? $payslip['late_undertime_mins_amount'] : 0);
+        $lateUndertimeAbsencesAmount2 = ($payslip2 ? $payslip2['absences_amount'] : 0) + ($payslip2 ? $payslip2['late_undertime_hours_amount'] : 0) + ($payslip2 ? $payslip2['late_undertime_mins_amount'] : 0);
+        $totalNetPay = ($payslip ? $payslip['net_amount_due'] : 0) + ($payslip2 ? $payslip2['net_amount_due'] : 0);
     @endphp
 
     <div class="container" style="border: solid 2px black; padding: 10px; margin-left: 100px; margin-top: -20px">
          {{-- Header --}}
         <div style="display:flex; margin-bottom: 30px;">
             <center style="display:flex;">
-                <img src="images/ndc_logo.png" width="35" style="margin-bottom: 2px">
-                <img src="images/bagong-pilipinas-logo.png" width="35" style="margin-bottom: 5px">
+                <img src="images/ndc_logo.png" width="55" style="margin-bottom: 2px">
+                <img src="images/bagong-pilipinas-logo.png" width="25" style="margin-bottom: 5px">
                 <img src="images/payslip-header.png" width="200">
             </center>
         </div>
@@ -69,7 +69,7 @@
             <tbody>
                 <tr>
                     <td width="20%" class="bold">Office/Division:</td>
-                    <td>{{ $payslip['office_division'] }}</td>
+                    <td>{{ $payslip ? $payslip['office_division'] : '--' }}</td>
                 </tr>
                 <tr>
                     <td width="20%" class="bold">Pay Period:</td>
@@ -84,7 +84,7 @@
             <tbody>
                 <tr>
                     <td width="20%" class="bold">Employee's Name:</td>
-                    <td width="30%">{{ $payslip['name'] }}</td>
+                    <td width="30%">{{ $payslip && $payslip['name'] }}</td>
                     <td></td>
                     <td width="20%" class="bold">Acct. No: </td>
                     <td width="15%"></td>
@@ -92,10 +92,10 @@
                 </tr>
                 <tr>
                     <td width="20%" class="bold">Position:</td>
-                    <td width="30%">{{ $payslip['position'] ?: '' }}</td>
+                    <td width="30%">{{ $payslip && $payslip['position'] ?: '' }}</td>
                     <td></td>
                     <td width="20%" class="bold">Employee No: </td>
-                    <td width="15%">{{ $payslip['employee_number'] ?: '' }}</td>
+                    <td width="15%">{{ $payslip && $payslip['employee_number'] ?: '' }}</td>
                     <td></td>
                 </tr>
             </tbody>
@@ -108,7 +108,7 @@
                 <tr>
                     <td class="bold">Monthly Salary
                     </td>
-                    <td class="currency bold" width="30%">{{ $payslip['rate_per_month'] ? $formatCurrency($payslip['rate_per_month']) : '-' }}</td>
+                    <td class="currency bold" width="30%">{{ $payslip && $payslip['rate_per_month'] ? $formatCurrency($payslip['rate_per_month']) : '--' }}</td>
                 </tr>
                 <tr>
                     <td class="dots" style="padding-left: 15px">1/2 Month Salary........................................................................
@@ -135,6 +135,7 @@
 
         <center><p style="margin: 6px 0;"></p></center>
 
+        @if($payslip )
             <table style="width: 100%;">
                 <tbody>
                     <tr>
@@ -167,157 +168,160 @@
                 </tbody>
             </table>
 
-        <center><p style="margin: 6px 0;"></p></center>
+            <center><p style="margin: 6px 0;"></p></center>
 
-        <table>
-            <tbody>
-                <tr>
-                    <td width="25%"></td>
-                    <td width="25%"></td>
-                    <td width="30%" class="dots">Less: Late, Undertime & Absences</td>
-                    <td width="20%" class="currency" width="30%">{{ $formatCurrency($lateUndertimeAbsencesAmount) }}</td>
-                </tr>
-                <tr>
-                    <td width="25%"></td>
-                    <td width="25%"></td>
-                    <td width="30%" class="dots">Total Earnings (1st Cut-off) =</td>
-                    <td width="20%" class="currency bold" width="30%" style="border-bottom: solid 2px black">{{ $formatCurrency($payslip['gross_salary_less']) }}</td>
-                </tr>
-            </tbody>
-        </table>
+            <table>
+                <tbody>
+                    <tr>
+                        <td width="25%"></td>
+                        <td width="25%"></td>
+                        <td width="30%" class="dots">Less: Late, Undertime & Absences</td>
+                        <td width="20%" class="currency" width="30%">{{ $formatCurrency($lateUndertimeAbsencesAmount) }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"></td>
+                        <td width="25%"></td>
+                        <td width="30%" class="dots">Total Earnings (1st Cut-off) =</td>
+                        <td width="20%" class="currency bold" width="30%" style="border-bottom: solid 2px black">{{ $formatCurrency($payslip['gross_salary_less']) }}</td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <center><p class="data" style="margin: 6px 0;">***DEDUCTIONS***</p></center>
+            <center><p class="data" style="margin: 6px 0;">***DEDUCTIONS***</p></center>
 
-        <table>
-            <tbody>
-                <tr>
-                    <td class="dots" style="padding-left: 15px">Withholding Tax..........................................................................
-                    </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip['withholding_tax']) }}</td>
-                </tr>
-                <tr>
-                    <td class="dots" style="padding-left: 15px">NYCEMPC..................................................................................
-                    </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip['nycempc']) }}</td>
-                </tr>
-                <tr>
-                    <td class="dots" style="padding-left: 15px">Other deductions.........................................................................
-                    </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip['other_deductions']) }}</td>
-                </tr>
-            </tbody>
-        </table>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="dots" style="padding-left: 15px">Withholding Tax..........................................................................
+                        </td>
+                        <td class="currency" width="30%">{{ $formatCurrency($payslip['withholding_tax']) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="dots" style="padding-left: 15px">NYCEMPC..................................................................................
+                        </td>
+                        <td class="currency" width="30%">{{ $formatCurrency($payslip['nycempc']) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="dots" style="padding-left: 15px">Other deductions.........................................................................
+                        </td>
+                        <td class="currency" width="30%">{{ $formatCurrency($payslip['other_deductions']) }}</td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <table>
-            <tbody>
-                <tr>
-                    <td width="25%"></td>
-                    <td width="30%"></td>
-                    <td width="30%" class="dots" style="text-align: right; padding-right: 10px">Total Deductions</td>
-                    <td width="15%" class="currency" width="30%">{{ $formatCurrency($payslip['total_deductions']) }}</td>
-                </tr>
-                <tr>
-                    <td width="25%"></td>
-                    <td width="30%" class="dots bold italic" style="text-align: right">NET PAY</td>
-                    <td width="30%" class="bold italic" style="text-align: right; padding-right: 10px">{{ $payslipFor ?: '' }}</td>
-                    <td width="15%" class="currency bold italic" width="30%" style="border-bottom: solid 2px black; background: #FCE4D6">{{ $formatCurrency($payslip['net_amount_due']) }}</td>
-                </tr>
-            </tbody>
-        </table>
+            <table>
+                <tbody>
+                    <tr>
+                        <td width="25%"></td>
+                        <td width="30%"></td>
+                        <td width="30%" class="dots" style="text-align: right; padding-right: 10px">Total Deductions</td>
+                        <td width="15%" class="currency" width="30%">{{ $formatCurrency($payslip['total_deductions']) }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"></td>
+                        <td width="30%" class="dots bold italic" style="text-align: right">NET PAY</td>
+                        <td width="30%" class="bold italic" style="text-align: right; padding-right: 10px">{{ $payslipFor ?: '' }}</td>
+                        <td width="15%" class="currency bold italic" width="30%" style="border-bottom: solid 2px black; background: #FCE4D6">{{ $formatCurrency($payslip['net_amount_due']) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        @endif
         
         {{-- Second Cut-off --------------------------------------------------------------------------------------------------------------- --}}
 
         <center><p style="margin: 10px 0 10px -10px; border-bottom: solid 5px #D9D9D9; width: 105%;"></p></center>
 
-        <table style="width: 100%;">
-            <tbody>
-                <tr>
-                    <td width="50%">
-                        <div style="width: 100%">
-                            <center><p class="data bold" style="color: red">{{ $payslipFor2 ?: '' }}</p></center>
-                        </div>
-                    </td>
-                    <td width="50%">
-                        <div style="width: 100%">
-                            <table style="border: 1px solid black; border-collapse: collapse;">
-                                <thead>
-                                    <tr style="background: #DDEBF7; border: 1px solid black;">
-                                        <th class="bold data text-center" style="border: 1px solid black; padding: 5px;">Days Rendered</th>
-                                        <th class="bold data text-center" style="border: 1px solid black; padding: 5px;">Daily Rate</th>
-                                        <th class="bold data text-center" style="border: 1px solid black; padding: 5px;">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr style="border: 1px solid black;">
-                                        <td class="text-center" style="border: 1px solid black; padding: 5px;">{{ $payslip2['no_of_days_covered'] ?: '' }}</td>
-                                        <td class="text-center" style="border: 1px solid black; padding: 5px;">{{ $formatCurrency($perDay) }}</td>
-                                        <td class="text-center" style="border: 1px solid black; padding: 5px;">{{ $formatCurrency($payslip2['gross_salary']) }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        @if($payslip2)
+            <table style="width: 100%;">
+                <tbody>
+                    <tr>
+                        <td width="50%">
+                            <div style="width: 100%">
+                                <center><p class="data bold" style="color: red">{{ $payslipFor2 ?: '' }}</p></center>
+                            </div>
+                        </td>
+                        <td width="50%">
+                            <div style="width: 100%">
+                                <table style="border: 1px solid black; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: #DDEBF7; border: 1px solid black;">
+                                            <th class="bold data text-center" style="border: 1px solid black; padding: 5px;">Days Rendered</th>
+                                            <th class="bold data text-center" style="border: 1px solid black; padding: 5px;">Daily Rate</th>
+                                            <th class="bold data text-center" style="border: 1px solid black; padding: 5px;">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style="border: 1px solid black;">
+                                            <td class="text-center" style="border: 1px solid black; padding: 5px;">{{ $payslip2['no_of_days_covered'] ?: '' }}</td>
+                                            <td class="text-center" style="border: 1px solid black; padding: 5px;">{{ $formatCurrency($perDay) }}</td>
+                                            <td class="text-center" style="border: 1px solid black; padding: 5px;">{{ $formatCurrency($payslip2['gross_salary']) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <center><p style="margin: 6px 0;"></p></center>
+            <center><p style="margin: 6px 0;"></p></center>
 
-        <table>
-            <tbody>
-                <tr>
-                    <td width="25%"></td>
-                    <td width="25%"></td>
-                    <td width="30%" class="dots">Less: Late, Undertime & Absences</td>
-                    <td width="20%" class="currency" width="30%">{{ $formatCurrency($lateUndertimeAbsencesAmount2) }}</td>
-                </tr>
-                <tr>
-                    <td width="25%"></td>
-                    <td width="25%"></td>
-                    <td width="30%" class="dots">Total Earnings (2nd Cut-off) =</td>
-                    <td width="20%" class="currency bold" width="30%" style="border-bottom: solid 2px black">{{ $formatCurrency($payslip2['gross_salary_less']) }}</td>
-                </tr>
-            </tbody>
-        </table>
+            <table>
+                <tbody>
+                    <tr>
+                        <td width="25%"></td>
+                        <td width="25%"></td>
+                        <td width="30%" class="dots">Less: Late, Undertime & Absences</td>
+                        <td width="20%" class="currency" width="30%">{{ $formatCurrency($lateUndertimeAbsencesAmount2) }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"></td>
+                        <td width="25%"></td>
+                        <td width="30%" class="dots">Total Earnings (2nd Cut-off) =</td>
+                        <td width="20%" class="currency bold" width="30%" style="border-bottom: solid 2px black">{{ $formatCurrency($payslip2['gross_salary_less']) }}</td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <center><p class="data" style="margin: 6px 0;">***DEDUCTIONS***</p></center>
+            <center><p class="data" style="margin: 6px 0;">***DEDUCTIONS***</p></center>
 
-        <table>
-            <tbody>
-                <tr>
-                    <td class="dots" style="padding-left: 15px">Withholding Tax..........................................................................
-                    </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip2['withholding_tax']) }}</td>
-                </tr>
-                <tr>
-                    <td class="dots" style="padding-left: 15px">NYCEMPC..................................................................................
-                    </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip2['nycempc']) }}</td>
-                </tr>
-                <tr>
-                    <td class="dots" style="padding-left: 15px">Other deductions.........................................................................
-                    </td>
-                    <td class="currency" width="30%">{{ $formatCurrency($payslip2['other_deductions']) }}</td>
-                </tr>
-            </tbody>
-        </table>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="dots" style="padding-left: 15px">Withholding Tax..........................................................................
+                        </td>
+                        <td class="currency" width="30%">{{ $formatCurrency($payslip2['withholding_tax']) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="dots" style="padding-left: 15px">NYCEMPC..................................................................................
+                        </td>
+                        <td class="currency" width="30%">{{ $formatCurrency($payslip2['nycempc']) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="dots" style="padding-left: 15px">Other deductions.........................................................................
+                        </td>
+                        <td class="currency" width="30%">{{ $formatCurrency($payslip2['other_deductions']) }}</td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <table>
-            <tbody>
-                <tr>
-                    <td width="25%"></td>
-                    <td width="30%"></td>
-                    <td width="30%" class="dots" style="text-align: right; padding-right: 10px">Total Deductions</td>
-                    <td width="15%" class="currency" width="30%">{{ $formatCurrency($payslip2['total_deductions']) }}</td>
-                </tr>
-                <tr>
-                    <td width="25%"></td>
-                    <td width="30%" class="dots bold italic" style="text-align: right">NET PAY</td>
-                    <td width="30%" class="bold italic" style="text-align: right; padding-right: 10px">{{ $payslipFor2 ?: '' }}</td>
-                    <td width="15%" class="currency bold italic" width="30%" style="border-bottom: solid 2px black; background: #FCE4D6">{{ $formatCurrency($payslip2['net_amount_due']) }}</td>
-                </tr>
-            </tbody>
-        </table>
+            <table>
+                <tbody>
+                    <tr>
+                        <td width="25%"></td>
+                        <td width="30%"></td>
+                        <td width="30%" class="dots" style="text-align: right; padding-right: 10px">Total Deductions</td>
+                        <td width="15%" class="currency" width="30%">{{ $formatCurrency($payslip2['total_deductions']) }}</td>
+                    </tr>
+                    <tr>
+                        <td width="25%"></td>
+                        <td width="30%" class="dots bold italic" style="text-align: right">NET PAY</td>
+                        <td width="30%" class="bold italic" style="text-align: right; padding-right: 10px">{{ $payslipFor2 ?: '' }}</td>
+                        <td width="15%" class="currency bold italic" width="30%" style="border-bottom: solid 2px black; background: #FCE4D6">{{ $formatCurrency($payslip2['net_amount_due']) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        @endif
         
         <center><p style="margin: 10px 0;"></p></center>
 
@@ -327,13 +331,13 @@
                     <td width="25%"></td>
                     <td width="30%" style="text-align: right">NET PAY</td>
                     <td width="30%" style="text-align: right; padding-right: 10px">{{ $payslipFor ?: '' }}</td>
-                    <td width="15%" class="currency" width="30%">{{ $formatCurrency($payslip['net_amount_due']) }}</td>
+                    <td width="15%" class="currency" width="30%">{{ $payslip ? $formatCurrency($payslip['net_amount_due']) : '--' }}</td>
                 </tr>
                 <tr>
                     <td width="25%"></td>
                     <td width="30%" style="text-align: right">NET PAY</td>
                     <td width="30%" style="text-align: right; padding-right: 10px">{{ $payslipFor2 ?: '' }}</td>
-                    <td width="15%" class="currency" width="30%">{{ $formatCurrency($payslip2['net_amount_due']) }}</td>
+                    <td width="15%" class="currency" width="30%">{{ $payslip2 ? $formatCurrency($payslip2['net_amount_due']) : '--' }}</td>
                 </tr>
                 <tr>
                     <td width="25%"></td>

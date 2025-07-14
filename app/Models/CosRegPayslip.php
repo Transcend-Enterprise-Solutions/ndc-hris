@@ -17,6 +17,7 @@ class CosRegPayslip extends Model implements AuditableContract
         'user_id',
         'salary_grade',
         'rate_per_month',
+        'rate_per_day',
         'days_covered',
         'gross_salary',
         'absences_days',

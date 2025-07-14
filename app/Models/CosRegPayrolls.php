@@ -17,6 +17,7 @@ class CosRegPayrolls extends Model implements AuditableContract
         'user_id',
         'sg_step',
         'rate_per_month', 
+        'rate_per_day', 
         'additional_premiums',
         'adjustment',
         'withholding_tax',

@@ -376,7 +376,7 @@ class PayslipTable extends Component
                 $preparedBySignaturePath = $preparedBy ? $this->getTemporarySignaturePath($preparedBy) : null;
                 $signatoriesSignaturePath = $signatories ? $this->getTemporarySignaturePath($signatories) : null;
 
-                if ($payslip) {
+                if ($payslip && $payslip2) {
                     $pdf = Pdf::loadView('pdf.cos-semi-monthly-payslip', [
                         'preparedBy' => $preparedBy,
                         'payslip' => $payslip,
@@ -393,7 +393,11 @@ class PayslipTable extends Component
                         echo $pdf->stream();
                     }, $payslip['name'] . ' ' . $monthPaylipFor . ' Payslip.pdf');
                 } else {
-                    throw new Exception('Payslip not found for the user.');
+                    $this->dispatch('swal', [
+                        'title' => 'Payslip is not available yet. Available by end of the month.',
+                        'icon' => 'success'
+                    ]);
+                    return;
                 }
             }
     

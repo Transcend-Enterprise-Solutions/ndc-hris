@@ -164,9 +164,11 @@ class CosRegRecordedPayroll extends Component
                         continue;
                     }
 
-                    $ratePerMonth = ($payrollRecord->rate_per_month * 0.20) + $payrollRecord->rate_per_month;
+                    $ratePerMonth = 
+                        // ($payrollRecord->rate_per_month * 0.20) + 
+                        $payrollRecord->rate_per_month;
 
-                    $dailySalaryRate = $ratePerMonth / 22;
+                    $dailySalaryRate = $payrollRecord->rate_per_day ?? $ratePerMonth / 22;
 
                     //Get total number of covered days
                     $totalDays = $dtrData['total_days'];
@@ -247,6 +249,7 @@ class CosRegRecordedPayroll extends Component
                         'salary_grade' => $payrollRecord->sg_step,
                         'daily_salary_rate' => $dailySalaryRate,
                         'rate_per_month' => $payrollRecord->rate_per_month,
+                        'rate_per_day' => $payrollRecord->rate_per_day,
                         'additional_premiums' => $payrollRecord->additional_premiums,
                         'no_of_days_covered' => $totalDays,
                         'gross_salary' => $grossSalary,
