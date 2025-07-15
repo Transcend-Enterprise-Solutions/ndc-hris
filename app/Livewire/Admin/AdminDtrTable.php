@@ -533,8 +533,6 @@ class AdminDtrTable extends Component
                 'endDate' => $this->endDate,
                 'eSignaturePath' => $this->eSignaturePath,
                 'divisionName' => $divisionName,
-                'userPosition' => $employeeDtrs->first()->user_position ?? '',
-                'userDepartment' => $employeeDtrs->first()->user_department ?? ''
             ])->setPaper('legal', 'portrait');
 
             // Dispatch success notification
