@@ -141,9 +141,9 @@ class ServiceRecordTable extends Component
            
             $user = User::findOrFail($id);
             $record = ServiceRecords::where('user_id', $id)
-                    ->orderByRaw("CASE WHEN toPresent = 'Present' THEN 0 ELSE 1 END")
-                    ->orderBy('from', 'desc') 
-                    ->get();
+                ->orderByRaw("CASE WHEN toPresent = 'Present' THEN 1 ELSE 0 END")
+                ->orderBy('from', 'asc') 
+                ->get();
             
             if($user && $record){
                 $filters = [
@@ -316,7 +316,7 @@ class ServiceRecordTable extends Component
         $signatory2 = Signatories::where('signatory_type', 'service_record_2')->first();
         if($signatory2 && $this->userId2){
             $signatory2->update([
-                'user_id' => $this->userId,
+                'user_id' => $this->userId2,
             ]);
         }elseif($this->userId2){
             $this->validate([

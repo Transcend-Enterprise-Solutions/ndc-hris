@@ -167,6 +167,7 @@ class EmployeeTable extends Component
     public $govId;
     public $idNumber;
     public $dateIssued;
+    public $appointment;
 
     public function toggleDropdown(){
         $this->dropdownForCategoryOpen = !$this->dropdownForCategoryOpen;
@@ -479,7 +480,22 @@ class EmployeeTable extends Component
                         WHERE work_experience.user_id = users.id AND work_experience.gov_service = 1
                     ) as years_in_gov_service'));
                 })
+                ->when($this->appointment, function ($query) {
+                    switch ($this->appointment) {
+                        case 'plantilla':
+                            $query->where('user_data.appointment', 'plantilla');
+                            break;
+                        case 'cos':
+                            $query->where('user_data.appointment', 'cos')
+                            ->orWhere('user_data.appointment', 'ct');
+                            break;
+                        case 'pa':
+                            $query->where('user_data.appointment', 'pa');
+                            break;
+                    }
+                })
                 ->where('users.user_role', '=','emp')
+                ->orderBy('users.name', 'asc')
                 ->paginate($this->pageSize);
 
             $query->getCollection()->transform(function ($user) {
@@ -605,6 +621,7 @@ class EmployeeTable extends Component
             'selectedBarangay' => $this->selectedBarangays ?? [],
             'selectedLD' => $this->selectedLD ?? [],
             'selectedEduc' => $this->selectedEduc ?? [],
+            'appointment' => $this->appointment,
         ];
     
         $this->filters['name'] = false;

@@ -165,7 +165,35 @@ class RoleManagementTable extends Component
             ->paginate($this->pageSize);
             
 
-        $organizations = User::where('user_role', 'emp')
+        $organizations = $this->getOrganization();
+
+        $this->officeDivisions = OfficeDivisions::with(['officeDivisionUnits', 'positions' => function($query) {
+            $query->where('position', '!=', 'Super Admin')->whereNull('unit_id');
+            }])
+            ->when($this->search4, function ($query) {
+                return $query->search(trim($this->search4));
+            })
+            ->get();
+        
+        $this->positionsByUnit = OfficeDivisionUnits::with(['positions' => function($query) {
+            $query->where('position', '!=', 'Super Admin')->whereNotNull('unit_id');
+            }])->get();
+
+
+        if($this->file){
+            $this->importFromExcel();
+        }
+                
+
+        return view('livewire.admin.role-management-table',[
+            'organizations' => $organizations,
+            'admins' => $admins,
+            'empPos' => $empPos,
+        ]);
+    }
+
+    protected function getOrganization(){
+        $users = User::where('user_role', 'emp')
                 ->join('user_data', 'user_data.user_id', 'users.id')
                 ->join('positions', 'positions.id', 'users.position_id')
                 ->join('office_divisions', 'office_divisions.id', 'users.office_division_id')
@@ -204,32 +232,49 @@ class RoleManagementTable extends Component
                         }
                     });
                 })
-                ->get()
-                ->groupBy('office_division');
+                ->orderBy('users.name', 'asc') // Alphabetical order
+                ->get();
 
-        $this->officeDivisions = OfficeDivisions::with(['officeDivisionUnits', 'positions' => function($query) {
-            $query->where('position', '!=', 'Super Admin')->whereNull('unit_id');
-            }])
-            ->when($this->search4, function ($query) {
-                return $query->search(trim($this->search4));
-            })
-            ->get();
+        // Group by office division and then by appointment type
+        $groupedData = [];
         
-        $this->positionsByUnit = OfficeDivisionUnits::with(['positions' => function($query) {
-            $query->where('position', '!=', 'Super Admin')->whereNotNull('unit_id');
-            }])->get();
-
-
-        if($this->file){
-            $this->importFromExcel();
+        foreach ($users as $user) {
+            $division = $user->office_division;
+            
+            // Determine appointment category
+            $appointmentCategory = 'Plantilla'; // Default
+            
+            if ($user->appointment == "cos" || $user->appointment == "ct") {
+                $appointmentCategory = 'COS';
+            } elseif (strpos($user->appointment, 'pa') === 0) {
+                $appointmentCategory = 'Presidential Appointee';
+            }
+            
+            // Add appointment_category to user object for template use
+            $user->appointment_category = $appointmentCategory;
+            
+            if (!isset($groupedData[$division])) {
+                $groupedData[$division] = [
+                    'users' => [],
+                    'totals' => [
+                        'Plantilla' => 0,
+                        'COS' => 0,
+                        'Presidential Appointee' => 0
+                    ],
+                    'by_appointment' => [
+                        'Plantilla' => [],
+                        'COS' => [],
+                        'Presidential Appointee' => []
+                    ]
+                ];
+            }
+            
+            $groupedData[$division]['users'][] = $user;
+            $groupedData[$division]['totals'][$appointmentCategory]++;
+            $groupedData[$division]['by_appointment'][$appointmentCategory][] = $user;
         }
-                
-
-        return view('livewire.admin.role-management-table',[
-            'organizations' => $organizations,
-            'admins' => $admins,
-            'empPos' => $empPos,
-        ]);
+        
+        return $groupedData;
     }
 
     public function toggleAllStats() {

@@ -216,10 +216,28 @@ class ServiceRecordExport
 
             $signatory1 = Signatories::where('signatory_type', 'service_record_1')->first();
             $signatory2 = Signatories::where('signatory_type', 'service_record_2')->first();
-            $emp1 = $signatory1  ? User::findOrFail($signatory1->user_id) : null;
-            $emp2 = $signatory2  ? User::findOrFail($signatory2->user_id) : null;
-            $employee1 = $emp1 ? strtoupper($emp1->name) : 'XXXXXXXXXX';
-            $employee2 = $emp2 ? strtoupper($emp2->name) : 'XXXXXXXXXX';
+        
+            $emp1 = $signatory1  ? User::where('users.id', $signatory1->user_id)->with('userdata')->first() : null;
+            $emp2 = $signatory2  ? User::where('users.id', $signatory2->user_id)->with('userdata')->first() : null;
+
+
+
+            $employee1 = 'XXXXXXXXXX';
+            if($emp1) {
+                $employee1 = strtoupper($emp1->userData->first_name) . 
+                ($emp1->userData->middle_name ? ' ' . strtoupper(substr($emp1->userData->middle_name, 0, 1)) . '.' : '') . 
+                ' ' . strtoupper($emp1->userData->surname) .
+                ($emp1->userData->name_extension ? ' ' . strtoupper($emp1->userData->name_extension) : '');
+            }
+
+
+            $employee2 = 'XXXXXXXXXX';
+            if($emp2) {
+                $employee2 = strtoupper($emp2->userData->first_name) . 
+                ($emp2->userData->middle_name ? ' ' . strtoupper(substr($emp2->userData->middle_name, 0, 1)) . '.' : '') . 
+                ' ' . strtoupper($emp2->userData->surname) .
+                ($emp2->userData->name_extension ? ' ' . strtoupper($emp2->userData->name_extension) : '');
+            }
 
             $pos1 = null;
             $pos2 = null;

@@ -3419,8 +3419,7 @@
                         @endforeach
                     @else
                         @foreach ($newEligibilities as $index => $elig)
-                            <div
-                                class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
+                            <div class="grid grid-cols-2 gap-4 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg pb-5 mb-3">
 
                                 <div class="col-span-2 sm:col-span-1">
                                     <label for="eligibility_{{ $index }}"

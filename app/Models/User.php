@@ -75,9 +75,17 @@ class User extends Authenticatable
         return $this->hasMany(Eligibility::class)->orderBy('date', 'DESC');
     }
 
-    public function workExperience()
+   public function workExperience()
     {
-        return $this->hasMany(WorkExperience::class)->orderBy('end_date', 'DESC');
+        return $this->hasMany(WorkExperience::class)
+            ->orderByRaw("
+                CASE 
+                    WHEN toPresent = 'Present' OR end_date IS NULL THEN 0 
+                    ELSE 1 
+                END ASC
+            ")
+            ->orderBy('start_date', 'DESC') 
+            ->orderBy('end_date', 'DESC'); 
     }
 
     public function employeesChildren()

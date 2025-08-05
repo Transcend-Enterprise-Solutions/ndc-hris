@@ -254,19 +254,17 @@ x-cloak>
                                                 </button>
                                             </div>
                                         </div>
+
                                         <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700" x-show="selectedSubTab === 'headcount'">
-                                            @forelse ($organizations as $division => $users)
-                                                <div class="block lg:flex w-full bg-white dark:bg-gray-600 mb-5 overflow-y-hidden" style="max-height: 500px">
+                                            @forelse ($organizations as $division => $divisionData)
+                                                <div class="block lg:flex w-full bg-white dark:bg-gray-600 mb-5 overflow-y-hidden" style="max-height: 650px">
                                                     <div class="pb-4 flex flex-col gap-2 sm:w-1/5 bg-gray-50 dark:bg-gray-800 relative">
                                                         <h2 class="text-wrap text-sm pb-2 h-min px-4 pt-2 font-bold dark:text-gray-300">
                                                             <i class="bi bi-building mr-2 text-emerald-500 dark:text-emerald-300"></i>
                                                             {{ $division }}
                                                         </h2>
-                                                        <div class="flex flex-col justify-center items-center" style="height: 120px">
-                                                            <p class="text-5xl font-bold">{{ count($users) }}</p>
-                                                            <p class="text-xs">Number of Employees</p>
-                                                        </div>
-                                                        <div class="flex justify-center items-center absolute bottom-2 w-full">
+
+                                                        <div class="flex justify-center items-center w-full">
                                                             <button wire:click="exportEmployees('{{ $division }}')"
                                                                 class="peer inline-flex items-center justify-center px-2
                                                                 text-sm font-medium tracking-wide text-green-500 hover:text-green-600 focus:outline-none"
@@ -279,6 +277,36 @@ x-cloak>
                                                                 </div>
                                                             </button>
                                                         </div>
+
+                                                        <div class="flex flex-col justify-center items-center" style="height: 120px">
+                                                            <p class="text-5xl font-bold">{{ count($divisionData['users']) }}</p>
+                                                            <p class="text-xs">Number of Employees</p>
+                                                        </div>
+                                                        
+                                                        <!-- Summary Section -->
+                                                        <div class="px-4 space-y-1">
+                                                            @if($divisionData['totals']['Plantilla'] > 0)
+                                                                <div class="flex justify-between items-center text-xs">
+                                                                    <span class="font-medium">Plantilla:</span>
+                                                                    <span class="font-bold">{{ $divisionData['totals']['Plantilla'] }}</span>
+                                                                </div>
+                                                            @endif
+                                                            
+                                                            @if($divisionData['totals']['COS'] > 0)
+                                                                <div class="flex justify-between items-center text-xs">
+                                                                    <span class="font-medium">COS:</span>
+                                                                    <span class="font-bold">{{ $divisionData['totals']['COS'] }}</span>
+                                                                </div>
+                                                            @endif
+                                                            
+                                                            @if($divisionData['totals']['Presidential Appointee'] > 0)
+                                                                <div class="flex justify-between items-center text-xs">
+                                                                    <span class="font-medium">Pres. Appointee:</span>
+                                                                    <span class="font-bold">{{ $divisionData['totals']['Presidential Appointee'] }}</span>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                            
                                                     </div>
                                                     <div class="pb-2 px-2 sm:w-4/5 flex flex-col">
                                                         <div class="overflow-x-auto overflow-y-hidden">
@@ -304,54 +332,74 @@ x-cloak>
                                                                 </thead>
                                                             </table>
                                                         </div>
-                                                        <div class="overflow-y-auto flex-grow scrollbar-thin1" style="max-height: calc(300px - 3rem);">
+                                                        <div class="overflow-y-auto flex-grow scrollbar-thin1" style="max-height: calc(450px - 3rem);">
                                                             <table class="w-full">
                                                                 <tbody>
-                                                                    @foreach ($users as $user)
-                                                                        @if (is_object($user))
-                                                                            <tr class="text-neutral-800 dark:text-neutral-200 border-b border-gray-100 dark:border-gray-500">
-                                                                                <td width="30%" class="px-2 py-2 text-left text-xs text-nowrap">
-                                                                                    {{ $user->name ?? 'N/A' }}
-                                                                                </td>
-                                                                                <td width="15%" class="px-2 py-2 text-center text-xs text-nowrap">
-                                                                                    {{ $user->emp_code }}
-                                                                                </td>
-                                                                                <td width="30%" class="px-2 py-2 text-center text-xs text-nowrap">
-                                                                                    {{ $user->position ?? 'N/A' }}
-                                                                                </td>
-                                                                                <td width="20%" class="px-2 py-2 text-center text-xs text-nowrap uppercase">
-                                                                                    @if($user->appointment != "cos" && $user->appointment != "ct")
-                                                                                        @php
-                                                                                            $appointment = explode(',', $user->appointment);
-                                                                                        @endphp
-                                                                                        @if($appointment[0] == 'pa')
-                                                                                           Presidential Appointee
-                                                                                        @else
-                                                                                            Plantilla
-                                                                                        @endif
-                                                                                    @else
-                                                                                        @if($user->appointment == "ct")
-                                                                                            Co-Terminus
-                                                                                        @else
-                                                                                            {{ $user->appointment }}
-                                                                                        @endif
-                                                                                    @endif
-                                                                                </td>
-                                                                                <td width="5%" class="px-2 py-2 text-center text-xs text-nowrap">
-                                                                                    <span title="
-                                                                                        {{ $user->active_status == 0 ? 'Status: Inactive' : '' }}
-                                                                                        {{ $user->active_status == 1 ? 'Status: Active' : '' }}
-                                                                                        {{ $user->active_status == 2 ? 'Status: Resigned' : '' }}
-                                                                                        {{ $user->active_status == 3 ? 'Status: Retired' : '' }}"
-                                                                                        class="inline-block px-3 py-1 text-xs font-semibold
-                                                                                        {{ $user->active_status == 0 ? 'text-red-400' : '' }}
-                                                                                        {{ $user->active_status == 1 ? 'text-green-400' : '' }}
-                                                                                        {{ $user->active_status == 2 ? 'text-yellow-400' : '' }}
-                                                                                        {{ $user->active_status == 3 ? 'text-purple-400' : '' }}">
-                                                                                        ⦿
-                                                                                    </span>
+                                                                    @foreach(['Plantilla', 'COS', 'Presidential Appointee'] as $appointmentType)
+                                                                        @if(count($divisionData['by_appointment'][$appointmentType]) > 0)
+                                                                            <!-- Appointment Type Header Row -->
+                                                                            <tr class="bg-gray-100 dark:bg-gray-700">
+                                                                                <td colspan="5" class="px-2 py-2 text-left text-xs font-bold 
+                                                                                    @if($appointmentType == 'Plantilla') text-blue-600 dark:text-blue-400 
+                                                                                    @elseif($appointmentType == 'COS') text-green-600 dark:text-green-400 
+                                                                                    @else text-purple-600 dark:text-purple-400 @endif">
+                                                                                    {{ $appointmentType }} ({{ count($divisionData['by_appointment'][$appointmentType]) }} Employees)
                                                                                 </td>
                                                                             </tr>
+                                                                            
+                                                                            <!-- Employee Rows for this Appointment Type -->
+                                                                            @foreach ($divisionData['by_appointment'][$appointmentType] as $user)
+                                                                                <tr class="text-neutral-800 dark:text-neutral-200 border-b border-gray-100 dark:border-gray-500">
+                                                                                    <td width="30%" class="px-2 py-2 text-left text-xs text-nowrap">
+                                                                                        {{ $user->name ?? 'N/A' }}
+                                                                                    </td>
+                                                                                    <td width="15%" class="px-2 py-2 text-center text-xs text-nowrap">
+                                                                                        {{ $user->emp_code }}
+                                                                                    </td>
+                                                                                    <td width="30%" class="px-2 py-2 text-center text-xs text-nowrap">
+                                                                                        {{ $user->position ?? 'N/A' }}
+                                                                                    </td>
+                                                                                    <td width="20%" class="px-2 py-2 text-center text-xs text-nowrap uppercase">
+                                                                                        @if($user->appointment != "cos" && $user->appointment != "ct")
+                                                                                            @php
+                                                                                                $appointment = explode(',', $user->appointment);
+                                                                                            @endphp
+                                                                                            @if($appointment[0] == 'pa')
+                                                                                            Presidential Appointee
+                                                                                            @else
+                                                                                                Plantilla
+                                                                                            @endif
+                                                                                        @else
+                                                                                            @if($user->appointment == "ct")
+                                                                                                Co-Terminus
+                                                                                            @else
+                                                                                                {{ $user->appointment }}
+                                                                                            @endif
+                                                                                        @endif
+                                                                                    </td>
+                                                                                    <td width="5%" class="px-2 py-2 text-center text-xs text-nowrap">
+                                                                                        <span title="
+                                                                                            {{ $user->active_status == 0 ? 'Status: Inactive' : '' }}
+                                                                                            {{ $user->active_status == 1 ? 'Status: Active' : '' }}
+                                                                                            {{ $user->active_status == 2 ? 'Status: Resigned' : '' }}
+                                                                                            {{ $user->active_status == 3 ? 'Status: Retired' : '' }}"
+                                                                                            class="inline-block px-3 py-1 text-xs font-semibold
+                                                                                            {{ $user->active_status == 0 ? 'text-red-400' : '' }}
+                                                                                            {{ $user->active_status == 1 ? 'text-green-400' : '' }}
+                                                                                            {{ $user->active_status == 2 ? 'text-yellow-400' : '' }}
+                                                                                            {{ $user->active_status == 3 ? 'text-purple-400' : '' }}">
+                                                                                            ⦿
+                                                                                        </span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            @endforeach
+                                                                            
+                                                                            <!-- Empty row for spacing between appointment types -->
+                                                                            @if(!$loop->last)
+                                                                                <tr>
+                                                                                    <td colspan="5" class="px-2 py-1"></td>
+                                                                                </tr>
+                                                                            @endif
                                                                         @endif
                                                                     @endforeach
                                                                 </tbody>
@@ -365,6 +413,7 @@ x-cloak>
                                                 </div>
                                             @endforelse
                                         </div>
+
                                         <div class="p-5 text-neutral-500 dark:text-neutral-200 bg-gray-200 dark:bg-gray-700" x-show="selectedSubTab === 'positions'">
                                             @foreach ($officeDivisions as $officeDivision)
 

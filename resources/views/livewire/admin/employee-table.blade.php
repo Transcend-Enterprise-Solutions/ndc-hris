@@ -1685,7 +1685,22 @@
                     </div>
 
 
-                    <div class="w-full sm:w-2/3 flex flex-col sm:flex-row sm:justify-end sm:space-x-4">
+                    <div class="w-full sm:w-2/3 flex items-end justify-end sm:space-x-4">
+
+                        {{-- Appointment Filter --}}
+                        <div class="w-full sm:w-auto relative">
+                            <label for="appointment"
+                                class="block text-sm font-medium text-gray-700 dark:text-slate-400 mb-1">Appointment</label>
+                            <select type="text" id="appointment" wire:model.live="appointment"
+                                class="px-2 py-1.5 block w-full shadow-sm sm:text-sm border border-gray-400 hover:bg-gray-300 rounded-md
+                                    dark:hover:bg-slate-600 dark:border-slate-600
+                                    dark:text-gray-300 dark:bg-gray-800">
+                                    <option value="">All</option>
+                                    <option value="plantilla">Plantilla</option>
+                                    <option value="cos">COS & Co-Terminus</option>
+                                    <option value="pa">Presidential Appointee</option>
+                            </select>
+                        </div>
 
                         <!-- Filter Dropdown -->
                         <div x-data="{ open: @entangle('toggleDropdownFilter') }" class="w-full sm:w-auto relative">
@@ -2525,9 +2540,9 @@
                                                     Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="divide-y divide-neutral-200 dark:divide-gray-400">
+                                        <tbody class="divide-y divide-neutral-200 dark:divide-gray-700">
                                             @foreach ($users as $user)
-                                                <tr class="text-sm whitespace-nowrap">
+                                                <tr class="text-sm whitespace-nowrap text-gray-600 dark:text-gray-300">
                                                     <td class="px-4 py-2 text-left">
                                                         {{ $user->name }}
                                                     </td>
@@ -2635,8 +2650,24 @@
                                                             {{ $user->active_status_label }}</td>
                                                     @endif
                                                     @if ($filters['appointment'])
-                                                        <td class="px-4 py-2 text-center">
-                                                            {{ $user->appointment }}</td>
+                                                        <td class="px-4 py-2 text-center uppercase">
+                                                            @if($user->appointment != "cos" && $user->appointment != "ct")
+                                                                @php
+                                                                    $appointment = explode(',', $user->appointment);
+                                                                @endphp
+                                                                @if($appointment[0] == 'pa')
+                                                                Presidential Appointee
+                                                                @else
+                                                                    Plantilla
+                                                                @endif
+                                                            @else
+                                                                @if($user->appointment == "ct")
+                                                                    Co-Terminus
+                                                                @else
+                                                                    {{ $user->appointment }}
+                                                                @endif
+                                                            @endif
+                                                        </td>
                                                     @endif
                                                     @if ($filters['date_hired'])
                                                         <td class="px-4 py-2 text-center">

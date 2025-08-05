@@ -232,6 +232,20 @@ class EmployeesExport implements FromCollection, WithEvents
             $columnsToSelect[] = 'learning_and_development.user_id as learning_and_development';
             $columnsToGroupBy[] = 'learning_and_development.user_id';
         }
+        if ($this->filters['appointment']) {
+            switch ($this->filters['appointment']) {
+                case 'plantilla':
+                    $query->where('user_data.appointment', 'plantilla');
+                    break;
+                case 'cos':
+                    $query->where('user_data.appointment', 'cos')
+                    ->orWhere('user_data.appointment', 'ct');
+                    break;
+                case 'pa':
+                    $query->where('user_data.appointment', 'pa');
+                    break;
+            }
+        }
         if (!empty($this->filters['selectedEduc'])) {
             $query->where(function($subQuery) {
                 $isBachelor = in_array('b', $this->filters['selectedEduc']);
