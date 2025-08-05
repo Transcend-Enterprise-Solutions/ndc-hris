@@ -245,11 +245,11 @@
                         </div>
                         <div>
                             <span class="employee-name-label">Position:</span>
-                            <span class="employee-name">{{ $userPosition }}</span>
+                            <span class="employee-name">{{ $data['dtrs'][0]->user_position ?? '' }}</span>
                         </div>
                         <div>
                             <span class="employee-name-label">Department:</span>
-                            <span class="employee-name">{{ $userDepartment }}</span>
+                            <span class="employee-name">{{ $data['dtrs'][0]->user_department ?? '' }}</span>
                         </div>
                     </div>
                 </div>
