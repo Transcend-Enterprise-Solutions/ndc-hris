@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 
+
 class AdminDtrTable extends Component
 {
     use WithPagination;
@@ -328,6 +329,8 @@ class AdminDtrTable extends Component
         ]);
     }
 
+
+
     public function exportToPdf()
     {
         // Validate date range
@@ -357,6 +360,7 @@ class AdminDtrTable extends Component
                 'office_divisions.sign_pos as division_sign_pos',
                 'office_division_units.sign_name as unit_sign_name',
                 'office_division_units.sign_pos as unit_sign_pos',
+                'user_data.appointment',
                 DB::raw("CASE
                     WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
                     ELSE users.emp_code
@@ -369,7 +373,7 @@ class AdminDtrTable extends Component
         if ($this->searchTerm) {
             $query->where(function($q) {
                 $q->where('users.emp_code', 'like', '%'.$this->searchTerm.'%')
-                  ->orWhere('users.name', 'like', '%'.$this->searchTerm.'%');
+                ->orWhere('users.name', 'like', '%'.$this->searchTerm.'%');
             });
         }
 
@@ -385,16 +389,20 @@ class AdminDtrTable extends Component
 
         // Order the results
         $dtrs = $query->orderBy('users.name')
-                      ->orderBy('employees_dtr.date')
-                      ->get()
-                      ->groupBy('user_name');
+                    ->orderBy('employees_dtr.date')
+                    ->get()
+                    ->groupBy('user_name');
 
         // Prepare DTRs with summary
         $dtrsWithSummary = [];
+        $today = Carbon::today();
 
         foreach ($dtrs as $employeeName => $employeeDtrs) {
+            // Get the employee's appointment type
+            $appointment = $employeeDtrs->first()->appointment ?? null;
+
             // Process each DTR record to use updated values when available
-            $processedDtrs = $employeeDtrs->map(function ($dtr) {
+            $processedDtrs = $employeeDtrs->map(function ($dtr) use ($appointment) {
                 // Use updated values if available, otherwise use original values
                 $dtr->effective_morning_in = $dtr->up_morning_in ?: $dtr->morning_in;
                 $dtr->effective_morning_out = $dtr->up_morning_out ?: $dtr->morning_out;
@@ -402,7 +410,21 @@ class AdminDtrTable extends Component
                 $dtr->effective_afternoon_out = $dtr->up_afternoon_out ?: $dtr->afternoon_out;
                 $dtr->effective_late = $dtr->up_late ?: $dtr->late;
                 $dtr->effective_ut = $dtr->up_ut ?: $dtr->ut;
-                $dtr->effective_overtime = $dtr->up_ot ?: $dtr->overtime;
+
+                // Handle overtime based on appointment type
+                $overtime = $dtr->up_ot ?: $dtr->overtime;
+                if ($overtime && $overtime !== '00:00') {
+                    list($hours, $minutes) = explode(':', $overtime);
+                    $totalMinutes = (intval($hours) * 60) + intval($minutes);
+
+                    if ($appointment === 'cos' && $totalMinutes <= 60) {
+                        $overtime = '00:00'; // COS with 1 hour or less
+                    } elseif ($appointment !== 'cos' && $totalMinutes <= 120) {
+                        $overtime = '00:00'; // Plantilla with 2 hours or less
+                    }
+                }
+                $dtr->effective_overtime = $overtime;
+
                 $dtr->effective_total_hours_rendered = $dtr->up_total_hours_rendered ?: $dtr->total_hours_rendered;
                 $dtr->effective_remarks = $dtr->up_remarks ?: $dtr->remarks;
                 $dtr->effective_updated_by = $dtr->updated_by;
@@ -410,16 +432,25 @@ class AdminDtrTable extends Component
                 return $dtr;
             });
 
-            // Calculate days with time entries
-            $daysWithTimeEntries = $processedDtrs->filter(function($dtr) {
+            // Calculate days with time entries (only past or present dates)
+            $daysWithTimeEntries = $processedDtrs->filter(function($dtr) use ($today) {
+                $date = Carbon::parse($dtr->date);
+                if ($date->isFuture()) {
+                    return false;
+                }
                 return $dtr->effective_morning_in || $dtr->effective_morning_out ||
-                       $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
+                    $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
             })->count();
 
-            // Calculate days worked
-            $daysWorked = $processedDtrs->filter(function($dtr) {
+            // Calculate days worked (only past or present dates)
+            $daysWorked = $processedDtrs->filter(function($dtr) use ($today) {
+                $date = Carbon::parse($dtr->date);
+                if ($date->isFuture()) {
+                    return false;
+                }
+
                 $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
-                                  $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
+                                $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
 
                 if (strtolower($dtr->effective_remarks) === 'absent') {
                     return false;
@@ -428,24 +459,41 @@ class AdminDtrTable extends Component
                 return $hasTimeEntries;
             })->count();
 
-            // Calculate absences
-            $absences = $processedDtrs->filter(function($dtr) {
+            // Calculate absences (only past or present dates)
+            $absences = $processedDtrs->filter(function($dtr) use ($today) {
+                $date = Carbon::parse($dtr->date);
+                if ($date->isFuture()) {
+                    return false;
+                }
                 return strtolower($dtr->effective_remarks) === 'absent';
             })->count();
 
-            // Calculate leave days
-            $leaveDays = $processedDtrs->filter(function($dtr) {
+            // Calculate leave days (only past or present dates)
+            $leaveDays = $processedDtrs->filter(function($dtr) use ($today) {
+                $date = Carbon::parse($dtr->date);
+                if ($date->isFuture()) {
+                    return false;
+                }
                 return str_contains(strtolower($dtr->effective_remarks), 'leave');
             })->count();
 
-            // Calculate holidays
-            $holidays = $processedDtrs->filter(function($dtr) {
+            // Calculate holidays (only past or present dates)
+            $holidays = $processedDtrs->filter(function($dtr) use ($today) {
+                $date = Carbon::parse($dtr->date);
+                if ($date->isFuture()) {
+                    return false;
+                }
                 return str_contains(strtolower($dtr->effective_remarks), 'holiday');
             })->count();
 
-            // Calculate overtime hours
+            // Calculate overtime hours (only past or present dates)
             $totalOvertimeMinutes = 0;
             foreach ($processedDtrs as $dtr) {
+                $date = Carbon::parse($dtr->date);
+                if ($date->isFuture()) {
+                    continue;
+                }
+
                 if (!empty($dtr->effective_overtime) && $dtr->effective_overtime !== '00:00') {
                     list($hours, $minutes) = explode(':', $dtr->effective_overtime);
                     $totalOvertimeMinutes += (intval($hours) * 60) + intval($minutes);
@@ -453,11 +501,16 @@ class AdminDtrTable extends Component
             }
             $overtime = sprintf("%02d:%02d", floor($totalOvertimeMinutes / 60), $totalOvertimeMinutes % 60);
 
-            // Calculate late hours
+            // Calculate late hours (only past or present dates)
             $totalLateMinutes = 0;
             foreach ($processedDtrs as $dtr) {
+                $date = Carbon::parse($dtr->date);
+                if ($date->isFuture()) {
+                    continue;
+                }
+
                 $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
-                                 $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
+                                $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
                 if ($hasTimeEntries && !empty($dtr->effective_late) && $dtr->effective_late !== '00:00') {
                     list($hours, $minutes) = explode(':', $dtr->effective_late);
                     $totalLateMinutes += (intval($hours) * 60) + intval($minutes);
@@ -465,11 +518,16 @@ class AdminDtrTable extends Component
             }
             $late = sprintf("%02d:%02d", floor($totalLateMinutes / 60), $totalLateMinutes % 60);
 
-            // Calculate undertime hours
+            // Calculate undertime hours (only past or present dates)
             $totalUndertimeMinutes = 0;
             foreach ($processedDtrs as $dtr) {
+                $date = Carbon::parse($dtr->date);
+                if ($date->isFuture()) {
+                    continue;
+                }
+
                 $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
-                                 $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
+                                $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
                 if ($hasTimeEntries && !empty($dtr->effective_ut) && $dtr->effective_ut !== '00:00') {
                     list($hours, $minutes) = explode(':', $dtr->effective_ut);
                     $totalUndertimeMinutes += (intval($hours) * 60) + intval($minutes);

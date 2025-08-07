@@ -42,12 +42,9 @@ class AdminScheduleTable extends Component
     public function mount()
     {
         $this->employees = User::where('user_role', 'emp')
-            ->leftJoin('user_data', 'users.id', '=', 'user_data.user_id')
-            ->select('users.*',
-                DB::raw("CASE
-                    WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
-                    ELSE users.emp_code
-                END as display_emp_code"))
+            ->with('userData')
+            ->orderBy(DB::raw('(SELECT surname FROM user_data WHERE user_data.user_id = users.id)'))
+            ->orderBy(DB::raw('(SELECT first_name FROM user_data WHERE user_data.user_id = users.id)'))
             ->get();
     }
 
@@ -57,6 +54,7 @@ class AdminScheduleTable extends Component
             'filteredSchedules' => $this->filterSchedules()
         ]);
     }
+
     public function updatedSearch()
     {
         $this->resetPage();
@@ -67,31 +65,38 @@ class AdminScheduleTable extends Component
         $now = Carbon::now()->startOfDay();
         $search = '%' . $this->search . '%';
 
-        return DTRSchedule::with(['user' => function ($query) {
-                $query->leftJoin('user_data', 'users.id', '=', 'user_data.user_id')
-                    ->select('users.*', 'user_data.appointment');
-            }])
-            ->whereHas('user', function($query) use ($search) {
-                $query->where('name', 'like', $search);
+        return DTRSchedule::with(['user.userData'])
+            ->whereHas('user.userData', function($query) use ($search) {
+                $query->where('surname', 'like', $search)
+                    ->orWhere('first_name', 'like', $search)
+                    ->orWhere('middle_name', 'like', $search);
             })
             ->when($this->selectedTab, function ($query) use ($now) {
                 switch ($this->selectedTab) {
                     case 'current':
                         return $query->where('start_date', '<=', $now)
-                                     ->where('end_date', '>=', $now);
+                                    ->where('end_date', '>=', $now);
                     case 'incoming':
                         return $query->where('start_date', '>', $now);
                     case 'expired':
                         return $query->where('end_date', '<', $now);
                 }
             })
+            ->join('users', 'dtrschedules.emp_code', '=', 'users.emp_code')
+            ->join('user_data', 'users.id', '=', 'user_data.user_id')
+            ->select('dtrschedules.*', 'user_data.surname', 'user_data.first_name', 'user_data.middle_name')
             ->when($this->selectedTab === 'expired', function ($query) {
-                return $query->orderBy('end_date', 'desc');
+                return $query->orderBy('end_date', 'desc')
+                            ->orderBy('user_data.surname')
+                            ->orderBy('user_data.first_name');
             }, function ($query) {
-                return $query->orderBy('start_date', 'asc');
+                return $query->orderBy('user_data.surname')
+                            ->orderBy('user_data.first_name')
+                            ->orderBy('start_date', 'asc');
             })
             ->paginate($this->perPage);
     }
+
     public function getDisplayEmpCode($empCode, $appointment)
     {
         if ($appointment === 'cos' && strpos($empCode, '1') === 0) {
@@ -99,7 +104,6 @@ class AdminScheduleTable extends Component
         }
         return $empCode;
     }
-
 
     public function getSortedWfhDays($wfhDays)
     {
@@ -111,6 +115,26 @@ class AdminScheduleTable extends Component
         });
 
         return implode(', ', $wfhDaysArray);
+    }
+
+    public function formatName($user)
+    {
+        if (!$user || !$user->userData) {
+            return 'No User Assigned';
+        }
+
+        $name = $user->userData->surname;
+        if ($user->userData->first_name) {
+            $name .= ', ' . $user->userData->first_name;
+        }
+        if ($user->userData->middle_name) {
+            $name .= ' ' . $user->userData->middle_name;
+        }
+        if ($user->userData->name_extension) {
+            $name .= ' ' . $user->userData->name_extension;
+        }
+
+        return $name;
     }
 
     public function setTab($tab)
@@ -142,7 +166,6 @@ class AdminScheduleTable extends Component
 
         $wfhDaysString = !empty($this->wfh_days) ? implode(',', $this->wfh_days) : null;
 
-        // Use the original emp_code (starting with '1' for COS) for database operations
         $originalEmpCode = $this->emp_code;
         if (strpos($this->emp_code, 'D-') === 0) {
             $originalEmpCode = '1' . substr($this->emp_code, 2);
@@ -168,17 +191,17 @@ class AdminScheduleTable extends Component
         }
 
         DTRSchedule::updateOrCreate(
-        ['id' => $this->scheduleId],
-        [
-            'emp_code' => $originalEmpCode,
-            'wfh_days' => $wfhDaysString,
-            'default_start_time' => $this->default_start_time,
-            'default_end_time' => $this->default_end_time,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
-            'is_flexi' => $this->is_flexi,
-        ]
-    );
+            ['id' => $this->scheduleId],
+            [
+                'emp_code' => $originalEmpCode,
+                'wfh_days' => $wfhDaysString,
+                'default_start_time' => $this->default_start_time,
+                'default_end_time' => $this->default_end_time,
+                'start_date' => $this->start_date,
+                'end_date' => $this->end_date,
+                'is_flexi' => $this->is_flexi,
+            ]
+        );
 
         $this->dispatch('swal', [
             'title' => $this->scheduleId ? 'Schedule updated successfully.' : 'Schedule created successfully.',
@@ -193,24 +216,18 @@ class AdminScheduleTable extends Component
         $schedule = DTRSchedule::findOrFail($id);
         $this->scheduleId = $id;
 
-        // Convert emp_code to display format (D- for COS)
         $user = User::where('emp_code', $schedule->emp_code)
-            ->leftJoin('user_data', 'users.id', '=', 'user_data.user_id')
-            ->select('users.*',
-                DB::raw("CASE
-                    WHEN user_data.appointment = 'cos' THEN CONCAT('D-', SUBSTRING(users.emp_code, 2))
-                    ELSE users.emp_code
-                END as display_emp_code"))
+            ->with('userData')
             ->first();
 
-        $this->emp_code = $user->display_emp_code;
-        $this->thisEmployeeName = $user->name;
+        $this->emp_code = $user->emp_code;
+        $this->thisEmployeeName = $this->formatName($user);
         $this->wfh_days = !empty($schedule->wfh_days) ? explode(',', $schedule->wfh_days) : [];
         $this->default_start_time = date('H:i', strtotime($schedule->default_start_time));
         $this->default_end_time = date('H:i', strtotime($schedule->default_end_time));
         $this->start_date = $schedule->start_date->format('Y-m-d');
         $this->end_date = $schedule->end_date->format('Y-m-d');
-        $this->is_flexi = (bool)$schedule->is_flexi; // Add this line
+        $this->is_flexi = (bool)$schedule->is_flexi;
         $this->isEditMode = true;
         $this->isModalOpen = true;
     }
@@ -245,7 +262,7 @@ class AdminScheduleTable extends Component
         $this->default_end_time = '18:30';
         $this->start_date = null;
         $this->end_date = null;
-        $this->is_flexi = false; // Add this line
+        $this->is_flexi = false;
         $this->isEditMode = false;
     }
 }

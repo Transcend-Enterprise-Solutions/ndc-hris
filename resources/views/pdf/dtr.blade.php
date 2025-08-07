@@ -147,7 +147,23 @@
     @php
         // Group DTRs by employee and month
         $groupedData = [];
+        $today = \Carbon\Carbon::today();
+
         foreach($dtrsWithSummary as $employeeName => $employeeData) {
+            // Format employee name to show only initial of middle name
+            $nameParts = explode(' ', $employeeName);
+            $formattedName = '';
+            if (count($nameParts) >= 3) {
+                // First name + Middle initial + Last name
+                $formattedName = $nameParts[0] . ' ' . substr($nameParts[1], 0, 1) . '. ' . $nameParts[2];
+                // Handle cases with suffix or multiple last names
+                if (count($nameParts) > 3) {
+                    $formattedName .= ' ' . implode(' ', array_slice($nameParts, 3));
+                }
+            } else {
+                $formattedName = $employeeName;
+            }
+
             $monthlyGroups = [];
             foreach($employeeData['dtrs'] as $dtr) {
                 $monthYear = Carbon\Carbon::parse($dtr->date)->format('Y-m');
@@ -177,36 +193,61 @@
                 $totalUndertimeMinutes = 0;
 
                 foreach($monthData['dtrs'] as $dtr) {
-                    // Days worked
+                    // Check if the date is in the future - skip calculations if it is
+                    $dtrDate = \Carbon\Carbon::parse($dtr->date);
+                    $isFuture = $dtrDate->isFuture();
+
+                    // Days worked calculation (only for past/present dates)
+                    if (!$isFuture) {
+                        $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
+                                        $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
+
+                        if (strtolower($dtr->effective_remarks) === 'absent') {
+                            $monthData['summary']['absences']++;
+                        } elseif (str_contains(strtolower($dtr->effective_remarks), 'leave')) {
+                            $monthData['summary']['leave_days']++;
+                        } elseif (str_contains(strtolower($dtr->effective_remarks), 'holiday')) {
+                            $monthData['summary']['holidays']++;
+                        } elseif ($hasTimeEntries) {
+                            $monthData['summary']['days_worked']++;
+                        }
+                    }
+
+                    // Time calculations - only process if not a future date
                     $hasTimeEntries = $dtr->effective_morning_in || $dtr->effective_morning_out ||
                                     $dtr->effective_afternoon_in || $dtr->effective_afternoon_out;
 
-                    if (strtolower($dtr->effective_remarks) === 'absent') {
-                        $monthData['summary']['absences']++;
-                    } elseif (str_contains(strtolower($dtr->effective_remarks), 'leave')) {
-                        $monthData['summary']['leave_days']++;
-                    } elseif (str_contains(strtolower($dtr->effective_remarks), 'holiday')) {
-                        $monthData['summary']['holidays']++;
-                    } elseif ($hasTimeEntries) {
-                        $monthData['summary']['days_worked']++;
+                    // Overtime calculation (only for past/present dates)
+                    if (!$isFuture && !empty($dtr->effective_overtime) && $dtr->effective_overtime !== '00:00') {
+                        $timeParts = explode(':', $dtr->effective_overtime);
+                        $overtimeDisplay = $timeParts[0] . ':' . $timeParts[1]; // Only hours and minutes
+                        list($hours, $minutes) = array_map('intval', $timeParts);
+                        $totalOvertimeMinutes += ($hours * 60) + $minutes;
+                        $dtr->formatted_overtime = $overtimeDisplay;
+                    } else {
+                        $dtr->formatted_overtime = '--:--';
                     }
 
-                    // Overtime calculation
-                    if (!empty($dtr->effective_overtime) && $dtr->effective_overtime !== '00:00') {
-                        list($hours, $minutes) = explode(':', $dtr->effective_overtime);
-                        $totalOvertimeMinutes += (intval($hours) * 60) + intval($minutes);
+                    // Late calculation (only for past/present dates with time entries)
+                    if (!$isFuture && $hasTimeEntries && !empty($dtr->effective_late) && $dtr->effective_late !== '00:00') {
+                        $timeParts = explode(':', $dtr->effective_late);
+                        $lateDisplay = $timeParts[0] . ':' . $timeParts[1]; // Only hours and minutes
+                        list($hours, $minutes) = array_map('intval', $timeParts);
+                        $totalLateMinutes += ($hours * 60) + $minutes;
+                        $dtr->formatted_late = $lateDisplay;
+                    } else {
+                        $dtr->formatted_late = '--:--';
                     }
 
-                    // Late calculation
-                    if ($hasTimeEntries && !empty($dtr->effective_late) && $dtr->effective_late !== '00:00') {
-                        list($hours, $minutes) = explode(':', $dtr->effective_late);
-                        $totalLateMinutes += (intval($hours) * 60) + intval($minutes);
-                    }
-
-                    // Undertime calculation
-                    if ($hasTimeEntries && !empty($dtr->effective_ut) && $dtr->effective_ut !== '00:00') {
-                        list($hours, $minutes) = explode(':', $dtr->effective_ut);
-                        $totalUndertimeMinutes += (intval($hours) * 60) + intval($minutes);
+                    // Undertime calculation (only for past/present dates with time entries)
+                    if (!$isFuture && $hasTimeEntries && !empty($dtr->effective_ut) && $dtr->effective_ut !== '00:00') {
+                        $timeParts = explode(':', $dtr->effective_ut);
+                        $undertimeDisplay = $timeParts[0] . ':' . $timeParts[1]; // Only hours and minutes
+                        list($hours, $minutes) = array_map('intval', $timeParts);
+                        $totalUndertimeMinutes += ($hours * 60) + $minutes;
+                        $dtr->formatted_ut = $undertimeDisplay;
+                    } else {
+                        $dtr->formatted_ut = '--:--';
                     }
                 }
 
@@ -217,7 +258,7 @@
                 $monthData['summary']['tardiness'] = sprintf("%02d:%02d", floor($totalTardinessMinutes / 60), $totalTardinessMinutes % 60);
             }
 
-            $groupedData[$employeeName] = $monthlyGroups;
+            $groupedData[$formattedName] = $monthlyGroups;
         }
     @endphp
 
@@ -243,14 +284,14 @@
                             <span class="employee-name-label">Name:</span>
                             <span class="employee-name">{{ $employeeName }}</span>
                         </div>
-                        <div>
+                        {{-- <div>
                             <span class="employee-name-label">Position:</span>
                             <span class="employee-name">{{ $data['dtrs'][0]->user_position ?? '' }}</span>
                         </div>
                         <div>
                             <span class="employee-name-label">Department:</span>
                             <span class="employee-name">{{ $data['dtrs'][0]->user_department ?? '' }}</span>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
 
@@ -285,16 +326,22 @@
                                 $dayOfWeek = $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('D') : '';
                                 $dayNum = $dtr->date ? Carbon\Carbon::parse($dtr->date)->format('j') : '';
                                 $isWeekend = in_array($dayOfWeek, ['Sat', 'Sun']);
+
+                                // Format time entries to remove seconds
+                                $morningIn = $dtr->effective_morning_in ? substr($dtr->effective_morning_in, 0, 5) : '--:--';
+                                $morningOut = $dtr->effective_morning_out ? substr($dtr->effective_morning_out, 0, 5) : '--:--';
+                                $afternoonIn = $dtr->effective_afternoon_in ? substr($dtr->effective_afternoon_in, 0, 5) : '--:--';
+                                $afternoonOut = $dtr->effective_afternoon_out ? substr($dtr->effective_afternoon_out, 0, 5) : '--:--';
                             @endphp
                             <tr class="{{ $isWeekend ? 'weekend' : '' }}">
                                 <td>{{ $dayNum }} {{ $dayOfWeek }}</td>
-                                <td>{{ $dtr->effective_morning_in && $dtr->effective_morning_in != '00:00' ? $dtr->effective_morning_in : '--:--' }}</td>
-                                <td>{{ $dtr->effective_morning_out && $dtr->effective_morning_out != '00:00' ? $dtr->effective_morning_out : '--:--' }}</td>
-                                <td>{{ $dtr->effective_afternoon_in && $dtr->effective_afternoon_in != '00:00' ? $dtr->effective_afternoon_in : '--:--' }}</td>
-                                <td>{{ $dtr->effective_afternoon_out && $dtr->effective_afternoon_out != '00:00' ? $dtr->effective_afternoon_out : '--:--' }}</td>
-                                <td>{{ $hasTimeEntries && $dtr->effective_late ? $dtr->effective_late : '--:--' }}</td>
-                                <td>{{ $hasTimeEntries && $dtr->effective_ut ? $dtr->effective_ut : '--:--' }}</td>
-                                <td>{{ $dtr->effective_overtime && $dtr->effective_overtime != '00:00' ? $dtr->effective_overtime : '--:--' }}</td>
+                                <td>{{ $morningIn }}</td>
+                                <td>{{ $morningOut }}</td>
+                                <td>{{ $afternoonIn }}</td>
+                                <td>{{ $afternoonOut }}</td>
+                                <td>{{ $dtr->formatted_late }}</td>
+                                <td>{{ $dtr->formatted_ut }}</td>
+                                <td>{{ $dtr->formatted_overtime }}</td>
                                 <td>{{ $dtr->effective_remarks !== 'Present' ? $dtr->effective_remarks : '' }}</td>
                             </tr>
                         @endforeach
@@ -337,7 +384,9 @@
                 <div class="certification">
                     I CERTIFY on my honor that the above is a true and correct report of the hours of work performed, record of which was made daily at the time of arrival and departure from office.
                 </div>
-
+                <br>
+                <br>
+                <br>
                 <div class="signature-container">
                     <table class="signature-table">
                         <tr>
@@ -346,12 +395,12 @@
                                     <img src="{{ storage_path('app/public/' . $eSignaturePath) }}"
                                          style="width: 80px; height: auto; margin-bottom: 5px; display: block; margin-left: auto; margin-right: auto;">
                                 @endif
-                                <div class="signature-line"></div>
+
                                 <div class="signature-name">{{ $employeeName }}</div>
                                 <div class="signature-title">Employee's Signature</div>
                             </td>
                             <td>
-                                <div class="signature-line"></div>
+
                                 <div class="signature-name">{{ $data['signatory']['name'] ?? '' }}</div>
                                 <div class="signature-title">{{ $data['signatory']['position'] ?? '' }}</div>
                             </td>

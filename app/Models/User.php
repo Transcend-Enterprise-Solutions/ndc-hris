@@ -52,18 +52,18 @@ class User extends Authenticatable
 
     public function userData()
     {
-        return $this->hasOne(UserData::class);
+        return $this->hasOne(UserData::class, 'user_id', 'id');
     }
 
     public function officeDivision()
     {
         return $this->belongsTo(OfficeDivisions::class, 'office_division_id', 'id');
-    }    
+    }
 
     public function officeDivisionUnit()
     {
         return $this->belongsTo(OfficeDivisionUnits::class, 'unit_id', 'id');
-    }    
+    }
 
     public function admin()
     {
@@ -273,13 +273,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(MonthlyIncomeTax::class);
     }
-    
+
     public function mandatoryFormRequest()
     {
         return $this->hasMany(MandatoryFormRequest::class);
 
     }
-    
+
     public function registrationOtp()
     {
         return $this->hasMany(RegistrationOtp::class);

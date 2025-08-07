@@ -60,7 +60,16 @@
                     <tr class="border-b dark:border-gray-600 whitespace-nowrap">
                         <td class="px-4 py-2 text-center">{{ $this->getDisplayEmpCode($schedule->emp_code,
                             $schedule->user?->appointment) }}</td>
-                        <td class="px-4 py-2 text-center">{{ $schedule->user?->name ?? 'No User Assigned' }}</td>
+                        <td class="px-4 py-2 text-center">
+                            @if($schedule->user && $schedule->user->userData)
+                                {{ $schedule->user->userData->surname }}, {{ $schedule->user->userData->first_name }}
+                                @if($schedule->user->userData->middle_name)
+                                    {{ $schedule->user->userData->middle_name }}
+                                @endif
+                            @else
+                                No User Assigned
+                            @endif
+                        </td>
                         <td class="px-4 py-2 text-center">
                             {{ $this->getSortedWfhDays($schedule->wfh_days) }}
                         </td>
@@ -140,7 +149,14 @@
                         class="w-full p-2 border rounded text-gray-700 dark:text-gray-300 dark:bg-gray-700">
                         <option value="" disabled selected>Select an employee</option>
                         @foreach ($employees as $employee)
-                        <option value="{{ $employee->emp_code }}">{{ $employee->name }}</option>
+                            @if($employee->userData)
+                            <option value="{{ $employee->emp_code }}">
+                                {{ $employee->userData->surname }}, {{ $employee->userData->first_name }}
+                                @if($employee->userData->middle_name)
+                                    {{ $employee->userData->middle_name }}
+                                @endif
+                            </option>
+                            @endif
                         @endforeach
                     </select>
                     @error('emp_code') <span class="text-red-500">{{ 'Employee Field is required!' }}</span> @enderror

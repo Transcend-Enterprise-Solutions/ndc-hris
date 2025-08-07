@@ -40,6 +40,8 @@
                                 <option value="">Select Type</option>
                                 <option value="Regular">Regular</option>
                                 <option value="Special">Special</option>
+                                <option value="Special">Suspensions</option>
+                                <option value="Special">Memorandum Circulars and Proclamation</option>
                             </select>
                             @error('type') <span class="text-red-500">{{ $message }}</span> @enderror
                         </div>
@@ -64,7 +66,7 @@
         <div class="mt-8 overflow-x-auto text-sm">
             <div class="w-full flex flex-col sm:flex-row sm:justify-start sm:space-x-4 mb-4">
                 <div class="w-auto">
-                    <button wire:click="openModal" class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md 
+                    <button wire:click="openModal" class="text-sm mt-4 sm:mt-1 px-2 py-1.5 bg-green-500 text-white rounded-md
                         hover:bg-green-600 focus:outline-none dark:bg-gray-700 w-full
                         dark:hover:bg-green-600 dark:text-gray-300 dark:hover:text-white">
                         Add Holiday
