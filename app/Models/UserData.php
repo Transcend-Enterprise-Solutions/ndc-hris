@@ -70,4 +70,20 @@ class UserData extends Model
     {
         return $this->hasMany(LeaveApplication::class);
     }
+
+
+    public function getFullNameAttribute()
+    {
+        $name = $this->surname;
+        if ($this->first_name) {
+            $name .= ', ' . $this->first_name;
+        }
+        if ($this->middle_name) {
+            $name .= ' ' . $this->middle_name;
+        }
+        if ($this->name_extension) {
+            $name .= ' ' . $this->name_extension;
+        }
+        return $name;
+    }
 }
